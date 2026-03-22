@@ -1,0 +1,60 @@
+.pc-root {
+  width: 160px;
+  border: 1px solid rgba(201, 150, 58, 0.3);
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(160deg, #1e1a12, #161208);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.pc-header {
+  padding: 10px 10px 8px;
+  border-bottom: 1px solid rgba(201, 150, 58, 0.1);
+  background: rgba(201, 150, 58, 0.04);
+}
+
+.pc-name {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cream);
+}
+
+.pc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.pc-body {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pc-prod-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.pc-glory {
+  font-family: var(--font-display);
+  font-size: 11px;
+}
+
+.pc-glory--pos {
+  color: var(--gold);
+}
+
+.pc-glory--neg {
+  color: #e08080;
+}
+
+.pc-upgrade-hint {
+  font-size: 10px;
+  color: var(--stone);
+  font-style: italic;
+}

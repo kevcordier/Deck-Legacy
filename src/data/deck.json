@@ -1,0 +1,108 @@
+{
+  "deck": [
+    {
+      "id": 1,
+      "cardId": 1
+    },
+    {
+      "id": 2,
+      "cardId": 1
+    },
+    {
+      "id": 3,
+      "cardId": 1
+    },
+    {
+      "id": 4,
+      "cardId": 2
+    },
+    {
+      "id": 5,
+      "cardId": 2
+    },
+    {
+      "id": 6,
+      "cardId": 2
+    },
+    {
+      "id": 7,
+      "cardId": 3
+    },
+    {
+      "id": 8,
+      "cardId": 3
+    },
+    {
+      "id": 9,
+      "cardId": 4
+    },
+    {
+      "id": 10,
+      "cardId": 5
+    },
+    {
+      "id": 11,
+      "cardId": 6
+    },
+    {
+      "id": 12,
+      "cardId": 7
+    },
+    {
+      "id": 13,
+      "cardId": 8
+    },
+    {
+      "id": 14,
+      "cardId": 9
+    },
+    {
+      "id": 15,
+      "cardId": 2
+    },
+    {
+      "id": 16,
+      "cardId": 10
+    },
+    {
+      "id": 17,
+      "cardId": 11
+    },
+    {
+      "id": 18,
+      "cardId": 12
+    },
+    {
+      "id": 19,
+      "cardId": 3
+    },
+    {
+      "id": 20,
+      "cardId": 13
+    },
+    {
+      "id": 21,
+      "cardId": 13
+    },
+    {
+      "id": 22,
+      "cardId": 14
+    },
+    {
+      "id": 22,
+      "cardId": 14
+    },
+    {
+      "id": 71,
+      "cardId": 2
+    },
+    {
+      "id": 72,
+      "cardId": 3
+    },
+    {
+      "id": 73,
+      "cardId": 2
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+.ht-root {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ht-live-btn {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ht-live-btn--on {
+  border: 1px solid rgba(201, 150, 58, 0.6);
+  background: rgba(201, 150, 58, 0.12);
+  color: var(--gold-l);
+}
+
+.ht-live-btn--off {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--stone);
+}
+
+.ht-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.ht-live-dot--on {
+  background: var(--gold);
+  animation: pulse 1.5s ease infinite;
+}
+
+.ht-live-dot--off {
+  background: var(--stone);
+}
+
+.ht-scroll {
+  flex: 1;
+  overflow-x: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-bottom: 2px;
+}
+
+.ht-separator {
+  width: 1px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.ht-position {
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: 10px;
+  color: var(--stone);
+  white-space: nowrap;
+}
+
+.ht-dot-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.ht-event-btn {
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+
+.ht-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 4px;
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: 5px;
+  padding: 3px 7px;
+  white-space: nowrap;
+  font-size: 9px;
+  font-family: var(--font-display);
+  pointer-events: none;
+  z-index: 10;
+}

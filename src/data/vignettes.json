@@ -1,0 +1,86 @@
+{
+  "vignettes": [
+    {
+      "number": 1,
+      "label": "Or",
+      "description": "+1 or à chaque production",
+      "max": 10,
+      "effect": { "type": "resource", "resource": "or", "amount": 1 }
+    },
+    {
+      "number": 2,
+      "label": "Bois",
+      "description": "+1 bois à chaque production",
+      "max": 10,
+      "effect": { "type": "resource", "resource": "bois", "amount": 1 }
+    },
+    {
+      "number": 3,
+      "label": "Pierre",
+      "description": "+1 pierre à chaque production",
+      "max": 5,
+      "effect": { "type": "resource", "resource": "pierre", "amount": 1 }
+    },
+    {
+      "number": 4,
+      "label": "Métal",
+      "description": "+1 métal à chaque production",
+      "max": 5,
+      "effect": { "type": "resource", "resource": "métal", "amount": 1 }
+    },
+    {
+      "number": 5,
+      "label": "Épée",
+      "description": "+1 épée à chaque production",
+      "max": 5,
+      "effect": { "type": "resource", "resource": "épée", "amount": 1 }
+    },
+    {
+      "number": 6,
+      "label": "Marchandise",
+      "description": "+1 marchandise à chaque production",
+      "max": 5,
+      "effect": { "type": "resource", "resource": "marchandise", "amount": 1 }
+    },
+    {
+      "number": 7,
+      "label": "Reste en jeu",
+      "description": "La carte reste en jeu à la fin du tour",
+      "max": 2,
+      "effect": { "type": "add_passive_effect", "effectId": "reste_en_jeu" }
+    },
+    {
+      "number": 8,
+      "label": "+2 gloire",
+      "description": "+2 points de gloire",
+      "max": 5,
+      "effect": { "type": "glory_points", "amount": 2 }
+    },
+    {
+      "number": 10,
+      "label": "+5 gloire",
+      "description": "+5 points de gloire",
+      "max": 5,
+      "effect": { "type": "glory_points", "amount": 5 }
+    },
+    {
+      "number": 11,
+      "label": "Chevalier",
+      "description": "Ajoute le tag chevalier à la carte",
+      "max": 1,
+      "effect": { "type": "add_tag", "tag": "chevalier" }
+    }
+  ],
+  "globalStock": {
+    "1":  10,
+    "2":  10,
+    "3":  5,
+    "4":  5,
+    "5":  5,
+    "6":  5,
+    "7":  2,
+    "8":  5,
+    "10": 5,
+    "11": 1
+  }
+}
