@@ -1,0 +1,17 @@
+
+.res-icon {
+  --res-icon-size: 1.5em;
+  vertical-align: baseline;
+  width: var(--res-icon-size);
+  height: var(--res-icon-size);
+}
+.res-icon.res-sm {
+  --res-icon-size: 1em;
+}
+.res-icon.res-md {
+  --res-icon-size: 2em;
+}
+.res-icon.res-lg {
+  --res-icon-size: 3em;
+}
+

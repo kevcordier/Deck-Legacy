@@ -1,0 +1,86 @@
+{
+  "stickers": [
+    {
+      "number": 1,
+      "label": "Gold",
+      "description": "+1 gold to each production",
+      "max": 10,
+      "effect": { "type": "resource", "resource": "gold", "amount": 1 }
+    },
+    {
+      "number": 2,
+      "label": "Wood",
+      "description": "+1 wood to each production",
+      "max": 10,
+      "effect": { "type": "resource", "resource": "wood", "amount": 1 }
+    },
+    {
+      "number": 3,
+      "label": "Stone",
+      "description": "+1 stone to each production",
+      "max": 5,
+      "effect": { "type": "resource", "resource": "stone", "amount": 1 }
+    },
+    {
+      "number": 4,
+      "label": "Iron",
+      "description": "+1 iron to each production",
+      "max": 5,
+      "effect": { "type": "resource", "resource": "iron", "amount": 1 }
+    },
+    {
+      "number": 5,
+      "label": "Sword",
+      "description": "+1 sword to each production",
+      "max": 5,
+      "effect": { "type": "resource", "resource": "sword", "amount": 1 }
+    },
+    {
+      "number": 6,
+      "label": "Goods",
+      "description": "+1 goods to each production",
+      "max": 5,
+      "effect": { "type": "resource", "resource": "goods", "amount": 1 }
+    },
+    {
+      "number": 7,
+      "label": "Remains in Play",
+      "description": "Card remains in play at end of turn",
+      "max": 2,
+      "effect": { "type": "add_passive_effect", "effectId": "reste_en_jeu" }
+    },
+    {
+      "number": 8,
+      "label": "+2 Glory",
+      "description": "+2 Glory points",
+      "max": 5,
+      "effect": { "type": "glory_points", "amount": 2 }
+    },
+    {
+      "number": 10,
+      "label": "+5 Glory",
+      "description": "+5 Glory points",
+      "max": 5,
+      "effect": { "type": "glory_points", "amount": 5 }
+    },
+    {
+      "number": 11,
+      "label": "Knight",
+      "description": "Adds knight tag to card",
+      "max": 1,
+      "effect": { "type": "add_tag", "tag": "chevalier" }
+    }
+  ],
+  "globalStock": {
+    "1": 10,
+    "2": 10,
+    "3": 5,
+    "4": 5,
+    "5": 5,
+    "6": 5,
+    "7": 2,
+    "8": 5,
+    "10": 5,
+    "11": 1
+  }
+}

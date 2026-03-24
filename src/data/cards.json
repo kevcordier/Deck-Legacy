@@ -7,11 +7,8 @@
         {
           "id": 1,
           "name": "Wild Grass",
-          "tags": ["Land"],
-          "resources": [
-            {
-              "gold": 1
-            }
+          "tags": [
+            "Land"
           ],
           "upgrade": [
             {
@@ -24,16 +21,18 @@
               },
               "upgradeTo": 2
             }
+          ],
+          "productions": [
+            {
+              "gold": 1
+            }
           ]
         },
         {
           "id": 2,
           "name": "Plains",
-          "tags": ["Land"],
-          "resources": [
-            {
-              "gold": 1
-            }
+          "tags": [
+            "Land"
           ],
           "actions": [
             {
@@ -69,16 +68,18 @@
               },
               "upgradeTo": 3
             }
+          ],
+          "productions": [
+            {
+              "gold": 1
+            }
           ]
         },
         {
           "id": 3,
           "name": "Farmlands",
-          "tags": ["Land"],
-          "resources": [
-            {
-              "gold": 2
-            }
+          "tags": [
+            "Land"
           ],
           "upgrade": [
             {
@@ -91,19 +92,26 @@
               },
               "upgradeTo": 4
             }
+          ],
+          "productions": [
+            {
+              "gold": 2
+            }
           ]
         },
         {
           "id": 4,
           "name": "Food Barns",
-          "tags": ["Building"],
-          "resources": [
+          "tags": [
+            "Building"
+          ],
+          "glory": 3,
+          "stayInPlay": true,
+          "productions": [
             {
               "gold": 2
             }
-          ],
-          "glory": 3,
-          "stayInPlay": true
+          ]
         }
       ]
     },
@@ -114,11 +122,8 @@
         {
           "id": 1,
           "name": "Distant Mountain",
-          "tags": ["Land"],
-          "resources": [
-            {
-              "gold": 1
-            }
+          "tags": [
+            "Land"
           ],
           "upgrade": [
             {
@@ -131,16 +136,18 @@
               },
               "upgradeTo": 2
             }
+          ],
+          "productions": [
+            {
+              "gold": 1
+            }
           ]
         },
         {
           "id": 2,
           "name": "Rocky Area",
-          "tags": ["Land"],
-          "resources": [
-            {
-              "rock": 1
-            }
+          "tags": [
+            "Land"
           ],
           "actions": [
             {
@@ -157,7 +164,7 @@
                   "type": "add_resources",
                   "resources": [
                     {
-                      "rock": 2
+                      "stone": 2
                     }
                   ]
                 }
@@ -177,16 +184,18 @@
               },
               "upgradeTo": 3
             }
+          ],
+          "productions": [
+            {
+              "stone": 1
+            }
           ]
         },
         {
           "id": 3,
           "name": "Quarry",
-          "tags": ["Land"],
-          "resources": [
-            {
-              "rock": 2
-            }
+          "tags": [
+            "Land"
           ],
           "upgrade": [
             {
@@ -200,22 +209,23 @@
               },
               "upgradeTo": 4
             }
+          ],
+          "productions": [
+            {
+              "stone": 2
+            }
           ]
         },
         {
           "id": 4,
           "name": "Shallow Mine",
-          "tags": ["Land"],
-          "resources": [
-            {
-              "rock": 1,
-              "iron": 1
-            }
+          "tags": [
+            "Land"
           ],
           "glory": 3,
           "actions": [
             {
-              "label": "Destroy this card to discover Mine (84/85).",
+              "label": "Discover Mine (84/85).",
               "cost": {
                 "destroy": "self"
               },
@@ -223,10 +233,19 @@
                 {
                   "type": "discover_card",
                   "number": 1,
-                  "cards": [84, 85]
+                  "cards": [
+                    84,
+                    85
+                  ]
                 }
               ],
               "endsTurn": false
+            }
+          ],
+          "productions": [
+            {
+              "stone": 1,
+              "iron": 1
             }
           ]
         }
@@ -239,18 +258,15 @@
         {
           "id": 1,
           "name": "Forest",
-          "tags": ["Land"],
-          "resources": [
-            {
-              "wood": 1
-            }
+          "tags": [
+            "Land"
           ],
           "upgrade": [
             {
               "cost": {
                 "resources": [
                   {
-                    "rock": 2
+                    "stone": 2
                   }
                 ]
               },
@@ -277,12 +293,19 @@
               ],
               "endsTurn": false
             }
+          ],
+          "productions": [
+            {
+              "wood": 1
+            }
           ]
         },
         {
           "id": 2,
           "name": "Felled Forest",
-          "tags": ["Land"],
+          "tags": [
+            "Land"
+          ],
           "upgrade": [
             {
               "cost": {
@@ -300,7 +323,7 @@
                   {
                     "gold": 2,
                     "wood": 1,
-                    "rock": 1
+                    "stone": 1
                   }
                 ]
               },
@@ -311,27 +334,26 @@
         {
           "id": 3,
           "name": "Lumberjack",
-          "tags": ["Building"],
-          "resources": [
+          "tags": [
+            "Building"
+          ],
+          "glory": 2,
+          "productions": [
             {
               "wood": 2
             }
-          ],
-          "glory": 2
+          ]
         },
         {
           "id": 4,
           "name": "Sacred Well",
-          "tags": ["Building"],
-          "resources": [
-            {
-              "gold": 1
-            }
+          "tags": [
+            "Building"
           ],
           "glory": 2,
           "actions": [
             {
-              "label": "Destroy this card to discover Shrine (82/83).",
+              "label": "Discover Shrine (82/83).",
               "cost": {
                 "destroy": "self"
               },
@@ -339,10 +361,18 @@
                 {
                   "type": "discover_card",
                   "number": 1,
-                  "cards": [82, 83]
+                  "cards": [
+                    82,
+                    83
+                  ]
                 }
               ],
               "endsTurn": false
+            }
+          ],
+          "productions": [
+            {
+              "gold": 1
             }
           ]
         }
@@ -355,34 +385,33 @@
         {
           "id": 1,
           "name": "Headquarters",
-          "tags": ["Building"],
-          "resources": [
-            {
-              "gold": 1
-            }
+          "tags": [
+            "Building"
           ],
           "upgrade": [
             {
               "cost": {
                 "resources": [
                   {
-                    "rock": 3,
+                    "stone": 3,
                     "wood": 1
                   }
                 ]
               },
               "upgradeTo": 2
             }
+          ],
+          "productions": [
+            {
+              "gold": 1
+            }
           ]
         },
         {
           "id": 2,
           "name": "Town Hall",
-          "tags": ["Building"],
-          "resources": [
-            {
-              "sword": 1
-            }
+          "tags": [
+            "Building"
           ],
           "glory": 3,
           "actions": [
@@ -392,7 +421,9 @@
                 {
                   "type": "play_from_discard",
                   "number": 1,
-                  "tags": ["Land"]
+                  "tags": [
+                    "Land"
+                  ]
                 }
               ],
               "endsTurn": false
@@ -403,23 +434,25 @@
               "cost": {
                 "resources": [
                   {
-                    "rock": 4,
+                    "stone": 4,
                     "wood": 2
                   }
                 ]
               },
               "upgradeTo": 3
             }
+          ],
+          "productions": [
+            {
+              "sword": 1
+            }
           ]
         },
         {
           "id": 3,
           "name": "Keep",
-          "tags": ["Building"],
-          "resources": [
-            {
-              "sword": 1
-            }
+          "tags": [
+            "Building"
           ],
           "glory": 7,
           "actions": [
@@ -429,7 +462,10 @@
                 {
                   "type": "play_from_discard",
                   "number": 1,
-                  "tags": ["Land", "Building"]
+                  "tags": [
+                    "Land",
+                    "Building"
+                  ]
                 }
               ],
               "endsTurn": false
@@ -440,7 +476,7 @@
               "cost": {
                 "resources": [
                   {
-                    "rock": 6,
+                    "stone": 6,
                     "wood": 2,
                     "iron": 1
                   }
@@ -448,16 +484,18 @@
               },
               "upgradeTo": 4
             }
+          ],
+          "productions": [
+            {
+              "sword": 1
+            }
           ]
         },
         {
           "id": 4,
           "name": "Castle",
-          "tags": ["Building"],
-          "resources": [
-            {
-              "sword": 1
-            }
+          "tags": [
+            "Building"
           ],
           "glory": 12,
           "actions": [
@@ -471,6 +509,11 @@
               ],
               "endsTurn": false
             }
+          ],
+          "productions": [
+            {
+              "sword": 1
+            }
           ]
         }
       ]
@@ -482,7 +525,9 @@
         {
           "id": 1,
           "name": "Trader",
-          "tags": ["Person"],
+          "tags": [
+            "Person"
+          ],
           "actions": [
             {
               "label": "Spend 1 gold to gain 1 Wood.",
@@ -522,7 +567,9 @@
         {
           "id": 2,
           "name": "Bazaar",
-          "tags": ["Building"],
+          "tags": [
+            "Building"
+          ],
           "glory": 1,
           "actions": [
             {
@@ -542,7 +589,7 @@
                       "wood": 1
                     },
                     {
-                      "rock": 1
+                      "stone": 1
                     }
                   ]
                 }
@@ -566,7 +613,9 @@
         {
           "id": 3,
           "name": "Market",
-          "tags": ["Building"],
+          "tags": [
+            "Building"
+          ],
           "glory": 3,
           "actions": [
             {
@@ -586,7 +635,7 @@
                       "wood": 1
                     },
                     {
-                      "rock": 1
+                      "stone": 1
                     },
                     {
                       "iron": 1
@@ -613,9 +662,11 @@
         {
           "id": 4,
           "name": "Festival",
-          "tags": ["Event"],
+          "tags": [
+            "Event"
+          ],
           "glory": 4,
-          "resources": [
+          "productions": [
             {
               "gold": 1
             },
@@ -623,7 +674,7 @@
               "wood": 1
             },
             {
-              "rock": 1
+              "stone": 1
             },
             {
               "iron": 1
@@ -639,7 +690,9 @@
         {
           "id": 1,
           "name": "Jungle",
-          "tags": ["Land"],
+          "tags": [
+            "Land"
+          ],
           "actions": [
             {
               "label": "Spend 1 gold to gain 1 Wood.",
@@ -679,11 +732,8 @@
         {
           "id": 2,
           "name": "Huge Trees",
-          "tags": ["Land"],
-          "resources": [
-            {
-              "wood": 1
-            }
+          "tags": [
+            "Land"
           ],
           "actions": [
             {
@@ -719,16 +769,18 @@
               },
               "upgradeTo": 3
             }
+          ],
+          "productions": [
+            {
+              "wood": 1
+            }
           ]
         },
         {
           "id": 3,
           "name": "Deep Jungle",
-          "tags": ["Land"],
-          "resources": [
-            {
-              "wood": 2
-            }
+          "tags": [
+            "Land"
           ],
           "upgrade": [
             {
@@ -741,20 +793,27 @@
               },
               "upgradeTo": 4
             }
+          ],
+          "productions": [
+            {
+              "wood": 2
+            }
           ]
         },
         {
           "id": 4,
           "name": "Treehouses",
-          "tags": ["Building"],
-          "resources": [
+          "tags": [
+            "Building"
+          ],
+          "glory": 4,
+          "stayInPlay": true,
+          "productions": [
             {
               "gold": 1,
               "wood": 2
             }
-          ],
-          "glory": 4,
-          "stayInPlay": true
+          ]
         }
       ]
     },
@@ -765,8 +824,10 @@
         {
           "id": 1,
           "name": "River",
-          "tags": ["Land"],
-          "resources": [
+          "tags": [
+            "Land"
+          ],
+          "productions": [
             {
               "gold": 1
             }
@@ -787,8 +848,10 @@
         {
           "id": 2,
           "name": "Bridge",
-          "tags": ["Land"],
-          "resources": [
+          "tags": [
+            "Land"
+          ],
+          "productions": [
             {
               "gold": 1
             }
@@ -810,8 +873,10 @@
         {
           "id": 3,
           "name": "Stone Bridge",
-          "tags": ["Land"],
-          "resources": [
+          "tags": [
+            "Land"
+          ],
+          "productions": [
             {
               "gold": 1
             }
@@ -833,8 +898,10 @@
         {
           "id": 4,
           "name": "Explorers",
-          "tags": ["Person"],
-          "resources": [
+          "tags": [
+            "Person"
+          ],
+          "productions": [
             {
               "gold": 1
             }
@@ -847,7 +914,12 @@
                 {
                   "type": "discover_card",
                   "number": 1,
-                  "cards": [71, 72, 73, 74]
+                  "cards": [
+                    71,
+                    72,
+                    73,
+                    74
+                  ]
                 },
                 {
                   "type": "upgrade_card",
@@ -868,7 +940,9 @@
         {
           "id": 1,
           "name": "Field Worker",
-          "tags": ["Person"],
+          "tags": [
+            "Person"
+          ],
           "actions": [
             {
               "label": "Choose a Land in play. Gain its productions as resources.",
@@ -879,7 +953,9 @@
                     {
                       "card": {
                         "card_scope": "in_play",
-                        "tags": ["Land"]
+                        "tags": [
+                          "Land"
+                        ]
                       }
                     }
                   ]
@@ -891,7 +967,9 @@
         {
           "id": 2,
           "name": "Servant",
-          "tags": ["Person"],
+          "tags": [
+            "Person"
+          ],
           "actions": [
             {
               "label": "Gain 1 Gold/Wood/Stone.",
@@ -919,13 +997,15 @@
     {
       "id": 9,
       "name": "Bandit",
-      "chooseState": true,
       "states": [
         {
           "id": 1,
           "name": "Bandit",
-          "tags": ["Enemy"],
+          "tags": [
+            "Enemy"
+          ],
           "glory": -2,
+          "illustration": "cards/bandit.webp",
           "actions": [
             {
               "label": "When played, blocks 1 card with gold productions.",
@@ -935,7 +1015,9 @@
                 {
                   "type": "block_card",
                   "number": 1,
-                  "produces": ["gold"]
+                  "produces": [
+                    "gold"
+                  ]
                 }
               ]
             },
@@ -1003,7 +1085,9 @@
         {
           "id": 2,
           "name": "Worker",
-          "tags": ["Person"],
+          "tags": [
+            "Person"
+          ],
           "actions": [
             {
               "label": "Choose a Building in play. Gain its productions as resources.",
@@ -1014,7 +1098,9 @@
                     {
                       "card": {
                         "card_scope": "in_play",
-                        "tags": ["Building"]
+                        "tags": [
+                          "Building"
+                        ]
                       }
                     }
                   ]
@@ -1028,13 +1114,15 @@
     {
       "id": 10,
       "name": "Bandit",
-      "chooseState": true,
       "states": [
         {
           "id": 1,
           "name": "Bandit",
-          "tags": ["Enemy"],
+          "tags": [
+            "Enemy"
+          ],
           "glory": -2,
+          "illustration": "cards/bandit.webp",
           "actions": [
             {
               "label": "When played, blocks 1 card with gold productions.",
@@ -1044,7 +1132,9 @@
                 {
                   "type": "block_card",
                   "number": 1,
-                  "produces": ["gold"]
+                  "produces": [
+                    "gold"
+                  ]
                 }
               ]
             },
@@ -1112,7 +1202,9 @@
         {
           "id": 2,
           "name": "Field Worker",
-          "tags": ["Person"],
+          "tags": [
+            "Person"
+          ],
           "actions": [
             {
               "label": "Choose a Land in play. Gain its productions as resources.",
@@ -1123,7 +1215,9 @@
                     {
                       "card": {
                         "card_scope": "in_play",
-                        "tags": ["Land"]
+                        "tags": [
+                          "Land"
+                        ]
                       }
                     }
                   ]
@@ -1141,8 +1235,10 @@
         {
           "id": 1,
           "name": "Hill",
-          "tags": ["Land"],
-          "resources": [
+          "tags": [
+            "Land"
+          ],
+          "productions": [
             {
               "gold": 1
             }
@@ -1154,7 +1250,7 @@
                   {
                     "gold": 1,
                     "wood": 1,
-                    "rock": 1
+                    "stone": 1
                   }
                 ]
               },
@@ -1165,8 +1261,10 @@
         {
           "id": 2,
           "name": "Chapel",
-          "tags": ["Building"],
-          "resources": [
+          "tags": [
+            "Building"
+          ],
+          "productions": [
             {
               "gold": 1
             }
@@ -1186,7 +1284,9 @@
                 {
                   "type": "discover_card",
                   "number": 1,
-                  "cards": [103]
+                  "cards": [
+                    103
+                  ]
                 }
               ],
               "endsTurn": false
@@ -1209,8 +1309,10 @@
         {
           "id": 3,
           "name": "Church",
-          "tags": ["Building"],
-          "resources": [
+          "tags": [
+            "Building"
+          ],
+          "productions": [
             {
               "gold": 1
             }
@@ -1230,7 +1332,9 @@
                 {
                   "type": "discover_card",
                   "number": 1,
-                  "cards": [104]
+                  "cards": [
+                    104
+                  ]
                 }
               ],
               "endsTurn": false
@@ -1254,8 +1358,10 @@
         {
           "id": 4,
           "name": "Cathedral",
-          "tags": ["Building"],
-          "resources": [
+          "tags": [
+            "Building"
+          ],
+          "productions": [
             {
               "gold": 1
             }
@@ -1271,7 +1377,9 @@
                   "resource": "gold",
                   "amount_per_card": 1,
                   "card_scope": "in_play",
-                  "tags": ["Person"]
+                  "tags": [
+                    "Person"
+                  ]
                 }
               ]
             }
@@ -1286,7 +1394,9 @@
         {
           "id": 1,
           "name": "East Cliffs",
-          "tags": ["Land"],
+          "tags": [
+            "Land"
+          ],
           "productions": [
             {
               "stone": 1
@@ -1297,7 +1407,7 @@
               "cost": {
                 "resources": [
                   {
-                    "rock": 3
+                    "stone": 3
                   }
                 ]
               },
@@ -1307,7 +1417,7 @@
               "cost": {
                 "resources": [
                   {
-                    "rock": 1,
+                    "stone": 1,
                     "wood": 1,
                     "gold": 2
                   }
@@ -1320,7 +1430,9 @@
         {
           "id": 2,
           "name": "Smithy",
-          "tags": ["Building"],
+          "tags": [
+            "Building"
+          ],
           "productions": [
             {
               "iron": 1
@@ -1334,7 +1446,9 @@
                 {
                   "type": "discover_card",
                   "number": 1,
-                  "cards": [90]
+                  "cards": [
+                    90
+                  ]
                 },
                 {
                   "type": "upgrade_card",
@@ -1362,7 +1476,9 @@
         {
           "id": 3,
           "name": "Arsenal",
-          "tags": ["Building"],
+          "tags": [
+            "Building"
+          ],
           "productions": [
             {
               "iron": 1
@@ -1378,7 +1494,9 @@
                   "resource": "sword",
                   "amount_per_card": 1,
                   "card_scope": "in_play",
-                  "tags": ["Person"]
+                  "tags": [
+                    "Person"
+                  ]
                 }
               ]
             }
@@ -1387,7 +1505,9 @@
         {
           "id": 4,
           "name": "Wall",
-          "tags": ["Building"],
+          "tags": [
+            "Building"
+          ],
           "productions": [
             {
               "sword": 1
@@ -1405,7 +1525,9 @@
         {
           "id": 1,
           "name": "Swamp",
-          "tags": ["Land"],
+          "tags": [
+            "Land"
+          ],
           "upgrade": [
             {
               "cost": {
@@ -1423,7 +1545,9 @@
         {
           "id": 2,
           "name": "Accessible Swamp",
-          "tags": ["Land"],
+          "tags": [
+            "Land"
+          ],
           "glory": 1,
           "upgrade": [
             {
@@ -1442,7 +1566,9 @@
         {
           "id": 3,
           "name": "Swamp Garden",
-          "tags": ["Land"],
+          "tags": [
+            "Land"
+          ],
           "glory": 3,
           "productions": [
             {
@@ -1466,7 +1592,9 @@
         {
           "id": 4,
           "name": "Exotic Fruit Trees",
-          "tags": ["Land"],
+          "tags": [
+            "Land"
+          ],
           "glory": 4,
           "productions": [
             {
@@ -1483,8 +1611,10 @@
         {
           "id": 1,
           "name": "Lake",
-          "tags": ["Land"],
-          "production": [
+          "tags": [
+            "Land"
+          ],
+          "productions": [
             {
               "gold": 1
             }
@@ -1516,7 +1646,9 @@
         {
           "id": 2,
           "name": "Fisherman's Cabin",
-          "tags": ["Building"],
+          "tags": [
+            "Building"
+          ],
           "productions": [
             {
               "gold": 1
@@ -1539,7 +1671,9 @@
         {
           "id": 3,
           "name": "Fishing Boat",
-          "tags": ["Seafaring"],
+          "tags": [
+            "Seafaring"
+          ],
           "productions": [
             {
               "gold": 2
@@ -1553,7 +1687,9 @@
                 {
                   "type": "discover_card",
                   "number": 1,
-                  "cards": [75]
+                  "cards": [
+                    75
+                  ]
                 }
               ]
             }
@@ -1562,112 +1698,15 @@
         {
           "id": 4,
           "name": "Lighthouse",
-          "tags": ["Building"],
+          "tags": [
+            "Building"
+          ],
           "glory": 5,
+          "stayInPlay": true,
           "passifs": [
             {
-              "label": "As long as this card is in play, you may discard the top card of your deck. You may do this repeatedly, and this card is not discarded by doing so.",
-              "effects": [
-                {
-                  "type": "can_discard_top_card"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 14,
-      "name": "Lake",
-      "states": [
-        {
-          "id": 1,
-          "name": "Lake",
-          "tags": ["Land"],
-          "production": [
-            {
-              "gold": 1
-            }
-          ],
-          "upgrade": [
-            {
-              "cost": {
-                "resources": [
-                  {
-                    "wood": 1,
-                    "stone": 2
-                  }
-                ]
-              },
-              "upgradeTo": 2
-            },
-            {
-              "cost": {
-                "resources": [
-                  {
-                    "stone": 4
-                  }
-                ]
-              },
-              "upgradeTo": 4
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "name": "Fisherman's Cabin",
-          "tags": ["Building"],
-          "productions": [
-            {
-              "gold": 1
-            }
-          ],
-          "glory": 1,
-          "upgrade": [
-            {
-              "cost": {
-                "resources": [
-                  {
-                    "wood": 3
-                  }
-                ]
-              },
-              "upgradeTo": 3
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "name": "Fishing Boat",
-          "tags": ["Seafaring"],
-          "productions": [
-            {
-              "gold": 2
-            }
-          ],
-          "glory": 1,
-          "actions": [
-            {
-              "label": "Discover Shore 75.",
-              "effects": [
-                {
-                  "type": "discover_card",
-                  "number": 1,
-                  "cards": [75]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 4,
-          "name": "Lighthouse",
-          "tags": ["Building"],
-          "glory": 5,
-          "passives": [
-            {
-              "label": "As long as this card is in play, you may discard the top card of your deck. You may do this repeatedly, and this card is not discarded by doing so.",
+              "label": "As long as this card is in play, you may discard the top card of your deck.",
+              "description": "As long as this card is in play, you may discard the top card of your deck. You may do this repeatedly, and this card is not discarded by doing so.",
               "effects": [
                 {
                   "type": "can_discard_top_card"

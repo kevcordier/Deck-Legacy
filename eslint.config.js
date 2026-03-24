@@ -36,7 +36,7 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any':         'warn',   // we use `any` for JSON casts
       '@typescript-eslint/no-unused-vars':           ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       '@typescript-eslint/no-non-null-assertion':    'warn',
-      '@typescript-eslint/consistent-type-imports':  ['error', { prefer: 'type-imports' }],
+      '@typescript-eslint/consistent-type-imports':  ['error', { prefer: 'type-imports', fixStyle: 'separate-type-imports' }],
 
       // General
       'no-console':          ['warn', { allow: ['warn', 'error'] }],

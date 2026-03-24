@@ -1,5 +1,32 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@engine/*": [
+        "src/engine/*"
+      ],
+      "@data/*": [
+        "src/data/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@helpers/*": [
+        "src/helpers/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@assets/*": [
+        "src/assets/*"
+      ],
+      "@i18n/*": [
+        "src/i18n/*"
+      ],
+      "@styles/*": [
+        "src/styles/*"
+      ],
+    },
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": [
@@ -24,6 +51,7 @@
   },
   "include": [
     "src/**/*",
+    ".storybook/**/*",
     "vite.config.ts",
     "eslint.config.ts"
   ]

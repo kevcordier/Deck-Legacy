@@ -1,0 +1,211 @@
+/* ── Hover utilities — replaces inline onMouseEnter/onMouseLeave ─────────── */
+
+/* Buttons — generic interactive states */
+.btn {
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-gold {
+  background: rgba(201, 150, 58, 0.15);
+  border: 1px solid rgba(201, 150, 58, 0.5);
+  color: var(--gold-l);
+}
+.btn-gold:hover:not(:disabled) {
+  background: rgba(201, 150, 58, 0.28);
+  border-color: rgba(201, 150, 58, 0.75);
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--cream-d);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.btn-warning {
+  background: rgba(201, 150, 58, 0.1);
+  border: 1px solid rgba(201, 150, 58, 0.4);
+  color: var(--amber);
+}
+.btn-warning:hover:not(:disabled) {
+  background: rgba(201, 150, 58, 0.2);
+  border-color: rgba(201, 150, 58, 0.6);
+}
+
+.btn-danger {
+  background: rgba(192, 64, 64, 0.14);
+  border: 1px solid rgba(192, 64, 64, 0.45);
+  color: #f09090;
+}
+.btn-danger:hover:not(:disabled) {
+  background: rgba(192, 64, 64, 0.28);
+  border-color: rgba(192, 64, 64, 0.7);
+}
+
+.btn-dim {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--stone);
+  border-radius: 50%;
+}
+.btn-dim:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--cream);
+}
+
+/* Action buttons inside cards */
+.btn-action {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--cream);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.btn-action:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Upgrade buttons inside cards */
+.btn-upgrade {
+  background: rgba(201, 150, 58, 0.08);
+  border: 1px solid rgba(201, 150, 58, 0.2);
+  color: var(--gold);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-upgrade:hover:not(:disabled) {
+  background: rgba(201, 150, 58, 0.18);
+}
+
+/* Resource produce buttons */
+.btn-produce:hover:not(:disabled) {
+  transform: scale(1.08);
+}
+
+/* Card-sized clickable areas */
+.card-clickable {
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.card-clickable:hover {
+  transform: translateY(-4px);
+}
+
+/* List rows */
+.row-hover {
+  transition: background 0.15s;
+}
+.row-hover:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Toggle buttons (deck/discard open) */
+.btn-toggle {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  color: var(--stone);
+  font-size: 0.6rem;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  transition: all 0.15s;
+}
+.btn-toggle:hover {
+  border-color: rgba(201, 150, 58, 0.3);
+  color: var(--cream-d);
+}
+.btn-toggle.open {
+  background: rgba(201, 150, 58, 0.1);
+  border-color: rgba(201, 150, 58, 0.3);
+  color: var(--gold);
+}
+
+/* View-all button */
+.btn-view-all {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  color: var(--stone);
+  font-size: 0.6rem;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+  transition: all 0.15s;
+}
+.btn-view-all:hover {
+  border-color: rgba(201, 150, 58, 0.3);
+  color: var(--gold);
+}
+
+/* Rewind button in log */
+.btn-rewind {
+  background: rgba(192, 64, 64, 0.08);
+  border: 1px solid rgba(192, 64, 64, 0.2);
+  color: #e08080;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-rewind:hover {
+  background: rgba(192, 64, 64, 0.16);
+}
+
+/* Modal close */
+.btn-close {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--stone);
+  cursor: pointer;
+  transition: all 0.15s;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-close:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--cream);
+}
+
+/* Resource choice options */
+.btn-res-choice {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(201, 150, 58, 0.3);
+  color: var(--cream);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.btn-res-choice:hover {
+  border-color: var(--gold);
+}
+
+/* CardState preview tabs */
+.tab-btn {
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab-btn:hover {
+  color: var(--cream-d) !important;
+}
+
+/* Upgrade path rows in CardStatePreview */
+.upgrade-row {
+  transition: background 0.15s;
+}
+.upgrade-row:hover {
+  background: rgba(201, 150, 58, 0.1) !important;
+}

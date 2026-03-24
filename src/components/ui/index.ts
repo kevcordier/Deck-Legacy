@@ -1,8 +1,0 @@
-export { PillBtn } from './PillBtn'
-export { NavBtn } from './NavBtn'
-export { Stat } from './Stat'
-export { ResourcePill } from './ResourcePill'
-export { ResourceList } from './ResourceList'
-export { ResourceChoice } from './ResourceChoice'
-export { getResMeta } from './resourceMeta'
-export type { ResMeta } from './resourceMeta'

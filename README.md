@@ -1,73 +1,60 @@
-# React + TypeScript + Vite
+# Deck Legacy
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Un jeu de cartes solo jouable dans le navigateur, construit avec React + TypeScript + Vite.
 
-Currently, two official plugins are available:
+## Concept
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Deck Legacy est un jeu de deckbuilding au tour par tour. Chaque manche, le joueur pioche des cartes, les active pour produire des ressources, déclenche des actions et fait évoluer son royaume. L'objectif est de maximiser ses **Points de Gloire** sur la durée de la partie.
 
-## React Compiler
+### Mécaniques principales
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Tableau** — les cartes jouées ce tour produisent des ressources et peuvent être activées une fois
+- **Permanents** — cartes qui restent en jeu d'une manche à l'autre
+- **Actions** — dépensent des ressources pour des effets variés (découverte, blocage, upgrade, piste d'avancée…)
+- **Stickers** — bonus collés sur une carte, octroyant des effets passifs ou des points de gloire
+- **Piste d'avancée** — certaines cartes progressent pas à pas vers des récompenses croissantes
+- **Upgrade** — les cartes peuvent évoluer vers un état amélioré en payant un coût
 
-## Expanding the ESLint configuration
+## Structure du projet
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+src/
+├── engine/         # Logique de jeu (reducer événementiel, types, persistence)
+├── components/     # UI React
+│   ├── game/       # Composants spécifiques au jeu (aperçus, listes de cartes)
+│   ├── layout/     # Composants de mise en page réutilisables
+│   └── ui/         # Composants atomiques (boutons, pills, stats…)
+├── data/           # Données JSON (cartes, stickers, deck)
+└── i18n/           # Traductions (EN / FR)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Démarrage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
+
+## Scripts disponibles
+
+| Commande | Description |
+| --- | --- |
+| `npm run dev` | Serveur de développement Vite |
+| `npm run build` | Build de production (TypeScript + Vite) |
+| `npm run preview` | Prévisualiser le build |
+| `npm run typecheck` | Vérification TypeScript sans build |
+| `npm run lint` | ESLint sur `src/` |
+| `npm run lint:fix` | ESLint avec corrections automatiques |
+| `npm run format` | Formatage Prettier |
+| `npm run format:check` | Vérification du formatage |
+
+## Persistence
+
+La partie en cours est sauvegardée automatiquement dans le `localStorage` sous la clé `deck_legacy_save`. La préférence de langue est mémorisée sous `deck_legacy_lang`.
+
+## Stack
+
+- **React 19** + **TypeScript**
+- **Vite** (bundler)
+- **i18next / react-i18next** (internationalisation EN/FR)
+- **ESLint** + **Prettier**

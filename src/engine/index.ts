@@ -1,9 +1,9 @@
-export * from './types'
-export { reducer, replayEvents, stateAtIndex, EMPTY_STATE } from './reducer'
+export * from './types';
+export { reducer, replayEvents, stateAtIndex, EMPTY_STATE } from './reducer';
 export {
   loadCardDefs,
-  loadVignetteDefs,
-  loadInitialVignetteStock,
+  loadStickerDefs,
+  loadInitialStickerStock,
   buildGameStartedEvent,
   buildRoundStartedEvent,
   buildTurnStartedEvent,
@@ -12,6 +12,21 @@ export {
   createInstance,
   generateUid,
   shuffle,
-} from './init'
-export { useGame } from './useGame'
-export type { GameHook } from './useGame'
+} from './init';
+export {
+  checkOnPlayTriggers,
+  computeStartRound,
+  computeStartTurn,
+  computeEndTurnVoluntary,
+  computeProgress,
+} from './turnFlow';
+export { computeActivateCard, computeResolveAction, computeResolveUpgrade } from './cardActions';
+export {
+  computeResolveChoice,
+  computeResolveChooseState,
+  computeResolveResourceChoice,
+  computeResolveCopyProduction,
+  computeResolveBlockCard,
+  computeResolvePlayFromDiscard,
+  computeResolveDiscardCost,
+} from './choiceHandlers';

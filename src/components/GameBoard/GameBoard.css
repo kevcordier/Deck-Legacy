@@ -1,0 +1,201 @@
+/* ── GameBoard layout ────────────────────────────────────────────────────── */
+.gb-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.gb-header {
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(201, 150, 58, 0.12);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  flex-shrink: 0;
+}
+
+.gb-logo {
+  font-family: var(--font-deco);
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+
+.gb-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.gb-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.gb-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Right sidebar border */
+.gb-sidebar-right {
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: none;
+}
+
+.gb-main {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+}
+
+/* Discard exit overlay */
+.gb-discard-overlay {
+  pointer-events: none;
+  position: absolute;
+  top: 80px;
+  left: 0;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 0 24px;
+}
+
+/* Preround screen */
+.gb-preround {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 0;
+  animation: fadeIn 0.4s ease;
+}
+
+.gb-preround-header {
+  text-align: center;
+}
+
+.gb-preround-divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-d), transparent);
+  margin: 0 auto 16px;
+}
+
+.gb-preround-title {
+  font-family: var(--font-deco);
+  font-size: 1.5rem;
+  color: var(--cream);
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.gb-preround-subtitle {
+  font-size: 0.8rem;
+  color: var(--stone);
+  font-style: italic;
+}
+
+.gb-preround-cards {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Pregame save actions */
+.gb-save-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-delete-save {
+  background: none;
+  border: none;
+  color: var(--stone);
+  font-size: 0.7rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-style: italic;
+  text-decoration: underline;
+  margin-top: 4px;
+  transition: color 0.15s;
+}
+.btn-delete-save:hover {
+  color: var(--cream-d);
+}
+
+/* Event log */
+.gb-log-wrapper {
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.gb-log-toggle {
+  width: 100%;
+  padding: 5px 16px;
+  background: transparent;
+  border: none;
+  color: var(--stone);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 0.15s;
+}
+.gb-log-toggle:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+.gb-log-toggle.open {
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.gb-log-toggle-arrow {
+  font-size: 0.6rem;
+}
+
+.gb-log-body {
+  height: 160px;
+}
+
+/* Rewind button */
+.btn-rewind-header {
+  background: rgba(192, 64, 64, 0.14);
+  border: 1px solid rgba(192, 64, 64, 0.45);
+  border-radius: 8px;
+  color: #f09090;
+  padding: 5px 14px;
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.btn-rewind-header:hover {
+  background: rgba(192, 64, 64, 0.28);
+  border-color: rgba(192, 64, 64, 0.7);
+}

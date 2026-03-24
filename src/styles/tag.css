@@ -1,0 +1,37 @@
+/* ── Tag chip ────────────────────────────────────────────────────────────── */
+.tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(201, 150, 58, 0.1);
+  color: var(--gold-d);
+  border: 1px solid rgba(201, 150, 58, 0.2);
+}
+.tag-enemy {
+  background: rgba(192, 64, 64, 0.15);
+  color: #e08080;
+  border-color: rgba(192, 64, 64, 0.3);
+}
+.tag-building {
+  background: rgba(80, 90, 140, 0.15);
+  color: #a0a8d8;
+  border-color: rgba(100, 110, 160, 0.3);
+}
+.tag-seafaring {
+  background: rgba(40, 100, 160, 0.15);
+  color: #80b8e8;
+  border-color: rgba(50, 120, 180, 0.3);
+}
+.tag-event {
+  background: rgba(160, 80, 40, 0.15);
+  color: #e0a080;
+  border-color: rgba(180, 90, 50, 0.3);
+}
+.tag--xs {
+  font-size: 0.5rem !important;
+}
