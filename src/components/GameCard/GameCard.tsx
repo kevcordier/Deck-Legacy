@@ -1,25 +1,16 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './GameCard.css';
-import {
-  tCardName,
-  tCardActionLabel,
-  tCardActionDescription,
-  tCardPassiveLabel,
-  tCardPassiveDescription,
-  tCardTag,
-} from '@i18n/cardI18n';
-import {
-  type CardInstance,
-  type CardDef,
-  type Resources,
-  getActiveState,
-  canAffordCost,
-} from '@engine/types';
+import { tCardName, tCardActionLabel, tCardActionDescription, tCardTag } from '@i18n/cardI18n';
 import gloryIcon from '@assets/icons/glory.svg';
-import { getEffectiveProductions, tagClass } from '@helpers/cardHelpers';
-import { renderTextWithIcons } from '@helpers/renderHelpers';
-import { getResMeta } from '@helpers/resourceHelpers';
+import {
+  getActiveState,
+  getEffectiveProductions,
+  tagClass,
+  canAffordCost,
+} from '@engine/application/cardHelpers';
+import { renderTextWithIcons } from '@engine/application/renderHelpers';
+import { getResMeta } from '@engine/application/resourceHelpers';
 import { CardStatePreview } from '@components/CardStatePreview';
 import { ResourceList } from '@components/Resource/ResourceList';
 import { ResourcePill } from '@components/Resource/ResourcePill';
@@ -27,13 +18,16 @@ import passifIcon from '@assets/icons/passif.svg';
 import activatedIcon from '@assets/icons/activated.png';
 import timeIcon from '@assets/icons/time.png';
 import destroyIcon from '@assets/icons/destroy.png';
+import type { CardDef, CardInstance, Sticker, Resources } from '@engine/domain/types';
+import { TargetScope, Trigger } from '@engine/domain/enums';
+import { useGame } from '@hooks/useGame';
 
 interface GameCardProps {
   instance: CardInstance;
   defs: Record<number, CardDef>;
+  stickerDefs?: Record<number, Sticker>;
   currentResources: Resources;
-  activated: string[];
-  isInTableau: boolean;
+  isOnBoard: boolean;
   onActivate?: () => void;
   onAction?: (label: string) => void;
   onUpgrade?: (toStateId?: number) => void;
@@ -45,9 +39,9 @@ interface GameCardProps {
 export function GameCard({
   instance,
   defs,
+  stickerDefs = {},
   currentResources,
-  activated,
-  isInTableau,
+  isOnBoard,
   onActivate,
   onAction,
   onUpgrade,
@@ -58,26 +52,30 @@ export function GameCard({
   const { t } = useTranslation();
   const cs = getActiveState(instance, defs);
   const def = defs[instance.cardId];
+  const { state } = useGame();
 
-  const isActivated = activated.includes(instance.uid);
-  const isBlocked = instance.blockedBy !== null;
-  const isEnemy = cs.tags.some(t => t.toLowerCase() === 'enemy' || t.toLowerCase() === 'ennemy');
-  const isPermanent = def.permanent;
-  const productions = getEffectiveProductions(cs, instance);
+  const isBlocked = Object.values(state.blockingCards).includes(instance.id);
+  const isEnemy = (cs.tags ?? []).some(
+    tag => tag.toLowerCase() === 'enemy' || tag.toLowerCase() === 'ennemy',
+  );
+  const isPermanent = def?.permanent;
+  const productions = getEffectiveProductions(cs, instance, stickerDefs);
   const hasProductions = Object.keys(productions).length > 0;
-  const canActivate = isInTableau && !isActivated && !isBlocked && hasProductions && !!onActivate;
-  const track = cs.track;
-  const progress = instance.trackProgress;
+  const canActivate = isOnBoard && !isBlocked && hasProductions && !!onActivate;
   const upgrades = cs.upgrade ?? [];
-  const actions = cs.actions ?? [];
+  const actions = (cs.cardEffects ?? []).filter(
+    ce => !ce.trigger || ce.trigger !== Trigger.ON_PLAY,
+  );
   const glory = cs.glory ?? 0;
   const resourceOptions = cs.productions as Resources[] | undefined;
+
+  // Stickers de l'état courant
+  const currentStateStickers = instance.stickers[instance.stateId] ?? [];
 
   const cardCls = [
     'gc',
     isEnemy ? 'enemy' : '',
     isBlocked ? 'blocked' : '',
-    isActivated ? 'activated' : '',
     isPermanent ? 'permanent' : '',
   ]
     .filter(Boolean)
@@ -92,14 +90,11 @@ export function GameCard({
         </div>
       )}
 
-      {/* Activated shimmer */}
-      {isActivated && <div className="gc-shimmer" />}
-
       {/* Header */}
       <div className={`gc-header${isEnemy ? ' enemy' : ''}`}>
         <div className="gc-name-row">
           <span className={`gc-name${isEnemy ? ' enemy' : ''}`}>
-            {instance.deckEntryId !== undefined && (
+            {instance.deckEntryId !== undefined && instance.deckEntryId !== 0 && (
               <span className="gc-deck-id">#{instance.deckEntryId}</span>
             )}
             {tCardName(t, instance.cardId, cs.id, cs.name)}
@@ -108,7 +103,7 @@ export function GameCard({
         </div>
 
         <div className="gc-tags">
-          {cs.tags.map(tag => (
+          {(cs.tags ?? []).map(tag => (
             <span key={tag} className={tagClass(tag)}>
               {tCardTag(t, tag)}
             </span>
@@ -128,11 +123,11 @@ export function GameCard({
           {/* Productions */}
           {hasProductions && (
             <React.Fragment>
-              {isInTableau && !isBlocked ? (
+              {isOnBoard && !isBlocked ? (
                 <button
                   onClick={onActivate}
-                  disabled={isActivated || !canActivate}
-                  title={isActivated ? t('card.alreadyProduced') : t('card.chooseProduction')}
+                  disabled={!canActivate}
+                  title={t('card.chooseProduction')}
                   className="gc-produce-btn"
                 >
                   <ResourceList resourceOptions={resourceOptions} />
@@ -153,38 +148,18 @@ export function GameCard({
             </div>
           )}
 
-          {/* Track */}
-          {track && (
-            <div>
-              <div className="gc-section-label">{t('card.track')}</div>
-              <div className="gc-track-row">
-                {track.steps.map(step => {
-                  const done = progress !== null && step.index <= progress;
-                  return (
-                    <div
-                      key={step.index}
-                      title={step.label}
-                      className={`gc-track-step${done ? ' done' : ''}`}
-                    >
-                      {done ? '×' : ''}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
           {/* Stickers */}
-          {instance.stickers.length > 0 && (
+          {currentStateStickers.length > 0 && (
             <div className="gc-stickers">
-              {instance.stickers.map((v, i) => {
-                const eff = v.effect;
-                if (eff.type === 'resource')
-                  return <ResourcePill key={i} resource={eff.resource} />;
-                if (eff.type === 'glory_points')
+              {currentStateStickers.map((stickerId, i) => {
+                const sticker = stickerDefs[stickerId];
+                if (!sticker) return null;
+                if (sticker.production)
+                  return <ResourcePill key={i} resource={sticker.production} />;
+                if (sticker.glory)
                   return (
                     <span key={i} className="gc-sticker-glory">
-                      +{eff.amount}★
+                      +{sticker.glory}★
                     </span>
                   );
                 return null;
@@ -192,47 +167,41 @@ export function GameCard({
             </div>
           )}
         </div>
+
         {/* Actions zone */}
         <div className="gc-actions">
-          {/* Passif */}
+          {/* Reste en jeu */}
           {cs.stayInPlay && (
             <span className="gc-passive-effect">
               <img className="gc-passive-effect-icon" src={passifIcon} alt="passif" />
               {t('card.stayInPlay')}
             </span>
           )}
-          {(cs.passifs ?? cs.passives ?? []).map((p, i) => {
-            const passiveLabel = tCardPassiveLabel(t, instance.cardId, cs.id, i, p.label);
-            const passiveDesc =
-              tCardPassiveDescription(t, instance.cardId, cs.id, i) || passiveLabel;
-            return (
-              <span key={i} className="gc-passive-effect" title={passiveDesc}>
-                <img className="gc-passive-effect-icon" src={passifIcon} alt="passif" />
-                {renderTextWithIcons(passiveLabel)}
-              </span>
-            );
-          })}
 
           {/* Action buttons */}
           {!isBlocked &&
             actions.map((action, i) => {
-              if (action.trigger === 'on_play') return null;
               const affordable = !action.cost || canAffordCost(currentResources, action.cost);
               const actionLabel = tCardActionLabel(t, instance.cardId, cs.id, i, action.label);
               const actionDesc =
                 tCardActionDescription(t, instance.cardId, cs.id, i) || actionLabel;
+              const hasDestroyItselfCost = action.cost?.destroy?.some(
+                c => c.scope === TargetScope.SELF,
+              );
               return (
                 <button
                   key={i}
                   onClick={() => onAction?.(action.label)}
-                  disabled={!affordable}
+                  disabled={!affordable || !canActivate}
                   title={actionDesc}
                   className="gc-action-btn"
                 >
-                  {action.cost?.destroy === 'self' ? (
+                  {hasDestroyItselfCost ? (
                     <img src={destroyIcon} className="gc-action-icon" alt="" />
                   ) : action.endsTurn ? (
                     <img src={timeIcon} className="gc-action-icon" alt="" />
+                  ) : action.passive ? (
+                    <img src={passifIcon} className="gc-action-icon" alt="" />
                   ) : (
                     <img src={activatedIcon} className="gc-action-icon" alt="" />
                   )}
@@ -263,12 +232,12 @@ export function GameCard({
           {!isBlocked &&
             upgrades.map((upg, i) => {
               const affordable = canAffordCost(currentResources, upg.cost);
-              const targetState = def.states.find(s => s.id === upg.upgradeTo);
+              const targetState = def?.states.find(s => s.id === upg.upgradeTo);
               return (
                 <button
                   key={i}
                   onClick={() => onUpgrade?.(upg.upgradeTo)}
-                  disabled={!affordable}
+                  disabled={!affordable || !canActivate}
                   className="gc-upgrade-btn"
                 >
                   ⬆{' '}

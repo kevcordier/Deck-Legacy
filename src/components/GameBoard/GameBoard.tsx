@@ -15,24 +15,26 @@ import { EventLog } from '@components/EventLog';
 import { OptionsModal } from '@components/OptionsModal';
 
 export function GameBoard() {
-  const game = useGame();
   const {
     state: gs,
     events,
     defs,
+    stickerDefs,
     score,
+    pendingChoice,
     hasSave,
     loadGame,
     deleteSave,
     startGame,
     startRound,
+    startTurn,
     activateCard,
     resolveAction,
     resolveUpgrade,
     progress,
     endTurnVoluntary,
-    currentTurnStartIndex,
-    rewindToEvent,
+    canRewind,
+    rewindEvent,
     resolveChoice,
     resolvePlayFromDiscard,
     resolveResourceChoice,
@@ -41,16 +43,13 @@ export function GameBoard() {
     resolveBlockCard,
     resolveDiscardCost,
     cancelDiscardCost,
-    canDiscardTopCard,
-    discardTopCard,
-    startTurn,
-  } = game;
+  } = useGame();
 
   const { t } = useTranslation();
   const [logOpen, setLogOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [drawnUids, setDrawnUids] = useState<Set<string>>(new Set());
-  const prevTableauRef = useRef<string[]>([]);
+  const prevBoardRef = useRef<string[]>([]);
 
   useEffect(() => {
     if (hasSave) loadGame();
@@ -58,27 +57,26 @@ export function GameBoard() {
   }, []);
 
   useEffect(() => {
-    const prevTableau = prevTableauRef.current;
-    const newlyDrawn = gs.tableau.filter(uid => !prevTableau.includes(uid));
+    const prevBoard = prevBoardRef.current;
+    const newlyDrawn = gs.board.filter(uid => !prevBoard.includes(uid));
     if (newlyDrawn.length > 0) {
       setDrawnUids(new Set(newlyDrawn));
       const timer = setTimeout(() => setDrawnUids(new Set()), 500);
-      prevTableauRef.current = gs.tableau;
+      prevBoardRef.current = gs.board;
       return () => clearTimeout(timer);
     }
-    prevTableauRef.current = gs.tableau;
-  }, [gs.tableau]);
+    prevBoardRef.current = gs.board;
+  }, [gs.board]);
 
-  const isGameStarted = gs.round > 0 || gs.deck.length > 0;
-  const deckEmpty = gs.deck.length === 0;
-  const canRewind = events.slice(currentTurnStartIndex + 1).length > 0;
+  const isGameStarted = gs.round > 0 || gs.drawPile.length > 0;
+  const deckEmpty = gs.drawPile.length === 0;
 
   type Phase = 'pregame' | 'preround' | 'roundpreview' | 'playing';
   let phase: Phase = 'pregame';
   if (!isGameStarted) phase = 'pregame';
   else if (gs.round === 0) phase = 'preround';
-  else if (gs.tableau.length === 0 && deckEmpty) phase = 'preround';
-  else if (gs.tableau.length === 0 && gs.turn === 0 && !deckEmpty && gs.round > 1)
+  else if (gs.board.length === 0 && deckEmpty) phase = 'preround';
+  else if (gs.board.length === 0 && gs.turn === 0 && !deckEmpty && gs.round > 1)
     phase = 'roundpreview';
   else phase = 'playing';
 
@@ -86,14 +84,9 @@ export function GameBoard() {
     <div className="gb-root">
       {/* ── Header ── */}
       <header className="gb-header">
-        <div className="gb-logo">⚜ {t('game.title')}</div>
+        <div className="gb-logo">{t('game.title')}</div>
 
         <div className="gb-header-actions">
-          {canDiscardTopCard && (
-            <PillBtn onClick={discardTopCard} variant="ghost">
-              {t('header.discardTop')}
-            </PillBtn>
-          )}
           {phase === 'pregame' && (
             <PillBtn onClick={startGame} variant="gold">
               {t('header.newGame')}
@@ -111,10 +104,10 @@ export function GameBoard() {
           )}
           {phase === 'playing' && (
             <>
-              {canRewind && (
+              {canRewind() && (
                 <button
                   className="btn-rewind-header"
-                  onClick={() => rewindToEvent(events.length - 2)}
+                  onClick={() => rewindEvent()}
                   title={t('header.undoTitle')}
                 >
                   ↩
@@ -123,7 +116,7 @@ export function GameBoard() {
               <PillBtn onClick={progress} disabled={deckEmpty} variant="ghost">
                 {deckEmpty
                   ? t('header.progress')
-                  : t('header.progressWithCount', { count: Math.min(2, gs.deck.length) })}
+                  : t('header.progressWithCount', { count: Math.min(2, gs.drawPile.length) })}
               </PillBtn>
               <PillBtn onClick={endTurnVoluntary} variant="ghost">
                 {t('header.endTurn')}
@@ -147,15 +140,15 @@ export function GameBoard() {
           score={score}
           round={gs.round}
           turn={gs.turn}
-          deckSize={gs.deck.length}
-          discardSize={gs.discard.length}
+          deckSize={gs.drawPile.length}
+          discardSize={gs.discardPile.length}
         />
       )}
 
       {/* ── 3-column body ── */}
       <div className="gb-body">
         <div className="gb-sidebar">
-          <DeckViewer deck={gs.deck} instances={gs.instances} defs={defs} />
+          <DeckViewer deck={gs.drawPile} instances={gs.instances} defs={defs} />
         </div>
 
         <main className="gb-main">
@@ -178,7 +171,7 @@ export function GameBoard() {
           {phase === 'preround' && gs.round === 0 && (
             <EmptyState
               title={t('pregame.readyToPlay')}
-              subtitle={t('pregame.deckShuffled', { count: gs.deck.length })}
+              subtitle={t('pregame.deckShuffled', { count: gs.drawPile.length })}
               action={
                 <PillBtn onClick={startRound} variant="gold" large>
                   {t('pregame.startGame')}
@@ -223,9 +216,9 @@ export function GameBoard() {
                         key={uid}
                         instance={inst}
                         defs={defs}
+                        stickerDefs={stickerDefs}
                         currentResources={{}}
-                        activated={[]}
-                        isInTableau={false}
+                        isOnBoard={false}
                         animDelay={i * 100}
                       />
                     );
@@ -258,9 +251,9 @@ export function GameBoard() {
                       <GameCard
                         instance={inst}
                         defs={defs}
+                        stickerDefs={stickerDefs}
                         currentResources={gs.resources}
-                        activated={gs.activated}
-                        isInTableau={true}
+                        isOnBoard={true}
                         onActivate={() => activateCard(uid)}
                         onAction={label => resolveAction(uid, label)}
                         onUpgrade={id => resolveUpgrade(uid, id)}
@@ -272,14 +265,14 @@ export function GameBoard() {
             </Section>
           )}
 
-          {/* Tableau */}
-          {gs.tableau.length > 0 && (
+          {/* Tableau (board) */}
+          {gs.board.length > 0 && (
             <Section
               title={t('sections.tableau')}
-              subtitle={`${t('cardCount', { count: gs.tableau.length })} · ${t('activatedCount', { count: gs.activated.length })}`}
+              subtitle={`${t('cardCount', { count: gs.board.length })}`}
             >
               <CardRow>
-                {gs.tableau.map((uid, i) => {
+                {gs.board.map((uid, i) => {
                   const inst = gs.instances[uid];
                   if (!inst) return null;
                   return (
@@ -291,9 +284,9 @@ export function GameBoard() {
                       <GameCard
                         instance={inst}
                         defs={defs}
+                        stickerDefs={stickerDefs}
                         currentResources={gs.resources}
-                        activated={gs.activated}
-                        isInTableau={true}
+                        isOnBoard={true}
                         onActivate={() => activateCard(uid)}
                         onAction={label => resolveAction(uid, label)}
                         onUpgrade={id => resolveUpgrade(uid, id)}
@@ -307,7 +300,7 @@ export function GameBoard() {
         </main>
 
         <div className="gb-sidebar gb-sidebar-right">
-          <DiscardPile discard={gs.discard} instances={gs.instances} defs={defs} />
+          <DiscardPile discard={gs.discardPile} instances={gs.instances} defs={defs} />
         </div>
       </div>
 
@@ -330,17 +323,16 @@ export function GameBoard() {
       )}
 
       {/* ── Pending choice modal ── */}
-      {gs.pendingChoice && (
+      {pendingChoice && (
         <PendingChoiceModal
-          choice={gs.pendingChoice}
+          choice={pendingChoice}
           defs={defs}
           instances={gs.instances}
           currentResources={gs.resources}
-          activated={gs.activated}
           onDiscoverCard={resolveChoice}
           onChooseUpgrade={id =>
             resolveUpgrade(
-              gs.pendingChoice?.kind === 'choose_upgrade' ? gs.pendingChoice.cardUid : '',
+              pendingChoice?.kind === 'choose_upgrade' ? pendingChoice.cardUid : '',
               id,
             )
           }

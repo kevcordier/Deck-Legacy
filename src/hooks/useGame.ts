@@ -1,66 +1,40 @@
-/**
- * @file useGame.ts
- * Hook React central — point d'entrée unique entre l'UI et le moteur de jeu.
- *
- * Responsabilités :
- * - Maintenir la liste d'événements (`events`) et l'état courant (`liveState`).
- * - Exposer des actions typées (startGame, activateCard, resolveChoice…) aux composants.
- * - Dispatcher les `ActionResult` retournés par le moteur (événements + pendingChoice + resourceDelta).
- * - Sauvegarder automatiquement dans localStorage quand l'état est stable.
- * - Gérer le rembobinage (rewindToEvent) pour l'historique interactif.
- *
- * Architecture :
- *   UI → useGame (dispatch) → moteur pur → ActionResult → reducer → nouveau state
- */
-
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
+import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
+import type {
+  GameState,
+  GameEvent,
+  CardDef,
+  Sticker,
+  Resources,
+  PendingChoice,
+  ResolvedCost,
+} from '@engine/domain/types';
+import { EffectType } from '@engine/domain/enums';
 import {
-  type GameState,
-  type GameEvent,
-  type CardDef,
-  type StickerDef,
-  type Resources,
-  type PendingChoice,
-  type ActionResult,
-  PENDING_UNCHANGED,
-  computeScore,
-  mergeResources,
+  loadCardDefs,
+  loadStickerDefs,
+  loadInitialStickerStock,
+} from '@engine/infrastructure/loaders';
+import { createInstance, resetUidCounter, shuffle } from '@engine/infrastructure/factory';
+import { saveGame, loadSave, deleteSave, hasSave } from '@engine/infrastructure/persistence';
+import {
   getActiveState,
-  type CardPassive,
-  type CardPassiveEffect,
-} from '@engine/types';
-import { reducer, EMPTY_STATE, replayEvents } from '@engine/reducer';
-import { saveGame, loadSave, deleteSave, hasSave } from '@engine/persistence';
-import { loadCardDefs, loadStickerDefs, buildGameStartedEvent } from '@engine/init';
-import {
-  checkOnPlayTriggers,
-  computeStartRound,
-  computeStartTurn,
-  computeEndTurnVoluntary,
-  computeProgress,
-} from '@engine/turnFlow';
-import {
-  computeActivateCard,
-  computeResolveAction,
-  computeResolveUpgrade,
-} from '@engine/cardActions';
-import {
-  computeResolveChoice,
-  computeResolveChooseState,
-  computeResolveResourceChoice,
-  computeResolveCopyProduction,
-  computeResolveBlockCard,
-  computeResolvePlayFromDiscard,
-  computeResolveDiscardCost,
-} from '@engine/choiceHandlers';
+  getEffectiveProductions,
+  canAffordResources,
+} from '@engine/application/cardHelpers';
+import { computeScore } from '@engine/application/gameStateHelper';
+import { mergeResources } from '@engine/application/resourceHelpers';
+import deckData from '@data/deck.json';
+
+// ─── Types ───────────────────────────────────────────────────────────────────
 
 export type GameHook = {
   state: GameState;
   events: GameEvent[];
   defs: Record<number, CardDef>;
-  stickerDefs: Record<number, StickerDef>;
+  stickerDefs: Record<number, Sticker>;
   score: number;
-  canDiscardTopCard: boolean;
+  pendingChoice: PendingChoice | null;
   hasSave: boolean;
   loadGame: () => void;
   deleteSave: () => void;
@@ -68,11 +42,10 @@ export type GameHook = {
   startRound: () => void;
   startTurn: () => void;
   activateCard: (cardUid: string, chosenResource?: Resources) => void;
-  resolveAction: (actionCardUid: string, actionId: string) => void;
+  resolveAction: (cardUid: string, actionId: string) => void;
   resolveUpgrade: (cardUid: string, chosenUpgradeTo?: number) => void;
   progress: () => void;
   endTurnVoluntary: () => void;
-  discardTopCard: () => void;
   resolveChoice: (chosenCardIds: number[]) => void;
   resolvePlayFromDiscard: (chosenUids: string[]) => void;
   resolveResourceChoice: (chosen: Resources) => void;
@@ -81,244 +54,484 @@ export type GameHook = {
   resolveBlockCard: (targetUid: string) => void;
   resolveDiscardCost: (chosenUid: string) => void;
   cancelDiscardCost: () => void;
-  currentTurnStartIndex: number;
-  rewindToEvent: (index: number) => void;
+  canRewind: () => boolean;
+  rewindEvent: () => void;
 };
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function makeAggregate(state?: GameState): GameAggregate {
+  return new GameAggregate(
+    [],
+    state ? (JSON.parse(JSON.stringify(state)) as GameState) : { ...EMPTY_STATE },
+    loadCardDefs(),
+  );
+}
+
+// ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useGame(): GameHook {
   const defs = useMemo(() => loadCardDefs(), []);
   const stickerDefs = useMemo(() => loadStickerDefs(), []);
-
+  const aggRef = useRef<GameAggregate>(makeAggregate());
   const [events, setEvents] = useState<GameEvent[]>([]);
-  const [liveState, setLiveState] = useState<GameState>(EMPTY_STATE);
+  const [liveState, setLiveState] = useState<GameState>({ ...EMPTY_STATE });
+  const [pendingChoice, setPendingChoice] = useState<PendingChoice | null>(null);
 
-  useEffect(() => {
-    if (events.length > 0 && liveState.pendingChoice === null) saveGame(events, liveState);
-  }, [events.length, liveState.pendingChoice]); // eslint-disable-line react-hooks/exhaustive-deps
+  // ── Synchronisation aggregate → React state ───────────────────────────────
 
-  // Score recalculé uniquement quand l'état change (somme de toutes les gloires des cartes).
-  const score = useMemo(() => computeScore(liveState, defs), [liveState, defs]);
+  const sync = useCallback(() => {
+    const gs = aggRef.current.getGameState();
+    setLiveState(gs);
+    saveGame(aggRef.current.getEvents(), aggRef.current.getSaveState());
+  }, []);
 
-  // Vrai si une carte en jeu possède l'effet passif `can_discard_top_card`.
-  const canDiscardTopCard = useMemo(() => {
-    const inPlay = [...liveState.tableau, ...liveState.permanents];
-    return inPlay.some(uid => {
-      const inst = liveState.instances[uid];
-      if (!inst) return false;
-      const cs = getActiveState(inst, defs);
-      return (cs.passives ?? cs.passifs ?? []).some((p: CardPassive) =>
-        p.effects?.some((e: CardPassiveEffect) => e.type === 'can_discard_top_card'),
-      );
-    });
-  }, [liveState, defs]);
+  // ── Score ─────────────────────────────────────────────────────────────────
 
-  // ─── Dispatch ──────────────────────────────────────────────────────────────
-
-  const dispatch = useCallback(
-    (event: GameEvent) => {
-      setLiveState(prev => reducer(prev, event, defs, stickerDefs));
-      setEvents(prev => [...prev, event]);
-    },
-    [defs, stickerDefs],
+  const score = useMemo(
+    () => computeScore(liveState, defs, stickerDefs),
+    [liveState, defs, stickerDefs],
   );
 
-  /**
-   * Applique un `ActionResult` retourné par une fonction du moteur :
-   * 1. Dispatche chaque événement (met à jour state + history).
-   * 2. Si `pendingChoice !== PENDING_UNCHANGED`, met à jour le choix en attente.
-   * 3. Si `resourceDelta` est présent, ajoute les ressources directement (sans événement).
-   */
-  const applyResult = useCallback(
-    (result: ActionResult) => {
-      for (const event of result.events) {
-        dispatch(event);
-      }
-      const hasPending = result.pendingChoice !== PENDING_UNCHANGED;
-      const hasDelta = result.resourceDelta !== undefined;
-      if (hasPending || hasDelta) {
-        setLiveState(prev => {
-          let next = prev;
-          if (hasPending)
-            next = { ...next, pendingChoice: result.pendingChoice as PendingChoice | null };
-          if (hasDelta)
-            next = {
-              ...next,
-              resources: mergeResources(next.resources, result.resourceDelta ?? {}),
-            };
-          return next;
-        });
-      }
-    },
-    [dispatch],
-  );
-
-  // ─── Chargement ───────────────────────────────────────────────────────────
+  // ── Persistance ───────────────────────────────────────────────────────────
 
   const loadGame = useCallback(() => {
     const save = loadSave();
-    if (!save || save.events.length === 0) return;
-    const restored = replayEvents(save.events, defs, stickerDefs);
-    setEvents(save.events);
-    setLiveState(
-      save.pendingChoice != null ? { ...restored, pendingChoice: save.pendingChoice } : restored,
-    );
-  }, [defs, stickerDefs]);
+    if (!save) return;
+    const agg = makeAggregate(save.saveState);
+    agg.loadFromHistory(save.events);
+    aggRef.current = agg;
+    setLiveState(agg.getGameState());
+    setEvents([...agg.getEvents()]);
+  }, []);
 
   const deleteSaveCallback = useCallback(() => {
     deleteSave();
+    aggRef.current = makeAggregate();
     setEvents([]);
-    setLiveState(EMPTY_STATE);
+    setLiveState({ ...EMPTY_STATE });
   }, []);
 
-  // ─── Démarrage ────────────────────────────────────────────────────────────
+  // ── Démarrage ─────────────────────────────────────────────────────────────
 
   const startGame = useCallback(() => {
-    const { event } = buildGameStartedEvent(defs);
-    const newState = reducer(EMPTY_STATE, event, defs, stickerDefs);
-    setLiveState(newState);
-    setEvents([event]);
-  }, [defs, stickerDefs]);
+    resetUidCounter();
+    const deckEntries = (deckData.deck as { id: number; cardId: number }[]).sort(
+      (a, b) => a.id - b.id,
+    );
+    const starterEntries = deckEntries.slice(0, 10);
+    const discoveryEntries = shuffle(deckEntries.filter(e => e.id > 10));
 
-  const startRound = useCallback(() => {
-    applyResult(computeStartRound(liveState, defs, stickerDefs));
-  }, [liveState, defs, stickerDefs, applyResult]);
+    const allInstances = [...starterEntries, ...discoveryEntries].map(entry => ({
+      ...createInstance(entry.cardId, defs[entry.cardId].states[0].id, defs),
+      deckEntryId: entry.id,
+    }));
+
+    const initialDeck = starterEntries.map((_, i) => allInstances[i].id);
+    const discoveryPile = discoveryEntries.map(
+      (_, i) => allInstances[starterEntries.length + i].id,
+    );
+
+    const agg = makeAggregate();
+    const startEvent = agg.gameStarted(
+      allInstances,
+      initialDeck,
+      loadInitialStickerStock() as Record<string, number>,
+      discoveryPile,
+    );
+
+    const roundEvent = agg.roundStarted();
+    const turnEvent = agg.turnStarted();
+    const events: GameEvent[] = [startEvent, roundEvent];
+    if (turnEvent) events.push(turnEvent);
+    aggRef.current = agg;
+    setEvents(events);
+    sync();
+  }, [defs, sync]);
 
   const startTurn = useCallback(() => {
-    applyResult(computeStartTurn(liveState, defs, stickerDefs));
-  }, [liveState, defs, stickerDefs, applyResult]);
+    const event = aggRef.current.turnStarted();
+    if (!event) return;
+    setEvents([...events, event]);
+    const evts = aggRef.current.getEvents();
+    const gs = aggRef.current.getGameState();
 
-  // ─── Actions de carte ─────────────────────────────────────────────────────
+    setLiveState(gs);
+    setEvents([...evts]);
+  }, [events]);
+
+  const startRound = useCallback(() => {
+    const event = aggRef.current.roundStarted();
+    setEvents([...events, event]);
+    sync();
+  }, [events, sync]);
+
+  // ── Actions de carte ──────────────────────────────────────────────────────
 
   const activateCard = useCallback(
     (cardUid: string, chosenResource?: Resources) => {
-      applyResult(computeActivateCard(liveState, cardUid, defs, chosenResource));
+      const gs = aggRef.current.getGameState();
+      const inst = gs.instances[cardUid];
+      if (!inst || Object.values(gs.blockingCards).includes(cardUid)) return;
+
+      const cs = getActiveState(inst, defs);
+      const productions = cs.productions ?? [];
+
+      if (productions.length > 1 && chosenResource === undefined) {
+        setPendingChoice({
+          kind: 'choose_resource',
+          source: 'activation',
+          cardUid,
+          options: productions,
+        });
+        return;
+      }
+
+      const resourcesGained = chosenResource ?? getEffectiveProductions(cs, inst, stickerDefs);
+      const event = aggRef.current.cardProduced(cardUid, resourcesGained as Record<string, number>);
+      setEvents([...events, event]);
+      sync();
     },
-    [liveState, defs, applyResult],
+    [events, defs, stickerDefs, sync],
   );
 
   const resolveAction = useCallback(
-    (actionCardUid: string, actionId: string) => {
-      applyResult(computeResolveAction(liveState, actionCardUid, actionId, defs, stickerDefs));
+    (cardUid: string, actionId: string) => {
+      const gs = aggRef.current.getGameState();
+      const inst = gs.instances[cardUid];
+      if (!inst || Object.values(gs.blockingCards).includes(cardUid)) return;
+      const cs = getActiveState(inst, defs);
+      const action = cs.cardEffects?.find(ce => ce.label === actionId);
+      if (!action) return;
+      if (!canAffordResources(gs.resources, action.cost ?? {})) return;
+
+      if ((action.cost?.discard?.length ?? 0) > 0) {
+        const candidates = gs.board.filter(uid => uid !== cardUid);
+        if (candidates.length === 0) return;
+        setPendingChoice({
+          kind: 'discard_for_cost',
+          actionCardUid: cardUid,
+          actionId,
+          candidates,
+          remainingScopes: (action.cost?.discard ?? []).slice(1),
+          collectedUids: [],
+        });
+        return;
+      }
+
+      // Effets différés nécessitant un choix
+      for (const eff of action.effects) {
+        if (eff.type === EffectType.DISCOVER_CARD) {
+          const e = eff as { cards?: number[]; number?: number };
+          setPendingChoice({
+            kind: 'discover_card',
+            actionCardUid: cardUid,
+            actionLabel: actionId,
+            candidates: e.cards ?? [],
+            pickCount: e.number ?? 1,
+          });
+          return;
+        }
+        if (eff.type === EffectType.ADD_RESOURCES) {
+          const e = eff as { resources?: Resources[] };
+          if ((e.resources?.length ?? 0) > 1) {
+            setPendingChoice({
+              kind: 'choose_resource',
+              source: 'action',
+              cardUid,
+              options: e.resources ?? [],
+            });
+            return;
+          }
+        }
+      }
+
+      const resolvedCost: ResolvedCost = {
+        resources: action.cost?.resources?.[0] ?? {},
+        discardedCardIds: [],
+        destroyedCardIds: [],
+      };
+      const effects = action.effects.map(e => ({ type: e.type, payload: e }));
+      const event = aggRef.current.useCardEffect(effects, resolvedCost, `${cardUid}_${actionId}`);
+      setEvents([...events, event]);
+      sync();
     },
-    [liveState, defs, stickerDefs, applyResult],
+    [events, defs, sync],
   );
 
   const resolveUpgrade = useCallback(
     (cardUid: string, chosenUpgradeTo?: number) => {
-      applyResult(computeResolveUpgrade(liveState, cardUid, defs, stickerDefs, chosenUpgradeTo));
+      const gs = aggRef.current.getGameState();
+      const inst = gs.instances[cardUid];
+      if (!inst || Object.values(gs.blockingCards).includes(cardUid)) return;
+      const cs = getActiveState(inst, defs);
+      const upgrades = cs.upgrade ?? [];
+      if (upgrades.length === 0) return;
+
+      if (upgrades.length > 1 && chosenUpgradeTo === undefined) {
+        setPendingChoice({ kind: 'choose_upgrade', cardUid, options: upgrades });
+        return;
+      }
+
+      const upgrade =
+        chosenUpgradeTo !== undefined
+          ? upgrades.find(u => u.upgradeTo === chosenUpgradeTo)
+          : upgrades[0];
+      if (!upgrade) return;
+      if (!canAffordResources(gs.resources, upgrade.cost)) return;
+
+      const event = aggRef.current.upgradeCard(
+        cardUid,
+        upgrade.upgradeTo,
+        upgrade.cost.resources?.[0] ?? {},
+      );
+      setEvents([...events, event]);
+      sync();
     },
-    [liveState, defs, stickerDefs, applyResult],
+    [events, defs, sync],
   );
 
-  // ─── Flux de tour ─────────────────────────────────────────────────────────
+  // ── Flux de tour ──────────────────────────────────────────────────────────
 
   const progress = useCallback(() => {
-    applyResult(computeProgress(liveState, defs, stickerDefs));
-  }, [liveState, defs, stickerDefs, applyResult]);
+    const event = aggRef.current.advance();
+    if (!event) return;
+    setEvents([...events, event]);
+    sync();
+  }, [events, sync]);
 
   const endTurnVoluntary = useCallback(() => {
-    applyResult(computeEndTurnVoluntary(liveState, defs, stickerDefs));
-  }, [liveState, defs, stickerDefs, applyResult]);
+    const event = aggRef.current.pass();
+    setEvents([...events, event]);
+    sync();
+  }, [events, sync]);
 
-  const discardTopCard = useCallback(() => {
-    if (!canDiscardTopCard || liveState.deck.length === 0) return;
-    dispatch({ type: 'CARD_DESTROYED', payload: { cardUid: liveState.deck[0], fromZone: 'deck' } });
-  }, [canDiscardTopCard, liveState.deck, dispatch]);
-
-  // ─── Résolution de choix ──────────────────────────────────────────────────
+  // ── Résolution de choix ───────────────────────────────────────────────────
 
   const resolveChoice = useCallback(
     (chosenCardIds: number[]) => {
-      applyResult(computeResolveChoice(liveState, chosenCardIds, defs));
+      if (!pendingChoice || pendingChoice.kind !== 'discover_card') return;
+      // La découverte de carte : déplacer de discoveryPile vers drawPile
+      // On utilise PLACE_CARD_IN_DRAW_PILE via useCardEffect
+      for (const cardId of chosenCardIds) {
+        const gs = aggRef.current.getGameState();
+        const uid = gs.discoveryPile.find(u => gs.instances[u]?.cardId === cardId);
+        if (!uid) continue;
+        const resolvedCost: ResolvedCost = {
+          resources: {},
+          discardedCardIds: [],
+          destroyedCardIds: [],
+        };
+        aggRef.current.useCardEffect(
+          [
+            {
+              type: EffectType.PLACE_CARD_IN_DRAW_PILE,
+              payload: { cardId: uid, position: 'bottom' },
+            },
+          ],
+          resolvedCost,
+          `discover_${uid}`,
+        );
+      }
+      sync();
     },
-    [liveState, defs, applyResult],
+    [pendingChoice, sync],
   );
 
   const resolveChooseState = useCallback(
     (chosenStateId: number) => {
-      applyResult(computeResolveChooseState(liveState, chosenStateId));
+      if (!pendingChoice || pendingChoice.kind !== 'choose_state') return;
+      const inst = { ...pendingChoice.instance, stateId: chosenStateId };
+      const resolvedCost: ResolvedCost = {
+        resources: {},
+        discardedCardIds: [],
+        destroyedCardIds: [],
+      };
+      const effectType =
+        pendingChoice.addedTo === 'permanents'
+          ? EffectType.PLAY_CARD
+          : EffectType.PLACE_CARD_IN_DRAW_PILE;
+      aggRef.current.useCardEffect(
+        [{ type: effectType, payload: { cardId: inst.id, position: 'bottom' } }],
+        resolvedCost,
+        `choose_state_${inst.id}`,
+      );
+      // Enchaîner sur le prochain choose_state si présent
+      const remaining = pendingChoice.remaining ?? [];
+      if (remaining.length > 0) {
+        const [next, ...rest] = remaining;
+        setPendingChoice({ kind: 'choose_state', ...next, remaining: rest });
+      } else {
+        sync();
+      }
     },
-    [liveState, applyResult],
+    [pendingChoice, sync],
   );
 
   const resolveResourceChoice = useCallback(
     (chosen: Resources) => {
-      applyResult(computeResolveResourceChoice(liveState, chosen));
+      if (!pendingChoice || pendingChoice.kind !== 'choose_resource') return;
+      if (pendingChoice.source === 'activation') {
+        activateCard(pendingChoice.cardUid, chosen);
+      } else {
+        // Source action : ajouter les ressources directement
+        const resolvedCost: ResolvedCost = {
+          resources: {},
+          discardedCardIds: [],
+          destroyedCardIds: [],
+        };
+        aggRef.current.useCardEffect(
+          [{ type: EffectType.ADD_RESOURCES, payload: { resources: chosen } }],
+          resolvedCost,
+          `resource_choice_${Date.now()}`,
+        );
+        sync();
+      }
     },
-    [liveState, applyResult],
+    [pendingChoice, activateCard, sync],
   );
 
   const resolveCopyProduction = useCallback(
     (targetUid: string) => {
-      applyResult(computeResolveCopyProduction(liveState, targetUid, defs));
+      if (!pendingChoice || pendingChoice.kind !== 'copy_production') return;
+      const gs = aggRef.current.getGameState();
+      const inst = gs.instances[targetUid];
+      if (!inst) {
+        sync();
+        return;
+      }
+      const cs = getActiveState(inst, defs);
+      const productions = getEffectiveProductions(cs, inst, stickerDefs);
+      const resolvedCost: ResolvedCost = {
+        resources: {},
+        discardedCardIds: [],
+        destroyedCardIds: [],
+      };
+      aggRef.current.useCardEffect(
+        [{ type: EffectType.ADD_RESOURCES, payload: { resources: productions } }],
+        resolvedCost,
+        `copy_production_${targetUid}`,
+      );
+      sync();
     },
-    [liveState, defs, applyResult],
+    [pendingChoice, defs, stickerDefs, sync],
   );
 
   const resolveBlockCard = useCallback(
     (targetUid: string) => {
-      applyResult(computeResolveBlockCard(liveState, targetUid));
+      if (!pendingChoice || pendingChoice.kind !== 'block_card') return;
+      const resolvedCost: ResolvedCost = {
+        resources: {},
+        discardedCardIds: [],
+        destroyedCardIds: [],
+      };
+      aggRef.current.useCardEffect(
+        [
+          {
+            type: EffectType.BLOCK_CARD,
+            payload: { blockingCardId: pendingChoice.blockerUid, blockedCardId: targetUid },
+          },
+        ],
+        resolvedCost,
+        `block_${pendingChoice.blockerUid}`,
+      );
+      sync();
     },
-    [liveState, applyResult],
+    [pendingChoice, sync],
   );
 
   const resolvePlayFromDiscard = useCallback(
     (chosenUids: string[]) => {
-      applyResult(computeResolvePlayFromDiscard(liveState, chosenUids));
+      if (!pendingChoice || pendingChoice.kind !== 'play_from_discard') return;
+      const resolvedCost: ResolvedCost = {
+        resources: {},
+        discardedCardIds: [],
+        destroyedCardIds: [],
+      };
+      for (const uid of chosenUids) {
+        aggRef.current.useCardEffect(
+          [{ type: EffectType.PLAY_CARD, payload: { cardId: uid } }],
+          resolvedCost,
+          `play_from_discard_${uid}`,
+        );
+      }
+      sync();
     },
-    [liveState, applyResult],
+    [pendingChoice, sync],
   );
 
   const resolveDiscardCost = useCallback(
     (chosenUid: string) => {
-      applyResult(computeResolveDiscardCost(liveState, chosenUid, defs, stickerDefs));
+      if (!pendingChoice || pendingChoice.kind !== 'discard_for_cost') return;
+      const { actionCardUid, actionId, remainingScopes, collectedUids } = pendingChoice;
+      const newCollected = [...collectedUids, chosenUid];
+
+      if (remainingScopes.length > 0) {
+        const gs = aggRef.current.getGameState();
+        const candidates = gs.board.filter(
+          uid => uid !== actionCardUid && !newCollected.includes(uid),
+        );
+        setPendingChoice({
+          kind: 'discard_for_cost',
+          actionCardUid,
+          actionId,
+          candidates,
+          remainingScopes: remainingScopes.slice(1),
+          collectedUids: newCollected,
+        });
+        return;
+      }
+
+      // Tous les coûts collectés → exécuter l'action
+      const gs = aggRef.current.getGameState();
+      const inst = gs.instances[actionCardUid];
+      if (!inst) {
+        sync();
+        return;
+      }
+      const cs = getActiveState(inst, defs);
+      const action = cs.cardEffects?.find(ce => ce.label === actionId);
+      if (!action) {
+        sync();
+        return;
+      }
+
+      const resolvedCost: ResolvedCost = {
+        resources: action.cost?.resources?.[0] ?? {},
+        discardedCardIds: newCollected,
+        destroyedCardIds: [],
+      };
+      const effects = action.effects.map(e => ({ type: e.type, payload: e }));
+      aggRef.current.useCardEffect(effects, resolvedCost, `${actionCardUid}_${actionId}`);
+      sync();
     },
-    [liveState, defs, stickerDefs, applyResult],
+    [pendingChoice, defs, sync],
   );
 
   const cancelDiscardCost = useCallback(() => {
-    setLiveState(prev => ({ ...prev, pendingChoice: null }));
+    setPendingChoice(null);
   }, []);
 
-  // ─── Rembobinage ──────────────────────────────────────────────────────────
+  // ── Rembobinage ───────────────────────────────────────────────────────────
 
-  // Index du dernier TURN_STARTED ou PROGRESSED dans l'historique.
-  // Limite le rembobinage : on ne peut pas revenir avant le début du tour actuel.
-  const currentTurnStartIndex = useMemo(() => {
-    for (let i = events.length - 1; i >= 0; i--) {
-      if (events[i].type === 'TURN_STARTED' || events[i].type === 'PROGRESSED') return i;
-    }
-    return -1;
+  const canRewind = useCallback(() => {
+    const events = aggRef.current.getEvents();
+    return events.length > 0;
+  }, [aggRef]);
+
+  const rewindEvent = useCallback(() => {
+    const aggEvent = aggRef.current.getEvents();
+    if (aggEvent.length === 0) return;
+    const saveState = aggRef.current.getSaveState();
+    const agg = makeAggregate(saveState);
+    agg.loadFromHistory(aggEvent.slice(0, -1));
+    aggRef.current = agg;
+    const truncated = events.slice(0, -1);
+    setEvents([...truncated]);
+    sync();
   }, [events]);
 
-  /**
-   * Rembobine la partie jusqu'à l'événement à l'index donné.
-   * - Clampe l'index au début du tour courant (on ne peut pas revenir à un tour précédent).
-   * - Rejoue tous les événements jusqu'à cet index pour reconstruire l'état.
-   * - Re-déclenche les `on_play` triggers du tour pour restaurer les choix en attente éventuels.
-   */
-  const rewindToEvent = useCallback(
-    (index: number) => {
-      if (currentTurnStartIndex === -1) return;
-      const clampedIndex = Math.max(index, currentTurnStartIndex);
-      if (clampedIndex >= events.length) return;
-      const truncated = events.slice(0, clampedIndex + 1);
-      const rewound = replayEvents(truncated, defs, stickerDefs);
-      setEvents(truncated);
-      setLiveState(rewound);
-      // Re-déclencher on_play (ex: block_card du Bandit) sur l'état rembobiné
-      const turnEvent = truncated
-        .slice()
-        .reverse()
-        .find(e => e.type === 'TURN_STARTED' || e.type === 'PROGRESSED');
-      if (turnEvent) {
-        const drawnUids = (turnEvent.payload as { drawnUids: string[] }).drawnUids;
-        const pending = checkOnPlayTriggers(drawnUids, rewound, defs);
-        if (pending) setLiveState(prev => ({ ...prev, pendingChoice: pending }));
-      }
-    },
-    [events, currentTurnStartIndex, defs, stickerDefs],
-  );
+  // ── Résultat ──────────────────────────────────────────────────────────────
 
   return {
     state: liveState,
@@ -326,7 +539,7 @@ export function useGame(): GameHook {
     defs,
     stickerDefs,
     score,
-    canDiscardTopCard,
+    pendingChoice,
     hasSave: hasSave(),
     loadGame,
     deleteSave: deleteSaveCallback,
@@ -338,7 +551,6 @@ export function useGame(): GameHook {
     resolveUpgrade,
     progress,
     endTurnVoluntary,
-    discardTopCard,
     resolveChoice,
     resolvePlayFromDiscard,
     resolveResourceChoice,
@@ -347,7 +559,10 @@ export function useGame(): GameHook {
     resolveBlockCard,
     resolveDiscardCost,
     cancelDiscardCost,
-    currentTurnStartIndex,
-    rewindToEvent,
+    canRewind,
+    rewindEvent,
   };
 }
+
+// Export pour compatibilité
+export { mergeResources };

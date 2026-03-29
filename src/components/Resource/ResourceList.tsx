@@ -1,4 +1,4 @@
-import type { Resources } from '@engine/types';
+import type { Resources } from '@engine/domain/types';
 import { ResourcePill } from './ResourcePill';
 import React from 'react';
 

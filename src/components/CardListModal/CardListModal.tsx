@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
-import { type CardInstance, type CardDef, type Resources } from '@engine/types';
 import './CardListModal.css';
 import { GameCard } from '@components/GameCard';
+import type { CardInstance, CardDef, Resources } from '@engine/domain/types';
 
 interface CardListModalProps {
   title: string;
@@ -46,12 +46,11 @@ export function CardListModal({
             <div className="clm-grid">
               {cards.map((inst, i) => (
                 <GameCard
-                  key={inst.uid}
+                  key={inst.id}
                   instance={inst}
                   defs={defs}
                   currentResources={{} as Resources}
-                  activated={[]}
-                  isInTableau={false}
+                  isOnBoard={false}
                   animDelay={Math.min(i * 30, 300)}
                 />
               ))}

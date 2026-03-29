@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import type { CardDef, CardInstance } from '@engine/types';
+import type { CardDef, CardInstance } from '@engine/domain/types';
 import { tCardName } from '@i18n/cardI18n';
 import './CardStatePreview.css';
 import { GameCard } from '@components/GameCard';
@@ -105,8 +105,7 @@ function CardStatesModal({
                   instance={fakeInstance}
                   defs={defs}
                   currentResources={{}}
-                  activated={[]}
-                  isInTableau={false}
+                  isOnBoard={false}
                   hideStatePreview
                 />
               </div>

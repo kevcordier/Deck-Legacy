@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import type { Resources } from '@engine/types';
+import type { Resources } from '@engine/domain/types';
 import gloryIcon from '@assets/icons/glory.svg';
 import './ResourceBar.css';
 import { ResourcePill } from '@components/Resource/ResourcePill';

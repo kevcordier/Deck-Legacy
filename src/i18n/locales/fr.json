@@ -173,6 +173,7 @@
     "discoveries_other": "+{{count}} découvertes",
     "roundEnded": "Manche terminée",
     "turn": "Tour {{turn}}",
+    "advance": "Progresser",
     "deckCards": "Pioche : {{count}} cartes",
     "endOfTurn": "Fin de tour",
     "production": "Production",

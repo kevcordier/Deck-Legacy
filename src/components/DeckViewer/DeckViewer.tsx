@@ -1,18 +1,19 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { type CardInstance, type CardDef, getActiveState } from '@engine/types';
 import { CardListModal } from '@components/CardListModal/CardListModal';
-import { getEffectiveProductions } from '@helpers/cardHelpers';
+import { getActiveState, getEffectiveProductions } from '@engine/application/cardHelpers';
 import './DeckViewer.css';
 import { GameCard } from '@components/GameCard';
+import type { CardInstance, CardDef, Sticker } from '@engine/domain/types';
 
 interface DeckViewerProps {
   deck: string[];
   instances: Record<string, CardInstance>;
   defs: Record<number, CardDef>;
+  stickers?: Record<number, Sticker>;
 }
 
-export function DeckViewer({ deck, instances, defs }: DeckViewerProps) {
+export function DeckViewer({ deck, instances, defs, stickers = {} }: DeckViewerProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -60,8 +61,7 @@ export function DeckViewer({ deck, instances, defs }: DeckViewerProps) {
             instance={topInst}
             defs={defs}
             currentResources={{}}
-            activated={[]}
-            isInTableau={false}
+            isOnBoard={false}
             style={{ width: '100%' }}
           />
         </div>
@@ -73,10 +73,10 @@ export function DeckViewer({ deck, instances, defs }: DeckViewerProps) {
           <div className="dv-list-label">{t('deckViewer.remainingCards')}</div>
           {sortedList.slice(1).map((inst, i) => {
             const cs = getActiveState(inst, defs);
-            const prod = getEffectiveProductions(cs, inst);
+            const prod = getEffectiveProductions(cs, inst, stickers);
             const glory = cs.glory ?? 0;
             return (
-              <div key={inst.uid} className="dv-row" style={{ animationDelay: `${i * 15}ms` }}>
+              <div key={inst.id} className="dv-row" style={{ animationDelay: `${i * 15}ms` }}>
                 <span className="dv-row-id">#{inst.deckEntryId}</span>
                 <span className="dv-row-name">{cs.name}</span>
                 <div className="dv-row-prods">
