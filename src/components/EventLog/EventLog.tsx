@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
-import type { GameEvent, Resources } from '@engine/types';
+import type { GameEvent, Resources } from '@engine/domain/types';
 import './EventLog.css';
 
 interface EventLogProps {
@@ -50,9 +50,7 @@ function res(r: Resources): string {
 const COLORS: Record<string, string> = {
   GAME_STARTED: '#c9963a',
   ROUND_STARTED: '#c9963a',
-  ROUND_ENDED: '#8a6420',
   TURN_STARTED: '#7a9a7a',
-  TURN_ENDED: '#6a7a6a',
   CARD_ACTIVATED: '#c9963a',
   ACTION_RESOLVED: '#a0c0e0',
   UPGRADE_RESOLVED: '#d4832a',
@@ -75,7 +73,9 @@ function formatEvent(
   t: TFunction,
 ): { label: string; detail?: string; color: string } {
   const color = COLORS[evt.type] ?? '#8a8478';
-  const p = evt.payload;
+  // Les nouveaux événements stockent les données directement (pas dans payload)
+  const p: Record<string, unknown> = ((evt as unknown as { payload?: Record<string, unknown> })
+    .payload ?? evt) as Record<string, unknown>;
 
   switch (evt.type) {
     case 'GAME_STARTED':
@@ -88,8 +88,8 @@ function formatEvent(
     case 'ROUND_STARTED':
       return {
         label: t('eventLog.round', { round: p.round }),
-        detail: p.addedCardUids?.length
-          ? t('eventLog.discoveries', { count: p.addedCardUids.length })
+        detail: (p.addedCardUids as unknown[] | undefined)?.length
+          ? t('eventLog.discoveries', { count: (p.addedCardUids as unknown[]).length })
           : undefined,
         color,
       };
@@ -100,12 +100,14 @@ function formatEvent(
     case 'TURN_STARTED':
       return {
         label: t('eventLog.turn', { turn: p.turn }),
-        detail: t('eventLog.deckCards', { count: p.drawnUids?.length ?? 0 }),
+        detail: t('eventLog.deckCards', {
+          count: (p.drawnUids as unknown[] | undefined)?.length ?? 0,
+        }),
         color,
       };
 
     case 'TURN_ENDED':
-      return { label: t('eventLog.endOfTurn'), detail: p.reason, color };
+      return { label: t('eventLog.endOfTurn'), detail: p.reason as string | undefined, color };
 
     case 'CARD_ACTIVATED': {
       const gained = p.resourcesGained ? res(p.resourcesGained as Resources) : '';
@@ -119,7 +121,11 @@ function formatEvent(
 
     case 'ACTION_RESOLVED': {
       const gained = p.resourcesGained ? res(p.resourcesGained as Resources) : '';
-      return { label: t('eventLog.action'), detail: gained ? `+${gained}` : p.actionId, color };
+      return {
+        label: t('eventLog.action'),
+        detail: gained ? `+${gained}` : (p.actionId as string | undefined),
+        color,
+      };
     }
 
     case 'UPGRADE_RESOLVED':
@@ -133,7 +139,9 @@ function formatEvent(
     case 'PROGRESSED':
       return {
         label: t('eventLog.progress'),
-        detail: t('eventLog.addedCards', { count: p.drawnUids?.length ?? 2 }),
+        detail: t('eventLog.addedCards', {
+          count: (p.drawnUids as unknown[] | undefined)?.length ?? 2,
+        }),
         color,
       };
 

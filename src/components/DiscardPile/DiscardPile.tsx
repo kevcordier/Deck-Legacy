@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { type CardInstance, type CardDef, getActiveState } from '@engine/types';
 import { CardListModal } from '@components/CardListModal';
-import { getEffectiveProductions } from '@helpers/cardHelpers';
+import { getActiveState, getEffectiveProductions } from '@engine/application/cardHelpers';
 import './DiscardPile.css';
 import { GameCard } from '@components/GameCard';
+import type { CardInstance, CardDef } from '@engine/domain/types';
+import { useGame } from '@hooks/useGame';
 
 interface DiscardPileProps {
   discard: string[];
@@ -14,6 +15,7 @@ interface DiscardPileProps {
 
 export function DiscardPile({ discard, instances, defs }: DiscardPileProps) {
   const { t } = useTranslation();
+  const { stickerDefs: stickers } = useGame(); // for up to date stickers with glory values
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -57,8 +59,7 @@ export function DiscardPile({ discard, instances, defs }: DiscardPileProps) {
             instance={topInst}
             defs={defs}
             currentResources={{}}
-            activated={[]}
-            isInTableau={false}
+            isOnBoard={false}
             style={{ width: '100%' }}
           />
         </div>
@@ -72,7 +73,7 @@ export function DiscardPile({ discard, instances, defs }: DiscardPileProps) {
             const inst = instances[uid];
             if (!inst) return null;
             const cs = getActiveState(inst, defs);
-            const prod = getEffectiveProductions(cs, inst);
+            const prod = getEffectiveProductions(cs, inst, stickers);
             const glory = cs.glory ?? 0;
             return (
               <div

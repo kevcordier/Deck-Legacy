@@ -1,15 +1,20 @@
 import { useTranslation } from 'react-i18next';
-import type { PendingChoice, CardDef, Resources, CardInstance, CardState } from '@engine/types';
+import type {
+  PendingChoice,
+  CardDef,
+  Resources,
+  CardInstance,
+  CardState,
+} from '@engine/domain/types';
 
 function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
   return {
-    uid: `preview-${def.id}-${state.id}`,
+    id: `preview-${def.id}-${state.id}`,
     cardId: def.id,
     stateId: state.id,
-    stickers: [],
-    blockedBy: null,
+    deckEntryId: 0,
+    stickers: {},
     trackProgress: null,
-    tags: state.tags,
   };
 }
 import '@components/PendingChoiceModal/PendingChoiceModal.css';
@@ -21,7 +26,6 @@ interface PendingChoiceModalProps {
   defs: Record<number, CardDef>;
   instances: Record<string, CardInstance>;
   currentResources: Resources;
-  activated: string[];
   // resolvers
   onDiscoverCard: (ids: number[]) => void;
   onChooseUpgrade: (toStateId: number) => void;
@@ -39,7 +43,6 @@ export function PendingChoiceModal({
   defs,
   instances,
   currentResources,
-  activated,
   onDiscoverCard,
   onChooseUpgrade,
   onPlayFromDiscard,
@@ -88,8 +91,7 @@ export function PendingChoiceModal({
                     instance={makePreviewInstance(def, state)}
                     defs={defs}
                     currentResources={currentResources}
-                    activated={activated}
-                    isInTableau={false}
+                    isOnBoard={false}
                     hideStatePreview
                   />
                 </div>
@@ -120,8 +122,7 @@ export function PendingChoiceModal({
                   instance={makePreviewInstance(def, state)}
                   defs={defs}
                   currentResources={currentResources}
-                  activated={activated}
-                  isInTableau={false}
+                  isOnBoard={false}
                   hideStatePreview
                 />
               </div>
@@ -155,8 +156,7 @@ export function PendingChoiceModal({
                       instance={makePreviewInstance(def, targetState)}
                       defs={defs}
                       currentResources={currentResources}
-                      activated={activated}
-                      isInTableau={false}
+                      isOnBoard={false}
                       hideStatePreview
                     />
                   )}
@@ -215,8 +215,7 @@ export function PendingChoiceModal({
                     instance={inst}
                     defs={defs}
                     currentResources={currentResources}
-                    activated={activated}
-                    isInTableau={false}
+                    isOnBoard={false}
                   />
                 </div>
               );
@@ -244,8 +243,7 @@ export function PendingChoiceModal({
                     instance={inst}
                     defs={defs}
                     currentResources={currentResources}
-                    activated={activated}
-                    isInTableau={false}
+                    isOnBoard={false}
                   />
                 </div>
               );
@@ -273,8 +271,7 @@ export function PendingChoiceModal({
                     instance={inst}
                     defs={defs}
                     currentResources={currentResources}
-                    activated={activated}
-                    isInTableau={false}
+                    isOnBoard={false}
                   />
                 </div>
               );
@@ -306,8 +303,7 @@ export function PendingChoiceModal({
                     instance={inst}
                     defs={defs}
                     currentResources={currentResources}
-                    activated={activated}
-                    isInTableau={false}
+                    isOnBoard={false}
                   />
                 </div>
               );
