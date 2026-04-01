@@ -9,49 +9,123 @@
 .el-scroll {
   flex: 1;
   overflow-y: auto;
-  padding: 6px 0;
+  padding: 4px 0 8px;
 }
+
+/* ── Game / Round headers ─────────────────────────────────────── */
+
+.el-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 4px;
+  margin-top: 6px;
+  font-family: var(--font-display);
+}
+
+.el-header--game {
+  border-bottom: 1px solid rgba(201, 150, 58, 0.25);
+  margin-bottom: 2px;
+}
+
+.el-header--round {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 2px;
+}
+
+.el-header-icon {
+  font-size: 0.6rem;
+  color: var(--gold, #c9963a);
+  flex-shrink: 0;
+}
+
+.el-header-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--cream, #e8e0d0);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.el-header-detail {
+  font-size: 0.6rem;
+  color: var(--stone, #8a8478);
+  margin-left: auto;
+}
+
+/* ── Turn sub-header ──────────────────────────────────────────── */
+
+.el-turn {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 12px 2px;
+  margin-top: 4px;
+}
+
+.el-turn-label {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--sage, #7a9a7a);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.el-turn-detail {
+  font-size: 0.55rem;
+  color: var(--stone, #8a8478);
+}
+
+/* ── Entries ──────────────────────────────────────────────────── */
 
 .el-entry {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  padding: 2px 10px;
-  font-size: 0.7rem;
+  gap: 6px;
+  padding: 2px 12px 2px 24px;
+  font-size: 0.68rem;
   font-family: var(--font-body);
   line-height: 1.5;
-  margin-left: 8px;
-  margin-bottom: 1px;
 }
 
-.el-index {
-  font-family: var(--font-display);
-  font-size: 0.5rem;
-  color: var(--stone);
-  min-width: 22px;
-  text-align: right;
+.el-entry-icon {
+  font-size: 0.55rem;
+  flex-shrink: 0;
+  width: 10px;
+  text-align: center;
+}
+
+.el-entry-label {
+  color: var(--cream-d, #c8bfb0);
   flex-shrink: 0;
 }
 
-.el-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  margin-top: 4px;
-}
-
-.el-label {
-  font-style: italic;
-  flex-shrink: 0;
-  font-size: 0.7rem;
-}
-
-.el-detail {
-  color: var(--cream-d);
-  font-size: 0.7rem;
+.el-entry-detail {
+  color: var(--stone, #8a8478);
+  font-size: 0.65rem;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* ── Entry variants ───────────────────────────────────────────── */
+
+.el-entry--produced .el-entry-icon { color: #c9963a; }
+.el-entry--produced .el-entry-label { color: #d4aa60; }
+
+.el-entry--upgrade .el-entry-icon { color: #d4832a; }
+.el-entry--upgrade .el-entry-label { color: #d4832a; }
+
+.el-entry--action .el-entry-icon { color: #a0c0e0; }
+.el-entry--action .el-entry-label { color: #a0c0e0; }
+
+.el-entry--passive .el-entry-icon { color: #8090a8; }
+.el-entry--passive .el-entry-label { color: #8090a8; }
+
+.el-entry--advance .el-entry-icon { color: #90c890; }
+.el-entry--advance .el-entry-label { color: #90c890; }
+
+.el-entry--pass .el-entry-icon { color: #555045; }
+.el-entry--pass .el-entry-label { color: #555045; }

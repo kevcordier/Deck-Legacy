@@ -1,5 +1,5 @@
 import type { CardTag, Trigger } from '@engine/domain/enums';
-import type { Cost, Effect, Resources } from '@engine/domain/types';
+import type { Cost, Action, Resources } from '@engine/domain/types';
 
 export type CardDef = {
   id: number;
@@ -19,15 +19,15 @@ export type CardState = {
   productions?: Resources[];
   glory?: number;
   stayInPlay?: boolean;
-  cardEffects?: EffectDef[];
+  cardEffects?: Effect[];
   upgrade?: UpgradeDef[];
   illustration?: string;
 };
 
-export type EffectDef = {
+export type Effect = {
   label: string;
   description?: string;
-  effects: Effect[];
+  actions: Action[];
   passive?: boolean;
   cost?: Cost;
   endsTurn?: boolean;

@@ -22,10 +22,11 @@ export enum GameEventType {
   ADVANCE = 'ADVANCE',
   UPGRADE_CARD = 'UPGRADE_CARD',
   USE_CARD_EFFECT = 'USE_CARD_EFFECT',
+  SKIP_TRIGGER = 'SKIP_TRIGGER',
   PASS = 'PASS',
 }
 
-export enum EffectType {
+export enum ActionType {
   ADD_RESOURCES = 'ADD_RESOURCES',
   DISCARD_CARD = 'DISCARD_CARD',
   DISCOVER_CARD = 'DISCOVER_CARD',
@@ -35,6 +36,7 @@ export enum EffectType {
   BLOCK_CARD = 'BLOCK_CARD',
   PLAY_CARD = 'PLAY_CARD',
   ADD_STICKER = 'ADD_STICKER',
+  CHOOSE_STATE = 'CHOOSE_STATE',
 }
 
 export enum ResourceType {
@@ -56,4 +58,11 @@ export enum TargetScope {
   FRIENDLY = 'friendly',
   ENEMY = 'enemy',
   SELF = 'self',
+  TOP_OF_DECK = 'top_of_deck',
+}
+
+export enum PendingChoiceType {
+  CHOOSE_CARD = 'choose_card',
+  CHOOSE_RESOURCE = 'choose_resource',
+  CHOOSE_STATE = 'choose_state',
 }

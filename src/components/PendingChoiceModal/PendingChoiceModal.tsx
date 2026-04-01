@@ -5,58 +5,118 @@ import type {
   Resources,
   CardInstance,
   CardState,
+  ResolvedAction,
+  ResolvedCost,
+  TriggerEntry,
 } from '@engine/domain/types';
+import triggerIcon from '@assets/icons/trigger.png';
+import forcedTriggerIcon from '@assets/icons/forcedtrigger.png';
+import '@components/PendingChoiceModal/PendingChoiceModal.css';
+import { ResourceChoice } from '@components/Resource/ResourceChoice';
+import { GameCard } from '@components/GameCard';
+import { PendingChoiceType } from '@engine/domain/enums';
 
 function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
   return {
-    id: `preview-${def.id}-${state.id}`,
+    id: 0,
     cardId: def.id,
     stateId: state.id,
-    deckEntryId: 0,
     stickers: {},
     trackProgress: null,
   };
 }
-import '@components/PendingChoiceModal/PendingChoiceModal.css';
-import { ResourceChoice } from '@components/Resource/ResourceChoice';
-import { GameCard } from '@components/GameCard';
 
 interface PendingChoiceModalProps {
-  choice: PendingChoice;
+  choice?: PendingChoice;
+  triggerPile?: Record<string, TriggerEntry> | null;
   defs: Record<number, CardDef>;
-  instances: Record<string, CardInstance>;
+  instances: Record<number, CardInstance>;
   currentResources: Resources;
-  // resolvers
-  onDiscoverCard: (ids: number[]) => void;
-  onChooseUpgrade: (toStateId: number) => void;
-  onPlayFromDiscard: (uids: string[]) => void;
-  onChooseResource: (r: Resources) => void;
-  onChooseState: (stateId: number) => void;
-  onCopyProduction: (uid: string) => void;
-  onBlockCard: (uid: string) => void;
-  onDiscardForCost: (uid: string) => void;
-  onCancelDiscardCost: () => void;
+  resolvePlayerChoice(option: ResolvedAction): void;
+  resolvePayCost(resolved: ResolvedCost): void;
+  onResolveTrigger(sourceInstanceId: number, actionId: string): void;
+  onSkipTrigger(uuid: string): void;
 }
 
 export function PendingChoiceModal({
   choice,
+  triggerPile,
   defs,
   instances,
   currentResources,
-  onDiscoverCard,
-  onChooseUpgrade,
-  onPlayFromDiscard,
-  onChooseResource,
-  onChooseState,
-  onCopyProduction,
-  onBlockCard,
-  onDiscardForCost,
-  onCancelDiscardCost,
+  resolvePlayerChoice,
+  resolvePayCost,
+  onResolveTrigger,
+  onSkipTrigger,
 }: PendingChoiceModalProps) {
   const { t } = useTranslation();
 
-  // ── discover_card ──────────────────────────────────────────────────────
-  if (choice.kind === 'discover_card') {
+  // ── trigger_pile ───────────────────────────────────────────────────────
+  if (triggerPile && Object.keys(triggerPile).length > 0) {
+    return (
+      <div className="pcm-overlay">
+        <div className="pcm-panel">
+          <div className="pcm-title">{t('triggerPile.title')}</div>
+          {Object.keys(triggerPile).length > 1 && (
+            <div className="pcm-subtitle">{t('triggerPile.subtitle')}</div>
+          )}
+          <div className="pcm-trigger-list">
+            {Object.entries(triggerPile).map(([triggerId, trigger]) => (
+              <div key={triggerId} className="pcm-trigger-item">
+                <img
+                  src={trigger.effectDef.optional ? triggerIcon : forcedTriggerIcon}
+                  className="pcm-trigger-icon"
+                  alt=""
+                />
+                <div className="pcm-trigger-info">
+                  <div className="pcm-trigger-label">{trigger.effectDef.label}</div>
+                  {trigger.effectDef.description && (
+                    <div className="pcm-trigger-desc">{trigger.effectDef.description}</div>
+                  )}
+                </div>
+                <div className="pcm-trigger-actions">
+                  <button
+                    className="pcm-trigger-btn-resolve"
+                    onClick={() =>
+                      onResolveTrigger(trigger.sourceInstanceId, trigger.effectDef.label)
+                    }
+                  >
+                    {t('triggerPile.resolve')}
+                  </button>
+                  {trigger.effectDef.optional && (
+                    <button
+                      className="pcm-trigger-btn-skip"
+                      onClick={() => onSkipTrigger(triggerId)}
+                    >
+                      {t('triggerPile.skip')}
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!choice) return null;
+
+  // ── choose_card ──────────────────────────────────────────────────────
+  if (choice.type === PendingChoiceType.CHOOSE_CARD) {
+    const handleCardClick = (instanceId: number) => {
+      if (choice.kind === 'cost') {
+        resolvePayCost({ resources: {}, discardedCardIds: [instanceId], destroyedCardIds: [] });
+      } else {
+        resolvePlayerChoice({
+          id: choice.id,
+          type: choice.kind,
+          sourceInstanceId: choice.sourceInstanceId,
+          instanceId,
+        });
+      }
+    };
+
     return (
       <div className="pcm-overlay">
         <div className="pcm-panel">
@@ -65,28 +125,26 @@ export function PendingChoiceModal({
             {t('pendingChoice.chooseCard', { count: choice.pickCount })}
           </div>
           <div className="pcm-card-grid">
-            {choice.candidates.map(cardId => {
-              const def = defs[cardId];
-              if (!def)
+            {choice.choices.map(id => {
+              if (typeof id !== 'number') return null;
+              const inst = instances[id];
+              const def = inst ? defs[inst.cardId] : undefined;
+              if (!def || !inst)
                 return (
                   <div
-                    key={cardId}
+                    key={id}
                     className="pcm-card-placeholder"
-                    onClick={() => onDiscoverCard([cardId])}
+                    onClick={() => handleCardClick(id)}
                   >
                     <span className="pcm-placeholder-name">
-                      {t('pendingChoice.cardPlaceholder', { id: cardId })}
+                      {t('pendingChoice.cardPlaceholder', { id })}
                     </span>
                     <span className="pcm-placeholder-label">{t('pendingChoice.toDiscover')}</span>
                   </div>
                 );
-              const state = def.states[0];
+              const state = def.states.find(s => s.id === inst.stateId) ?? def.states[0];
               return (
-                <div
-                  key={cardId}
-                  onClick={() => onDiscoverCard([cardId])}
-                  className="pcm-card-clickable"
-                >
+                <div key={id} onClick={() => handleCardClick(id)} className="pcm-card-clickable">
                   <GameCard
                     instance={makePreviewInstance(def, state)}
                     defs={defs}
@@ -104,68 +162,40 @@ export function PendingChoiceModal({
   }
 
   // ── choose_state ───────────────────────────────────────────────────────
-  if (choice.kind === 'choose_state') {
-    const def = defs[choice.instance.cardId];
+  if (choice.type === PendingChoiceType.CHOOSE_STATE) {
+    const sourceInst = instances[choice.sourceInstanceId];
+    const cardDef = sourceInst ? defs[sourceInst.cardId] : undefined;
+
     return (
       <div className="pcm-overlay">
         <div className="pcm-panel">
           <div className="pcm-title">{t('pendingChoice.chooseState')}</div>
           <div className="pcm-subtitle">{t('pendingChoice.chooseStateSubtitle')}</div>
           <div className="pcm-card-grid">
-            {choice.options.map(state => (
-              <div
-                key={state.id}
-                onClick={() => onChooseState(state.id)}
-                className="pcm-card-clickable"
-              >
-                <GameCard
-                  instance={makePreviewInstance(def, state)}
-                  defs={defs}
-                  currentResources={currentResources}
-                  isOnBoard={false}
-                  hideStatePreview
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── choose_upgrade ─────────────────────────────────────────────────────
-  if (choice.kind === 'choose_upgrade') {
-    const instance = instances[choice.cardUid];
-    const def = defs[instance?.cardId ?? 0];
-    return (
-      <div className="pcm-overlay">
-        <div className="pcm-panel">
-          <div className="pcm-title">{t('pendingChoice.chooseUpgrade')}</div>
-          <div className="pcm-subtitle">{t('pendingChoice.chooseUpgradeSubtitle')}</div>
-          <div className="pcm-card-grid">
-            {choice.options.map((upg, i) => {
-              const targetState = def?.states.find(s => s.id === upg.upgradeTo);
+            {choice.choices.map(stateId => {
+              if (typeof stateId !== 'number') return null;
+              const state = cardDef?.states.find(s => s.id === stateId);
+              if (!cardDef || !state) return null;
               return (
                 <div
-                  key={i}
-                  onClick={() => onChooseUpgrade(upg.upgradeTo)}
-                  style={{ cursor: 'pointer' }}
+                  key={stateId}
+                  onClick={() =>
+                    resolvePlayerChoice({
+                      id: choice.id,
+                      type: choice.kind,
+                      sourceInstanceId: choice.sourceInstanceId,
+                      stateId,
+                    })
+                  }
+                  className="pcm-card-clickable"
                 >
-                  {targetState && (
-                    <GameCard
-                      instance={makePreviewInstance(def, targetState)}
-                      defs={defs}
-                      currentResources={currentResources}
-                      isOnBoard={false}
-                      hideStatePreview
-                    />
-                  )}
-                  <div className="pcm-upgrade-cost">
-                    {t('pendingChoice.cost')}{' '}
-                    {Object.entries(upg.cost.resources?.[0] ?? {})
-                      .map(([k, v]) => `${v} ${k}`)
-                      .join(', ') || t('pendingChoice.free')}
-                  </div>
+                  <GameCard
+                    instance={makePreviewInstance(cardDef, state)}
+                    defs={defs}
+                    currentResources={currentResources}
+                    isOnBoard={false}
+                    hideStatePreview
+                  />
                 </div>
               );
             })}
@@ -176,142 +206,31 @@ export function PendingChoiceModal({
   }
 
   // ── choose_resource ────────────────────────────────────────────────────
-  if (choice.kind === 'choose_resource') {
+  if (choice.type === PendingChoiceType.CHOOSE_RESOURCE) {
+    const handleResourceSelect = (r: Resources) => {
+      if (choice.kind === 'cost') {
+        resolvePayCost({ resources: r, discardedCardIds: [], destroyedCardIds: [] });
+      } else {
+        resolvePlayerChoice({
+          id: choice.id,
+          type: choice.kind,
+          sourceInstanceId: choice.sourceInstanceId,
+          resources: r,
+        });
+      }
+    };
+
     return (
       <div className="pcm-overlay">
         <div className="pcm-panel">
           <div className="pcm-title">{t('pendingChoice.chooseResource')}</div>
-          <div className="pcm-subtitle">
-            {choice.source === 'activation'
-              ? t('pendingChoice.produceResource')
-              : t('pendingChoice.gainResource')}
-          </div>
-          <ResourceChoice options={choice.options} onSelect={onChooseResource} />
-        </div>
-      </div>
-    );
-  }
-
-  // ── play_from_discard ──────────────────────────────────────────────────
-  if (choice.kind === 'play_from_discard') {
-    return (
-      <div className="pcm-overlay">
-        <div className="pcm-panel">
-          <div className="pcm-title">{t('pendingChoice.playFromDiscard')}</div>
-          <div className="pcm-subtitle">
-            {t('pendingChoice.chooseFromDiscard', { count: choice.pickCount })}
-          </div>
-          <div className="pcm-card-grid">
-            {choice.candidates.map(uid => {
-              const inst = instances[uid];
-              if (!inst) return null;
-              return (
-                <div
-                  key={uid}
-                  onClick={() => onPlayFromDiscard([uid])}
-                  className="pcm-card-clickable"
-                >
-                  <GameCard
-                    instance={inst}
-                    defs={defs}
-                    currentResources={currentResources}
-                    isOnBoard={false}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── copy_production ────────────────────────────────────────────────────
-  if (choice.kind === 'copy_production') {
-    return (
-      <div className="pcm-overlay">
-        <div className="pcm-panel">
-          <div className="pcm-title">{t('pendingChoice.copyProduction')}</div>
-          <div className="pcm-subtitle">{t('pendingChoice.copyProductionSubtitle')}</div>
-          <div className="pcm-card-grid">
-            {choice.candidates.map(uid => {
-              const inst = instances[uid];
-              if (!inst) return null;
-              return (
-                <div key={uid} onClick={() => onCopyProduction(uid)} className="pcm-card-clickable">
-                  <GameCard
-                    instance={inst}
-                    defs={defs}
-                    currentResources={currentResources}
-                    isOnBoard={false}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── block_card ─────────────────────────────────────────────────────────
-  if (choice.kind === 'block_card') {
-    return (
-      <div className="pcm-overlay">
-        <div className="pcm-panel">
-          <div className="pcm-title">{t('pendingChoice.blockCard')}</div>
-          <div className="pcm-subtitle">{choice.actionLabel}</div>
-          <div className="pcm-card-grid">
-            {choice.candidates.map(uid => {
-              const inst = instances[uid];
-              if (!inst) return null;
-              return (
-                <div key={uid} onClick={() => onBlockCard(uid)} className="pcm-card-clickable">
-                  <GameCard
-                    instance={inst}
-                    defs={defs}
-                    currentResources={currentResources}
-                    isOnBoard={false}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── discard_for_cost ───────────────────────────────────────────────────
-  if (choice.kind === 'discard_for_cost') {
-    const total = choice.collectedUids.length + 1 + choice.remainingScopes.length;
-    const current = choice.collectedUids.length + 1;
-    return (
-      <div className="pcm-overlay" onClick={onCancelDiscardCost}>
-        <div className="pcm-panel" onClick={e => e.stopPropagation()}>
-          <div className="pcm-title">{t('pendingChoice.discardForCost')}</div>
-          <div className="pcm-subtitle">
-            {t('pendingChoice.discardForCostSubtitle', { current, total })}
-          </div>
-          <div className="pcm-card-grid">
-            {choice.candidates.map(uid => {
-              const inst = instances[uid];
-              if (!inst) return null;
-              return (
-                <div key={uid} onClick={() => onDiscardForCost(uid)} className="pcm-card-clickable">
-                  <GameCard
-                    instance={inst}
-                    defs={defs}
-                    currentResources={currentResources}
-                    isOnBoard={false}
-                  />
-                </div>
-              );
-            })}
-          </div>
-          <button className="pcm-cancel-btn" onClick={onCancelDiscardCost}>
-            {t('pendingChoice.cancel')}
-          </button>
+          <div className="pcm-subtitle">{t('pendingChoice.gainResource')}</div>
+          <ResourceChoice
+            options={choice.choices.filter(
+              (c): c is Resources => typeof c !== 'number' && typeof c !== 'string',
+            )}
+            onSelect={handleResourceSelect}
+          />
         </div>
       </div>
     );

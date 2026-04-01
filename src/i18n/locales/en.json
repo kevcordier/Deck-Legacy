@@ -113,6 +113,12 @@
     "discardForCostSubtitle": "Choose a card to discard ({{current}}/{{total}})",
     "cancel": "Cancel"
   },
+  "triggerPile": {
+    "title": "Pending effects",
+    "subtitle": "Choose resolution order",
+    "resolve": "Resolve",
+    "skip": "Skip"
+  },
   "deckViewer": {
     "title": "Deck",
     "viewAll": "⊞ View all",
@@ -195,7 +201,9 @@
     "sticker": "Sticker",
     "track": "Track",
     "step": "step {{progress}}",
-    "choice": "Choice"
+    "choice": "Choice",
+    "pass": "Pass",
+    "passiveEffect": "Passive effect"
   },
   "gameOver": {
     "title": "Game Over",

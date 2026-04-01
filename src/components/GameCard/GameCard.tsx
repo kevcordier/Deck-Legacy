@@ -7,7 +7,7 @@ import {
   getActiveState,
   getEffectiveProductions,
   tagClass,
-  canAffordCost,
+  canAffordResources,
 } from '@engine/application/cardHelpers';
 import { renderTextWithIcons } from '@engine/application/renderHelpers';
 import { getResMeta } from '@engine/application/resourceHelpers';
@@ -18,9 +18,10 @@ import passifIcon from '@assets/icons/passif.svg';
 import activatedIcon from '@assets/icons/activated.png';
 import timeIcon from '@assets/icons/time.png';
 import destroyIcon from '@assets/icons/destroy.png';
+import forcedtrigger from '@assets/icons/forcedtrigger.png';
+import trigger from '@assets/icons/trigger.png';
 import type { CardDef, CardInstance, Sticker, Resources } from '@engine/domain/types';
-import { TargetScope, Trigger } from '@engine/domain/enums';
-import { useGame } from '@hooks/useGame';
+import { TargetScope } from '@engine/domain/enums';
 
 interface GameCardProps {
   instance: CardInstance;
@@ -34,6 +35,7 @@ interface GameCardProps {
   style?: React.CSSProperties;
   animDelay?: number;
   hideStatePreview?: boolean;
+  isBlocked?: boolean;
 }
 
 export function GameCard({
@@ -48,24 +50,23 @@ export function GameCard({
   style,
   animDelay = 0,
   hideStatePreview = false,
+  isBlocked = false,
 }: GameCardProps) {
   const { t } = useTranslation();
   const cs = getActiveState(instance, defs);
   const def = defs[instance.cardId];
-  const { state } = useGame();
 
-  const isBlocked = Object.values(state.blockingCards).includes(instance.id);
   const isEnemy = (cs.tags ?? []).some(
     tag => tag.toLowerCase() === 'enemy' || tag.toLowerCase() === 'ennemy',
   );
   const isPermanent = def?.permanent;
-  const productions = getEffectiveProductions(cs, instance, stickerDefs);
+  const sc = getActiveState(instance, defs);
+  const base = sc.productions?.[0] || {};
+  const productions = getEffectiveProductions(base, instance, stickerDefs);
   const hasProductions = Object.keys(productions).length > 0;
   const canActivate = isOnBoard && !isBlocked && hasProductions && !!onActivate;
   const upgrades = cs.upgrade ?? [];
-  const actions = (cs.cardEffects ?? []).filter(
-    ce => !ce.trigger || ce.trigger !== Trigger.ON_PLAY,
-  );
+  const actions = cs.cardEffects ?? [];
   const glory = cs.glory ?? 0;
   const resourceOptions = cs.productions as Resources[] | undefined;
 
@@ -94,8 +95,8 @@ export function GameCard({
       <div className={`gc-header${isEnemy ? ' enemy' : ''}`}>
         <div className="gc-name-row">
           <span className={`gc-name${isEnemy ? ' enemy' : ''}`}>
-            {instance.deckEntryId !== undefined && instance.deckEntryId !== 0 && (
-              <span className="gc-deck-id">#{instance.deckEntryId}</span>
+            {instance.id !== undefined && instance.id !== 0 && (
+              <span className="gc-deck-id">#{instance.id}</span>
             )}
             {tCardName(t, instance.cardId, cs.id, cs.name)}
           </span>
@@ -181,22 +182,26 @@ export function GameCard({
           {/* Action buttons */}
           {!isBlocked &&
             actions.map((action, i) => {
-              const affordable = !action.cost || canAffordCost(currentResources, action.cost);
+              const affordable = !action.cost || canAffordResources(currentResources, action.cost);
               const actionLabel = tCardActionLabel(t, instance.cardId, cs.id, i, action.label);
               const actionDesc =
                 tCardActionDescription(t, instance.cardId, cs.id, i) || actionLabel;
-              const hasDestroyItselfCost = action.cost?.destroy?.some(
-                c => c.scope === TargetScope.SELF,
-              );
+              const hasDestroyItselfCost = action.cost?.destroy?.scope === TargetScope.SELF;
+              const haveTrigger = !!action.trigger;
+              const isOptional = action.optional;
               return (
                 <button
                   key={i}
                   onClick={() => onAction?.(action.label)}
-                  disabled={!affordable || !canActivate}
+                  disabled={!affordable || !canActivate || haveTrigger}
                   title={actionDesc}
                   className="gc-action-btn"
                 >
-                  {hasDestroyItselfCost ? (
+                  {haveTrigger && !isOptional ? (
+                    <img src={forcedtrigger} className="gc-action-icon" alt="" />
+                  ) : haveTrigger && isOptional ? (
+                    <img src={trigger} className="gc-action-icon" alt="" />
+                  ) : hasDestroyItselfCost ? (
                     <img src={destroyIcon} className="gc-action-icon" alt="" />
                   ) : action.endsTurn ? (
                     <img src={timeIcon} className="gc-action-icon" alt="" />
@@ -207,23 +212,6 @@ export function GameCard({
                   )}
 
                   {renderTextWithIcons(actionLabel)}
-                  {action.cost?.resources?.[0] && (
-                    <span className="gc-action-cost">
-                      (
-                      {Object.entries(action.cost.resources[0]).map(([k, v], ci) => (
-                        <React.Fragment key={k}>
-                          {ci > 0 && ', '}
-                          {v}
-                          <img
-                            src={getResMeta(k).iconUrl}
-                            className={`res-icon ${getResMeta(k).cls} res-sm`}
-                            alt={k}
-                          />
-                        </React.Fragment>
-                      ))}
-                      )
-                    </span>
-                  )}
                 </button>
               );
             })}
@@ -231,7 +219,7 @@ export function GameCard({
           {/* Upgrade buttons */}
           {!isBlocked &&
             upgrades.map((upg, i) => {
-              const affordable = canAffordCost(currentResources, upg.cost);
+              const affordable = canAffordResources(currentResources, upg.cost);
               const targetState = def?.states.find(s => s.id === upg.upgradeTo);
               return (
                 <button

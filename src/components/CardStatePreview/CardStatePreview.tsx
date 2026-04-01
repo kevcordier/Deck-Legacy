@@ -78,7 +78,7 @@ function CardStatesModal({
               <div className="csp-card-meta">
                 {t('cardPreview.statesMeta', {
                   count: def.states.length,
-                  id: instance.deckEntryId,
+                  id: instance.id,
                 })}
               </div>
             </div>

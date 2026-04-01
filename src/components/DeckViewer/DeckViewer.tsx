@@ -7,8 +7,8 @@ import { GameCard } from '@components/GameCard';
 import type { CardInstance, CardDef, Sticker } from '@engine/domain/types';
 
 interface DeckViewerProps {
-  deck: string[];
-  instances: Record<string, CardInstance>;
+  deck: number[];
+  instances: Record<number, CardInstance>;
   defs: Record<number, CardDef>;
   stickers?: Record<number, Sticker>;
 }
@@ -18,15 +18,14 @@ export function DeckViewer({ deck, instances, defs, stickers = {} }: DeckViewerP
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const topUid = deck[0];
-  const topInst = topUid ? instances[topUid] : null;
+  const topId = deck[0];
+  const topInst = topId ? instances[topId] : null;
 
-  // List sorted by deckEntryId (not deck order) — no info leak on next card
   const sortedList = useMemo(() => {
     return [...deck]
-      .map(uid => instances[uid])
+      .map(id => instances[id])
       .filter(Boolean)
-      .sort((a, b) => (a.deckEntryId ?? 9999) - (b.deckEntryId ?? 9999));
+      .sort((a, b) => (a.id ?? 9999) - (b.id ?? 9999));
   }, [deck, instances]);
 
   if (deck.length === 0)
@@ -73,11 +72,12 @@ export function DeckViewer({ deck, instances, defs, stickers = {} }: DeckViewerP
           <div className="dv-list-label">{t('deckViewer.remainingCards')}</div>
           {sortedList.slice(1).map((inst, i) => {
             const cs = getActiveState(inst, defs);
-            const prod = getEffectiveProductions(cs, inst, stickers);
+            const base = cs.productions?.[0] || {};
+            const prod = getEffectiveProductions(base, inst, stickers);
             const glory = cs.glory ?? 0;
             return (
               <div key={inst.id} className="dv-row" style={{ animationDelay: `${i * 15}ms` }}>
-                <span className="dv-row-id">#{inst.deckEntryId}</span>
+                <span className="dv-row-id">#{inst.id}</span>
                 <span className="dv-row-name">{cs.name}</span>
                 <div className="dv-row-prods">
                   {Object.entries(prod)

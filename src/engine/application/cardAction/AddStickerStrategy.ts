@@ -1,12 +1,15 @@
-import type { CardEffectStrategy } from '@engine/application/cardEffect/CardEffectStrategy';
+import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import type { GameState } from '@engine/domain/types';
 
-export class AddStickerStrategy implements CardEffectStrategy {
+export class AddStickerStrategy implements CardActionStrategy {
   applyEffect(
     gameState: GameState,
     payload: {
+      id: string;
+      type: string;
+      sourceInstanceId: number;
       stickerId: number;
-      cardId: string;
+      cardId: number;
     },
   ): GameState {
     gameState.stickerStock[payload.stickerId]--;

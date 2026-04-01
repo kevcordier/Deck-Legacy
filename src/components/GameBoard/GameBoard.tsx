@@ -21,35 +21,31 @@ export function GameBoard() {
     defs,
     stickerDefs,
     score,
-    pendingChoice,
+    pendingChoices,
+    triggerPile,
     hasSave,
     loadGame,
     deleteSave,
     startGame,
     startRound,
     startTurn,
-    activateCard,
+    resolveProduction,
     resolveAction,
     resolveUpgrade,
     progress,
     endTurnVoluntary,
+    resolvePlayerChoice,
+    resolvePayCost,
+    skipTrigger,
     canRewind,
     rewindEvent,
-    resolveChoice,
-    resolvePlayFromDiscard,
-    resolveResourceChoice,
-    resolveCopyProduction,
-    resolveChooseState,
-    resolveBlockCard,
-    resolveDiscardCost,
-    cancelDiscardCost,
   } = useGame();
 
   const { t } = useTranslation();
   const [logOpen, setLogOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
-  const [drawnUids, setDrawnUids] = useState<Set<string>>(new Set());
-  const prevBoardRef = useRef<string[]>([]);
+  const [drawnIds, setDrawnIds] = useState<Set<number>>(new Set());
+  const prevBoardRef = useRef<number[]>([]);
 
   useEffect(() => {
     if (hasSave) loadGame();
@@ -58,10 +54,10 @@ export function GameBoard() {
 
   useEffect(() => {
     const prevBoard = prevBoardRef.current;
-    const newlyDrawn = gs.board.filter(uid => !prevBoard.includes(uid));
+    const newlyDrawn = gs.board.filter(id => !prevBoard.includes(id));
     if (newlyDrawn.length > 0) {
-      setDrawnUids(new Set(newlyDrawn));
-      const timer = setTimeout(() => setDrawnUids(new Set()), 500);
+      setDrawnIds(new Set(newlyDrawn));
+      const timer = setTimeout(() => setDrawnIds(new Set()), 500);
       prevBoardRef.current = gs.board;
       return () => clearTimeout(timer);
     }
@@ -75,7 +71,6 @@ export function GameBoard() {
   let phase: Phase = 'pregame';
   if (!isGameStarted) phase = 'pregame';
   else if (gs.round === 0) phase = 'preround';
-  else if (gs.board.length === 0 && deckEmpty) phase = 'preround';
   else if (gs.board.length === 0 && gs.turn === 0 && !deckEmpty && gs.round > 1)
     phase = 'roundpreview';
   else phase = 'playing';
@@ -206,14 +201,14 @@ export function GameBoard() {
                 <div className="gb-preround-subtitle">{t('roundpreview.subtitle')}</div>
               </div>
 
-              {gs.lastAddedUids.length > 0 && (
+              {gs.lastAddedIds.length > 0 && (
                 <div className="gb-preround-cards">
-                  {gs.lastAddedUids.map((uid: string, i: number) => {
-                    const inst = gs.instances[uid];
+                  {gs.lastAddedIds.map((id: number, i: number) => {
+                    const inst = gs.instances[id];
                     if (!inst) return null;
                     return (
                       <GameCard
-                        key={uid}
+                        key={id}
                         instance={inst}
                         defs={defs}
                         stickerDefs={stickerDefs}
@@ -239,14 +234,14 @@ export function GameBoard() {
               subtitle={t('cardCount', { count: gs.permanents.length })}
             >
               <CardRow>
-                {gs.permanents.map((uid, i) => {
-                  const inst = gs.instances[uid];
+                {gs.permanents.map((id, i) => {
+                  const inst = gs.instances[id];
                   if (!inst) return null;
                   return (
                     <div
-                      key={uid}
-                      className={drawnUids.has(uid) ? 'card-draw' : ''}
-                      style={{ animationDelay: drawnUids.has(uid) ? `${i * 60}ms` : undefined }}
+                      key={id}
+                      className={drawnIds.has(id) ? 'card-draw' : ''}
+                      style={{ animationDelay: drawnIds.has(id) ? `${i * 60}ms` : undefined }}
                     >
                       <GameCard
                         instance={inst}
@@ -254,9 +249,9 @@ export function GameBoard() {
                         stickerDefs={stickerDefs}
                         currentResources={gs.resources}
                         isOnBoard={true}
-                        onActivate={() => activateCard(uid)}
-                        onAction={label => resolveAction(uid, label)}
-                        onUpgrade={id => resolveUpgrade(uid, id)}
+                        onActivate={() => resolveProduction(id)}
+                        onAction={label => resolveAction(id, label)}
+                        onUpgrade={upgradeId => resolveUpgrade(id, upgradeId)}
                       />
                     </div>
                   );
@@ -272,14 +267,14 @@ export function GameBoard() {
               subtitle={`${t('cardCount', { count: gs.board.length })}`}
             >
               <CardRow>
-                {gs.board.map((uid, i) => {
-                  const inst = gs.instances[uid];
+                {gs.board.map((id, i) => {
+                  const inst = gs.instances[id];
                   if (!inst) return null;
                   return (
                     <div
-                      key={uid}
-                      className={drawnUids.has(uid) ? 'card-draw' : ''}
-                      style={{ animationDelay: drawnUids.has(uid) ? `${i * 60}ms` : undefined }}
+                      key={id}
+                      className={drawnIds.has(id) ? 'card-draw' : ''}
+                      style={{ animationDelay: drawnIds.has(id) ? `${i * 60}ms` : undefined }}
                     >
                       <GameCard
                         instance={inst}
@@ -287,9 +282,10 @@ export function GameBoard() {
                         stickerDefs={stickerDefs}
                         currentResources={gs.resources}
                         isOnBoard={true}
-                        onActivate={() => activateCard(uid)}
-                        onAction={label => resolveAction(uid, label)}
-                        onUpgrade={id => resolveUpgrade(uid, id)}
+                        onActivate={() => resolveProduction(id)}
+                        onAction={label => resolveAction(id, label)}
+                        onUpgrade={upgradeId => resolveUpgrade(id, upgradeId)}
+                        isBlocked={Object.values(gs.blockingCards).includes(id)}
                       />
                     </div>
                   );
@@ -322,27 +318,19 @@ export function GameBoard() {
         </div>
       )}
 
-      {/* ── Pending choice modal ── */}
-      {pendingChoice && (
+      {/* ── Pending choice modal (inclut triggerPile) ── */}
+      {((pendingChoices && pendingChoices.length > 0) ||
+        (triggerPile && Object.keys(triggerPile).length > 0)) && (
         <PendingChoiceModal
-          choice={pendingChoice}
+          choice={pendingChoices?.[0]}
+          triggerPile={triggerPile}
           defs={defs}
           instances={gs.instances}
           currentResources={gs.resources}
-          onDiscoverCard={resolveChoice}
-          onChooseUpgrade={id =>
-            resolveUpgrade(
-              pendingChoice?.kind === 'choose_upgrade' ? pendingChoice.cardUid : '',
-              id,
-            )
-          }
-          onPlayFromDiscard={resolvePlayFromDiscard}
-          onChooseResource={resolveResourceChoice}
-          onChooseState={resolveChooseState}
-          onCopyProduction={resolveCopyProduction}
-          onBlockCard={resolveBlockCard}
-          onDiscardForCost={resolveDiscardCost}
-          onCancelDiscardCost={cancelDiscardCost}
+          resolvePlayerChoice={resolvePlayerChoice}
+          resolvePayCost={resolvePayCost}
+          onResolveTrigger={resolveAction}
+          onSkipTrigger={skipTrigger}
         />
       )}
 

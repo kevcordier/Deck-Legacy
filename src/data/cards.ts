@@ -1,5 +1,5 @@
 import type { CardDef } from '@engine/domain/types';
-import { ResourceType, CardTag, Trigger, EffectType, TargetScope } from '@engine/domain/enums';
+import { ResourceType, CardTag, Trigger, ActionType, TargetScope } from '@engine/domain/enums';
 
 export const cardsData: CardDef[] = [
   {
@@ -36,20 +36,17 @@ export const cardsData: CardDef[] = [
           {
             label: 'Discard a friendly card to gain 2 gold.',
             cost: {
-              discard: [
-                {
-                  scope: TargetScope.FRIENDLY,
-                },
-              ],
+              discard: {
+                scope: TargetScope.FRIENDLY,
+              },
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.GOLD]: 2,
-                  },
-                ],
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  [ResourceType.GOLD]: 2,
+                },
               },
             ],
           },
@@ -148,14 +145,13 @@ export const cardsData: CardDef[] = [
                 },
               ],
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.STONE]: 2,
-                  },
-                ],
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  [ResourceType.STONE]: 2,
+                },
               },
             ],
           },
@@ -211,13 +207,13 @@ export const cardsData: CardDef[] = [
           {
             label: 'Discover Mine (84/85).',
             cost: {
-              destroy: [{ scope: TargetScope.SELF }],
+              destroy: { scope: TargetScope.SELF },
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.DISCOVER_CARD,
-                number: 1,
-                cards: [84, 85],
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: { ids: [84, 85] },
               },
             ],
           },
@@ -248,25 +244,27 @@ export const cardsData: CardDef[] = [
                 },
               ],
             },
-            upgradeTo: 3,
+            upgradeTo: 4,
           },
         ],
         cardEffects: [
           {
             label: 'Gain 3 woods, then upgrade.',
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.WOOD]: 3,
-                  },
-                ],
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  [ResourceType.WOOD]: 3,
+                },
               },
               {
-                type: EffectType.UPGRADE_CARD,
-                cardId: 'self',
-                upgradeTo: 2,
+                id: 2,
+                type: ActionType.UPGRADE_CARD,
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+                states: [2],
               },
             ],
           },
@@ -302,7 +300,7 @@ export const cardsData: CardDef[] = [
                 },
               ],
             },
-            upgradeTo: 4,
+            upgradeTo: 3,
           },
         ],
       },
@@ -326,13 +324,13 @@ export const cardsData: CardDef[] = [
           {
             label: 'Discover Shrine (82/83).',
             cost: {
-              destroy: [{ scope: TargetScope.SELF }],
+              destroy: { scope: TargetScope.SELF },
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.DISCOVER_CARD,
-                number: 1,
-                cards: [82, 83],
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: { ids: [82, 83] },
               },
             ],
           },
@@ -380,12 +378,14 @@ export const cardsData: CardDef[] = [
         cardEffects: [
           {
             label: 'Play 1 Land from discard pile.',
-            effects: [
+            actions: [
               {
-                type: EffectType.PLAY_CARD,
-                number: 1,
-                tags: [CardTag.LAND],
-                scope: TargetScope.DISCARD,
+                id: 1,
+                type: ActionType.PLAY_CARD,
+                cards: {
+                  tags: [CardTag.LAND],
+                  scope: TargetScope.DISCARD,
+                },
               },
             ],
           },
@@ -417,12 +417,15 @@ export const cardsData: CardDef[] = [
         cardEffects: [
           {
             label: 'Play 1 Land or Building from discard pile.',
-            effects: [
+            actions: [
               {
-                type: EffectType.PLAY_CARD,
-                number: 1,
-                tags: [CardTag.LAND, CardTag.BUILDING],
-                scope: TargetScope.DISCARD,
+                id: 1,
+                type: ActionType.PLAY_CARD,
+                cards: {
+                  number: 1,
+                  tags: [CardTag.LAND, CardTag.BUILDING],
+                  scope: TargetScope.DISCARD,
+                },
               },
             ],
           },
@@ -455,11 +458,14 @@ export const cardsData: CardDef[] = [
         cardEffects: [
           {
             label: 'Play 1 card from discard pile.',
-            effects: [
+            actions: [
               {
-                type: EffectType.PLAY_CARD,
-                number: 1,
-                scope: TargetScope.DISCARD,
+                id: 1,
+                type: ActionType.PLAY_CARD,
+                cards: {
+                  number: 1,
+                  scope: TargetScope.DISCARD,
+                },
               },
             ],
           },
@@ -490,14 +496,13 @@ export const cardsData: CardDef[] = [
                 },
               ],
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.WOOD]: 1,
-                  },
-                ],
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  [ResourceType.WOOD]: 1,
+                },
               },
             ],
           },
@@ -530,17 +535,20 @@ export const cardsData: CardDef[] = [
                 },
               ],
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.WOOD]: 1,
-                  },
-                  {
-                    [ResourceType.STONE]: 1,
-                  },
-                ],
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  choice: [
+                    {
+                      [ResourceType.WOOD]: 1,
+                    },
+                    {
+                      [ResourceType.STONE]: 1,
+                    },
+                  ],
+                },
               },
             ],
           },
@@ -573,20 +581,23 @@ export const cardsData: CardDef[] = [
                 },
               ],
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.WOOD]: 1,
-                  },
-                  {
-                    [ResourceType.STONE]: 1,
-                  },
-                  {
-                    [ResourceType.IRON]: 1,
-                  },
-                ],
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  choice: [
+                    {
+                      [ResourceType.WOOD]: 1,
+                    },
+                    {
+                      [ResourceType.STONE]: 1,
+                    },
+                    {
+                      [ResourceType.IRON]: 1,
+                    },
+                  ],
+                },
               },
             ],
           },
@@ -644,14 +655,13 @@ export const cardsData: CardDef[] = [
                 },
               ],
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.WOOD]: 1,
-                  },
-                ],
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  [ResourceType.WOOD]: 1,
+                },
               },
             ],
           },
@@ -683,14 +693,13 @@ export const cardsData: CardDef[] = [
                 },
               ],
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.WOOD]: 2,
-                  },
-                ],
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  [ResourceType.WOOD]: 2,
+                },
               },
             ],
           },
@@ -835,16 +844,22 @@ export const cardsData: CardDef[] = [
         cardEffects: [
           {
             label: 'Discover a new region (71/72/73/74). Then upgrade.',
-            effects: [
+            actions: [
               {
-                type: EffectType.DISCOVER_CARD,
-                number: 1,
-                cards: [71, 72, 73, 74],
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  number: 1,
+                  ids: [71, 72, 73, 74],
+                },
               },
               {
-                type: EffectType.UPGRADE_CARD,
-                cardId: 'self',
-                upgradeTo: 3,
+                id: 2,
+                type: ActionType.UPGRADE_CARD,
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+                states: [3],
               },
             ],
           },
@@ -864,17 +879,16 @@ export const cardsData: CardDef[] = [
         cardEffects: [
           {
             label: 'Choose a Land in play. Gain its productions as resources.',
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    card: {
-                      scope: TargetScope.BOARD,
-                      tags: [CardTag.LAND],
-                    },
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  cards: {
+                    scope: TargetScope.BOARD,
+                    tags: [CardTag.LAND],
                   },
-                ],
+                },
               },
             ],
           },
@@ -887,20 +901,23 @@ export const cardsData: CardDef[] = [
         cardEffects: [
           {
             label: 'Gain 1 Gold/Wood/Stone.',
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.GOLD]: 1,
-                  },
-                  {
-                    [ResourceType.WOOD]: 1,
-                  },
-                  {
-                    [ResourceType.STONE]: 1,
-                  },
-                ],
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  choice: [
+                    {
+                      [ResourceType.GOLD]: 1,
+                    },
+                    {
+                      [ResourceType.WOOD]: 1,
+                    },
+                    {
+                      [ResourceType.STONE]: 1,
+                    },
+                  ],
+                },
               },
             ],
           },
@@ -924,10 +941,15 @@ export const cardsData: CardDef[] = [
             label: 'When played, blocks 1 card with gold productions.',
             trigger: Trigger.ON_PLAY,
             optional: false,
-            effects: [
+            actions: [
               {
-                type: EffectType.BLOCK_CARD,
-                produces: [ResourceType.GOLD],
+                id: 1,
+                type: ActionType.BLOCK_CARD,
+                cards: {
+                  scope: TargetScope.BOARD,
+                  tags: [CardTag.LAND],
+                  produces: [ResourceType.GOLD],
+                },
               },
             ],
           },
@@ -939,54 +961,60 @@ export const cardsData: CardDef[] = [
                   [ResourceType.SWORD]: 1,
                 },
               ],
-              destroy: [{ scope: TargetScope.SELF }],
+              destroy: { scope: TargetScope.SELF },
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.GOLD]: 1,
-                  },
-                  {
-                    [ResourceType.WOOD]: 1,
-                  },
-                  {
-                    [ResourceType.STONE]: 1,
-                  },
-                  {
-                    [ResourceType.IRON]: 1,
-                  },
-                  {
-                    [ResourceType.SWORD]: 1,
-                  },
-                  {
-                    [ResourceType.GOODS]: 1,
-                  },
-                ],
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  choice: [
+                    {
+                      [ResourceType.GOLD]: 1,
+                    },
+                    {
+                      [ResourceType.WOOD]: 1,
+                    },
+                    {
+                      [ResourceType.STONE]: 1,
+                    },
+                    {
+                      [ResourceType.IRON]: 1,
+                    },
+                    {
+                      [ResourceType.SWORD]: 1,
+                    },
+                    {
+                      [ResourceType.GOODS]: 1,
+                    },
+                  ],
+                },
               },
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.GOLD]: 1,
-                  },
-                  {
-                    [ResourceType.WOOD]: 1,
-                  },
-                  {
-                    [ResourceType.STONE]: 1,
-                  },
-                  {
-                    [ResourceType.IRON]: 1,
-                  },
-                  {
-                    [ResourceType.SWORD]: 1,
-                  },
-                  {
-                    [ResourceType.GOODS]: 1,
-                  },
-                ],
+                id: 2,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  choice: [
+                    {
+                      [ResourceType.GOLD]: 1,
+                    },
+                    {
+                      [ResourceType.WOOD]: 1,
+                    },
+                    {
+                      [ResourceType.STONE]: 1,
+                    },
+                    {
+                      [ResourceType.IRON]: 1,
+                    },
+                    {
+                      [ResourceType.SWORD]: 1,
+                    },
+                    {
+                      [ResourceType.GOODS]: 1,
+                    },
+                  ],
+                },
               },
             ],
           },
@@ -999,17 +1027,16 @@ export const cardsData: CardDef[] = [
         cardEffects: [
           {
             label: 'Choose a Building in play. Gain its productions as resources.',
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    card: {
-                      scope: TargetScope.BOARD,
-                      tags: [CardTag.BUILDING],
-                    },
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  cards: {
+                    scope: TargetScope.BOARD,
+                    tags: [CardTag.BUILDING],
                   },
-                ],
+                },
               },
             ],
           },
@@ -1033,11 +1060,15 @@ export const cardsData: CardDef[] = [
             label: 'When played, blocks 1 card with gold productions.',
             trigger: Trigger.ON_PLAY,
             optional: false,
-            effects: [
+            actions: [
               {
-                type: EffectType.BLOCK_CARD,
-                number: 1,
-                produces: ['gold'],
+                id: 1,
+                type: ActionType.BLOCK_CARD,
+                cards: {
+                  scope: TargetScope.BOARD,
+                  tags: [CardTag.LAND],
+                  produces: [ResourceType.GOLD],
+                },
               },
             ],
           },
@@ -1049,54 +1080,60 @@ export const cardsData: CardDef[] = [
                   [ResourceType.SWORD]: 1,
                 },
               ],
-              destroy: [{ scope: TargetScope.SELF }],
+              destroy: { scope: TargetScope.SELF },
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.GOLD]: 1,
-                  },
-                  {
-                    [ResourceType.WOOD]: 1,
-                  },
-                  {
-                    [ResourceType.STONE]: 1,
-                  },
-                  {
-                    [ResourceType.IRON]: 1,
-                  },
-                  {
-                    [ResourceType.SWORD]: 1,
-                  },
-                  {
-                    [ResourceType.GOODS]: 1,
-                  },
-                ],
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  choice: [
+                    {
+                      [ResourceType.GOLD]: 1,
+                    },
+                    {
+                      [ResourceType.WOOD]: 1,
+                    },
+                    {
+                      [ResourceType.STONE]: 1,
+                    },
+                    {
+                      [ResourceType.IRON]: 1,
+                    },
+                    {
+                      [ResourceType.SWORD]: 1,
+                    },
+                    {
+                      [ResourceType.GOODS]: 1,
+                    },
+                  ],
+                },
               },
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    [ResourceType.GOLD]: 1,
-                  },
-                  {
-                    [ResourceType.WOOD]: 1,
-                  },
-                  {
-                    [ResourceType.STONE]: 1,
-                  },
-                  {
-                    [ResourceType.IRON]: 1,
-                  },
-                  {
-                    [ResourceType.SWORD]: 1,
-                  },
-                  {
-                    [ResourceType.GOODS]: 1,
-                  },
-                ],
+                id: 2,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  choice: [
+                    {
+                      [ResourceType.GOLD]: 1,
+                    },
+                    {
+                      [ResourceType.WOOD]: 1,
+                    },
+                    {
+                      [ResourceType.STONE]: 1,
+                    },
+                    {
+                      [ResourceType.IRON]: 1,
+                    },
+                    {
+                      [ResourceType.SWORD]: 1,
+                    },
+                    {
+                      [ResourceType.GOODS]: 1,
+                    },
+                  ],
+                },
               },
             ],
           },
@@ -1109,17 +1146,16 @@ export const cardsData: CardDef[] = [
         cardEffects: [
           {
             label: 'Choose a Land in play. Gain its productions as resources.',
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resources: [
-                  {
-                    card: {
-                      scope: TargetScope.BOARD,
-                      tags: [CardTag.LAND],
-                    },
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resources: {
+                  cards: {
+                    scope: TargetScope.BOARD,
+                    tags: [CardTag.LAND],
                   },
-                ],
+                },
               },
             ],
           },
@@ -1175,11 +1211,14 @@ export const cardsData: CardDef[] = [
                 },
               ],
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.DISCOVER_CARD,
-                number: 1,
-                cards: [103],
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  number: 1,
+                  ids: [103],
+                },
               },
             ],
           },
@@ -1218,11 +1257,14 @@ export const cardsData: CardDef[] = [
                 },
               ],
             },
-            effects: [
+            actions: [
               {
-                type: EffectType.DISCOVER_CARD,
-                number: 1,
-                cards: [104],
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  number: 1,
+                  ids: [104],
+                },
               },
             ],
           },
@@ -1256,14 +1298,19 @@ export const cardsData: CardDef[] = [
           {
             label: 'This card has +1 gold production for each person you have in play.',
             passive: true,
-            effects: [
+            actions: [
               {
+                id: 1,
                 type: 'increase_production',
-                target: 'self',
-                resource: ResourceType.GOLD,
-                amount_per_card: 1,
-                scope: TargetScope.BOARD,
-                tags: [CardTag.PERSON],
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+                resource_per_card: {
+                  resource: ResourceType.GOLD,
+                  amount: 1,
+                  scope: TargetScope.BOARD,
+                  tags: [CardTag.PERSON],
+                },
               },
             ],
           },
@@ -1322,16 +1369,22 @@ export const cardsData: CardDef[] = [
         cardEffects: [
           {
             label: 'Reset to discover Jewellery (90).',
-            effects: [
+            actions: [
               {
-                type: EffectType.DISCOVER_CARD,
-                number: 1,
-                cards: [90],
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  number: 1,
+                  ids: [90],
+                },
               },
               {
-                type: EffectType.UPGRADE_CARD,
-                cardId: 'self',
-                upgradeTo: 1,
+                id: 2,
+                type: ActionType.UPGRADE_CARD,
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+                states: [1],
               },
             ],
           },
@@ -1363,13 +1416,16 @@ export const cardsData: CardDef[] = [
         cardEffects: [
           {
             label: 'Gain 1 Sword for each Person in play.',
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_RESOURCES,
-                resource: ResourceType.SWORD,
-                amount_per_card: 1,
-                scope: TargetScope.BOARD,
-                tags: [CardTag.PERSON],
+                id: 1,
+                type: ActionType.ADD_RESOURCES,
+                resource_per_card: {
+                  amount: 1,
+                  resource: ResourceType.SWORD,
+                  scope: TargetScope.BOARD,
+                  tags: [CardTag.PERSON],
+                },
               },
             ],
           },
@@ -1540,11 +1596,14 @@ export const cardsData: CardDef[] = [
         cardEffects: [
           {
             label: 'Discover Shore 75.',
-            effects: [
+            actions: [
               {
-                type: EffectType.DISCOVER_CARD,
-                number: 1,
-                cards: [75],
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  number: 1,
+                  ids: [75],
+                },
               },
             ],
           },
@@ -1562,10 +1621,14 @@ export const cardsData: CardDef[] = [
             description:
               'As long as this card is in play, you may discard the top card of your deck. You may do this repeatedly, and this card is not discarded by doing so.',
             passive: true,
-            effects: [
+            actions: [
               {
-                type: EffectType.DISCARD_CARD,
-                scope: 'top_of_deck',
+                id: 1,
+                type: ActionType.DISCARD_CARD,
+                cards: {
+                  number: 1,
+                  scope: TargetScope.TOP_OF_DECK,
+                },
               },
             ],
           },
@@ -1587,11 +1650,14 @@ export const cardsData: CardDef[] = [
             description:
               'Now that you have got the hang of the game, you may reset to start again if you like to give it your best shot. If you continue, you will discover 4 cards, cards 24-27. Look at them now and THEN decide if you want to restart or continue. After this card comes the legacy part of the game, where some cards will permanently change over the course of the game. You will not be able to reset the game once you continue down this road.',
             trigger: Trigger.ON_DISCOVER,
-            effects: [
+            actions: [
               {
-                type: EffectType.DISCOVER_CARD,
-                number: 4,
-                cards: [24, 25, 26, 27],
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  number: 4,
+                  ids: [24, 25, 26, 27],
+                },
               },
             ],
           },
@@ -1613,11 +1679,15 @@ export const cardsData: CardDef[] = [
             description:
               'This land seems to grow anything you put into the ground. Add sticker 1 (Gold) as production to a land.',
             trigger: Trigger.ON_DISCOVER,
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_STICKER,
-                sticker: 1,
-                tags: [CardTag.LAND],
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerId: 1,
+                cards: {
+                  number: 1,
+                  tags: [CardTag.LAND],
+                },
               },
             ],
           },
@@ -1626,11 +1696,15 @@ export const cardsData: CardDef[] = [
             description:
               "You're getting the hang of this! Choose 1 building and boost its production (add a resource sticker to it to make it produce 1 more of a resource it already produces. Resource stickers are numbered 1-6 on the sticker sheet).",
             trigger: Trigger.ON_DISCOVER,
-            effects: [
+            actions: [
               {
-                type: EffectType.ADD_STICKER,
-                sticker: 'boost',
-                tags: [CardTag.BUILDING],
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerId: 'boost',
+                cards: {
+                  number: 1,
+                  tags: [CardTag.BUILDING],
+                },
               },
             ],
           },

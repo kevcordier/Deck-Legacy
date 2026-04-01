@@ -113,6 +113,12 @@
     "discardForCostSubtitle": "Choisissez une carte à défausser ({{current}}/{{total}})",
     "cancel": "Annuler"
   },
+  "triggerPile": {
+    "title": "Effets en attente",
+    "subtitle": "Choisissez l'ordre de résolution",
+    "resolve": "Résoudre",
+    "skip": "Ignorer"
+  },
   "deckViewer": {
     "title": "Pioche",
     "viewAll": "⊞ Voir tout",
@@ -194,7 +200,9 @@
     "sticker": "Sticker",
     "track": "Piste",
     "step": "étape {{progress}}",
-    "choice": "Choix"
+    "choice": "Choix",
+    "pass": "Passer",
+    "passiveEffect": "Effet passif"
   },
   "gameOver": {
     "title": "Partie terminée",

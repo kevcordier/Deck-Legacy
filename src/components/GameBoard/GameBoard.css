@@ -179,6 +179,117 @@
   height: 160px;
 }
 
+/* Trigger pile */
+.gb-trigger-pile {
+  background: rgba(201, 150, 58, 0.06);
+  border: 1px solid rgba(201, 150, 58, 0.22);
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn 0.3s ease;
+}
+
+.gb-trigger-pile-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.gb-trigger-pile-title {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.gb-trigger-pile-subtitle {
+  font-size: 0.68rem;
+  color: var(--stone);
+  font-style: italic;
+}
+
+.gb-trigger-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gb-trigger-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(201, 150, 58, 0.12);
+  border-radius: 8px;
+  padding: 9px 14px;
+}
+
+.gb-trigger-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.gb-trigger-label {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--cream);
+}
+
+.gb-trigger-desc {
+  font-size: 0.7rem;
+  color: var(--stone);
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.gb-trigger-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-trigger-resolve {
+  padding: 5px 14px;
+  background: rgba(201, 150, 58, 0.14);
+  border: 1px solid rgba(201, 150, 58, 0.4);
+  border-radius: 6px;
+  color: var(--gold-l);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.btn-trigger-resolve:hover {
+  background: rgba(201, 150, 58, 0.28);
+  border-color: rgba(201, 150, 58, 0.7);
+}
+
+.btn-trigger-skip {
+  padding: 5px 10px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--stone);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.btn-trigger-skip:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--cream-d);
+}
+
 /* Rewind button */
 .btn-rewind-header {
   background: rgba(192, 64, 64, 0.14);

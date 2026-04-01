@@ -5,19 +5,16 @@ import type {
   Cost,
   Resources,
   Sticker,
-  EffectDef,
+  TriggerEntry,
 } from '@engine/domain/types';
 import { mergeResources } from '@engine/application/resourceHelpers';
-import type { Trigger } from '@engine/domain/enums';
+import { ActionType, TargetScope, Trigger } from '@engine/domain/enums';
 
 export function getEffectiveProductions(
-  cs: CardState,
+  base: Resources,
   instance: CardInstance,
   stickers: Record<number, Sticker> = {},
 ): Resources {
-  const raw = cs.productions;
-  const base: Resources = (raw as Resources[] | undefined)?.[0] ?? {};
-
   const stickerBonus = (instance.stickers[instance.stateId] ?? []).reduce<Resources>(
     (acc, stickerId) => {
       const sticker = stickers[stickerId];
@@ -66,17 +63,30 @@ export function canAffordResources(available: Resources, cost: Cost): boolean {
   );
 }
 
-/** Alias de canAffordResources pour compatibilité avec le code existant. */
-export const canAffordCost = canAffordResources;
-
 export function getInstancesTriggerEffects(
   instances: CardInstance[],
   defs: Record<number, CardDef>,
   effect: Trigger,
-): EffectDef[] {
-  return instances.reduce<EffectDef[]>((acc, instance) => {
+): TriggerEntry[] {
+  return instances.reduce<TriggerEntry[]>((acc, instance) => {
     const state = getActiveState(instance, defs);
+    const cardDef = defs[instance.cardId];
     const effects = state.cardEffects?.filter(ce => ce.trigger === effect) ?? [];
-    return [...acc, ...effects];
-  }, []);
+    if (effect === Trigger.ON_DISCOVER && cardDef.chooseState) {
+      effects.push({
+        label: 'Choose state',
+        actions: [
+          {
+            id: 0,
+            type: ActionType.CHOOSE_STATE,
+            cards: { scope: TargetScope.SELF },
+            states: [1, 2],
+          },
+        ],
+        trigger: Trigger.ON_DISCOVER,
+        optional: false,
+      });
+    }
+    return [...acc, ...effects.map(effectDef => ({ effectDef, sourceInstanceId: instance.id }))];
+  }, [] as TriggerEntry[]);
 }

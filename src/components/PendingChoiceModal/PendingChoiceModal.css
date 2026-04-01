@@ -107,3 +107,89 @@
   border-color: rgba(201, 150, 58, 0.6);
   color: var(--gold-l);
 }
+
+/* ── resolve_trigger ──────────────────────────────────────────────────────── */
+.pcm-trigger-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pcm-trigger-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(201, 150, 58, 0.15);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.pcm-trigger-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.pcm-trigger-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pcm-trigger-label {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--cream);
+}
+
+.pcm-trigger-desc {
+  font-size: 0.72rem;
+  color: var(--stone);
+  font-style: italic;
+  margin-top: 3px;
+}
+
+.pcm-trigger-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.pcm-trigger-btn-resolve {
+  padding: 6px 16px;
+  background: rgba(201, 150, 58, 0.14);
+  border: 1px solid rgba(201, 150, 58, 0.4);
+  border-radius: 6px;
+  color: var(--gold-l);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.pcm-trigger-btn-resolve:hover {
+  background: rgba(201, 150, 58, 0.28);
+  border-color: rgba(201, 150, 58, 0.7);
+}
+
+.pcm-trigger-btn-skip {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--stone);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.pcm-trigger-btn-skip:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--cream-d);
+}

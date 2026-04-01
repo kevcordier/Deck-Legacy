@@ -8,8 +8,8 @@ import type { CardInstance, CardDef } from '@engine/domain/types';
 import { useGame } from '@hooks/useGame';
 
 interface DiscardPileProps {
-  discard: string[];
-  instances: Record<string, CardInstance>;
+  discard: number[];
+  instances: Record<number, CardInstance>;
   defs: Record<number, CardDef>;
 }
 
@@ -19,12 +19,12 @@ export function DiscardPile({ discard, instances, defs }: DiscardPileProps) {
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const topUid = discard[discard.length - 1]; // last discarded = top of pile
-  const topInst = topUid ? instances[topUid] : null;
+  const topId = discard[discard.length - 1]; // last discarded = top of pile
+  const topInst = topId ? instances[topId] : null;
 
   const discardForModal = [...discard]
     .reverse()
-    .map(uid => instances[uid])
+    .map(id => instances[id])
     .filter(Boolean) as CardInstance[];
 
   if (discard.length === 0)
@@ -69,19 +69,19 @@ export function DiscardPile({ discard, instances, defs }: DiscardPileProps) {
       {open && discard.length > 1 && (
         <div className="dp-list">
           <div className="dp-list-label">{t('discardPile.allCards')}</div>
-          {[...discard].reverse().map((uid, i) => {
-            const inst = instances[uid];
+          {[...discard].reverse().map((id, i) => {
+            const inst = instances[id];
             if (!inst) return null;
             const cs = getActiveState(inst, defs);
             const prod = getEffectiveProductions(cs, inst, stickers);
             const glory = cs.glory ?? 0;
             return (
               <div
-                key={`${uid}-${i}`}
+                key={`${id}-${i}`}
                 className="dp-row"
                 style={{ animationDelay: `${Math.min(i * 15, 200)}ms` }}
               >
-                <span className="dp-row-id">#{inst.deckEntryId}</span>
+                <span className="dp-row-id">#{inst.id}</span>
                 <span className="dp-row-name">{cs.name}</span>
                 <div className="dp-row-prods">
                   {Object.entries(prod)

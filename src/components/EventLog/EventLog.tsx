@@ -1,7 +1,18 @@
 import { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
-import type { GameEvent, Resources } from '@engine/domain/types';
+import type {
+  GameEvent,
+  GameStartedEvent,
+  RoundStartedEvent,
+  TurnStartedEvent,
+  CardProducedEvent,
+  UpgradeCardEvent,
+  UseCardEffectEvent,
+  AdvanceEvent,
+  Resources,
+} from '@engine/domain/types';
+import { GameEventType } from '@engine/domain/enums';
 import './EventLog.css';
 
 interface EventLogProps {
@@ -19,171 +30,131 @@ export function EventLog({ events }: EventLogProps) {
   return (
     <div className="el-root">
       <div className="el-scroll">
-        {events.map((evt, i) => {
-          const meta = formatEvent(evt, t);
-          return (
-            <div key={i} className="el-entry" style={{ borderLeft: `2px solid ${meta.color}33` }}>
-              <span className="el-index">{i + 1}</span>
-              <span className="el-dot" style={{ background: meta.color }} />
-              <span className="el-label" style={{ color: meta.color }}>
-                {meta.label}
-              </span>
-              {meta.detail && <span className="el-detail">{meta.detail}</span>}
-            </div>
-          );
-        })}
+        {events.map((evt, i) => renderEvent(evt, i, t))}
         <div ref={bottomRef} />
       </div>
     </div>
   );
 }
 
-// ── Event formatters ──────────────────────────────────────────────────────────
+// ── Renderers ────────────────────────────────────────────────────────────────
+
+function renderEvent(evt: GameEvent, key: number, t: TFunction): React.ReactNode {
+  switch (evt.type) {
+    case GameEventType.GAME_STARTED: {
+      const e = evt as GameStartedEvent;
+      return (
+        <div key={key} className="el-header el-header--game">
+          <span className="el-header-icon">⚜</span>
+          <span className="el-header-label">{t('eventLog.gameStarted')}</span>
+          <span className="el-header-detail">
+            {t('eventLog.cards', { count: e.initialDeck.length })}
+          </span>
+        </div>
+      );
+    }
+
+    case GameEventType.ROUND_STARTED: {
+      const e = evt as RoundStartedEvent;
+      return (
+        <div key={key} className="el-header el-header--round">
+          <span className="el-header-label">{t('eventLog.round', { round: e.round })}</span>
+          {e.newCards.length > 0 && (
+            <span className="el-header-detail">
+              {t('eventLog.discoveries', { count: e.newCards.length })}
+            </span>
+          )}
+        </div>
+      );
+    }
+
+    case GameEventType.TURN_STARTED: {
+      const e = evt as TurnStartedEvent;
+      return (
+        <div key={key} className="el-turn">
+          <span className="el-turn-label">{t('eventLog.turn', { turn: e.turn })}</span>
+          <span className="el-turn-detail">
+            {t('eventLog.deckCards', { count: e.turnCards.length })}
+          </span>
+        </div>
+      );
+    }
+
+    case GameEventType.CARD_PRODUCED: {
+      const e = evt as CardProducedEvent;
+      const gained = res(e.productions);
+      return (
+        <div key={key} className="el-entry el-entry--produced">
+          <span className="el-entry-icon">◆</span>
+          <span className="el-entry-label">{t('eventLog.production')}</span>
+          {gained && <span className="el-entry-detail">+{gained}</span>}
+        </div>
+      );
+    }
+
+    case GameEventType.UPGRADE_CARD: {
+      const e = evt as UpgradeCardEvent;
+      return (
+        <div key={key} className="el-entry el-entry--upgrade">
+          <span className="el-entry-icon">▲</span>
+          <span className="el-entry-label">{t('eventLog.upgrade')}</span>
+          <span className="el-entry-detail">{t('eventLog.toState', { id: e.stateId })}</span>
+        </div>
+      );
+    }
+
+    case GameEventType.USE_CARD_EFFECT: {
+      const e = evt as UseCardEffectEvent;
+      return (
+        <div
+          key={key}
+          className={`el-entry ${e.isDiscarded ? 'el-entry--passive' : 'el-entry--action'}`}
+        >
+          <span className="el-entry-icon">{e.isDiscarded ? '◎' : '▶'}</span>
+          <span className="el-entry-label">
+            {e.isDiscarded ? t('eventLog.passiveEffect') : t('eventLog.action')}
+          </span>
+        </div>
+      );
+    }
+
+    case GameEventType.ADVANCE: {
+      const e = evt as AdvanceEvent;
+      return (
+        <div key={key} className="el-entry el-entry--advance">
+          <span className="el-entry-icon">»</span>
+          <span className="el-entry-label">{t('eventLog.advance')}</span>
+          {e.turnCards.length > 0 && (
+            <span className="el-entry-detail">
+              {t('eventLog.addedCards', { count: e.turnCards.length })}
+            </span>
+          )}
+        </div>
+      );
+    }
+
+    case GameEventType.PASS: {
+      return (
+        <div key={key} className="el-entry el-entry--pass">
+          <span className="el-entry-icon">—</span>
+          <span className="el-entry-label">{t('eventLog.pass')}</span>
+        </div>
+      );
+    }
+
+    default:
+      return (
+        <div key={key} className="el-entry">
+          <span className="el-entry-icon">·</span>
+          <span className="el-entry-label">{evt.type.replace(/_/g, ' ').toLowerCase()}</span>
+        </div>
+      );
+  }
+}
 
 function res(r: Resources): string {
   return Object.entries(r)
     .filter(([, v]) => v > 0)
     .map(([k, v]) => `${v} ${k}`)
     .join(', ');
-}
-
-const COLORS: Record<string, string> = {
-  GAME_STARTED: '#c9963a',
-  ROUND_STARTED: '#c9963a',
-  TURN_STARTED: '#7a9a7a',
-  CARD_ACTIVATED: '#c9963a',
-  ACTION_RESOLVED: '#a0c0e0',
-  UPGRADE_RESOLVED: '#d4832a',
-  UPGRADE_CARD_EFFECT: '#d4832a',
-  PROGRESSED: '#8a9a8a',
-  CARD_BLOCKED: '#c04040',
-  CARD_UNBLOCKED: '#40a040',
-  CARD_DESTROYED: '#c04040',
-  CARD_DISCOVERED: '#c9963a',
-  CARD_STATE_CHOSEN: '#c9963a',
-  CARD_PLAYED_FROM_DISCARD: '#a0c0e0',
-  CARD_ADDED_TO_DECK: '#8a9a8a',
-  STICKER_ADDED: '#c0a8e8',
-  TRACK_ADVANCED: '#90c890',
-  CHOICE_MADE: '#a0a0c0',
-};
-
-function formatEvent(
-  evt: GameEvent,
-  t: TFunction,
-): { label: string; detail?: string; color: string } {
-  const color = COLORS[evt.type] ?? '#8a8478';
-  // Les nouveaux événements stockent les données directement (pas dans payload)
-  const p: Record<string, unknown> = ((evt as unknown as { payload?: Record<string, unknown> })
-    .payload ?? evt) as Record<string, unknown>;
-
-  switch (evt.type) {
-    case 'GAME_STARTED':
-      return {
-        label: t('eventLog.gameStarted'),
-        detail: t('eventLog.cards', { count: p.deckSize ?? 0 }),
-        color,
-      };
-
-    case 'ROUND_STARTED':
-      return {
-        label: t('eventLog.round', { round: p.round }),
-        detail: (p.addedCardUids as unknown[] | undefined)?.length
-          ? t('eventLog.discoveries', { count: (p.addedCardUids as unknown[]).length })
-          : undefined,
-        color,
-      };
-
-    case 'ROUND_ENDED':
-      return { label: t('eventLog.roundEnded'), color };
-
-    case 'TURN_STARTED':
-      return {
-        label: t('eventLog.turn', { turn: p.turn }),
-        detail: t('eventLog.deckCards', {
-          count: (p.drawnUids as unknown[] | undefined)?.length ?? 0,
-        }),
-        color,
-      };
-
-    case 'TURN_ENDED':
-      return { label: t('eventLog.endOfTurn'), detail: p.reason as string | undefined, color };
-
-    case 'CARD_ACTIVATED': {
-      const gained = p.resourcesGained ? res(p.resourcesGained as Resources) : '';
-      const discarded = p.discardedUid ? ` ${t('eventLog.toDiscard')}` : '';
-      return {
-        label: t('eventLog.production'),
-        detail: gained ? `${gained}${discarded}` : discarded || undefined,
-        color,
-      };
-    }
-
-    case 'ACTION_RESOLVED': {
-      const gained = p.resourcesGained ? res(p.resourcesGained as Resources) : '';
-      return {
-        label: t('eventLog.action'),
-        detail: gained ? `+${gained}` : (p.actionId as string | undefined),
-        color,
-      };
-    }
-
-    case 'UPGRADE_RESOLVED':
-    case 'UPGRADE_CARD_EFFECT':
-      return {
-        label: t('eventLog.upgrade'),
-        detail: t('eventLog.toState', { id: p.toStateId }),
-        color,
-      };
-
-    case 'PROGRESSED':
-      return {
-        label: t('eventLog.progress'),
-        detail: t('eventLog.addedCards', {
-          count: (p.drawnUids as unknown[] | undefined)?.length ?? 2,
-        }),
-        color,
-      };
-
-    case 'CARD_BLOCKED':
-      return { label: t('eventLog.cardBlocked'), color };
-
-    case 'CARD_UNBLOCKED':
-      return { label: t('eventLog.cardUnblocked'), color };
-
-    case 'CARD_DESTROYED':
-      return { label: t('eventLog.cardDestroyed'), color };
-
-    case 'CARD_DISCOVERED':
-      return { label: t('eventLog.discovery'), color };
-
-    case 'CARD_STATE_CHOSEN':
-      return {
-        label: t('eventLog.stateChosen'),
-        detail: t('eventLog.state', { id: p.chosenStateId }),
-        color,
-      };
-
-    case 'CARD_PLAYED_FROM_DISCARD':
-      return { label: t('eventLog.fromDiscard'), color };
-
-    case 'CARD_ADDED_TO_DECK':
-      return { label: t('eventLog.addedToDeck'), color };
-
-    case 'STICKER_ADDED':
-      return { label: t('eventLog.sticker'), detail: `#${p.stickerNumber}`, color };
-
-    case 'TRACK_ADVANCED':
-      return {
-        label: t('eventLog.track'),
-        detail: t('eventLog.step', { progress: p.newProgress }),
-        color,
-      };
-
-    case 'CHOICE_MADE':
-      return { label: t('eventLog.choice'), color };
-
-    default:
-      return { label: evt.type.replace(/_/g, ' ').toLowerCase(), color };
-  }
 }
