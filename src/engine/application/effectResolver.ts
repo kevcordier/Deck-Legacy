@@ -33,7 +33,7 @@ export function resolveActionEffect(
         resolverAction.instanceId = choices[0];
       } else {
         pendingChoice.push({
-          id: `${instanceId}-${action.type}`,
+          id: `${instanceId}-${action.id}`,
           kind: action.type,
           type: PendingChoiceType.CHOOSE_CARD,
           sourceInstanceId: instanceId,
@@ -47,7 +47,7 @@ export function resolveActionEffect(
   if (action.resources) {
     if (action.resources.choice && action.resources.choice.length > 1) {
       pendingChoice.push({
-        id: `${instanceId}-${action.type}`,
+        id: `${instanceId}-${action.id}`,
         kind: action.type,
         type: PendingChoiceType.CHOOSE_RESOURCE,
         sourceInstanceId: instanceId,

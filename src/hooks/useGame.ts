@@ -125,7 +125,7 @@ export function useGame(): GameHook {
       return aggRef.current.useCardEffect(
         effects,
         resolvedCost,
-        !effect.passive || !!effect.trigger,
+        !effect.passive && !effect.trigger,
         triggerId,
       );
     },
@@ -406,7 +406,7 @@ export function useGame(): GameHook {
           const event = aggRef.current.useCardEffect(
             resolvedAction,
             resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
-            !action.passive || !!action.trigger,
+            !action.passive && !action.trigger,
             triggerId,
           );
           setEvents([...events, event]);
