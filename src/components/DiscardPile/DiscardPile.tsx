@@ -73,7 +73,8 @@ export function DiscardPile({ discard, instances, defs }: DiscardPileProps) {
             const inst = instances[id];
             if (!inst) return null;
             const cs = getActiveState(inst, defs);
-            const prod = getEffectiveProductions(cs, inst, stickers);
+            const base = cs.productions?.[0] || {};
+            const prod = getEffectiveProductions(base, inst, stickers);
             const glory = cs.glory ?? 0;
             return (
               <div

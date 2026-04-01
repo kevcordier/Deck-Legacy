@@ -1299,19 +1299,19 @@ export const cardsData: CardDef[] = [
             label: 'This card has +1 gold production for each person you have in play.',
             passive: true,
             actions: [
-              {
-                id: 1,
-                type: 'increase_production',
-                cards: {
-                  scope: TargetScope.SELF,
-                },
-                resource_per_card: {
-                  resource: ResourceType.GOLD,
-                  amount: 1,
-                  scope: TargetScope.BOARD,
-                  tags: [CardTag.PERSON],
-                },
-              },
+              // {
+              //   id: 1,
+              //   type: 'increase_production',
+              //   cards: {
+              //     scope: TargetScope.SELF,
+              //   },
+              //   resource_per_card: {
+              //     resource: ResourceType.GOLD,
+              //     amount: 1,
+              //     scope: TargetScope.BOARD,
+              //     tags: [CardTag.PERSON],
+              //   },
+              // },
             ],
           },
         ],

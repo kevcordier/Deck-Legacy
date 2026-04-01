@@ -20,6 +20,7 @@ export function resolveCost(
       resolvedCost.resources = cost.resources[0];
     } else {
       pendingChoices.push({
+        id: `${instanceId}-cost`,
         kind: 'cost',
         type: PendingChoiceType.CHOOSE_RESOURCE,
         sourceInstanceId: instanceId,
@@ -39,6 +40,7 @@ export function resolveCost(
       resolvedCost.discardedCardIds = candidates;
     } else {
       pendingChoices.push({
+        id: `${instanceId}-discard`,
         kind: 'cost',
         type: PendingChoiceType.CHOOSE_CARD,
         sourceInstanceId: instanceId,
@@ -56,6 +58,7 @@ export function resolveCost(
       resolvedCost.destroyedCardIds = candidates;
     } else {
       pendingChoices.push({
+        id: `${instanceId}-destroy`,
         kind: 'cost',
         type: PendingChoiceType.CHOOSE_CARD,
         sourceInstanceId: instanceId,
