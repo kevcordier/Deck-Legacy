@@ -61,11 +61,21 @@ export const Disabled: Story = {
 export const AllVariants: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-      <PillBtn variant="gold" onClick={() => {}}>Gold</PillBtn>
-      <PillBtn variant="ghost" onClick={() => {}}>Ghost</PillBtn>
-      <PillBtn variant="warning" onClick={() => {}}>Warning</PillBtn>
-      <PillBtn variant="gold" large onClick={() => {}}>Gold Large</PillBtn>
-      <PillBtn variant="gold" disabled onClick={() => {}}>Disabled</PillBtn>
+      <PillBtn variant="gold" onClick={() => {}}>
+        Gold
+      </PillBtn>
+      <PillBtn variant="ghost" onClick={() => {}}>
+        Ghost
+      </PillBtn>
+      <PillBtn variant="warning" onClick={() => {}}>
+        Warning
+      </PillBtn>
+      <PillBtn variant="gold" large onClick={() => {}}>
+        Gold Large
+      </PillBtn>
+      <PillBtn variant="gold" disabled onClick={() => {}}>
+        Disabled
+      </PillBtn>
     </div>
   ),
 };

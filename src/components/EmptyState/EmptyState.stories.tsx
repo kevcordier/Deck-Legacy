@@ -26,7 +26,7 @@ export const Default: Story = {
 export const WithSubtitle: Story = {
   args: {
     title: 'Défausse vide',
-    subtitle: 'Vous n\'avez pas encore défaussé de cartes.',
+    subtitle: "Vous n'avez pas encore défaussé de cartes.",
   },
 };
 
@@ -34,6 +34,10 @@ export const WithAction: Story = {
   args: {
     title: 'Deck vide',
     subtitle: 'Votre deck est épuisé. Commencez une nouvelle partie ?',
-    action: <PillBtn variant="gold" onClick={() => {}}>Nouvelle partie</PillBtn>,
+    action: (
+      <PillBtn variant="gold" onClick={() => {}}>
+        Nouvelle partie
+      </PillBtn>
+    ),
   },
 };

@@ -260,12 +260,43 @@ export const UpgradedState: Story = {
 export const AllCards: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-      <GameCard instance={simpleInstance} defs={defs} currentResources={{ gold: 2 }} isOnBoard={true} />
-      <GameCard instance={actionInstance} defs={{ 2: actionDef }} currentResources={{ iron: 1 }} isOnBoard={true} />
-      <GameCard instance={upgradeInstance} defs={{ 3: upgradeDef }} currentResources={{ stone: 3 }} isOnBoard={true} />
-      <GameCard instance={gloryInstance} defs={{ 5: gloryDef }} currentResources={{}} isOnBoard={true} />
-      <GameCard instance={enemyInstance} defs={{ 4: enemyDef }} currentResources={{}} isOnBoard={true} />
-      <GameCard instance={simpleInstance} defs={defs} currentResources={{}} isOnBoard={true} isBlocked />
+      <GameCard
+        instance={simpleInstance}
+        defs={defs}
+        currentResources={{ gold: 2 }}
+        isOnBoard={true}
+      />
+      <GameCard
+        instance={actionInstance}
+        defs={{ 2: actionDef }}
+        currentResources={{ iron: 1 }}
+        isOnBoard={true}
+      />
+      <GameCard
+        instance={upgradeInstance}
+        defs={{ 3: upgradeDef }}
+        currentResources={{ stone: 3 }}
+        isOnBoard={true}
+      />
+      <GameCard
+        instance={gloryInstance}
+        defs={{ 5: gloryDef }}
+        currentResources={{}}
+        isOnBoard={true}
+      />
+      <GameCard
+        instance={enemyInstance}
+        defs={{ 4: enemyDef }}
+        currentResources={{}}
+        isOnBoard={true}
+      />
+      <GameCard
+        instance={simpleInstance}
+        defs={defs}
+        currentResources={{}}
+        isOnBoard={true}
+        isBlocked
+      />
     </div>
   ),
 };
