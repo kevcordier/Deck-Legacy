@@ -64,7 +64,7 @@ export function GameCard({
   const base = sc.productions?.[0] || {};
   const productions = getEffectiveProductions(base, instance, stickerDefs);
   const hasProductions = Object.keys(productions).length > 0;
-  const canActivate = isOnBoard && !isBlocked && hasProductions && !!onActivate;
+  const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
   const actions = cs.cardEffects ?? [];
   const glory = cs.glory ?? 0;

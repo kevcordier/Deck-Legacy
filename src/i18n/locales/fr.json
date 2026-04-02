@@ -210,6 +210,10 @@
     "rounds": "Manches",
     "newGame": "↺ Nouvelle partie"
   },
+  "rules": {
+    "title": "Règles",
+    "open": "Règles"
+  },
   "options": {
     "title": "Options",
     "language": "Langue",

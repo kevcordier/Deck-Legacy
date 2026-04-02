@@ -13,6 +13,7 @@ import { DeckViewer } from '@components/DeckViewer';
 import { DiscardPile } from '@components/DiscardPile';
 import { EventLog } from '@components/EventLog';
 import { OptionsModal } from '@components/OptionsModal';
+import { RulesModal } from '@components/RulesModal';
 
 export function GameBoard() {
   const {
@@ -44,6 +45,7 @@ export function GameBoard() {
   const { t } = useTranslation();
   const [logOpen, setLogOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const [rulesOpen, setRulesOpen] = useState(false);
   const [drawnIds, setDrawnIds] = useState<Set<number>>(new Set());
   const prevBoardRef = useRef<number[]>([]);
 
@@ -118,6 +120,13 @@ export function GameBoard() {
               </PillBtn>
             </>
           )}
+          <button
+            className="btn-rewind-header"
+            onClick={() => setRulesOpen(true)}
+            title={t('rules.open')}
+          >
+            ?
+          </button>
           <button
             className="btn-rewind-header"
             onClick={() => setOptionsOpen(true)}
@@ -333,6 +342,9 @@ export function GameBoard() {
           onSkipTrigger={skipTrigger}
         />
       )}
+
+      {/* ── Rules modal ── */}
+      {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}
 
       {/* ── Options modal ── */}
       {optionsOpen && (

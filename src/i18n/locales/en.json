@@ -211,6 +211,10 @@
     "rounds": "Rounds",
     "newGame": "↺ New game"
   },
+  "rules": {
+    "title": "Rules",
+    "open": "Rules"
+  },
   "options": {
     "title": "Options",
     "language": "Language",
