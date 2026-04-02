@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+set -e
+
+# Get staged .ts/.tsx files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(ts|tsx)$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+  exit 0
+fi
+
+echo "Running pre-commit checks on modified files..."
+
+# Format check on staged files
+echo "\n→ Format check"
+echo "$STAGED_FILES" | xargs npx prettier --check
+
+# Lint on staged files
+echo "\n→ Lint"
+echo "$STAGED_FILES" | xargs npx eslint --max-warnings 0
+
+# Typecheck (always full project)
+echo "\n→ Typecheck"
+npm run typecheck
+
+# Tests (always full suite)
+echo "\n→ Tests"
+npm run test
+
+echo "\nAll checks passed."

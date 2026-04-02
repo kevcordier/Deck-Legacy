@@ -18,7 +18,7 @@ import {
   loadStickerDefs,
   loadInitialStickerStock,
 } from '@engine/infrastructure/loaders';
-import { createInstance } from '@engine/infrastructure/factory';
+import { createInstance } from '@engine/application/factory';
 import { saveGame, loadSave, deleteSave, hasSave } from '@engine/infrastructure/persistence';
 import {
   getActiveState,

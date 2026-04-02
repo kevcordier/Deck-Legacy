@@ -112,20 +112,44 @@
 
 /* ── Entry variants ───────────────────────────────────────────── */
 
-.el-entry--produced .el-entry-icon { color: #c9963a; }
-.el-entry--produced .el-entry-label { color: #d4aa60; }
+.el-entry--produced .el-entry-icon {
+  color: #c9963a;
+}
+.el-entry--produced .el-entry-label {
+  color: #d4aa60;
+}
 
-.el-entry--upgrade .el-entry-icon { color: #d4832a; }
-.el-entry--upgrade .el-entry-label { color: #d4832a; }
+.el-entry--upgrade .el-entry-icon {
+  color: #d4832a;
+}
+.el-entry--upgrade .el-entry-label {
+  color: #d4832a;
+}
 
-.el-entry--action .el-entry-icon { color: #a0c0e0; }
-.el-entry--action .el-entry-label { color: #a0c0e0; }
+.el-entry--action .el-entry-icon {
+  color: #a0c0e0;
+}
+.el-entry--action .el-entry-label {
+  color: #a0c0e0;
+}
 
-.el-entry--passive .el-entry-icon { color: #8090a8; }
-.el-entry--passive .el-entry-label { color: #8090a8; }
+.el-entry--passive .el-entry-icon {
+  color: #8090a8;
+}
+.el-entry--passive .el-entry-label {
+  color: #8090a8;
+}
 
-.el-entry--advance .el-entry-icon { color: #90c890; }
-.el-entry--advance .el-entry-label { color: #90c890; }
+.el-entry--advance .el-entry-icon {
+  color: #90c890;
+}
+.el-entry--advance .el-entry-label {
+  color: #90c890;
+}
 
-.el-entry--pass .el-entry-icon { color: #555045; }
-.el-entry--pass .el-entry-label { color: #555045; }
+.el-entry--pass .el-entry-icon {
+  color: #555045;
+}
+.el-entry--pass .el-entry-label {
+  color: #555045;
+}

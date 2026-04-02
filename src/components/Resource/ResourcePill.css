@@ -1,4 +1,3 @@
-
 .res-icon {
   --res-icon-size: 1.5em;
   vertical-align: baseline;
@@ -14,4 +13,3 @@
 .res-icon.res-lg {
   --res-icon-size: 3em;
 }
-
