@@ -2,7 +2,7 @@ import React from 'react';
 import { getResMeta } from './resourceHelpers';
 
 // Detects tokens like {{gold}}, {{wood}}, etc. in translated texts
-const ICON_TOKEN = /\{\{(gold|wood|stone|iron|sword|goods|glory)\}\}/g;
+const ICON_TOKEN = /\{\{(gold|wood|stone|iron|weapon|goods|glory)\}\}/g;
 
 /**
  * Replaces {{resource}} tokens in a text with the corresponding SVG icon.

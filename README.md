@@ -13,7 +13,7 @@ Deck Legacy is a solitaire deck-builder with roguelike progression. Each round, 
 ### Core Mechanics
 
 - **Rounds & Turns** — Each round adds new cards to your deck. Each turn, you draw and activate one card.
-- **Resources** — Six resources drive your economy: Gold, Wood, Stone, Iron, Sword, and Goods.
+- **Resources** — Six resources drive your economy: Gold, Wood, Stone, Iron, Weapon, and Goods.
 - **Production** — Cards generate resources automatically on play.
 - **Effects** — Activated abilities with resource or discard costs.
 - **Upgrades** — Spend resources to evolve cards into stronger states.

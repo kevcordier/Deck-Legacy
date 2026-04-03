@@ -44,7 +44,7 @@ export enum ResourceType {
   WOOD = 'wood',
   STONE = 'stone',
   IRON = 'iron',
-  SWORD = 'sword',
+  WEAPON = 'weapon',
   GOODS = 'goods',
 }
 

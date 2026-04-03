@@ -11,6 +11,7 @@ export class PlayCardStrategy implements CardActionStrategy {
       instanceId: number;
     },
   ): GameState {
+    // @todo: if has on play trigger, trigger it
     gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== payload.instanceId);
     gameState.drawPile = gameState.drawPile.filter(c => c !== payload.instanceId);
     gameState.destroyedPile = gameState.destroyedPile.filter(c => c !== payload.instanceId);

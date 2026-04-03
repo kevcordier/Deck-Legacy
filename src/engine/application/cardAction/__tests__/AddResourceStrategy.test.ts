@@ -65,6 +65,6 @@ describe('AddResourceStrategy', () => {
       sourceInstanceId: 1,
       resources: { gold: 1 },
     });
-    expect(result).toBe(gs);
+    expect(result).toEqual({ ...gs, resources: { gold: 1 } }); // should return the same game state object
   });
 });

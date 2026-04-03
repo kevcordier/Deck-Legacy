@@ -43,7 +43,7 @@ export const NoResources: Story = {
 
 export const RichResources: Story = {
   args: {
-    resources: { gold: 5, wood: 3, stone: 2, iron: 1, sword: 2, goods: 4 },
+    resources: { gold: 5, wood: 3, stone: 2, iron: 1, weapon: 2, goods: 4 },
     score: 45,
     round: 5,
     turn: 8,

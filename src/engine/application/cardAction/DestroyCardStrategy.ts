@@ -12,6 +12,7 @@ export class DestroyCardStrategy implements CardActionStrategy {
       instanceId: number;
     },
   ): GameState {
-    return destroyCards(gameState, [payload.instanceId]);
+    const gs = JSON.parse(JSON.stringify(gameState)) as GameState; // Deep clone to avoid mutating original state
+    return { ...gs, ...destroyCards(gs, [payload.instanceId]) };
   }
 }

@@ -16,7 +16,7 @@ describe('createInstance', () => {
     expect(instance.cardId).toBe(10);
     expect(instance.stateId).toBe(1);
     expect(instance.stickers).toEqual({});
-    expect(instance.trackProgress).toBeNull();
+    expect(instance.trackProgress).toEqual([]);
   });
 
   it('works with any valid stateId on the card', () => {

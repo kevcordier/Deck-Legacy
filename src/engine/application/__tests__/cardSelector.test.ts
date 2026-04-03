@@ -10,7 +10,7 @@ const makeInstance = (id: number, cardId: number, stateId: number): CardInstance
   cardId,
   stateId,
   stickers: {},
-  trackProgress: null,
+  trackProgress: [],
 });
 
 const makeState = (id: number, overrides: Partial<CardDef['states'][number]> = {}) => ({
@@ -230,6 +230,67 @@ describe('cardSelector — ids filtering', () => {
     };
     const result = cardSelector({ scope: TargetScope.BOARD, ids: [2, 3] }, 99, gs, defs);
     expect(result).toEqual([2, 3]);
+  });
+});
+
+// — missing instance fallback —
+
+describe('cardSelector — missing instance in pool', () => {
+  it('excludes pool entries that have no matching instance', () => {
+    const gs = makeGameState({
+      board: [1, 999], // 999 has no instance
+      instances: { 1: makeInstance(1, 10, 1) },
+    });
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeState(1)]),
+    };
+    const result = cardSelector({ scope: TargetScope.BOARD }, 99, gs, defs);
+    expect(result).toEqual([1]);
+    expect(result).not.toContain(999);
+  });
+});
+
+// — PERMANENTS scope —
+
+describe('cardSelector — PERMANENTS', () => {
+  it('returns all cards in the permanents pile', () => {
+    const gs = makeGameState({
+      permanents: [7, 8],
+      instances: {
+        7: makeInstance(7, 10, 1),
+        8: makeInstance(8, 11, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeState(1)]),
+      11: makeDef(11, [makeState(1)]),
+    };
+    const result = cardSelector({ scope: TargetScope.PERMANENTS }, 99, gs, defs);
+    expect(result).toContain(7);
+    expect(result).toContain(8);
+  });
+});
+
+// — blocked card exclusion —
+
+describe('cardSelector — blocked card exclusion', () => {
+  it('excludes blocked cards from non-BLOCKED scope results', () => {
+    const gs = makeGameState({
+      board: [1, 2, 3],
+      blockingCards: { 99: 2 }, // card 2 is blocked by 99
+      instances: {
+        1: makeInstance(1, 10, 1),
+        2: makeInstance(2, 10, 1),
+        3: makeInstance(3, 10, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeState(1)]),
+    };
+    const result = cardSelector({ scope: TargetScope.BOARD }, 99, gs, defs);
+    expect(result).not.toContain(2);
+    expect(result).toContain(1);
+    expect(result).toContain(3);
   });
 });
 

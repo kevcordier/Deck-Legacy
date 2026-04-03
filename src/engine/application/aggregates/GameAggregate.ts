@@ -34,10 +34,12 @@ import {
   discardCards,
   drawCards,
   endTurn,
+  spendResources,
 } from '@engine/application/gameStateHelper';
-import { mergeResources, spendResources } from '@engine/application/resourceHelpers';
+import { mergeResources } from '@engine/application/resourceHelpers';
 import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { ChoseStateStrategy } from '@engine/application/cardAction/ChoseStateStrategy';
+import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
 
 export const EMPTY_STATE: GameState = {
   instances: {},
@@ -91,12 +93,12 @@ export class GameAggregate {
         const roundStartedEvent = event as RoundStartedEvent;
         this.gameState.round = roundStartedEvent.round;
         this.gameState.turn = 0;
-        this.gameState.lastAddedIds = roundStartedEvent.newCards ?? [];
+        this.gameState.lastAddedIds = roundStartedEvent.newCards;
         this.gameState.drawPile = this.shuffle([
           ...this.gameState.drawPile,
           ...this.gameState.discardPile,
           ...this.gameState.board,
-          ...(roundStartedEvent.newCards || []),
+          ...roundStartedEvent.newCards,
         ]);
         this.gameState.triggerPile = roundStartedEvent.onDiscoverEvents.reduce(
           (acc, { effectDef, sourceInstanceId }) => {
@@ -112,9 +114,13 @@ export class GameAggregate {
       }
       case GameEventType.TURN_STARTED: {
         const turnStartedEvent = event as TurnStartedEvent;
-        this.gameState.turn = turnStartedEvent.turn;
-        this.gameState.lastAddedIds = [];
-        this.gameState = drawCards(this.gameState, turnStartedEvent.turnCards);
+        this.gameState = {
+          ...this.gameState,
+          ...drawCards(
+            { ...this.gameState, lastAddedIds: [], turn: turnStartedEvent.turn },
+            turnStartedEvent.turnCards,
+          ),
+        };
         this.gameState.triggerPile = turnStartedEvent.onPlayEvents.reduce(
           (acc, { effectDef, sourceInstanceId }) => {
             const triggerId = crypto.randomUUID();
@@ -131,12 +137,18 @@ export class GameAggregate {
           this.gameState.resources,
           cardProducedEvent.productions,
         );
-        this.gameState = discardCards(this.gameState, [cardProducedEvent.cardInstanceId]);
+        this.gameState = {
+          ...this.gameState,
+          ...discardCards(this.gameState, [cardProducedEvent.cardInstanceId]),
+        };
         break;
       }
       case GameEventType.ADVANCE: {
         const advanceEvent = event as AdvanceEvent;
-        this.gameState = drawCards(this.gameState, advanceEvent.turnCards);
+        this.gameState = {
+          ...this.gameState,
+          ...drawCards(this.gameState, advanceEvent.turnCards),
+        };
         this.gameState.triggerPile = advanceEvent.onPlayEvents.reduce(
           (acc, { effectDef, sourceInstanceId }) => {
             const triggerId = crypto.randomUUID();
@@ -151,28 +163,44 @@ export class GameAggregate {
         const upgradeCardEvent = event as UpgradeCardEvent;
         this.gameState.instances[upgradeCardEvent.cardInstanceId].stateId =
           upgradeCardEvent.stateId;
-        this.gameState = endTurn(discardCards(this.gameState, [upgradeCardEvent.cardInstanceId]));
-        this.gameState.resources = spendResources(this.gameState.resources, upgradeCardEvent.cost);
+        this.gameState = {
+          ...this.gameState,
+          ...endTurn(
+            discardCards(spendResources(this.gameState, upgradeCardEvent.cost), [
+              upgradeCardEvent.cardInstanceId,
+            ]),
+          ),
+        };
         break;
       }
       case GameEventType.USE_CARD_EFFECT: {
         const useCardEffectEvent = event as UseCardEffectEvent;
-        this.gameState = useCardEffectEvent.gameState;
-        if (useCardEffectEvent.isDiscarded) {
-          this.gameState = discardCards(this.gameState, [useCardEffectEvent.sourceInstanceId]);
+        if (useCardEffectEvent.validatedStepId !== undefined) {
+          const inst = this.gameState.instances[useCardEffectEvent.sourceInstanceId];
+          if (inst) {
+            inst.trackProgress = [...inst.trackProgress, useCardEffectEvent.validatedStepId];
+          }
         }
-        this.gameState.resources = spendResources(
-          this.gameState.resources,
-          useCardEffectEvent.resolvedCost.resources,
-        );
-        this.gameState = destroyCards(
-          this.gameState,
-          useCardEffectEvent.resolvedCost.destroyedCardIds,
-        );
-        this.gameState = discardCards(
-          this.gameState,
-          useCardEffectEvent.resolvedCost.discardedCardIds,
-        );
+        const discardedCardIds = useCardEffectEvent.resolvedCost.discardedCardIds || [];
+        const destroyedCardIds = useCardEffectEvent.resolvedCost.destroyedCardIds || [];
+        if (useCardEffectEvent.isDiscarded) {
+          discardedCardIds.push(useCardEffectEvent.sourceInstanceId);
+        } else if (useCardEffectEvent.isDestroyed) {
+          destroyedCardIds.push(useCardEffectEvent.sourceInstanceId);
+        }
+        this.gameState = {
+          ...this.gameState,
+          ...discardCards(
+            destroyCards(
+              spendResources(
+                useCardEffectEvent.gameState,
+                useCardEffectEvent.resolvedCost.resources,
+              ),
+              destroyedCardIds,
+            ),
+            discardedCardIds,
+          ),
+        };
         delete this.gameState.triggerPile[useCardEffectEvent.triggerId];
         break;
       }
@@ -182,7 +210,7 @@ export class GameAggregate {
         break;
       }
       case GameEventType.PASS: {
-        this.gameState = endTurn(this.gameState);
+        this.gameState = { ...this.gameState, ...endTurn(this.gameState) };
         break;
       }
       default:
@@ -353,7 +381,10 @@ export class GameAggregate {
     effects: ResolvedAction[],
     resolvedCost: ResolvedCost,
     isDiscarded = false,
+    isDestroyed = false,
     triggerId: string,
+    validatedStepId?: number,
+    explicitSourceInstanceId?: number,
   ): UseCardEffectEvent {
     const cardActionContext = new CardActionContext();
 
@@ -363,9 +394,12 @@ export class GameAggregate {
           cardActionContext.setStrategy(new AddResourceStrategy());
           break;
         }
-        case ActionType.DISCARD_CARD:
-        case ActionType.DISCOVER_CARD: {
+        case ActionType.DISCARD_CARD: {
           cardActionContext.setStrategy(new DiscardCardStrategy());
+          break;
+        }
+        case ActionType.DISCOVER_CARD: {
+          cardActionContext.setStrategy(new DiscoverCardStrategy());
           break;
         }
         case ActionType.DESTROY_CARD: {
@@ -407,11 +441,14 @@ export class GameAggregate {
       id: crypto.randomUUID(),
       type: GameEventType.USE_CARD_EFFECT,
       timestamp: Date.now(),
+      cardDefs: this.cardDefs,
       gameState,
       resolvedCost,
-      sourceInstanceId: effects[0].sourceInstanceId,
+      sourceInstanceId: explicitSourceInstanceId ?? effects[0]?.sourceInstanceId ?? -1,
       triggerId,
       isDiscarded,
+      isDestroyed,
+      ...(validatedStepId !== undefined ? { validatedStepId } : {}),
     };
     this.apply(event);
     this.events.push(event);

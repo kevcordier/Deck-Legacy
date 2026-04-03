@@ -12,7 +12,11 @@ export class ChoseStateStrategy implements CardActionStrategy {
       stateId: number;
     },
   ): GameState {
-    gameState.instances[payload.instanceId].stateId = payload.stateId;
-    return gameState;
+    const gs = JSON.parse(JSON.stringify(gameState)) as GameState; // Deep clone to avoid mutating original state
+    gs.instances[payload.instanceId].stateId = payload.stateId;
+    return {
+      ...gs,
+      instances: gs.instances,
+    };
   }
 }

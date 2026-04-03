@@ -10,7 +10,7 @@ const makeInstance = (id: number, cardId: number, stateId: number): CardInstance
   cardId,
   stateId,
   stickers: {},
-  trackProgress: null,
+  trackProgress: [],
 });
 
 const makeState = (id: number) => ({ id, name: `State ${id}` });
@@ -76,6 +76,25 @@ describe('resolveCost — resources', () => {
 // — discard cost —
 
 describe('resolveCost — discard', () => {
+  it('uses pickCount of 1 when number is omitted', () => {
+    const gs = makeGameState({
+      board: [2, 3],
+      instances: {
+        1: makeInstance(1, 10, 1),
+        2: makeInstance(2, 10, 1),
+        3: makeInstance(3, 10, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = { 10: makeDef(10) };
+    const [, pending] = resolveCost(
+      { discard: { scope: TargetScope.BOARD } }, // no number specified
+      1,
+      gs,
+      defs,
+    );
+    expect(pending[0].pickCount).toBe(1);
+  });
+
   it('resolves directly when only one candidate matches', () => {
     const gs = makeGameState({
       board: [2, 3],
@@ -158,6 +177,45 @@ describe('resolveCost — destroy', () => {
     expect(pending[0].type).toBe(PendingChoiceType.CHOOSE_CARD);
     expect(pending[0].id).toBe('1-destroy');
     expect(resolved.destroyedCardIds).toEqual([]);
+  });
+
+  it('uses pickCount of 1 when number is omitted for destroy', () => {
+    const gs = makeGameState({
+      board: [1, 2, 3],
+      instances: {
+        1: makeInstance(1, 10, 1),
+        2: makeInstance(2, 10, 1),
+        3: makeInstance(3, 10, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = { 10: makeDef(10) };
+    const [, pending] = resolveCost(
+      { destroy: { scope: TargetScope.BOARD } }, // no number specified
+      1,
+      gs,
+      defs,
+    );
+    expect(pending[0].pickCount).toBe(1);
+  });
+
+  it('auto-resolves when candidates count exactly matches required number', () => {
+    const gs = makeGameState({
+      board: [1, 2, 3],
+      instances: {
+        1: makeInstance(1, 10, 1),
+        2: makeInstance(2, 10, 1),
+        3: makeInstance(3, 10, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = { 10: makeDef(10) };
+    const [resolved, pending] = resolveCost(
+      { destroy: { scope: TargetScope.BOARD, number: 2 } },
+      1, // instanceId 1 is excluded, leaving [2, 3] — exactly 2
+      gs,
+      defs,
+    );
+    expect(resolved.destroyedCardIds).toEqual([2, 3]);
+    expect(pending).toEqual([]);
   });
 
   it('sets empty destroyedCardIds when no other cards on board', () => {

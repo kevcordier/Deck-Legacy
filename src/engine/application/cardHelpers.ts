@@ -63,6 +63,17 @@ export function canAffordResources(available: Resources, cost: Cost): boolean {
   );
 }
 
+/** Retourne la gloire totale gagnée via les steps de track validés. */
+export function getTrackGlory(instance: CardInstance, cs: CardState): number {
+  if (!cs.track || instance.trackProgress.length === 0) return 0;
+  return cs.track.steps.reduce((sum, step) => {
+    if (instance.trackProgress.includes(step.id)) {
+      return sum + (step.onClick.glory ?? 0);
+    }
+    return sum;
+  }, 0);
+}
+
 export function getInstancesTriggerEffects(
   instances: CardInstance[],
   defs: Record<number, CardDef>,

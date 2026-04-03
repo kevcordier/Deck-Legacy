@@ -31,10 +31,10 @@ export const stickerData: Sticker[] = [
   },
   {
     id: 5,
-    label: 'Sword',
+    label: 'Weapon',
     type: 'add',
-    description: '+1 sword to each production',
-    production: 'sword',
+    description: '+1 weapon to each production',
+    production: 'weapon',
   },
   {
     id: 6,

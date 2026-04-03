@@ -77,6 +77,10 @@ export function GameBoard() {
     phase = 'roundpreview';
   else phase = 'playing';
 
+  const haveChoiceToDo =
+    (!!pendingChoices && pendingChoices.length > 0) ||
+    (!!triggerPile && Object.keys(triggerPile).length > 0);
+
   return (
     <div className="gb-root">
       {/* ── Header ── */}
@@ -90,12 +94,12 @@ export function GameBoard() {
             </PillBtn>
           )}
           {phase === 'preround' && (
-            <PillBtn onClick={startRound} variant="gold">
+            <PillBtn onClick={startRound} disabled={haveChoiceToDo} variant="gold">
               {gs.round === 0 ? t('header.start') : t('header.newRound')}
             </PillBtn>
           )}
           {phase === 'roundpreview' && (
-            <PillBtn onClick={startTurn} variant="gold">
+            <PillBtn onClick={startTurn} disabled={haveChoiceToDo} variant="gold">
               {t('roundpreview.start')}
             </PillBtn>
           )}
@@ -110,12 +114,12 @@ export function GameBoard() {
                   ↩
                 </button>
               )}
-              <PillBtn onClick={progress} disabled={deckEmpty} variant="ghost">
+              <PillBtn onClick={progress} disabled={deckEmpty || haveChoiceToDo} variant="ghost">
                 {deckEmpty
                   ? t('header.progress')
                   : t('header.progressWithCount', { count: Math.min(2, gs.drawPile.length) })}
               </PillBtn>
-              <PillBtn onClick={endTurnVoluntary} variant="ghost">
+              <PillBtn onClick={endTurnVoluntary} disabled={haveChoiceToDo} variant="ghost">
                 {t('header.endTurn')}
               </PillBtn>
             </>
@@ -276,29 +280,72 @@ export function GameBoard() {
               subtitle={`${t('cardCount', { count: gs.board.length })}`}
             >
               <CardRow>
-                {gs.board.map((id, i) => {
-                  const inst = gs.instances[id];
-                  if (!inst) return null;
-                  return (
-                    <div
-                      key={id}
-                      className={drawnIds.has(id) ? 'card-draw' : ''}
-                      style={{ animationDelay: drawnIds.has(id) ? `${i * 60}ms` : undefined }}
-                    >
-                      <GameCard
-                        instance={inst}
-                        defs={defs}
-                        stickerDefs={stickerDefs}
-                        currentResources={gs.resources}
-                        isOnBoard={true}
-                        onActivate={() => resolveProduction(id)}
-                        onAction={label => resolveAction(id, label)}
-                        onUpgrade={upgradeId => resolveUpgrade(id, upgradeId)}
-                        isBlocked={Object.values(gs.blockingCards).includes(id)}
-                      />
-                    </div>
-                  );
-                })}
+                {(() => {
+                  const blockedIds = new Set(Object.values(gs.blockingCards));
+                  const blockerIds = new Set(Object.keys(gs.blockingCards).map(Number));
+                  return gs.board.map((id, i) => {
+                    if (blockerIds.has(id)) return null;
+                    const inst = gs.instances[id];
+                    if (!inst) return null;
+                    const isBlocked = blockedIds.has(id);
+                    const blockerEntry = isBlocked
+                      ? Object.entries(gs.blockingCards).find(([, v]) => v === id)
+                      : undefined;
+                    const blockerId = blockerEntry ? Number(blockerEntry[0]) : null;
+                    const blockerInst = blockerId !== null ? gs.instances[blockerId] : null;
+                    const wrapCls = drawnIds.has(id) ? 'card-draw' : '';
+                    const wrapStyle = drawnIds.has(id)
+                      ? { animationDelay: `${i * 60}ms` }
+                      : undefined;
+                    if (isBlocked && blockerInst && blockerId !== null) {
+                      return (
+                        <div
+                          key={id}
+                          className={`card-blocking-group${wrapCls ? ` ${wrapCls}` : ''}`}
+                          style={wrapStyle}
+                        >
+                          <GameCard
+                            instance={inst}
+                            defs={defs}
+                            stickerDefs={stickerDefs}
+                            currentResources={gs.resources}
+                            isOnBoard={true}
+                            onActivate={() => resolveProduction(id)}
+                            onAction={label => resolveAction(id, label)}
+                            onUpgrade={upgradeId => resolveUpgrade(id, upgradeId)}
+                            isBlocked={true}
+                          />
+                          <GameCard
+                            instance={blockerInst}
+                            defs={defs}
+                            stickerDefs={stickerDefs}
+                            currentResources={gs.resources}
+                            isOnBoard={true}
+                            onActivate={() => resolveProduction(blockerId)}
+                            onAction={label => resolveAction(blockerId, label)}
+                            onUpgrade={upgradeId => resolveUpgrade(blockerId, upgradeId)}
+                            style={{ position: 'absolute', top: '30px', left: '10px', zIndex: 2 }}
+                          />
+                        </div>
+                      );
+                    }
+                    return (
+                      <div key={id} className={wrapCls} style={wrapStyle}>
+                        <GameCard
+                          instance={inst}
+                          defs={defs}
+                          stickerDefs={stickerDefs}
+                          currentResources={gs.resources}
+                          isOnBoard={true}
+                          onActivate={() => resolveProduction(id)}
+                          onAction={label => resolveAction(id, label)}
+                          onUpgrade={upgradeId => resolveUpgrade(id, upgradeId)}
+                          isBlocked={false}
+                        />
+                      </div>
+                    );
+                  });
+                })()}
               </CardRow>
             </Section>
           )}

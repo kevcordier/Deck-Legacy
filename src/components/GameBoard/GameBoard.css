@@ -9,6 +9,8 @@
 }
 
 .gb-header {
+  position: relative;
+  z-index: 101;
   padding: 12px 24px;
   display: flex;
   align-items: center;
@@ -44,6 +46,14 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+}
+
+/* Blocking card group — blocked card at top-left, blocker overlaid bottom-right */
+.card-blocking-group {
+  position: relative;
+  width: calc(var(--card-w) + 20px);
+  min-height: calc(var(--card-h) + 50px);
+  flex-shrink: 0;
 }
 
 /* Right sidebar border */

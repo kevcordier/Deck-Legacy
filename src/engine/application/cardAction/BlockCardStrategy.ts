@@ -8,10 +8,15 @@ export class BlockCardStrategy implements CardActionStrategy {
       id: string;
       type: string;
       sourceInstanceId: number;
-      instanceId: number;
+      instanceId?: number;
     },
   ): GameState {
-    gameState.blockingCards[payload.sourceInstanceId] = payload.instanceId;
-    return gameState;
+    if (payload.instanceId === undefined) return gameState;
+    const gs = JSON.parse(JSON.stringify(gameState)) as GameState; // Deep clone to avoid mutating original state
+    gs.blockingCards[payload.sourceInstanceId] = payload.instanceId;
+    return {
+      ...gs,
+      blockingCards: gs.blockingCards,
+    };
   }
 }

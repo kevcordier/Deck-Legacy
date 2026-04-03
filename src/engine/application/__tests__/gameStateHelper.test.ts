@@ -4,6 +4,7 @@ import {
   drawCards,
   destroyCards,
   endTurn,
+  spendResources,
   computeScore,
 } from '@engine/application/gameStateHelper';
 import type { CardDef, CardInstance, GameState, Sticker } from '@engine/domain/types';
@@ -15,7 +16,7 @@ const makeInstance = (id: number, cardId: number, stateId: number): CardInstance
   cardId,
   stateId,
   stickers: {},
-  trackProgress: null,
+  trackProgress: [],
 });
 
 const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
@@ -168,6 +169,35 @@ describe('endTurn', () => {
   });
 });
 
+// — spendResources —
+
+describe('spendResources', () => {
+  it('subtracts resource values from the game state', () => {
+    const gs = makeGameState({ resources: { gold: 5, wood: 3 } });
+    const result = spendResources(gs, { gold: 2, wood: 1 });
+    expect(result.resources.gold).toBe(3);
+    expect(result.resources.wood).toBe(2);
+  });
+
+  it('removes a resource key when the result is exactly zero', () => {
+    const gs = makeGameState({ resources: { gold: 3 } });
+    const result = spendResources(gs, { gold: 3 });
+    expect(result.resources.gold).toBeUndefined();
+  });
+
+  it('removes a resource key when the result goes below zero', () => {
+    const gs = makeGameState({ resources: { gold: 2 } });
+    const result = spendResources(gs, { gold: 5 });
+    expect(result.resources.gold).toBeUndefined();
+  });
+
+  it('does not mutate the original game state', () => {
+    const gs = makeGameState({ resources: { gold: 4 } });
+    spendResources(gs, { gold: 4 });
+    expect(gs.resources.gold).toBe(4);
+  });
+});
+
 // — computeScore —
 
 describe('computeScore', () => {
@@ -212,7 +242,7 @@ describe('computeScore', () => {
     const gs = makeGameState({
       drawPile: [1],
       instances: {
-        1: { id: 1, cardId: 10, stateId: 1, stickers: { 1: [101] }, trackProgress: null },
+        1: { id: 1, cardId: 10, stateId: 1, stickers: { 1: [101] }, trackProgress: [] },
       },
     });
     const defs: Record<number, CardDef> = {
@@ -222,6 +252,69 @@ describe('computeScore', () => {
       101: { id: 101, type: 'add', glory: 3, description: '' },
     };
     expect(computeScore(gs, defs, stickers)).toBe(4);
+  });
+
+  it('counts 0 glory when card state has no glory field', () => {
+    const gs = makeGameState({
+      drawPile: [1],
+      instances: { 1: makeInstance(1, 10, 1) },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'A', states: [{ id: 1, name: 'S1' }] }, // no glory
+    };
+    expect(computeScore(gs, defs, {})).toBe(0);
+  });
+
+  it('counts 0 sticker glory when sticker id is not in stickers record', () => {
+    const gs = makeGameState({
+      drawPile: [1],
+      instances: {
+        1: { id: 1, cardId: 10, stateId: 1, stickers: { 1: [999] }, trackProgress: [] },
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'A', states: [{ id: 1, name: 'S1', glory: 2 }] },
+    };
+    // sticker 999 not in stickers map → glory from sticker = 0
+    expect(computeScore(gs, defs, {})).toBe(2);
+  });
+
+  it('adds track glory from completed steps to the score', () => {
+    const gs = makeGameState({
+      drawPile: [1],
+      instances: {
+        1: {
+          id: 1,
+          cardId: 10,
+          stateId: 1,
+          stickers: {},
+          trackProgress: [1, 2],
+        },
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: {
+        id: 10,
+        name: 'A',
+        states: [
+          {
+            id: 1,
+            name: 'S1',
+            glory: 0,
+            track: {
+              steps: [
+                { id: 1, cost: {}, onClick: { glory: 4 } },
+                { id: 2, cost: {}, onClick: { glory: 3 } },
+              ],
+              inOrder: false,
+              cumulative: false,
+              endsTurn: false,
+            },
+          },
+        ],
+      },
+    };
+    expect(computeScore(gs, defs, {})).toBe(7);
   });
 
   it('ignores cards without a matching instance', () => {

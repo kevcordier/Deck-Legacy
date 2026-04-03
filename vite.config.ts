@@ -23,7 +23,12 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/engine/**/*.ts'],
-      exclude: ['src/engine/useGame.ts', 'src/engine/index.ts'],
+      exclude: [
+        'src/engine/infrastructure',
+        'src/engine/**/index.ts',
+        'src/engine/domain/types/**',
+        'src/engine/application/cardAction/CardActionStrategy.ts',
+      ],
     },
   },
 });

@@ -10,7 +10,7 @@ const meta: Meta<typeof ResourcePill> = {
   argTypes: {
     resource: {
       control: 'select',
-      options: ['gold', 'wood', 'stone', 'iron', 'sword', 'goods', 'glory'],
+      options: ['gold', 'wood', 'stone', 'iron', 'weapon', 'goods', 'glory'],
     },
     size: {
       control: 'select',
@@ -38,8 +38,8 @@ export const Iron: Story = {
   args: { resource: 'iron', size: 'md' },
 };
 
-export const Sword: Story = {
-  args: { resource: 'sword', size: 'md' },
+export const Weapon: Story = {
+  args: { resource: 'weapon', size: 'md' },
 };
 
 export const Goods: Story = {
@@ -52,7 +52,7 @@ export const AllResources: Story = {
       {(['sm', 'md', 'lg'] as const).map(size => (
         <div key={size} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <span style={{ color: 'var(--cream)', width: '24px', fontSize: '12px' }}>{size}</span>
-          {['gold', 'wood', 'stone', 'iron', 'sword', 'goods', 'glory'].map(r => (
+          {['gold', 'wood', 'stone', 'iron', 'weapon', 'goods', 'glory'].map(r => (
             <ResourcePill key={r} resource={r} size={size} />
           ))}
         </div>

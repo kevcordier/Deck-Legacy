@@ -264,6 +264,23 @@
   color: var(--gold-d);
 }
 
+/* Description */
+.gc-action-label {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.gc-description {
+  font-family: var(--font-body);
+  font-size: 0.67rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--ink-grey, #5a4e30);
+  margin: 0;
+  padding: 0;
+}
+
 /* Stickers */
 .gc-stickers {
   display: flex;

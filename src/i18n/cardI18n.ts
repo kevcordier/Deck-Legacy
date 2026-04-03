@@ -7,21 +7,21 @@ const ICON_PASSTHROUGH = {
   wood: '{{wood}}',
   stone: '{{stone}}',
   iron: '{{iron}}',
-  sword: '{{sword}}',
+  weapon: '{{weapon}}',
   goods: '{{goods}}',
   glory: '{{glory}}',
 };
 
-export function tCardName(t: TFunction, cardId: number, stateId: number, fallback: string): string {
+export function tCardName(t: TFunction, cardId = 0, stateId = 0, fallback = ''): string {
   return t(`names.${cardId}_${stateId}`, { ns: 'cards', defaultValue: fallback });
 }
 
 export function tCardActionLabel(
   t: TFunction,
-  cardId: number,
-  stateId: number,
-  idx: number,
-  fallback: string,
+  cardId = 0,
+  stateId = 0,
+  idx = 0,
+  fallback = '',
 ): string {
   return t(`labels.${cardId}_${stateId}_a${idx}`, {
     ns: 'cards',
@@ -32,10 +32,10 @@ export function tCardActionLabel(
 
 export function tCardPassiveLabel(
   t: TFunction,
-  cardId: number,
-  stateId: number,
-  idx: number,
-  fallback: string,
+  cardId = 0,
+  stateId = 0,
+  idx = 0,
+  fallback = '',
 ): string {
   return t(`labels.${cardId}_${stateId}_p${idx}`, {
     ns: 'cards',
@@ -46,20 +46,37 @@ export function tCardPassiveLabel(
 
 export function tCardActionDescription(
   t: TFunction,
-  cardId: number,
-  stateId: number,
-  idx: number,
+  cardId = 0,
+  stateId = 0,
+  idx = 0,
+  fallback = '',
 ): string {
-  return t(`descriptions.${cardId}_${stateId}_a${idx}`, { ns: 'cards', defaultValue: '' });
+  return t(`descriptions.${cardId}_${stateId}_a${idx}`, {
+    ns: 'cards',
+    defaultValue: fallback,
+  });
+}
+
+export function tCardStateDescription(
+  t: TFunction,
+  cardId = 0,
+  stateId = 0,
+  fallback = '',
+): string {
+  return t(`descriptions.${cardId}_${stateId}`, { ns: 'cards', defaultValue: fallback });
 }
 
 export function tCardPassiveDescription(
   t: TFunction,
-  cardId: number,
-  stateId: number,
-  idx: number,
+  cardId = 0,
+  stateId = 0,
+  idx = 0,
+  fallback = '',
 ): string {
-  return t(`descriptions.${cardId}_${stateId}_p${idx}`, { ns: 'cards', defaultValue: '' });
+  return t(`descriptions.${cardId}_${stateId}_p${idx}`, {
+    ns: 'cards',
+    defaultValue: fallback,
+  });
 }
 
 export function tCardTag(t: TFunction, tag: string): string {

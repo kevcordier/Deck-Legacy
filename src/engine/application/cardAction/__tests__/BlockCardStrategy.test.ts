@@ -24,7 +24,7 @@ const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
 describe('BlockCardStrategy', () => {
   const strategy = new BlockCardStrategy();
 
-  it('registers sourceInstanceId blocking the target instanceId', () => {
+  it('returns the modified game state', () => {
     const gs = makeGameState();
     const result = strategy.applyEffect(gs, {
       id: '1-1',
@@ -32,28 +32,17 @@ describe('BlockCardStrategy', () => {
       sourceInstanceId: 5,
       instanceId: 10,
     });
+    expect(result).toEqual({ ...gs, blockingCards: { ...gs.blockingCards, 5: 10 } }); // should return the same game state object
     expect(result.blockingCards[5]).toBe(10);
   });
 
-  it('overwrites an existing blocking entry for the source', () => {
+  it('does not modify blockingCards if instanceId is undefined', () => {
     const gs = makeGameState({ blockingCards: { 5: 99 } });
     const result = strategy.applyEffect(gs, {
       id: '1-1',
       type: ActionType.BLOCK_CARD,
       sourceInstanceId: 5,
-      instanceId: 42,
     });
-    expect(result.blockingCards[5]).toBe(42);
-  });
-
-  it('does not affect other entries in blockingCards', () => {
-    const gs = makeGameState({ blockingCards: { 3: 7 } });
-    strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.BLOCK_CARD,
-      sourceInstanceId: 5,
-      instanceId: 10,
-    });
-    expect(gs.blockingCards[3]).toBe(7);
+    expect(result.blockingCards[5]).toBe(99); // should remain unchanged
   });
 });

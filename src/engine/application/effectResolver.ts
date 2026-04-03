@@ -108,8 +108,7 @@ export function resolveActionEffect(
 }
 
 /** Strips the `choice` and `cards` sub-fields from Action.resources to get plain Resources. */
-function extractResources(raw: Action['resources']): Resources {
-  if (!raw) return {};
+function extractResources(raw: NonNullable<Action['resources']>): Resources {
   const { choice: _choice, cards: _cards, ...rest } = raw;
   return rest as Resources;
 }

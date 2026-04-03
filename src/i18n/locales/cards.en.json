@@ -49,7 +49,9 @@
     "14_1": "Lake",
     "14_2": "Fisherman's Cabin",
     "14_3": "Fishing Boat",
-    "14_4": "Lighthouse"
+    "14_4": "Lighthouse",
+    "17_1": "Army",
+    "17_2": "Army"
   },
   "labels": {
     "1_2_a0": "Discard a friendly card to gain 2 {{gold}}.",
@@ -69,15 +71,15 @@
     "8_1_a0": "Choose a Land in play. Gain its productions as resources.",
     "8_2_a0": "Gain {{gold}}/{{wood}}/{{stone}}.",
     "9_1_a0": "When played, blocks 1 card with {{gold}} productions.",
-    "9_1_a1": "Spend {{sword}} to defeat (destroy this card) and gain any 2 resources.",
+    "9_1_a1": "Spend {{weapon}} to defeat (destroy this card) and gain any 2 resources.",
     "9_2_a0": "Choose a Building in play. Gain its productions as resources.",
     "10_1_a0": "When played, blocks 1 card with {{gold}} productions.",
-    "10_1_a1": "Spend {{sword}} to defeat (destroy this card) and gain any 2 resources.",
+    "10_1_a1": "Spend {{weapon}} to defeat (destroy this card) and gain any 2 resources.",
     "10_2_a0": "Choose a Land in play. Gain its productions as resources.",
     "11_2_a0": "Spend 3 {{gold}} to discover a Missionary (103).",
     "11_3_a0": "Spend 4 {{gold}} to discover a Priest (104).",
     "12_2_a0": "Reset to discover Jewellery (90).",
-    "12_3_a0": "Gain {{sword}} for each Person in play.",
+    "12_3_a0": "Gain {{weapon}} for each Person in play.",
     "14_3_a0": "Discover Shore 75.",
     "11_4_p0": "This card has +1 {{gold}} production for each person you have in play.",
     "14_4_p0": "As long as this card is in play, you may discard the top card of your deck."
@@ -93,12 +95,12 @@
     "6_2_a0": "Spend 1 gold to gain 2 wood.",
     "8_2_a0": "Gain 1 gold, wood, or stone.",
     "9_1_a0": "When played, blocks 1 card with gold productions.",
-    "9_1_a1": "Spend 1 sword to defeat (destroy this card) and gain any 2 resources.",
+    "9_1_a1": "Spend 1 weapon to defeat (destroy this card) and gain any 2 resources.",
     "10_1_a0": "When played, blocks 1 card with gold productions.",
-    "10_1_a1": "Spend 1 sword to defeat (destroy this card) and gain any 2 resources.",
+    "10_1_a1": "Spend 1 weapon to defeat (destroy this card) and gain any 2 resources.",
     "11_2_a0": "Spend 3 gold to discover a Missionary (103).",
     "11_3_a0": "Spend 4 gold to discover a Priest (104).",
-    "12_3_a0": "Gain 1 sword for each Person in play.",
+    "12_3_a0": "Gain 1 weapon for each Person in play.",
     "11_4_p0": "This card has +1 gold production for each person you have in play."
   },
   "tags": {

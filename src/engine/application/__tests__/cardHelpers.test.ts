@@ -5,6 +5,7 @@ import {
   getActiveState,
   canAffordResources,
   getInstancesTriggerEffects,
+  getTrackGlory,
 } from '@engine/application/cardHelpers';
 import { ActionType, Trigger, TargetScope, ResourceType } from '@engine/domain/enums';
 import type { CardDef, CardInstance, Sticker } from '@engine/domain/types';
@@ -16,7 +17,7 @@ const makeInstance = (id: number, cardId: number, stateId: number): CardInstance
   cardId,
   stateId,
   stickers: {},
-  trackProgress: null,
+  trackProgress: [],
 });
 
 const makeDef = (id: number, states: CardDef['states'] = []): CardDef => ({
@@ -46,7 +47,7 @@ describe('getEffectiveProductions', () => {
       cardId: 10,
       stateId: 1,
       stickers: { 1: [101] },
-      trackProgress: null,
+      trackProgress: [],
     };
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
@@ -61,12 +62,24 @@ describe('getEffectiveProductions', () => {
       cardId: 10,
       stateId: 2,
       stickers: { 1: [101] }, // stickers for state 1, not active state 2
-      trackProgress: null,
+      trackProgress: [],
     };
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
     };
     const result = getEffectiveProductions({ gold: 2 }, instance, stickers);
+    expect(result).toEqual({ gold: 2 });
+  });
+
+  it('ignores sticker ids that have no entry in the stickers record', () => {
+    const instance: CardInstance = {
+      id: 1,
+      cardId: 10,
+      stateId: 1,
+      stickers: { 1: [999] }, // sticker 999 does not exist in stickers map
+      trackProgress: [],
+    };
+    const result = getEffectiveProductions({ gold: 2 }, instance, {});
     expect(result).toEqual({ gold: 2 });
   });
 
@@ -76,7 +89,7 @@ describe('getEffectiveProductions', () => {
       cardId: 10,
       stateId: 1,
       stickers: { 1: [101] },
-      trackProgress: null,
+      trackProgress: [],
     };
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'remove', production: ResourceType.GOLD, glory: 0, description: '' },
@@ -172,6 +185,92 @@ describe('canAffordResources', () => {
 
   it('returns false when a required resource is missing', () => {
     expect(canAffordResources({ wood: 5 }, { resources: [{ gold: 1 }] })).toBe(false);
+  });
+});
+
+// — getTrackGlory —
+
+describe('getTrackGlory', () => {
+  it('returns 0 when track is undefined', () => {
+    const instance = makeInstance(1, 10, 1);
+    const cs = makeState(1);
+    expect(getTrackGlory(instance, cs)).toBe(0);
+  });
+
+  it('returns 0 when trackProgress is empty even if track exists', () => {
+    const instance = makeInstance(1, 10, 1);
+    const cs = makeState(1, {
+      track: {
+        steps: [{ id: 1, cost: {}, onClick: { glory: 3 } }],
+        inOrder: false,
+        cumulative: false,
+        endsTurn: false,
+      },
+    });
+    expect(getTrackGlory(instance, cs)).toBe(0);
+  });
+
+  it('sums glory from completed track steps', () => {
+    const instance: CardInstance = {
+      id: 1,
+      cardId: 10,
+      stateId: 1,
+      stickers: {},
+      trackProgress: [1, 2],
+    };
+    const cs = makeState(1, {
+      track: {
+        steps: [
+          { id: 1, cost: {}, onClick: { glory: 3 } },
+          { id: 2, cost: {}, onClick: { glory: 5 } },
+        ],
+        inOrder: false,
+        cumulative: false,
+        endsTurn: false,
+      },
+    });
+    expect(getTrackGlory(instance, cs)).toBe(8);
+  });
+
+  it('ignores track steps not in trackProgress', () => {
+    const instance: CardInstance = {
+      id: 1,
+      cardId: 10,
+      stateId: 1,
+      stickers: {},
+      trackProgress: [1],
+    };
+    const cs = makeState(1, {
+      track: {
+        steps: [
+          { id: 1, cost: {}, onClick: { glory: 4 } },
+          { id: 2, cost: {}, onClick: { glory: 6 } },
+        ],
+        inOrder: false,
+        cumulative: false,
+        endsTurn: false,
+      },
+    });
+    expect(getTrackGlory(instance, cs)).toBe(4);
+  });
+
+  it('treats missing onClick.glory as 0', () => {
+    const instance: CardInstance = {
+      id: 1,
+      cardId: 10,
+      stateId: 1,
+      stickers: {},
+      trackProgress: [1],
+    };
+    const cs = makeState(1, {
+      track: {
+        steps: [{ id: 1, cost: {}, onClick: {} }],
+        inOrder: false,
+        cumulative: false,
+        endsTurn: false,
+      },
+    });
+    expect(getTrackGlory(instance, cs)).toBe(0);
   });
 });
 

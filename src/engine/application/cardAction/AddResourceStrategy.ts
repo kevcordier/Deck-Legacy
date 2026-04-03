@@ -12,7 +12,6 @@ export class AddResourceStrategy implements CardActionStrategy {
       resources: Resources;
     },
   ): GameState {
-    gameState.resources = mergeResources(gameState.resources, payload.resources);
-    return gameState;
+    return { ...gameState, resources: mergeResources(gameState.resources, payload.resources) };
   }
 }

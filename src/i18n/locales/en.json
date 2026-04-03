@@ -54,7 +54,7 @@
     "wood": "Wood",
     "stone": "Stone",
     "iron": "Iron",
-    "sword": "Sword",
+    "weapon": "Weapon",
     "goods": "Goods"
   },
   "card": {
@@ -89,7 +89,6 @@
     "stateLabel": "State {{id}}"
   },
   "pendingChoice": {
-    "discoverCard": "Discover a card",
     "chooseCard": "Choose {{count}} card to discover",
     "chooseCard_other": "Choose {{count}} cards to discover",
     "cardPlaceholder": "Card #{{id}}",

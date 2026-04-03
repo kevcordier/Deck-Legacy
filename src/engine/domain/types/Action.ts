@@ -11,7 +11,7 @@ export interface Action {
     stone?: number;
     food?: number;
     iron?: number;
-    sword?: number;
+    weapon?: number;
     goods?: number;
     choice?: {
       gold?: number;
@@ -19,7 +19,7 @@ export interface Action {
       stone?: number;
       food?: number;
       iron?: number;
-      sword?: number;
+      weapon?: number;
       goods?: number;
     }[];
     cards?: CardeSelector;

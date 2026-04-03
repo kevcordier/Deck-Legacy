@@ -1,5 +1,6 @@
-import type { CardDef, GameState, Sticker } from '@engine/domain/types';
-import { getActiveState } from '@engine/application/cardHelpers';
+import type { CardDef, GameState, Resources, Sticker } from '@engine/domain/types';
+import { getActiveState, getTrackGlory } from '@engine/application/cardHelpers';
+import type { ResourceType } from '@engine/domain/enums';
 
 export const discardCards = (_gameState: GameState, cardIds: number[]): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
@@ -37,7 +38,21 @@ export const destroyCards = (_gameState: GameState, cardIds: number[]): GameStat
 export const endTurn = (_gameState: GameState): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
   gameState.resources = {};
-  return discardCards(gameState, gameState.board);
+  return { ...gameState, ...discardCards(gameState, gameState.board) };
+};
+
+export const spendResources = (_gameState: GameState, resources: Resources): GameState => {
+  const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
+  for (const [resourceKey, number] of Object.entries(resources)) {
+    const key = resourceKey as ResourceType;
+    const newValue = (gameState.resources[key] ?? 0) - number;
+    if (newValue <= 0) {
+      delete gameState.resources[key];
+    } else {
+      gameState.resources[key] = newValue;
+    }
+  }
+  return gameState;
 };
 
 export function computeScore(
@@ -53,6 +68,7 @@ export function computeScore(
     const stickerGlory =
       instance.stickers[instance.stateId]?.reduce((sum, s) => sum + (stickers[s]?.glory ?? 0), 0) ??
       0;
-    return total + (cs.glory ?? 0) + stickerGlory;
+    const trackGlory = getTrackGlory(instance, cs);
+    return total + (cs.glory ?? 0) + stickerGlory + trackGlory;
   }, 0);
 }

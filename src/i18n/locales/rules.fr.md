@@ -36,13 +36,13 @@ Chaque tour commence par le tirage automatique de **4 cartes** sur le plateau. S
 
 Vous interagissez ensuite librement avec les cartes, dans l'ordre de votre choix, jusqu'à décider de terminer votre tour :
 
-| Action | Comment |
-| --- | --- |
-| **Produire** | Cliquez sur le bouton de production d'une carte pour gagner ses ressources — la carte est défaussée. |
-| **Utiliser un effet** | Cliquez sur le bouton d'action d'une carte. Un coût peut être à payer au préalable. |
-| **Améliorer** | Cliquez sur une voie d'amélioration, payez le coût — la carte évolue et **le tour se termine**. |
-| **›› Progresser** | Piochez **2 cartes supplémentaires** sur le plateau (peut être fait plusieurs fois). |
-| **Fin de tour** | Terminez votre tour volontairement sans améliorer. |
+| Action                | Comment                                                                                              |
+| --------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Produire**          | Cliquez sur le bouton de production d'une carte pour gagner ses ressources — la carte est défaussée. |
+| **Utiliser un effet** | Cliquez sur le bouton d'action d'une carte. Un coût peut être à payer au préalable.                  |
+| **Améliorer**         | Cliquez sur une voie d'amélioration, payez le coût — la carte évolue et **le tour se termine**.      |
+| **›› Progresser**     | Piochez **2 cartes supplémentaires** sur le plateau (peut être fait plusieurs fois).                 |
+| **Fin de tour**       | Terminez votre tour volontairement sans améliorer.                                                   |
 
 À la fin de chaque tour, **toutes les ressources sont perdues** et les cartes restantes sur le plateau sont défaussées.
 
@@ -52,11 +52,11 @@ Vous interagissez ensuite librement avec les cartes, dans l'ordre de votre choix
 
 Les ressources sont produites par les cartes et dépensées pour payer les coûts d'actions ou d'améliorations. Elles sont **perdues à la fin du tour** — dépensez-les dans le même tour où vous les gagnez.
 
-| | Ressource | | Ressource |
-| --- | --- | --- | --- |
-| {{gold}} | **Or** | {{sword}} | **Épée** |
-| {{wood}} | **Bois** | {{goods}} | **Marchandise** |
-| {{stone}} | **Pierre** | {{iron}} | **Fer** |
+|           | Ressource  |            | Ressource       |
+| --------- | ---------- | ---------- | --------------- |
+| {{gold}}  | **Or**     | {{weapon}} | **Épée**        |
+| {{wood}}  | **Bois**   | {{goods}}  | **Marchandise** |
+| {{stone}} | **Pierre** | {{iron}}   | **Fer**         |
 
 ---
 
@@ -89,7 +89,14 @@ Certaines cartes ont **plusieurs faces** (états). Quand une telle carte est dé
 
 ### Pistes
 
-Certaines cartes possèdent une **piste de progression**. Chaque fois que la carte s'active, sa piste avance. Compléter la piste déclenche un effet bonus puissant.
+Certaines cartes possèdent une **piste de progression** — une rangée de boutons carrés affichés sur la carte. Chaque bouton est une **étape** activable une seule fois en payant son coût (affiché au-dessus).
+
+Le contenu d'une étape indique ce que vous gagnez : une valeur de **Gloire**, une **ressource**, un **numéro de carte** à découvrir, ou une flèche **↑** pour une amélioration.
+
+- Si la piste est **ordonnée**, seule la première étape non validée est cliquable.
+- Si la piste est **libre**, n'importe quelle étape non validée peut être cliquée indépendamment.
+
+Une fois cliquée, l'étape est définitivement **cochée (✓)** et ne peut plus être activée. Les étapes validées contribuent à votre score de Gloire en fin de partie.
 
 ### Stickers
 
@@ -109,13 +116,13 @@ Certaines cartes déclenchent des effets automatiquement lorsqu'elles sont tiré
 
 ## Mots-clés des cartes
 
-| Mot-clé | Description |
-| --- | --- |
-| **Terre** | Cartes de territoire de base |
-| **Bâtiment** | Cartes d'infrastructure |
-| **Personne** | Cartes de personnage |
-| **Bétail** | Cartes d'animaux |
-| **Maritime** | Cartes navales |
+| Mot-clé                | Description                        |
+| ---------------------- | ---------------------------------- |
+| **Terre**              | Cartes de territoire de base       |
+| **Bâtiment**           | Cartes d'infrastructure            |
+| **Personne**           | Cartes de personnage               |
+| **Bétail**             | Cartes d'animaux                   |
+| **Maritime**           | Cartes navales                     |
 | **Ennemi / Événement** | Cartes rouges — toujours négatives |
 
 ---

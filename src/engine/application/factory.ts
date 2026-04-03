@@ -24,6 +24,6 @@ export function createInstance(
     cardId,
     stateId,
     stickers: {},
-    trackProgress: null,
+    trackProgress: [],
   };
 }

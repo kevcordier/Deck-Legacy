@@ -36,13 +36,13 @@ Each turn starts by automatically drawing **4 cards** onto the board. If fewer t
 
 You then interact with the cards freely, in any order, until you choose to end your turn:
 
-| Action | How |
-| --- | --- |
-| **Produce** | Click a card's production button to gain its resources — the card is discarded. |
-| **Use effect** | Click a card's action button. A cost may need to be paid first. |
-| **Upgrade** | Click an upgrade path on a card, pay the cost — the card upgrades and **the turn ends**. |
+| Action          | How                                                                                         |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| **Produce**     | Click a card's production button to gain its resources — the card is discarded.             |
+| **Use effect**  | Click a card's action button. A cost may need to be paid first.                             |
+| **Upgrade**     | Click an upgrade path on a card, pay the cost — the card upgrades and **the turn ends**.    |
 | **›› Progress** | Draw **2 more cards** onto the board (can be done multiple times, as long as cards remain). |
-| **End turn** | End your turn voluntarily without upgrading. |
+| **End turn**    | End your turn voluntarily without upgrading.                                                |
 
 At the end of each turn, **all resources are lost** and all remaining board cards are discarded.
 
@@ -52,11 +52,11 @@ At the end of each turn, **all resources are lost** and all remaining board card
 
 Resources are produced by cards and spent to pay action or upgrade costs. They are **lost at the end of the turn** — spend them in the same turn you gain them.
 
-| | Resource | | Resource |
-| --- | --- | --- | --- |
-| {{gold}} | **Gold** | {{sword}} | **Sword** |
-| {{wood}} | **Wood** | {{goods}} | **Goods** |
-| {{stone}} | **Stone** | {{iron}} | **Iron** |
+|           | Resource  |            | Resource   |
+| --------- | --------- | ---------- | ---------- |
+| {{gold}}  | **Gold**  | {{weapon}} | **Weapon** |
+| {{wood}}  | **Wood**  | {{goods}}  | **Goods**  |
+| {{stone}} | **Stone** | {{iron}}   | **Iron**   |
 
 ---
 
@@ -89,7 +89,14 @@ Some cards have **multiple sides** (states). When such a card is discovered, you
 
 ### Tracks
 
-Some cards have a **progress track**. Each time the card activates, its track advances. Completing the track triggers a powerful bonus effect.
+Some cards have a **progress track** — a row of square buttons displayed on the card. Each button is a **step** that can be activated once by paying its cost (shown above the button).
+
+Step content shows what you gain: a **Glory** value, a **resource**, a **card number** to discover, or an **↑** arrow for an upgrade.
+
+- If the track is **in order**, only the first unvalidated step is clickable.
+- If the track is **free**, any unvalidated step can be clicked independently.
+
+Once clicked, a step is permanently **checked (✓)** and cannot be activated again. Validated steps count towards your Glory score at the end of the game.
 
 ### Stickers
 
@@ -109,13 +116,13 @@ Some cards trigger effects automatically when drawn or discovered. When **multip
 
 ## Card Keywords
 
-| Keyword | Description |
-| --- | --- |
-| **Land** | Basic territory cards |
-| **Building** | Infrastructure cards |
-| **Person** | Character cards |
-| **Livestock** | Animal cards |
-| **Seafaring** | Naval cards |
+| Keyword           | Description                 |
+| ----------------- | --------------------------- |
+| **Land**          | Basic territory cards       |
+| **Building**      | Infrastructure cards        |
+| **Person**        | Character cards             |
+| **Livestock**     | Animal cards                |
+| **Seafaring**     | Naval cards                 |
 | **Enemy / Event** | Red cards — always negative |
 
 ---

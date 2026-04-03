@@ -67,7 +67,7 @@ The entire game state is derived by replaying an ordered list of `GameEvent` obj
 | `GameEvent` | Discriminated union of all recordable events |
 | `PendingChoice` | Prompt awaiting player input (card select, resource, state) |
 | `Action` / `Cost` | Effect definitions for card abilities |
-| `Resource` | `{gold, wood, stone, iron, sword, goods}` |
+| `Resource` | `{gold, wood, stone, iron, weapon, goods}` |
 | `Sticker` | Persistent card modifier (production bonus, glory, stay-in-play) |
 
 ### Strategy Pattern (Card Actions)

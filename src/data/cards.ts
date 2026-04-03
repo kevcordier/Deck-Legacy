@@ -405,7 +405,7 @@ export const cardsData: CardDef[] = [
         ],
         productions: [
           {
-            [ResourceType.SWORD]: 1,
+            [ResourceType.WEAPON]: 1,
           },
         ],
       },
@@ -446,7 +446,7 @@ export const cardsData: CardDef[] = [
         ],
         productions: [
           {
-            [ResourceType.SWORD]: 1,
+            [ResourceType.WEAPON]: 1,
           },
         ],
       },
@@ -472,7 +472,7 @@ export const cardsData: CardDef[] = [
         ],
         productions: [
           {
-            [ResourceType.SWORD]: 1,
+            [ResourceType.WEAPON]: 1,
           },
         ],
       },
@@ -954,11 +954,11 @@ export const cardsData: CardDef[] = [
             ],
           },
           {
-            label: 'Spend 1 sword to defeat (destroy this card) and gain any 2 resources.',
+            label: 'Spend 1 weapon to defeat (destroy this card) and gain any 2 resources.',
             cost: {
               resources: [
                 {
-                  [ResourceType.SWORD]: 1,
+                  [ResourceType.WEAPON]: 1,
                 },
               ],
               destroy: { scope: TargetScope.SELF },
@@ -982,7 +982,7 @@ export const cardsData: CardDef[] = [
                       [ResourceType.IRON]: 1,
                     },
                     {
-                      [ResourceType.SWORD]: 1,
+                      [ResourceType.WEAPON]: 1,
                     },
                     {
                       [ResourceType.GOODS]: 1,
@@ -1008,7 +1008,7 @@ export const cardsData: CardDef[] = [
                       [ResourceType.IRON]: 1,
                     },
                     {
-                      [ResourceType.SWORD]: 1,
+                      [ResourceType.WEAPON]: 1,
                     },
                     {
                       [ResourceType.GOODS]: 1,
@@ -1073,11 +1073,11 @@ export const cardsData: CardDef[] = [
             ],
           },
           {
-            label: 'Spend 1 sword to defeat (destroy this card) and gain any 2 resources.',
+            label: 'Spend 1 weapon to defeat (destroy this card) and gain any 2 resources.',
             cost: {
               resources: [
                 {
-                  [ResourceType.SWORD]: 1,
+                  [ResourceType.WEAPON]: 1,
                 },
               ],
               destroy: { scope: TargetScope.SELF },
@@ -1101,7 +1101,7 @@ export const cardsData: CardDef[] = [
                       [ResourceType.IRON]: 1,
                     },
                     {
-                      [ResourceType.SWORD]: 1,
+                      [ResourceType.WEAPON]: 1,
                     },
                     {
                       [ResourceType.GOODS]: 1,
@@ -1127,7 +1127,7 @@ export const cardsData: CardDef[] = [
                       [ResourceType.IRON]: 1,
                     },
                     {
-                      [ResourceType.SWORD]: 1,
+                      [ResourceType.WEAPON]: 1,
                     },
                     {
                       [ResourceType.GOODS]: 1,
@@ -1415,14 +1415,14 @@ export const cardsData: CardDef[] = [
         glory: 4,
         cardEffects: [
           {
-            label: 'Gain 1 Sword for each Person in play.',
+            label: 'Gain 1 Weapon for each Person in play.',
             actions: [
               {
                 id: 1,
                 type: ActionType.ADD_RESOURCES,
                 resource_per_card: {
                   amount: 1,
-                  resource: ResourceType.SWORD,
+                  resource: ResourceType.WEAPON,
                   scope: TargetScope.BOARD,
                   tags: [CardTag.PERSON],
                 },
@@ -1437,7 +1437,7 @@ export const cardsData: CardDef[] = [
         tags: [CardTag.BUILDING],
         productions: [
           {
-            [ResourceType.SWORD]: 1,
+            [ResourceType.WEAPON]: 1,
           },
         ],
         glory: 3,
@@ -1655,8 +1655,28 @@ export const cardsData: CardDef[] = [
                 id: 1,
                 type: ActionType.DISCOVER_CARD,
                 cards: {
-                  number: 4,
-                  ids: [24, 25, 26, 27],
+                  ids: [24],
+                },
+              },
+              {
+                id: 2,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  ids: [25],
+                },
+              },
+              {
+                id: 3,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  ids: [26],
+                },
+              },
+              {
+                id: 4,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  ids: [27],
                 },
               },
             ],
@@ -1709,6 +1729,248 @@ export const cardsData: CardDef[] = [
             ],
           },
         ],
+      },
+    ],
+  },
+  {
+    id: 17,
+    name: 'Army',
+    permanent: true,
+    states: [
+      {
+        id: 1,
+        name: 'Army',
+        track: {
+          cumulative: false,
+          inOrder: true,
+          endsTurn: true,
+          steps: [
+            {
+              id: 1,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 1,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 1,
+              },
+            },
+            {
+              id: 2,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 2,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 4,
+              },
+            },
+            {
+              id: 3,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 3,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 7,
+              },
+            },
+            {
+              id: 4,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 4,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 10,
+              },
+            },
+            {
+              id: 5,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 5,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 14,
+              },
+            },
+            {
+              id: 6,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 6,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 19,
+              },
+            },
+            {
+              id: 7,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 7,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 25,
+              },
+            },
+            {
+              id: 8,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 8,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 32,
+              },
+            },
+            {
+              id: 9,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 9,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 40,
+              },
+            },
+            {
+              id: 10,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 10,
+                  },
+                ],
+              },
+              onClick: {
+                actions: [
+                  {
+                    id: 1,
+                    type: ActionType.DISCOVER_CARD,
+                    cards: {
+                      number: 1,
+                      ids: [135],
+                    },
+                  },
+                  {
+                    id: 2,
+                    type: ActionType.UPGRADE_CARD,
+                    cards: {
+                      scope: TargetScope.SELF,
+                    },
+                    states: [2],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+      {
+        id: 2,
+        name: 'Grand Army',
+        glory: 50,
+        track: {
+          cumulative: false,
+          inOrder: true,
+          endsTurn: true,
+          steps: [
+            {
+              id: 1,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 10,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 10,
+              },
+            },
+            {
+              id: 2,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 10,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 20,
+              },
+            },
+            {
+              id: 3,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 12,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 30,
+              },
+            },
+            {
+              id: 4,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 12,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 40,
+              },
+            },
+            {
+              id: 5,
+              cost: {
+                resources: [
+                  {
+                    [ResourceType.WEAPON]: 15,
+                  },
+                ],
+              },
+              onClick: {
+                glory: 50,
+              },
+            },
+          ],
+        },
       },
     ],
   },

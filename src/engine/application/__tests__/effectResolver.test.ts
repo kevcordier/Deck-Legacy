@@ -10,7 +10,7 @@ const makeInstance = (id: number, cardId: number, stateId: number): CardInstance
   cardId,
   stateId,
   stickers: {},
-  trackProgress: null,
+  trackProgress: [],
 });
 
 const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
@@ -148,6 +148,62 @@ describe('resolveActionEffect — resources', () => {
   });
 });
 
+// — resources.cards resolution —
+
+describe('resolveActionEffect — resources.cards', () => {
+  it('sets resources to empty when no cards match the cards selector', () => {
+    const gs = makeGameState({ board: [], instances: {} });
+    const defs: Record<number, CardDef> = {};
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_RESOURCES,
+      resources: { gold: 2, cards: { scope: TargetScope.BOARD } },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(resolved.resources).toEqual({});
+    expect(pending).toEqual([]);
+  });
+
+  it('resolves resources when exactly one card matches the cards selector', () => {
+    const gs = makeGameState({
+      board: [2],
+      instances: { 2: makeInstance(2, 10, 1) },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'Card', states: [{ id: 1, name: 'State 1' }] },
+    };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_RESOURCES,
+      resources: { gold: 3, cards: { scope: TargetScope.BOARD } },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(resolved.resources).toEqual({ gold: 3 });
+    expect(pending).toEqual([]);
+  });
+
+  it('creates a pending choice when multiple cards match the cards selector', () => {
+    const gs = makeGameState({
+      board: [2, 3],
+      instances: {
+        2: makeInstance(2, 10, 1),
+        3: makeInstance(3, 10, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'Card', states: [{ id: 1, name: 'State 1' }] },
+    };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_RESOURCES,
+      resources: { gold: 2, cards: { scope: TargetScope.BOARD, number: 1 } },
+    });
+    const [, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe(PendingChoiceType.CHOOSE_CARD);
+  });
+});
+
 // — stickerId resolution —
 
 describe('resolveActionEffect — stickerId', () => {
@@ -159,6 +215,110 @@ describe('resolveActionEffect — stickerId', () => {
     });
     const [resolved] = resolveActionEffect(action, 1);
     expect(resolved.stickerId).toBe(42);
+  });
+});
+
+// — cards.number fallback —
+
+describe('resolveActionEffect — cards.number fallback', () => {
+  it('uses pickCount of 1 when cards.number is not specified', () => {
+    const gs = makeGameState({
+      board: [2, 3],
+      instances: {
+        2: makeInstance(2, 10, 1),
+        3: makeInstance(3, 10, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'Card', states: [{ id: 1, name: 'State 1' }] },
+    };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.DISCARD_CARD,
+      cards: { scope: TargetScope.BOARD }, // no number
+    });
+    const [, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(pending[0].pickCount).toBe(1);
+  });
+});
+
+// — resources.cards without gameState —
+
+describe('resolveActionEffect — resources.cards without gameState', () => {
+  it('treats choices as empty when gameState is not provided', () => {
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_RESOURCES,
+      resources: { gold: 2, cards: { scope: TargetScope.BOARD } },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 1);
+    expect(resolved.resources).toEqual({});
+    expect(pending).toEqual([]);
+  });
+
+  it('uses pickCount of 1 when resources.cards.number is not specified and multiple match', () => {
+    const gs = makeGameState({
+      board: [2, 3],
+      instances: {
+        2: makeInstance(2, 10, 1),
+        3: makeInstance(3, 10, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'Card', states: [{ id: 1, name: 'State 1' }] },
+    };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_RESOURCES,
+      resources: { gold: 2, cards: { scope: TargetScope.BOARD } }, // no number
+    });
+    const [, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(pending[0].pickCount).toBe(1);
+  });
+});
+
+// — stickerId boost without cards —
+
+describe('resolveActionEffect — stickerId boost without cards', () => {
+  it('does not set stickerId when stickerId is boost without cards', () => {
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_STICKER,
+      stickerId: 'boost',
+      // no cards property
+    });
+    const [resolved] = resolveActionEffect(action, 1);
+    expect(resolved.stickerId).toBeUndefined();
+  });
+});
+
+// — stickerId boost —
+
+describe('resolveActionEffect — stickerId boost', () => {
+  it('does not set stickerId when stickerId is boost with cards', () => {
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_STICKER,
+      stickerId: 'boost',
+      cards: { scope: TargetScope.SELF },
+    });
+    const [resolved] = resolveActionEffect(action, 1);
+    expect(resolved.stickerId).toBeUndefined();
+  });
+});
+
+// — resource_per_card —
+
+describe('resolveActionEffect — resource_per_card', () => {
+  it('ignores resource_per_card (not yet implemented)', () => {
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_RESOURCES,
+      resource_per_card: { amount: 1, resource: 'gold' as never, scope: TargetScope.BOARD },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 1);
+    expect(pending).toEqual([]);
+    expect(resolved.resources).toBeUndefined();
   });
 });
 

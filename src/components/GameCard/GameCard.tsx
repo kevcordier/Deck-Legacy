@@ -12,6 +12,7 @@ import {
 import { renderTextWithIcons } from '@engine/application/renderHelpers';
 import { getResMeta } from '@engine/application/resourceHelpers';
 import { CardStatePreview } from '@components/CardStatePreview';
+import { CardTrack } from '@components/CardTrack';
 import { ResourceList } from '@components/Resource/ResourceList';
 import { ResourcePill } from '@components/Resource/ResourcePill';
 import passifIcon from '@assets/icons/passif.svg';
@@ -32,6 +33,7 @@ interface GameCardProps {
   onActivate?: () => void;
   onAction?: (label: string) => void;
   onUpgrade?: (toStateId?: number) => void;
+  onTrackStep?: (stepId: number) => void;
   style?: React.CSSProperties;
   animDelay?: number;
   hideStatePreview?: boolean;
@@ -47,6 +49,7 @@ export function GameCard({
   onActivate,
   onAction,
   onUpgrade,
+  onTrackStep,
   style,
   animDelay = 0,
   hideStatePreview = false,
@@ -60,6 +63,7 @@ export function GameCard({
     tag => tag.toLowerCase() === 'enemy' || tag.toLowerCase() === 'ennemy',
   );
   const isPermanent = def?.permanent;
+  const isParchment = def?.parchmentCard ?? false;
   const sc = getActiveState(instance, defs);
   const base = sc.productions?.[0] || {};
   const productions = getEffectiveProductions(base, instance, stickerDefs);
@@ -67,6 +71,8 @@ export function GameCard({
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
   const actions = cs.cardEffects ?? [];
+
+  // Description: state-level i18n key, falling back to first effect's description (parchment cards)
   const glory = cs.glory ?? 0;
   const resourceOptions = cs.productions as Resources[] | undefined;
 
@@ -149,6 +155,21 @@ export function GameCard({
             </div>
           )}
 
+          {/* Action description */}
+          {isParchment &&
+            actions.map((action, i) => {
+              return (
+                <React.Fragment key={i}>
+                  <span className="gc-action-label">
+                    {tCardActionLabel(t, instance.cardId, cs.id, i, action.label)}
+                  </span>
+                  {action.description && (
+                    <p className="gc-description">{renderTextWithIcons(action.description)}</p>
+                  )}
+                </React.Fragment>
+              );
+            })}
+
           {/* Stickers */}
           {currentStateStickers.length > 0 && (
             <div className="gc-stickers">
@@ -179,13 +200,13 @@ export function GameCard({
             </span>
           )}
 
-          {/* Action buttons */}
+          {/* Action buttons — hidden for parchment cards */}
           {!isBlocked &&
+            !isParchment &&
             actions.map((action, i) => {
               const affordable = !action.cost || canAffordResources(currentResources, action.cost);
               const actionLabel = tCardActionLabel(t, instance.cardId, cs.id, i, action.label);
-              const actionDesc =
-                tCardActionDescription(t, instance.cardId, cs.id, i) || actionLabel;
+              const actionDesc = tCardActionDescription(t, instance.cardId, cs.id, i, actionLabel);
               const hasDestroyItselfCost = action.cost?.destroy?.scope === TargetScope.SELF;
               const haveTrigger = !!action.trigger;
               const isOptional = action.optional;
@@ -215,6 +236,17 @@ export function GameCard({
                 </button>
               );
             })}
+
+          {/* Track */}
+          {!isBlocked && cs.track && (
+            <CardTrack
+              track={cs.track}
+              validatedSteps={instance.trackProgress}
+              currentResources={currentResources}
+              canActivate={canActivate}
+              onStep={stepId => onTrackStep?.(stepId)}
+            />
+          )}
 
           {/* Upgrade buttons */}
           {!isBlocked &&

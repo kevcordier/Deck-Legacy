@@ -137,6 +137,14 @@
   min-width: 0;
 }
 
+.pcm-trigger-card-name {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  color: var(--gold-d);
+  letter-spacing: 0.03em;
+  margin-bottom: 2px;
+}
+
 .pcm-trigger-label {
   font-family: var(--font-display);
   font-size: 0.85rem;

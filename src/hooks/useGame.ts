@@ -49,6 +49,7 @@ export type GameHook = {
   startTurn: () => void;
   resolveProduction: (instanceId: number, chosenResource?: Resources) => void;
   resolveAction: (instanceId: number, actionId: string) => void;
+  resolveTrackStep: (instanceId: number, stepId: number) => void;
   resolveUpgrade: (instanceId: number, chosenUpgradeTo?: number) => void;
   progress: () => void;
   endTurnVoluntary: () => void;
@@ -95,6 +96,7 @@ export function useGame(): GameHook {
     (instanceId: number, effect: Effect, resolvedCost: ResolvedCost, triggerId: string) => {
       const gs = aggRef.current.getGameState();
       const inst = gs.instances[instanceId];
+      const def = defs[inst.cardId];
       if (!inst || Object.values(gs.blockingCards).includes(instanceId)) return;
       if (!effect) return;
 
@@ -126,6 +128,7 @@ export function useGame(): GameHook {
         effects,
         resolvedCost,
         !effect.passive && !effect.trigger,
+        def.parchmentCard,
         triggerId,
       );
     },
@@ -136,9 +139,11 @@ export function useGame(): GameHook {
 
   const sync = useCallback(() => {
     const gs = aggRef.current.getGameState();
+
     setLiveState(gs);
     saveGame(aggRef.current.getEvents(), aggRef.current.getSaveState());
 
+    const triggers = gs.triggerPile;
     // If there's only one trigger in the trigger pile, automatically set it as the only pending choice. Otherwise, if there are multiple triggers, set a pending choice to ask the player to choose which one to resolve.
     if (Object.entries(gs.triggerPile).length === 1) {
       const [triggerId, trigger] = Object.entries(gs.triggerPile)[0];
@@ -153,12 +158,13 @@ export function useGame(): GameHook {
         },
         triggerId,
       );
+      delete triggers[triggerId];
 
-      if (event) setEvents([...events, event]);
-    } else if (Object.entries(gs.triggerPile).length > 1) {
-      setTriggerPile(gs.triggerPile);
+      if (event) setEvents(prev => [...prev, event]);
     }
-  }, [events, triggerAction]);
+
+    setTriggerPile(triggers);
+  }, [triggerAction]);
 
   // ── Score ─────────────────────────────────────────────────────────────────
 
@@ -166,25 +172,6 @@ export function useGame(): GameHook {
     () => computeScore(liveState, defs, stickerDefs),
     [liveState, defs, stickerDefs],
   );
-
-  // ── Persistance ───────────────────────────────────────────────────────────
-
-  const loadGame = useCallback(() => {
-    const save = loadSave();
-    if (!save) return;
-    const agg = makeAggregate(save.saveState);
-    agg.loadFromHistory(save.events);
-    aggRef.current = agg;
-    setEvents([...agg.getEvents()]);
-    sync();
-  }, [sync]);
-
-  const deleteSaveCallback = useCallback(() => {
-    deleteSave();
-    aggRef.current = makeAggregate();
-    setEvents([]);
-    setLiveState({ ...EMPTY_STATE });
-  }, []);
 
   // ── Démarrage ─────────────────────────────────────────────────────────────
 
@@ -217,32 +204,51 @@ export function useGame(): GameHook {
     const events: GameEvent[] = [startEvent, roundEvent];
     if (turnEvent) events.push(turnEvent);
     aggRef.current = agg;
-    setEvents(events);
+    setEvents(prev => [...prev, ...events]);
     sync();
   }, [defs, sync]);
 
   const startRound = useCallback(() => {
     const event = aggRef.current.roundStarted();
-    setEvents([...events, event]);
+    setEvents(prev => [...prev, event]);
     sync();
-  }, [events, sync]);
+  }, [sync]);
 
   const startTurn = useCallback(() => {
     const event = aggRef.current.turnStarted();
     if (!event) return;
-    setEvents([...events, event]);
+    setEvents(prev => [...prev, event]);
     sync();
-  }, [events, sync]);
+  }, [sync]);
+
+  // ── Persistance ───────────────────────────────────────────────────────────
+
+  const loadGame = useCallback(() => {
+    const save = loadSave();
+    if (!save) return;
+    const agg = makeAggregate(save.saveState);
+    agg.loadFromHistory(save.events);
+    aggRef.current = agg;
+    setEvents([...agg.getEvents()]);
+    sync();
+  }, [sync]);
+
+  const deleteSaveCallback = useCallback(() => {
+    deleteSave();
+    aggRef.current = makeAggregate();
+    setPendingChoices(null);
+    startGame();
+  }, [startGame]);
 
   // ── Actions de carte ──────────────────────────────────────────────────────
 
   const triggerProduction = useCallback(
     (instanceId: number, resourcesGained: Record<string, number>) => {
       const event = aggRef.current.cardProduced(instanceId, resourcesGained);
-      setEvents([...events, event]);
+      setEvents(prev => [...prev, event]);
       sync();
     },
-    [events, sync],
+    [sync],
   );
 
   const resolveProduction = useCallback(
@@ -280,7 +286,7 @@ export function useGame(): GameHook {
   );
 
   const resolveAction = useCallback(
-    (instanceId: number, actionId: string) => {
+    (instanceId: number, actionId: string, triggerId?: string) => {
       const gs = aggRef.current.getGameState();
       const inst = gs.instances[instanceId];
       if (!inst || Object.values(gs.blockingCards).includes(instanceId)) return;
@@ -304,18 +310,60 @@ export function useGame(): GameHook {
           action,
           resolvedCost,
           resolvedAction: [],
-          triggerId: crypto.randomUUID(),
+          triggerId: triggerId ?? crypto.randomUUID(),
         };
         setPendingChoices(costPendingChoices);
         return;
       }
 
       // if no pending choices are needed to pay the cost, proceed to trigger the action immediately
-      const event = triggerAction(instanceId, action, resolvedCost, crypto.randomUUID());
-      if (event) setEvents([...events, event]);
+      const event = triggerAction(
+        instanceId,
+        action,
+        resolvedCost,
+        triggerId ?? crypto.randomUUID(),
+      );
+      if (event) setEvents(prev => [...prev, event]);
+
       sync();
     },
-    [triggerAction, defs, events, sync],
+    [triggerAction, defs, sync],
+  );
+
+  const resolveTrackStep = useCallback(
+    (instanceId: number, stepId: number) => {
+      const gs = aggRef.current.getGameState();
+      const inst = gs.instances[instanceId];
+      if (!inst || Object.values(gs.blockingCards).includes(instanceId)) return;
+      const cs = getActiveState(inst, defs);
+      const track = cs.track;
+      if (!track) return;
+      const step = track.steps.find(s => s.id === stepId);
+      if (!step) return;
+      if (inst.trackProgress.includes(stepId)) return;
+      if (!canAffordResources(gs.resources, step.cost)) return;
+
+      const [resolvedCost] = resolveCost(step.cost, instanceId, gs, defs);
+
+      const effects = (step.onClick.actions ?? []).flatMap(action => {
+        const [resolved] = resolveActionEffect(action, instanceId, gs, defs);
+        return [resolved];
+      });
+
+      const triggerId = crypto.randomUUID();
+      const event = aggRef.current.useCardEffect(
+        effects,
+        resolvedCost,
+        false,
+        false,
+        triggerId,
+        stepId,
+        instanceId,
+      );
+      setEvents(prev => [...prev, event]);
+      sync();
+    },
+    [defs, sync],
   );
 
   const resolveUpgrade = useCallback(
@@ -339,10 +387,10 @@ export function useGame(): GameHook {
         upgrade.upgradeTo,
         upgrade.cost.resources?.[0] ?? {},
       );
-      setEvents([...events, event]);
+      setEvents(prev => [...prev, event]);
       sync();
     },
-    [events, defs, sync],
+    [defs, sync],
   );
 
   // ── Flux de tour ──────────────────────────────────────────────────────────
@@ -350,15 +398,15 @@ export function useGame(): GameHook {
   const progress = useCallback(() => {
     const event = aggRef.current.advance();
     if (!event) return;
-    setEvents([...events, event]);
+    setEvents(prev => [...prev, event]);
     sync();
-  }, [events, sync]);
+  }, [sync]);
 
   const endTurnVoluntary = useCallback(() => {
     const event = aggRef.current.pass();
-    setEvents([...events, event]);
+    setEvents(prev => [...prev, event]);
     sync();
-  }, [events, sync]);
+  }, [sync]);
 
   // ── Résolution de choix ───────────────────────────────────────────────────
 
@@ -383,6 +431,7 @@ export function useGame(): GameHook {
         const { instanceId, action } = currentActionRef.current;
         const gs = aggRef.current.getGameState();
         const inst = gs.instances[instanceId];
+        const def = defs[inst.cardId];
         if (!inst || Object.values(gs.blockingCards).includes(instanceId)) return;
         if (!action) return;
 
@@ -407,15 +456,16 @@ export function useGame(): GameHook {
             resolvedAction,
             resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
             !action.passive && !action.trigger,
+            def.parchmentCard,
             triggerId,
           );
-          setEvents([...events, event]);
+          setEvents(prev => [...prev, event]);
           sync();
           setPendingChoices(pendingChoices);
         }
       }
     },
-    [events, sync, pendingChoices, triggerProduction, stickerDefs],
+    [sync, pendingChoices, triggerProduction, stickerDefs, defs],
   );
 
   // This function is called when the player has made a choice needed to pay an action's cost.
@@ -451,10 +501,10 @@ export function useGame(): GameHook {
         currentActionRef.current.resolvedCost,
         currentActionRef.current.triggerId,
       );
-      if (event) setEvents([...events, event]);
+      if (event) setEvents(prev => [...prev, event]);
       sync();
     },
-    [triggerAction, events, sync],
+    [triggerAction, sync],
   );
 
   // ── Rembobinage ───────────────────────────────────────────────────────────
@@ -502,6 +552,7 @@ export function useGame(): GameHook {
     startTurn,
     resolveProduction,
     resolveAction,
+    resolveTrackStep,
     resolveUpgrade,
     progress,
     endTurnVoluntary,

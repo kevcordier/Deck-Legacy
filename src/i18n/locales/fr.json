@@ -54,7 +54,7 @@
     "wood": "Bois",
     "stone": "Pierre",
     "iron": "Fer",
-    "sword": "Épée",
+    "weapon": "Épée",
     "goods": "Marchandise"
   },
   "card": {
@@ -89,7 +89,6 @@
     "stateLabel": "État {{id}}"
   },
   "pendingChoice": {
-    "discoverCard": "Découvrir une carte",
     "chooseCard": "Choisissez {{count}} carte à découvrir",
     "chooseCard_other": "Choisissez {{count}} cartes à découvrir",
     "cardPlaceholder": "Carte #{{id}}",

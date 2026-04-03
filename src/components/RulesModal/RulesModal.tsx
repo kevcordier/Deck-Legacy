@@ -7,7 +7,7 @@ import goldIcon from '@assets/icons/gold.svg';
 import woodIcon from '@assets/icons/wood.svg';
 import stoneIcon from '@assets/icons/stone.svg';
 import ironIcon from '@assets/icons/iron.svg';
-import swordIcon from '@assets/icons/sword.svg';
+import weaponIcon from '@assets/icons/weapon.svg';
 import goodsIcon from '@assets/icons/goods.svg';
 import gloryIcon from '@assets/icons/glory.svg';
 import './RulesModal.css';
@@ -26,14 +26,14 @@ const ICON_URLS: Record<string, string> = {
   wood: woodIcon,
   stone: stoneIcon,
   iron: ironIcon,
-  sword: swordIcon,
+  weapon: weaponIcon,
   goods: goodsIcon,
   glory: gloryIcon,
 };
 
 function injectIcons(content: string): string {
   return content.replace(
-    /\{\{(gold|wood|stone|iron|sword|goods|glory)\}\}/g,
+    /\{\{(gold|wood|stone|iron|weapon|goods|glory)\}\}/g,
     (_, key: string) => `![${key}](${ICON_URLS[key]})`,
   );
 }

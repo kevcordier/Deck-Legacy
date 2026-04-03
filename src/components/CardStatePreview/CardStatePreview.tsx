@@ -94,7 +94,7 @@ function CardStatesModal({
             const fakeInstance: CardInstance = {
               ...instance,
               stateId: s.id,
-              trackProgress: isCurrent ? instance.trackProgress : null,
+              trackProgress: isCurrent ? instance.trackProgress : [],
             };
             return (
               <div

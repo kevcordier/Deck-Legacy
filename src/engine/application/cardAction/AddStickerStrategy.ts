@@ -12,17 +12,19 @@ export class AddStickerStrategy implements CardActionStrategy {
       cardId: number;
     },
   ): GameState {
-    gameState.stickerStock[payload.stickerId]--;
-    if (
-      !gameState.instances[payload.cardId].stickers[gameState.instances[payload.cardId].stateId]
-    ) {
-      gameState.instances[payload.cardId].stickers[gameState.instances[payload.cardId].stateId] =
-        [];
+    const gs = JSON.parse(JSON.stringify(gameState)) as GameState; // Deep clone to avoid mutating original state
+    gs.stickerStock[payload.stickerId]--;
+    if (!gs.instances[payload.cardId].stickers[gs.instances[payload.cardId].stateId]) {
+      gs.instances[payload.cardId].stickers[gs.instances[payload.cardId].stateId] = [];
     }
-    gameState.instances[payload.cardId].stickers[gameState.instances[payload.cardId].stateId].push(
+    gs.instances[payload.cardId].stickers[gs.instances[payload.cardId].stateId].push(
       payload.stickerId,
     );
 
-    return gameState;
+    return {
+      ...gs,
+      stickerStock: gs.stickerStock,
+      instances: gs.instances,
+    };
   }
 }

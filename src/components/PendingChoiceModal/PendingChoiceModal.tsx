@@ -15,6 +15,7 @@ import '@components/PendingChoiceModal/PendingChoiceModal.css';
 import { ResourceChoice } from '@components/Resource/ResourceChoice';
 import { GameCard } from '@components/GameCard';
 import { PendingChoiceType } from '@engine/domain/enums';
+import { tCardName, tCardActionLabel } from '@i18n/cardI18n';
 
 function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
   return {
@@ -22,7 +23,7 @@ function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
     cardId: def.id,
     stateId: state.id,
     stickers: {},
-    trackProgress: null,
+    trackProgress: [],
   };
 }
 
@@ -34,7 +35,7 @@ interface PendingChoiceModalProps {
   currentResources: Resources;
   resolvePlayerChoice(option: ResolvedAction): void;
   resolvePayCost(resolved: ResolvedCost): void;
-  onResolveTrigger(sourceInstanceId: number, actionId: string): void;
+  onResolveTrigger(sourceInstanceId: number, actionId: string, triggerId: string): void;
   onSkipTrigger(uuid: string): void;
 }
 
@@ -61,39 +62,60 @@ export function PendingChoiceModal({
             <div className="pcm-subtitle">{t('triggerPile.subtitle')}</div>
           )}
           <div className="pcm-trigger-list">
-            {Object.entries(triggerPile).map(([triggerId, trigger]) => (
-              <div key={triggerId} className="pcm-trigger-item">
-                <img
-                  src={trigger.effectDef.optional ? triggerIcon : forcedTriggerIcon}
-                  className="pcm-trigger-icon"
-                  alt=""
-                />
-                <div className="pcm-trigger-info">
-                  <div className="pcm-trigger-label">{trigger.effectDef.label}</div>
-                  {trigger.effectDef.description && (
-                    <div className="pcm-trigger-desc">{trigger.effectDef.description}</div>
-                  )}
-                </div>
-                <div className="pcm-trigger-actions">
-                  <button
-                    className="pcm-trigger-btn-resolve"
-                    onClick={() =>
-                      onResolveTrigger(trigger.sourceInstanceId, trigger.effectDef.label)
-                    }
-                  >
-                    {t('triggerPile.resolve')}
-                  </button>
-                  {trigger.effectDef.optional && (
+            {Object.entries(triggerPile).map(([triggerId, trigger]) => {
+              const inst = instances[trigger.sourceInstanceId];
+              const def = inst ? defs[inst.cardId] : undefined;
+              const state = def?.states.find(s => s.id === inst?.stateId) ?? def?.states[0];
+              const actionIdx =
+                state?.cardEffects?.findIndex(e => e.label === trigger.effectDef.label) ?? -1;
+              const cardName = tCardName(t, def?.id, state?.id, state?.name);
+              const actionLabel = tCardActionLabel(
+                t,
+                def?.id,
+                state?.id,
+                actionIdx,
+                trigger.effectDef.label,
+              );
+              return (
+                <div key={triggerId} className="pcm-trigger-item">
+                  <img
+                    src={trigger.effectDef.optional ? triggerIcon : forcedTriggerIcon}
+                    className="pcm-trigger-icon"
+                    alt=""
+                  />
+                  <div className="pcm-trigger-info">
+                    {cardName && (
+                      <div className="pcm-trigger-card-name">
+                        #{trigger.sourceInstanceId} {cardName}
+                      </div>
+                    )}
+                    <div className="pcm-trigger-label">{actionLabel}</div>
+                  </div>
+                  <div className="pcm-trigger-actions">
                     <button
-                      className="pcm-trigger-btn-skip"
-                      onClick={() => onSkipTrigger(triggerId)}
+                      className="pcm-trigger-btn-resolve"
+                      onClick={() =>
+                        onResolveTrigger(
+                          trigger.sourceInstanceId,
+                          trigger.effectDef.label,
+                          triggerId,
+                        )
+                      }
                     >
-                      {t('triggerPile.skip')}
+                      {t('triggerPile.resolve')}
                     </button>
-                  )}
+                    {trigger.effectDef.optional && (
+                      <button
+                        className="pcm-trigger-btn-skip"
+                        onClick={() => onSkipTrigger(triggerId)}
+                      >
+                        {t('triggerPile.skip')}
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -120,8 +142,7 @@ export function PendingChoiceModal({
     return (
       <div className="pcm-overlay">
         <div className="pcm-panel">
-          <div className="pcm-title">{t('pendingChoice.discoverCard')}</div>
-          <div className="pcm-subtitle">
+          <div className="pcm-title">
             {t('pendingChoice.chooseCard', { count: choice.pickCount })}
           </div>
           <div className="pcm-card-grid">

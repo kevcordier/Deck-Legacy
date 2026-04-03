@@ -49,7 +49,9 @@
     "14_1": "Lac",
     "14_2": "Cabane du pêcheur",
     "14_3": "Bateau de pêche",
-    "14_4": "Phare"
+    "14_4": "Phare",
+    "17_1": "Armée",
+    "17_2": "Armée"
   },
   "labels": {
     "1_2_a0": "Défaussez une carte alliée pour gagner {{gold}} {{gold}}.",
@@ -69,15 +71,15 @@
     "8_1_a0": "Choisissez un Terrain en jeu. Gagnez ses productions comme ressources.",
     "8_2_a0": "Gagnez {{gold}}/{{wood}}/{{stone}}.",
     "9_1_a0": "Carte joué, bloque 1 carte avec une production d'{{gold}}.",
-    "9_1_a1": "Dépensez {{sword}} pour vaincre (détruire cette carte) et gagner 2 ressources au choix.",
+    "9_1_a1": "Dépensez {{weapon}} pour vaincre (détruire cette carte) et gagner 2 ressources au choix.",
     "9_2_a0": "Choisissez un Bâtiment en jeu. Gagnez ses productions comme ressources.",
     "10_1_a0": "Carte joué, bloque 1 carte avec une production d'{{gold}}.",
-    "10_1_a1": "Dépensez {{sword}} pour vaincre (détruire cette carte) et gagner 2 ressources au choix.",
+    "10_1_a1": "Dépensez {{weapon}} pour vaincre (détruire cette carte) et gagner 2 ressources au choix.",
     "10_2_a0": "Choisissez un Terrain en jeu. Gagnez ses productions comme ressources.",
     "11_2_a0": "Dépensez {{gold}} {{gold}} {{gold}} pour découvrir un Missionnaire (103).",
     "11_3_a0": "Dépensez {{gold}} {{gold}} {{gold}} {{gold}} pour découvrir un Prêtre (104).",
     "12_2_a0": "Réinitialisez pour découvrir Bijouterie (90).",
-    "12_3_a0": "Gagnez {{sword}} par Personne en jeu.",
+    "12_3_a0": "Gagnez {{weapon}} par Personne en jeu.",
     "14_3_a0": "Découvrez Rivage 75.",
     "11_4_p0": "Cette carte a +1 production d'{{gold}} pour chaque personne en jeu.",
     "14_4_p0": "Tant que cette carte est en jeu, vous pouvez défausser la carte au sommet de votre pioche."

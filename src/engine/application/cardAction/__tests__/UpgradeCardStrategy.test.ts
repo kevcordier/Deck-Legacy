@@ -8,7 +8,7 @@ const makeInstance = (id: number, cardId: number, stateId: number): CardInstance
   cardId,
   stateId,
   stickers: {},
-  trackProgress: null,
+  trackProgress: [],
 });
 
 const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({

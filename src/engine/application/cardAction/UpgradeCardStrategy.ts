@@ -13,8 +13,8 @@ export class UpgradeCardStrategy implements CardActionStrategy {
       stateId: number;
     },
   ): GameState {
-    gameState.instances[payload.instanceId].stateId = payload.stateId;
-    gameState = discardCards(gameState, [payload.instanceId]);
-    return gameState;
+    const gs = JSON.parse(JSON.stringify(gameState)) as GameState; // Deep clone to avoid mutating original state
+    gs.instances[payload.instanceId].stateId = payload.stateId;
+    return { ...gs, ...discardCards(gs, [payload.instanceId]) };
   }
 }

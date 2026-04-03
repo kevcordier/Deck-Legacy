@@ -10,6 +10,22 @@ export type CardDef = {
   parchmentCard?: boolean;
 };
 
+export type StepDef = {
+  id: number;
+  cost: Cost;
+  onClick: {
+    actions?: Action[];
+    glory?: number;
+  };
+};
+
+export type TrackDef = {
+  steps: StepDef[];
+  inOrder: boolean;
+  cumulative: boolean;
+  endsTurn: boolean;
+};
+
 export type CardState = {
   id: number;
   name: string;
@@ -21,6 +37,7 @@ export type CardState = {
   stayInPlay?: boolean;
   cardEffects?: Effect[];
   upgrade?: UpgradeDef[];
+  track?: TrackDef;
   illustration?: string;
 };
 

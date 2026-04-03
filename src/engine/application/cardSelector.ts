@@ -35,6 +35,8 @@ export function cardSelector(
 
   return pool.filter(id => {
     if (id === instanceId) return false; // Exclude self unless explicitly included by scope or ids
+    if (scope !== TargetScope.BLOCKED && Object.values(gameState.blockingCards).includes(id))
+      return false; // Exclude blocked cards
     const inst = gameState.instances[id];
     if (!inst || !defs) return false;
     const state = defs[inst.cardId]?.states.find(s => s.id === inst.stateId);
