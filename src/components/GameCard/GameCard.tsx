@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './GameCard.css';
 import { tCardName, tCardActionLabel, tCardActionDescription, tCardTag } from '@i18n/cardI18n';
-import gloryIcon from '@assets/icons/glory.svg';
 import {
   getActiveState,
   getEffectiveProductions,
@@ -15,14 +14,16 @@ import { CardStatePreview } from '@components/CardStatePreview';
 import { CardTrack } from '@components/CardTrack';
 import { ResourceList } from '@components/Resource/ResourceList';
 import { ResourcePill } from '@components/Resource/ResourcePill';
-import passifIcon from '@assets/icons/passif.svg';
-import activatedIcon from '@assets/icons/activated.png';
-import timeIcon from '@assets/icons/time.png';
-import destroyIcon from '@assets/icons/destroy.png';
-import forcedtrigger from '@assets/icons/forcedtrigger.png';
-import trigger from '@assets/icons/trigger.png';
 import type { CardDef, CardInstance, Sticker, Resources } from '@engine/domain/types';
 import { TargetScope } from '@engine/domain/enums';
+import {
+  ActivatedIcon,
+  DestroyIcon,
+  GloryIcon,
+  PassifIcon,
+  TimeIcon,
+  TriggerIcon,
+} from '@components/Icon';
 
 interface GameCardProps {
   instance: CardInstance;
@@ -98,9 +99,9 @@ export function GameCard({
       )}
 
       {/* Header */}
-      <div className={`gc-header${isEnemy ? ' enemy' : ''}`}>
+      <div className={`gc-header ${isEnemy ? 'enemy' : ''}`}>
         <div className="gc-name-row">
-          <span className={`gc-name${isEnemy ? ' enemy' : ''}`}>
+          <span className={`gc-name ${isEnemy ? 'enemy' : ''}`}>
             {instance.id !== undefined && instance.id !== 0 && (
               <span className="gc-deck-id">#{instance.id}</span>
             )}
@@ -146,8 +147,8 @@ export function GameCard({
           )}
 
           {glory !== 0 && (
-            <div className={`gc-glory-badge${glory < 0 ? ' negative' : ''}`}>
-              <img src={gloryIcon} alt="" />
+            <div className={`gc-glory-badge ${glory < 0 ? 'negative' : ''}`}>
+              <GloryIcon />
               <span>
                 {glory > 0 ? '+' : ''}
                 {glory}
@@ -195,7 +196,7 @@ export function GameCard({
           {/* Stay in play */}
           {cs.stayInPlay && (
             <span className="gc-passive-effect">
-              <img className="gc-passive-effect-icon" src={passifIcon} alt="passif" />
+              <PassifIcon className="gc-passive-effect-icon" color="currentColor" alt="passif" />
               {t('card.stayInPlay')}
             </span>
           )}
@@ -219,17 +220,17 @@ export function GameCard({
                   className="gc-action-btn"
                 >
                   {haveTrigger && !isOptional ? (
-                    <img src={forcedtrigger} className="gc-action-icon" alt="" />
+                    <TriggerIcon color="red" className="gc-action-icon" />
                   ) : haveTrigger && isOptional ? (
-                    <img src={trigger} className="gc-action-icon" alt="" />
+                    <TriggerIcon color="yellow" className="gc-action-icon" />
                   ) : hasDestroyItselfCost ? (
-                    <img src={destroyIcon} className="gc-action-icon" alt="" />
+                    <DestroyIcon color="red" className="gc-action-icon" />
                   ) : action.endsTurn ? (
-                    <img src={timeIcon} className="gc-action-icon" alt="" />
+                    <TimeIcon className="gc-action-icon" />
                   ) : action.passive ? (
-                    <img src={passifIcon} className="gc-action-icon" alt="" />
+                    <PassifIcon className="gc-action-icon" />
                   ) : (
-                    <img src={activatedIcon} className="gc-action-icon" alt="" />
+                    <ActivatedIcon color="green" className="gc-action-icon" />
                   )}
 
                   {renderTextWithIcons(actionLabel)}
@@ -267,17 +268,18 @@ export function GameCard({
                   {upg.cost.resources?.[0] && (
                     <span className="gc-action-cost">
                       (
-                      {Object.entries(upg.cost.resources[0]).map(([k, v], ci) => (
-                        <React.Fragment key={k}>
-                          {ci > 0 && ', '}
-                          {v}
-                          <img
-                            src={getResMeta(k).iconUrl}
-                            className={`res-icon ${getResMeta(k).cls} res-sm`}
-                            alt={k}
-                          />
-                        </React.Fragment>
-                      ))}
+                      {Object.entries(upg.cost.resources[0]).map(([k, v], ci) => {
+                        const meta = getResMeta(k);
+                        return (
+                          <React.Fragment key={k}>
+                            {ci > 0 && ', '}
+                            {v}
+                            {meta.icon && (
+                              <meta.icon className={`res-icon ${meta.cls} res-sm`} alt={k} />
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
                       )
                     </span>
                   )}

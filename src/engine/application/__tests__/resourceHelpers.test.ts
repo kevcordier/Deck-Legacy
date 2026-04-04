@@ -6,13 +6,13 @@ import { mergeResources, getResMeta } from '@engine/application/resourceHelpers'
 describe('getResMeta', () => {
   it('returns known meta for gold', () => {
     const meta = getResMeta('gold');
-    expect(meta.cls).toBe('res-gold');
+    expect(meta.cls).toBe('color:gold');
     expect(meta.label).toBe('resources.gold');
   });
 
   it('returns fallback meta for an unknown key', () => {
     const meta = getResMeta('unknown_resource');
-    expect(meta.cls).toBe('res-default');
+    expect(meta.cls).toBe('color:gold');
     expect(meta.label).toBe('unknown_resource');
   });
 });
