@@ -1,11 +1,11 @@
 import type { CardeSelector, Resources } from '@engine/domain/types';
 
 export type Cost = {
-  /** Coûts en ressources : `resources[0]` = coût fixe, les indices suivants sont réservés aux variantes. */
+  /** Resource costs: `resources[0]` = fixed cost, subsequent indices are reserved for variants. */
   resources?: Resources[];
-  /** Cartes à défausser pour payer le coût (résolues une par une via `discard_for_cost`). */
+  /** Cards to discard to pay the cost (resolved one at a time via `discard_for_cost`). */
   discard?: CardeSelector;
-  /** Carte à détruire lors de l'utilisation (ex: coût de l'auto-destruction). */
+  /** Card to destroy on use (e.g. self-destruction cost). */
   destroy?: CardeSelector;
 };
 

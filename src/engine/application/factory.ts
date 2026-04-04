@@ -1,13 +1,13 @@
 /**
  * @file infrastructure/factory.ts
  *
- * Couche : Infrastructure — dépend uniquement du domaine.
+ * Layer: Infrastructure — depends only on the domain.
  */
 
 import type { CardDef, CardInstance } from '@engine/domain/types';
 
 /**
- * Crée une nouvelle instance de carte dans son état initial.
+ * Creates a new card instance in its initial state.
  */
 export function createInstance(
   id: number,

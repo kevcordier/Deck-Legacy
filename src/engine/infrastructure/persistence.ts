@@ -1,13 +1,13 @@
 /**
  * @file infrastructure/persistence.ts
- * Sauvegarde et chargement de la partie dans `localStorage`.
+ * Save and load game state from `localStorage`.
  *
- * La sauvegarde stocke la liste complète des événements (`GameEvent[]`), ce qui permet
- * de reconstruire l'état exact via `replayEvents` au rechargement.
- * Le `pendingChoice` est également sauvegardé car il n'est pas dans les événements.
+ * The save stores the full list of events (`GameEvent[]`), which allows
+ * the exact state to be reconstructed via `replayEvents` on reload.
+ * `pendingChoice` is also saved because it is not part of the event log.
  *
- * Clé localStorage : `deck_legacy_save`
- * Couche : Infrastructure — dépend uniquement du domaine.
+ * localStorage key: `deck_legacy_save`
+ * Layer: Infrastructure — depends only on the domain.
  */
 
 import type { GameEvent, GameState } from '@engine/domain/types';
@@ -23,8 +23,8 @@ export type SaveData = {
 };
 
 /**
- * Sauvegarde la partie courante dans `localStorage`.
- * N'est appelé que quand `pendingChoice === null` (partie dans un état stable).
+ * Saves the current game to `localStorage`.
+ * Only called when `pendingChoice === null` (game is in a stable state).
  */
 export function saveGame(events: GameEvent[], saveState: GameState): void {
   try {
@@ -41,7 +41,7 @@ export function saveGame(events: GameEvent[], saveState: GameState): void {
   }
 }
 
-/** Charge la sauvegarde depuis `localStorage`. Retourne `null` si absente ou corrompue. */
+/** Loads the save from `localStorage`. Returns `null` if missing or corrupted. */
 export function loadSave(): SaveData | null {
   try {
     const raw = localStorage.getItem(SAVE_KEY);

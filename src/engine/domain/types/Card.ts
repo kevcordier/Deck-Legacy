@@ -5,7 +5,7 @@ export type CardDef = {
   id: number;
   name: string;
   permanent?: boolean;
-  chooseState?: boolean; // le joueur choisit l'état au moment de la découverte
+  chooseState?: boolean; // the player chooses the state at discovery time
   states: CardState[];
   parchmentCard?: boolean;
 };
@@ -54,5 +54,5 @@ export type Effect = {
 
 export type UpgradeDef = {
   cost: Cost;
-  upgradeTo: number; // id d'un state dans la même carte
+  upgradeTo: number; // id of a state within the same card
 };

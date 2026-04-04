@@ -76,7 +76,7 @@ export function GameCard({
   const glory = cs.glory ?? 0;
   const resourceOptions = cs.productions as Resources[] | undefined;
 
-  // Stickers de l'état courant
+  // Stickers for the current state
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
 
   const cardCls = [
@@ -192,7 +192,7 @@ export function GameCard({
 
         {/* Actions zone */}
         <div className="gc-actions">
-          {/* Reste en jeu */}
+          {/* Stay in play */}
           {cs.stayInPlay && (
             <span className="gc-passive-effect">
               <img className="gc-passive-effect-icon" src={passifIcon} alt="passif" />

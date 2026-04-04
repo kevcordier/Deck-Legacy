@@ -240,39 +240,6 @@ export function GameBoard() {
             </div>
           )}
 
-          {/* Permanentes */}
-          {gs.permanents.length > 0 && (
-            <Section
-              title={t('sections.permanents')}
-              subtitle={t('cardCount', { count: gs.permanents.length })}
-            >
-              <CardRow>
-                {gs.permanents.map((id, i) => {
-                  const inst = gs.instances[id];
-                  if (!inst) return null;
-                  return (
-                    <div
-                      key={id}
-                      className={drawnIds.has(id) ? 'card-draw' : ''}
-                      style={{ animationDelay: drawnIds.has(id) ? `${i * 60}ms` : undefined }}
-                    >
-                      <GameCard
-                        instance={inst}
-                        defs={defs}
-                        stickerDefs={stickerDefs}
-                        currentResources={gs.resources}
-                        isOnBoard={true}
-                        onActivate={() => resolveProduction(id)}
-                        onAction={label => resolveAction(id, label)}
-                        onUpgrade={upgradeId => resolveUpgrade(id, upgradeId)}
-                      />
-                    </div>
-                  );
-                })}
-              </CardRow>
-            </Section>
-          )}
-
           {/* Tableau (board) */}
           {gs.board.length > 0 && (
             <Section
@@ -346,6 +313,39 @@ export function GameBoard() {
                     );
                   });
                 })()}
+              </CardRow>
+            </Section>
+          )}
+
+          {/* Permanentes */}
+          {gs.permanents.length > 0 && (
+            <Section
+              title={t('sections.permanents')}
+              subtitle={t('cardCount', { count: gs.permanents.length })}
+            >
+              <CardRow>
+                {gs.permanents.map((id, i) => {
+                  const inst = gs.instances[id];
+                  if (!inst) return null;
+                  return (
+                    <div
+                      key={id}
+                      className={drawnIds.has(id) ? 'card-draw' : ''}
+                      style={{ animationDelay: drawnIds.has(id) ? `${i * 60}ms` : undefined }}
+                    >
+                      <GameCard
+                        instance={inst}
+                        defs={defs}
+                        stickerDefs={stickerDefs}
+                        currentResources={gs.resources}
+                        isOnBoard={true}
+                        onActivate={() => resolveProduction(id)}
+                        onAction={label => resolveAction(id, label)}
+                        onUpgrade={upgradeId => resolveUpgrade(id, upgradeId)}
+                      />
+                    </div>
+                  );
+                })}
               </CardRow>
             </Section>
           )}

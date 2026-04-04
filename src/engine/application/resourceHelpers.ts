@@ -22,7 +22,7 @@ export function getResMeta(key: string) {
   return RESOURCE_META[key] ?? { iconUrl: crownIcon, cls: 'res-default', label: key };
 }
 
-/** Fusionne deux dictionnaires de ressources en additionnant les valeurs. Pur, sans mutation. */
+/** Merges two resource dictionaries by summing their values. Pure, no mutation. */
 export function mergeResources(a: Resources, b: Resources): Resources {
   const result = JSON.parse(JSON.stringify(a)) as Resources;
   for (const [k, v] of Object.entries(b)) {

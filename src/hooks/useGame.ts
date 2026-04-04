@@ -240,7 +240,7 @@ export function useGame(): GameHook {
     startGame();
   }, [startGame]);
 
-  // ── Actions de carte ──────────────────────────────────────────────────────
+  // ── Card actions ──────────────────────────────────────────────────────────
 
   const triggerProduction = useCallback(
     (instanceId: number, resourcesGained: Record<string, number>) => {
@@ -393,7 +393,7 @@ export function useGame(): GameHook {
     [defs, sync],
   );
 
-  // ── Flux de tour ──────────────────────────────────────────────────────────
+  // ── Turn flow ─────────────────────────────────────────────────────────────
 
   const progress = useCallback(() => {
     const event = aggRef.current.advance();
@@ -408,7 +408,7 @@ export function useGame(): GameHook {
     sync();
   }, [sync]);
 
-  // ── Résolution de choix ───────────────────────────────────────────────────
+  // ── Choice resolution ─────────────────────────────────────────────────────
 
   // This function is called when the player has made a choice needed.
   const resolvePlayerChoice = useCallback(
@@ -507,7 +507,7 @@ export function useGame(): GameHook {
     [triggerAction, sync],
   );
 
-  // ── Rembobinage ───────────────────────────────────────────────────────────
+  // ── Rewind  ───────────────────────────────────────────────────────────
 
   // const skipTrigger = useCallback((uuid: string) => {
   //   setTriggerPile(prev => {
@@ -534,7 +534,7 @@ export function useGame(): GameHook {
     sync();
   }, [events, sync]);
 
-  // ── Résultat ──────────────────────────────────────────────────────────────
+  // ── Result ──────────────────────────────────────────────────────────────
 
   return {
     state: liveState,
