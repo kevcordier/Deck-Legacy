@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { Resources } from '@engine/domain/types';
-import gloryIcon from '@assets/icons/glory.svg';
+import { GloryIcon } from '@components/Icon';
 import './ResourceBar.css';
 import { ResourcePill } from '@components/Resource/ResourcePill';
 
@@ -64,7 +64,7 @@ export function ResourceBar({
       {/* Score */}
       <div className="rb-score">
         <div className="rb-score-badge">
-          <img src={gloryIcon} alt="" />
+          <GloryIcon color="#e8b85a" />
           <span className="rb-score-value">{score}</span>
         </div>
         <span className="rb-score-label">{t('resourceBar.glory')}</span>

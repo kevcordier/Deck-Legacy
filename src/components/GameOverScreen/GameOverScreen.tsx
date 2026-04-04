@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import gloryIcon from '@assets/icons/glory.svg';
+import { GloryIcon } from '@components/Icon';
 import './GameOverScreen.css';
 
 interface GameOverScreenProps {
@@ -17,7 +17,7 @@ export function GameOverScreen({ score, round, onNewGame }: GameOverScreenProps)
         <div className="gos-title">{t('gameOver.title')}</div>
 
         <div className="gos-score">
-          <img src={gloryIcon} className="gos-glory-icon" alt="" />
+          <GloryIcon className="gos-glory-icon" color="#e8b85a" />
           <span className="gos-score-value">{score}</span>
           <span className="gos-score-label">{t('gameOver.glory')}</span>
         </div>

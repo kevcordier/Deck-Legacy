@@ -1,10 +1,10 @@
 import React from 'react';
-import gloryIcon from '@assets/icons/glory.svg';
 import { getResMeta } from '@engine/application/resourceHelpers';
 import { canAffordResources } from '@engine/application/cardHelpers';
 import { ActionType } from '@engine/domain/enums';
 import type { TrackDef, Resources } from '@engine/domain/types';
-import './CardTrack.css';
+// import './CardTrack.css';
+import { GloryIcon } from '@components/Icon';
 
 interface CardTrackProps {
   track: TrackDef;
@@ -47,7 +47,7 @@ export function CardTrack({
           content = (
             <span className="ct-step-glory">
               +{glory}
-              <img src={gloryIcon} className="ct-step-glory-icon" alt="glory" />
+              <GloryIcon className="ct-step-glory-icon" alt="glory" />
             </span>
           );
         } else if (firstAction) {
@@ -63,8 +63,8 @@ export function CardTrack({
               Object.entries(firstAction.resources).filter(([k]) => k !== 'choice')[0] ?? [];
             if (resKey) {
               const meta = getResMeta(resKey);
-              content = meta.iconUrl ? (
-                <img src={meta.iconUrl} className={`res-icon ${meta.cls} res-sm`} alt={resKey} />
+              content = meta.icon ? (
+                <meta.icon className={`res-icon ${meta.cls} res-sm`} alt={resKey} />
               ) : null;
             }
           }
@@ -79,9 +79,7 @@ export function CardTrack({
                   return (
                     <React.Fragment key={k}>
                       {v}
-                      {meta.iconUrl && (
-                        <img src={meta.iconUrl} className={`res-icon ${meta.cls} res-xs`} alt={k} />
-                      )}
+                      {meta.icon && <meta.icon className={`res-icon ${meta.cls} res-xs`} alt={k} />}
                     </React.Fragment>
                   );
                 })}

@@ -11,13 +11,6 @@ export function ResourcePill({ resource, size = 'md' }: ResourcePillProps) {
   const { t } = useTranslation();
   const meta = getResMeta(resource);
   return (
-    meta.iconUrl && (
-      <img
-        src={meta.iconUrl}
-        className={`res-icon ${meta.cls} res-${size}`}
-        title={t(meta.label)}
-        alt={t(meta.label)}
-      />
-    )
+    meta.icon && <meta.icon className={`res-icon ${meta.cls} res-${size}`} alt={t(meta.label)} />
   );
 }

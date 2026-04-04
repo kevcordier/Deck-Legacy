@@ -19,13 +19,8 @@ export function renderTextWithIcons(text: string): React.ReactNode {
     const key = match[1];
     const meta = getResMeta(key);
     parts.push(
-      meta.iconUrl ? (
-        <img
-          key={match.index}
-          src={meta.iconUrl}
-          className={`res-icon ${meta.cls} res-sm`}
-          alt={key}
-        />
+      meta.icon ? (
+        <meta.icon key={match.index} className={`res-icon ${meta.cls} res-sm`} alt={key} />
       ) : (
         key
       ),

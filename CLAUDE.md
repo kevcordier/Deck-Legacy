@@ -111,7 +111,6 @@ rewindEvent()  canRewind()
 | `@data/*` | `src/data/*` |
 | `@hooks/*` | `src/hooks/*` |
 | `@helpers/*` | `src/helpers/*` |
-| `@assets/*` | `src/assets/*` |
 | `@i18n/*` | `src/i18n/*` |
 | `@styles/*` | `src/styles/*` |
 

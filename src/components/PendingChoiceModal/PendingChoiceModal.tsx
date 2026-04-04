@@ -9,8 +9,7 @@ import type {
   ResolvedCost,
   TriggerEntry,
 } from '@engine/domain/types';
-import triggerIcon from '@assets/icons/trigger.png';
-import forcedTriggerIcon from '@assets/icons/forcedtrigger.png';
+import { TriggerIcon } from '@components/Icon';
 import '@components/PendingChoiceModal/PendingChoiceModal.css';
 import { ResourceChoice } from '@components/Resource/ResourceChoice';
 import { GameCard } from '@components/GameCard';
@@ -78,10 +77,9 @@ export function PendingChoiceModal({
               );
               return (
                 <div key={triggerId} className="pcm-trigger-item">
-                  <img
-                    src={trigger.effectDef.optional ? triggerIcon : forcedTriggerIcon}
+                  <TriggerIcon
                     className="pcm-trigger-icon"
-                    alt=""
+                    color={trigger.effectDef.optional ? 'yellow' : 'red'}
                   />
                   <div className="pcm-trigger-info">
                     {cardName && (

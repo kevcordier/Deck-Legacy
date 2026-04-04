@@ -1,25 +1,36 @@
-import goldIcon from '@assets/icons/gold.svg';
-import woodIcon from '@assets/icons/wood.svg';
-import stoneIcon from '@assets/icons/stone.svg';
-import ironIcon from '@assets/icons/iron.svg';
-import weaponIcon from '@assets/icons/weapon.svg';
-import goodsIcon from '@assets/icons/goods.svg';
-import gloryIcon from '@assets/icons/glory.svg';
-import crownIcon from '@assets/icons/crown.svg';
+import {
+  CrownIcon,
+  GloryIcon,
+  GoldIcon,
+  GoodsIcon,
+  IronIcon,
+  StoneIcon,
+  WeaponIcon,
+  WoodIcon,
+  type IconProps,
+} from '@components/Icon';
 import type { Resources } from '@engine/domain/types';
+import type { ComponentType } from 'react';
 
-const RESOURCE_META: Record<string, { iconUrl?: string; cls: string; label: string }> = {
-  gold: { iconUrl: goldIcon, cls: 'res-gold', label: 'resources.gold' },
-  wood: { iconUrl: woodIcon, cls: 'res-wood', label: 'resources.wood' },
-  stone: { iconUrl: stoneIcon, cls: 'res-stone', label: 'resources.stone' },
-  iron: { iconUrl: ironIcon, cls: 'res-iron', label: 'resources.iron' },
-  weapon: { iconUrl: weaponIcon, cls: 'res-weapon', label: 'resources.weapon' },
-  goods: { iconUrl: goodsIcon, cls: 'res-goods', label: 'resources.goods' },
-  glory: { iconUrl: gloryIcon, cls: 'res-glory', label: 'resources.glory' },
+const RESOURCE_META: Record<
+  string,
+  {
+    icon?: ComponentType<IconProps>;
+    cls: string;
+    label: string;
+  }
+> = {
+  gold: { icon: GoldIcon, cls: 'color:gold', label: 'resources.gold' },
+  wood: { icon: WoodIcon, cls: 'color:brown', label: 'resources.wood' },
+  stone: { icon: StoneIcon, cls: 'color:gray', label: 'resources.stone' },
+  iron: { icon: IronIcon, cls: 'color:lightsteelblue', label: 'resources.iron' },
+  weapon: { icon: WeaponIcon, cls: 'color:orangered', label: 'resources.weapon' },
+  goods: { icon: GoodsIcon, cls: 'color:limegreen', label: 'resources.goods' },
+  glory: { icon: GloryIcon, cls: 'color:gold', label: 'resources.glory' },
 };
 
 export function getResMeta(key: string) {
-  return RESOURCE_META[key] ?? { iconUrl: crownIcon, cls: 'res-default', label: key };
+  return RESOURCE_META[key] ?? { icon: CrownIcon, cls: 'color:gold', label: key };
 }
 
 /** Merges two resource dictionaries by summing their values. Pure, no mutation. */
