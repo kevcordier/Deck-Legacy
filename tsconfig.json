@@ -2,35 +2,18 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@engine/*": [
-        "src/engine/*"
-      ],
-      "@data/*": [
-        "src/data/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@helpers/*": [
-        "src/helpers/*"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
-      ],
-      "@i18n/*": [
-        "src/i18n/*"
-      ],
-      "@styles/*": [
-        "src/styles/*"
-      ],
+      "@engine/*": ["src/engine/*"],
+      "@data/*": ["src/data/*"],
+      "@components/*": ["src/components/*"],
+      "@pages/*": ["src/pages/*"],
+      "@helpers/*": ["src/helpers/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@i18n/*": ["src/i18n/*"],
+      "@styles/*": ["src/styles/*"]
     },
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
@@ -44,14 +27,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
-  "include": [
-    "src/**/*",
-    ".storybook/**/*",
-    "vite.config.ts",
-    "eslint.config.ts"
-  ],
+  "include": ["src/**/*", ".storybook/**/*", "vite.config.ts", "eslint.config.ts"],
   "exclude": [
     "src/engine/application/cardActions.ts",
     "src/engine/application/turnFlow.ts",

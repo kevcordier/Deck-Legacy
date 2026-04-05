@@ -46,7 +46,7 @@ export function DiscardPile({ discard, instances, defs }: DiscardPileProps) {
           <button onClick={() => setModalOpen(true)} className="btn-view-all">
             {t('discardPile.viewAll')}
           </button>
-          <button onClick={() => setOpen(o => !o)} className={`btn-toggle${open ? ' open' : ''}`}>
+          <button onClick={() => setOpen(o => !o)} className={`btn-toggle ${open ? 'open' : ''}`}>
             {open ? '▲' : '▼'} {discard.length}
           </button>
         </div>

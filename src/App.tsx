@@ -1,4 +1,4 @@
-import { GameBoard } from './components/GameBoard';
+import { GameBoard } from './pages/GameBoard';
 import './styles/game.css';
 
 export default function App() {

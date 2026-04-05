@@ -42,6 +42,7 @@ src/
 ```
 
 ### Layer Rules
+
 - **Domain** imports nothing from Application or Infrastructure.
 - **Application** imports only from Domain.
 - **Infrastructure** imports from both Domain and Application; never imported by Application.
@@ -52,6 +53,7 @@ src/
 ## Core Concepts
 
 ### Event Sourcing
+
 The entire game state is derived by replaying an ordered list of `GameEvent` objects. `GameAggregate` (`src/engine/application/GameAggregate.ts`) holds the events and reconstructs `GameState` on demand.
 
 - **Never mutate `GameState` directly.** Always dispatch a new event.
@@ -59,19 +61,22 @@ The entire game state is derived by replaying an ordered list of `GameEvent` obj
 - Undo (`rewindEvent`) pops the last event and replays the remainder.
 
 ### Key Domain Types (src/engine/domain/)
-| Type | Description |
-|------|-------------|
-| `CardDef` | Static card template with states, productions, upgrade paths, effects |
-| `CardInstance` | Runtime card: `{id, cardId, stateId, stickers, trackProgress}` |
-| `GameState` | Full snapshot: piles, board, instances, resources, trigger stack |
-| `GameEvent` | Discriminated union of all recordable events |
-| `PendingChoice` | Prompt awaiting player input (card select, resource, state) |
-| `Action` / `Cost` | Effect definitions for card abilities |
-| `Resource` | `{gold, wood, stone, iron, weapon, goods}` |
-| `Sticker` | Persistent card modifier (production bonus, glory, stay-in-play) |
+
+| Type              | Description                                                           |
+| ----------------- | --------------------------------------------------------------------- |
+| `CardDef`         | Static card template with states, productions, upgrade paths, effects |
+| `CardInstance`    | Runtime card: `{id, cardId, stateId, stickers, trackProgress}`        |
+| `GameState`       | Full snapshot: piles, board, instances, resources, trigger stack      |
+| `GameEvent`       | Discriminated union of all recordable events                          |
+| `PendingChoice`   | Prompt awaiting player input (card select, resource, state)           |
+| `Action` / `Cost` | Effect definitions for card abilities                                 |
+| `Resource`        | `{gold, wood, stone, iron, weapon, goods}`                            |
+| `Sticker`         | Persistent card modifier (production bonus, glory, stay-in-play)      |
 
 ### Strategy Pattern (Card Actions)
+
 `src/engine/application/cardAction/` contains 10 strategies implementing `CardActionStrategy`:
+
 - `AddResourceStrategy`, `AddStickerStrategy`, `BlockCardStrategy`, `ChooseStateStrategy`
 - `DestroyCardStrategy`, `DiscardCardStrategy`, `PlayCardStrategy`, `UpgradeCardStrategy`
 - `PlaceCardInDrawPileStrategy`, (context: `CardActionContext`)
@@ -79,6 +84,7 @@ The entire game state is derived by replaying an ordered list of `GameEvent` obj
 When adding new action types, add a new strategy file and register it in `CardActionContext`.
 
 ### useGame Hook
+
 `src/hooks/useGame.ts` is the single integration point between the engine and React UI. It exposes game state and ~15 action methods:
 
 ```typescript
@@ -98,21 +104,24 @@ rewindEvent()  canRewind()
 ## Directory Conventions
 
 ### Components
+
 - Each component lives in its own subdirectory: `src/components/ComponentName/`
 - Barrel export via `index.ts`
 - Co-located CSS: `ComponentName.css`
 - Co-located tests if needed: `ComponentName.test.ts`
 
 ### Path Aliases (tsconfig.json)
-| Alias | Maps to |
-|-------|---------|
-| `@engine/*` | `src/engine/*` |
+
+| Alias           | Maps to            |
+| --------------- | ------------------ |
+| `@engine/*`     | `src/engine/*`     |
 | `@components/*` | `src/components/*` |
-| `@data/*` | `src/data/*` |
-| `@hooks/*` | `src/hooks/*` |
-| `@helpers/*` | `src/helpers/*` |
-| `@i18n/*` | `src/i18n/*` |
-| `@styles/*` | `src/styles/*` |
+| `@pages/*`      | `src/pages/*`      |
+| `@data/*`       | `src/data/*`       |
+| `@hooks/*`      | `src/hooks/*`      |
+| `@helpers/*`    | `src/helpers/*`    |
+| `@i18n/*`       | `src/i18n/*`       |
+| `@styles/*`     | `src/styles/*`     |
 
 Always use aliases, never relative `../../` chains across major directories.
 
@@ -143,6 +152,7 @@ npm run test:coverage   # Coverage report
 ```
 
 18 test files cover:
+
 - All 10 card action strategies
 - Core helpers: `cardHelpers`, `cardSelector`, `costResolver`, `effectResolver`, `factory`, `gameStateHelper`, `resourceHelpers`
 - `GameAggregate`
@@ -154,6 +164,7 @@ npm run test:coverage   # Coverage report
 ## Code Quality Gates
 
 A **pre-commit hook** (`.githooks/pre-commit`) blocks commits if any of these fail:
+
 1. Prettier format check on staged `.ts`/`.tsx`
 2. ESLint (zero warnings)
 3. Full TypeScript type check
@@ -179,6 +190,7 @@ Fix all issues before committing; do not use `--no-verify`.
 ## Game Data
 
 Static data lives in `src/data/`:
+
 - `cards.ts` — `CardDef[]` array defining all cards (states, productions, upgrades, effects)
 - `stickers.ts` — Sticker definitions (production bonuses, glory, stay-in-play)
 - `deck.json` — Initial deck composition (card IDs + instance counts)
@@ -189,10 +201,10 @@ When adding or modifying cards, update the corresponding locale files (`cards.en
 
 ## localStorage Keys
 
-| Key | Contents |
-|-----|----------|
+| Key                | Contents                         |
+| ------------------ | -------------------------------- |
 | `deck_legacy_save` | Serialized event log + timestamp |
-| `deck_legacy_lang` | Language code (`en` or `fr`) |
+| `deck_legacy_lang` | Language code (`en` or `fr`)     |
 
 ---
 

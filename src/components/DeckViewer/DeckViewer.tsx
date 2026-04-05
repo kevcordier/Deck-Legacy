@@ -47,7 +47,7 @@ export function DeckViewer({ deck, instances, defs, stickers = {} }: DeckViewerP
           <button onClick={() => setModalOpen(true)} className="btn-view-all">
             {t('deckViewer.viewAll')}
           </button>
-          <button onClick={() => setOpen(o => !o)} className={`btn-toggle${open ? ' open' : ''}`}>
+          <button onClick={() => setOpen(o => !o)} className={`btn-toggle ${open ? 'open' : ''}`}>
             {open ? '▲' : '▼'} {deck.length}
           </button>
         </div>

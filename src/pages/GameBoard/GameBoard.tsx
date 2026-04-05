@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import '@components/GameBoard/GameBoard.css';
+import '@pages/GameBoard/GameBoard.css';
 import { useGame } from '@hooks/useGame';
 import { Section } from '@components/Section';
 import { CardRow } from '@components/CardRow';
@@ -360,7 +360,7 @@ export function GameBoard() {
       {events.length > 0 && (
         <div className="gb-log-wrapper">
           <button
-            className={`gb-log-toggle${logOpen ? ' open' : ''}`}
+            className={`gb-log-toggle ${logOpen ? 'open' : ''}`}
             onClick={() => setLogOpen(o => !o)}
           >
             <span>{t('sections.eventLog', { count: events.length })}</span>

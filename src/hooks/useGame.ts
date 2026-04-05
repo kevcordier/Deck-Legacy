@@ -144,8 +144,11 @@ export function useGame(): GameHook {
     saveGame(aggRef.current.getEvents(), aggRef.current.getSaveState());
 
     const triggers = gs.triggerPile;
-    // If there's only one trigger in the trigger pile, automatically set it as the only pending choice. Otherwise, if there are multiple triggers, set a pending choice to ask the player to choose which one to resolve.
-    if (Object.entries(gs.triggerPile).length === 1) {
+    // If there's only one non optional trigger in the trigger pile, automatically set it as the only pending choice.
+    if (
+      Object.entries(gs.triggerPile).length === 1 &&
+      gs.triggerPile[Object.keys(gs.triggerPile)[0]].effectDef.optional !== true
+    ) {
       const [triggerId, trigger] = Object.entries(gs.triggerPile)[0];
 
       const event = triggerAction(
@@ -468,6 +471,14 @@ export function useGame(): GameHook {
     [sync, pendingChoices, triggerProduction, stickerDefs, defs],
   );
 
+  const skipTrigger = useCallback((uuid: string) => {
+    setTriggerPile(prev => {
+      const updated = { ...prev };
+      delete updated[uuid];
+      return Object.keys(updated).length > 0 ? updated : null;
+    });
+  }, []);
+
   // This function is called when the player has made a choice needed to pay an action's cost.
   const resolvePayCost = useCallback(
     (resolved: ResolvedCost) => {
@@ -508,14 +519,6 @@ export function useGame(): GameHook {
   );
 
   // ── Rewind  ───────────────────────────────────────────────────────────
-
-  // const skipTrigger = useCallback((uuid: string) => {
-  //   setTriggerPile(prev => {
-  //     const updated = { ...prev };
-  //     delete updated[uuid];
-  //     return Object.keys(updated).length > 0 ? updated : null;
-  //   });
-  // }, []);
 
   const canRewind = useCallback(() => {
     const events = aggRef.current.getEvents();
@@ -558,7 +561,7 @@ export function useGame(): GameHook {
     endTurnVoluntary,
     resolvePlayerChoice,
     resolvePayCost,
-    skipTrigger: () => {}, // skipTrigger, --- IGNORE ---
+    skipTrigger,
     canRewind,
     rewindEvent,
   };

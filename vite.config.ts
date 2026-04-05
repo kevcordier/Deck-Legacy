@@ -10,6 +10,7 @@ export default defineConfig({
       '@engine': path.resolve(__dirname, 'src/engine'),
       '@data': path.resolve(__dirname, 'src/data'),
       '@components': path.resolve(__dirname, 'src/components'),
+      '@pages': path.resolve(__dirname, 'src/pages'),
       '@helpers': path.resolve(__dirname, 'src/helpers'),
       '@hooks': path.resolve(__dirname, 'src/hooks'),
       '@i18n': path.resolve(__dirname, 'src/i18n'),
