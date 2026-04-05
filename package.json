@@ -13,7 +13,7 @@
     "format:check": "prettier --check src",
     "preview": "vite preview",
     "test": "vitest run",
-    "prepare": "git config core.hooksPath .githooks",
+    "prepare": "husky",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "storybook": "storybook dev -p 6006",
@@ -42,11 +42,22 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.4.2",
     "storybook": "^8.6.18",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
     "vite": "^6.4.1",
     "vitest": "^4.1.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "npm run lint:fix",
+      "npm run format"
+    ],
+    "*.{css,scss,md,json,yaml}": [
+      "npm run format"
+    ]
   }
 }
