@@ -20,6 +20,7 @@ import {
   ActivatedIcon,
   DestroyIcon,
   GloryIcon,
+  IconColors,
   PassifIcon,
   TimeIcon,
   TriggerIcon,
@@ -148,7 +149,7 @@ export function GameCard({
 
           {glory !== 0 && (
             <div className={`gc-glory-badge ${glory < 0 ? 'negative' : ''}`}>
-              <GloryIcon />
+              <GloryIcon color={IconColors.gold} className="gc-glory-badge-icon" />
               <span>
                 {glory > 0 ? '+' : ''}
                 {glory}
@@ -196,7 +197,7 @@ export function GameCard({
           {/* Stay in play */}
           {cs.stayInPlay && (
             <span className="gc-passive-effect">
-              <PassifIcon className="gc-passive-effect-icon" color="currentColor" alt="passif" />
+              <PassifIcon className="gc-passive-effect-icon" alt="passif" />
               {t('card.stayInPlay')}
             </span>
           )}

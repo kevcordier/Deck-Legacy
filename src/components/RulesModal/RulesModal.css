@@ -106,10 +106,9 @@
   background: rgba(201, 150, 58, 0.07);
 }
 
-.rm-body img {
+.rm-body svg {
   display: inline-block;
   width: 16px;
   height: 16px;
-  vertical-align: middle;
-  object-fit: contain;
+  vertical-align: text-bottom;
 }

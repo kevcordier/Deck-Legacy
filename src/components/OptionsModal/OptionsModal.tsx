@@ -33,7 +33,7 @@ export function OptionsModal({ onClose, onReset }: OptionsModalProps) {
                 <button
                   key={lang}
                   onClick={() => i18n.changeLanguage(lang)}
-                  className={`om-lang-btn${i18n.language === lang ? ' active' : ''}`}
+                  className={`om-lang-btn ${i18n.language === lang ? 'active' : ''}`}
                 >
                   {t(`options.${lang}`)}
                 </button>

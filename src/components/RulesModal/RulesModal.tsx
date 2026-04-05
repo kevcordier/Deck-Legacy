@@ -24,7 +24,7 @@ const rulesContent: Record<string, string> = {
   fr: rulesFr,
 };
 
-const ICON_URLS: Record<string, ComponentType> = {
+const ICON_MAP: Record<string, ComponentType> = {
   gold: GoldIcon,
   wood: WoodIcon,
   stone: StoneIcon,
@@ -37,8 +37,17 @@ const ICON_URLS: Record<string, ComponentType> = {
 function injectIcons(content: string): string {
   return content.replace(
     /\{\{(gold|wood|stone|iron|weapon|goods|glory)\}\}/g,
-    (_, key: string) => `![${key}](${ICON_URLS[key]})`,
+    (_, key: string) => `![${key}](./${key}.svg)`,
   );
+}
+
+function IconImg({ src, alt }: { src?: string; alt?: string }) {
+  const key = src?.replace('./', '').replace('.svg', '') ?? '';
+  const Icon = ICON_MAP[key];
+  if (Icon) {
+    return <Icon />;
+  }
+  return <img src={src} alt={alt} />;
 }
 
 export function RulesModal({ onClose }: RulesModalProps) {
@@ -55,7 +64,10 @@ export function RulesModal({ onClose }: RulesModalProps) {
           </button>
         </div>
         <div className="rm-body">
-          <ReactMarkdown remarkPlugins={[remarkGfm]} urlTransform={url => url}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{ img: ({ src, alt }) => <IconImg src={src} alt={alt} /> }}
+          >
             {injectIcons(raw)}
           </ReactMarkdown>
         </div>

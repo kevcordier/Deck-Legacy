@@ -3,7 +3,7 @@ import { getResMeta } from '@engine/application/resourceHelpers';
 import { canAffordResources } from '@engine/application/cardHelpers';
 import { ActionType } from '@engine/domain/enums';
 import type { TrackDef, Resources } from '@engine/domain/types';
-// import './CardTrack.css';
+import './CardTrack.css';
 import { GloryIcon } from '@components/Icon';
 
 interface CardTrackProps {

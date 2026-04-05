@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { IconColors } from './iconColors';
 
 export interface IconProps {
   color?: string;
@@ -6,6 +7,8 @@ export interface IconProps {
   style?: CSSProperties;
   alt?: string;
 }
+
+export { IconColors };
 
 export function ActivatedIcon({ color = 'currentColor', className, style, alt }: IconProps) {
   return (
@@ -69,7 +72,7 @@ export function DestroyIcon({ color = 'currentColor', className, style, alt }: I
   );
 }
 
-export function GloryIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+export function GloryIcon({ color = IconColors.gold, className, style, alt }: IconProps) {
   return (
     <svg
       viewBox="2 2 20 20"
@@ -122,7 +125,7 @@ export function TriggerIcon({ color = 'currentColor', className, style, alt }: I
   );
 }
 
-export function WoodIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+export function WoodIcon({ color = IconColors.wood, className, style, alt }: IconProps) {
   return (
     <svg
       viewBox="1 1 22 22"
@@ -194,7 +197,7 @@ export function WoodIcon({ color = 'currentColor', className, style, alt }: Icon
   );
 }
 
-export function GoldIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+export function GoldIcon({ color = IconColors.gold, className, style, alt }: IconProps) {
   return (
     <svg
       viewBox="2 2 20 20"
@@ -215,7 +218,7 @@ export function GoldIcon({ color = 'currentColor', className, style, alt }: Icon
   );
 }
 
-export function StoneIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+export function StoneIcon({ color = IconColors.stone, className, style, alt }: IconProps) {
   return (
     <svg
       viewBox="0 0 16 16"
@@ -232,7 +235,7 @@ export function StoneIcon({ color = 'currentColor', className, style, alt }: Ico
   );
 }
 
-export function IronIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+export function IronIcon({ color = IconColors.iron, className, style, alt }: IconProps) {
   return (
     <svg
       viewBox="0 0 512.082 512.082"
@@ -263,7 +266,7 @@ export function IronIcon({ color = 'currentColor', className, style, alt }: Icon
   );
 }
 
-export function GoodsIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+export function GoodsIcon({ color = IconColors.wood, className, style, alt }: IconProps) {
   return (
     <svg
       viewBox="1 1 22 22"
@@ -307,7 +310,7 @@ export function GoodsIcon({ color = 'currentColor', className, style, alt }: Ico
   );
 }
 
-export function WeaponIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+export function WeaponIcon({ color = IconColors.iron, className, style, alt }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"

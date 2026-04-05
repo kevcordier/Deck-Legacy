@@ -1,6 +1,6 @@
 .res-icon {
   --res-icon-size: 1.5em;
-  vertical-align: baseline;
+  vertical-align: middle;
   width: var(--res-icon-size);
   height: var(--res-icon-size);
 }

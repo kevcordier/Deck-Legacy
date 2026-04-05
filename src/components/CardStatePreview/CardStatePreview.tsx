@@ -99,7 +99,7 @@ function CardStatesModal({
             return (
               <div
                 key={s.id}
-                className={`csp-state-slot${isCurrent ? ' csp-state-slot--current' : ''}`}
+                className={`csp-state-slot ${isCurrent ? 'csp-state-slot--current' : ''}`}
               >
                 <GameCard
                   instance={fakeInstance}
