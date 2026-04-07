@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
-import { GameBoard } from './GameBoard';
+import { Game } from './Game';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import type { GameState, GameEvent, TriggerEntry } from '@engine/domain/types';
 import {
@@ -14,10 +14,12 @@ import {
 import { createInstance } from '@engine/application/factory';
 import deckData from '@data/deck.json';
 import { loadCardDefs } from '@engine/infrastructure/loaders';
+import { GameUIProvider } from '@contexts/GameUIProvider';
+import { GameProvider } from '@contexts/GameProvider';
 
 // ─── Debug wrapper ────────────────────────────────────────────────────────────
 //
-// Writes saveState + events to localStorage before mounting <GameBoard />.
+// Writes saveState + events to localStorage before mounting <Game />.
 // The `key` changes on every args modification → full remount of the board.
 
 type StoryArgs = {
@@ -32,15 +34,15 @@ function writeSave(saveState: GameState, events: GameEvent[]) {
   );
 }
 
-function GameBoardDebugWrapper({ saveState, events }: StoryArgs) {
-  // useState initializer: writes to localStorage before the first mount of GameBoard
+function GameDebugWrapper({ saveState, events }: StoryArgs) {
+  // useState initializer: writes to localStorage before the first mount of Game
   const [mountKey, setMountKey] = useState(() => {
     const key = JSON.stringify({ saveState, events });
     writeSave(saveState, events);
     return key;
   });
 
-  // When args change: 1) write the new state, 2) change the key → remount GameBoard
+  // When args change: 1) write the new state, 2) change the key → remount Game
   useEffect(() => {
     const key = JSON.stringify({ saveState, events });
     writeSave(saveState, events);
@@ -48,7 +50,7 @@ function GameBoardDebugWrapper({ saveState, events }: StoryArgs) {
     setMountKey(key);
   }, [saveState, events]);
 
-  return <GameBoard key={mountKey} />;
+  return <Game key={mountKey} />;
 }
 
 // ─── Preset fixtures ──────────────────────────────────────────────────────────
@@ -132,8 +134,8 @@ const PERMANENT_STATE: GameState = {
 // ─── Meta ─────────────────────────────────────────────────────────────────────
 
 const meta: Meta<StoryArgs> = {
-  title: 'Pages/GameBoard',
-  component: GameBoardDebugWrapper,
+  title: 'Pages/Game',
+  component: GameDebugWrapper,
   parameters: {
     layout: 'fullscreen',
     docs: {
@@ -153,6 +155,15 @@ const meta: Meta<StoryArgs> = {
       description: 'GameEvent[] rejoués par-dessus saveState (depuis le dernier save point)',
     },
   },
+  decorators: [
+    Story => (
+      <GameUIProvider>
+        <GameProvider>
+          <Story />
+        </GameProvider>
+      </GameUIProvider>
+    ),
+  ],
 };
 
 export default meta;

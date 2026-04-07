@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import './OptionsModal.css';
+import { GameUIContext } from '@contexts/GameUIContext';
+import { Button } from '@components/ui/Button/Button';
+import { ButtonGroup } from '@components/ui/ButtonGroup/ButtonGroup';
+import type { Theme } from '@contexts/GameUIProvider';
 
 interface OptionsModalProps {
   onClose: () => void;
@@ -10,6 +13,7 @@ interface OptionsModalProps {
 export function OptionsModal({ onClose, onReset }: OptionsModalProps) {
   const { t, i18n } = useTranslation();
   const [confirmReset, setConfirmReset] = useState(false);
+  const { theme, setTheme } = useContext(GameUIContext);
 
   function handleReset() {
     onReset();
@@ -17,49 +21,63 @@ export function OptionsModal({ onClose, onReset }: OptionsModalProps) {
   }
 
   return (
-    <div className="om-overlay" onClick={onClose}>
-      <div className="om-panel" onClick={e => e.stopPropagation()}>
-        <div className="om-header">
-          <div className="om-title">{t('options.title')}</div>
-          <button onClick={onClose} className="btn-close">
+    <div
+      className="fixed inset-0 z-200 flex items-center justify-center bg-black/60"
+      onClick={onClose}
+    >
+      <div
+        className="bg-background border-border min-w rounded-lg border p-8"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="mb-6 flex items-center justify-between">
+          <div className="text-primary font-bold uppercase">{t('options.title')}</div>
+          <Button onClick={onClose} variant="text" color="ink" size="sm">
             ✕
-          </button>
+          </Button>
         </div>
-        <div className="om-body">
-          <div className="om-row">
-            <span className="om-label">{t('options.language')}</span>
-            <div className="om-lang-btns">
-              {(['en', 'fr'] as const).map(lang => (
-                <button
-                  key={lang}
-                  onClick={() => i18n.changeLanguage(lang)}
-                  className={`om-lang-btn ${i18n.language === lang ? 'active' : ''}`}
-                >
-                  {t(`options.${lang}`)}
-                </button>
-              ))}
-            </div>
-          </div>
+        <div className="flex flex-col gap-6">
+          <ButtonGroup
+            label={t('options.theme')}
+            value={theme}
+            onChange={value => setTheme(value as Theme)}
+            size="sm"
+            options={[
+              { children: t('options.theme_light'), value: 'light' },
+              { children: t('options.theme_dark'), value: 'dark' },
+              { children: t('options.theme_system'), value: 'system' },
+            ]}
+          />
 
-          <div className="om-row om-row--danger">
+          <ButtonGroup
+            label={t('options.language')}
+            value={i18n.language}
+            onChange={value => i18n.changeLanguage(value)}
+            size="sm"
+            options={[
+              { children: t('options.en'), value: 'en' },
+              { children: t('options.fr'), value: 'fr' },
+            ]}
+          />
+
+          <div className="flex flex-col gap-2">
             {confirmReset ? (
               <>
-                <span className="om-label">{t('options.resetConfirm')}</span>
+                <span className="text-xs">{t('options.resetConfirm')}</span>
                 <div className="om-lang-btns">
-                  <button className="om-reset-btn om-reset-btn--confirm" onClick={handleReset}>
+                  <Button size="sm" color="danger" onClick={handleReset}>
                     {t('options.resetYes')}
-                  </button>
-                  <button className="om-lang-btn" onClick={() => setConfirmReset(false)}>
+                  </Button>
+                  <Button size="sm" color="ink" onClick={() => setConfirmReset(false)}>
                     {t('options.resetNo')}
-                  </button>
+                  </Button>
                 </div>
               </>
             ) : (
               <>
-                <span className="om-label">{t('options.reset')}</span>
-                <button className="om-reset-btn" onClick={() => setConfirmReset(true)}>
+                <span className="text-xs">{t('options.reset')}</span>
+                <Button onClick={() => setConfirmReset(true)} size="sm" color="danger">
                   {t('options.resetBtn')}
-                </button>
+                </Button>
               </>
             )}
           </div>

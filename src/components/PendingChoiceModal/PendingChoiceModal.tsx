@@ -9,7 +9,7 @@ import type {
   ResolvedCost,
   TriggerEntry,
 } from '@engine/domain/types';
-import { TriggerIcon } from '@components/Icon';
+import { TriggerIcon } from '@components/ui/Icon';
 import '@components/PendingChoiceModal/PendingChoiceModal.css';
 import { ResourceChoice } from '@components/Resource/ResourceChoice';
 import { GameCard } from '@components/GameCard';
@@ -31,7 +31,6 @@ interface PendingChoiceModalProps {
   triggerPile?: Record<string, TriggerEntry> | null;
   defs: Record<number, CardDef>;
   instances: Record<number, CardInstance>;
-  currentResources: Resources;
   resolvePlayerChoice(option: ResolvedAction): void;
   resolvePayCost(resolved: ResolvedCost): void;
   onResolveTrigger(sourceInstanceId: number, actionId: string, triggerId: string): void;
@@ -43,7 +42,6 @@ export function PendingChoiceModal({
   triggerPile,
   defs,
   instances,
-  currentResources,
   resolvePlayerChoice,
   resolvePayCost,
   onResolveTrigger,
@@ -164,13 +162,7 @@ export function PendingChoiceModal({
               const state = def.states.find(s => s.id === inst.stateId) ?? def.states[0];
               return (
                 <div key={id} onClick={() => handleCardClick(id)} className="pcm-card-clickable">
-                  <GameCard
-                    instance={makePreviewInstance(def, state)}
-                    defs={defs}
-                    currentResources={currentResources}
-                    isOnBoard={false}
-                    hideStatePreview
-                  />
+                  <GameCard instance={makePreviewInstance(def, state)} hideStatePreview />
                 </div>
               );
             })}
@@ -208,13 +200,7 @@ export function PendingChoiceModal({
                   }
                   className="pcm-card-clickable"
                 >
-                  <GameCard
-                    instance={makePreviewInstance(cardDef, state)}
-                    defs={defs}
-                    currentResources={currentResources}
-                    isOnBoard={false}
-                    hideStatePreview
-                  />
+                  <GameCard instance={makePreviewInstance(cardDef, state)} hideStatePreview />
                 </div>
               );
             })}

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CardStatePreview } from './CardStatePreview';
 import type { CardDef, CardInstance } from '@engine/domain/types';
 import { CardTag, ActionType } from '@engine/domain/enums';

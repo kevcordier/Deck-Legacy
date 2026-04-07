@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { EmptyState } from './EmptyState';
-import { PillBtn } from '../PillBtn/PillBtn';
+import { Button } from '@components/ui/Button/Button';
 
 const meta: Meta<typeof EmptyState> = {
   title: 'Components/EmptyState',
@@ -35,9 +35,9 @@ export const WithAction: Story = {
     title: 'Deck vide',
     subtitle: 'Votre deck est épuisé. Commencez une nouvelle partie ?',
     action: (
-      <PillBtn variant="gold" onClick={() => {}}>
+      <Button color="primary" onClick={() => {}}>
         Nouvelle partie
-      </PillBtn>
+      </Button>
     ),
   },
 };

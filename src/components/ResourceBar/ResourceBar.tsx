@@ -1,49 +1,39 @@
 import { useTranslation } from 'react-i18next';
-import type { Resources } from '@engine/domain/types';
-import { GloryIcon, IconColors } from '@components/Icon';
-import './ResourceBar.css';
+import { GloryIcon, IconColors } from '@components/ui/Icon';
 import { ResourcePill } from '@components/Resource/ResourcePill';
+import { useGame } from '@hooks/useGame';
+import { Stat } from '@components/ui/Stat/Stat';
+import { Divider } from '@components/ui/Divider/Divider';
 
-interface ResourceBarProps {
-  resources: Resources;
-  score: number;
-  round: number;
-  turn: number;
-  deckSize: number;
-  discardSize: number;
-}
-
-export function ResourceBar({
-  resources,
-  score,
-  round,
-  turn,
-  deckSize,
-  discardSize,
-}: ResourceBarProps) {
+export function ResourceBar() {
   const { t } = useTranslation();
+  const { state, score } = useGame();
+
+  const { resources, round, turn, drawPile, discardPile } = state;
   const entries = Object.entries(resources).filter(([, v]) => v > 0);
 
   return (
-    <div className="rb-root">
+    <div className="bg-background border-b-border z-100 flex items-stretch gap-6 border-b px-6 py-2">
       {/* Round/Turn info */}
-      <div className="rb-group">
+      <div className="flex items-stretch gap-4">
         <Stat label={t('resourceBar.round')} value={round || '—'} />
-        <div className="rb-divider" />
+        <Divider />
         <Stat label={t('resourceBar.turn')} value={turn || '—'} />
       </div>
 
-      <div className="rb-divider" />
-
+      <Divider />
       {/* Resources */}
-      <div className="rb-resources">
+      <div className="flex flex-1 flex-wrap items-center gap-4">
         {entries.length === 0 ? (
-          <span className="rb-empty">{t('resourceBar.noResources')}</span>
+          <p className="text-sm text-gray-400 italic">{t('resourceBar.noResources')}</p>
         ) : (
           entries.map(([k, v]) => {
             return (
-              <div key={k} className="rb-resource-item">
-                <span className="rb-resource-value">{v}</span>
+              <div
+                key={k}
+                className="border-border flex items-center gap-1 rounded border px-2 py-1"
+              >
+                <span className="font-display">{v}</span>
                 <ResourcePill key={k} resource={k} size="sm" />
               </div>
             );
@@ -51,35 +41,27 @@ export function ResourceBar({
         )}
       </div>
 
-      <div className="rb-divider" />
+      <Divider />
 
       {/* Deck / Discard */}
-      <div className="rb-group">
-        <Stat label={t('resourceBar.deck')} value={deckSize} color="var(--cream-d)" />
-        <Stat label={t('resourceBar.discard')} value={discardSize} color="var(--stone)" />
+      <div className="flex items-stretch gap-4">
+        <Stat label={t('resourceBar.deck')} value={drawPile.length} />
+        <Divider />
+        <Stat label={t('resourceBar.discard')} value={discardPile.length} />
       </div>
 
-      <div className="rb-divider" />
+      <Divider />
 
       {/* Score */}
-      <div className="rb-score">
-        <div className="rb-score-badge">
-          <GloryIcon color={IconColors.gold} className="rb-score-badge-icon" />
-          <span className="rb-score-value">{score}</span>
+      <div className="flex items-center gap-2">
+        <div className="relative">
+          <GloryIcon color={IconColors.gold} className="size-8" />
+          <span className="font-display text-primary absolute top-0 left-0 flex size-8 items-center justify-center text-sm font-bold">
+            {score}
+          </span>
         </div>
-        <span className="rb-score-label">{t('resourceBar.glory')}</span>
+        <span className="text-primary text-xs uppercase">{t('resourceBar.glory')}</span>
       </div>
-    </div>
-  );
-}
-
-function Stat({ label, value, color }: { label: string; value: number | string; color?: string }) {
-  return (
-    <div className="stat">
-      <div className="stat-value" style={color ? { color } : undefined}>
-        {value}
-      </div>
-      <div className="stat-label">{label}</div>
     </div>
   );
 }

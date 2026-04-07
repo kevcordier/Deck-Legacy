@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { EventLog } from './EventLog';
 import type { GameEvent } from '@engine/domain/types';
 import { GameEventType } from '@engine/domain/enums';

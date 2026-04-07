@@ -2,25 +2,17 @@ import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import './CardListModal.css';
 import { GameCard } from '@components/GameCard';
-import type { CardInstance, CardDef, Resources } from '@engine/domain/types';
+import type { CardInstance } from '@engine/domain/types';
 
 interface CardListModalProps {
   title: string;
   subtitle?: string;
   cards: CardInstance[];
-  defs: Record<number, CardDef>;
   onClose: () => void;
   emptyText?: string;
 }
 
-export function CardListModal({
-  title,
-  subtitle,
-  cards,
-  defs,
-  onClose,
-  emptyText,
-}: CardListModalProps) {
+export function CardListModal({ title, subtitle, cards, onClose, emptyText }: CardListModalProps) {
   const { t } = useTranslation();
 
   const modal = (
@@ -48,10 +40,8 @@ export function CardListModal({
                 <GameCard
                   key={inst.id}
                   instance={inst}
-                  defs={defs}
-                  currentResources={{} as Resources}
-                  isOnBoard={false}
                   animDelay={Math.min(i * 30, 300)}
+                  size="sm"
                 />
               ))}
             </div>

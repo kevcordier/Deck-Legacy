@@ -14,7 +14,7 @@ import { CardStatePreview } from '@components/CardStatePreview';
 import { CardTrack } from '@components/CardTrack';
 import { ResourceList } from '@components/Resource/ResourceList';
 import { ResourcePill } from '@components/Resource/ResourcePill';
-import type { CardDef, CardInstance, Sticker, Resources } from '@engine/domain/types';
+import type { CardInstance, Resources } from '@engine/domain/types';
 import { TargetScope } from '@engine/domain/enums';
 import {
   ActivatedIcon,
@@ -24,40 +24,38 @@ import {
   PassifIcon,
   TimeIcon,
   TriggerIcon,
-} from '@components/Icon';
+} from '@components/ui/Icon';
+import { useGame } from '@hooks/useGame';
 
 interface GameCardProps {
   instance: CardInstance;
-  defs: Record<number, CardDef>;
-  stickerDefs?: Record<number, Sticker>;
-  currentResources: Resources;
-  isOnBoard: boolean;
-  onActivate?: () => void;
-  onAction?: (label: string) => void;
-  onUpgrade?: (toStateId?: number) => void;
-  onTrackStep?: (stepId: number) => void;
   style?: React.CSSProperties;
   animDelay?: number;
   hideStatePreview?: boolean;
-  isBlocked?: boolean;
+  isOnBoard?: boolean;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export function GameCard({
   instance,
-  defs,
-  stickerDefs = {},
-  currentResources,
-  isOnBoard,
-  onActivate,
-  onAction,
-  onUpgrade,
-  onTrackStep,
   style,
   animDelay = 0,
   hideStatePreview = false,
-  isBlocked = false,
+  isOnBoard = false,
+  size = 'md',
 }: GameCardProps) {
   const { t } = useTranslation();
+  const {
+    state,
+    defs,
+    stickerDefs,
+    resolveProduction,
+    resolveAction,
+    resolveUpgrade,
+    resolveTrackStep,
+  } = useGame();
+  const currentResources = state.resources;
+  const isBlocked = isOnBoard && Object.values(state.blockingCards ?? {}).includes(instance.id);
   const cs = getActiveState(instance, defs);
   const def = defs[instance.cardId];
 
@@ -81,8 +79,15 @@ export function GameCard({
   // Stickers for the current state
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
 
-  const cardCls = [
-    'gc',
+  const sizeStyle =
+    size === 'sm'
+      ? '[calc(var(--spacing) * 0.6))]'
+      : size === 'lg'
+        ? '[calc(var(--spacing) * 1.2))]'
+        : 'var(--spacing)';
+
+  const cardClass = [
+    'w-card-w h-card-h rounded-lg border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden animate-fade-in-scale',
     isEnemy ? 'enemy' : '',
     isBlocked ? 'blocked' : '',
     isPermanent ? 'permanent' : '',
@@ -91,7 +96,16 @@ export function GameCard({
     .join(' ');
 
   return (
-    <div className={cardCls} style={{ animationDelay: `${animDelay}ms`, ...style }}>
+    <div
+      className={cardClass}
+      style={
+        {
+          animationDelay: `${animDelay}ms`,
+          ...style,
+          '--spacing': sizeStyle,
+        } as React.CSSProperties & { '--spacing': string }
+      }
+    >
       {/* Blocked overlay */}
       {isBlocked && (
         <div className="gc-blocked-overlay">
@@ -134,7 +148,7 @@ export function GameCard({
             <React.Fragment>
               {isOnBoard && !isBlocked ? (
                 <button
-                  onClick={onActivate}
+                  onClick={() => resolveProduction(instance.id)}
                   disabled={!canActivate}
                   title={t('card.chooseProduction')}
                   className="gc-produce-btn"
@@ -215,7 +229,7 @@ export function GameCard({
               return (
                 <button
                   key={i}
-                  onClick={() => onAction?.(action.label)}
+                  onClick={() => resolveAction(instance.id, action.label)}
                   disabled={!affordable || !canActivate || haveTrigger}
                   title={actionDesc}
                   className="gc-action-btn"
@@ -246,7 +260,7 @@ export function GameCard({
               validatedSteps={instance.trackProgress}
               currentResources={currentResources}
               canActivate={canActivate}
-              onStep={stepId => onTrackStep?.(stepId)}
+              onStep={stepId => resolveTrackStep(instance.id, stepId)}
             />
           )}
 
@@ -258,7 +272,7 @@ export function GameCard({
               return (
                 <button
                   key={i}
-                  onClick={() => onUpgrade?.(upg.upgradeTo)}
+                  onClick={() => resolveUpgrade(instance.id, upg.upgradeTo)}
                   disabled={!affordable || !canActivate}
                   className="gc-upgrade-btn"
                 >

@@ -119,22 +119,15 @@
     "skip": "Skip"
   },
   "deckViewer": {
-    "title": "Deck",
-    "viewAll": "⊞ View all",
-    "empty": "Empty",
-    "remainingCards": "Remaining cards",
-    "modalSubtitle": "{{count}} cards",
-    "modalSubtitle_other": "{{count}} cards",
-    "emptyDeck": "The deck is empty"
-  },
-  "discardPile": {
-    "title": "Discard",
+    "draw": "Deck",
+    "discard": "Discard",
     "viewAll": "⊞ View all",
     "empty": "Empty",
     "allCards": "All cards",
     "modalSubtitle": "{{count}} card",
     "modalSubtitle_other": "{{count}} cards",
-    "emptyDiscard": "The discard pile is empty"
+    "emptyDiscard": "The discard pile is empty",
+    "emptyDeck": "The deck is empty"
   },
   "cardList": {
     "listView": "≡ List",
@@ -216,6 +209,10 @@
   },
   "options": {
     "title": "Options",
+    "theme": "Theme",
+    "theme_light": "Light",
+    "theme_dark": "Dark",
+    "theme_system": "System",
     "language": "Language",
     "close": "Close",
     "en": "English",

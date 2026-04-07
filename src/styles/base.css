@@ -1,14 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel+Decorative:wght@400;700&display=swap');
-
+/* 
 html,
 body,
 #root {
   height: 100%;
   overflow: hidden;
-}
+} */
 
 /* ── Tokens ──────────────────────────────────────────────────────────────── */
-:root {
+/* :root {
   --bg: #0f0d0a;
   --bg-2: #1a1610;
   --bg-3: #231e16;
@@ -44,17 +43,17 @@ body,
   --shadow-glow: 0 0 20px rgba(201, 150, 58, 0.25);
   --border-gold: 1px solid rgba(201, 150, 58, 0.3);
   --border-dim: 1px solid rgba(255, 255, 255, 0.06);
-}
-
+} */
+/* 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-}
+} */
 
-html {
+/* html {
   font-size: 15px;
 }
 
@@ -65,21 +64,10 @@ body {
   line-height: 1.5;
   min-height: 100vh;
   overflow-x: hidden;
-}
-
-/* ── Texture overlay ─────────────────────────────────────────────────────── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.5;
-}
+} */
 
 /* ── Scrollbar ───────────────────────────────────────────────────────────── */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
 }
@@ -89,4 +77,4 @@ body::before {
 ::-webkit-scrollbar-thumb {
   background: var(--gold-d);
   border-radius: 4px;
-}
+} */

@@ -12,7 +12,7 @@ import {
   StoneIcon,
   WeaponIcon,
   WoodIcon,
-} from '@components/Icon';
+} from '@components/ui/Icon';
 import type { ComponentType } from 'react';
 
 interface RulesModalProps {

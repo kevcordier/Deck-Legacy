@@ -119,22 +119,15 @@
     "skip": "Ignorer"
   },
   "deckViewer": {
-    "title": "Pioche",
-    "viewAll": "⊞ Voir tout",
-    "empty": "Vide",
-    "remainingCards": "Cartes restantes",
-    "modalSubtitle": "{{count}} carte",
-    "modalSubtitle_other": "{{count}} cartes",
-    "emptyDeck": "La pioche est vide"
-  },
-  "discardPile": {
-    "title": "Défausse",
+    "draw": "Pioche",
+    "discard": "Défausse",
     "viewAll": "⊞ Voir tout",
     "empty": "Vide",
     "allCards": "Toutes les cartes",
     "modalSubtitle": "{{count}} carte",
     "modalSubtitle_other": "{{count}} cartes",
-    "emptyDiscard": "La défausse est vide"
+    "emptyDiscard": "La défausse est vide",
+    "emptyDeck": "La pioche est vide"
   },
   "cardList": {
     "listView": "≡ Liste",
@@ -215,6 +208,10 @@
   },
   "options": {
     "title": "Options",
+    "theme": "Thème",
+    "theme_light": "Clair",
+    "theme_dark": "Sombre",
+    "theme_system": "Système",
     "language": "Langue",
     "close": "Fermer",
     "en": "Anglais",

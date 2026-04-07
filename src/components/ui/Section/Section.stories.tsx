@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Section } from './Section';
 
 const meta: Meta<typeof Section> = {
-  title: 'Components/Section',
+  title: 'UI/Section',
   component: Section,
   parameters: {
     layout: 'padded',

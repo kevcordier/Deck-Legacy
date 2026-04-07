@@ -48,9 +48,7 @@ export function CardStatePreview({ instance, defs }: CardStatePreviewProps) {
         <EyeIcon />
       </button>
 
-      {open && (
-        <CardStatesModal instance={instance} def={def} defs={defs} onClose={() => setOpen(false)} />
-      )}
+      {open && <CardStatesModal instance={instance} def={def} onClose={() => setOpen(false)} />}
     </>
   );
 }
@@ -58,12 +56,10 @@ export function CardStatePreview({ instance, defs }: CardStatePreviewProps) {
 function CardStatesModal({
   instance,
   def,
-  defs,
   onClose,
 }: {
   instance: CardInstance;
   def: CardDef;
-  defs: Record<number, CardDef>;
   onClose: () => void;
 }) {
   const { t } = useTranslation();
@@ -101,13 +97,7 @@ function CardStatesModal({
                 key={s.id}
                 className={`csp-state-slot ${isCurrent ? 'csp-state-slot--current' : ''}`}
               >
-                <GameCard
-                  instance={fakeInstance}
-                  defs={defs}
-                  currentResources={{}}
-                  isOnBoard={false}
-                  hideStatePreview
-                />
+                <GameCard instance={fakeInstance} hideStatePreview />
               </div>
             );
           })}

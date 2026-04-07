@@ -1,4 +1,4 @@
-/* ── GameBoard layout ────────────────────────────────────────────────────── */
+/* ── Game layout ────────────────────────────────────────────────────── */
 .gb-root {
   display: flex;
   flex-direction: column;
@@ -6,25 +6,6 @@
   overflow: hidden;
   position: relative;
   z-index: 1;
-}
-
-.gb-header {
-  position: relative;
-  z-index: 101;
-  padding: 12px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(201, 150, 58, 0.12);
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(12px);
-  flex-shrink: 0;
-}
-
-.gb-logo {
-  font-family: var(--font-deco);
-  color: var(--gold);
-  letter-spacing: 0.1em;
 }
 
 .gb-header-actions {
