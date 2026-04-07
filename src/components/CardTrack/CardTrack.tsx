@@ -3,8 +3,8 @@ import { getResMeta } from '@engine/application/resourceHelpers';
 import { canAffordResources } from '@engine/application/cardHelpers';
 import { ActionType } from '@engine/domain/enums';
 import type { TrackDef, Resources } from '@engine/domain/types';
-import './CardTrack.css';
-import { GloryIcon } from '@components/ui/Icon';
+import { Glory } from '@components/ui/Glory/Glory';
+import { Button } from '@components/ui/Button/Button';
 
 interface CardTrackProps {
   track: TrackDef;
@@ -12,6 +12,7 @@ interface CardTrackProps {
   currentResources: Resources;
   canActivate: boolean;
   onStep: (stepId: number) => void;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export function CardTrack({
@@ -20,13 +21,14 @@ export function CardTrack({
   currentResources,
   canActivate,
   onStep,
+  size = 'md',
 }: CardTrackProps) {
   const firstPendingId = track.inOrder
     ? track.steps.find(s => !validatedSteps.includes(s.id))?.id
     : undefined;
 
   return (
-    <div className="ct">
+    <div className="flex flex-wrap items-center gap-2 py-1">
       {track.steps.map(step => {
         const isValidated = validatedSteps.includes(step.id);
         const isClickable =
@@ -40,65 +42,67 @@ export function CardTrack({
         // Determine step button content
         const glory = step.onClick.glory;
         const actions = step.onClick.actions ?? [];
-        const firstAction = actions[0];
 
-        let content: React.ReactNode = null;
+        const contents: React.ReactNode[] = [];
         if (glory !== undefined && glory !== 0) {
-          content = (
-            <span className="ct-step-glory">
-              +{glory}
-              <GloryIcon className="ct-step-glory-icon" alt="glory" />
-            </span>
-          );
-        } else if (firstAction) {
-          if (
-            firstAction.type === ActionType.DISCOVER_CARD &&
-            firstAction.cards?.ids?.[0] !== undefined
-          ) {
-            content = <span className="ct-step-discover">#{firstAction.cards.ids[0]}</span>;
-          } else if (firstAction.type === ActionType.UPGRADE_CARD) {
-            content = <span className="ct-step-upgrade">↑</span>;
-          } else if (firstAction.type === ActionType.ADD_RESOURCES && firstAction.resources) {
+          contents.push(<Glory glory={glory} size={size === 'lg' ? 'md' : 'sm'} />);
+        }
+        actions.forEach(action => {
+          if (action.type === ActionType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
+            contents.push(<span>#{action.cards.ids[0]}</span>);
+          } else if (action.type === ActionType.UPGRADE_CARD) {
+            contents.push(<span>⬆</span>);
+          } else if (action.type === ActionType.ADD_RESOURCES && action.resources) {
             const [resKey] =
-              Object.entries(firstAction.resources).filter(([k]) => k !== 'choice')[0] ?? [];
+              Object.entries(action.resources).filter(([k]) => k !== 'choice')[0] ?? [];
             if (resKey) {
               const meta = getResMeta(resKey);
-              content = meta.icon ? (
-                <meta.icon className={`res-icon ${meta.cls} res-sm`} alt={resKey} />
-              ) : null;
+              contents.push(
+                meta.icon ? (
+                  <meta.icon
+                    className={`${meta.cls} ${size === 'sm' ? 'size-3' : size === 'lg' ? 'size-4' : 'size-5'}`}
+                    alt={resKey}
+                  />
+                ) : null,
+              );
             }
           }
-        }
+        });
 
         return (
-          <div key={step.id} className="ct-step-wrap">
+          <div key={step.id} className="flex flex-col items-center gap-1">
             {costEntry && (
-              <div className="ct-step-cost">
+              <div
+                className={`flex items-center gap-0.5 ${size === 'sm' ? 'text-sm' : 'text-md'} text-gray-500`}
+              >
                 {Object.entries(costEntry).map(([k, v]) => {
                   const meta = getResMeta(k);
                   return (
                     <React.Fragment key={k}>
                       {v}
-                      {meta.icon && <meta.icon className={`res-icon ${meta.cls} res-xs`} alt={k} />}
+                      {meta.icon && (
+                        <meta.icon
+                          className={`${meta.cls} ${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-4'}`}
+                          alt={k}
+                        />
+                      )}
                     </React.Fragment>
                   );
                 })}
               </div>
             )}
-            <button
+            <Button
               className={[
-                'ct-step-btn',
-                isValidated ? 'ct-step-btn--done' : '',
-                !isClickable && !isValidated ? 'ct-step-btn--locked' : '',
-              ]
-                .filter(Boolean)
-                .join(' ')}
-              disabled={!isClickable}
+                `${size === 'sm' ? 'size-6' : size === 'lg' ? 'size-12' : 'size-10'} ${size === 'sm' ? 'text-sm' : 'text-md'} flex flex-col items-center justify-center rounded-sm border-2 border-gray-300 leading-none font-bold`,
+                isValidated ? 'border-green-700 bg-green-700/20! text-green-700' : '',
+              ].join(' ')}
+              disabled={!isClickable && !isValidated}
+              variant="text"
               onClick={() => onStep(step.id)}
               title={isValidated ? '✓' : undefined}
             >
-              {isValidated ? <span className="ct-step-check">✓</span> : content}
-            </button>
+              {isValidated ? <span>✓</span> : contents}
+            </Button>
           </div>
         );
       })}

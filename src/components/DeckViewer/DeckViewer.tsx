@@ -25,14 +25,14 @@ export function DeckViewer({
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <section className="w-side-bar-w bg-background scrollbar flex h-full shrink-0 flex-col">
+    <section className="bg-background scrollbar flex h-full w-64 shrink-0 flex-col">
       <div className="border-b-border flex min-h-11 items-center justify-between border-b p-2">
         <Title level={3}>{title}</Title>
         {deck.length <= 1 ? (
           <span className="font-display text-xs">{deck.length}</span>
         ) : (
           <div className="flex items-center gap-2">
-            <Button onClick={() => setModalOpen(true)} size="xs" variant="outlined" color="ink">
+            <Button onClick={() => setModalOpen(true)} size="xs" variant="text" color="ink">
               {t('deckViewer.viewAll')}
             </Button>
             <Button onClick={() => setOpen(o => !o)} size="xs" variant="outlined" color="ink">
@@ -44,8 +44,8 @@ export function DeckViewer({
       {deck.length > 0 ? (
         <React.Fragment>
           {displayedCard && (
-            <div className="p-2">
-              <GameCard instance={displayedCard} style={{ width: '100%' }} size="sm" />
+            <div className="flex flex-col items-center p-2">
+              <GameCard instance={displayedCard} size="sm" />
             </div>
           )}
           {open && deck.length > 1 && (

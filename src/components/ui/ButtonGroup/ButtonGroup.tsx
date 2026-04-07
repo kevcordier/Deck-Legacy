@@ -24,7 +24,7 @@ export function ButtonGroup({ label, options, value, size, onChange }: ButtonGro
             color={value === option.value ? 'primary' : 'ink'}
             size={size}
             className="not-first:not-last:rounded-none first:rounded-e-none last:rounded-s-none"
-            onClick={() => (onChange ? onChange(option.value || '') : option.onClick?.())}
+            onClick={e => (onChange ? onChange(option.value || '') : option.onClick?.(e))}
           >
             {option.children}
           </Button>

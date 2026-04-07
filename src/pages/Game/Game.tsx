@@ -41,16 +41,12 @@ export function Game() {
 
   return (
     <div className="z-1 flex h-screen flex-col">
-      {/* ── Header ── */}
       <Header />
 
-      {/* ── Resource bar ── */}
       {phase !== 'pregame' && <ResourceBar />}
 
-      {/* ── 3-column body ── */}
       <GameBoard />
 
-      {/* ── Event log ── */}
       {events.length > 0 && (
         <div className="gb-log-wrapper">
           <button
@@ -68,7 +64,6 @@ export function Game() {
         </div>
       )}
 
-      {/* ── Pending choice modal (inclut triggerPile) ── */}
       {((pendingChoices && pendingChoices.length > 0) ||
         (triggerPile && Object.keys(triggerPile).length > 0)) && (
         <PendingChoiceModal
@@ -83,10 +78,8 @@ export function Game() {
         />
       )}
 
-      {/* ── Rules modal ── */}
       {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}
 
-      {/* ── Options modal ── */}
       {optionsOpen && (
         <OptionsModal
           onClose={() => setOptionsOpen(false)}

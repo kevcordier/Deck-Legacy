@@ -127,7 +127,8 @@
     "modalSubtitle": "{{count}} carte",
     "modalSubtitle_other": "{{count}} cartes",
     "emptyDiscard": "La défausse est vide",
-    "emptyDeck": "La pioche est vide"
+    "emptyDeck": "La pioche est vide",
+    "remainingCards": "Autres cartes"
   },
   "cardList": {
     "listView": "≡ Liste",

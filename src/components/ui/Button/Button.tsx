@@ -1,8 +1,8 @@
 export type ButtonProps = {
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   variant?: 'text' | 'contained' | 'outlined';
-  color?: 'primary' | 'danger' | 'ink' | 'base-primary';
+  color?: 'primary' | 'danger' | 'ink' | 'base-primary' | 'base-ink';
   size?: 'xs' | 'sm' | 'md' | 'lg';
   value?: string;
   disabled?: boolean;
@@ -22,6 +22,7 @@ export function Button({
     danger: '[--color-btn-color:var(--color-danger)]',
     ink: '',
     'base-primary': '[--color-btn-color:var(--color-base-primary)]',
+    'base-ink': '[--color-btn-color:var(--color-base-ink)]',
   }[color];
   const variantClasses = {
     text: `bg-transparent text-[var(--color-btn-color)] hover:not-disabled:bg-[var(--color-btn-color)]/10 active:not-disabled:bg-[var(--color-btn-color)]/20`,
@@ -31,7 +32,7 @@ export function Button({
   const sizeClasses = {
     xs: 'px-2 py-1 text-xs',
     sm: 'px-2 py-1 text-sm',
-    md: 'px-3 py-1 text-base',
+    md: 'px-3 py-2 text-base',
     lg: 'px-4 py-2 text-lg',
   }[size];
 

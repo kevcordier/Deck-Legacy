@@ -127,7 +127,8 @@
     "modalSubtitle": "{{count}} card",
     "modalSubtitle_other": "{{count}} cards",
     "emptyDiscard": "The discard pile is empty",
-    "emptyDeck": "The deck is empty"
+    "emptyDeck": "The deck is empty",
+    "remainingCards": "Other cards"
   },
   "cardList": {
     "listView": "≡ List",

@@ -1,4 +1,4 @@
-import { ResourcePill } from '@components/Resource/ResourcePill';
+import { ResourcePill } from '@components/ResourcePill/ResourcePill';
 import type { Resources } from '@engine/domain/types';
 
 interface ResourceChoiceProps {

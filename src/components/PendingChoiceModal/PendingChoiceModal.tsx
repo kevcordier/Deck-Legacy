@@ -11,7 +11,7 @@ import type {
 } from '@engine/domain/types';
 import { TriggerIcon } from '@components/ui/Icon';
 import '@components/PendingChoiceModal/PendingChoiceModal.css';
-import { ResourceChoice } from '@components/Resource/ResourceChoice';
+import { ResourceChoice } from '@components/ResourceChoice/ResourceChoice';
 import { GameCard } from '@components/GameCard';
 import { PendingChoiceType } from '@engine/domain/enums';
 import { tCardName, tCardActionLabel } from '@i18n/cardI18n';

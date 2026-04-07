@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import './GameCard.css';
 import { tCardName, tCardActionLabel, tCardActionDescription, tCardTag } from '@i18n/cardI18n';
 import {
   getActiveState,
@@ -12,37 +11,32 @@ import { renderTextWithIcons } from '@engine/application/renderHelpers';
 import { getResMeta } from '@engine/application/resourceHelpers';
 import { CardStatePreview } from '@components/CardStatePreview';
 import { CardTrack } from '@components/CardTrack';
-import { ResourceList } from '@components/Resource/ResourceList';
-import { ResourcePill } from '@components/Resource/ResourcePill';
+import { ResourceList } from '@components/ResourceChoice/ResourceList';
+import { ResourcePill } from '@components/ResourcePill/ResourcePill';
 import type { CardInstance, Resources } from '@engine/domain/types';
 import { TargetScope } from '@engine/domain/enums';
-import {
-  ActivatedIcon,
-  DestroyIcon,
-  GloryIcon,
-  IconColors,
-  PassifIcon,
-  TimeIcon,
-  TriggerIcon,
-} from '@components/ui/Icon';
+import { ActivatedIcon, DestroyIcon, PassifIcon, TimeIcon, TriggerIcon } from '@components/ui/Icon';
 import { useGame } from '@hooks/useGame';
+import { Button } from '@components/ui/Button/Button';
+import { Glory } from '@components/ui/Glory/Glory';
 
 interface GameCardProps {
   instance: CardInstance;
   style?: React.CSSProperties;
-  animDelay?: number;
+  index?: number;
   hideStatePreview?: boolean;
   isOnBoard?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  className?: string;
 }
 
 export function GameCard({
   instance,
-  style,
-  animDelay = 0,
+  index = 0,
   hideStatePreview = false,
   isOnBoard = false,
   size = 'md',
+  className = '',
 }: GameCardProps) {
   const { t } = useTranslation();
   const {
@@ -58,10 +52,7 @@ export function GameCard({
   const isBlocked = isOnBoard && Object.values(state.blockingCards ?? {}).includes(instance.id);
   const cs = getActiveState(instance, defs);
   const def = defs[instance.cardId];
-
-  const isEnemy = (cs.tags ?? []).some(
-    tag => tag.toLowerCase() === 'enemy' || tag.toLowerCase() === 'ennemy',
-  );
+  const isEnemy = cs.negative === true;
   const isPermanent = def?.permanent;
   const isParchment = def?.parchmentCard ?? false;
   const sc = getActiveState(instance, defs);
@@ -71,23 +62,20 @@ export function GameCard({
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
   const actions = cs.cardEffects ?? [];
-
-  // Description: state-level i18n key, falling back to first effect's description (parchment cards)
   const glory = cs.glory ?? 0;
   const resourceOptions = cs.productions as Resources[] | undefined;
-
-  // Stickers for the current state
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
 
-  const sizeStyle =
+  const sizeClass =
     size === 'sm'
-      ? '[calc(var(--spacing) * 0.6))]'
+      ? 'w-56 h-80 rounded-md'
       : size === 'lg'
-        ? '[calc(var(--spacing) * 1.2))]'
-        : 'var(--spacing)';
+        ? 'w-84 h-120 rounded-lg'
+        : 'w-70 h-100 rounded-lg';
 
   const cardClass = [
-    'w-card-w h-card-h rounded-lg border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden animate-fade-in-scale',
+    sizeClass,
+    ' border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden animate-fade-in-scale',
     isEnemy ? 'enemy' : '',
     isBlocked ? 'blocked' : '',
     isPermanent ? 'permanent' : '',
@@ -95,128 +83,115 @@ export function GameCard({
     .filter(Boolean)
     .join(' ');
 
+  const animationDelayClass = [`delay-50`, `delay-100`, `delay-1500`, `delay-200`][index];
+
   return (
     <div
-      className={cardClass}
-      style={
-        {
-          animationDelay: `${animDelay}ms`,
-          ...style,
-          '--spacing': sizeStyle,
-        } as React.CSSProperties & { '--spacing': string }
-      }
+      className={`${cardClass} ${className} ${animationDelayClass} ${isPermanent ? 'border-5 border-gray-400' : ''}`}
     >
-      {/* Blocked overlay */}
       {isBlocked && (
-        <div className="gc-blocked-overlay">
-          <span className="gc-blocked-label">{t('card.blocked')}</span>
+        <div className="bg-opacity-50 absolute inset-0 z-20 flex items-center justify-center bg-red-950/60">
+          <span className="font-display text-danger rounded bg-black px-2 py-1 uppercase">
+            {t('card.blocked')}
+          </span>
         </div>
       )}
 
-      {/* Header */}
-      <div className={`gc-header ${isEnemy ? 'enemy' : ''}`}>
-        <div className="gc-name-row">
-          <span className={`gc-name ${isEnemy ? 'enemy' : ''}`}>
+      <div className={`border-b border-black/10 bg-black/5 p-3 pb-2`}>
+        <div className="flex items-start justify-between gap-2">
+          <span
+            className={`${size === 'sm' ? 'text-xs' : 'text-sm'} text-base-ink flex items-center gap-1`}
+          >
             {instance.id !== undefined && instance.id !== 0 && (
-              <span className="gc-deck-id">#{instance.id}</span>
+              <span className={`mr-1 rounded bg-black/6 px-1 font-bold`}>#{instance.id}</span>
             )}
-            {tCardName(t, instance.cardId, cs.id, cs.name)}
+            <span className={`font-display font-bold ${isEnemy ? 'text-red-600' : ''}`}>
+              {tCardName(t, instance.cardId, cs.id, cs.name)}
+            </span>
           </span>
           {!hideStatePreview && <CardStatePreview instance={instance} defs={defs} />}
         </div>
 
-        <div className="gc-tags">
+        <div className="mt-1 flex flex-wrap items-center gap-1">
           {(cs.tags ?? []).map(tag => (
-            <span key={tag} className={tagClass(tag)}>
+            <span
+              key={tag}
+              className={`${tagClass(tag, isEnemy)} font-display inline-block gap-1 rounded px-1.5 py-0.5 ${size === 'sm' ? 'px-0.5 text-xs' : size === 'lg' ? 'text-md' : 'text-xs'} text-base-ink`}
+            >
               {tCardTag(t, tag)}
             </span>
           ))}
-          {isPermanent && <span className="tag tag-permanent">{t('card.permanent')}</span>}
         </div>
       </div>
 
-      {/* Everything below the header */}
-      <div className="gc-main">
+      <div className="relative flex flex-1 flex-col overflow-hidden">
         {cs.illustration && (
-          <div className="gc-illustration" style={{ backgroundImage: `url(${cs.illustration})` }} />
+          <div
+            className="absolute inset-0 z-0 bg-cover bg-center opacity-60"
+            style={{ backgroundImage: `url(${cs.illustration})` }}
+          />
         )}
 
-        {/* Body */}
-        <div className="gc-body">
-          {/* Productions */}
+        <div className="relative z-10 flex flex-1 flex-col items-start gap-2 p-3">
           {hasProductions && (
-            <React.Fragment>
-              {isOnBoard && !isBlocked ? (
-                <button
-                  onClick={() => resolveProduction(instance.id)}
-                  disabled={!canActivate}
-                  title={t('card.chooseProduction')}
-                  className="gc-produce-btn"
-                >
-                  <ResourceList resourceOptions={resourceOptions} />
-                </button>
-              ) : (
-                <ResourceList resourceOptions={resourceOptions} />
-              )}
-            </React.Fragment>
+            <Button
+              onClick={() => resolveProduction(instance.id)}
+              disabled={!canActivate || !isOnBoard || isBlocked}
+              title={t('card.chooseProduction')}
+              size={size}
+              variant="text"
+            >
+              <ResourceList resourceOptions={resourceOptions} size={size} />
+            </Button>
           )}
 
-          {glory !== 0 && (
-            <div className={`gc-glory-badge ${glory < 0 ? 'negative' : ''}`}>
-              <GloryIcon color={IconColors.gold} className="gc-glory-badge-icon" />
-              <span>
-                {glory > 0 ? '+' : ''}
-                {glory}
-              </span>
-            </div>
-          )}
+          {glory !== 0 && <Glory glory={glory} size={size} />}
 
-          {/* Action description */}
           {isParchment &&
             actions.map((action, i) => {
               return (
-                <React.Fragment key={i}>
-                  <span className="gc-action-label">
+                <div className="flex flex-col gap-2" key={i}>
+                  <span className="font-display text-base-ink text-center text-2xl font-semibold">
                     {tCardActionLabel(t, instance.cardId, cs.id, i, action.label)}
                   </span>
                   {action.description && (
-                    <p className="gc-description">{renderTextWithIcons(action.description)}</p>
+                    <p
+                      className={`text-center text-gray-600 italic ${size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-xl' : 'text-md'}`}
+                    >
+                      {renderTextWithIcons(action.description)}
+                    </p>
                   )}
-                </React.Fragment>
+                </div>
               );
             })}
 
-          {/* Stickers */}
           {currentStateStickers.length > 0 && (
-            <div className="gc-stickers">
+            <div className="flex flex-wrap gap-1">
               {currentStateStickers.map((stickerId, i) => {
                 const sticker = stickerDefs[stickerId];
                 if (!sticker) return null;
                 if (sticker.production)
-                  return <ResourcePill key={i} resource={sticker.production} />;
-                if (sticker.glory)
-                  return (
-                    <span key={i} className="gc-sticker-glory">
-                      +{sticker.glory}★
-                    </span>
-                  );
+                  return <ResourcePill key={i} resource={sticker.production} size={size} />;
+                if (sticker.glory) return <Glory key={i} glory={sticker.glory} size={size} />;
                 return null;
               })}
             </div>
           )}
         </div>
 
-        {/* Actions zone */}
-        <div className="gc-actions">
-          {/* Stay in play */}
+        <div className="relative z-10 flex flex-col items-center gap-2 p-3 pt-0">
           {cs.stayInPlay && (
-            <span className="gc-passive-effect">
-              <PassifIcon className="gc-passive-effect-icon" alt="passif" />
+            <span
+              className={`text-base-ink flex items-center gap-1 rounded bg-white/60 px-3 py-2 backdrop-blur-sm ${size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'}`}
+            >
+              <PassifIcon
+                className={`align-text-bottom ${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                alt="passif"
+              />{' '}
               {t('card.stayInPlay')}
             </span>
           )}
 
-          {/* Action buttons — hidden for parchment cards */}
           {!isBlocked &&
             !isParchment &&
             actions.map((action, i) => {
@@ -227,33 +202,49 @@ export function GameCard({
               const haveTrigger = !!action.trigger;
               const isOptional = action.optional;
               return (
-                <button
+                <Button
                   key={i}
                   onClick={() => resolveAction(instance.id, action.label)}
                   disabled={!affordable || !canActivate || haveTrigger}
                   title={actionDesc}
-                  className="gc-action-btn"
+                  variant="text"
+                  color="base-ink"
+                  className={`font-body! bg-white/60 backdrop-blur-sm ${size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'} ${haveTrigger ? 'cursor-not-allowed' : ''}`}
                 >
                   {haveTrigger && !isOptional ? (
-                    <TriggerIcon color="red" className="gc-action-icon" />
+                    <TriggerIcon
+                      color="red"
+                      className={`${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                    />
                   ) : haveTrigger && isOptional ? (
-                    <TriggerIcon color="yellow" className="gc-action-icon" />
+                    <TriggerIcon
+                      color="yellow"
+                      className={`${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                    />
                   ) : hasDestroyItselfCost ? (
-                    <DestroyIcon color="red" className="gc-action-icon" />
+                    <DestroyIcon
+                      color="red"
+                      className={`${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                    />
                   ) : action.endsTurn ? (
-                    <TimeIcon className="gc-action-icon" />
+                    <TimeIcon
+                      className={`${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                    />
                   ) : action.passive ? (
-                    <PassifIcon className="gc-action-icon" />
+                    <PassifIcon
+                      className={`${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                    />
                   ) : (
-                    <ActivatedIcon color="green" className="gc-action-icon" />
-                  )}
-
+                    <ActivatedIcon
+                      color="green"
+                      className={`${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                    />
+                  )}{' '}
                   {renderTextWithIcons(actionLabel)}
-                </button>
+                </Button>
               );
             })}
 
-          {/* Track */}
           {!isBlocked && cs.track && (
             <CardTrack
               track={cs.track}
@@ -261,20 +252,22 @@ export function GameCard({
               currentResources={currentResources}
               canActivate={canActivate}
               onStep={stepId => resolveTrackStep(instance.id, stepId)}
+              size={size}
             />
           )}
 
-          {/* Upgrade buttons */}
           {!isBlocked &&
             upgrades.map((upg, i) => {
               const affordable = canAffordResources(currentResources, upg.cost);
               const targetState = def?.states.find(s => s.id === upg.upgradeTo);
               return (
-                <button
+                <Button
+                  variant="text"
+                  color="base-ink"
                   key={i}
                   onClick={() => resolveUpgrade(instance.id, upg.upgradeTo)}
                   disabled={!affordable || !canActivate}
-                  className="gc-upgrade-btn"
+                  className={`font-body! bg-white/60 backdrop-blur-sm ${size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'}`}
                 >
                   ⬆{' '}
                   {targetState
@@ -290,7 +283,7 @@ export function GameCard({
                             {ci > 0 && ', '}
                             {v}
                             {meta.icon && (
-                              <meta.icon className={`res-icon ${meta.cls} res-sm`} alt={k} />
+                              <meta.icon className={`size-4 align-middle ${meta.cls}`} alt={k} />
                             )}
                           </React.Fragment>
                         );
@@ -298,12 +291,11 @@ export function GameCard({
                       )
                     </span>
                   )}
-                </button>
+                </Button>
               );
             })}
         </div>
       </div>
-      {/* gc-main */}
     </div>
   );
 }

@@ -12,6 +12,8 @@
   --color-primary: var(--color-base-primary);
   --color-card: #f0e4be;
 
+  --spacing-2xs: 0.5rem;
+
   /* ── Semantic colors ─────────────────────────────────────────────────────── */
   --color-danger: #c2554f;
   --color-success: #00b286;
@@ -44,13 +46,6 @@
   }
 }
 
-@theme inline {
-  /* ── Card dimensions ─────────────────────────────────────────────────────── */
-  --spacing-card-w: var(--w-63);
-  --spacing-card-h: var(--h-80);
-  --spacing-side-bar-w: var(--w-64);
-}
-
 @layer theme {
   :root,
   :host {
@@ -63,27 +58,26 @@
   }
 }
 
-@layer utilities {
-  .scrollbar {
-    scrollbar-gutter: stable;
-    overflow-x: auto;
-  }
-  .scrollbar::-webkit-scrollbar {
+@utilities scrollbar {
+  scrollbar-gutter: stable;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
     width: 5px;
     height: 5px;
   }
 
-  .scrollbar::-webkit-scrollbar-track {
+  &::-webkit-scrollbar-track {
     border-radius: 100vh;
     background: transparent;
   }
 
-  .scrollbar::-webkit-scrollbar-thumb {
+  &::-webkit-scrollbar-thumb {
     background: var(--color-primary);
     border-radius: 100vh;
   }
 
-  .scrollbar::-webkit-scrollbar-thumb:hover {
+  &::-webkit-scrollbar-thumb:hover {
     background: var(--color-primary);
   }
 }

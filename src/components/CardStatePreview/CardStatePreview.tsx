@@ -5,6 +5,7 @@ import type { CardDef, CardInstance } from '@engine/domain/types';
 import { tCardName } from '@i18n/cardI18n';
 import './CardStatePreview.css';
 import { GameCard } from '@components/GameCard';
+import { Button } from '@components/ui/Button/Button';
 
 function EyeIcon() {
   return (
@@ -37,16 +38,17 @@ export function CardStatePreview({ instance, defs }: CardStatePreviewProps) {
 
   return (
     <>
-      <button
+      <Button
         onClick={e => {
           e.stopPropagation();
           setOpen(true);
         }}
         title={t('cardPreview.viewAllStates')}
-        className="csp-btn"
+        color="base-ink"
+        variant="text"
       >
         <EyeIcon />
-      </button>
+      </Button>
 
       {open && <CardStatesModal instance={instance} def={def} onClose={() => setOpen(false)} />}
     </>

@@ -18,7 +18,7 @@
     "test:coverage": "vitest run --coverage",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "verify": "npm run lint && npm run typecheck && npm run test"
+    "verify": "npm run format && npm run lint:fix && npm run typecheck && npm run test"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",

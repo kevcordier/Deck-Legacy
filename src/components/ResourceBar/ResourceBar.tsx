@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { GloryIcon, IconColors } from '@components/ui/Icon';
-import { ResourcePill } from '@components/Resource/ResourcePill';
 import { useGame } from '@hooks/useGame';
 import { Stat } from '@components/ui/Stat/Stat';
 import { Divider } from '@components/ui/Divider/Divider';
+import { ResourcePill } from '@components/ResourcePill/ResourcePill';
 
 export function ResourceBar() {
   const { t } = useTranslation();
@@ -14,7 +14,6 @@ export function ResourceBar() {
 
   return (
     <div className="bg-background border-b-border z-100 flex items-stretch gap-6 border-b px-6 py-2">
-      {/* Round/Turn info */}
       <div className="flex items-stretch gap-4">
         <Stat label={t('resourceBar.round')} value={round || '—'} />
         <Divider />
@@ -22,7 +21,6 @@ export function ResourceBar() {
       </div>
 
       <Divider />
-      {/* Resources */}
       <div className="flex flex-1 flex-wrap items-center gap-4">
         {entries.length === 0 ? (
           <p className="text-sm text-gray-400 italic">{t('resourceBar.noResources')}</p>
@@ -43,7 +41,6 @@ export function ResourceBar() {
 
       <Divider />
 
-      {/* Deck / Discard */}
       <div className="flex items-stretch gap-4">
         <Stat label={t('resourceBar.deck')} value={drawPile.length} />
         <Divider />
@@ -52,7 +49,6 @@ export function ResourceBar() {
 
       <Divider />
 
-      {/* Score */}
       <div className="flex items-center gap-2">
         <div className="relative">
           <GloryIcon color={IconColors.gold} className="size-8" />

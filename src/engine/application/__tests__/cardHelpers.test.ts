@@ -102,33 +102,39 @@ describe('getEffectiveProductions', () => {
 // — tagClass —
 
 describe('tagClass', () => {
-  it('returns tag-enemy for "enemy"', () => {
-    expect(tagClass('enemy')).toBe('tag tag-enemy');
+  it('returns tag class for "enemy"', () => {
+    expect(tagClass('enemy', true)).toBe(
+      'bg-base-ink/10 border border-base-ink/20 bg-red-500/10 border-red-500/20',
+    );
   });
 
-  it('returns tag-enemy for "ennemy" (typo variant)', () => {
-    expect(tagClass('ennemy')).toBe('tag tag-enemy');
+  it('returns tag class for "building"', () => {
+    expect(tagClass('building', false)).toBe(
+      'bg-base-ink/10 border border-base-ink/20 bg-gray-500/10 border-gray-300/20',
+    );
   });
 
-  it('returns tag-building for "building"', () => {
-    expect(tagClass('building')).toBe('tag tag-building');
+  it('returns tag class for "seafaring"', () => {
+    expect(tagClass('seafaring', false)).toBe(
+      'bg-base-ink/10 border border-base-ink/20 bg-sky-500/10 border-sky-300/20',
+    );
   });
 
-  it('returns tag-seafaring for "seafaring"', () => {
-    expect(tagClass('seafaring')).toBe('tag tag-seafaring');
-  });
-
-  it('returns tag-event for "event"', () => {
-    expect(tagClass('event')).toBe('tag tag-event');
+  it('returns tag class for "event"', () => {
+    expect(tagClass('event', false)).toBe('bg-base-ink/10 border border-base-ink/20');
   });
 
   it('is case-insensitive', () => {
-    expect(tagClass('ENEMY')).toBe('tag tag-enemy');
-    expect(tagClass('Building')).toBe('tag tag-building');
+    expect(tagClass('ENEMY', true)).toBe(
+      'bg-base-ink/10 border border-base-ink/20 bg-red-500/10 border-red-500/20',
+    );
+    expect(tagClass('Building', false)).toBe(
+      'bg-base-ink/10 border border-base-ink/20 bg-gray-500/10 border-gray-300/20',
+    );
   });
 
   it('returns generic tag class for unknown tags', () => {
-    expect(tagClass('unknown')).toBe('tag');
+    expect(tagClass('unknown', false)).toBe('bg-base-ink/10 border border-base-ink/20');
   });
 });
 

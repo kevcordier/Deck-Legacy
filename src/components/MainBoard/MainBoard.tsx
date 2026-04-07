@@ -12,7 +12,6 @@ export function MainBoard() {
   const { t } = useTranslation();
   return (
     <main className="scrollbar flex flex-1 flex-col gap-6 p-4">
-      {/* Pregame */}
       {phase === 'pregame' && (
         <EmptyState
           title={t('game.title')}
@@ -25,7 +24,6 @@ export function MainBoard() {
         />
       )}
 
-      {/* Preround — first */}
       {phase === 'preround' && state.round === 0 && (
         <EmptyState
           title={t('pregame.readyToPlay')}
@@ -38,7 +36,6 @@ export function MainBoard() {
         />
       )}
 
-      {/* Preround — end of round */}
       {phase === 'preround' && state.round > 0 && (
         <div className="animate-fade-in-scale flex h-full flex-1 flex-col items-center justify-center gap-6 p-6 text-center">
           <div className="text-center">
@@ -51,7 +48,6 @@ export function MainBoard() {
         </div>
       )}
 
-      {/* Round preview — nouvelles cartes avant le début de la manche */}
       {phase === 'roundpreview' && (
         <div className="animate-fade-in-scale flex h-full flex-1 flex-col items-center justify-center gap-6 p-6 text-center">
           <div className="text-center">
@@ -62,10 +58,10 @@ export function MainBoard() {
 
           {state.lastAddedIds.length > 0 && (
             <div className="flex flex-wrap items-center justify-center gap-4">
-              {state.lastAddedIds.map((id: number, i: number) => {
+              {state.lastAddedIds.map((id: number) => {
                 const inst = state.instances[id];
                 if (!inst) return null;
-                return <GameCard key={id} instance={inst} animDelay={i * 100} />;
+                return <GameCard key={id} instance={inst} />;
               })}
             </div>
           )}
@@ -76,7 +72,6 @@ export function MainBoard() {
         </div>
       )}
 
-      {/* Tableau (board) */}
       {state.board.length > 0 && (
         <Section
           title={t('sections.tableau')}
@@ -90,7 +85,6 @@ export function MainBoard() {
         </Section>
       )}
 
-      {/* Permanentes */}
       {state.permanents.length > 0 && (
         <Section
           title={t('sections.permanents')}

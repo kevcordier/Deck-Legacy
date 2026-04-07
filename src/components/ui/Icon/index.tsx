@@ -16,7 +16,7 @@ export function ActivatedIcon({ color = 'currentColor', className, style, alt }:
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >
@@ -40,7 +40,7 @@ export function CrownIcon({ color = 'currentColor', className, style, alt }: Ico
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >
@@ -60,7 +60,7 @@ export function DestroyIcon({ color = 'currentColor', className, style, alt }: I
     <svg
       viewBox="-0.5 0 19 19"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >
@@ -78,7 +78,7 @@ export function GloryIcon({ color = IconColors.gold, className, style, alt }: Ic
       viewBox="2 2 20 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >
@@ -99,7 +99,7 @@ export function TimeIcon({ color = 'currentColor', className, style, alt }: Icon
       viewBox="0 0 24 24"
       fill={color}
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >
@@ -113,7 +113,7 @@ export function TriggerIcon({ color = 'currentColor', className, style, alt }: I
     <svg
       viewBox="0 0 512 512"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >
@@ -131,7 +131,7 @@ export function WoodIcon({ color = IconColors.wood, className, style, alt }: Ico
       viewBox="1 1 22 22"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >
@@ -203,7 +203,7 @@ export function GoldIcon({ color = IconColors.gold, className, style, alt }: Ico
       viewBox="2 2 20 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >
@@ -223,7 +223,7 @@ export function StoneIcon({ color = IconColors.stone, className, style, alt }: I
     <svg
       viewBox="0 0 16 16"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >
@@ -240,7 +240,7 @@ export function IronIcon({ color = IconColors.iron, className, style, alt }: Ico
     <svg
       viewBox="0 0 512.082 512.082"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >
@@ -272,7 +272,7 @@ export function GoodsIcon({ color = IconColors.wood, className, style, alt }: Ic
       viewBox="1 1 22 22"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >
@@ -316,7 +316,7 @@ export function WeaponIcon({ color = IconColors.iron, className, style, alt }: I
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >
@@ -335,7 +335,7 @@ export function PassifIcon({ color = 'currentColor', className, style, alt }: Ic
     <svg
       viewBox="0 0 16 16"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={`inline ${className}`}
       style={style}
       aria-label={alt}
     >

@@ -18,7 +18,6 @@ export function CardListModal({ title, subtitle, cards, onClose, emptyText }: Ca
   const modal = (
     <div onClick={onClose} className="clm-overlay">
       <div onClick={e => e.stopPropagation()} className="clm-panel">
-        {/* Header */}
         <div className="clm-header">
           <div className="clm-header-info">
             <div className="clm-title">{title}</div>
@@ -30,19 +29,13 @@ export function CardListModal({ title, subtitle, cards, onClose, emptyText }: Ca
           </button>
         </div>
 
-        {/* Content */}
         <div className="clm-content">
           {cards.length === 0 ? (
             <div className="clm-empty">{emptyText ?? t('cardList.noCards')}</div>
           ) : (
             <div className="clm-grid">
-              {cards.map((inst, i) => (
-                <GameCard
-                  key={inst.id}
-                  instance={inst}
-                  animDelay={Math.min(i * 30, 300)}
-                  size="sm"
-                />
+              {cards.map(inst => (
+                <GameCard key={inst.id} instance={inst} size="sm" />
               ))}
             </div>
           )}
