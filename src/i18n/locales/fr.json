@@ -4,7 +4,6 @@
     "subtitle": "Un jeu de construction de deck"
   },
   "header": {
-    "discardTop": "Défausser sommet",
     "newGame": "Nouvelle partie",
     "start": "Démarrer",
     "newRound": "Nouvelle manche",
@@ -15,10 +14,7 @@
     "options": "Options"
   },
   "pregame": {
-    "resumeGame": "▶ Reprendre la partie",
-    "newGame": "↺ Nouvelle partie",
     "startNew": "⚜ Commencer",
-    "deleteSave": "Supprimer la sauvegarde",
     "readyToPlay": "Prêt à jouer",
     "deckShuffled": "Deck de {{count}} cartes mélangées",
     "startGame": "▶ Démarrer la partie"
@@ -34,13 +30,10 @@
   },
   "sections": {
     "permanents": "Permanentes",
-    "tableau": "Tableau",
-    "eventLog": "Journal — {{count}} événements"
+    "tableau": "Tableau"
   },
   "cardCount": "{{count}} carte",
   "cardCount_other": "{{count}} cartes",
-  "activatedCount": "{{count}} activée",
-  "activatedCount_other": "{{count}} activées",
   "resourceBar": {
     "round": "Manche",
     "turn": "Tour",
@@ -59,58 +52,26 @@
   },
   "card": {
     "blocked": "Bloquée",
-    "production": "PRODUCTION",
-    "alreadyProduced": "Déjà produit",
-    "produce": "Produire — {{amount}} {{resource}}",
-    "choice": "Au choix",
-    "track": "PISTE",
-    "state": "État {{id}}",
-    "permanent": "Permanent",
-    "stayInPlay": "Reste en jeu"
+    "stayInPlay": "Reste en jeu",
+    "state": "État {{id}}"
   },
   "cardPreview": {
     "viewAllStates": "Voir tous les états",
-    "statesCount": "◎ {{count}} états",
-    "statesMeta": "{{count}} états · #{{id}}",
-    "currentState": "État actuel",
-    "production": "Production",
-    "advanceTrack": "Piste d'avancée",
-    "actions": "Actions",
-    "upgrades": "Améliorations",
-    "onPlay": "AU JEU",
-    "cost": "Coût :",
-    "destroySelf": "+ détruire cette carte",
-    "destroyCount": "+ détruire {{count}}",
-    "endOfTurn": "FIN DE TOUR",
-    "passiveEffects": "Effets passifs",
-    "stayInPlay": "Reste en jeu",
-    "glory": "gloire",
-    "sticker": "Sticker #{{number}}",
-    "stateLabel": "État {{id}}"
+    "statesMeta": "{{count}} états · #{{id}}"
   },
   "pendingChoice": {
-    "chooseCard": "Choisissez {{count}} carte à découvrir",
-    "chooseCard_other": "Choisissez {{count}} cartes à découvrir",
-    "cardPlaceholder": "Carte #{{id}}",
-    "toDiscover": "À découvrir",
+    "chooseCard": {
+      "DISCARD_CARD": "Choisissez {{count}} carte à défausser",
+      "DISCARD_CARD_other": "Choisissez {{count}} cartes à défausser",
+      "DISCOVER_CARD": "Choisissez {{count}} carte à découvrir",
+      "DISCOVER_CARD_other": "Choisissez {{count}} cartes à découvrir",
+      "DESTROY_CARD": "Choisissez {{count}} carte à détruire",
+      "DESTROY_CARD_other": "Choisissez {{count}} cartes à détruire"
+    },
     "chooseState": "Choisir un état",
     "chooseStateSubtitle": "Cette carte a deux faces. Choisissez celle que vous voulez jouer.",
-    "chooseUpgrade": "Choisir une amélioration",
-    "chooseUpgradeSubtitle": "Plusieurs chemins sont disponibles pour cette carte.",
-    "cost": "Coût :",
-    "free": "Gratuit",
     "chooseResource": "Choisir une ressource",
-    "produceResource": "Quelle ressource voulez-vous produire ?",
-    "gainResource": "Quelle ressource voulez-vous gagner ?",
-    "playFromDiscard": "Jouer depuis la défausse",
-    "chooseFromDiscard": "Choisissez {{count}} carte à rejouer depuis votre défausse.",
-    "chooseFromDiscard_other": "Choisissez {{count}} cartes à rejouer depuis votre défausse.",
-    "copyProduction": "Copier une production",
-    "copyProductionSubtitle": "Choisissez une carte dont vous allez copier la production.",
-    "blockCard": "Bloquer une carte",
-    "discardForCost": "Défausser une carte (coût)",
-    "discardForCostSubtitle": "Choisissez une carte à défausser ({{current}}/{{total}})",
-    "cancel": "Annuler"
+    "gainResource": "Quelle ressource voulez-vous gagner ?"
   },
   "triggerPile": {
     "title": "Effets en attente",
@@ -119,89 +80,18 @@
     "skip": "Ignorer"
   },
   "deckViewer": {
-    "title": "Pioche",
+    "title": "Liste des cartes",
+    "draw": "Pioche",
+    "discard": "Défausse",
     "viewAll": "⊞ Voir tout",
     "empty": "Vide",
-    "remainingCards": "Cartes restantes",
     "modalSubtitle": "{{count}} carte",
     "modalSubtitle_other": "{{count}} cartes",
-    "emptyDeck": "La pioche est vide"
-  },
-  "discardPile": {
-    "title": "Défausse",
-    "viewAll": "⊞ Voir tout",
-    "empty": "Vide",
-    "allCards": "Toutes les cartes",
-    "modalSubtitle": "{{count}} carte",
-    "modalSubtitle_other": "{{count}} cartes",
-    "emptyDiscard": "La défausse est vide"
+    "emptyDeck": "La pioche est vide",
+    "remainingCards": "Autres cartes"
   },
   "cardList": {
-    "listView": "≡ Liste",
-    "gridView": "⊞ Cartes",
     "noCards": "Aucune carte"
-  },
-  "timeline": {
-    "liveButton": "LIVE",
-    "eventCount": "{{count}} evt",
-    "returnHere": "Revenir ici",
-    "clickToReturn": "{{label}} — clic pour revenir ici",
-    "events": {
-      "GAME_STARTED": "Début",
-      "ROUND_STARTED": "Manche",
-      "ROUND_ENDED": "Fin manche",
-      "TURN_STARTED": "Tour",
-      "TURN_ENDED": "Fin tour",
-      "CARD_ACTIVATED": "Prod.",
-      "ACTION_RESOLVED": "Action",
-      "UPGRADE_RESOLVED": "Upgrade",
-      "UPGRADE_CARD_EFFECT": "Upgrade",
-      "PROGRESSED": "Progrès",
-      "CARD_BLOCKED": "Bloqué",
-      "CARD_UNBLOCKED": "Débloqué",
-      "CARD_DESTROYED": "Détruit",
-      "CARD_DISCOVERED": "Découverte",
-      "CARD_STATE_CHOSEN": "Découverte",
-      "CARD_PLAYED_FROM_DISCARD": "Depuis défausse",
-      "CARD_ADDED_TO_DECK": "Pioche",
-      "STICKER_ADDED": "Sticker",
-      "TRACK_ADVANCED": "Piste",
-      "CHOICE_MADE": "Choix",
-      "ON_PLAY_TRIGGERED": "Déclencheur"
-    }
-  },
-  "eventLog": {
-    "gameStarted": "Partie démarrée",
-    "cards": "{{count}} cartes",
-    "round": "Manche {{round}}",
-    "discoveries": "+{{count}} découverte",
-    "discoveries_other": "+{{count}} découvertes",
-    "roundEnded": "Manche terminée",
-    "turn": "Tour {{turn}}",
-    "advance": "Progresser",
-    "deckCards": "Pioche : {{count}} cartes",
-    "endOfTurn": "Fin de tour",
-    "production": "Production",
-    "toDiscard": "→ défausse",
-    "action": "Action",
-    "upgrade": "Amélioration",
-    "toState": "→ état {{id}}",
-    "progress": "Progression",
-    "addedCards": "+{{count}} cartes",
-    "cardBlocked": "Carte bloquée",
-    "cardUnblocked": "Carte débloquée",
-    "cardDestroyed": "Carte détruite",
-    "discovery": "Découverte",
-    "stateChosen": "État choisi",
-    "state": "état {{id}}",
-    "fromDiscard": "Depuis défausse",
-    "addedToDeck": "Ajout pioche",
-    "sticker": "Sticker",
-    "track": "Piste",
-    "step": "étape {{progress}}",
-    "choice": "Choix",
-    "pass": "Passer",
-    "passiveEffect": "Effet passif"
   },
   "gameOver": {
     "title": "Partie terminée",
@@ -215,8 +105,11 @@
   },
   "options": {
     "title": "Options",
+    "theme": "Thème",
+    "theme_light": "Clair",
+    "theme_dark": "Sombre",
+    "theme_system": "Système",
     "language": "Langue",
-    "close": "Fermer",
     "en": "Anglais",
     "fr": "Français",
     "reset": "Réinitialiser la partie",

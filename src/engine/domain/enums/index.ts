@@ -66,3 +66,9 @@ export enum PendingChoiceType {
   CHOOSE_RESOURCE = 'choose_resource',
   CHOOSE_STATE = 'choose_state',
 }
+
+export enum PaseType {
+  PASE_1 = 'pase_1',
+  PASE_2 = 'pase_2',
+  PASE_3 = 'pase_3',
+}

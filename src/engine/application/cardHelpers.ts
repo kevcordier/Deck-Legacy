@@ -34,13 +34,16 @@ export function getEffectiveProductions(
   return mergeResources(base, stickerBonus);
 }
 
-export function tagClass(tag: string): string {
+export function tagClass(tag: string, isEnemy: boolean): string {
   const t = tag.toLowerCase();
-  if (t === 'enemy' || t === 'ennemy') return 'tag tag-enemy';
-  if (t === 'building') return 'tag tag-building';
-  if (t === 'seafaring') return 'tag tag-seafaring';
-  if (t === 'event') return 'tag tag-event';
-  return 'tag';
+  let tagClass = 'bg-base-ink/10 border border-base-ink/20';
+  if (isEnemy) tagClass += ' bg-red-500/10 border-red-500/20';
+  if (t === 'building') tagClass += ' bg-gray-500/10 border-gray-300/20';
+  if (t === 'person') tagClass += ' bg-yellow-500/10 border-yellow-500/20';
+  if (t === 'seafaring') tagClass += ' bg-sky-500/10 border-sky-300/20';
+  if (t === 'land') tagClass += ' bg-green-500/10 border-green-500/20';
+  if (t === 'livestock') tagClass += ' bg-orange-500/10 border-orange-500/20';
+  return tagClass;
 }
 
 /** Retourne l'état actif d'une instance (lève une erreur si la définition ou l'état est introuvable). */

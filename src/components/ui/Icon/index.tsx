@@ -1,0 +1,354 @@
+import type { CSSProperties } from 'react';
+import { IconColors } from './iconColors';
+
+export interface IconProps {
+  color?: string;
+  className?: string;
+  style?: CSSProperties;
+  alt?: string;
+}
+
+export { IconColors };
+
+export function ActivatedIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <path
+        fill={color}
+        d="M1.25 7.25C1.25 3.93629 3.93629 1.25 7.25 1.25H16.75C20.0637 1.25 22.75 3.93629 22.75 7.25V16.75C22.75 20.0637 20.0637 22.75 16.75 22.75H7.25C3.93629 22.75 1.25 20.0637 1.25 16.75V7.25Z"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M18.0183 8.17565C18.2525 8.40985 18.2525 8.78956 18.0183 9.02376L11.6861 15.356C10.8274 16.2147 9.43512 16.2147 8.57639 15.356L5.9757 12.7553C5.7415 12.5211 5.7415 12.1414 5.9757 11.9072C6.2099 11.673 6.58961 11.673 6.82381 11.9072L9.4245 14.5078C9.81483 14.8982 10.4477 14.8982 10.838 14.5078L17.1702 8.17565C17.4044 7.94145 17.7841 7.94145 18.0183 8.17565Z"
+        fill="white"
+      />
+    </svg>
+  );
+}
+
+export function CrownIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <path
+        d="M4 8L6 20H18L20 8M4 8L5.71624 9.37299C6.83218 10.2657 7.39014 10.7121 7.95256 10.7814C8.4453 10.8421 8.94299 10.7173 9.34885 10.4314C9.81211 10.1051 10.0936 9.4483 10.6565 8.13476L12 5M4 8C4.55228 8 5 7.55228 5 7C5 6.44772 4.55228 6 4 6C3.44772 6 3 6.44772 3 7C3 7.55228 3.44772 8 4 8ZM20 8L18.2838 9.373C17.1678 10.2657 16.6099 10.7121 16.0474 10.7814C15.5547 10.8421 15.057 10.7173 14.6511 10.4314C14.1879 10.1051 13.9064 9.4483 13.3435 8.13476L12 5M20 8C20.5523 8 21 7.55228 21 7C21 6.44772 20.5523 6 20 6C19.4477 6 19 6.44772 19 7C19 7.55228 19.4477 8 20 8ZM12 5C12.5523 5 13 4.55228 13 4C13 3.44772 12.5523 3 12 3C11.4477 3 11 3.44772 11 4C11 4.55228 11.4477 5 12 5ZM12 4H12.01M20 7H20.01M4 7H4.01"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function DestroyIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="-0.5 0 19 19"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <path
+        fill={color}
+        d="M4.91666667,14.8888889 C4.91666667,15.3571429 5.60416667,16 6.0625,16 L12.9375,16 C13.3958333,16 14.0833333,15.3571429 14.0833333,14.8888889 L14.0833333,6 L4.91666667,6 L4.91666667,14.8888889 L4.91666667,14.8888889 L4.91666667,14.8888889 Z M15,3.46500003 L12.5555556,3.46500003 L11.3333333,2 L7.66666667,2 L6.44444444,3.46500003 L4,3.46500003 L4,4.93000007 L15,4.93000007 L15,3.46500003 L15,3.46500003 L15,3.46500003 Z"
+      />
+    </svg>
+  );
+}
+
+export function GloryIcon({ color = IconColors.gold, className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="2 2 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <path
+        d="M18.364 5.636C17.8001 5.07212 17.0676 4.77963 16.3287 4.75855C15.5976 4.73769 15.2321 4.72726 15.147 4.70581C14.9649 4.65988 15.0937 4.71324 14.9325 4.61693C14.8571 4.57194 14.5913 4.32084 14.0595 3.81864C13.5222 3.31114 12.7974 3 12 3C11.2026 3 10.4778 3.31113 9.94047 3.81863C9.40876 4.32082 9.14287 4.57195 9.06753 4.61694C8.90626 4.71325 9.0351 4.65988 8.85296 4.70581C8.76788 4.72727 8.40232 4.73769 7.67121 4.75855C6.93238 4.77963 6.19986 5.07211 5.63597 5.636C5.07207 6.1999 4.77959 6.93243 4.75852 7.67126C4.73766 8.40235 4.72724 8.7679 4.70578 8.85299C4.65985 9.03512 4.71322 8.90628 4.61691 9.06755C4.57192 9.14289 4.32082 9.40876 3.81862 9.94048C3.31113 10.4778 3 11.2026 3 12C3 12.7974 3.31113 13.5222 3.81862 14.0595C4.32082 14.5912 4.57192 14.8571 4.61691 14.9324C4.71322 15.0937 4.65985 14.9649 4.70578 15.147C4.72724 15.2321 4.73766 15.5976 4.75852 16.3287C4.77959 17.0676 5.07207 17.8001 5.63597 18.364C6.19986 18.9279 6.93238 19.2204 7.67121 19.2414C8.40225 19.2623 8.76788 19.2727 8.85296 19.2942C9.0351 19.3401 8.90626 19.2868 9.06753 19.3831C9.14287 19.4281 9.40874 19.6792 9.94047 20.1814C10.4778 20.6889 11.2026 21 12 21C12.7974 21 13.5222 20.6889 14.0595 20.1814C14.5912 19.6792 14.8571 19.4281 14.9325 19.3831C15.0937 19.2868 14.9649 19.3401 15.147 19.2942C15.2321 19.2727 15.5976 19.2623 16.3287 19.2414C17.0676 19.2204 17.8001 18.9279 18.364 18.364C18.9278 17.8001 19.2203 17.0676 19.2414 16.3288C19.2623 15.5977 19.2727 15.2321 19.2942 15.147C19.3401 14.9649 19.2867 15.0937 19.383 14.9325C19.428 14.8571 19.6792 14.5912 20.1814 14.0595C20.6889 13.5222 21 12.7974 21 12C21 11.2026 20.6889 10.4778 20.1814 9.94045C19.6792 9.40876 19.428 9.14286 19.383 9.06752C19.2867 8.90625 19.3401 9.0351 19.2942 8.85296C19.2727 8.76787 19.2623 8.40232 19.2414 7.67121C19.2203 6.9324 18.9278 6.19989 18.364 5.636Z"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function TimeIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill={color}
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <path d="M6.108,20H4a1,1,0,0,0,0,2H20a1,1,0,0,0,0-2H17.892c-.247-2.774-1.071-7.61-3.826-9,2.564-1.423,3.453-4.81,3.764-7H20a1,1,0,0,0,0-2H4A1,1,0,0,0,4,4H6.17c.311,2.19,1.2,5.577,3.764,7C7.179,12.39,6.355,17.226,6.108,20ZM9,16.6c0-1.2,3-3.6,3-3.6s3,2.4,3,3.6V20H9Z" />
+    </svg>
+  );
+}
+
+export function TriggerIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 512 512"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <polygon
+        fill={color}
+        points="386.415,193.208 287.481,193.208 359.434,0 161.566,0 125.585,280.151 206.528,280.151 170.557,512"
+      />
+    </svg>
+  );
+}
+
+export function WoodIcon({ color = IconColors.wood, className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="1 1 22 22"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <circle
+        stroke={color}
+        strokeMiterlimit={10}
+        strokeWidth="1.88"
+        cx="6.82"
+        cy="17.18"
+        r="5.32"
+      />
+      <circle
+        stroke={color}
+        strokeMiterlimit={10}
+        strokeWidth="1.88"
+        cx="6.82"
+        cy="17.18"
+        r="2.35"
+      />
+      <path
+        stroke={color}
+        strokeMiterlimit={10}
+        strokeWidth="1.88"
+        d="M20.94,10.59,10.59,20.94a5.32,5.32,0,0,0-7.53-7.53L13.41,3.06a5.32,5.32,0,0,1,7.53,7.53Z"
+      />
+      <line
+        stroke={color}
+        strokeMiterlimit={10}
+        strokeWidth="1.88"
+        x1="9.35"
+        y1="12.41"
+        x2="12.79"
+        y2="8.97"
+      />
+      <line
+        stroke={color}
+        strokeMiterlimit={10}
+        strokeWidth="1.88"
+        x1="21.94"
+        y1="4.36"
+        x2="18.18"
+        y2="8.12"
+      />
+      <line
+        stroke={color}
+        strokeMiterlimit={10}
+        strokeWidth="1.88"
+        x1="13.73"
+        y1="13.18"
+        x2="17.06"
+        y2="9.85"
+      />
+      <line
+        stroke={color}
+        strokeMiterlimit={10}
+        strokeWidth="1.88"
+        x1="15.76"
+        y1="5.41"
+        x2="19.06"
+        y2="2.12"
+      />
+    </svg>
+  );
+}
+
+export function GoldIcon({ color = IconColors.gold, className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="2 2 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <path
+        d="M12 10V14M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12ZM17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12Z"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function StoneIcon({ color = IconColors.stone, className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <path
+        fill={color}
+        d="M6.516,2.612L9.325,3.55l0.734,2.934l0.188,0.75l0.644,0.428l2.238,1.494L13.734,14H2.441l0.331-1.65l1.125-0.562 l0.875-0.438l0.191-0.959L6.516,2.612 M5,0L3,10l-2,1l-1,5h16l-1-8l-3-2l-1-4L5,0L5,0z"
+      />
+    </svg>
+  );
+}
+
+export function IronIcon({ color = IconColors.iron, className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 512.082 512.082"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <g transform="translate(0 -1)">
+        <path
+          fill={color}
+          d="M417.826,509.073c0.007-0.005,0.013-0.01,0.02-0.014c4.369-3.068,7.642-7.78,8.581-13.776
+            c0.267-1.529,0.36-3.095,0.282-4.67V107.709c0-5.658-2.248-11.084-6.248-15.085L335.126,7.291
+            c-4.701-4.701-10.569-6.585-16.212-6.244H193.168c-5.052-0.305-10.281,1.18-14.694,4.868
+            c-0.002,0.002-0.005,0.004-0.007,0.006c-0.514,0.43-1.02,0.88-1.511,1.371L91.623,92.624
+            c-4.001,4.001-6.248,9.427-6.248,15.085v382.903c-0.078,1.576,0.015,3.141,0.282,4.67
+            c0.939,5.995,4.212,10.708,8.581,13.776c0.007,0.005,0.013,0.01,0.02,0.014
+            c0.242,0.17,0.486,0.335,0.735,0.495c2.514,1.66,5.43,2.815,8.658,3.264
+            c1.428,0.216,2.877,0.281,4.324,0.211h296.134c1.447,0.07,2.897,0.005,4.324-0.211
+            c3.228-0.448,6.144-1.604,8.658-3.264C417.339,509.408,417.583,509.242,417.826,509.073z
+            M384.041,116.546V421.25l-42.667-64V73.879L384.041,116.546z
+            M203.455,385.047h105.171l56.886,85.329H146.569L203.455,385.047z
+            M298.706,342.376h-85.331V43.714h85.331V342.376z
+            M170.706,73.881v283.372l-42.664,63.997V116.546L170.706,73.881z"
+        />
+      </g>
+    </svg>
+  );
+}
+
+export function GoodsIcon({ color = IconColors.wood, className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="1 1 22 22"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <path
+        stroke={color}
+        strokeMiterlimit={10}
+        strokeWidth="1.91"
+        d="M22.5,12A22.79,22.79,0,0,0,19.64,1.5H4.36A22.79,22.79,0,0,0,1.5,12,22.79,22.79,0,0,0,4.36,22.5H19.64A22.79,22.79,0,0,0,22.5,12Z"
+      />
+      <path
+        stroke={color}
+        strokeMiterlimit={10}
+        strokeWidth="1.91"
+        d="M15.82,12A38.34,38.34,0,0,0,14.29,1.5H9.71A38.34,38.34,0,0,0,8.18,12,38.34,38.34,0,0,0,9.71,22.5h4.58A38.34,38.34,0,0,0,15.82,12Z"
+      />
+      <line
+        stroke={color}
+        strokeMiterlimit={10}
+        strokeWidth="1.91"
+        x1="2.45"
+        y1="5.32"
+        x2="21.55"
+        y2="5.32"
+      />
+      <line
+        stroke={color}
+        strokeMiterlimit={10}
+        strokeWidth="1.91"
+        x1="2.45"
+        y1="18.68"
+        x2="21.55"
+        y2="18.68"
+      />
+    </svg>
+  );
+}
+
+export function WeaponIcon({ color = IconColors.iron, className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        fill={color}
+        d="M19 1.48416e-05L23 0C23.2652 -9.53668e-07 23.5195 0.105355 23.7071 0.292891C23.8946 0.480426 24 0.73478 24 0.999997L24 5.00001C24 5.26523 23.8946 5.51958 23.7071 5.70712L11.9142 17.5L13.7071 19.2929C14.0976 19.6834 14.0976 20.3166 13.7071 20.7071C13.3166 21.0977 12.6834 21.0977 12.2929 20.7071L9.79289 18.2071L9.46376 17.878L5.9999 20.9955C6.00096 21.7635 5.70873 22.534 5.12132 23.1214C3.94975 24.293 2.05025 24.293 0.87868 23.1214C-0.292893 21.9498 -0.292893 20.0503 0.87868 18.8787C1.46607 18.2913 2.23647 17.9991 3.00451 18.0002L6.12202 14.5363L5.79287 14.2071L3.29289 11.7071C2.90237 11.3166 2.90237 10.6834 3.29289 10.2929C3.68342 9.90239 4.31658 9.90239 4.70711 10.2929L6.49998 12.0858L18.2929 0.292907C18.4804 0.105372 18.7348 1.57952e-05 19 1.48416e-05ZM7.91419 13.5L8.2071 13.7929L10.2071 15.7929L10.5 16.0858L22 4.5858L22 2L19.4142 2.00001L7.91419 13.5ZM7.53819 15.9524L5.00435 18.7678C5.0441 18.8035 5.08311 18.8405 5.12132 18.8787C5.15952 18.9169 5.19648 18.9559 5.23221 18.9957L8.04759 16.4618L7.53819 15.9524ZM3.20676 20.0214C2.88445 19.954 2.54009 20.0458 2.29289 20.293C1.90237 20.6835 1.90237 21.3166 2.29289 21.7072C2.68342 22.0977 3.31658 22.0977 3.70711 21.7072C3.95431 21.46 4.0461 21.1156 3.97862 20.7933C3.94032 20.6103 3.85075 20.4366 3.70711 20.293C3.56346 20.1493 3.3897 20.0597 3.20676 20.0214Z"
+      />
+    </svg>
+  );
+}
+
+export function PassifIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <g transform="translate(6.025 -1038.1)">
+        <path
+          fill={color}
+          d="M-2.025 1042.1a4 4 0 0 0 0 8c2 0 4-1 5-4-1-3-3-4-5-4zm0 2s2 0 3 2c-1 2-3 2-3 2a2 2 0 1 1 0-4z"
+        />
+        <path
+          fill={color}
+          d="M5.975 1042.1a4 4 0 0 1 0 8c-2 0-4-1-5-4 1-3 3-4 5-4zm0 2s-2 0-3 2c1 2 3 2 3 2a2 2 0 1 0 0-4z"
+        />
+      </g>
+    </svg>
+  );
+}

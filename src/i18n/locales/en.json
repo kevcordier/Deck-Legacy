@@ -4,7 +4,6 @@
     "subtitle": "A deck-building game"
   },
   "header": {
-    "discardTop": "Discard top",
     "newGame": "New game",
     "start": "Start",
     "newRound": "New round",
@@ -15,10 +14,7 @@
     "options": "Options"
   },
   "pregame": {
-    "resumeGame": "▶ Resume game",
-    "newGame": "↺ New game",
     "startNew": "⚜ Start",
-    "deleteSave": "Delete save",
     "readyToPlay": "Ready to play",
     "deckShuffled": "Deck of {{count}} shuffled cards",
     "startGame": "▶ Start game"
@@ -34,13 +30,10 @@
   },
   "sections": {
     "permanents": "Permanents",
-    "tableau": "Tableau",
-    "eventLog": "Log — {{count}} events"
+    "tableau": "Tableau"
   },
   "cardCount": "{{count}} card",
   "cardCount_other": "{{count}} cards",
-  "activatedCount": "{{count}} activated",
-  "activatedCount_other": "{{count}} activated",
   "resourceBar": {
     "round": "Round",
     "turn": "Turn",
@@ -59,58 +52,26 @@
   },
   "card": {
     "blocked": "Blocked",
-    "production": "PRODUCTION",
-    "alreadyProduced": "Already produced",
-    "produce": "Produce — {{amount}} {{resource}}",
-    "choice": "By choice",
-    "track": "TRACK",
-    "state": "State {{id}}",
-    "permanent": "Permanent",
-    "stayInPlay": "Stays in play"
+    "stayInPlay": "Stays in play",
+    "state": "State {{id}}"
   },
   "cardPreview": {
     "viewAllStates": "View all states",
-    "statesCount": "◎ {{count}} states",
-    "statesMeta": "{{count}} states · #{{id}}",
-    "currentState": "Current state",
-    "production": "Production",
-    "advanceTrack": "Progress track",
-    "actions": "Actions",
-    "upgrades": "Upgrades",
-    "onPlay": "ON PLAY",
-    "cost": "Cost:",
-    "destroySelf": "+ destroy this card",
-    "destroyCount": "+ destroy {{count}}",
-    "endOfTurn": "END OF TURN",
-    "passiveEffects": "Passive effects",
-    "stayInPlay": "Stays in play",
-    "glory": "glory",
-    "sticker": "Sticker #{{number}}",
-    "stateLabel": "State {{id}}"
+    "statesMeta": "{{count}} states · #{{id}}"
   },
   "pendingChoice": {
-    "chooseCard": "Choose {{count}} card to discover",
-    "chooseCard_other": "Choose {{count}} cards to discover",
-    "cardPlaceholder": "Card #{{id}}",
-    "toDiscover": "To discover",
+    "chooseCard": {
+      "DISCARD_CARD": "Choose {{count}} card to discard",
+      "DISCARD_CARD_other": "Choose {{count}} cards to discard",
+      "DISCOVER_CARD": "Choose {{count}} card to discover",
+      "DISCOVER_CARD_other": "Choose {{count}} cards to discover",
+      "DESTROY_CARD": "Choose {{count}} card to destroy",
+      "DESTROY_CARD_other": "Choose {{count}} cards to destroy"
+    },
     "chooseState": "Choose a state",
     "chooseStateSubtitle": "This card has two sides. Choose which one you want to play.",
-    "chooseUpgrade": "Choose an upgrade",
-    "chooseUpgradeSubtitle": "Multiple paths are available for this card.",
-    "cost": "Cost:",
-    "free": "Free",
     "chooseResource": "Choose a resource",
-    "produceResource": "Which resource do you want to produce?",
-    "gainResource": "Which resource do you want to gain?",
-    "playFromDiscard": "Play from discard",
-    "chooseFromDiscard": "Choose {{count}} card to replay from your discard.",
-    "chooseFromDiscard_other": "Choose {{count}} cards to replay from your discard.",
-    "copyProduction": "Copy a production",
-    "copyProductionSubtitle": "Choose a card whose production you will copy.",
-    "blockCard": "Block a card",
-    "discardForCost": "Discard a card (cost)",
-    "discardForCostSubtitle": "Choose a card to discard ({{current}}/{{total}})",
-    "cancel": "Cancel"
+    "gainResource": "Which resource do you want to gain?"
   },
   "triggerPile": {
     "title": "Pending effects",
@@ -119,90 +80,18 @@
     "skip": "Skip"
   },
   "deckViewer": {
-    "title": "Deck",
+    "title": "Cards list",
+    "draw": "Deck",
+    "discard": "Discard",
     "viewAll": "⊞ View all",
     "empty": "Empty",
-    "remainingCards": "Remaining cards",
-    "modalSubtitle": "{{count}} cards",
-    "modalSubtitle_other": "{{count}} cards",
-    "emptyDeck": "The deck is empty"
-  },
-  "discardPile": {
-    "title": "Discard",
-    "viewAll": "⊞ View all",
-    "empty": "Empty",
-    "allCards": "All cards",
     "modalSubtitle": "{{count}} card",
     "modalSubtitle_other": "{{count}} cards",
-    "emptyDiscard": "The discard pile is empty"
+    "emptyDeck": "The deck is empty",
+    "remainingCards": "Other cards"
   },
   "cardList": {
-    "listView": "≡ List",
-    "gridView": "⊞ Cards",
     "noCards": "No cards"
-  },
-  "timeline": {
-    "liveButton": "LIVE",
-    "eventCount": "{{count}} evt",
-    "returnHere": "Return here",
-    "clickToReturn": "{{label}} — click to return here",
-    "events": {
-      "GAME_STARTED": "Start",
-      "ROUND_STARTED": "Round",
-      "ROUND_ENDED": "Round end",
-      "TURN_STARTED": "Turn",
-      "TURN_ENDED": "Turn end",
-      "CARD_ACTIVATED": "Prod.",
-      "ACTION_RESOLVED": "Action",
-      "UPGRADE_RESOLVED": "Upgrade",
-      "UPGRADE_CARD_EFFECT": "Upgrade",
-      "PROGRESSED": "Progress",
-      "CARD_BLOCKED": "Blocked",
-      "CARD_UNBLOCKED": "Unblocked",
-      "CARD_DESTROYED": "Destroyed",
-      "CARD_DISCOVERED": "Discovery",
-      "CARD_STATE_CHOSEN": "Discovery",
-      "CARD_PLAYED_FROM_DISCARD": "From discard",
-      "CARD_ADDED_TO_DECK": "Deck",
-      "STICKER_ADDED": "Sticker",
-      "TRACK_ADVANCED": "Track",
-      "ADVANCE": "Advance",
-      "CHOICE_MADE": "Choice",
-      "ON_PLAY_TRIGGERED": "Trigger"
-    }
-  },
-  "eventLog": {
-    "gameStarted": "Game started",
-    "cards": "{{count}} cards",
-    "round": "Round {{round}}",
-    "discoveries": "+{{count}} discovery",
-    "discoveries_other": "+{{count}} discoveries",
-    "roundEnded": "Round ended",
-    "turn": "Turn {{turn}}",
-    "advance": "Advance",
-    "deckCards": "Deck: {{count}} cards",
-    "endOfTurn": "End of turn",
-    "production": "Production",
-    "toDiscard": "→ discard",
-    "action": "Action",
-    "upgrade": "Upgrade",
-    "toState": "→ state {{id}}",
-    "progress": "Progress",
-    "addedCards": "+{{count}} cards",
-    "cardBlocked": "Card blocked",
-    "cardUnblocked": "Card unblocked",
-    "cardDestroyed": "Card destroyed",
-    "discovery": "Discovery",
-    "stateChosen": "State chosen",
-    "state": "state {{id}}",
-    "fromDiscard": "From discard",
-    "addedToDeck": "Added to deck",
-    "sticker": "Sticker",
-    "track": "Track",
-    "step": "step {{progress}}",
-    "choice": "Choice",
-    "pass": "Pass",
-    "passiveEffect": "Passive effect"
   },
   "gameOver": {
     "title": "Game Over",
@@ -216,8 +105,11 @@
   },
   "options": {
     "title": "Options",
+    "theme": "Theme",
+    "theme_light": "Light",
+    "theme_dark": "Dark",
+    "theme_system": "System",
     "language": "Language",
-    "close": "Close",
     "en": "English",
     "fr": "French",
     "reset": "Reset game",

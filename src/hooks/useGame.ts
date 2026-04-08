@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useMemo, useRef, useContext } from 'react';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import type {
   GameState,
@@ -13,11 +13,7 @@ import type {
   Effect,
 } from '@engine/domain/types';
 import { PendingChoiceType } from '@engine/domain/enums';
-import {
-  loadCardDefs,
-  loadStickerDefs,
-  loadInitialStickerStock,
-} from '@engine/infrastructure/loaders';
+import { loadInitialStickerStock } from '@engine/infrastructure/loaders';
 import { createInstance } from '@engine/application/factory';
 import { saveGame, loadSave, deleteSave, hasSave } from '@engine/infrastructure/persistence';
 import {
@@ -25,11 +21,13 @@ import {
   getEffectiveProductions,
   canAffordResources,
 } from '@engine/application/cardHelpers';
-import { computeScore } from '@engine/application/gameStateHelper';
+import { computeScore, getCurrentPhase } from '@engine/application/gameStateHelper';
 import { mergeResources } from '@engine/application/resourceHelpers';
 import deckData from '@data/deck.json';
 import { resolveActionEffect } from '@engine/application/effectResolver';
 import { resolveCost } from '@engine/application/costResolver';
+import { GameContext } from '@contexts/GameContext';
+import type { Phase } from '@engine/domain/types/Phase';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -42,6 +40,7 @@ export type GameHook = {
   pendingChoices: PendingChoice[] | null;
   triggerPile: Record<string, TriggerEntry> | null;
   hasSave: boolean;
+  phase: Phase;
   loadGame: () => void;
   deleteSave: () => void;
   startGame: () => void;
@@ -62,22 +61,18 @@ export type GameHook = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function makeAggregate(state?: GameState): GameAggregate {
-  return new GameAggregate(
-    [],
-    state ? (JSON.parse(JSON.stringify(state)) as GameState) : { ...EMPTY_STATE },
-    loadCardDefs(),
-  );
+function makeAggregate(
+  state: GameState = { ...EMPTY_STATE },
+  cardDefs: Record<number, CardDef>,
+): GameAggregate {
+  return new GameAggregate([], JSON.parse(JSON.stringify(state)) as GameState, cardDefs);
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useGame(): GameHook {
-  const defs = useMemo(() => loadCardDefs(), []);
-  const stickerDefs = useMemo(() => loadStickerDefs(), []);
-  const aggRef = useRef<GameAggregate>(makeAggregate());
+  const { gameState, setGameState, defs, stickerDefs, aggRef } = useContext(GameContext);
   const [events, setEvents] = useState<GameEvent[]>([]);
-  const [liveState, setLiveState] = useState<GameState>({ ...EMPTY_STATE });
   const [pendingChoices, setPendingChoices] = useState<PendingChoice[] | null>(null);
   const [triggerPile, setTriggerPile] = useState<Record<string, TriggerEntry> | null>(null);
   const currentProductionRef = useRef<{
@@ -132,7 +127,7 @@ export function useGame(): GameHook {
         triggerId,
       );
     },
-    [defs],
+    [defs, aggRef],
   );
 
   // ── Synchronisation aggregate → React state ───────────────────────────────
@@ -140,7 +135,7 @@ export function useGame(): GameHook {
   const sync = useCallback(() => {
     const gs = aggRef.current.getGameState();
 
-    setLiveState(gs);
+    setGameState(gs);
     saveGame(aggRef.current.getEvents(), aggRef.current.getSaveState());
 
     const triggers = gs.triggerPile;
@@ -167,14 +162,16 @@ export function useGame(): GameHook {
     }
 
     setTriggerPile(triggers);
-  }, [triggerAction]);
+  }, [triggerAction, setGameState, aggRef]);
 
   // ── Score ─────────────────────────────────────────────────────────────────
 
   const score = useMemo(
-    () => computeScore(liveState, defs, stickerDefs),
-    [liveState, defs, stickerDefs],
+    () => computeScore(gameState, defs, stickerDefs),
+    [gameState, defs, stickerDefs],
   );
+
+  const phase = useMemo(() => getCurrentPhase(gameState), [gameState]);
 
   // ── Démarrage ─────────────────────────────────────────────────────────────
 
@@ -194,7 +191,7 @@ export function useGame(): GameHook {
       (_, i) => allInstances[starterEntries.length + i].id,
     );
 
-    const agg = makeAggregate();
+    const agg = makeAggregate(gameState, defs);
     const startEvent = agg.gameStarted(
       allInstances,
       initialDeck,
@@ -209,39 +206,39 @@ export function useGame(): GameHook {
     aggRef.current = agg;
     setEvents(prev => [...prev, ...events]);
     sync();
-  }, [defs, sync]);
+  }, [defs, sync, aggRef, gameState]);
 
   const startRound = useCallback(() => {
     const event = aggRef.current.roundStarted();
     setEvents(prev => [...prev, event]);
     sync();
-  }, [sync]);
+  }, [sync, aggRef]);
 
   const startTurn = useCallback(() => {
     const event = aggRef.current.turnStarted();
     if (!event) return;
     setEvents(prev => [...prev, event]);
     sync();
-  }, [sync]);
+  }, [sync, aggRef]);
 
   // ── Persistance ───────────────────────────────────────────────────────────
 
   const loadGame = useCallback(() => {
     const save = loadSave();
     if (!save) return;
-    const agg = makeAggregate(save.saveState);
+    const agg = makeAggregate(save.saveState, defs);
     agg.loadFromHistory(save.events);
     aggRef.current = agg;
     setEvents([...agg.getEvents()]);
     sync();
-  }, [sync]);
+  }, [sync, aggRef, defs]);
 
   const deleteSaveCallback = useCallback(() => {
     deleteSave();
-    aggRef.current = makeAggregate();
+    aggRef.current = makeAggregate(gameState, defs);
     setPendingChoices(null);
     startGame();
-  }, [startGame]);
+  }, [startGame, aggRef, gameState, defs]);
 
   // ── Card actions ──────────────────────────────────────────────────────────
 
@@ -251,7 +248,7 @@ export function useGame(): GameHook {
       setEvents(prev => [...prev, event]);
       sync();
     },
-    [sync],
+    [sync, aggRef],
   );
 
   const resolveProduction = useCallback(
@@ -285,7 +282,7 @@ export function useGame(): GameHook {
       const resourcesGained = getEffectiveProductions(base, inst, stickerDefs);
       triggerProduction(instanceId, resourcesGained);
     },
-    [defs, triggerProduction, stickerDefs],
+    [defs, triggerProduction, stickerDefs, aggRef],
   );
 
   const resolveAction = useCallback(
@@ -330,7 +327,7 @@ export function useGame(): GameHook {
 
       sync();
     },
-    [triggerAction, defs, sync],
+    [triggerAction, defs, sync, aggRef],
   );
 
   const resolveTrackStep = useCallback(
@@ -366,7 +363,7 @@ export function useGame(): GameHook {
       setEvents(prev => [...prev, event]);
       sync();
     },
-    [defs, sync],
+    [defs, sync, aggRef],
   );
 
   const resolveUpgrade = useCallback(
@@ -393,7 +390,7 @@ export function useGame(): GameHook {
       setEvents(prev => [...prev, event]);
       sync();
     },
-    [defs, sync],
+    [defs, sync, aggRef],
   );
 
   // ── Turn flow ─────────────────────────────────────────────────────────────
@@ -403,13 +400,13 @@ export function useGame(): GameHook {
     if (!event) return;
     setEvents(prev => [...prev, event]);
     sync();
-  }, [sync]);
+  }, [sync, aggRef]);
 
   const endTurnVoluntary = useCallback(() => {
     const event = aggRef.current.pass();
     setEvents(prev => [...prev, event]);
     sync();
-  }, [sync]);
+  }, [sync, aggRef]);
 
   // ── Choice resolution ─────────────────────────────────────────────────────
 
@@ -468,7 +465,7 @@ export function useGame(): GameHook {
         }
       }
     },
-    [sync, pendingChoices, triggerProduction, stickerDefs, defs],
+    [sync, pendingChoices, triggerProduction, stickerDefs, defs, aggRef],
   );
 
   const skipTrigger = useCallback((uuid: string) => {
@@ -529,18 +526,18 @@ export function useGame(): GameHook {
     const aggEvent = aggRef.current.getEvents();
     if (aggEvent.length === 0) return;
     const saveState = aggRef.current.getSaveState();
-    const agg = makeAggregate(saveState);
+    const agg = makeAggregate(saveState, defs);
     agg.loadFromHistory(aggEvent.slice(0, -1));
     aggRef.current = agg;
     const truncated = events.slice(0, -1);
     setEvents([...truncated]);
     sync();
-  }, [events, sync]);
+  }, [events, sync, defs, aggRef]);
 
   // ── Result ──────────────────────────────────────────────────────────────
 
   return {
-    state: liveState,
+    state: gameState,
     events,
     defs,
     stickerDefs,
@@ -548,6 +545,7 @@ export function useGame(): GameHook {
     pendingChoices,
     triggerPile,
     hasSave: hasSave(),
+    phase,
     loadGame,
     deleteSave: deleteSaveCallback,
     startGame,

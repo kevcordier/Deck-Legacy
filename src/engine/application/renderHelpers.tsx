@@ -20,7 +20,7 @@ export function renderTextWithIcons(text: string): React.ReactNode {
     const meta = getResMeta(key);
     parts.push(
       meta.icon ? (
-        <meta.icon key={match.index} className={`res-icon ${meta.cls} res-sm`} alt={key} />
+        <meta.icon key={match.index} className={`${meta.cls} size-4 align-middle`} alt={key} />
       ) : (
         key
       ),

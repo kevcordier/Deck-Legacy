@@ -8,6 +8,7 @@
       "@pages/*": ["src/pages/*"],
       "@helpers/*": ["src/helpers/*"],
       "@hooks/*": ["src/hooks/*"],
+      "@contexts/*": ["src/contexts/*"],
       "@i18n/*": ["src/i18n/*"],
       "@styles/*": ["src/styles/*"]
     },
@@ -29,7 +30,13 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*", ".storybook/**/*", "vite.config.ts", "eslint.config.ts"],
+  "include": [
+    "src/**/*",
+    ".storybook/**/*",
+    "vite.config.ts",
+    "eslint.config.ts",
+    "tailwind.config.js"
+  ],
   "exclude": [
     "src/engine/application/cardActions.ts",
     "src/engine/application/turnFlow.ts",

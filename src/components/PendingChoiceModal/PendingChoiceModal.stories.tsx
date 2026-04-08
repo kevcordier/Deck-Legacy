@@ -1,7 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PendingChoiceModal } from './PendingChoiceModal';
 import type { CardDef, CardInstance } from '@engine/domain/types';
 import { CardTag, PendingChoiceType, ActionType, Trigger } from '@engine/domain/enums';
+import { GameProvider } from '@contexts/GameProvider';
+import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 
 const meta: Meta<typeof PendingChoiceModal> = {
   title: 'Components/PendingChoiceModal',
@@ -15,6 +17,11 @@ const meta: Meta<typeof PendingChoiceModal> = {
     onResolveTrigger: { action: 'resolveTrigger' },
     onSkipTrigger: { action: 'skipTrigger' },
   },
+  render: args => (
+    <GameProvider initialState={{ ...EMPTY_STATE }}>
+      <PendingChoiceModal {...args} />
+    </GameProvider>
+  ),
 };
 
 export default meta;
@@ -100,7 +107,6 @@ export const ChooseCard: Story = {
     },
     defs,
     instances,
-    currentResources: { gold: 3 },
   },
 };
 
@@ -117,7 +123,6 @@ export const ChooseResource: Story = {
     },
     defs,
     instances,
-    currentResources: {},
   },
 };
 
@@ -134,7 +139,6 @@ export const ChooseState: Story = {
     },
     defs,
     instances,
-    currentResources: {},
   },
 };
 
@@ -153,7 +157,6 @@ export const TriggerPileOptional: Story = {
     },
     defs,
     instances,
-    currentResources: { iron: 2 },
   },
 };
 
@@ -172,7 +175,6 @@ export const TriggerPileForced: Story = {
     },
     defs,
     instances,
-    currentResources: { iron: 2 },
   },
 };
 
@@ -191,7 +193,6 @@ export const TriggerPileMultiple: Story = {
     },
     defs,
     instances,
-    currentResources: {},
   },
 };
 
@@ -200,6 +201,5 @@ export const NoChoice: Story = {
   args: {
     defs,
     instances,
-    currentResources: {},
   },
 };

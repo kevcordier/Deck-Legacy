@@ -1,116 +1,86 @@
-import { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CardListModal } from '@components/CardListModal/CardListModal';
-import { getActiveState, getEffectiveProductions } from '@engine/application/cardHelpers';
-import './DeckViewer.css';
-import { GameCard } from '@components/GameCard';
-import type { CardInstance, CardDef, Sticker } from '@engine/domain/types';
+import { getActiveState } from '@engine/application/cardHelpers';
+import { GameCard } from '@components/GameCard/GameCard';
+import { useGame } from '@hooks/useGame';
+import { Title } from '@components/ui/Title/Title';
+import { Button } from '@components/ui/Button/Button';
+import type { CardInstance } from '@engine/domain/types';
 
-interface DeckViewerProps {
-  deck: number[];
-  instances: Record<number, CardInstance>;
-  defs: Record<number, CardDef>;
-  stickers?: Record<number, Sticker>;
-}
-
-export function DeckViewer({ deck, instances, defs, stickers = {} }: DeckViewerProps) {
+export function DeckViewer({
+  title,
+  emptyText,
+  deck,
+  displayedCard,
+}: {
+  title: string;
+  emptyText?: string;
+  deck: CardInstance[];
+  displayedCard?: CardInstance;
+}) {
+  const { defs } = useGame();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const topId = deck[0];
-  const topInst = topId ? instances[topId] : null;
-
-  const sortedList = useMemo(() => {
-    return [...deck]
-      .map(id => instances[id])
-      .filter(Boolean)
-      .sort((a, b) => (a.id ?? 9999) - (b.id ?? 9999));
-  }, [deck, instances]);
-
-  if (deck.length === 0)
-    return (
-      <div className="dv-col">
-        <div className="dv-header">
-          <span className="dv-title">{t('deckViewer.title')}</span>
-          <span className="dv-count">0</span>
-        </div>
-        <div className="dv-empty">{t('deckViewer.empty')}</div>
-      </div>
-    );
-
   return (
-    <div className="dv-col">
-      <div className="dv-header">
-        <span className="dv-title">{t('deckViewer.title')}</span>
-        <div className="dv-header-btns">
-          <button onClick={() => setModalOpen(true)} className="btn-view-all">
-            {t('deckViewer.viewAll')}
-          </button>
-          <button onClick={() => setOpen(o => !o)} className={`btn-toggle ${open ? 'open' : ''}`}>
-            {open ? '▲' : '▼'} {deck.length}
-          </button>
-        </div>
+    <section className="bg-background scrollbar flex h-full w-64 shrink-0 flex-col">
+      <div className="border-b-border flex min-h-11 items-center justify-between border-b p-2">
+        <Title level={4}>{title}</Title>
+        {deck.length <= 1 ? (
+          <span className="font-display text-xs">{deck.length}</span>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Button onClick={() => setModalOpen(true)} size="xs" variant="text" color="ink">
+              {t('deckViewer.viewAll')}
+            </Button>
+            <Button onClick={() => setOpen(o => !o)} size="xs" variant="outlined" color="ink">
+              {open ? '▲' : '▼'} {deck.length}
+            </Button>
+          </div>
+        )}
       </div>
-
-      {/* Top card */}
-      {topInst && (
-        <div className="dv-top-card">
-          <GameCard
-            instance={topInst}
-            defs={defs}
-            currentResources={{}}
-            isOnBoard={false}
-            style={{ width: '100%' }}
-          />
-        </div>
+      {deck.length > 0 ? (
+        <React.Fragment>
+          {displayedCard && (
+            <div className="flex flex-col items-center p-2">
+              <GameCard instance={displayedCard} size="sm" />
+            </div>
+          )}
+          {open && deck.length > 1 && (
+            <div className="border-border flex flex-col gap-1 border-t p-2">
+              <p className="font-display text-ink/90 text-center text-xs uppercase">
+                {t('deckViewer.remainingCards')}
+              </p>
+              {deck.slice(1).map((inst, i) => {
+                const cs = getActiveState(inst, defs);
+                return (
+                  <div
+                    key={inst.id}
+                    className="bg-border/20 border-border flex items-stretch gap-2 rounded-md border px-2 py-1"
+                    style={{ animationDelay: `${i * 15}ms` }}
+                  >
+                    <span className="min-w-4.5 text-xs">#{inst.id}</span>
+                    <span className="truncate text-xs font-semibold">{cs.name}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {modalOpen && (
+            <CardListModal
+              title={t('deckViewer.title')}
+              subtitle={t('deckViewer.modalSubtitle', { count: deck.length })}
+              cards={deck}
+              onClose={() => setModalOpen(false)}
+              emptyText={t('deckViewer.emptyDeck')}
+            />
+          )}
+        </React.Fragment>
+      ) : (
+        emptyText && <p className="p-2 text-center text-sm text-gray-400 italic">{emptyText}</p>
       )}
-
-      {/* Remaining list sorted by id */}
-      {open && deck.length > 1 && (
-        <div className="dv-list">
-          <div className="dv-list-label">{t('deckViewer.remainingCards')}</div>
-          {sortedList.slice(1).map((inst, i) => {
-            const cs = getActiveState(inst, defs);
-            const base = cs.productions?.[0] || {};
-            const prod = getEffectiveProductions(base, inst, stickers);
-            const glory = cs.glory ?? 0;
-            return (
-              <div key={inst.id} className="dv-row" style={{ animationDelay: `${i * 15}ms` }}>
-                <span className="dv-row-id">#{inst.id}</span>
-                <span className="dv-row-name">{cs.name}</span>
-                <div className="dv-row-prods">
-                  {Object.entries(prod)
-                    .slice(0, 2)
-                    .map(([k, v]) => (
-                      <span key={k} className={`res res-${k} res--xs`}>
-                        {v}
-                      </span>
-                    ))}
-                  {glory !== 0 && (
-                    <span
-                      className={`dv-row-glory ${glory < 0 ? 'dv-row-glory--neg' : 'dv-row-glory--pos'}`}
-                    >
-                      {glory > 0 ? '+' : ''}
-                      {glory}★
-                    </span>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-      {modalOpen && (
-        <CardListModal
-          title={t('deckViewer.title')}
-          subtitle={t('deckViewer.modalSubtitle', { count: deck.length })}
-          cards={sortedList}
-          defs={defs}
-          onClose={() => setModalOpen(false)}
-          emptyText={t('deckViewer.emptyDeck')}
-        />
-      )}
-    </div>
+    </section>
   );
 }
