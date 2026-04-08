@@ -27,7 +27,7 @@ export function Header() {
     (!!triggerPile && Object.keys(triggerPile).length > 0);
   return (
     <header className="bg-background border-b-border z-101 flex items-center justify-between border-b px-6 py-3">
-      <Title level={1}>{t('game.title')}</Title>
+      <Title level={2}>{t('game.title')}</Title>
 
       <div className="align-center flex gap-2">
         {phase === 'pregame' && (

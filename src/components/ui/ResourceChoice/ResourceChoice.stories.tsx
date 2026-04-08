@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ResourceChoice } from './ResourceChoice';
 
 const meta: Meta<typeof ResourceChoice> = {
-  title: 'Components/Resource/ResourceChoice',
+  title: 'UI/ResourceChoice',
   component: ResourceChoice,
   parameters: {
     layout: 'centered',

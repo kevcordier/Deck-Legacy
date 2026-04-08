@@ -1,12 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import '@pages/Game/Game.css';
+import { useEffect } from 'react';
 import { useGame } from '@hooks/useGame';
-import { ResourceBar } from '@components/ResourceBar';
-import { PendingChoiceModal } from '@components/PendingChoiceModal';
-import { EventLog } from '@components/EventLog';
+import { ResourceBar } from '@components/ResourceBar/ResourceBar';
+import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
 import { OptionsModal } from '@components/OptionsModal';
-import { RulesModal } from '@components/RulesModal';
+import { RulesModal } from '@components/RulesModal/RulesModal';
 import { Header } from '@components/Header/Header';
 import { useGameUI } from '@hooks/useGameInterface';
 import { GameBoard } from '@components/GameBoard/GameBoard';
@@ -14,7 +11,6 @@ import { GameBoard } from '@components/GameBoard/GameBoard';
 export function Game() {
   const {
     state: gs,
-    events,
     defs,
     pendingChoices,
     triggerPile,
@@ -31,9 +27,6 @@ export function Game() {
 
   const { setOptionsOpen, setRulesOpen, optionsOpen, rulesOpen } = useGameUI();
 
-  const { t } = useTranslation();
-  const [logOpen, setLogOpen] = useState(false);
-
   useEffect(() => {
     if (hasSave) loadGame();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,23 +39,6 @@ export function Game() {
       {phase !== 'pregame' && <ResourceBar />}
 
       <GameBoard />
-
-      {events.length > 0 && (
-        <div className="gb-log-wrapper">
-          <button
-            className={`gb-log-toggle ${logOpen ? 'open' : ''}`}
-            onClick={() => setLogOpen(o => !o)}
-          >
-            <span>{t('sections.eventLog', { count: events.length })}</span>
-            <span className="gb-log-toggle-arrow">{logOpen ? '▼' : '▲'}</span>
-          </button>
-          {logOpen && (
-            <div className="gb-log-body">
-              <EventLog events={events} />
-            </div>
-          )}
-        </div>
-      )}
 
       {((pendingChoices && pendingChoices.length > 0) ||
         (triggerPile && Object.keys(triggerPile).length > 0)) && (

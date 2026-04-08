@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import type { CardDef, CardInstance } from '@engine/domain/types';
 import { tCardName } from '@i18n/cardI18n';
-import './CardStatePreview.css';
-import { GameCard } from '@components/GameCard';
+import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
+import { Modal } from '@components/ui/Modal/Modal';
 
 function EyeIcon() {
   return (
@@ -67,45 +67,30 @@ function CardStatesModal({
   const { t } = useTranslation();
 
   return createPortal(
-    <div className="csp-overlay" onClick={onClose}>
-      <div className="csp-panel" onClick={e => e.stopPropagation()}>
-        <div className="csp-modal-header">
-          <div className="csp-modal-header-row">
-            <div>
-              <div className="csp-card-name">{tCardName(t, def.id, 1, def.name)}</div>
-              <div className="csp-card-meta">
-                {t('cardPreview.statesMeta', {
-                  count: def.states.length,
-                  id: instance.id,
-                })}
-              </div>
-            </div>
-            <button onClick={onClose} className="btn-close">
-              ✕
-            </button>
-          </div>
-        </div>
-
-        <div className="csp-cards-row">
-          {def.states.map(s => {
-            const isCurrent = s.id === instance.stateId;
-            const fakeInstance: CardInstance = {
-              ...instance,
-              stateId: s.id,
-              trackProgress: isCurrent ? instance.trackProgress : [],
-            };
-            return (
-              <div
-                key={s.id}
-                className={`csp-state-slot ${isCurrent ? 'csp-state-slot--current' : ''}`}
-              >
-                <GameCard instance={fakeInstance} hideStatePreview />
-              </div>
-            );
-          })}
-        </div>
+    <Modal
+      title={tCardName(t, def.id, 1, def.name)}
+      subtitle={t('cardPreview.statesMeta', { count: def.states.length, id: instance.id })}
+      onClose={onClose}
+    >
+      <div className="flex flex-wrap justify-center gap-4">
+        {def.states.map(s => {
+          const isCurrent = s.id === instance.stateId;
+          const fakeInstance: CardInstance = {
+            ...instance,
+            stateId: s.id,
+            trackProgress: isCurrent ? instance.trackProgress : [],
+          };
+          return (
+            <GameCard
+              key={s.id}
+              instance={fakeInstance}
+              className={`${isCurrent ? 'ring-primary ring-3' : ''}`}
+              hideStatePreview
+            />
+          );
+        })}
       </div>
-    </div>,
+    </Modal>,
     document.body,
   );
 }

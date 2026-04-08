@@ -58,9 +58,10 @@
   }
 }
 
-@utilities scrollbar {
+@utility scrollbar {
   scrollbar-gutter: stable;
-  overflow-x: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   &::-webkit-scrollbar {
     width: 5px;
@@ -81,8 +82,3 @@
     background: var(--color-primary);
   }
 }
-
-@import './base.css';
-@import './buttons.css';
-@import './tag.css';
-@import './animations.css';

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CardListModal } from '@components/CardListModal/CardListModal';
 import { getActiveState } from '@engine/application/cardHelpers';
-import { GameCard } from '@components/GameCard';
+import { GameCard } from '@components/GameCard/GameCard';
 import { useGame } from '@hooks/useGame';
 import { Title } from '@components/ui/Title/Title';
 import { Button } from '@components/ui/Button/Button';
@@ -27,7 +27,7 @@ export function DeckViewer({
   return (
     <section className="bg-background scrollbar flex h-full w-64 shrink-0 flex-col">
       <div className="border-b-border flex min-h-11 items-center justify-between border-b p-2">
-        <Title level={3}>{title}</Title>
+        <Title level={4}>{title}</Title>
         {deck.length <= 1 ? (
           <span className="font-display text-xs">{deck.length}</span>
         ) : (

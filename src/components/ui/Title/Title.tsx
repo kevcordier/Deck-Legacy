@@ -10,8 +10,13 @@ export function Title({
   className?: string;
 }) {
   const CustomTag = `h${level}` as React.ElementType;
-  const sizeClass =
-    level === 1 ? 'text-xl font-bold tracking-widest' : level === 2 ? 'text-3xl' : 'text-xs';
+  const sizeClass = [
+    '',
+    'text-3xl font-bold tracking-widest',
+    'text-xl font-bold tracking-widest',
+    'text-lg font-bold font-body!',
+    'text-xs',
+  ][level] as string;
 
   return React.createElement(
     CustomTag,

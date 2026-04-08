@@ -9,16 +9,16 @@ import {
 } from '@engine/application/cardHelpers';
 import { renderTextWithIcons } from '@engine/application/renderHelpers';
 import { getResMeta } from '@engine/application/resourceHelpers';
-import { CardStatePreview } from '@components/CardStatePreview';
-import { CardTrack } from '@components/CardTrack';
-import { ResourceList } from '@components/ResourceChoice/ResourceList';
-import { ResourcePill } from '@components/ResourcePill/ResourcePill';
+import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview';
+import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import type { CardInstance, Resources } from '@engine/domain/types';
 import { TargetScope } from '@engine/domain/enums';
 import { ActivatedIcon, DestroyIcon, PassifIcon, TimeIcon, TriggerIcon } from '@components/ui/Icon';
 import { useGame } from '@hooks/useGame';
 import { Button } from '@components/ui/Button/Button';
 import { Glory } from '@components/ui/Glory/Glory';
+import { CardTrack } from '@components/CardTrack/CardTrack';
+import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 
 interface GameCardProps {
   instance: CardInstance;
@@ -134,15 +134,12 @@ export function GameCard({
 
         <div className="relative z-10 flex flex-1 flex-col items-start gap-2 p-3">
           {hasProductions && (
-            <Button
-              onClick={() => resolveProduction(instance.id)}
-              disabled={!canActivate || !isOnBoard || isBlocked}
-              title={t('card.chooseProduction')}
+            <ResourceChoice
+              onSelect={() => resolveProduction(instance.id)}
+              options={resourceOptions as Resources[]}
               size={size}
-              variant="text"
-            >
-              <ResourceList resourceOptions={resourceOptions} size={size} />
-            </Button>
+              disabled={!canActivate || !isOnBoard || isBlocked}
+            />
           )}
 
           {glory !== 0 && <Glory glory={glory} size={size} />}
@@ -274,7 +271,8 @@ export function GameCard({
                     ? tCardName(t, def.id, targetState.id, targetState.name)
                     : t('card.state', { id: upg.upgradeTo })}
                   {upg.cost.resources?.[0] && (
-                    <span className="gc-action-cost">
+                    <span>
+                      {' '}
                       (
                       {Object.entries(upg.cost.resources[0]).map(([k, v], ci) => {
                         const meta = getResMeta(k);

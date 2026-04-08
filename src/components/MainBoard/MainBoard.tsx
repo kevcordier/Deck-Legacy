@@ -1,6 +1,6 @@
-import { CardRow } from '@components/CardRow';
-import { EmptyState } from '@components/EmptyState';
-import { GameCard } from '@components/GameCard';
+import { CardRow } from '@components/CardRow/CardRow';
+import { EmptyState } from '@components/EmptyState/EmptyState';
+import { GameCard } from '@components/GameCard/GameCard';
 import { Section } from '@components/ui/Section';
 import { Button } from '@components/ui/Button/Button';
 import { Title } from '@components/ui/Title/Title';
@@ -39,8 +39,8 @@ export function MainBoard() {
       {phase === 'preround' && state.round > 0 && (
         <div className="animate-fade-in-scale flex h-full flex-1 flex-col items-center justify-center gap-6 p-6 text-center">
           <div className="text-center">
-            <div className="via-primary h-px min-w-40 bg-linear-to-r from-transparent to-transparent" />
-            <Title level={2}>{t('preround.roundEnded', { round: state.round })}</Title>
+            <div className="via-primary mb-4 h-px min-w-40 bg-linear-to-r from-transparent to-transparent" />
+            <Title level={1}>{t('preround.roundEnded', { round: state.round })}</Title>
           </div>
           <Button onClick={startRound} color="primary" size="md">
             {t('preround.newRound')}
@@ -51,8 +51,8 @@ export function MainBoard() {
       {phase === 'roundpreview' && (
         <div className="animate-fade-in-scale flex h-full flex-1 flex-col items-center justify-center gap-6 p-6 text-center">
           <div className="text-center">
-            <div className="via-primary h-px min-w-40 bg-linear-to-r from-transparent to-transparent" />
-            <Title level={2}>{t('roundpreview.title', { round: state.round })}</Title>
+            <div className="via-primary mb-4 h-px min-w-40 bg-linear-to-r from-transparent to-transparent" />
+            <Title level={1}>{t('roundpreview.title', { round: state.round })}</Title>
             <div className="text-sm italic">{t('roundpreview.subtitle')}</div>
           </div>
 

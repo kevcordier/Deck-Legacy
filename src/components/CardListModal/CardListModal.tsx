@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
-import './CardListModal.css';
-import { GameCard } from '@components/GameCard';
+import { GameCard } from '@components/GameCard/GameCard';
 import type { CardInstance } from '@engine/domain/types';
+import { Modal } from '@components/ui/Modal/Modal';
 
 interface CardListModalProps {
   title: string;
@@ -16,32 +16,19 @@ export function CardListModal({ title, subtitle, cards, onClose, emptyText }: Ca
   const { t } = useTranslation();
 
   const modal = (
-    <div onClick={onClose} className="clm-overlay">
-      <div onClick={e => e.stopPropagation()} className="clm-panel">
-        <div className="clm-header">
-          <div className="clm-header-info">
-            <div className="clm-title">{title}</div>
-            {subtitle && <div className="clm-subtitle">{subtitle}</div>}
-          </div>
-
-          <button onClick={onClose} className="btn-close">
-            ✕
-          </button>
+    <Modal title={title} subtitle={subtitle} onClose={onClose}>
+      {cards.length === 0 ? (
+        <p className="p-2 text-center text-sm text-gray-400 italic">
+          {emptyText ?? t('cardList.noCards')}
+        </p>
+      ) : (
+        <div className="flex flex-wrap gap-4">
+          {cards.map(inst => (
+            <GameCard key={inst.id} instance={inst} />
+          ))}
         </div>
-
-        <div className="clm-content">
-          {cards.length === 0 ? (
-            <div className="clm-empty">{emptyText ?? t('cardList.noCards')}</div>
-          ) : (
-            <div className="clm-grid">
-              {cards.map(inst => (
-                <GameCard key={inst.id} instance={inst} size="sm" />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 
   return createPortal(modal, document.body);

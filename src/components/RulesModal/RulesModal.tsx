@@ -3,7 +3,6 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rulesEn from '../../i18n/locales/rules.en.md?raw';
 import rulesFr from '../../i18n/locales/rules.fr.md?raw';
-import './RulesModal.css';
 import {
   GloryIcon,
   GoldIcon,
@@ -13,7 +12,10 @@ import {
   WeaponIcon,
   WoodIcon,
 } from '@components/ui/Icon';
-import type { ComponentType } from 'react';
+import React from 'react';
+import { Modal } from '@components/ui/Modal/Modal';
+import { Title } from '@components/ui/Title/Title';
+import { Divider } from '@components/ui/Divider/Divider';
 
 interface RulesModalProps {
   onClose: () => void;
@@ -24,7 +26,7 @@ const rulesContent: Record<string, string> = {
   fr: rulesFr,
 };
 
-const ICON_MAP: Record<string, ComponentType> = {
+const ICON_MAP: Record<string, React.ComponentType> = {
   gold: GoldIcon,
   wood: WoodIcon,
   stone: StoneIcon,
@@ -41,13 +43,13 @@ function injectIcons(content: string): string {
   );
 }
 
-function IconImg({ src, alt }: { src?: string; alt?: string }) {
+function IconImg({ src, alt, className }: { src?: string; alt?: string; className?: string }) {
   const key = src?.replace('./', '').replace('.svg', '') ?? '';
   const Icon = ICON_MAP[key];
   if (Icon) {
-    return <Icon />;
+    return React.createElement(Icon, { className } as React.ComponentProps<typeof Icon>);
   }
-  return <img src={src} alt={alt} />;
+  return <img src={src} alt={alt} className={className} />;
 }
 
 export function RulesModal({ onClose }: RulesModalProps) {
@@ -55,23 +57,38 @@ export function RulesModal({ onClose }: RulesModalProps) {
   const raw = rulesContent[i18n.language] ?? rulesEn;
 
   return (
-    <div className="rm-overlay" onClick={onClose}>
-      <div className="rm-panel" onClick={e => e.stopPropagation()}>
-        <div className="rm-header">
-          <div className="rm-title">{t('rules.title')}</div>
-          <button onClick={onClose} className="btn-close">
-            ✕
-          </button>
-        </div>
-        <div className="rm-body">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{ img: ({ src, alt }) => <IconImg src={src} alt={alt} /> }}
-          >
-            {injectIcons(raw)}
-          </ReactMarkdown>
-        </div>
+    <Modal title={t('rules.title')} onClose={onClose}>
+      <div className="flex-1 overflow-y-auto p-4">
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            img: ({ src, alt }) => <IconImg src={src} alt={alt} className="inline-block size-5" />,
+            h1: () => '',
+            h2: ({ children }) => (
+              <Title level={2} className="mb-1 not-first-of-type:mt-2">
+                {children}
+              </Title>
+            ),
+            h3: ({ children }) => (
+              <Title level={3} className="mb-1 not-first-of-type:mt-2">
+                {children}
+              </Title>
+            ),
+            strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+            table: ({ children }) => (
+              <table className="mt-2 w-full border-collapse">{children}</table>
+            ),
+            th: ({ children }) => (
+              <th className="border-border border bg-black/20 px-2 py-1">{children}</th>
+            ),
+            td: ({ children }) => <td className="border-border border px-2 py-1">{children}</td>,
+            hr: () => <Divider />,
+            p: ({ children }) => <p className="mt-2">{children}</p>,
+          }}
+        >
+          {injectIcons(raw)}
+        </ReactMarkdown>
       </div>
-    </div>
+    </Modal>
   );
 }

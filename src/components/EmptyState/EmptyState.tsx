@@ -10,11 +10,11 @@ interface EmptyStateProps {
 export function EmptyState({ title, subtitle, action }: EmptyStateProps) {
   return (
     <div className="animate-fade-in-scale flex h-full flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
-      <div className="via-primary h-px min-w-40 bg-linear-to-r from-transparent to-transparent" />
-      <Title level={2}>{title}</Title>
+      <div className="via-primary mb-4 h-px min-w-40 bg-linear-to-r from-transparent to-transparent" />
+      <Title level={1}>{title}</Title>
       {subtitle && <p className="italic">{subtitle}</p>}
       {action && <div className="pt-2">{action}</div>}
-      <div className="via-primary h-px min-w-40 bg-linear-to-r from-transparent to-transparent" />
+      <div className="via-primary mb-4 h-px min-w-40 bg-linear-to-r from-transparent to-transparent" />
     </div>
   );
 }

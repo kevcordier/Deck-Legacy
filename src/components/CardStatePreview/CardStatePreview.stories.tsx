@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CardStatePreview } from './CardStatePreview';
 import type { CardDef, CardInstance } from '@engine/domain/types';
 import { CardTag, ActionType } from '@engine/domain/enums';
+import { GameProvider } from '@contexts/GameProvider';
+import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 
 const meta: Meta<typeof CardStatePreview> = {
   title: 'Components/CardStatePreview',
@@ -9,6 +11,11 @@ const meta: Meta<typeof CardStatePreview> = {
   parameters: {
     layout: 'centered',
   },
+  render: args => (
+    <GameProvider initialState={{ ...EMPTY_STATE }}>
+      <CardStatePreview {...args} />
+    </GameProvider>
+  ),
 };
 
 export default meta;

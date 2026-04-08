@@ -1,4 +1,4 @@
-import { GameCard } from '@components/GameCard';
+import { GameCard } from '@components/GameCard/GameCard';
 import type { CardInstance } from '@engine/domain/types';
 
 interface CardRowProps {
@@ -12,7 +12,7 @@ export function CardRow({ cardIds, blockingCards, instances }: CardRowProps) {
   const blockerIds = new Set(Object.keys(blockingCards).map(Number));
 
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-wrap gap-4.5">
       {cardIds
         .filter(id => !blockerIds.has(id))
         .map((id, index) => {
@@ -34,7 +34,7 @@ export function CardRow({ cardIds, blockingCards, instances }: CardRowProps) {
                 <GameCard
                   instance={blockerInst}
                   isOnBoard
-                  className="absolute top-8 left-2 z-10"
+                  className="absolute! top-2 left-2 z-30"
                   index={index}
                 />
               </div>

@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CardListModal } from './CardListModal';
 import type { CardInstance } from '@engine/domain/types';
+import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
+import { GameProvider } from '@contexts/GameProvider';
 
 const meta: Meta<typeof CardListModal> = {
   title: 'Components/CardListModal',
@@ -11,6 +13,11 @@ const meta: Meta<typeof CardListModal> = {
   argTypes: {
     onClose: { action: 'closed' },
   },
+  render: args => (
+    <GameProvider initialState={{ ...EMPTY_STATE }}>
+      <CardListModal {...args} />
+    </GameProvider>
+  ),
 };
 
 export default meta;

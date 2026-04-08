@@ -3,7 +3,7 @@ import { GloryIcon, IconColors } from '@components/ui/Icon';
 import { useGame } from '@hooks/useGame';
 import { Stat } from '@components/ui/Stat/Stat';
 import { Divider } from '@components/ui/Divider/Divider';
-import { ResourcePill } from '@components/ResourcePill/ResourcePill';
+import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 
 export function ResourceBar() {
   const { t } = useTranslation();
@@ -16,11 +16,11 @@ export function ResourceBar() {
     <div className="bg-background border-b-border z-100 flex items-stretch gap-6 border-b px-6 py-2">
       <div className="flex items-stretch gap-4">
         <Stat label={t('resourceBar.round')} value={round || '—'} />
-        <Divider />
+        <Divider orientation="vertical" />
         <Stat label={t('resourceBar.turn')} value={turn || '—'} />
       </div>
 
-      <Divider />
+      <Divider orientation="vertical" />
       <div className="flex flex-1 flex-wrap items-center gap-4">
         {entries.length === 0 ? (
           <p className="text-sm text-gray-400 italic">{t('resourceBar.noResources')}</p>
@@ -39,15 +39,15 @@ export function ResourceBar() {
         )}
       </div>
 
-      <Divider />
+      <Divider orientation="vertical" />
 
       <div className="flex items-stretch gap-4">
         <Stat label={t('resourceBar.deck')} value={drawPile.length} />
-        <Divider />
+        <Divider orientation="vertical" />
         <Stat label={t('resourceBar.discard')} value={discardPile.length} />
       </div>
 
-      <Divider />
+      <Divider orientation="vertical" />
 
       <div className="flex items-center gap-2">
         <div className="relative">

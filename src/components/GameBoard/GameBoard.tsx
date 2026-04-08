@@ -1,4 +1,4 @@
-import { DeckViewer } from '@components/DeckViewer';
+import { DeckViewer } from '@components/DeckViewer/DeckViewer';
 import { MainBoard } from '@components/MainBoard/MainBoard';
 import { useGame } from '@hooks/useGame';
 import { useMemo } from 'react';
@@ -23,7 +23,7 @@ export function GameBoard() {
   }, [discardPile, instances]);
 
   return (
-    <div className="flex flex-1 items-stretch gap-4 overflow-hidden">
+    <div className="flex h-full flex-1 items-stretch gap-4 overflow-hidden">
       {phase !== 'pregame' && (
         <DeckViewer
           title={t('deckViewer.draw')}
@@ -39,7 +39,7 @@ export function GameBoard() {
         <DeckViewer
           title={t('deckViewer.discard')}
           deck={discardDeck}
-          displayedCard={discardDeck[0]}
+          displayedCard={discardDeck[discardDeck.length - 1]} // top of discard pile
         />
       )}
     </div>

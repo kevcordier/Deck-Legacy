@@ -3,8 +3,8 @@ type DividerProps = {
   className?: string;
 };
 
-export function Divider({ orientation = 'vertical', className }: DividerProps) {
-  const orientationClass = orientation === 'vertical' ? 'h-auto w-px' : 'h-px w-full';
+export function Divider({ orientation = 'horizontal', className = '' }: DividerProps) {
+  const orientationClass = orientation === 'vertical' ? 'h-auto w-px mx-2' : 'h-px w-full my-2';
   return (
     <div
       className={`bg-ink ${orientationClass} ${className}`}

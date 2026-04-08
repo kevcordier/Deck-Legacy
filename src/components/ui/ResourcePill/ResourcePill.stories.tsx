@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ResourcePill } from './ResourcePill';
 
 const meta: Meta<typeof ResourcePill> = {
-  title: 'Components/Resource/ResourcePill',
+  title: 'UI/ResourcePill',
   component: ResourcePill,
   parameters: {
     layout: 'centered',

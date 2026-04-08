@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { GloryIcon } from '@components/ui/Icon';
-import './GameOverScreen.css';
 import { Button } from '@components/ui/Button/Button';
 
 interface GameOverScreenProps {
@@ -14,7 +13,7 @@ export function GameOverScreen({ score, round, onNewGame }: GameOverScreenProps)
 
   return (
     <div className="bg-background bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center">
-      <div className="bg-card border-border gos-container animate-fade-in-scale flex flex-col items-center gap-6 rounded-lg border p-8">
+      <div className="bg-card border-border animate-fade-in-scale flex flex-col items-center gap-6 rounded-lg border p-8">
         <div className="font-display text-base-primary text-3xl font-semibold tracking-tight">
           {t('gameOver.title')}
         </div>
