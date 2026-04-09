@@ -5,12 +5,22 @@ type ButtonGroupProps = {
   options: ButtonProps[];
   value: string;
   size?: 'xs' | 'sm' | 'md' | 'lg';
+  font?: 'display' | 'body';
   onChange?: (value: string) => void;
+  className?: string;
 };
 
-export function ButtonGroup({ label, options, value, size, onChange }: ButtonGroupProps) {
+export function ButtonGroup({
+  label,
+  options,
+  value,
+  size,
+  font,
+  onChange,
+  className = '',
+}: ButtonGroupProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className={`flex flex-col gap-2 ${className}`}>
       <span className="text-xs">{label}</span>
       <div
         className="rounded-base inline-flex -space-x-px shadow-xs"
@@ -23,6 +33,7 @@ export function ButtonGroup({ label, options, value, size, onChange }: ButtonGro
             key={option.value || JSON.stringify(option.children)}
             color={value === option.value ? 'primary' : 'ink'}
             size={size}
+            font={font}
             className="not-first:not-last:rounded-none first:rounded-e-none last:rounded-s-none"
             onClick={e => (onChange ? onChange(option.value || '') : option.onClick?.(e))}
           >

@@ -5,16 +5,17 @@ export type ModalProps = {
   subtitle?: string | null;
   children: React.ReactNode;
   onClose?: () => void;
+  className?: string;
 };
 
-export function Modal({ title, subtitle, children, onClose }: ModalProps) {
+export function Modal({ title, subtitle, children, onClose, className = '' }: ModalProps) {
   return (
     <div
       className="fixed inset-0 z-200 flex items-center justify-center bg-black/60 backdrop-blur-md"
       onClick={onClose}
     >
       <div
-        className="bg-background border-border scrollbar flex max-h-[80vh] max-w-[80vw] flex-col items-center gap-6 rounded-2xl border p-6"
+        className={`bg-background border-border flex max-h-[80vh] max-w-[80vw] flex-col items-center gap-6 rounded-2xl border p-6 ${className}`}
         onClick={e => e.stopPropagation()}
       >
         <div className="flex w-full items-start justify-between">
@@ -28,7 +29,7 @@ export function Modal({ title, subtitle, children, onClose }: ModalProps) {
             </Button>
           )}
         </div>
-        <div className="flex flex-col gap-6">{children}</div>
+        <div className="scrollbar flex flex-col gap-6">{children}</div>
       </div>
     </div>
   );

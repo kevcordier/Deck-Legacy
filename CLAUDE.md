@@ -75,11 +75,11 @@ The entire game state is derived by replaying an ordered list of `GameEvent` obj
 
 ### Strategy Pattern (Card Actions)
 
-`src/engine/application/cardAction/` contains 10 strategies implementing `CardActionStrategy`:
+`src/engine/application/cardAction/` contains 11 strategies implementing `CardActionStrategy`:
 
 - `AddResourceStrategy`, `AddStickerStrategy`, `BlockCardStrategy`, `ChooseStateStrategy`
-- `DestroyCardStrategy`, `DiscardCardStrategy`, `PlayCardStrategy`, `UpgradeCardStrategy`
-- `PlaceCardInDrawPileStrategy`, (context: `CardActionContext`)
+- `DestroyCardStrategy`, `DiscardCardStrategy`, `DiscoverCardStrategy`, `PlayCardStrategy`
+- `UpgradeCardStrategy`, `PlaceCardInDrawPileStrategy` (context: `CardActionContext`)
 
 When adding new action types, add a new strategy file and register it in `CardActionContext`.
 
@@ -106,9 +106,8 @@ rewindEvent()  canRewind()
 ### Components
 
 - Each component lives in its own subdirectory: `src/components/ComponentName/`
-- Barrel export via `index.ts`
-- Co-located CSS: `ComponentName.css`
 - Co-located tests if needed: `ComponentName.test.ts`
+- Shared UI primitives live under `src/components/ui/` (Button, ButtonGroup, Divider, Glory, Icon, Modal, ResourceChoice, ResourcePill, Section, Stat, Title)
 
 ### Path Aliases (tsconfig.json)
 
@@ -124,6 +123,18 @@ rewindEvent()  canRewind()
 | `@styles/*`     | `src/styles/*`     |
 
 Always use aliases, never relative `../../` chains across major directories.
+
+---
+
+## Styling
+
+The project uses **Tailwind CSS v4** (via `@tailwindcss/vite`). All styling is done with utility classes directly in JSX.
+
+- Single CSS entry point: `src/styles/game.css` — contains the `@import 'tailwindcss'` directive, the `@theme` block (brand colors, fonts, animations), dark mode variants, and a single `@utility scrollbar` helper.
+- No per-component CSS files. Do not create `ComponentName.css` files.
+- Custom design tokens (colors, fonts) are declared in the `@theme` block in `game.css` and are available as Tailwind utilities (e.g. `bg-background`, `text-primary`, `font-display`).
+- Dark mode uses the `[data-theme=dark]` attribute selector via `@custom-variant dark`.
+- `prettier-plugin-tailwindcss` auto-sorts class names on format — do not reorder manually.
 
 ---
 
@@ -151,9 +162,9 @@ npm run test:watch      # Watch mode
 npm run test:coverage   # Coverage report
 ```
 
-18 test files cover:
+19 test files cover:
 
-- All 10 card action strategies
+- All 11 card action strategies
 - Core helpers: `cardHelpers`, `cardSelector`, `costResolver`, `effectResolver`, `factory`, `gameStateHelper`, `resourceHelpers`
 - `GameAggregate`
 
@@ -163,10 +174,10 @@ npm run test:coverage   # Coverage report
 
 ## Code Quality Gates
 
-A **pre-commit hook** (`.githooks/pre-commit`) blocks commits if any of these fail:
+A **pre-commit hook** (Husky + lint-staged, `.husky/pre-commit`) blocks commits if any of these fail:
 
-1. Prettier format check on staged `.ts`/`.tsx`
-2. ESLint (zero warnings)
+1. ESLint auto-fix + Prettier format on staged `.ts`/`.tsx`
+2. Prettier format on staged `.css`/`.json`/`.md`/`.yaml`
 3. Full TypeScript type check
 4. Full test suite
 
@@ -184,6 +195,7 @@ Fix all issues before committing; do not use `--no-verify`.
 - Card text: `src/i18n/locales/cards.en.json`, `src/i18n/locales/cards.fr.json`
 - Language preference persisted to `localStorage` key `deck_legacy_lang`
 - When adding new UI strings, add to **both** locale files. Card name/description additions go in both `cards.*.json` files.
+- Keep locale files lean — only add keys that are actively used in the UI. Remove keys when their component is deleted or refactored away.
 
 ---
 
@@ -238,3 +250,5 @@ npm run build-storybook # Static build
 - **The tsconfig excludes 4 files from typecheck** (`cardActions`, `turnFlow`, `choices`, `eventBuilders`). Do not add more exclusions; fix type errors instead.
 - **Zero-warning ESLint policy.** Warnings become failures in CI.
 - **Test coverage is for `src/engine/`** — UI components are not currently covered; do not rely on coverage numbers for component code.
+- **Do not create per-component CSS files.** Styling is done exclusively with Tailwind utility classes. The only CSS file is `src/styles/game.css`.
+- **Do not add unused i18n keys.** Both locale files must stay in sync and only contain keys actively used in the UI.

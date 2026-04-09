@@ -6,6 +6,7 @@ import { Button } from '@components/ui/Button/Button';
 import { Title } from '@components/ui/Title/Title';
 import { useGame } from '@hooks/useGame';
 import { useTranslation } from 'react-i18next';
+import { Divider } from '@components/ui/Divider/Divider';
 
 export function MainBoard() {
   const { state, phase, startGame, startRound, startTurn } = useGame();
@@ -39,7 +40,7 @@ export function MainBoard() {
       {phase === 'preround' && state.round > 0 && (
         <div className="animate-fade-in-scale flex h-full flex-1 flex-col items-center justify-center gap-6 p-6 text-center">
           <div className="text-center">
-            <div className="via-primary mb-4 h-px min-w-40 bg-linear-to-r from-transparent to-transparent" />
+            <Divider color="gradient" className="mb-4 h-px max-w-40" />
             <Title level={1}>{t('preround.roundEnded', { round: state.round })}</Title>
           </div>
           <Button onClick={startRound} color="primary" size="md">
@@ -51,7 +52,7 @@ export function MainBoard() {
       {phase === 'roundpreview' && (
         <div className="animate-fade-in-scale flex h-full flex-1 flex-col items-center justify-center gap-6 p-6 text-center">
           <div className="text-center">
-            <div className="via-primary mb-4 h-px min-w-40 bg-linear-to-r from-transparent to-transparent" />
+            <Divider color="gradient" className="mb-4 h-px max-w-40" />
             <Title level={1}>{t('roundpreview.title', { round: state.round })}</Title>
             <div className="text-sm italic">{t('roundpreview.subtitle')}</div>
           </div>

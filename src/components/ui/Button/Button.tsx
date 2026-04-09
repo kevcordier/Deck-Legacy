@@ -4,6 +4,7 @@ export type ButtonProps = {
   variant?: 'text' | 'contained' | 'outlined';
   color?: 'primary' | 'danger' | 'ink' | 'base-primary' | 'base-ink';
   size?: 'xs' | 'sm' | 'md' | 'lg';
+  font?: 'display' | 'body';
   value?: string;
   disabled?: boolean;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
@@ -14,6 +15,7 @@ export function Button({
   variant = 'contained',
   color = 'primary',
   size = 'md',
+  font = 'display',
   className = '',
   ...rest
 }: ButtonProps) {
@@ -38,7 +40,7 @@ export function Button({
 
   return (
     <button
-      className={`${colorClasses} ${variantClasses} ${sizeClasses} font-display cursor-pointer rounded font-semibold focus:not-disabled:ring-1 focus:not-disabled:ring-[var(--color-btn-color)] focus:not-disabled:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none ${className}`}
+      className={`${colorClasses} ${variantClasses} ${sizeClasses} ${font === 'body' ? 'font-body' : 'font-display'} cursor-pointer rounded font-semibold focus:not-disabled:ring-1 focus:not-disabled:ring-[var(--color-btn-color)] focus:not-disabled:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none ${className}`}
       onClick={onClick}
       {...rest}
     >

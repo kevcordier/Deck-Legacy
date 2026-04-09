@@ -58,19 +58,19 @@ export function RulesModal({ onClose }: RulesModalProps) {
 
   return (
     <Modal title={t('rules.title')} onClose={onClose}>
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 p-4">
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
             img: ({ src, alt }) => <IconImg src={src} alt={alt} className="inline-block size-5" />,
             h1: () => '',
             h2: ({ children }) => (
-              <Title level={2} className="mb-1 not-first-of-type:mt-2">
+              <Title level={2} className="mb-1 not-first-of-type:mt-3">
                 {children}
               </Title>
             ),
             h3: ({ children }) => (
-              <Title level={3} className="mb-1 not-first-of-type:mt-2">
+              <Title level={3} className="mb-1 not-first-of-type:mt-3">
                 {children}
               </Title>
             ),
@@ -82,7 +82,7 @@ export function RulesModal({ onClose }: RulesModalProps) {
               <th className="border-border border bg-black/20 px-2 py-1">{children}</th>
             ),
             td: ({ children }) => <td className="border-border border px-2 py-1">{children}</td>,
-            hr: () => <Divider />,
+            hr: () => <Divider color="border" />,
             p: ({ children }) => <p className="mt-2">{children}</p>,
           }}
         >
