@@ -9,18 +9,15 @@ import type {
   TriggerEntry,
 } from '@engine/domain/types';
 import type { loadCardDefs, loadStickerDefs } from '@engine/infrastructure/loaders';
-import { createContext, type Dispatch, type SetStateAction } from 'react';
+import { createContext } from 'react';
 
 type GameContextType = {
   gameState: GameState;
-  setGameState: Dispatch<SetStateAction<GameState>>;
   defs: ReturnType<typeof loadCardDefs>;
   stickerDefs: ReturnType<typeof loadStickerDefs>;
   aggRef: React.RefObject<GameAggregate>;
   pendingChoices: PendingChoice[] | null;
-  setPendingChoices: Dispatch<SetStateAction<PendingChoice[] | null>>;
   triggerPile: Record<string, TriggerEntry> | null;
-  setTriggerPile: Dispatch<SetStateAction<Record<string, TriggerEntry> | null>>;
   currentProductionRef: React.RefObject<{
     instanceId: number;
     resources: Resources;
@@ -32,6 +29,30 @@ type GameContextType = {
     resolvedAction: ResolvedAction[];
     triggerId: string;
   } | null>;
+  triggerAction: (
+    instanceId: number,
+    effect: Effect,
+    resolvedCost: ResolvedCost,
+    triggerId: string,
+  ) => void;
+  sync: () => void;
+  loadGame: () => void;
+  deleteSave: () => void;
+  startGame: () => void;
+  startRound: () => void;
+  startTurn: () => void;
+  resolveProduction: (instanceId: number, chosenResource?: Resources) => void;
+  resolveAction: (instanceId: number, actionId: string) => void;
+  resolveTrackStep: (instanceId: number, stepId: number) => void;
+  resolveUpgrade: (instanceId: number, chosenUpgradeTo?: number) => void;
+  progress: () => void;
+  endTurnVoluntary: () => void;
+  resolvePlayerChoice: (choice: ResolvedAction) => void;
+  resolvePayCost: (resolved: ResolvedCost) => void;
+  skipTrigger: (uuid: string) => void;
+  skipChoice: (uuid: string) => void;
+  canRewind: () => boolean;
+  rewindEvent: () => void;
 };
 
 export const GameContext = createContext<GameContextType>({} as GameContextType);

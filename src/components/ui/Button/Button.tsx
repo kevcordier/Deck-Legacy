@@ -40,7 +40,7 @@ export function Button({
 
   return (
     <button
-      className={`${colorClasses} ${variantClasses} ${sizeClasses} ${font === 'body' ? 'font-body' : 'font-display'} cursor-pointer rounded font-semibold focus:not-disabled:ring-1 focus:not-disabled:ring-[var(--color-btn-color)] focus:not-disabled:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none ${className}`}
+      className={`${colorClasses} ${variantClasses} ${sizeClasses} ${font === 'body' ? 'font-body' : 'font-display'} focus:not-disabled:ring-((--color-btn-color)) cursor-pointer rounded font-semibold focus:not-disabled:ring-1 focus:not-disabled:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none ${className}`}
       onClick={onClick}
       {...rest}
     >

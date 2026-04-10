@@ -1,16 +1,15 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
-      "@engine/*": ["src/engine/*"],
-      "@data/*": ["src/data/*"],
-      "@components/*": ["src/components/*"],
-      "@pages/*": ["src/pages/*"],
-      "@helpers/*": ["src/helpers/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@contexts/*": ["src/contexts/*"],
-      "@i18n/*": ["src/i18n/*"],
-      "@styles/*": ["src/styles/*"]
+      "@engine/*": ["./src/engine/*"],
+      "@data/*": ["./src/data/*"],
+      "@components/*": ["./src/components/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@helpers/*": ["./src/helpers/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@contexts/*": ["./src/contexts/*"],
+      "@i18n/*": ["./src/i18n/*"],
+      "@styles/*": ["./src/styles/*"]
     },
     "target": "ES2020",
     "useDefineForClassFields": true,
