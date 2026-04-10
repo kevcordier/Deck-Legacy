@@ -27,7 +27,7 @@ import {
 import deckData from '@data/deck.json';
 import { deleteSave, loadSave, saveGame } from '@engine/infrastructure/persistence';
 import type { Resources } from 'i18next';
-import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { mergeResources } from '@engine/application/gameStateHelper';
 
 function makeAggregate(
@@ -163,7 +163,9 @@ export function GameProvider({
     setTriggerPile(triggers);
   }, [triggerAction, setGameState, aggRef, setTriggerPile, defs, setParchmentTextPending]);
 
-  syncRef.current = sync;
+  useLayoutEffect(() => {
+    syncRef.current = sync;
+  });
 
   // ── Démarrage ─────────────────────────────────────────────────────────────
 
