@@ -69,6 +69,8 @@ export function GameProvider({
 
   // ─── Sync ───────────────────────────────────────────────────────────────
 
+  const syncRef = useRef<() => void>(() => {});
+
   const triggerAction = useCallback(
     (instanceId: number, effect: Effect, resolvedCost: ResolvedCost, triggerId: string) => {
       const gs = aggRef.current.getGameState();
@@ -136,14 +138,13 @@ export function GameProvider({
       return;
     }
 
-    // If there's only one non optional trigger in the trigger pile, automatically set it as the only pending choice.
+    // If there's only one non optional trigger in the trigger pile, automatically fire it and re-sync.
     if (
       Object.entries(gs.triggerPile).length === 1 &&
       gs.triggerPile[Object.keys(gs.triggerPile)[0]].effectDef.optional !== true
     ) {
       const [triggerId, trigger] = Object.entries(gs.triggerPile)[0];
 
-      delete triggers[triggerId];
       triggerAction(
         trigger.sourceInstanceId,
         trigger.effectDef,
@@ -155,12 +156,14 @@ export function GameProvider({
         triggerId,
       );
 
-      setGameState(aggRef.current.getGameState());
-      saveGame(aggRef.current.getEvents(), aggRef.current.getSaveState());
+      syncRef.current();
+      return;
     }
 
     setTriggerPile(triggers);
   }, [triggerAction, setGameState, aggRef, setTriggerPile, defs, setParchmentTextPending]);
+
+  syncRef.current = sync;
 
   // ── Démarrage ─────────────────────────────────────────────────────────────
 
