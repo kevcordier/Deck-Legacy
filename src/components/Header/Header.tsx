@@ -27,8 +27,9 @@ export function Header() {
       <Title level={2}>{t('game.title')}</Title>
 
       <div className="align-center flex gap-2">
+        {/* Gameplay buttons — hidden on mobile (moved to bottom action bar) */}
         {phase === 'playing' && (
-          <>
+          <div className="hidden items-center gap-2 md:flex">
             {canRewind() && (
               <Button
                 onClick={() => rewindEvent()}
@@ -57,7 +58,7 @@ export function Header() {
             >
               {t('header.endTurn')}
             </Button>
-          </>
+          </div>
         )}
         <Button onClick={() => setRulesOpen(true)} color="danger" size="xs" title={t('rules.open')}>
           ?

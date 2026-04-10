@@ -15,7 +15,7 @@ export function Modal({ title, subtitle, children, onClose, className = '' }: Mo
       onClick={onClose}
     >
       <div
-        className={`bg-background border-border flex max-h-[80vh] max-w-[80vw] flex-col items-start justify-start gap-6 rounded-2xl border p-6 ${className}`}
+        className={`bg-background border-border flex h-screen w-screen flex-col items-start justify-start gap-6 rounded-none border-0 p-4 md:h-auto md:max-h-[80vh] md:w-auto md:max-w-[80vw] md:rounded-2xl md:border md:p-6 ${className}`}
         onClick={e => e.stopPropagation()}
       >
         <div className="flex w-full items-start justify-between">
