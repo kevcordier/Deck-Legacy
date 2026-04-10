@@ -7,7 +7,6 @@ interface ResourceChoiceProps {
   disabled?: boolean;
   onSelect: (r: Resources) => void;
   size?: 'sm' | 'md' | 'lg';
-  variant?: 'text' | 'outlined';
 }
 
 export function ResourceChoice({
@@ -15,7 +14,6 @@ export function ResourceChoice({
   disabled = false,
   onSelect,
   size = 'md',
-  variant = 'text',
 }: ResourceChoiceProps) {
   return (
     <div className="flex items-center gap-2">
@@ -26,9 +24,9 @@ export function ResourceChoice({
           <Button
             key={i}
             onClick={() => onSelect(opt)}
-            variant={variant}
+            variant="text"
             disabled={disabled}
-            className={`transition-transform hover:scale-[1.02] ${variant === 'text' ? 'p-0!' : ''}`}
+            className="transition-transform hover:scale-[1.02]"
           >
             {Array.from({ length: val }, (_, j) => (
               <ResourcePill key={`${key}-${j}`} resource={key} size={size} />

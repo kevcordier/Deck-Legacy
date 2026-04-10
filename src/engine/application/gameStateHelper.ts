@@ -79,7 +79,7 @@ export function getCurrentPhase(state: GameState): Phase {
   const isGameStarted = state.round > 0 || state.drawPile.length > 0;
   const deckEmpty = state.drawPile.length === 0;
   if (!isGameStarted) phase = 'pregame';
-  else if (state.round === 0) phase = 'preround';
+  else if (state.round === 0 && Object.keys(state.triggerPile).length > 0) phase = 'preround';
   else if (state.board.length === 0 && state.turn === 0 && !deckEmpty && state.round > 1)
     phase = 'roundpreview';
   else phase = 'playing';

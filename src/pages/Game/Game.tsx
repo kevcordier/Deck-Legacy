@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
 import { useGame } from '@hooks/useGame';
 import { ResourceBar } from '@components/ResourceBar/ResourceBar';
 import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
-import { OptionsModal } from '@components/OptionsModal';
+import { OptionsModal } from '@components/OptionsModal/OptionsModal';
 import { RulesModal } from '@components/RulesModal/RulesModal';
 import { Header } from '@components/Header/Header';
 import { useGameUI } from '@hooks/useGameInterface';
@@ -14,23 +13,16 @@ export function Game() {
     defs,
     pendingChoices,
     triggerPile,
-    hasSave,
     phase,
-    loadGame,
     deleteSave,
-    startGame,
     resolveAction,
     resolvePlayerChoice,
     resolvePayCost,
     skipTrigger,
+    skipChoice,
   } = useGame();
 
   const { setOptionsOpen, setRulesOpen, optionsOpen, rulesOpen } = useGameUI();
-
-  useEffect(() => {
-    if (hasSave) loadGame();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <div className="z-1 flex h-screen flex-col">
@@ -51,6 +43,7 @@ export function Game() {
           resolvePayCost={resolvePayCost}
           onResolveTrigger={resolveAction}
           onSkipTrigger={skipTrigger}
+          onSkipChoice={skipChoice}
         />
       )}
 
@@ -61,7 +54,6 @@ export function Game() {
           onClose={() => setOptionsOpen(false)}
           onReset={() => {
             deleteSave();
-            startGame();
           }}
         />
       )}

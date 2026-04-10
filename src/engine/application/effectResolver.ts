@@ -14,6 +14,7 @@ export function resolveActionEffect(
   instanceId: number,
   gameState?: GameState,
   defs?: Record<number, CardDef>,
+  isMandatory = false,
 ): [ResolvedAction, PendingChoice[]] {
   const resolverAction: ResolvedAction = {
     id: `${instanceId}-${action.id}`,
@@ -39,6 +40,7 @@ export function resolveActionEffect(
           sourceInstanceId: instanceId,
           choices,
           pickCount: action.cards.number ?? 1,
+          isMandatory,
         });
       }
     }
@@ -53,6 +55,7 @@ export function resolveActionEffect(
         sourceInstanceId: instanceId,
         choices: action.resources.choice as Resources[],
         pickCount: 1,
+        isMandatory,
       });
     } else if (action.resources.cards) {
       const choices = gameState
@@ -70,6 +73,7 @@ export function resolveActionEffect(
           sourceInstanceId: instanceId,
           choices,
           pickCount: action.resources.cards.number ?? 1,
+          isMandatory,
         });
       }
     } else {
@@ -96,6 +100,7 @@ export function resolveActionEffect(
         sourceInstanceId: instanceId,
         choices: action.states,
         pickCount: 1,
+        isMandatory,
       });
     }
   }

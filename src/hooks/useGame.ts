@@ -1,8 +1,7 @@
-import { useState, useCallback, useMemo, useRef, useContext } from 'react';
+import { useCallback, useMemo, useContext } from 'react';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import type {
   GameState,
-  GameEvent,
   CardDef,
   Sticker,
   Resources,
@@ -15,7 +14,7 @@ import type {
 import { PendingChoiceType } from '@engine/domain/enums';
 import { loadInitialStickerStock } from '@engine/infrastructure/loaders';
 import { createInstance } from '@engine/application/factory';
-import { saveGame, loadSave, deleteSave, hasSave } from '@engine/infrastructure/persistence';
+import { saveGame, loadSave, deleteSave } from '@engine/infrastructure/persistence';
 import {
   getActiveState,
   getEffectiveProductions,
@@ -33,13 +32,11 @@ import type { Phase } from '@engine/domain/types/Phase';
 
 export type GameHook = {
   state: GameState;
-  events: GameEvent[];
   defs: Record<number, CardDef>;
   stickerDefs: Record<number, Sticker>;
   score: number;
   pendingChoices: PendingChoice[] | null;
   triggerPile: Record<string, TriggerEntry> | null;
-  hasSave: boolean;
   phase: Phase;
   loadGame: () => void;
   deleteSave: () => void;
@@ -55,6 +52,7 @@ export type GameHook = {
   resolvePlayerChoice: (choice: ResolvedAction) => void;
   resolvePayCost: (resolved: ResolvedCost) => void;
   skipTrigger: (uuid: string) => void;
+  skipChoice: (uuid: string) => void;
   canRewind: () => boolean;
   rewindEvent: () => void;
 };
@@ -71,21 +69,19 @@ function makeAggregate(
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useGame(): GameHook {
-  const { gameState, setGameState, defs, stickerDefs, aggRef } = useContext(GameContext);
-  const [events, setEvents] = useState<GameEvent[]>([]);
-  const [pendingChoices, setPendingChoices] = useState<PendingChoice[] | null>(null);
-  const [triggerPile, setTriggerPile] = useState<Record<string, TriggerEntry> | null>(null);
-  const currentProductionRef = useRef<{
-    instanceId: number;
-    resources: Resources;
-  } | null>(null);
-  const currentActionRef = useRef<{
-    instanceId: number;
-    action: Effect;
-    resolvedCost: ResolvedCost | null;
-    resolvedAction: ResolvedAction[];
-    triggerId: string;
-  } | null>(null);
+  const {
+    gameState,
+    setGameState,
+    defs,
+    stickerDefs,
+    aggRef,
+    pendingChoices,
+    setPendingChoices,
+    triggerPile,
+    setTriggerPile,
+    currentProductionRef,
+    currentActionRef,
+  } = useContext(GameContext);
 
   const triggerAction = useCallback(
     (instanceId: number, effect: Effect, resolvedCost: ResolvedCost, triggerId: string) => {
@@ -99,12 +95,17 @@ export function useGame(): GameHook {
       const effects: ResolvedAction[] = [];
       const choices: PendingChoice[] = [];
       for (const eff of effect.actions) {
-        const [resolvedAction, pendingChoices] = resolveActionEffect(eff, instanceId, gs, defs);
+        const [resolvedAction, pendingChoices] = resolveActionEffect(
+          eff,
+          instanceId,
+          gs,
+          defs,
+          true,
+        );
 
         effects.push(resolvedAction);
         choices.push(...pendingChoices);
       }
-
       // If there are pending choices to resolve the effects, set them and return early to wait for resolution
       if (choices.length > 0) {
         currentActionRef.current = {
@@ -117,7 +118,6 @@ export function useGame(): GameHook {
         setPendingChoices(choices);
         return;
       }
-
       // If no pending choices are needed to resolve the effects, proceed to trigger the action immediately
       return aggRef.current.useCardEffect(
         effects,
@@ -127,7 +127,7 @@ export function useGame(): GameHook {
         triggerId,
       );
     },
-    [defs, aggRef],
+    [defs, aggRef, setPendingChoices, currentActionRef],
   );
 
   // ── Synchronisation aggregate → React state ───────────────────────────────
@@ -146,7 +146,8 @@ export function useGame(): GameHook {
     ) {
       const [triggerId, trigger] = Object.entries(gs.triggerPile)[0];
 
-      const event = triggerAction(
+      delete triggers[triggerId];
+      triggerAction(
         trigger.sourceInstanceId,
         trigger.effectDef,
         {
@@ -156,13 +157,13 @@ export function useGame(): GameHook {
         },
         triggerId,
       );
-      delete triggers[triggerId];
 
-      if (event) setEvents(prev => [...prev, event]);
+      setGameState(aggRef.current.getGameState());
+      saveGame(aggRef.current.getEvents(), aggRef.current.getSaveState());
     }
 
     setTriggerPile(triggers);
-  }, [triggerAction, setGameState, aggRef]);
+  }, [triggerAction, setGameState, aggRef, setTriggerPile]);
 
   // ── Score ─────────────────────────────────────────────────────────────────
 
@@ -192,32 +193,27 @@ export function useGame(): GameHook {
     );
 
     const agg = makeAggregate(gameState, defs);
-    const startEvent = agg.gameStarted(
+    agg.gameStarted(
       allInstances,
       initialDeck,
       loadInitialStickerStock() as Record<string, number>,
       discoveryPile,
     );
 
-    const roundEvent = agg.roundStarted();
-    const turnEvent = agg.turnStarted();
-    const events: GameEvent[] = [startEvent, roundEvent];
-    if (turnEvent) events.push(turnEvent);
+    agg.roundStarted();
+    agg.turnStarted();
     aggRef.current = agg;
-    setEvents(prev => [...prev, ...events]);
     sync();
   }, [defs, sync, aggRef, gameState]);
 
   const startRound = useCallback(() => {
-    const event = aggRef.current.roundStarted();
-    setEvents(prev => [...prev, event]);
+    aggRef.current.roundStarted();
     sync();
   }, [sync, aggRef]);
 
   const startTurn = useCallback(() => {
     const event = aggRef.current.turnStarted();
     if (!event) return;
-    setEvents(prev => [...prev, event]);
     sync();
   }, [sync, aggRef]);
 
@@ -229,23 +225,20 @@ export function useGame(): GameHook {
     const agg = makeAggregate(save.saveState, defs);
     agg.loadFromHistory(save.events);
     aggRef.current = agg;
-    setEvents([...agg.getEvents()]);
     sync();
   }, [sync, aggRef, defs]);
 
   const deleteSaveCallback = useCallback(() => {
     deleteSave();
-    aggRef.current = makeAggregate(gameState, defs);
-    setPendingChoices(null);
-    startGame();
-  }, [startGame, aggRef, gameState, defs]);
+    aggRef.current = makeAggregate({ ...EMPTY_STATE }, defs);
+    setGameState(aggRef.current.getGameState());
+  }, [setGameState, aggRef, defs]);
 
   // ── Card actions ──────────────────────────────────────────────────────────
 
   const triggerProduction = useCallback(
     (instanceId: number, resourcesGained: Record<string, number>) => {
-      const event = aggRef.current.cardProduced(instanceId, resourcesGained);
-      setEvents(prev => [...prev, event]);
+      aggRef.current.cardProduced(instanceId, resourcesGained);
       sync();
     },
     [sync, aggRef],
@@ -266,11 +259,12 @@ export function useGame(): GameHook {
         setPendingChoices([
           {
             id: `${instanceId}-production`,
-            kind: 'production',
+            kind: 'PRODUCTION',
             type: PendingChoiceType.CHOOSE_RESOURCE,
             sourceInstanceId: instanceId,
             choices: productions,
             pickCount: 1,
+            isMandatory: false,
           },
         ]);
         return;
@@ -282,7 +276,7 @@ export function useGame(): GameHook {
       const resourcesGained = getEffectiveProductions(base, inst, stickerDefs);
       triggerProduction(instanceId, resourcesGained);
     },
-    [defs, triggerProduction, stickerDefs, aggRef],
+    [defs, triggerProduction, stickerDefs, aggRef, currentProductionRef, setPendingChoices],
   );
 
   const resolveAction = useCallback(
@@ -317,17 +311,11 @@ export function useGame(): GameHook {
       }
 
       // if no pending choices are needed to pay the cost, proceed to trigger the action immediately
-      const event = triggerAction(
-        instanceId,
-        action,
-        resolvedCost,
-        triggerId ?? crypto.randomUUID(),
-      );
-      if (event) setEvents(prev => [...prev, event]);
+      triggerAction(instanceId, action, resolvedCost, triggerId ?? crypto.randomUUID());
 
       sync();
     },
-    [triggerAction, defs, sync, aggRef],
+    [triggerAction, defs, sync, aggRef, currentActionRef, setPendingChoices],
   );
 
   const resolveTrackStep = useCallback(
@@ -351,7 +339,7 @@ export function useGame(): GameHook {
       });
 
       const triggerId = crypto.randomUUID();
-      const event = aggRef.current.useCardEffect(
+      aggRef.current.useCardEffect(
         effects,
         resolvedCost,
         false,
@@ -360,7 +348,6 @@ export function useGame(): GameHook {
         stepId,
         instanceId,
       );
-      setEvents(prev => [...prev, event]);
       sync();
     },
     [defs, sync, aggRef],
@@ -382,12 +369,7 @@ export function useGame(): GameHook {
       if (!upgrade) return;
       if (!canAffordResources(gs.resources, upgrade.cost)) return;
 
-      const event = aggRef.current.upgradeCard(
-        instanceId,
-        upgrade.upgradeTo,
-        upgrade.cost.resources?.[0] ?? {},
-      );
-      setEvents(prev => [...prev, event]);
+      aggRef.current.upgradeCard(instanceId, upgrade.upgradeTo, upgrade.cost.resources?.[0] ?? {});
       sync();
     },
     [defs, sync, aggRef],
@@ -398,13 +380,11 @@ export function useGame(): GameHook {
   const progress = useCallback(() => {
     const event = aggRef.current.advance();
     if (!event) return;
-    setEvents(prev => [...prev, event]);
     sync();
   }, [sync, aggRef]);
 
   const endTurnVoluntary = useCallback(() => {
-    const event = aggRef.current.pass();
-    setEvents(prev => [...prev, event]);
+    aggRef.current.pass();
     sync();
   }, [sync, aggRef]);
 
@@ -452,29 +432,52 @@ export function useGame(): GameHook {
           const resolvedCost = currentActionRef.current.resolvedCost;
           const triggerId = currentActionRef.current.triggerId;
           currentActionRef.current = null;
-          const event = aggRef.current.useCardEffect(
+          aggRef.current.useCardEffect(
             resolvedAction,
             resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
             !action.passive && !action.trigger,
             def.parchmentCard,
             triggerId,
           );
-          setEvents(prev => [...prev, event]);
           sync();
           setPendingChoices(pendingChoices);
         }
       }
     },
-    [sync, pendingChoices, triggerProduction, stickerDefs, defs, aggRef],
+    [
+      sync,
+      pendingChoices,
+      triggerProduction,
+      stickerDefs,
+      defs,
+      aggRef,
+      currentActionRef,
+      currentProductionRef,
+      setPendingChoices,
+    ],
   );
 
-  const skipTrigger = useCallback((uuid: string) => {
-    setTriggerPile(prev => {
-      const updated = { ...prev };
-      delete updated[uuid];
-      return Object.keys(updated).length > 0 ? updated : null;
-    });
-  }, []);
+  const skipTrigger = useCallback(
+    (uuid: string) => {
+      setTriggerPile(prev => {
+        const updated = { ...prev };
+        delete updated[uuid];
+        return Object.keys(updated).length > 0 ? updated : null;
+      });
+    },
+    [setTriggerPile],
+  );
+
+  const skipChoice = useCallback(
+    (uuid: string) => {
+      setPendingChoices(prev => {
+        if (!prev) return null;
+        const updated = prev.filter(choice => choice.id !== uuid);
+        return updated.length > 0 ? updated : null;
+      });
+    },
+    [setPendingChoices],
+  );
 
   // This function is called when the player has made a choice needed to pay an action's cost.
   const resolvePayCost = useCallback(
@@ -503,16 +506,15 @@ export function useGame(): GameHook {
         updated.shift();
         return updated.length ? updated : null;
       });
-      const event = triggerAction(
+      triggerAction(
         currentActionRef.current.instanceId,
         currentActionRef.current.action,
         currentActionRef.current.resolvedCost,
         currentActionRef.current.triggerId,
       );
-      if (event) setEvents(prev => [...prev, event]);
       sync();
     },
-    [triggerAction, sync],
+    [triggerAction, sync, currentActionRef, setPendingChoices],
   );
 
   // ── Rewind  ───────────────────────────────────────────────────────────
@@ -529,22 +531,18 @@ export function useGame(): GameHook {
     const agg = makeAggregate(saveState, defs);
     agg.loadFromHistory(aggEvent.slice(0, -1));
     aggRef.current = agg;
-    const truncated = events.slice(0, -1);
-    setEvents([...truncated]);
     sync();
-  }, [events, sync, defs, aggRef]);
+  }, [sync, defs, aggRef]);
 
   // ── Result ──────────────────────────────────────────────────────────────
 
   return {
     state: gameState,
-    events,
     defs,
     stickerDefs,
     score,
     pendingChoices,
     triggerPile,
-    hasSave: hasSave(),
     phase,
     loadGame,
     deleteSave: deleteSaveCallback,
@@ -560,6 +558,7 @@ export function useGame(): GameHook {
     resolvePlayerChoice,
     resolvePayCost,
     skipTrigger,
+    skipChoice,
     canRewind,
     rewindEvent,
   };

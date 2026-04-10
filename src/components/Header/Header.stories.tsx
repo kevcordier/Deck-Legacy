@@ -34,21 +34,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Pregame: Story = {};
 
-export const Preround: Story = {
-  args: {
-    round: 1,
-    drawPile: [1, 2, 3],
-    turn: 0,
-  },
-};
-
-export const RoundPreview: Story = {
-  args: {
-    round: 2,
-    drawPile: [1, 2, 3],
-  },
-};
-
 export const Playing: Story = {
   args: {
     round: 2,

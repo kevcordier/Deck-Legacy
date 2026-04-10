@@ -3,7 +3,7 @@ import { EmptyState } from './EmptyState';
 import { Button } from '@components/ui/Button/Button';
 
 const meta: Meta<typeof EmptyState> = {
-  title: 'Components/EmptyState',
+  title: 'UI/EmptyState',
   component: EmptyState,
   parameters: {
     layout: 'centered',

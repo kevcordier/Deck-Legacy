@@ -15,7 +15,7 @@ export function Modal({ title, subtitle, children, onClose, className = '' }: Mo
       onClick={onClose}
     >
       <div
-        className={`bg-background border-border flex max-h-[80vh] max-w-[80vw] flex-col items-center gap-6 rounded-2xl border p-6 ${className}`}
+        className={`bg-background border-border flex max-h-[80vh] max-w-[80vw] flex-col items-start justify-start gap-6 rounded-2xl border p-6 ${className}`}
         onClick={e => e.stopPropagation()}
       >
         <div className="flex w-full items-start justify-between">
@@ -29,7 +29,7 @@ export function Modal({ title, subtitle, children, onClose, className = '' }: Mo
             </Button>
           )}
         </div>
-        <div className="scrollbar flex flex-col gap-6">{children}</div>
+        <div className="scrollbar flex flex-col justify-start gap-6 p-1">{children}</div>
       </div>
     </div>
   );

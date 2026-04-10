@@ -7,9 +7,6 @@ import { useTranslation } from 'react-i18next';
 export function Header() {
   const { t } = useTranslation();
   const {
-    startGame,
-    startRound,
-    startTurn,
     progress,
     endTurnVoluntary,
     rewindEvent,
@@ -30,21 +27,6 @@ export function Header() {
       <Title level={2}>{t('game.title')}</Title>
 
       <div className="align-center flex gap-2">
-        {phase === 'pregame' && (
-          <Button onClick={startGame} size="xs" variant="outlined">
-            {t('header.newGame')}
-          </Button>
-        )}
-        {phase === 'preround' && (
-          <Button onClick={startRound} disabled={haveChoiceToDo} size="xs" variant="outlined">
-            {state.round === 0 ? t('header.start') : t('header.newRound')}
-          </Button>
-        )}
-        {phase === 'roundpreview' && (
-          <Button onClick={startTurn} disabled={haveChoiceToDo} size="xs" variant="outlined">
-            {t('roundpreview.start')}
-          </Button>
-        )}
         {phase === 'playing' && (
           <>
             {canRewind() && (

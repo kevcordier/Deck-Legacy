@@ -20,7 +20,7 @@ export function ButtonGroup({
   className = '',
 }: ButtonGroupProps) {
   return (
-    <div className={`flex flex-col gap-2 ${className}`}>
+    <div className={`flex flex-col items-start justify-start gap-2 ${className}`}>
       <span className="text-xs">{label}</span>
       <div
         className="rounded-base inline-flex -space-x-px shadow-xs"

@@ -1,4 +1,4 @@
-import { GloryIcon, IconColors } from '@components/ui/Icon';
+import { GloryIcon, IconColors } from '@components/ui/Icon/icon';
 
 type GloryProps = {
   glory: number;

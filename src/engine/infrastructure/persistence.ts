@@ -59,7 +59,3 @@ export function deleteSave(): void {
     // ignore
   }
 }
-
-export function hasSave(): boolean {
-  return !!localStorage.getItem(SAVE_KEY);
-}

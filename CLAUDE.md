@@ -193,6 +193,7 @@ Fix all issues before committing; do not use `--no-verify`.
 - Languages: English (`en`) and French (`fr`)
 - UI strings: `src/i18n/locales/en.json`, `src/i18n/locales/fr.json`
 - Card text: `src/i18n/locales/cards.en.json`, `src/i18n/locales/cards.fr.json`
+- Game rules: `src/i18n/locales/rules.en.md`, `src/i18n/locales/rules.fr.md` — Markdown files imported as raw strings by `RulesModal` and rendered with `react-markdown`. Icon placeholders (`{{gold}}`, `{{glory}}`, …) are replaced with inline SVG icons at render time.
 - Language preference persisted to `localStorage` key `deck_legacy_lang`
 - When adding new UI strings, add to **both** locale files. Card name/description additions go in both `cards.*.json` files.
 - Keep locale files lean — only add keys that are actively used in the UI. Remove keys when their component is deleted or refactored away.
@@ -239,6 +240,14 @@ Component stories live alongside components. Run with:
 npm run storybook       # Dev server on :6006
 npm run build-storybook # Static build
 ```
+
+### Story conventions
+
+- Stories are co-located next to their component: `ComponentName/ComponentName.stories.tsx`
+- All shared UI primitives under `src/components/ui/` have stories (Button, ButtonGroup, Divider, Glory, Icon, Modal, ResourceChoice, ResourcePill, Section, Stat, Title).
+- Feature components that require game context use `GameProvider` with `EMPTY_STATE` as a decorator or inside `render`.
+- Use `title: 'UI/ComponentName'` for primitives and `title: 'Components/ComponentName'` for feature components.
+- When adding a new UI primitive or feature component, add a corresponding `.stories.tsx` file.
 
 ---
 

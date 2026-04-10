@@ -11,7 +11,7 @@ import {
   StoneIcon,
   WeaponIcon,
   WoodIcon,
-} from '@components/ui/Icon';
+} from '@components/ui/Icon/icon';
 import React from 'react';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Title } from '@components/ui/Title/Title';

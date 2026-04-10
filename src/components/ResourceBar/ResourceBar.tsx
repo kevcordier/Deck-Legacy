@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { GloryIcon, IconColors } from '@components/ui/Icon';
+import { GloryIcon, IconColors } from '@components/ui/Icon/icon';
 import { useGame } from '@hooks/useGame';
 import { Stat } from '@components/ui/Stat/Stat';
 import { Divider } from '@components/ui/Divider/Divider';

@@ -8,7 +8,7 @@ import {
   WeaponIcon,
   WoodIcon,
   type IconProps,
-} from '@components/ui/Icon';
+} from '@components/ui/Icon/icon';
 import type { Resources } from '@engine/domain/types';
 import type { ComponentType } from 'react';
 

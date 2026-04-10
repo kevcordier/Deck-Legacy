@@ -1,6 +1,5 @@
 import type { GameEventType } from '@engine/domain/enums';
 import type {
-  CardDef,
   CardInstance,
   GameState,
   ResolvedCost,
@@ -58,7 +57,6 @@ export interface UpgradeCardEvent extends GameEvent {
 export interface UseCardEffectEvent extends GameEvent {
   type: GameEventType.USE_CARD_EFFECT;
   gameState: GameState;
-  cardDefs: Record<number, CardDef>;
   resolvedCost: ResolvedCost;
   triggerId: string;
   sourceInstanceId: number;

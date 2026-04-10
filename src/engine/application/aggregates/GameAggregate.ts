@@ -399,7 +399,7 @@ export class GameAggregate {
           break;
         }
         case ActionType.DISCOVER_CARD: {
-          cardActionContext.setStrategy(new DiscoverCardStrategy());
+          cardActionContext.setStrategy(new DiscoverCardStrategy(this.cardDefs));
           break;
         }
         case ActionType.DESTROY_CARD: {
@@ -441,7 +441,6 @@ export class GameAggregate {
       id: crypto.randomUUID(),
       type: GameEventType.USE_CARD_EFFECT,
       timestamp: Date.now(),
-      cardDefs: this.cardDefs,
       gameState,
       resolvedCost,
       sourceInstanceId: explicitSourceInstanceId ?? effects[0]?.sourceInstanceId ?? -1,

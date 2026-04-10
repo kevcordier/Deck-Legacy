@@ -5,6 +5,8 @@ import { Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState } from '@engine/domain/types';
 
 export class DiscoverCardStrategy implements CardActionStrategy {
+  constructor(private cardDefs: Record<number, CardDef>) {}
+
   applyEffect(
     gameState: GameState,
     payload: {
@@ -12,15 +14,14 @@ export class DiscoverCardStrategy implements CardActionStrategy {
       type: string;
       sourceInstanceId: number;
       instanceId: number;
-      cardDefs: Record<number, CardDef>;
     },
   ): GameState {
-    const gs = JSON.parse(JSON.stringify(gameState)) as GameState; // Deep clone to avoid mutating original state
+    const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
 
-    const cardDef = payload.cardDefs[gameState.instances[payload.instanceId].cardId];
+    const cardDef = this.cardDefs[gameState.instances[payload.instanceId].cardId];
     const triggerEffects = getInstancesTriggerEffects(
       [gameState.instances[payload.instanceId]],
-      payload.cardDefs,
+      this.cardDefs,
       Trigger.ON_DISCOVER,
     );
     if (triggerEffects.length > 0) {
@@ -28,6 +29,7 @@ export class DiscoverCardStrategy implements CardActionStrategy {
         gs.triggerPile[crypto.randomUUID()] = effect;
       });
     }
+    gs.lastAddedIds.push(payload.instanceId);
     if (cardDef.permanent) {
       gs.permanents.push(payload.instanceId);
 

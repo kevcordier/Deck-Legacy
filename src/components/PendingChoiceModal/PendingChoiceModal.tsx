@@ -9,7 +9,7 @@ import type {
   ResolvedCost,
   TriggerEntry,
 } from '@engine/domain/types';
-import { TriggerIcon } from '@components/ui/Icon';
+import { TriggerIcon } from '@components/ui/Icon/icon';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { GameCard } from '@components/GameCard/GameCard';
 import { PendingChoiceType } from '@engine/domain/enums';
@@ -36,6 +36,7 @@ interface PendingChoiceModalProps {
   resolvePayCost(resolved: ResolvedCost): void;
   onResolveTrigger(sourceInstanceId: number, actionId: string, triggerId: string): void;
   onSkipTrigger(uuid: string): void;
+  onSkipChoice(uuid: string): void;
 }
 
 export function PendingChoiceModal({
@@ -47,6 +48,7 @@ export function PendingChoiceModal({
   resolvePayCost,
   onResolveTrigger,
   onSkipTrigger,
+  onSkipChoice,
 }: PendingChoiceModalProps) {
   const { t } = useTranslation();
 
@@ -121,7 +123,7 @@ export function PendingChoiceModal({
   // ── choose_card ──────────────────────────────────────────────────────
   if (choice && choice.type === PendingChoiceType.CHOOSE_CARD) {
     const handleCardClick = (instanceId: number) => {
-      if (choice.kind === 'cost') {
+      if (choice.kind === 'COST') {
         resolvePayCost({ resources: {}, discardedCardIds: [instanceId], destroyedCardIds: [] });
       } else {
         resolvePlayerChoice({
@@ -196,7 +198,7 @@ export function PendingChoiceModal({
   // ── choose_resource ────────────────────────────────────────────────────
   if (choice && choice.type === PendingChoiceType.CHOOSE_RESOURCE) {
     const handleResourceSelect = (r: Resources) => {
-      if (choice.kind === 'cost') {
+      if (choice.kind === 'COST') {
         resolvePayCost({ resources: r, discardedCardIds: [], destroyedCardIds: [] });
       } else {
         resolvePlayerChoice({
@@ -217,15 +219,15 @@ export function PendingChoiceModal({
           (c): c is Resources => typeof c !== 'number' && typeof c !== 'string',
         )}
         size="lg"
-        variant="outlined"
-        disabled={true}
         onSelect={handleResourceSelect}
       />
     );
   }
 
+  const onClose = choice?.isMandatory === false ? () => onSkipChoice(choice.id) : undefined;
+
   return (
-    <Modal title={title} subtitle={subtitle}>
+    <Modal title={title} onClose={onClose} subtitle={subtitle}>
       {content}
     </Modal>
   );

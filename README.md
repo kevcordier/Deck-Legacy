@@ -44,18 +44,18 @@ Open [http://localhost:5173/Deck-Legacy/](http://localhost:5173/Deck-Legacy/) in
 
 ### Available Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Development server with hot reload |
-| `npm run build` | Production build (`dist/`) |
-| `npm run test` | Run unit tests once |
-| `npm run test:watch` | Run tests in watch mode |
+| Command                 | Description                          |
+| ----------------------- | ------------------------------------ |
+| `npm run dev`           | Development server with hot reload   |
+| `npm run build`         | Production build (`dist/`)           |
+| `npm run test`          | Run unit tests once                  |
+| `npm run test:watch`    | Run tests in watch mode              |
 | `npm run test:coverage` | Coverage report for the engine layer |
-| `npm run lint` | ESLint (zero-warning policy) |
-| `npm run lint:fix` | Auto-fix ESLint violations |
-| `npm run typecheck` | TypeScript check without emit |
-| `npm run format` | Prettier format `src/` |
-| `npm run storybook` | Component explorer on port 6006 |
+| `npm run lint`          | ESLint (zero-warning policy)         |
+| `npm run lint:fix`      | Auto-fix ESLint violations           |
+| `npm run typecheck`     | TypeScript check without emit        |
+| `npm run format`        | Prettier format `src/`               |
+| `npm run storybook`     | Component explorer on port 6006      |
 
 ---
 
@@ -95,6 +95,17 @@ src/
 **Strategy Pattern** — Each card action type (AddResource, Upgrade, Destroy, etc.) is an independent strategy, making new mechanics easy to add.
 
 For full architectural details, see [CLAUDE.md](./CLAUDE.md).
+
+---
+
+## Rules
+
+The full game rules are available in both languages:
+
+- [Rules (English)](src/i18n/locales/rules.en.md)
+- [Règles (Français)](src/i18n/locales/rules.fr.md)
+
+In-game, click the **Rules** button in the header to open the rules modal at any time.
 
 ---
 

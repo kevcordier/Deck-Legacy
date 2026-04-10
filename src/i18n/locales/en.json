@@ -66,7 +66,11 @@
       "DISCOVER_CARD": "Choose {{count}} card to discover",
       "DISCOVER_CARD_other": "Choose {{count}} cards to discover",
       "DESTROY_CARD": "Choose {{count}} card to destroy",
-      "DESTROY_CARD_other": "Choose {{count}} cards to destroy"
+      "DESTROY_CARD_other": "Choose {{count}} cards to destroy",
+      "COST": "Choose {{count}} card to pay the cost",
+      "COST_other": "Choose {{count}} cards to pay the cost",
+      "BLOCK_CARD": "Choose {{count}} card to block",
+      "BLOCK_CARD_other": "Choose {{count}} cards to block"
     },
     "chooseState": "Choose a state",
     "chooseStateSubtitle": "This card has two sides. Choose which one you want to play.",

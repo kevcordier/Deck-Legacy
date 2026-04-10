@@ -335,7 +335,11 @@ describe('getCurrentPhase', () => {
   });
 
   it('returns "preround" when round is 0 but game has started', () => {
-    const gs = makeGameState({ round: 0, drawPile: [1, 2, 3] });
+    const gs = makeGameState({
+      round: 0,
+      drawPile: [1, 2, 3],
+      triggerPile: { 1: { sourceInstanceId: 1, effectDef: { label: 'E1', actions: [] } } },
+    });
     expect(getCurrentPhase(gs)).toBe('preround');
   });
 

@@ -7,6 +7,7 @@ export function resolveCost(
   instanceId: number,
   gameState: GameState,
   defs: Record<number, CardDef>,
+  isMandatory = false,
 ): [ResolvedCost, PendingChoice[]] {
   const pendingChoices: PendingChoice[] = [];
   const resolvedCost: ResolvedCost = {
@@ -21,11 +22,12 @@ export function resolveCost(
     } else {
       pendingChoices.push({
         id: `${instanceId}-cost`,
-        kind: 'cost',
+        kind: 'COST',
         type: PendingChoiceType.CHOOSE_RESOURCE,
         sourceInstanceId: instanceId,
         choices: cost.resources,
         pickCount: 1,
+        isMandatory,
       });
     }
   }
@@ -41,11 +43,12 @@ export function resolveCost(
     } else {
       pendingChoices.push({
         id: `${instanceId}-discard`,
-        kind: 'cost',
+        kind: 'COST',
         type: PendingChoiceType.CHOOSE_CARD,
         sourceInstanceId: instanceId,
         choices: candidates,
         pickCount: cost.discard.number ?? 1,
+        isMandatory,
       });
     }
   }
@@ -59,11 +62,12 @@ export function resolveCost(
     } else {
       pendingChoices.push({
         id: `${instanceId}-destroy`,
-        kind: 'cost',
+        kind: 'COST',
         type: PendingChoiceType.CHOOSE_CARD,
         sourceInstanceId: instanceId,
         choices: candidates,
         pickCount: cost.destroy.number ?? 1,
+        isMandatory,
       });
     }
   }

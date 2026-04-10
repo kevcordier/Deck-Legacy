@@ -1,7 +1,17 @@
 import { GameContext } from '@contexts/GameContext';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
-import type { CardDef, GameState } from '@engine/domain/types';
+import type {
+  CardDef,
+  Effect,
+  GameEvent,
+  GameState,
+  PendingChoice,
+  ResolvedAction,
+  ResolvedCost,
+  TriggerEntry,
+} from '@engine/domain/types';
 import { loadCardDefs, loadStickerDefs } from '@engine/infrastructure/loaders';
+import type { Resources } from 'i18next';
 import { useMemo, useRef, useState, type ReactNode } from 'react';
 
 function makeAggregate(
@@ -14,14 +24,31 @@ function makeAggregate(
 export function GameProvider({
   children,
   initialState,
+  initialEvents = [],
 }: {
   children: ReactNode;
   initialState?: GameState;
+  initialEvents?: GameEvent[];
 }) {
   const defs = useMemo(() => loadCardDefs(), []);
   const stickerDefs = useMemo(() => loadStickerDefs(), []);
-  const [gameState, setGameState] = useState<GameState>({ ...EMPTY_STATE, ...initialState });
-  const aggRef = useRef<GameAggregate>(makeAggregate(gameState, defs));
+  const agg = makeAggregate(initialState, defs);
+  agg.loadFromHistory(initialEvents);
+  const aggRef = useRef<GameAggregate>(agg);
+  const [gameState, setGameState] = useState<GameState>(agg.getGameState());
+  const [pendingChoices, setPendingChoices] = useState<PendingChoice[] | null>(null);
+  const [triggerPile, setTriggerPile] = useState<Record<string, TriggerEntry> | null>(null);
+  const currentProductionRef = useRef<{
+    instanceId: number;
+    resources: Resources;
+  } | null>(null);
+  const currentActionRef = useRef<{
+    instanceId: number;
+    action: Effect;
+    resolvedCost: ResolvedCost | null;
+    resolvedAction: ResolvedAction[];
+    triggerId: string;
+  } | null>(null);
 
   return (
     <GameContext.Provider
@@ -31,6 +58,12 @@ export function GameProvider({
         defs,
         stickerDefs,
         aggRef,
+        pendingChoices,
+        setPendingChoices,
+        triggerPile,
+        setTriggerPile,
+        currentProductionRef,
+        currentActionRef,
       }}
     >
       {children}

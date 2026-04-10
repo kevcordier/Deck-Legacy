@@ -114,9 +114,27 @@ describe('tagClass', () => {
     );
   });
 
+  it('returns tag class for "person"', () => {
+    expect(tagClass('person', false)).toBe(
+      'bg-base-ink/10 border border-base-ink/20 bg-yellow-500/10 border-yellow-500/20',
+    );
+  });
+
   it('returns tag class for "seafaring"', () => {
     expect(tagClass('seafaring', false)).toBe(
       'bg-base-ink/10 border border-base-ink/20 bg-sky-500/10 border-sky-300/20',
+    );
+  });
+
+  it('returns tag class for "land"', () => {
+    expect(tagClass('land', false)).toBe(
+      'bg-base-ink/10 border border-base-ink/20 bg-green-500/10 border-green-500/20',
+    );
+  });
+
+  it('returns tag class for "livestock"', () => {
+    expect(tagClass('livestock', false)).toBe(
+      'bg-base-ink/10 border border-base-ink/20 bg-orange-500/10 border-orange-500/20',
     );
   });
 

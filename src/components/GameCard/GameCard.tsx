@@ -13,7 +13,13 @@ import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview'
 import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import type { CardInstance, Resources } from '@engine/domain/types';
 import { TargetScope } from '@engine/domain/enums';
-import { ActivatedIcon, DestroyIcon, PassifIcon, TimeIcon, TriggerIcon } from '@components/ui/Icon';
+import {
+  ActivatedIcon,
+  DestroyIcon,
+  PassifIcon,
+  TimeIcon,
+  TriggerIcon,
+} from '@components/ui/Icon/icon';
 import { useGame } from '@hooks/useGame';
 import { Button } from '@components/ui/Button/Button';
 import { Glory } from '@components/ui/Glory/Glory';

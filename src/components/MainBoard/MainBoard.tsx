@@ -1,15 +1,13 @@
 import { CardRow } from '@components/CardRow/CardRow';
-import { EmptyState } from '@components/EmptyState/EmptyState';
+import { EmptyState } from '@components/ui/EmptyState/EmptyState';
 import { GameCard } from '@components/GameCard/GameCard';
-import { Section } from '@components/ui/Section';
+import { Section } from '@components/ui/Section/Section';
 import { Button } from '@components/ui/Button/Button';
-import { Title } from '@components/ui/Title/Title';
 import { useGame } from '@hooks/useGame';
 import { useTranslation } from 'react-i18next';
-import { Divider } from '@components/ui/Divider/Divider';
 
 export function MainBoard() {
-  const { state, phase, startGame, startRound, startTurn } = useGame();
+  const { state, phase, startGame, startRound } = useGame();
   const { t } = useTranslation();
   return (
     <main className="scrollbar flex flex-1 flex-col gap-6 p-4">
@@ -37,26 +35,16 @@ export function MainBoard() {
         />
       )}
 
-      {phase === 'preround' && state.round > 0 && (
-        <div className="animate-fade-in-scale flex h-full flex-1 flex-col items-center justify-center gap-6 p-6 text-center">
-          <div className="text-center">
-            <Divider color="gradient" className="mb-4 h-px max-w-40" />
-            <Title level={1}>{t('preround.roundEnded', { round: state.round })}</Title>
-          </div>
-          <Button onClick={startRound} color="primary" size="md">
-            {t('preround.newRound')}
-          </Button>
-        </div>
-      )}
-
       {phase === 'roundpreview' && (
-        <div className="animate-fade-in-scale flex h-full flex-1 flex-col items-center justify-center gap-6 p-6 text-center">
-          <div className="text-center">
-            <Divider color="gradient" className="mb-4 h-px max-w-40" />
-            <Title level={1}>{t('roundpreview.title', { round: state.round })}</Title>
-            <div className="text-sm italic">{t('roundpreview.subtitle')}</div>
-          </div>
-
+        <EmptyState
+          title={t('roundpreview.title', { round: state.round })}
+          subtitle={t('roundpreview.subtitle')}
+          action={
+            <Button onClick={startRound} color="primary" size="md">
+              {t('roundpreview.start')}
+            </Button>
+          }
+        >
           {state.lastAddedIds.length > 0 && (
             <div className="flex flex-wrap items-center justify-center gap-4">
               {state.lastAddedIds.map((id: number) => {
@@ -66,14 +54,10 @@ export function MainBoard() {
               })}
             </div>
           )}
-
-          <Button onClick={startTurn} color="primary" size="md">
-            {t('roundpreview.start')}
-          </Button>
-        </div>
+        </EmptyState>
       )}
 
-      {state.board.length > 0 && (
+      {phase === 'playing' && state.board.length > 0 && (
         <Section
           title={t('sections.tableau')}
           subtitle={`${t('cardCount', { count: state.board.length })}`}
@@ -86,7 +70,7 @@ export function MainBoard() {
         </Section>
       )}
 
-      {state.permanents.length > 0 && (
+      {phase === 'playing' && state.permanents.length > 0 && (
         <Section
           title={t('sections.permanents')}
           subtitle={t('cardCount', { count: state.permanents.length })}

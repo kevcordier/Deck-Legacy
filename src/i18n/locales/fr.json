@@ -66,7 +66,11 @@
       "DISCOVER_CARD": "Choisissez {{count}} carte à découvrir",
       "DISCOVER_CARD_other": "Choisissez {{count}} cartes à découvrir",
       "DESTROY_CARD": "Choisissez {{count}} carte à détruire",
-      "DESTROY_CARD_other": "Choisissez {{count}} cartes à détruire"
+      "DESTROY_CARD_other": "Choisissez {{count}} cartes à détruire",
+      "COST": "Choisissez {{count}} carte comme coût",
+      "COST_other": "Choisissez {{count}} cartes comme coût",
+      "BLOCK_CARD": "Choisissez {{count}} carte à bloquer",
+      "BLOCK_CARD_other": "Choisissez {{count}} cartes à bloquer"
     },
     "chooseState": "Choisir un état",
     "chooseStateSubtitle": "Cette carte a deux faces. Choisissez celle que vous voulez jouer.",

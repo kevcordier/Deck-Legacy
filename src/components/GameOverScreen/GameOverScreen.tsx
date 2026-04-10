@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { GloryIcon } from '@components/ui/Icon';
+import { GloryIcon } from '@components/ui/Icon/icon';
 import { Button } from '@components/ui/Button/Button';
 
 interface GameOverScreenProps {
