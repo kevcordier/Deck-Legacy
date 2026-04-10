@@ -1,12 +1,12 @@
 import { useMemo, useContext } from 'react';
 import type {
-  GameState,
   CardDef,
-  Sticker,
-  Resources,
+  GameState,
   PendingChoice,
-  ResolvedCost,
   ResolvedAction,
+  ResolvedCost,
+  Resources,
+  Sticker,
   TriggerEntry,
 } from '@engine/domain/types';
 import { computeScore, getCurrentPhase } from '@engine/application/gameStateHelper';
@@ -38,6 +38,8 @@ export type GameHook = {
   resolvePayCost: (resolved: ResolvedCost) => void;
   skipTrigger: (uuid: string) => void;
   skipChoice: (uuid: string) => void;
+  parchmentTextPending: CardDef | null;
+  dismissParchmentText: () => void;
   canRewind: () => boolean;
   rewindEvent: () => void;
 };
@@ -66,6 +68,8 @@ export function useGame(): GameHook {
     resolvePayCost,
     skipTrigger,
     skipChoice,
+    parchmentTextPending,
+    dismissParchmentText,
     canRewind,
     rewindEvent,
   } = useContext(GameContext);
@@ -104,6 +108,8 @@ export function useGame(): GameHook {
     resolvePayCost,
     skipTrigger,
     skipChoice,
+    parchmentTextPending,
+    dismissParchmentText,
     canRewind,
     rewindEvent,
   };

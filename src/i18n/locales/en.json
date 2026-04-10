@@ -1,4 +1,7 @@
 {
+  "parchmentCard": {
+    "continue": "Continue"
+  },
   "game": {
     "title": "Deck Legacy",
     "subtitle": "A deck-building game"

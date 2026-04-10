@@ -1640,6 +1640,16 @@ export const cardsData: CardDef[] = [
     id: 15,
     name: 'Stop',
     parchmentCard: true,
+    text: `
+## Stop! 
+Now that you have got the hang of the game, you may reset to start again if you like to give it your best shot. If you continue, you will discover 4 cards, cards 24-27. Look at them now and THEN decide if you want to restart or continue.
+
+Cards 25, 26, and 27 are **permanent** cards, meaning they are never shuffled into your deck and cannot be discarded. They are always visible and active, but are not counted as "in play"
+
+The Army and Treasury are track cards. They let you spend your turn ({{time}}) and resources ({{weapon}}/{{gold}}) to gain fame . Export is a tally card. It doesn't end your turn ({{passif}}) and lets you spend trade goods ({{goods}}) to gain stickers, new cards, and other cool effects.
+
+You will not be able to complete all tracks before the game ends. Try to get as far as possible!
+    `,
     states: [
       {
         id: 1,
@@ -1651,13 +1661,6 @@ export const cardsData: CardDef[] = [
               'Now that you have got the hang of the game, you may reset to start again if you like to give it your best shot. If you continue, you will discover 4 cards, cards 24-27. Look at them now and THEN decide if you want to restart or continue. After this card comes the legacy part of the game, where some cards will permanently change over the course of the game. You will not be able to reset the game once you continue down this road.',
             trigger: Trigger.ON_DISCOVER,
             actions: [
-              {
-                id: 1,
-                type: ActionType.DISCOVER_CARD,
-                cards: {
-                  ids: [24],
-                },
-              },
               {
                 id: 2,
                 type: ActionType.DISCOVER_CARD,
@@ -1679,6 +1682,13 @@ export const cardsData: CardDef[] = [
                   ids: [27],
                 },
               },
+              {
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  ids: [24],
+                },
+              },
             ],
           },
         ],
@@ -1689,6 +1699,21 @@ export const cardsData: CardDef[] = [
     id: 16,
     name: 'Stop',
     parchmentCard: true,
+    text: `
+## Fertile Soil 
+
+This land seems to grow anything you put into the ground.
+
+Add sticker 1 ({{gold}}) as production to a land.
+
+## Efficiency 
+
+You're getting the hang of this!
+
+Choose 1 **building** and **boost** its production (add a resource sticker to it to make it produce 1 more of a resource it already produces. Resource stickers are numbered 1-6 on the sticker sheet).
+
+(Reminder: When discovering a parchment card like this, follow all its instructions, then destroy this.)
+    `,
     states: [
       {
         id: 1,

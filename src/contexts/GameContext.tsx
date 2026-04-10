@@ -1,5 +1,6 @@
 import type { GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import type {
+  CardDef,
   Effect,
   GameState,
   PendingChoice,
@@ -51,6 +52,8 @@ type GameContextType = {
   resolvePayCost: (resolved: ResolvedCost) => void;
   skipTrigger: (uuid: string) => void;
   skipChoice: (uuid: string) => void;
+  parchmentTextPending: CardDef | null;
+  dismissParchmentText: () => void;
   canRewind: () => boolean;
   rewindEvent: () => void;
 };

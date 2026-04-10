@@ -1,7 +1,7 @@
 import { Button } from '@components/ui/Button/Button';
 
 export type ModalProps = {
-  title: string;
+  title?: string;
   subtitle?: string | null;
   children: React.ReactNode;
   onClose?: () => void;
@@ -19,10 +19,12 @@ export function Modal({ title, subtitle, children, onClose, className = '' }: Mo
         onClick={e => e.stopPropagation()}
       >
         <div className="flex w-full items-start justify-between">
-          <div>
-            <div className="text-primary font-bold uppercase">{title}</div>
-            {subtitle && <div className="text-ink text-sm">{subtitle}</div>}
-          </div>
+          {title || subtitle ? (
+            <div>
+              {title && <div className="text-primary font-bold uppercase">{title}</div>}
+              {subtitle && <div className="text-ink text-sm">{subtitle}</div>}
+            </div>
+          ) : null}
           {onClose && (
             <Button onClick={onClose} variant="text" color="ink" size="sm">
               ✕

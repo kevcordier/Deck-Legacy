@@ -8,6 +8,7 @@ export type CardDef = {
   chooseState?: boolean; // the player chooses the state at discovery time
   states: CardState[];
   parchmentCard?: boolean;
+  text?: string;
 };
 
 export type StepDef = {

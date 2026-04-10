@@ -54,6 +54,7 @@ export function GameProvider({
   const [gameState, setGameState] = useState<GameState>(agg.getGameState());
   const [pendingChoices, setPendingChoices] = useState<PendingChoice[] | null>(null);
   const [triggerPile, setTriggerPile] = useState<Record<string, TriggerEntry> | null>(null);
+  const [parchmentTextPending, setParchmentTextPending] = useState<CardDef | null>(null);
   const currentProductionRef = useRef<{
     instanceId: number;
     resources: Resources;
@@ -122,6 +123,19 @@ export function GameProvider({
     saveGame(aggRef.current.getEvents(), aggRef.current.getSaveState());
 
     const triggers = gs.triggerPile;
+
+    // If any trigger comes from a parchment card with text, show the text modal first.
+    const parchmentTrigger = Object.values(triggers).find(t => {
+      const inst = gs.instances[t.sourceInstanceId];
+      return inst && defs[inst.cardId]?.parchmentCard && defs[inst.cardId]?.text;
+    });
+    if (parchmentTrigger) {
+      const inst = gs.instances[parchmentTrigger.sourceInstanceId];
+      setParchmentTextPending(defs[inst.cardId]);
+      setTriggerPile(null);
+      return;
+    }
+
     // If there's only one non optional trigger in the trigger pile, automatically set it as the only pending choice.
     if (
       Object.entries(gs.triggerPile).length === 1 &&
@@ -146,7 +160,7 @@ export function GameProvider({
     }
 
     setTriggerPile(triggers);
-  }, [triggerAction, setGameState, aggRef, setTriggerPile]);
+  }, [triggerAction, setGameState, aggRef, setTriggerPile, defs, setParchmentTextPending]);
 
   // ── Démarrage ─────────────────────────────────────────────────────────────
 
@@ -431,6 +445,12 @@ export function GameProvider({
     ],
   );
 
+  const dismissParchmentText = useCallback(() => {
+    setParchmentTextPending(null);
+    const gs = aggRef.current.getGameState();
+    setTriggerPile(gs.triggerPile);
+  }, [aggRef, setTriggerPile]);
+
   const skipTrigger = useCallback(
     (uuid: string) => {
       setTriggerPile(prev => {
@@ -536,6 +556,8 @@ export function GameProvider({
         resolvePayCost,
         skipTrigger,
         skipChoice,
+        parchmentTextPending,
+        dismissParchmentText,
         canRewind,
         rewindEvent,
       }}

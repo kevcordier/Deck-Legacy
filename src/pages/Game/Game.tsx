@@ -1,5 +1,6 @@
 import { useGame } from '@hooks/useGame';
 import { ResourceBar } from '@components/ResourceBar/ResourceBar';
+import { ParchmentModal } from '@components/ParchmentModal/ParchmentModal';
 import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
 import { OptionsModal } from '@components/OptionsModal/OptionsModal';
 import { RulesModal } from '@components/RulesModal/RulesModal';
@@ -20,6 +21,8 @@ export function Game() {
     resolvePayCost,
     skipTrigger,
     skipChoice,
+    parchmentTextPending,
+    dismissParchmentText,
   } = useGame();
 
   const { setOptionsOpen, setRulesOpen, optionsOpen, rulesOpen } = useGameUI();
@@ -31,6 +34,10 @@ export function Game() {
       {phase !== 'pregame' && <ResourceBar />}
 
       <GameBoard />
+
+      {parchmentTextPending && (
+        <ParchmentModal def={parchmentTextPending} onContinue={dismissParchmentText} />
+      )}
 
       {((pendingChoices && pendingChoices.length > 0) ||
         (triggerPile && Object.keys(triggerPile).length > 0)) && (
