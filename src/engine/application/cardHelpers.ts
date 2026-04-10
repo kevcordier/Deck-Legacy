@@ -7,8 +7,8 @@ import type {
   Sticker,
   TriggerEntry,
 } from '@engine/domain/types';
-import { mergeResources } from '@engine/application/resourceHelpers';
 import { ActionType, TargetScope, Trigger } from '@engine/domain/enums';
+import { mergeResources } from '@engine/application/gameStateHelper';
 
 export function getEffectiveProductions(
   base: Resources,

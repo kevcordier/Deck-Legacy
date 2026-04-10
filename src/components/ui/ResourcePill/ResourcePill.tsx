@@ -1,5 +1,5 @@
+import { getResMeta } from '@helpers/renderHelpers';
 import { useTranslation } from 'react-i18next';
-import { getResMeta } from '@engine/application/resourceHelpers';
 
 interface ResourcePillProps {
   resource: string;

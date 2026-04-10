@@ -1,14 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { tCardName, tCardActionLabel, tCardActionDescription, tCardTag } from '@i18n/cardI18n';
+import { tCardName, tCardActionLabel, tCardActionDescription, tCardTag } from '@helpers/cardI18n';
 import {
   getActiveState,
   getEffectiveProductions,
   tagClass,
   canAffordResources,
 } from '@engine/application/cardHelpers';
-import { renderTextWithIcons } from '@engine/application/renderHelpers';
-import { getResMeta } from '@engine/application/resourceHelpers';
+import { getResMeta, renderTextWithIcons } from '@helpers/renderHelpers';
 import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview';
 import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import type { CardInstance, Resources } from '@engine/domain/types';

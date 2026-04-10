@@ -20,8 +20,7 @@ import {
   getEffectiveProductions,
   canAffordResources,
 } from '@engine/application/cardHelpers';
-import { computeScore, getCurrentPhase } from '@engine/application/gameStateHelper';
-import { mergeResources } from '@engine/application/resourceHelpers';
+import { computeScore, getCurrentPhase, mergeResources } from '@engine/application/gameStateHelper';
 import deckData from '@data/deck.json';
 import { resolveActionEffect } from '@engine/application/effectResolver';
 import { resolveCost } from '@engine/application/costResolver';

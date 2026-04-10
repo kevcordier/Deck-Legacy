@@ -1,9 +1,9 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import en from './locales/en.json';
-import fr from './locales/fr.json';
-import cardsEn from './locales/cards.en.json';
-import cardsFr from './locales/cards.fr.json';
+import en from '../i18n/locales/en.json';
+import fr from '../i18n/locales/fr.json';
+import cardsEn from '../i18n/locales/cards.en.json';
+import cardsFr from '../i18n/locales/cards.fr.json';
 
 const LANG_KEY = 'deck_legacy_lang';
 

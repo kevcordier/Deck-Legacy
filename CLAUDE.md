@@ -30,11 +30,12 @@ The codebase follows Clean Architecture / Domain-Driven Design, split into three
 
 ```
 src/
-├── engine/
+├── engine/              # Agnostic engine
 │   ├── domain/          # Pure types, enums, interfaces — zero logic
 │   ├── application/     # Use cases, business logic, orchestration
 │   └── infrastructure/  # localStorage persistence, data loaders
 ├── components/          # React UI components (feature folders)
+├── helpers/             # Helpers use in React
 ├── hooks/               # Custom React hooks
 ├── data/                # Static game data (cards, stickers, deck)
 ├── i18n/                # i18next setup + EN/FR locale files
@@ -162,12 +163,6 @@ npm run test:watch      # Watch mode
 npm run test:coverage   # Coverage report
 ```
 
-19 test files cover:
-
-- All 11 card action strategies
-- Core helpers: `cardHelpers`, `cardSelector`, `costResolver`, `effectResolver`, `factory`, `gameStateHelper`, `resourceHelpers`
-- `GameAggregate`
-
 **When adding new engine logic:** always add corresponding unit tests. Keep tests isolated — construct minimal `GameState`/`CardDef` fixtures rather than importing real game data.
 
 ---
@@ -179,7 +174,8 @@ A **pre-commit hook** (Husky + lint-staged, `.husky/pre-commit`) blocks commits 
 1. ESLint auto-fix + Prettier format on staged `.ts`/`.tsx`
 2. Prettier format on staged `.css`/`.json`/`.md`/`.yaml`
 3. Full TypeScript type check
-4. Full test suite
+4. Dependecy cruiser validation
+5. Full test suite
 
 CI (`.github/workflows/deploy.yml`) also runs lint → typecheck → format check → tests before deploying to GitHub Pages.
 

@@ -7,7 +7,7 @@ import { useGame } from '@hooks/useGame';
 import { useTranslation } from 'react-i18next';
 
 export function MainBoard() {
-  const { state, phase, startGame, startRound } = useGame();
+  const { state, phase, startGame, startTurn } = useGame();
   const { t } = useTranslation();
   return (
     <main className="scrollbar flex flex-1 flex-col gap-6 p-4">
@@ -23,24 +23,12 @@ export function MainBoard() {
         />
       )}
 
-      {phase === 'preround' && state.round === 0 && (
-        <EmptyState
-          title={t('pregame.readyToPlay')}
-          subtitle={t('pregame.deckShuffled', { count: state.drawPile.length })}
-          action={
-            <Button onClick={startRound} color="primary" size="md">
-              {t('pregame.startGame')}
-            </Button>
-          }
-        />
-      )}
-
       {phase === 'roundpreview' && (
         <EmptyState
           title={t('roundpreview.title', { round: state.round })}
           subtitle={t('roundpreview.subtitle')}
           action={
-            <Button onClick={startRound} color="primary" size="md">
+            <Button onClick={startTurn} color="primary" size="md">
               {t('roundpreview.start')}
             </Button>
           }

@@ -1,6 +1,6 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
+import { mergeResources } from '@engine/application/gameStateHelper';
 import type { GameState, Resources } from '@engine/domain/types';
-import { mergeResources } from '@engine/application/resourceHelpers';
 
 export class AddResourceStrategy implements CardActionStrategy {
   applyEffect(

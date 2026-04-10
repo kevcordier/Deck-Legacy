@@ -13,7 +13,7 @@ import { TriggerIcon } from '@components/ui/Icon/icon';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { GameCard } from '@components/GameCard/GameCard';
 import { PendingChoiceType } from '@engine/domain/enums';
-import { tCardName, tCardActionLabel } from '@i18n/cardI18n';
+import { tCardName, tCardActionLabel } from '@helpers/cardI18n';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Button } from '@components/ui/Button/Button';
 

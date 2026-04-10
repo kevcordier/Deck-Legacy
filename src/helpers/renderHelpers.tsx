@@ -1,8 +1,39 @@
 import React from 'react';
-import { getResMeta } from './resourceHelpers';
+import {
+  CrownIcon,
+  GloryIcon,
+  GoldIcon,
+  GoodsIcon,
+  IronIcon,
+  StoneIcon,
+  WeaponIcon,
+  WoodIcon,
+  type IconProps,
+} from '@components/ui/Icon/icon';
 
 // Detects tokens like {{gold}}, {{wood}}, etc. in translated texts
 const ICON_TOKEN = /\{\{(gold|wood|stone|iron|weapon|goods|glory)\}\}/g;
+
+const RESOURCE_META: Record<
+  string,
+  {
+    icon?: React.ComponentType<IconProps>;
+    cls: string;
+    label: string;
+  }
+> = {
+  gold: { icon: GoldIcon, cls: 'color:gold', label: 'resources.gold' },
+  wood: { icon: WoodIcon, cls: 'color:brown', label: 'resources.wood' },
+  stone: { icon: StoneIcon, cls: 'color:gray', label: 'resources.stone' },
+  iron: { icon: IronIcon, cls: 'color:lightsteelblue', label: 'resources.iron' },
+  weapon: { icon: WeaponIcon, cls: 'color:orangered', label: 'resources.weapon' },
+  goods: { icon: GoodsIcon, cls: 'color:limegreen', label: 'resources.goods' },
+  glory: { icon: GloryIcon, cls: 'color:gold', label: 'resources.glory' },
+};
+
+export function getResMeta(key: string) {
+  return RESOURCE_META[key] ?? { icon: CrownIcon, cls: 'color:gold', label: key };
+}
 
 /**
  * Replaces {{resource}} tokens in a text with the corresponding SVG icon.

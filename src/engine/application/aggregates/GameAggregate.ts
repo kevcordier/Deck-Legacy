@@ -34,9 +34,9 @@ import {
   discardCards,
   drawCards,
   endTurn,
+  mergeResources,
   spendResources,
 } from '@engine/application/gameStateHelper';
-import { mergeResources } from '@engine/application/resourceHelpers';
 import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { ChoseStateStrategy } from '@engine/application/cardAction/ChoseStateStrategy';
 import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
