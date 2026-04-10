@@ -13,15 +13,15 @@ export function ResourceBar() {
   const entries = Object.entries(resources).filter(([, v]) => v > 0);
 
   return (
-    <div className="bg-background border-b-border z-100 flex items-stretch gap-6 border-b px-6 py-2">
-      <div className="flex items-stretch gap-4">
+    <div className="bg-background border-b-border scrollbar z-100 flex items-stretch gap-3 overflow-x-auto border-b px-3 py-1 md:gap-6 md:px-6 md:py-2">
+      <div className="flex shrink-0 items-stretch gap-2 md:gap-4">
         <Stat label={t('resourceBar.round')} value={round || '—'} />
         <Divider orientation="vertical" />
         <Stat label={t('resourceBar.turn')} value={turn || '—'} />
       </div>
 
       <Divider orientation="vertical" />
-      <div className="flex flex-1 flex-wrap items-center gap-4">
+      <div className="flex shrink-0 flex-wrap items-center gap-2 md:gap-4">
         {entries.length === 0 ? (
           <p className="text-sm text-gray-400 italic">{t('resourceBar.noResources')}</p>
         ) : (
@@ -41,7 +41,7 @@ export function ResourceBar() {
 
       <Divider orientation="vertical" />
 
-      <div className="flex items-stretch gap-4">
+      <div className="flex shrink-0 items-stretch gap-2 md:gap-4">
         <Stat label={t('resourceBar.deck')} value={drawPile.length} />
         <Divider orientation="vertical" />
         <Stat label={t('resourceBar.discard')} value={discardPile.length} />
@@ -49,14 +49,16 @@ export function ResourceBar() {
 
       <Divider orientation="vertical" />
 
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         <div className="relative">
           <GloryIcon color={IconColors.gold} className="size-8" />
           <span className="font-display text-primary absolute top-0 left-0 flex size-8 items-center justify-center text-sm font-bold">
             {score}
           </span>
         </div>
-        <span className="text-primary text-xs uppercase">{t('resourceBar.glory')}</span>
+        <span className="text-primary hidden text-xs uppercase md:inline">
+          {t('resourceBar.glory')}
+        </span>
       </div>
     </div>
   );

@@ -13,11 +13,13 @@ export function DeckViewer({
   emptyText,
   deck,
   displayedCard,
+  isSheet = false,
 }: {
   title: string;
   emptyText?: string;
   deck: CardInstance[];
   displayedCard?: CardInstance;
+  isSheet?: boolean;
 }) {
   const { defs } = useGame();
   const { t } = useTranslation();
@@ -25,7 +27,9 @@ export function DeckViewer({
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <section className="bg-background scrollbar flex h-full w-64 shrink-0 flex-col">
+    <section
+      className={`bg-background scrollbar flex shrink-0 flex-col ${isSheet ? 'w-full' : 'h-full w-64'}`}
+    >
       <div className="border-b-border flex min-h-11 items-center justify-between border-b p-2">
         <Title level={4}>{title}</Title>
         {deck.length <= 1 ? (
