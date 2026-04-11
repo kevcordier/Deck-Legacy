@@ -27,7 +27,7 @@
   },
   "roundpreview": {
     "title": "Round {{round}}",
-    "subtitle": "Here are the new cards added to your deck",
+    "subtitle": "Here are the new cards discovered for this round.",
     "start": "▶ Start round"
   },
   "sections": {

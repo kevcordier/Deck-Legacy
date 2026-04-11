@@ -27,7 +27,7 @@
   },
   "roundpreview": {
     "title": "Manche {{round}}",
-    "subtitle": "Voici les nouvelles cartes ajoutées à votre pioche",
+    "subtitle": "Voici les nouvelles cartes découvertes pour cette manche.",
     "start": "▶ Commencer la manche"
   },
   "sections": {
