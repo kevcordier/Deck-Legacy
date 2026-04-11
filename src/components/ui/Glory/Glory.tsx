@@ -2,7 +2,7 @@ import { GloryIcon, IconColors } from '@components/ui/Icon/icon';
 
 type GloryProps = {
   glory: number;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
 };
 
 export function Glory({ glory, size = 'md' }: GloryProps) {
@@ -12,10 +12,10 @@ export function Glory({ glory, size = 'md' }: GloryProps) {
     >
       <GloryIcon
         color={IconColors.gold}
-        className={`${size === 'sm' ? 'size-7' : size === 'lg' ? 'size-15' : 'size-10'} fill-amber-200/90`}
+        className={`${size === 'xs' ? 'size-5' : size === 'sm' ? 'size-7' : size === 'lg' ? 'size-15' : 'size-10'} fill-amber-200/90`}
       />
       <span
-        className={`font-display absolute font-bold ${size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-2xl' : 'text-lg'}`}
+        className={`font-display absolute font-bold ${size === 'xs' ? 'text-[9px]' : size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-2xl' : 'text-lg'}`}
       >
         {glory > 0 ? '+' : ''}
         {glory}

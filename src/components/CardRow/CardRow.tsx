@@ -1,4 +1,5 @@
 import { GameCard } from '@components/GameCard/GameCard';
+import { useMediaQuery } from '@hooks/useMediaQuery';
 import type { CardInstance } from '@engine/domain/types';
 
 interface CardRowProps {
@@ -8,11 +9,13 @@ interface CardRowProps {
 }
 
 export function CardRow({ cardIds, blockingCards, instances }: CardRowProps) {
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const blockedIds = new Set(Object.values(blockingCards));
   const blockerIds = new Set(Object.keys(blockingCards).map(Number));
+  const cardSize = isMobile ? 'xs' : 'md';
 
   return (
-    <div className="flex flex-wrap gap-4.5">
+    <div className={isMobile ? 'grid grid-cols-4 gap-2' : 'flex flex-wrap gap-4.5'}>
       {cardIds
         .filter(id => !blockerIds.has(id))
         .map((id, index) => {
@@ -28,21 +31,28 @@ export function CardRow({ cardIds, blockingCards, instances }: CardRowProps) {
             return (
               <div
                 key={id}
-                className="w-[calc(var(--card-w) + 20px)] min-h-[calc(var(--card-h) + 50px)] relative shrink-0"
+                className={
+                  isMobile
+                    ? 'relative min-h-36'
+                    : 'w-[calc(var(--card-w) + 20px)] min-h-[calc(var(--card-h) + 50px)] relative shrink-0'
+                }
               >
-                <GameCard instance={inst} isOnBoard index={index} />
+                <GameCard instance={inst} isOnBoard index={index} size={cardSize} />
                 <GameCard
                   instance={blockerInst}
                   isOnBoard
-                  className="absolute! top-2 left-2 z-30"
+                  className={
+                    isMobile ? 'absolute! top-1 left-1 z-30 !w-full' : 'absolute! top-2 left-2 z-30'
+                  }
                   index={index}
+                  size={cardSize}
                 />
               </div>
             );
           }
           return (
             <div key={id}>
-              <GameCard instance={inst} isOnBoard index={index} />
+              <GameCard instance={inst} isOnBoard index={index} size={cardSize} />
             </div>
           );
         })}

@@ -11,7 +11,7 @@
     "start": "Start",
     "newRound": "New round",
     "progress": "›› Progress",
-    "progressWithCount": "›› Progress (+{{count}})",
+    "progressWithCount": "›› Progress +{{count}}",
     "endTurn": "End turn",
     "undoTitle": "Undo last action",
     "options": "Options"

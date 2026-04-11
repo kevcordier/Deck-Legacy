@@ -6,7 +6,7 @@ interface ResourceChoiceProps {
   options: Resources[];
   disabled?: boolean;
   onSelect: (r: Resources) => void;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export function ResourceChoice({
