@@ -11,7 +11,7 @@
     "start": "Démarrer",
     "newRound": "Nouvelle manche",
     "progress": "›› Progresser",
-    "progressWithCount": "›› Progresser (+{{count}})",
+    "progressWithCount": "›› Progresser +{{count}}",
     "endTurn": "Fin de tour",
     "undoTitle": "Annuler la dernière action",
     "options": "Options"

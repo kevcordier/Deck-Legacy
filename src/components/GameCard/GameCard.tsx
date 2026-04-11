@@ -31,7 +31,7 @@ interface GameCardProps {
   index?: number;
   hideStatePreview?: boolean;
   isOnBoard?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   className?: string;
 }
 
@@ -72,11 +72,13 @@ export function GameCard({
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
 
   const sizeClass =
-    size === 'sm'
-      ? 'w-56 h-80 rounded-md'
-      : size === 'lg'
-        ? 'w-84 h-120 rounded-lg'
-        : 'w-70 h-100 rounded-lg';
+    size === 'xs'
+      ? 'w-full h-36 rounded'
+      : size === 'sm'
+        ? 'w-56 h-80 rounded-md'
+        : size === 'lg'
+          ? 'w-84 h-120 rounded-lg'
+          : 'w-70 h-100 rounded-lg';
 
   const cardClass = [
     sizeClass,
@@ -102,31 +104,35 @@ export function GameCard({
         </div>
       )}
 
-      <div className={`border-b border-black/10 bg-black/5 p-3 pb-2`}>
+      <div className={`border-b border-black/10 bg-black/5 ${size === 'xs' ? 'p-1' : 'p-3 pb-2'}`}>
         <div className="flex items-start justify-between gap-2">
           <span
-            className={`${size === 'sm' ? 'text-xs' : 'text-sm'} text-base-ink flex items-center gap-1`}
+            className={`${size === 'xs' ? 'text-[9px] leading-tight' : size === 'sm' ? 'text-xs' : 'text-sm'} text-base-ink flex min-w-0 items-center gap-1`}
           >
-            {instance.id !== undefined && instance.id !== 0 && (
+            {instance.id !== undefined && instance.id !== 0 && size !== 'xs' && (
               <span className={`mr-1 rounded bg-black/6 px-1 font-bold`}>#{instance.id}</span>
             )}
-            <span className={`font-display font-bold ${isEnemy ? 'text-red-600' : ''}`}>
+            <span className={`font-display truncate font-bold ${isEnemy ? 'text-red-600' : ''}`}>
               {tCardName(t, instance.cardId, cs.id, cs.name)}
             </span>
           </span>
-          {!hideStatePreview && <CardStatePreview instance={instance} defs={defs} />}
+          {!hideStatePreview && size !== 'xs' && (
+            <CardStatePreview instance={instance} defs={defs} />
+          )}
         </div>
 
-        <div className="mt-1 flex flex-wrap items-center gap-1">
-          {(cs.tags ?? []).map(tag => (
-            <span
-              key={tag}
-              className={`${tagClass(tag, isEnemy)} font-display inline-block gap-1 rounded px-1.5 py-0.5 ${size === 'sm' ? 'px-0.5 text-xs' : size === 'lg' ? 'text-md' : 'text-xs'} text-base-ink`}
-            >
-              {tCardTag(t, tag)}
-            </span>
-          ))}
-        </div>
+        {size !== 'xs' && (
+          <div className="mt-1 flex flex-wrap items-center gap-1">
+            {(cs.tags ?? []).map(tag => (
+              <span
+                key={tag}
+                className={`${tagClass(tag, isEnemy)} font-display inline-block gap-1 rounded px-1.5 py-0.5 ${size === 'sm' ? 'px-0.5 text-xs' : size === 'lg' ? 'text-md' : 'text-xs'} text-base-ink`}
+              >
+                {tCardTag(t, tag)}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="relative flex flex-1 flex-col overflow-hidden">
@@ -137,7 +143,9 @@ export function GameCard({
           />
         )}
 
-        <div className="relative z-10 flex flex-1 flex-col items-start gap-2 p-3">
+        <div
+          className={`relative z-10 flex flex-1 flex-col items-start gap-1 ${size === 'xs' ? 'p-1' : 'p-3'}`}
+        >
           {hasProductions && (
             <ResourceChoice
               onSelect={() => resolveProduction(instance.id)}
@@ -153,12 +161,14 @@ export function GameCard({
             actions.map((action, i) => {
               return (
                 <div className="flex flex-col gap-2" key={i}>
-                  <span className="font-display text-base-ink text-center text-2xl font-semibold">
+                  <span
+                    className={`font-display text-base-ink text-center font-semibold ${size === 'xs' ? 'text-sm' : 'text-2xl'}`}
+                  >
                     {tCardActionLabel(t, instance.cardId, cs.id, i, action.label)}
                   </span>
                   {action.description && (
                     <p
-                      className={`text-center text-gray-600 italic ${size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-xl' : 'text-md'}`}
+                      className={`text-center text-gray-600 italic ${size === 'xs' ? 'text-[9px]' : size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-xl' : 'text-md'}`}
                     >
                       {renderTextWithIcons(action.description)}
                     </p>
@@ -181,13 +191,15 @@ export function GameCard({
           )}
         </div>
 
-        <div className="relative z-10 flex flex-col items-center gap-2 p-3 pt-0">
+        <div
+          className={`relative z-10 flex flex-col items-center gap-1 ${size === 'xs' ? 'p-1 pt-0' : 'p-3 pt-0'}`}
+        >
           {cs.stayInPlay && (
             <span
-              className={`text-base-ink flex items-center gap-1 rounded bg-white/60 px-3 py-2 backdrop-blur-sm ${size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'}`}
+              className={`text-base-ink flex items-center gap-1 rounded bg-white/60 px-3 py-2 backdrop-blur-sm ${size === 'xs' ? 'px-1 py-0.5 text-[9px]' : size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'}`}
             >
               <PassifIcon
-                className={`align-text-bottom ${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                className={`align-text-bottom ${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
                 alt="passif"
               />{' '}
               {t('card.stayInPlay')}
@@ -211,35 +223,35 @@ export function GameCard({
                   title={actionDesc}
                   variant="text"
                   color="base-ink"
-                  className={`font-body! bg-white/60 backdrop-blur-sm ${size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'} ${haveTrigger ? 'cursor-not-allowed' : ''}`}
+                  className={`font-body! bg-white/60 backdrop-blur-sm ${size === 'xs' ? 'text-[9px]' : size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'} ${haveTrigger ? 'cursor-not-allowed' : ''}`}
                 >
                   {haveTrigger && !isOptional ? (
                     <TriggerIcon
                       color="red"
-                      className={`${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                      className={`${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
                     />
                   ) : haveTrigger && isOptional ? (
                     <TriggerIcon
                       color="yellow"
-                      className={`${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                      className={`${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
                     />
                   ) : hasDestroyItselfCost ? (
                     <DestroyIcon
                       color="red"
-                      className={`${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                      className={`${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
                     />
                   ) : action.endsTurn ? (
                     <TimeIcon
-                      className={`${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                      className={`${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
                     />
                   ) : action.passive ? (
                     <PassifIcon
-                      className={`${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                      className={`${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
                     />
                   ) : (
                     <ActivatedIcon
                       color="green"
-                      className={`${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
+                      className={`${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
                     />
                   )}{' '}
                   {renderTextWithIcons(actionLabel)}
@@ -269,7 +281,7 @@ export function GameCard({
                   key={i}
                   onClick={() => resolveUpgrade(instance.id, upg.upgradeTo)}
                   disabled={!affordable || !canActivate}
-                  className={`font-body! bg-white/60 backdrop-blur-sm ${size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'}`}
+                  className={`font-body! bg-white/60 backdrop-blur-sm ${size === 'xs' ? 'text-[9px]' : size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'}`}
                 >
                   ⬆{' '}
                   {targetState

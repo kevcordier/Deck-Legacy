@@ -12,7 +12,7 @@ interface CardTrackProps {
   currentResources: Resources;
   canActivate: boolean;
   onStep: (stepId: number) => void;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export function CardTrack({
@@ -45,7 +45,13 @@ export function CardTrack({
 
         const contents: React.ReactNode[] = [];
         if (glory !== undefined && glory !== 0) {
-          contents.push(<Glory key="glory" glory={glory} size={size === 'lg' ? 'md' : 'sm'} />);
+          contents.push(
+            <Glory
+              key="glory"
+              glory={glory}
+              size={size === 'xs' || size === 'sm' ? 'sm' : size === 'lg' ? 'md' : 'sm'}
+            />,
+          );
         }
         actions.forEach((action, i) => {
           if (action.type === ActionType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
@@ -60,7 +66,7 @@ export function CardTrack({
               contents.push(
                 meta.icon ? (
                   <meta.icon
-                    className={`${meta.cls} ${size === 'sm' ? 'size-3' : size === 'lg' ? 'size-4' : 'size-5'}`}
+                    className={`${meta.cls} ${size === 'xs' || size === 'sm' ? 'size-3' : size === 'lg' ? 'size-4' : 'size-5'}`}
                     alt={resKey}
                     key={i}
                   />
@@ -74,7 +80,7 @@ export function CardTrack({
           <div key={step.id} className="flex flex-col items-center gap-1">
             {costEntry && (
               <div
-                className={`flex items-center gap-0.5 ${size === 'sm' ? 'text-sm' : 'text-md'} text-gray-500`}
+                className={`flex items-center gap-0.5 ${size === 'xs' || size === 'sm' ? 'text-xs' : 'text-md'} text-gray-500`}
               >
                 {Object.entries(costEntry).map(([k, v]) => {
                   const meta = getResMeta(k);
@@ -83,7 +89,7 @@ export function CardTrack({
                       {v}
                       {meta.icon && (
                         <meta.icon
-                          className={`${meta.cls} ${size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-4'}`}
+                          className={`${meta.cls} ${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-4'}`}
                           alt={k}
                         />
                       )}
@@ -94,7 +100,7 @@ export function CardTrack({
             )}
             <Button
               className={[
-                `${size === 'sm' ? 'size-6' : size === 'lg' ? 'size-12' : 'size-10'} ${size === 'sm' ? 'text-sm' : 'text-md'} flex flex-col items-center justify-center rounded-sm border-2 border-gray-300 leading-none font-bold`,
+                `${size === 'xs' ? 'size-5' : size === 'sm' ? 'size-6' : size === 'lg' ? 'size-12' : 'size-10'} ${size === 'xs' || size === 'sm' ? 'text-xs' : 'text-md'} flex flex-col items-center justify-center rounded-sm border-2 border-gray-300 leading-none font-bold`,
                 isValidated ? 'border-green-700 bg-green-700/20! text-green-700' : '',
               ].join(' ')}
               disabled={!isClickable && !isValidated}
