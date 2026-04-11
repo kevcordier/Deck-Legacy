@@ -10,8 +10,7 @@
     "newGame": "New game",
     "start": "Start",
     "newRound": "New round",
-    "progress": "›› Progress",
-    "progressWithCount": "›› Progress +{{count}}",
+    "progress": "Progress",
     "endTurn": "End turn",
     "undoTitle": "Undo last action",
     "options": "Options"

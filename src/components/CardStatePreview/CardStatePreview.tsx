@@ -46,6 +46,7 @@ export function CardStatePreview({ instance, defs }: CardStatePreviewProps) {
         title={t('cardPreview.viewAllStates')}
         color="base-ink"
         variant="text"
+        className="p-1!"
       >
         <EyeIcon />
       </Button>
@@ -72,7 +73,7 @@ function CardStatesModal({
       subtitle={t('cardPreview.statesMeta', { count: def.states.length, id: instance.id })}
       onClose={onClose}
     >
-      <div className="flex flex-wrap justify-center gap-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
         {def.states.map(s => {
           const isCurrent = s.id === instance.stateId;
           const fakeInstance: CardInstance = {

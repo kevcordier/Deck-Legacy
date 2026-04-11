@@ -14,7 +14,6 @@ type GameCardContainerProps = {
   currentResources: Resources;
   isOnBoard: boolean;
   isBlocked: boolean;
-  size: 'sm' | 'md' | 'lg';
 };
 
 const meta: Meta<GameCardContainerProps> = {
@@ -30,9 +29,8 @@ const meta: Meta<GameCardContainerProps> = {
     currentResources: { control: 'object' },
     isOnBoard: { control: 'boolean' },
     isBlocked: { control: 'boolean' },
-    size: { control: 'inline-radio', options: ['sm', 'md', 'lg'] },
   },
-  render: ({ id, cardId, stateId, isOnBoard, isBlocked, size, currentResources, ...props }) => {
+  render: ({ id, cardId, stateId, isOnBoard, isBlocked, currentResources, ...props }) => {
     const defs = loadCardDefs();
 
     const validCardId = defs[cardId] ? cardId : 1;
@@ -43,14 +41,19 @@ const meta: Meta<GameCardContainerProps> = {
 
     return (
       <GameProvider
-        key={JSON.stringify({ id, cardId, stateId, isOnBoard, isBlocked, size, currentResources })}
+        key={JSON.stringify({ id, cardId, stateId, isOnBoard, isBlocked, currentResources })}
         initialState={{
           ...EMPTY_STATE,
           resources: currentResources as Resources,
           blockingCards: isBlocked ? [instance.id] : [],
         }}
       >
-        <GameCard {...props} instance={instance} isOnBoard={isOnBoard} size={size} />
+        <GameCard
+          {...props}
+          className="w-screen max-w-sm"
+          instance={instance}
+          isOnBoard={isOnBoard}
+        />
       </GameProvider>
     );
   },
@@ -67,6 +70,5 @@ export const GameCardPreview: Story = {
     currentResources: { wood: 2, gold: 2, stone: 2, iron: 2, weapon: 2, goods: 2 },
     isOnBoard: true,
     isBlocked: false,
-    size: 'md',
   },
 };

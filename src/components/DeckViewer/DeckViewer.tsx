@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CardListModal } from '@components/CardListModal/CardListModal';
 import { getActiveState } from '@engine/application/cardHelpers';
@@ -39,21 +39,29 @@ export function DeckViewer({
             <Button onClick={() => setModalOpen(true)} size="xs" variant="text" color="ink">
               {t('deckViewer.viewAll')}
             </Button>
-            <Button onClick={() => setOpen(o => !o)} size="xs" variant="outlined" color="ink">
+            <Button
+              onClick={() => setOpen(o => !o)}
+              size="xs"
+              variant="outlined"
+              color="ink"
+              className="hidden lg:inline"
+            >
               {open ? '▲' : '▼'} {deck.length}
             </Button>
           </div>
         )}
       </div>
       {deck.length > 0 ? (
-        <React.Fragment>
+        <div className="flex flex-wrap justify-center lg:flex-col">
           {displayedCard && (
-            <div className="flex flex-col items-center p-2">
-              <GameCard instance={displayedCard} size="sm" />
+            <div className="flex min-w-xs flex-col items-center p-2 lg:min-w-0">
+              <GameCard instance={displayedCard} />
             </div>
           )}
-          {open && deck.length > 1 && (
-            <div className="border-border flex flex-col gap-1 border-t p-2">
+          {deck.length > 1 && (
+            <div
+              className={`border-border min-w-xs grow flex-col gap-1 p-2 lg:min-w-0 lg:border-t ${open ? 'flex' : 'flex lg:hidden'}`}
+            >
               <p className="font-display text-ink/90 text-center text-xs uppercase">
                 {t('deckViewer.remainingCards')}
               </p>
@@ -72,18 +80,18 @@ export function DeckViewer({
               })}
             </div>
           )}
-          {modalOpen && (
-            <CardListModal
-              title={t('deckViewer.title')}
-              subtitle={t('deckViewer.modalSubtitle', { count: deck.length })}
-              cards={deck}
-              onClose={() => setModalOpen(false)}
-              emptyText={t('deckViewer.emptyDeck')}
-            />
-          )}
-        </React.Fragment>
+        </div>
       ) : (
         emptyText && <p className="p-2 text-center text-sm text-gray-400 italic">{emptyText}</p>
+      )}
+      {modalOpen && (
+        <CardListModal
+          title={t('deckViewer.title')}
+          subtitle={t('deckViewer.modalSubtitle', { count: deck.length })}
+          cards={deck}
+          onClose={() => setModalOpen(false)}
+          emptyText={t('deckViewer.emptyDeck')}
+        />
       )}
     </section>
   );

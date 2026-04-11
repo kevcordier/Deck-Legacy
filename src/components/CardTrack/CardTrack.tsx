@@ -80,7 +80,7 @@ export function CardTrack({
           <div key={step.id} className="flex flex-col items-center gap-1">
             {costEntry && (
               <div
-                className={`flex items-center gap-0.5 ${size === 'xs' || size === 'sm' ? 'text-xs' : 'text-md'} text-gray-500`}
+                className={`flex items-center gap-0.5 ${size === 'xs' || size === 'sm' ? 'text-xs' : 'text-base'} text-gray-500`}
               >
                 {Object.entries(costEntry).map(([k, v]) => {
                   const meta = getResMeta(k);
@@ -100,7 +100,7 @@ export function CardTrack({
             )}
             <Button
               className={[
-                `${size === 'xs' ? 'size-5' : size === 'sm' ? 'size-6' : size === 'lg' ? 'size-12' : 'size-10'} ${size === 'xs' || size === 'sm' ? 'text-xs' : 'text-md'} flex flex-col items-center justify-center rounded-sm border-2 border-gray-300 leading-none font-bold`,
+                `${size === 'xs' ? 'size-5' : size === 'sm' ? 'size-6' : size === 'lg' ? 'size-12' : 'size-10'} ${size === 'xs' || size === 'sm' ? 'text-xs' : 'text-base'} flex flex-col items-center justify-center rounded-sm border-2 border-gray-300 leading-none font-bold`,
                 isValidated ? 'border-green-700 bg-green-700/20! text-green-700' : '',
               ].join(' ')}
               disabled={!isClickable && !isValidated}

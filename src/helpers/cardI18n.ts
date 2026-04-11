@@ -10,6 +10,8 @@ const ICON_PASSTHROUGH = {
   weapon: '{{weapon}}',
   goods: '{{goods}}',
   glory: '{{glory}}',
+  time: '{{time}}',
+  passif: '{{passif}}',
 };
 
 export function tCardName(t: TFunction, cardId = 0, stateId = 0, fallback = ''): string {
@@ -81,4 +83,8 @@ export function tCardPassiveDescription(
 
 export function tCardTag(t: TFunction, tag: string): string {
   return t(`tags.${tag}`, { ns: 'cards', defaultValue: tag });
+}
+
+export function tCardParchmentText(t: TFunction, cardId = 0, fallback = ''): string {
+  return t(`texts.${cardId}`, { ns: 'cards', defaultValue: fallback, ...ICON_PASSTHROUGH });
 }

@@ -22,7 +22,7 @@ export function CardListModal({ title, subtitle, cards, onClose, emptyText }: Ca
           {emptyText ?? t('cardList.noCards')}
         </p>
       ) : (
-        <div className="flex flex-wrap gap-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
           {cards.map(inst => (
             <GameCard key={inst.id} instance={inst} />
           ))}

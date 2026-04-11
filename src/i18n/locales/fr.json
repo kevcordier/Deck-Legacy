@@ -10,8 +10,7 @@
     "newGame": "Nouvelle partie",
     "start": "Démarrer",
     "newRound": "Nouvelle manche",
-    "progress": "›› Progresser",
-    "progressWithCount": "›› Progresser +{{count}}",
+    "progress": "Progresser",
     "endTurn": "Fin de tour",
     "undoTitle": "Annuler la dernière action",
     "options": "Options"
@@ -73,7 +72,9 @@
       "COST": "Choisissez {{count}} carte comme coût",
       "COST_other": "Choisissez {{count}} cartes comme coût",
       "BLOCK_CARD": "Choisissez {{count}} carte à bloquer",
-      "BLOCK_CARD_other": "Choisissez {{count}} cartes à bloquer"
+      "BLOCK_CARD_other": "Choisissez {{count}} cartes à bloquer",
+      "ADD_STICKER": "Choisissez {{count}} carte pour ajouter un autocollant",
+      "ADD_STICKER_other": "Choisissez {{count}} cartes pour ajouter un autocollant"
     },
     "chooseState": "Choisir un état",
     "chooseStateSubtitle": "Cette carte a deux faces. Choisissez celle que vous voulez jouer.",

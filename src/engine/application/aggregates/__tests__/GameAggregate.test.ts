@@ -668,8 +668,8 @@ describe('GameAggregate.roundStarted with round > 1', () => {
     };
     const agg = new GameAggregate([], state, defs);
     const event = agg.roundStarted();
-    expect(event.newCards).toHaveLength(1);
-    expect(event.newCards).toContain(1);
+    expect(event.newCards).toHaveLength(0);
+    expect(event.type).toBe(GameEventType.ROUND_STARTED);
   });
 });
 
@@ -753,7 +753,7 @@ describe('GameAggregate.useCardEffect — ADD_STICKER', () => {
         type: ActionType.ADD_STICKER,
         sourceInstanceId: 1,
         stickerId: 101,
-        cardId: 1,
+        instanceId: 1,
       } as unknown as ResolvedAction,
     ];
     agg.useCardEffect(effects, makeEmptyResolvedCost(), false, false, 't1');

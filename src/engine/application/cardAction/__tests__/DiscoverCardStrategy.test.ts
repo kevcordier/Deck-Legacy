@@ -58,6 +58,7 @@ describe('DiscoverCardStrategy', () => {
       states: [{ id: 1, name: 'State 1', cardEffects: [onDiscoverEffect] }],
     },
     14: { id: 14, name: 'Card 14', states: [{ id: 1, name: 'State 1', cardEffects: [] }] },
+    15: { id: 15, name: 'Card 15', parchmentCard: true, states: [{ id: 1, name: 'State 1' }] },
   });
 
   it('moves a non-permanent card to the discard pile', () => {
@@ -111,5 +112,25 @@ describe('DiscoverCardStrategy', () => {
     });
     const result = strategy.applyEffect(gs, makePayload(5));
     expect(Object.keys(result.triggerPile)).toHaveLength(0);
+  });
+
+  it('does not add a parchment card to lastAddedIds', () => {
+    const instance = makeInstance(5, 15, 1);
+    const gs = makeGameState({
+      instances: { 5: instance },
+      discoveryPile: [5],
+    });
+    const result = strategy.applyEffect(gs, makePayload(5));
+    expect(result.lastAddedIds).not.toContain(5);
+  });
+
+  it('adds a non-parchment card to lastAddedIds', () => {
+    const instance = makeInstance(5, 10, 1);
+    const gs = makeGameState({
+      instances: { 5: instance },
+      discoveryPile: [5],
+    });
+    const result = strategy.applyEffect(gs, makePayload(5));
+    expect(result.lastAddedIds).toContain(5);
   });
 });

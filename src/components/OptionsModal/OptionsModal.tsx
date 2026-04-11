@@ -22,7 +22,7 @@ export function OptionsModal({ onClose, onReset }: OptionsModalProps) {
   }
 
   return (
-    <Modal title={t('options.title')} onClose={onClose} className="w-full max-w-xs">
+    <Modal title={t('options.title')} onClose={onClose}>
       <ButtonGroup
         label={t('options.theme')}
         value={theme}
@@ -48,7 +48,7 @@ export function OptionsModal({ onClose, onReset }: OptionsModalProps) {
         ]}
       />
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col items-start gap-2">
         {confirmReset ? (
           <>
             <span className="text-xs">{t('options.resetConfirm')}</span>

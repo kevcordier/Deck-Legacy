@@ -50,6 +50,8 @@
     "14_2": "Cabane du pêcheur",
     "14_3": "Bateau de pêche",
     "14_4": "Phare",
+    "15_1": "Stop",
+    "16_1": "Stop",
     "17_1": "Armée",
     "17_2": "Armée"
   },
@@ -82,7 +84,10 @@
     "12_3_a0": "Gagnez {{weapon}} par Personne en jeu.",
     "14_3_a0": "Découvrez Rivage 75.",
     "11_4_p0": "Cette carte a +1 production d'{{gold}} pour chaque personne en jeu.",
-    "14_4_p0": "Tant que cette carte est en jeu, vous pouvez défausser la carte au sommet de votre pioche."
+    "14_4_p0": "Tant que cette carte est en jeu, vous pouvez défausser la carte au sommet de votre pioche.",
+    "15_1_a0": "Stop",
+    "16_1_a0": "Terre fertile",
+    "16_1_a1": "Efficacité"
   },
   "descriptions": {
     "1_2_a0": "Défaussez une carte alliée pour gagner 2 or.",
@@ -102,6 +107,10 @@
     "11_3_a0": "Dépensez 4 or pour découvrir un Prêtre (104).",
     "12_3_a0": "Gagnez 1 épée par Personne en jeu.",
     "11_4_p0": "Cette carte a +1 production d'or pour chaque personne en jeu."
+  },
+  "texts": {
+    "15": "## Stop !\nMaintenant que vous avez pris le coup de main, vous pouvez réinitialiser la partie pour tenter votre meilleur score. Si vous continuez, vous allez découvrir 4 cartes, les cartes 24-27. Regardez-les maintenant et PUIS décidez si vous voulez recommencer ou continuer.\n\nLes cartes 25, 26 et 27 sont des cartes **permanentes**, ce qui signifie qu'elles ne sont jamais mélangées dans votre deck et ne peuvent pas être défaussées. Elles sont toujours visibles et actives, mais ne comptent pas comme « en jeu ».\n\nL'Armée et le Trésor sont des cartes de progression. Elles vous permettent de dépenser votre tour ({{time}}) et des ressources ({{weapon}}/{{gold}}) pour gagner de la gloire. L'Exportation est une carte de décompte. Elle ne met pas fin à votre tour ({{passif}}) et vous permet de dépenser des marchandises ({{goods}}) pour obtenir des autocollants, de nouvelles cartes et d'autres effets intéressants.\n\nVous ne pourrez pas terminer toutes les pistes avant la fin de la partie. Essayez d'aller le plus loin possible !",
+    "16": "## Terre fertile\n\nCette terre semble pouvoir faire pousser tout ce qu'on y met.\n\nAjoutez l'autocollant 1 ({{gold}}) comme production à un terrain.\n\n## Efficacité\n\nVous prenez le coup de main !\n\nChoisissez 1 **bâtiment** et **boostez** sa production (ajoutez un autocollant de ressource pour qu'il produise 1 ressource supplémentaire d'un type qu'il produit déjà. Les autocollants de ressources sont numérotés de 1 à 6 sur la feuille d'autocollants).\n\n(Rappel : lors de la découverte d'une carte parchemin, suivez toutes ses instructions puis détruisez-la.)"
   },
   "tags": {
     "Land": "Terrain",

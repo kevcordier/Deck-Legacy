@@ -29,7 +29,7 @@ export function Header() {
       <div className="align-center flex gap-2">
         {/* Gameplay buttons — hidden on mobile (moved to bottom action bar) */}
         {phase === 'playing' && (
-          <div className="hidden items-center gap-2 md:flex">
+          <div className="hidden items-center gap-2 lg:flex">
             {canRewind() && (
               <Button
                 onClick={() => rewindEvent()}
@@ -46,9 +46,9 @@ export function Header() {
               variant="outlined"
               size="xs"
             >
-              {deckEmpty
-                ? t('header.progress')
-                : t('header.progressWithCount', { count: Math.min(2, state.drawPile.length) })}
+              <span className="hidden lg:inline">›› </span>
+              {t('header.progress')}
+              {deckEmpty ? '' : ` (${Math.min(2, state.drawPile.length)})`}
             </Button>
             <Button
               onClick={endTurnVoluntary}

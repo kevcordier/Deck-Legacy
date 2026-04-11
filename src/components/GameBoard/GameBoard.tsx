@@ -44,7 +44,7 @@ export function GameBoard() {
       {/* Main content row — sidebars hidden on mobile */}
       <div className="flex flex-1 items-stretch gap-4 overflow-hidden">
         {phase !== 'pregame' && (
-          <div className="hidden md:contents">
+          <div className="hidden lg:contents">
             <DeckViewer
               title={t('deckViewer.draw')}
               emptyText={t('deckViewer.empty')}
@@ -57,7 +57,7 @@ export function GameBoard() {
         <MainBoard />
 
         {phase !== 'pregame' && (
-          <div className="hidden md:contents">
+          <div className="hidden lg:contents">
             <DeckViewer
               title={t('deckViewer.discard')}
               deck={discardDeck}
@@ -69,7 +69,7 @@ export function GameBoard() {
 
       {/* Mobile action bar */}
       {phase !== 'pregame' && (
-        <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t px-2 py-2 md:hidden">
+        <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t px-2 py-2 lg:hidden">
           <Button
             onClick={() => setOpenSheet(o => (o === 'draw' ? null : 'draw'))}
             variant="outlined"
@@ -96,9 +96,9 @@ export function GameBoard() {
               variant="outlined"
               size="sm"
             >
-              {deckEmpty
-                ? t('header.progress')
-                : t('header.progressWithCount', { count: Math.min(2, drawPile.length) })}
+              <span className="hidden lg:inline">›› </span>
+              {t('header.progress')}
+              {deckEmpty ? '' : ` (${Math.min(2, drawPile.length)})`}
             </Button>
             <Button
               onClick={endTurnVoluntary}
@@ -124,7 +124,7 @@ export function GameBoard() {
       {/* Mobile bottom sheet for deck viewers */}
       {openSheet !== null && (
         <div
-          className="fixed inset-0 z-[150] bg-black/40 md:hidden"
+          className="fixed inset-0 z-[150] bg-black/40 lg:hidden"
           onClick={() => setOpenSheet(null)}
         >
           <div

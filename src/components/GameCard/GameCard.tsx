@@ -31,7 +31,6 @@ interface GameCardProps {
   index?: number;
   hideStatePreview?: boolean;
   isOnBoard?: boolean;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
   className?: string;
 }
 
@@ -40,7 +39,6 @@ export function GameCard({
   index = 0,
   hideStatePreview = false,
   isOnBoard = false,
-  size = 'md',
   className = '',
 }: GameCardProps) {
   const { t } = useTranslation();
@@ -71,26 +69,17 @@ export function GameCard({
   const resourceOptions = cs.productions as Resources[] | undefined;
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
 
-  const sizeClass =
-    size === 'xs'
-      ? 'w-full h-36 rounded'
-      : size === 'sm'
-        ? 'w-56 h-80 rounded-md'
-        : size === 'lg'
-          ? 'w-84 h-120 rounded-lg'
-          : 'w-70 h-100 rounded-lg';
-
   const cardClass = [
-    sizeClass,
-    ' border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden animate-fade-in-scale',
-    isEnemy ? 'enemy' : '',
-    isBlocked ? 'blocked' : '',
-    isPermanent ? 'permanent' : '',
+    '@container/card w-full min-w-60 max-w-100 aspect-2/3 rounded-md @3xs/card:rounded-lg',
+    'border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden animate-fade-in-scale',
   ]
     .filter(Boolean)
     .join(' ');
 
   const animationDelayClass = [`delay-50`, `delay-100`, `delay-1500`, `delay-200`][index];
+
+  const cardActionsClass =
+    'font-body! bg-white/60 px-3! py-2! rounded-md text-xs backdrop-blur-sm @3xs/card:text-lg';
 
   return (
     <div
@@ -104,35 +93,31 @@ export function GameCard({
         </div>
       )}
 
-      <div className={`border-b border-black/10 bg-black/5 ${size === 'xs' ? 'p-1' : 'p-3 pb-2'}`}>
+      <div className={`border-b border-black/10 bg-black/5 p-1 pb-2 @3xs/card:p-3`}>
         <div className="flex items-start justify-between gap-2">
           <span
-            className={`${size === 'xs' ? 'text-[9px] leading-tight' : size === 'sm' ? 'text-xs' : 'text-sm'} text-base-ink flex min-w-0 items-center gap-1`}
+            className={`text-base-ink flex min-w-0 items-center gap-1 text-xs leading-tight @3xs/card:text-base`}
           >
-            {instance.id !== undefined && instance.id !== 0 && size !== 'xs' && (
+            {instance.id !== undefined && instance.id !== 0 && (
               <span className={`mr-1 rounded bg-black/6 px-1 font-bold`}>#{instance.id}</span>
             )}
             <span className={`font-display truncate font-bold ${isEnemy ? 'text-red-600' : ''}`}>
               {tCardName(t, instance.cardId, cs.id, cs.name)}
             </span>
           </span>
-          {!hideStatePreview && size !== 'xs' && (
-            <CardStatePreview instance={instance} defs={defs} />
-          )}
+          {!hideStatePreview && <CardStatePreview instance={instance} defs={defs} />}
         </div>
 
-        {size !== 'xs' && (
-          <div className="mt-1 flex flex-wrap items-center gap-1">
-            {(cs.tags ?? []).map(tag => (
-              <span
-                key={tag}
-                className={`${tagClass(tag, isEnemy)} font-display inline-block gap-1 rounded px-1.5 py-0.5 ${size === 'sm' ? 'px-0.5 text-xs' : size === 'lg' ? 'text-md' : 'text-xs'} text-base-ink`}
-              >
-                {tCardTag(t, tag)}
-              </span>
-            ))}
-          </div>
-        )}
+        <div className="mt-1 flex flex-wrap items-center gap-1">
+          {(cs.tags ?? []).map(tag => (
+            <span
+              key={tag}
+              className={`${tagClass(tag, isEnemy)} font-display text-base-ink inline-block gap-1 rounded px-0.5 py-0.5 text-xs @3xs/card:px-1.5 @3xs/card:text-base`}
+            >
+              {tCardTag(t, tag)}
+            </span>
+          ))}
+        </div>
       </div>
 
       <div className="relative flex flex-1 flex-col overflow-hidden">
@@ -143,33 +128,28 @@ export function GameCard({
           />
         )}
 
-        <div
-          className={`relative z-10 flex flex-1 flex-col items-start gap-1 ${size === 'xs' ? 'p-1' : 'p-3'}`}
-        >
+        <div className={`relative z-10 flex flex-1 flex-col items-start gap-1 p-1 @3xs/card:p-3`}>
           {hasProductions && (
             <ResourceChoice
               onSelect={() => resolveProduction(instance.id)}
               options={resourceOptions as Resources[]}
-              size={size}
               disabled={!canActivate || !isOnBoard || isBlocked}
             />
           )}
 
-          {glory !== 0 && <Glory glory={glory} size={size} />}
+          {glory !== 0 && <Glory glory={glory} />}
 
           {isParchment &&
             actions.map((action, i) => {
               return (
                 <div className="flex flex-col gap-2" key={i}>
                   <span
-                    className={`font-display text-base-ink text-center font-semibold ${size === 'xs' ? 'text-sm' : 'text-2xl'}`}
+                    className={`font-display text-base-ink text-center text-sm font-semibold @3xs/card:text-2xl`}
                   >
                     {tCardActionLabel(t, instance.cardId, cs.id, i, action.label)}
                   </span>
                   {action.description && (
-                    <p
-                      className={`text-center text-gray-600 italic ${size === 'xs' ? 'text-[9px]' : size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-xl' : 'text-md'}`}
-                    >
+                    <p className={`text-center text-xs text-gray-600 italic @3xs/card:text-base`}>
                       {renderTextWithIcons(action.description)}
                     </p>
                   )}
@@ -183,26 +163,18 @@ export function GameCard({
                 const sticker = stickerDefs[stickerId];
                 if (!sticker) return null;
                 if (sticker.production)
-                  return <ResourcePill key={i} resource={sticker.production} size={size} />;
-                if (sticker.glory) return <Glory key={i} glory={sticker.glory} size={size} />;
+                  return <ResourcePill key={i} resource={sticker.production} />;
+                if (sticker.glory) return <Glory key={i} glory={sticker.glory} />;
                 return null;
               })}
             </div>
           )}
         </div>
 
-        <div
-          className={`relative z-10 flex flex-col items-center gap-1 ${size === 'xs' ? 'p-1 pt-0' : 'p-3 pt-0'}`}
-        >
+        <div className={`relative z-10 flex flex-col items-center gap-1 p-1 @3xs/card:p-3`}>
           {cs.stayInPlay && (
-            <span
-              className={`text-base-ink flex items-center gap-1 rounded bg-white/60 px-3 py-2 backdrop-blur-sm ${size === 'xs' ? 'px-1 py-0.5 text-[9px]' : size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'}`}
-            >
-              <PassifIcon
-                className={`align-text-bottom ${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
-                alt="passif"
-              />{' '}
-              {t('card.stayInPlay')}
+            <span className={cardActionsClass}>
+              <PassifIcon className="size-3 @3xs/card:size-6" /> {t('card.stayInPlay')}
             </span>
           )}
 
@@ -223,36 +195,20 @@ export function GameCard({
                   title={actionDesc}
                   variant="text"
                   color="base-ink"
-                  className={`font-body! bg-white/60 backdrop-blur-sm ${size === 'xs' ? 'text-[9px]' : size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'} ${haveTrigger ? 'cursor-not-allowed' : ''}`}
+                  className={`${cardActionsClass} ${haveTrigger ? 'cursor-not-allowed' : ''}`}
                 >
                   {haveTrigger && !isOptional ? (
-                    <TriggerIcon
-                      color="red"
-                      className={`${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
-                    />
+                    <TriggerIcon color="red" className="size-3 @3xs/card:size-6" />
                   ) : haveTrigger && isOptional ? (
-                    <TriggerIcon
-                      color="yellow"
-                      className={`${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
-                    />
+                    <TriggerIcon color="yellow" className="size-3 @3xs/card:size-6" />
                   ) : hasDestroyItselfCost ? (
-                    <DestroyIcon
-                      color="red"
-                      className={`${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
-                    />
+                    <DestroyIcon color="red" className="size-3 @3xs/card:size-6" />
                   ) : action.endsTurn ? (
-                    <TimeIcon
-                      className={`${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
-                    />
+                    <TimeIcon className="size-3 @3xs/card:size-6" />
                   ) : action.passive ? (
-                    <PassifIcon
-                      className={`${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
-                    />
+                    <PassifIcon className="size-3 @3xs/card:size-6" />
                   ) : (
-                    <ActivatedIcon
-                      color="green"
-                      className={`${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'}`}
-                    />
+                    <ActivatedIcon color="green" className="size-3 @3xs/card:size-6" />
                   )}{' '}
                   {renderTextWithIcons(actionLabel)}
                 </Button>
@@ -266,7 +222,6 @@ export function GameCard({
               currentResources={currentResources}
               canActivate={canActivate}
               onStep={stepId => resolveTrackStep(instance.id, stepId)}
-              size={size}
             />
           )}
 
@@ -281,7 +236,7 @@ export function GameCard({
                   key={i}
                   onClick={() => resolveUpgrade(instance.id, upg.upgradeTo)}
                   disabled={!affordable || !canActivate}
-                  className={`font-body! bg-white/60 backdrop-blur-sm ${size === 'xs' ? 'text-[9px]' : size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'}`}
+                  className={cardActionsClass}
                 >
                   ⬆{' '}
                   {targetState

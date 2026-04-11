@@ -29,7 +29,9 @@ export class DiscoverCardStrategy implements CardActionStrategy {
         gs.triggerPile[crypto.randomUUID()] = effect;
       });
     }
-    gs.lastAddedIds.push(payload.instanceId);
+    if (!cardDef.parchmentCard) {
+      gs.lastAddedIds.push(payload.instanceId);
+    }
     if (cardDef.permanent) {
       gs.permanents.push(payload.instanceId);
 

@@ -11,13 +11,16 @@ import {
 } from '@helpers/cardI18n';
 
 const ICON_PASSTHROUGH = {
-  gold: '{{gold}}',
-  wood: '{{wood}}',
-  stone: '{{stone}}',
-  iron: '{{iron}}',
-  weapon: '{{weapon}}',
-  goods: '{{goods}}',
   glory: '{{glory}}',
+  gold: '{{gold}}',
+  goods: '{{goods}}',
+  iron: '{{iron}}',
+  ns: 'cards',
+  passif: '{{passif}}',
+  stone: '{{stone}}',
+  time: '{{time}}',
+  weapon: '{{weapon}}',
+  wood: '{{wood}}',
 };
 
 const makeT = (translations: Record<string, string> = {}): TFunction =>
@@ -67,7 +70,6 @@ describe('tCardActionLabel', () => {
     const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
     tCardActionLabel(t, 1, 2, 3, 'fb');
     expect(t).toHaveBeenCalledWith('labels.1_2_a3', {
-      ns: 'cards',
       defaultValue: 'fb',
       ...ICON_PASSTHROUGH,
     });
@@ -91,7 +93,6 @@ describe('tCardPassiveLabel', () => {
     const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
     tCardPassiveLabel(t, 1, 2, 0, 'fb');
     expect(t).toHaveBeenCalledWith('labels.1_2_p0', {
-      ns: 'cards',
       defaultValue: 'fb',
       ...ICON_PASSTHROUGH,
     });

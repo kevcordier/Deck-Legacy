@@ -6,11 +6,12 @@ interface SectionProps {
   title: string;
   subtitle?: string;
   children: ReactNode;
+  className?: string;
 }
 
-export function Section({ title, subtitle, children }: SectionProps) {
+export function Section({ title, subtitle, children, className = '' }: SectionProps) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className={`flex flex-col gap-3 ${className}`}>
       <div className="flex items-baseline gap-2 text-center">
         <Title level={4} className="shrink-0">
           {title}

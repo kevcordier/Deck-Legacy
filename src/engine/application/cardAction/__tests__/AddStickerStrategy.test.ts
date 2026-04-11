@@ -42,7 +42,7 @@ describe('AddStickerStrategy', () => {
       type: ActionType.ADD_STICKER,
       sourceInstanceId: 99,
       stickerId: 101,
-      cardId: 1,
+      instanceId: 1,
     });
     expect(result.instances[1].stickers[2]).toContain(101);
   });
@@ -57,7 +57,7 @@ describe('AddStickerStrategy', () => {
       type: ActionType.ADD_STICKER,
       sourceInstanceId: 99,
       stickerId: 101,
-      cardId: 1,
+      instanceId: 1,
     });
     expect(result.stickerStock[101]).toBe(4);
   });
@@ -80,7 +80,7 @@ describe('AddStickerStrategy', () => {
       type: ActionType.ADD_STICKER,
       sourceInstanceId: 99,
       stickerId: 101,
-      cardId: 1,
+      instanceId: 1,
     });
     expect(result.instances[1].stickers[1]).toEqual([100, 101]);
   });

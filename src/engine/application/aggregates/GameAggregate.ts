@@ -262,7 +262,6 @@ export class GameAggregate {
     const onDiscoverEvents: TriggerEntry[] = [];
     if (round > 1) {
       const firstDiscoveredCard = this.gameState.discoveryPile.slice(0, 1)[0];
-      newCards.push(firstDiscoveredCard);
       const cardInstance = this.gameState.instances[firstDiscoveredCard];
       const cardDef = this.cardDefs[cardInstance.cardId];
 
@@ -271,6 +270,7 @@ export class GameAggregate {
       );
 
       if (!cardDef.parchmentCard) {
+        newCards.push(firstDiscoveredCard);
         const secondDiscoveredCard = this.gameState.discoveryPile.slice(1, 2)[0];
         newCards.push(secondDiscoveredCard);
         const cardInstance = this.gameState.instances[secondDiscoveredCard];

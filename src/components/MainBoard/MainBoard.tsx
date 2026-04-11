@@ -10,7 +10,7 @@ export function MainBoard() {
   const { state, phase, startGame, startTurn } = useGame();
   const { t } = useTranslation();
   return (
-    <main className="scrollbar flex flex-1 flex-col gap-6 p-4">
+    <main className="scrollbar @container/main flex flex-1 flex-col gap-6 p-4">
       {phase === 'pregame' && (
         <EmptyState
           title={t('game.title')}
@@ -34,11 +34,11 @@ export function MainBoard() {
           }
         >
           {state.lastAddedIds.length > 0 && (
-            <div className="flex flex-wrap items-center justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               {state.lastAddedIds.map((id: number) => {
                 const inst = state.instances[id];
                 if (!inst) return null;
-                return <GameCard key={id} instance={inst} />;
+                return <GameCard key={id} instance={inst} className="min-w-xs basis-1/4" />;
               })}
             </div>
           )}

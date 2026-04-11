@@ -1720,9 +1720,8 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
         name: 'Stop',
         cardEffects: [
           {
-            label: 'Fertile Soil',
-            description:
-              'This land seems to grow anything you put into the ground. Add sticker 1 (Gold) as production to a land.',
+            label: '',
+            description: '',
             trigger: Trigger.ON_DISCOVER,
             actions: [
               {
@@ -1734,14 +1733,6 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
                   tags: [CardTag.LAND],
                 },
               },
-            ],
-          },
-          {
-            label: 'Efficiency',
-            description:
-              "You're getting the hang of this! Choose 1 building and boost its production (add a resource sticker to it to make it produce 1 more of a resource it already produces. Resource stickers are numbered 1-6 on the sticker sheet).",
-            trigger: Trigger.ON_DISCOVER,
-            actions: [
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,

@@ -451,10 +451,27 @@ export function GameProvider({
   );
 
   const dismissParchmentText = useCallback(() => {
-    setParchmentTextPending(null);
     const gs = aggRef.current.getGameState();
-    setTriggerPile(gs.triggerPile);
-  }, [aggRef, setTriggerPile]);
+
+    const parchmentEntry = Object.entries(gs.triggerPile).find(([, t]) => {
+      const inst = gs.instances[t.sourceInstanceId];
+      return inst && defs[inst.cardId]?.parchmentCard && defs[inst.cardId]?.text;
+    });
+
+    setParchmentTextPending(null);
+
+    if (parchmentEntry) {
+      const [triggerId, trigger] = parchmentEntry;
+      triggerAction(
+        trigger.sourceInstanceId,
+        trigger.effectDef,
+        { destroyedCardIds: [], discardedCardIds: [], resources: {} },
+        triggerId,
+      );
+    }
+
+    sync();
+  }, [triggerAction, aggRef, defs, setParchmentTextPending, sync]);
 
   const skipTrigger = useCallback(
     (uuid: string) => {
