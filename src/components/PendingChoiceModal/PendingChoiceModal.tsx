@@ -1,23 +1,23 @@
-import { useTranslation } from 'react-i18next';
+import { GameCard } from '@components/GameCard/GameCard';
+import { Button } from '@components/ui/Button/Button';
+import { TriggerIcon } from '@components/ui/Icon/icon';
+import { Modal } from '@components/ui/Modal/Modal';
+import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
+import { StickerChoice } from '@components/ui/StickerChoice/StickerChoice';
+import { PendingChoiceType } from '@engine/domain/enums';
 import type {
-  PendingChoice,
   CardDef,
-  Resources,
   CardInstance,
   CardState,
+  PendingChoice,
   ResolvedAction,
   ResolvedCost,
+  Resources,
   Sticker,
   TriggerEntry,
 } from '@engine/domain/types';
-import { TriggerIcon } from '@components/ui/Icon/icon';
-import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
-import { StickerChoice } from '@components/ui/StickerChoice/StickerChoice';
-import { GameCard } from '@components/GameCard/GameCard';
-import { PendingChoiceType } from '@engine/domain/enums';
-import { tCardName, tCardActionLabel } from '@helpers/cardI18n';
-import { Modal } from '@components/ui/Modal/Modal';
-import { Button } from '@components/ui/Button/Button';
+import { tCardActionLabel, tCardName } from '@helpers/cardI18n';
+import { useTranslation } from 'react-i18next';
 
 function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
   return {

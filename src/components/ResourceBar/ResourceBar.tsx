@@ -1,9 +1,9 @@
-import { useTranslation } from 'react-i18next';
-import { GloryIcon, IconColors } from '@components/ui/Icon/icon';
-import { useGame } from '@hooks/useGame';
-import { Stat } from '@components/ui/Stat/Stat';
 import { Divider } from '@components/ui/Divider/Divider';
+import { GloryIcon, IconColors } from '@components/ui/Icon/icon';
 import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
+import { Stat } from '@components/ui/Stat/Stat';
+import { useGame } from '@hooks/useGame';
+import { useTranslation } from 'react-i18next';
 
 export function ResourceBar() {
   const { t } = useTranslation();

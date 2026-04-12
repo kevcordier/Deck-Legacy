@@ -1,4 +1,4 @@
-import { TargetScope, type CardTag } from '@engine/domain/enums';
+import { type CardTag, TargetScope } from '@engine/domain/enums';
 import type { CardDef, CardeSelector, GameState } from '@engine/domain/types';
 
 /**

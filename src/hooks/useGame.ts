@@ -1,4 +1,5 @@
-import { useMemo, useContext } from 'react';
+import { GameContext } from '@contexts/GameContext';
+import { computeScore, getCurrentPhase } from '@engine/application/gameStateHelper';
 import type {
   CardDef,
   GameState,
@@ -9,9 +10,8 @@ import type {
   Sticker,
   TriggerEntry,
 } from '@engine/domain/types';
-import { computeScore, getCurrentPhase } from '@engine/application/gameStateHelper';
-import { GameContext } from '@contexts/GameContext';
 import type { Phase } from '@engine/domain/types/Phase';
+import { useContext, useMemo } from 'react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 

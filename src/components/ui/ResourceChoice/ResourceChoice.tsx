@@ -1,5 +1,5 @@
-import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Button } from '@components/ui/Button/Button';
+import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import type { Resources } from '@engine/domain/types';
 
 interface ResourceChoiceProps {

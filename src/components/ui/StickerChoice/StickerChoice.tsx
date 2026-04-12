@@ -1,10 +1,10 @@
-import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Button } from '@components/ui/Button/Button';
-import type { Sticker } from '@engine/domain/types';
 import { Glory } from '@components/ui/Glory/Glory';
 import { PassifIcon } from '@components/ui/Icon/icon';
-import { useTranslation } from 'react-i18next';
+import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Tag } from '@components/ui/Tag/Tag';
+import type { Sticker } from '@engine/domain/types';
+import { useTranslation } from 'react-i18next';
 
 interface StickerChoiceProps {
   options: Sticker[];

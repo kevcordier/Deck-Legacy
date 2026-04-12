@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
 import { DestroyCardStrategy } from '@engine/application/cardAction/DestroyCardStrategy';
 import { ActionType } from '@engine/domain/enums';
 import type { GameState } from '@engine/domain/types';
+import { describe, expect, it } from 'vitest';
 
 const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
   instances: {},

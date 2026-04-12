@@ -1,6 +1,6 @@
-import { GameProvider } from '@contexts/GameProvider';
 import { Game } from './pages/Game/Game';
 import './styles/game.css';
+import { GameProvider } from '@contexts/GameProvider';
 import { GameUIProvider } from '@contexts/GameUIProvider';
 import { loadSave } from '@engine/infrastructure/persistence';
 

@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { EmptyState } from './EmptyState';
 import { Button } from '@components/ui/Button/Button';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof EmptyState> = {
   title: 'UI/EmptyState',

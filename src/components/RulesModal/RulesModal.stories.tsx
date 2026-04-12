@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { RulesModal } from './RulesModal';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof RulesModal> = {
   title: 'Components/RulesModal',

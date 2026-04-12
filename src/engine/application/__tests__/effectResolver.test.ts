@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { resolveActionEffect } from '@engine/application/effectResolver';
 import { ActionType, PendingChoiceType, TargetScope } from '@engine/domain/enums';
 import type { Action, CardDef, CardInstance, GameState } from '@engine/domain/types';
-import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
+import { describe, expect, it } from 'vitest';
 
 // — fixtures —
 

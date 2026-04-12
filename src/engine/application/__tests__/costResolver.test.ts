@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
 import { resolveCost } from '@engine/application/costResolver';
 import { PendingChoiceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, CardInstance, GameState } from '@engine/domain/types';
+import { describe, expect, it } from 'vitest';
 
 // — fixtures —
 

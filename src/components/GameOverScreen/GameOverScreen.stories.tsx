@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { GameOverScreen } from './GameOverScreen';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof GameOverScreen> = {
   title: 'Components/GameOverScreen',

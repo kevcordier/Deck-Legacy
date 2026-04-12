@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
 import { createInstance } from '@engine/application/factory';
 import type { CardDef } from '@engine/domain/types';
+import { describe, expect, it } from 'vitest';
 
 const makeDef = (id: number, stateIds: number[] = [1]): CardDef => ({
   id,

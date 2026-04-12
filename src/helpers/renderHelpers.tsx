@@ -1,15 +1,15 @@
-import React from 'react';
 import {
   CrownIcon,
   GloryIcon,
   GoldIcon,
   GoodsIcon,
+  type IconProps,
   IronIcon,
   StoneIcon,
   WeaponIcon,
   WoodIcon,
-  type IconProps,
 } from '@components/ui/Icon/icon';
+import React from 'react';
 
 // Detects tokens like {{gold}}, {{wood}}, etc. in translated texts
 const ICON_TOKEN = /\{\{(gold|wood|stone|iron|weapon|goods|glory)\}\}/g;

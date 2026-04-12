@@ -1,10 +1,10 @@
-import React from 'react';
+import { Button } from '@components/ui/Button/Button';
+import { Glory } from '@components/ui/Glory/Glory';
 import { canAffordResources } from '@engine/application/cardHelpers';
 import { ActionType } from '@engine/domain/enums';
-import type { TrackDef, Resources } from '@engine/domain/types';
-import { Glory } from '@components/ui/Glory/Glory';
-import { Button } from '@components/ui/Button/Button';
+import type { Resources, TrackDef } from '@engine/domain/types';
 import { getResMeta } from '@helpers/renderHelpers';
+import React from 'react';
 
 interface CardTrackProps {
   track: TrackDef;

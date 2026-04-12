@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ResourceBar } from './ResourceBar';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import type { CardInstance } from '@engine/domain/types';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 type ResourceBarProps = {
   instances: CardInstance[];

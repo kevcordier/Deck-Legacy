@@ -1,14 +1,14 @@
-import { describe, it, expect } from 'vitest';
 import {
-  getEffectiveProductions,
-  tagClass,
-  getActiveState,
   canAffordResources,
+  getActiveState,
+  getEffectiveProductions,
   getInstancesTriggerEffects,
   getTrackGlory,
+  tagClass,
 } from '@engine/application/cardHelpers';
-import { ActionType, Trigger, TargetScope, ResourceType } from '@engine/domain/enums';
+import { ActionType, ResourceType, TargetScope, Trigger } from '@engine/domain/enums';
 import type { CardDef, CardInstance, Sticker } from '@engine/domain/types';
+import { describe, expect, it } from 'vitest';
 
 // — helpers —
 

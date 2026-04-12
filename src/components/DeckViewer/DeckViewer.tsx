@@ -1,12 +1,12 @@
+import { CardListModal } from '@components/CardListModal/CardListModal';
+import { GameCard } from '@components/GameCard/GameCard';
+import { Button } from '@components/ui/Button/Button';
+import { Title } from '@components/ui/Title/Title';
+import { getActiveState } from '@engine/application/cardHelpers';
+import type { CardInstance } from '@engine/domain/types';
+import { useGame } from '@hooks/useGame';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CardListModal } from '@components/CardListModal/CardListModal';
-import { getActiveState } from '@engine/application/cardHelpers';
-import { GameCard } from '@components/GameCard/GameCard';
-import { useGame } from '@hooks/useGame';
-import { Title } from '@components/ui/Title/Title';
-import { Button } from '@components/ui/Button/Button';
-import type { CardInstance } from '@engine/domain/types';
 
 export function DeckViewer({
   title,

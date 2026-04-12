@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CardTrack } from './CardTrack';
 import { ActionType } from '@engine/domain/enums';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof CardTrack> = {
   title: 'Components/CardTrack',

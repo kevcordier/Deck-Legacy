@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PendingChoiceModal } from './PendingChoiceModal';
-import type { CardDef, CardInstance, Sticker } from '@engine/domain/types';
-import { CardTag, PendingChoiceType, ActionType, Trigger } from '@engine/domain/enums';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
+import { ActionType, CardTag, PendingChoiceType, Trigger } from '@engine/domain/enums';
+import type { CardDef, CardInstance, Sticker } from '@engine/domain/types';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof PendingChoiceModal> = {
   title: 'Components/PendingChoiceModal',

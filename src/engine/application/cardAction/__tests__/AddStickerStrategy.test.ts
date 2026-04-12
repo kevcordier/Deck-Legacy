@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
 import { AddStickerStrategy } from '@engine/application/cardAction/AddStickerStrategy';
 import { ActionType } from '@engine/domain/enums';
 import type { CardInstance, GameState } from '@engine/domain/types';
+import { describe, expect, it } from 'vitest';
 
 const makeInstance = (id: number, cardId: number, stateId: number): CardInstance => ({
   id,

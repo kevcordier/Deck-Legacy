@@ -1,6 +1,4 @@
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import React from 'react';
+import { Divider } from '@components/ui/Divider/Divider';
 import {
   GloryIcon,
   GoldIcon,
@@ -13,7 +11,9 @@ import {
   WoodIcon,
 } from '@components/ui/Icon/icon';
 import { Title } from '@components/ui/Title/Title';
-import { Divider } from '@components/ui/Divider/Divider';
+import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const ICON_MAP: Record<string, React.ComponentType> = {
   gold: GoldIcon,

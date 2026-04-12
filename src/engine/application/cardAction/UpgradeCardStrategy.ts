@@ -1,7 +1,7 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
-import type { GameState } from '@engine/domain/types';
 import { discardCards } from '@engine/application/gameStateHelper';
 import type { ActionType } from '@engine/domain/enums';
+import type { GameState } from '@engine/domain/types';
 
 export class UpgradeCardStrategy implements CardActionStrategy {
   applyEffect(

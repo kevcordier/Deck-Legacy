@@ -1,9 +1,9 @@
-import { useTranslation } from 'react-i18next';
-import type { CardDef } from '@engine/domain/types';
-import { Modal } from '@components/ui/Modal/Modal';
 import { Button } from '@components/ui/Button/Button';
 import { MarkdownText } from '@components/ui/MarkdownText/MarckdownText';
+import { Modal } from '@components/ui/Modal/Modal';
+import type { CardDef } from '@engine/domain/types';
 import { tCardParchmentText } from '@helpers/cardI18n';
+import { useTranslation } from 'react-i18next';
 
 interface ParchmentModalProps {
   def: CardDef;

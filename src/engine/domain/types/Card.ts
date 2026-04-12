@@ -1,5 +1,5 @@
 import type { CardTag, Trigger } from '@engine/domain/enums';
-import type { Cost, Action, Resources } from '@engine/domain/types';
+import type { Action, Cost, Resources } from '@engine/domain/types';
 
 export type CardDef = {
   id: number;

@@ -1,8 +1,8 @@
-import { useTranslation } from 'react-i18next';
-import { createPortal } from 'react-dom';
 import { GameCard } from '@components/GameCard/GameCard';
-import type { CardInstance } from '@engine/domain/types';
 import { Modal } from '@components/ui/Modal/Modal';
+import type { CardInstance } from '@engine/domain/types';
+import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 
 interface CardListModalProps {
   title: string;

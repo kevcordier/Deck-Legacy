@@ -1,7 +1,7 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { discardCards } from '@engine/application/gameStateHelper';
-import { Trigger, type ActionType } from '@engine/domain/enums';
+import { type ActionType, Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState } from '@engine/domain/types';
 
 export class DiscoverCardStrategy implements CardActionStrategy {

@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
 import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
 import { ActionType, Trigger } from '@engine/domain/enums';
 import type { CardInstance, GameState } from '@engine/domain/types';
+import { describe, expect, it } from 'vitest';
 
 // — fixtures —
 

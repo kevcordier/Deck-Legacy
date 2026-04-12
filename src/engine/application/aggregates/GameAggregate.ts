@@ -9,26 +9,9 @@ import {
   PlayCardStrategy,
   UpgradeCardStrategy,
 } from '@engine/application/cardAction';
-import { ActionType, GameEventType, Trigger } from '@engine/domain/enums';
-import type {
-  CardInstance,
-  AdvanceEvent,
-  CardProducedEvent,
-  GameEvent,
-  GameStartedEvent,
-  PassEvent,
-  RoundStartedEvent,
-  TurnStartedEvent,
-  UpgradeCardEvent,
-  UseCardEffectEvent,
-  GameState,
-  Resources,
-  CardDef,
-  ResolvedCost,
-  TriggerEntry,
-  ResolvedAction,
-  SkipTriggerEvent,
-} from '@engine/domain/types';
+import { ChoseStateStrategy } from '@engine/application/cardAction/ChoseStateStrategy';
+import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
+import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import {
   destroyCards,
   discardCards,
@@ -37,9 +20,26 @@ import {
   mergeResources,
   spendResources,
 } from '@engine/application/gameStateHelper';
-import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
-import { ChoseStateStrategy } from '@engine/application/cardAction/ChoseStateStrategy';
-import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
+import { ActionType, GameEventType, Trigger } from '@engine/domain/enums';
+import type {
+  AdvanceEvent,
+  CardDef,
+  CardInstance,
+  CardProducedEvent,
+  GameEvent,
+  GameStartedEvent,
+  GameState,
+  PassEvent,
+  ResolvedAction,
+  ResolvedCost,
+  Resources,
+  RoundStartedEvent,
+  SkipTriggerEvent,
+  TriggerEntry,
+  TurnStartedEvent,
+  UpgradeCardEvent,
+  UseCardEffectEvent,
+} from '@engine/domain/types';
 
 export const EMPTY_STATE: GameState = {
   instances: {},

@@ -1,6 +1,6 @@
-import React from 'react';
 import { getResMeta, renderTextWithIcons } from '@helpers/renderHelpers';
-import { describe, it, expect } from 'vitest';
+import React from 'react';
+import { describe, expect, it } from 'vitest';
 
 // — getResMeta —
 

@@ -1,5 +1,5 @@
-import type { CSSProperties } from 'react';
 import { IconColors } from './iconColors';
+import type { CSSProperties } from 'react';
 
 export interface IconProps {
   color?: string;

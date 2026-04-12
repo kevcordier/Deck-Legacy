@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
   ActivatedIcon,
   CrownIcon,
@@ -6,6 +5,7 @@ import {
   GloryIcon,
   GoldIcon,
   GoodsIcon,
+  IconColors,
   IronIcon,
   PassifIcon,
   StoneIcon,
@@ -13,8 +13,8 @@ import {
   TriggerIcon,
   WeaponIcon,
   WoodIcon,
-  IconColors,
 } from './icon';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const AllIconsMeta: Meta = {
   title: 'UI/Icons',

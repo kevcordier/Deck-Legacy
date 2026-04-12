@@ -1,15 +1,15 @@
-import { describe, it, expect } from 'vitest';
 import {
+  computeScore,
+  destroyCards,
   discardCards,
   drawCards,
-  destroyCards,
   endTurn,
-  spendResources,
-  computeScore,
   getCurrentPhase,
   mergeResources,
+  spendResources,
 } from '@engine/application/gameStateHelper';
 import type { CardDef, CardInstance, GameState, Sticker } from '@engine/domain/types';
+import { describe, expect, it } from 'vitest';
 
 // — fixtures —
 

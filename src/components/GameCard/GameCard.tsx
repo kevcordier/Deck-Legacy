@@ -1,17 +1,7 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { tCardName, tCardActionLabel, tCardActionDescription, tCardTag } from '@helpers/cardI18n';
-import {
-  getActiveState,
-  getEffectiveProductions,
-  tagClass,
-  canAffordResources,
-} from '@engine/application/cardHelpers';
-import { getResMeta, renderTextWithIcons } from '@helpers/renderHelpers';
 import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview';
-import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
-import type { CardInstance } from '@engine/domain/types';
-import { TargetScope } from '@engine/domain/enums';
+import { CardTrack } from '@components/CardTrack/CardTrack';
+import { Button } from '@components/ui/Button/Button';
+import { Glory } from '@components/ui/Glory/Glory';
 import {
   ActivatedIcon,
   DestroyIcon,
@@ -19,12 +9,22 @@ import {
   TimeIcon,
   TriggerIcon,
 } from '@components/ui/Icon/icon';
-import { useGame } from '@hooks/useGame';
-import { Button } from '@components/ui/Button/Button';
-import { Glory } from '@components/ui/Glory/Glory';
-import { CardTrack } from '@components/CardTrack/CardTrack';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
+import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Tag } from '@components/ui/Tag/Tag';
+import {
+  canAffordResources,
+  getActiveState,
+  getEffectiveProductions,
+  tagClass,
+} from '@engine/application/cardHelpers';
+import { TargetScope } from '@engine/domain/enums';
+import type { CardInstance } from '@engine/domain/types';
+import { tCardActionDescription, tCardActionLabel, tCardName, tCardTag } from '@helpers/cardI18n';
+import { getResMeta, renderTextWithIcons } from '@helpers/renderHelpers';
+import { useGame } from '@hooks/useGame';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface GameCardProps {
   instance: CardInstance;

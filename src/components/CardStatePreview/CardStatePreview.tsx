@@ -1,11 +1,11 @@
-import { createPortal } from 'react-dom';
-import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
-import type { CardDef, CardInstance } from '@engine/domain/types';
-import { tCardName } from '@helpers/cardI18n';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
 import { Modal } from '@components/ui/Modal/Modal';
+import type { CardDef, CardInstance } from '@engine/domain/types';
+import { tCardName } from '@helpers/cardI18n';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 
 function EyeIcon() {
   return (

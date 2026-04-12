@@ -4,9 +4,8 @@
  *
  * Layer: Infrastructure — depends only on the domain and static assets.
  */
-
 import { cardsData } from '@data/cards';
-import { stickerData, globalStock } from '@data/stickers';
+import { globalStock, stickerData } from '@data/stickers';
 import type { CardDef, Sticker, StickerStock } from '@engine/domain/types';
 
 /** Loads and indexes all card definitions from `cards.json` (key = `card.id`). */

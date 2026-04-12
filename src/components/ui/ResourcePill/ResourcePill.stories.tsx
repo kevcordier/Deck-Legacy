@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ResourcePill } from './ResourcePill';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof ResourcePill> = {
   title: 'UI/ResourcePill',

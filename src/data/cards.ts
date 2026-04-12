@@ -1,5 +1,5 @@
+import { ActionType, CardTag, ResourceType, TargetScope, Trigger } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
-import { ResourceType, CardTag, Trigger, ActionType, TargetScope } from '@engine/domain/enums';
 
 export const cardsData: CardDef[] = [
   {

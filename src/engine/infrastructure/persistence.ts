@@ -9,7 +9,6 @@
  * localStorage key: `deck_legacy_save`
  * Layer: Infrastructure — depends only on the domain.
  */
-
 import type { GameEvent, GameState } from '@engine/domain/types';
 
 const SAVE_KEY = 'deck_legacy_save';

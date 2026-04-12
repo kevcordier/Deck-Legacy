@@ -1,10 +1,10 @@
-import { useState, useContext } from 'react';
-import { useTranslation } from 'react-i18next';
-import { GameUIContext } from '@contexts/GameUIContext';
 import { Button } from '@components/ui/Button/Button';
 import { ButtonGroup } from '@components/ui/ButtonGroup/ButtonGroup';
-import type { Theme } from '@contexts/GameUIProvider';
 import { Modal } from '@components/ui/Modal/Modal';
+import { GameUIContext } from '@contexts/GameUIContext';
+import type { Theme } from '@contexts/GameUIProvider';
+import { useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface OptionsModalProps {
   onClose: () => void;

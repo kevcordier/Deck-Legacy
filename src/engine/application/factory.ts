@@ -3,7 +3,6 @@
  *
  * Layer: Infrastructure — depends only on the domain.
  */
-
 import type { CardDef, CardInstance } from '@engine/domain/types';
 
 /**

@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
-import { Title } from '@components/ui/Title/Title';
 import { Divider } from '@components/ui/Divider/Divider';
+import { Title } from '@components/ui/Title/Title';
+import type { ReactNode } from 'react';
 
 interface SectionProps {
   title: string;

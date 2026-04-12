@@ -1,8 +1,8 @@
-import { useTranslation } from 'react-i18next';
 import rulesEn from '../../i18n/locales/rules.en.md?raw';
 import rulesFr from '../../i18n/locales/rules.fr.md?raw';
-import { Modal } from '@components/ui/Modal/Modal';
 import { MarkdownText } from '@components/ui/MarkdownText/MarckdownText';
+import { Modal } from '@components/ui/Modal/Modal';
+import { useTranslation } from 'react-i18next';
 
 interface RulesModalProps {
   onClose: () => void;

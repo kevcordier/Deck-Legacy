@@ -1,9 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-
 import { Header } from './Header';
 import { GameProvider } from '@contexts/GameProvider';
 import { GameUIProvider } from '@contexts/GameUIProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 type HeaderProps = {
   round?: number;

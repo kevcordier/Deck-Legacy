@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
 import { cardSelector } from '@engine/application/cardSelector';
 import { CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, CardInstance, GameState } from '@engine/domain/types';
+import { describe, expect, it } from 'vitest';
 
 // — fixtures —
 

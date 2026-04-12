@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StickerChoice } from './StickerChoice';
 import { stickerData } from '@data/stickers';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof StickerChoice> = {
   title: 'UI/StickerChoice',

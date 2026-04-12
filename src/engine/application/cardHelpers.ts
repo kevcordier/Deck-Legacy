@@ -1,14 +1,14 @@
+import { mergeResources } from '@engine/application/gameStateHelper';
+import { ActionType, TargetScope, Trigger } from '@engine/domain/enums';
 import type {
   CardDef,
-  CardState,
   CardInstance,
+  CardState,
   Cost,
   Resources,
   Sticker,
   TriggerEntry,
 } from '@engine/domain/types';
-import { ActionType, TargetScope, Trigger } from '@engine/domain/enums';
-import { mergeResources } from '@engine/application/gameStateHelper';
 
 export function getEffectiveProductions(
   base: Resources,

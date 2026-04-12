@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-
 import { Stat } from './Stat';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   title: 'UI/Stat',

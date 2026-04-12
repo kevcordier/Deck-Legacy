@@ -1,4 +1,5 @@
 import { GameContext } from '@contexts/GameContext';
+import deckData from '@data/deck.json';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import {
   canAffordResources,
@@ -8,6 +9,7 @@ import {
 import { resolveCost } from '@engine/application/costResolver';
 import { resolveActionEffect } from '@engine/application/effectResolver';
 import { createInstance } from '@engine/application/factory';
+import { mergeResources } from '@engine/application/gameStateHelper';
 import { ActionType, PendingChoiceType, type ResourceType } from '@engine/domain/enums';
 import type {
   CardDef,
@@ -25,10 +27,8 @@ import {
   loadInitialStickerStock,
   loadStickerDefs,
 } from '@engine/infrastructure/loaders';
-import deckData from '@data/deck.json';
 import { deleteSave, loadSave, saveGame } from '@engine/infrastructure/persistence';
-import { useMemo, useRef, useState, type ReactNode } from 'react';
-import { mergeResources } from '@engine/application/gameStateHelper';
+import { type ReactNode, useMemo, useRef, useState } from 'react';
 
 function makeAggregate(
   state: GameState = { ...EMPTY_STATE },

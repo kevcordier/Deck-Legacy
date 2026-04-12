@@ -1,14 +1,14 @@
-import { describe, it, expect, vi } from 'vitest';
-import type { TFunction } from 'i18next';
 import {
-  tCardName,
-  tCardActionLabel,
-  tCardPassiveLabel,
   tCardActionDescription,
-  tCardStateDescription,
+  tCardActionLabel,
+  tCardName,
   tCardPassiveDescription,
+  tCardPassiveLabel,
+  tCardStateDescription,
   tCardTag,
 } from '@helpers/cardI18n';
+import type { TFunction } from 'i18next';
+import { describe, expect, it, vi } from 'vitest';
 
 const ICON_PASSTHROUGH = {
   glory: '{{glory}}',

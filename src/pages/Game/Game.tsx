@@ -1,12 +1,12 @@
-import { useGame } from '@hooks/useGame';
-import { ResourceBar } from '@components/ResourceBar/ResourceBar';
+import { GameBoard } from '@components/GameBoard/GameBoard';
+import { Header } from '@components/Header/Header';
+import { OptionsModal } from '@components/OptionsModal/OptionsModal';
 import { ParchmentModal } from '@components/ParchmentModal/ParchmentModal';
 import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
-import { OptionsModal } from '@components/OptionsModal/OptionsModal';
+import { ResourceBar } from '@components/ResourceBar/ResourceBar';
 import { RulesModal } from '@components/RulesModal/RulesModal';
-import { Header } from '@components/Header/Header';
+import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
-import { GameBoard } from '@components/GameBoard/GameBoard';
 
 export function Game() {
   const {

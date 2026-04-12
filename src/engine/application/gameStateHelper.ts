@@ -1,6 +1,6 @@
-import type { CardDef, GameState, Resources, Sticker } from '@engine/domain/types';
 import { getActiveState, getTrackGlory } from '@engine/application/cardHelpers';
 import type { ResourceType } from '@engine/domain/enums';
+import type { CardDef, GameState, Resources, Sticker } from '@engine/domain/types';
 import type { Phase } from '@engine/domain/types/Phase';
 
 export const discardCards = (_gameState: GameState, cardIds: number[]): GameState => {

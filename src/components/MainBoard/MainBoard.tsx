@@ -1,8 +1,8 @@
 import { CardRow } from '@components/CardRow/CardRow';
-import { EmptyState } from '@components/ui/EmptyState/EmptyState';
 import { GameCard } from '@components/GameCard/GameCard';
-import { Section } from '@components/ui/Section/Section';
 import { Button } from '@components/ui/Button/Button';
+import { EmptyState } from '@components/ui/EmptyState/EmptyState';
+import { Section } from '@components/ui/Section/Section';
 import { useGame } from '@hooks/useGame';
 import { useTranslation } from 'react-i18next';
 

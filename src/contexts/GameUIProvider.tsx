@@ -1,5 +1,5 @@
 import { GameUIContext } from '@contexts/GameUIContext';
-import { useState, useEffect, type ReactNode } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 
 export type Theme = 'light' | 'dark' | 'system';
 

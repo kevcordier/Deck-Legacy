@@ -1,5 +1,4 @@
-import { describe, it, expect } from 'vitest';
-import { GameAggregate, EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
+import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import { ActionType, GameEventType, Trigger } from '@engine/domain/enums';
 import type {
   CardDef,
@@ -9,6 +8,7 @@ import type {
   ResolvedAction,
   ResolvedCost,
 } from '@engine/domain/types';
+import { describe, expect, it } from 'vitest';
 
 // — fixtures —
 
