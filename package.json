@@ -19,7 +19,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "depcruise": "depcruise src --config .dependency-cruiser.cjs",
-    "verify": "npm run format && npm run lint:fix && npm run typecheck && npm run depcruise && npm run test"
+    "verify": "npm run format && npm run lint:fix && npm run typecheck && npm run depcruise && npm run test:coverage"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
