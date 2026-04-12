@@ -3,7 +3,7 @@ name: ⚡ Coverage badges generation
 on:
   # Runs on pushes targeting the default branch
   workflow_run:
-    workflows: ['CI']
+    workflows: ['Code quality checks and tests']
     branches: [main]
     types:
       - completed
