@@ -1,11 +1,11 @@
 import { Button } from '@components/ui/Button/Button';
 
 export type ModalProps = {
-  title?: string;
-  subtitle?: string | null;
-  children: React.ReactNode;
-  onClose?: () => void;
-  className?: string;
+  readonly title?: string;
+  readonly subtitle?: string | null;
+  readonly children: React.ReactNode;
+  readonly onClose?: () => void;
+  readonly className?: string;
 };
 
 export function Modal({ title, subtitle, children, onClose, className = '' }: ModalProps) {

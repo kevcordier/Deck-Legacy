@@ -1,4 +1,5 @@
-import { type CardTag, TargetScope } from '@engine/domain/enums';
+import { getAffectedCardsByBoardEffects } from '@engine/application/cardHelpers';
+import { type CardTag, PassiveType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, CardeSelector, GameState } from '@engine/domain/types';
 
 /**
@@ -18,6 +19,8 @@ export function cardSelector(
     return topCardId ? [gameState.instances[topCardId].id] : [];
   }
 
+  const blockedInstanceIds = getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK);
+
   let pool: number[] = [];
   if (scope === TargetScope.DECK) {
     pool = gameState.drawPile;
@@ -26,7 +29,7 @@ export function cardSelector(
   } else if (scope === TargetScope.DISCARD) {
     pool = gameState.discardPile;
   } else if (scope === TargetScope.BLOCKED) {
-    pool = Object.values(gameState.blockingCards);
+    pool = blockedInstanceIds;
   } else if (scope === TargetScope.PERMANENTS) {
     pool = Object.values(gameState.permanents);
   } else if (scope === TargetScope.ANY) {
@@ -42,8 +45,7 @@ export function cardSelector(
 
   return pool.filter(id => {
     if (id === instanceId) return false; // Exclude self unless explicitly included by scope or ids
-    if (scope !== TargetScope.BLOCKED && Object.values(gameState.blockingCards).includes(id))
-      return false; // Exclude blocked cards
+    if (scope !== TargetScope.BLOCKED && blockedInstanceIds.includes(id)) return false; // Exclude blocked cards
     const inst = gameState.instances[id];
     if (!inst || !defs) return false;
     const state = defs[inst.cardId]?.states.find(s => s.id === inst.stateId);

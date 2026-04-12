@@ -7,10 +7,10 @@ import type { Sticker } from '@engine/domain/types';
 import { useTranslation } from 'react-i18next';
 
 interface StickerChoiceProps {
-  options: Sticker[];
-  disabled?: boolean;
-  onSelect: (stickerId: number) => void;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  readonly options: Sticker[];
+  readonly disabled?: boolean;
+  readonly onSelect: (stickerId: number) => void;
+  readonly size?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export function StickerChoice({

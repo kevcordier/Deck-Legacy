@@ -1,13 +1,13 @@
 import { Button, type ButtonProps } from '@components/ui/Button/Button';
 
 type ButtonGroupProps = {
-  label: string;
-  options: ButtonProps[];
-  value: string;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
-  font?: 'display' | 'body';
-  onChange?: (value: string) => void;
-  className?: string;
+  readonly label: string;
+  readonly options: ButtonProps[];
+  readonly value: string;
+  readonly size?: 'xs' | 'sm' | 'md' | 'lg';
+  readonly font?: 'display' | 'body';
+  readonly onChange?: (value: string) => void;
+  readonly className?: string;
 };
 
 export function ButtonGroup({

@@ -31,11 +31,11 @@ function getChoiceActionLabel(
   const inst = instances[choice.sourceInstanceId];
   const def = inst ? defs[inst.cardId] : undefined;
   const state = def?.states.find(s => s.id === inst?.stateId);
-  const effects = state?.cardEffects;
+  const effects = state?.actions;
   if (!effects || !def || !state) return undefined;
   const effectIdx = effects.findIndex(e => e.actions.some(a => a.id === actionId));
   if (effectIdx === -1) return undefined;
-  return tCardActionLabel(t, def.id, state.id, effectIdx, effects[effectIdx].label) || undefined;
+  return tCardActionLabel(t, def.id, state.id, effectIdx) || undefined;
 }
 
 function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
@@ -89,16 +89,9 @@ export function PendingChoiceModal({
           const inst = instances[trigger.sourceInstanceId];
           const def = inst ? defs[inst.cardId] : undefined;
           const state = def?.states.find(s => s.id === inst?.stateId) ?? def?.states[0];
-          const actionIdx =
-            state?.cardEffects?.findIndex(e => e.label === trigger.effectDef.label) ?? -1;
-          const cardName = tCardName(t, def?.id, state?.id, state?.name);
-          const actionLabel = tCardActionLabel(
-            t,
-            def?.id,
-            state?.id,
-            actionIdx,
-            trigger.effectDef.label,
-          );
+          const actionIdx = state?.actions?.findIndex(e => e.id === trigger.effectDef.id) ?? -1;
+          const cardName = tCardName(t, def?.id, state?.id);
+          const actionLabel = tCardActionLabel(t, def?.id, state?.id, actionIdx);
           return (
             <div
               key={triggerId}
@@ -121,7 +114,7 @@ export function PendingChoiceModal({
                   size="sm"
                   color="base-primary"
                   onClick={() =>
-                    onResolveTrigger(trigger.sourceInstanceId, trigger.effectDef.label, triggerId)
+                    onResolveTrigger(trigger.sourceInstanceId, trigger.effectDef.id, triggerId)
                   }
                 >
                   {t('triggerPile.resolve')}

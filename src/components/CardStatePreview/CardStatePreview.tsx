@@ -69,7 +69,7 @@ function CardStatesModal({
 
   return createPortal(
     <Modal
-      title={tCardName(t, def.id, 1, def.name)}
+      title={tCardName(t, def.id, 1)}
       subtitle={t('cardPreview.statesMeta', { count: def.states.length, id: instance.id })}
       onClose={onClose}
     >

@@ -28,7 +28,7 @@ export const makeGameState = (overrides: Partial<GameState> = {}): GameState => 
   board: [],
   destroyedPile: [],
   permanents: [],
-  blockingCards: {},
+  boardEffects: {},
   resources: {},
   stickerStock: {},
   discoveryPile: [],

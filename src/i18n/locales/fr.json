@@ -55,7 +55,6 @@
   },
   "card": {
     "blocked": "Bloquée",
-    "stayInPlay": "Reste en jeu",
     "state": "État {{id}}"
   },
   "cardPreview": {

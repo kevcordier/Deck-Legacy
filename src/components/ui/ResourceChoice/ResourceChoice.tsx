@@ -3,10 +3,10 @@ import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import type { Resources } from '@engine/domain/types';
 
 interface ResourceChoiceProps {
-  options: Resources[];
-  disabled?: boolean;
-  onSelect: (r: Resources) => void;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  readonly options: Resources[];
+  readonly disabled?: boolean;
+  readonly onSelect: (r: Resources) => void;
+  readonly size?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export function ResourceChoice({

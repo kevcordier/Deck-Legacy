@@ -3,6 +3,8 @@ import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
 import { EmptyState } from '@components/ui/EmptyState/EmptyState';
 import { Section } from '@components/ui/Section/Section';
+import { getAffectedCardsByBoardEffects } from '@engine/application/cardHelpers';
+import { PassiveType } from '@engine/domain/enums';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +60,7 @@ export function MainBoard() {
         >
           <CardRow
             cardIds={state.board}
-            blockingCards={state.blockingCards}
+            blockingCards={getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)}
             instances={state.instances}
           />
         </Section>
@@ -71,7 +73,7 @@ export function MainBoard() {
         >
           <CardRow
             cardIds={state.permanents}
-            blockingCards={state.blockingCards}
+            blockingCards={getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)}
             instances={state.instances}
           />
         </Section>

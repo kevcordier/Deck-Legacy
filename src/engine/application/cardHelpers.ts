@@ -1,10 +1,11 @@
 import { mergeResources } from '@engine/application/gameStateHelper';
-import { ActionType, TargetScope, Trigger } from '@engine/domain/enums';
+import { ActionType, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
 import type {
   CardDef,
   CardInstance,
   CardState,
   Cost,
+  GameState,
   Resources,
   Sticker,
   TriggerEntry,
@@ -85,10 +86,10 @@ export function getInstancesTriggerEffects(
   return instances.reduce<TriggerEntry[]>((acc, instance) => {
     const state = getActiveState(instance, defs);
     const cardDef = defs[instance.cardId];
-    const effects = state.cardEffects?.filter(ce => ce.trigger === effect) ?? [];
+    const effects = state.actions?.filter(ce => ce.trigger === effect) ?? [];
     if (effect === Trigger.ON_DISCOVER && cardDef.chooseState) {
       effects.push({
-        label: 'Choose state',
+        id: 'choose_state',
         actions: [
           {
             id: 0,
@@ -103,4 +104,45 @@ export function getInstancesTriggerEffects(
     }
     return [...acc, ...effects.map(effectDef => ({ effectDef, sourceInstanceId: instance.id }))];
   }, [] as TriggerEntry[]);
+}
+
+// Sticker ID for the 'stays_in_play' effect (see src/data/stickers.ts)
+const STAYS_IN_PLAY_STICKER_ID = 7;
+
+export function cardShouldStayInPlay(
+  instanceId: number,
+  gameState: GameState,
+  cardDefs: Record<number, CardDef>,
+): boolean {
+  const instance = gameState.instances[instanceId];
+  if (!instance) return false;
+  const def = cardDefs[instance.cardId];
+  const state = def?.states.find(s => s.id === instance.stateId);
+  if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
+  if (getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY).includes(instanceId))
+    return true;
+  const stickers = instance.stickers[instance.stateId] ?? [];
+  return stickers.includes(STAYS_IN_PLAY_STICKER_ID);
+}
+
+export function cardIsBlocked(instanceId: number, gameState: GameState): boolean {
+  return getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK).includes(instanceId);
+}
+
+export function getAffectedCardsByBoardEffects(
+  gameState: GameState,
+  passiveType: PassiveType,
+): number[] {
+  const affectedInstanceIds: number[] = [];
+  Object.entries(gameState.boardEffects).forEach(([, effects]) =>
+    effects
+      .filter(be => be.type === passiveType)
+      .forEach(be => {
+        if (be.cards?.ids) {
+          affectedInstanceIds.push(...be.cards.ids);
+        }
+      }),
+  );
+
+  return affectedInstanceIds;
 }

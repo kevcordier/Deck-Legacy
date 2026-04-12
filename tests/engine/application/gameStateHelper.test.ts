@@ -9,7 +9,9 @@ import {
   mergeResources,
   spendResources,
 } from '@engine/application/gameStateHelper';
+import { PassiveType } from '@engine/domain/enums';
 import type { CardDef, Sticker } from '@engine/domain/types';
+import { CardPassives } from '@engine/domain/types/effects';
 import { describe, expect, it } from 'vitest';
 
 // — discardCards —
@@ -36,11 +38,16 @@ describe('discardCards', () => {
     expect(result.discoveryPile).toEqual([6]);
   });
 
-  it('removes cards from blockingCards', () => {
-    const gs = makeGameState({ blockingCards: { 1: 2, 3: 4 } });
+  it('removes cards from boardEffects', () => {
+    const gs = makeGameState({
+      boardEffects: {
+        1: [{ id: '2', type: PassiveType.BLOCK }],
+        3: [{ id: '4', type: PassiveType.BLOCK }],
+      },
+    });
     const result = discardCards(gs, [1]);
-    expect(result.blockingCards[1]).toBeUndefined();
-    expect(result.blockingCards[3]).toBe(4);
+    expect(result.boardEffects[1]).toBeUndefined();
+    expect(result.boardEffects[3]).toEqual([{ id: '4', type: PassiveType.BLOCK }]);
   });
 
   it('does not mutate the original game state', () => {
@@ -105,10 +112,10 @@ describe('destroyCards', () => {
     expect(result.destroyedPile).toEqual([1, 3, 4, 5]);
   });
 
-  it('removes destroyed cards from blockingCards', () => {
-    const gs = makeGameState({ blockingCards: { 1: 2 } });
+  it('removes destroyed cards from boardEffects', () => {
+    const gs = makeGameState({ boardEffects: { 1: [{ id: '2', type: PassiveType.BLOCK }] } });
     const result = destroyCards(gs, [1]);
-    expect(result.blockingCards[1]).toBeUndefined();
+    expect(result.boardEffects[1]).toBeUndefined();
   });
 
   it('does not mutate the original game state', () => {
@@ -152,7 +159,17 @@ describe('endTurn', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: { id: 10, name: 'A', states: [{ id: 1, name: 'S1', stayInPlay: true }] },
+      10: {
+        id: 10,
+        name: 'A',
+        states: [
+          {
+            id: 1,
+            name: 'S1',
+            passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
+          },
+        ],
+      },
       11: { id: 11, name: 'B', states: [{ id: 1, name: 'S1' }] },
     };
     const result = endTurn(gs, defs);
@@ -191,7 +208,17 @@ describe('endTurn', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: { id: 10, name: 'A', states: [{ id: 1, name: 'S1', stayInPlay: true }] },
+      10: {
+        id: 10,
+        name: 'A',
+        states: [
+          {
+            id: 1,
+            name: 'S1',
+            passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
+          },
+        ],
+      },
       11: { id: 11, name: 'B', states: [{ id: 1, name: 'S1' }] },
       12: { id: 12, name: 'C', states: [{ id: 1, name: 'S1' }] },
     };
@@ -386,7 +413,9 @@ describe('getCurrentPhase', () => {
     const gs = makeGameState({
       round: 0,
       drawPile: [1, 2, 3],
-      triggerPile: { 1: { sourceInstanceId: 1, effectDef: { label: 'E1', actions: [] } } },
+      triggerPile: {
+        1: { sourceInstanceId: 1, effectDef: { id: 'E1', actions: [] } },
+      },
     });
     expect(getCurrentPhase(gs)).toBe('preround');
   });

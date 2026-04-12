@@ -11,9 +11,9 @@ const cardDefs: Record<number, CardDef> = {
 const cardDefsWithTrigger: Record<number, CardDef> = {
   10: makeDef(10, [
     makeCardState(1, {
-      cardEffects: [
+      actions: [
         {
-          label: 'On play effect',
+          id: 'e1',
           trigger: Trigger.ON_PLAY,
           optional: false,
           actions: [{ id: 1, type: ActionType.ADD_RESOURCES }],

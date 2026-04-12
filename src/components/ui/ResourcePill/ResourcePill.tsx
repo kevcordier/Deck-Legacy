@@ -2,8 +2,8 @@ import { getResMeta } from '@helpers/renderHelpers';
 import { useTranslation } from 'react-i18next';
 
 interface ResourcePillProps {
-  resource: string;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  readonly resource: string;
+  readonly size?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export function ResourcePill({ resource, size = 'md' }: ResourcePillProps) {

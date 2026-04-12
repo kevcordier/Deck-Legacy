@@ -2,10 +2,10 @@ import { IconColors } from './iconColors';
 import type { CSSProperties } from 'react';
 
 export interface IconProps {
-  color?: string;
-  className?: string;
-  style?: CSSProperties;
-  alt?: string;
+  readonly color?: string;
+  readonly className?: string;
+  readonly style?: CSSProperties;
+  readonly alt?: string;
 }
 
 export { IconColors };

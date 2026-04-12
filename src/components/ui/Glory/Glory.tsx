@@ -1,8 +1,8 @@
 import { GloryIcon, IconColors } from '@components/ui/Icon/icon';
 
 type GloryProps = {
-  glory: number;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  readonly glory: number;
+  readonly size?: 'xs' | 'sm' | 'md' | 'lg';
 };
 
 export function Glory({ glory, size = 'md' }: GloryProps) {

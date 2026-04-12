@@ -1,34 +1,7 @@
+import { makeGameState, makeInstance } from '../testHelpers';
 import { AddStickerStrategy } from '@engine/application/cardAction/AddStickerStrategy';
 import { ActionType } from '@engine/domain/enums';
-import type { CardInstance, GameState } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
-
-const makeInstance = (id: number, cardId: number, stateId: number): CardInstance => ({
-  id,
-  cardId,
-  stateId,
-  stickers: {},
-  trackProgress: [],
-  cumulated: 0,
-});
-
-const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
-  instances: {},
-  drawPile: [],
-  discardPile: [],
-  board: [],
-  destroyedPile: [],
-  permanents: [],
-  blockingCards: {},
-  resources: {},
-  stickerStock: {},
-  discoveryPile: [],
-  triggerPile: {},
-  lastAddedIds: [],
-  round: 0,
-  turn: 0,
-  ...overrides,
-});
 
 describe('AddStickerStrategy', () => {
   const strategy = new AddStickerStrategy();

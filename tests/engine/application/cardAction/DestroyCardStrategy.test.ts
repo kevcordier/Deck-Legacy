@@ -1,25 +1,7 @@
+import { makeGameState } from '../testHelpers';
 import { DestroyCardStrategy } from '@engine/application/cardAction/DestroyCardStrategy';
 import { ActionType } from '@engine/domain/enums';
-import type { GameState } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
-
-const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
-  instances: {},
-  drawPile: [],
-  discardPile: [],
-  board: [],
-  destroyedPile: [],
-  permanents: [],
-  blockingCards: {},
-  resources: {},
-  stickerStock: {},
-  discoveryPile: [],
-  triggerPile: {},
-  lastAddedIds: [],
-  round: 0,
-  turn: 0,
-  ...overrides,
-});
 
 describe('DestroyCardStrategy', () => {
   const strategy = new DestroyCardStrategy();

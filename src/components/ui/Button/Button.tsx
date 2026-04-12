@@ -1,12 +1,12 @@
 export type ButtonProps = {
-  children: React.ReactNode;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  variant?: 'text' | 'contained' | 'outlined';
-  color?: 'primary' | 'danger' | 'ink' | 'base-primary' | 'base-ink';
-  size?: 'xs' | 'sm' | 'md' | 'lg';
-  font?: 'display' | 'body';
-  value?: string;
-  disabled?: boolean;
+  readonly children: React.ReactNode;
+  readonly onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  readonly variant?: 'text' | 'contained' | 'outlined';
+  readonly color?: 'primary' | 'danger' | 'ink' | 'base-primary' | 'base-ink';
+  readonly size?: 'xs' | 'sm' | 'md' | 'lg';
+  readonly font?: 'display' | 'body';
+  readonly value?: string;
+  readonly disabled?: boolean;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function Button({

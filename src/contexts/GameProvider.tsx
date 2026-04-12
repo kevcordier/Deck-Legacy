@@ -3,6 +3,7 @@ import deckData from '@data/deck.json';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import {
   canAffordResources,
+  cardIsBlocked,
   getActiveState,
   getEffectiveProductions,
 } from '@engine/application/cardHelpers';
@@ -12,8 +13,8 @@ import { createInstance } from '@engine/application/factory';
 import { mergeResources } from '@engine/application/gameStateHelper';
 import { ActionType, PendingChoiceType, type ResourceType } from '@engine/domain/enums';
 import type {
+  CardAction,
   CardDef,
-  Effect,
   GameEvent,
   GameState,
   PendingChoice,
@@ -61,7 +62,7 @@ export function GameProvider({
   } | null>(null);
   const currentActionRef = useRef<{
     instanceId: number;
-    action: Effect;
+    action: CardAction;
     resolvedCost: ResolvedCost | null;
     resolvedAction: ResolvedAction[];
     triggerId: string;
@@ -71,14 +72,15 @@ export function GameProvider({
 
   const triggerAction = (
     instanceId: number,
-    effect: Effect,
+    effect: CardAction,
     resolvedCost: ResolvedCost,
     triggerId: string,
   ): GameState | undefined => {
     const gs = aggRef.current.getGameState();
     const inst = gs.instances[instanceId];
     const def = defs[inst.cardId];
-    if (!inst || Object.values(gs.blockingCards).includes(instanceId)) return;
+
+    if (!inst || cardIsBlocked(instanceId, gs)) return;
     if (!effect) return;
 
     // Resolve all effects of the action and gather any pending choices needed to resolve them
@@ -118,10 +120,10 @@ export function GameProvider({
 
     const triggers = newState.triggerPile;
 
-    // If any trigger comes from a parchment card with text, show the text modal first.
+    // If any trigger comes from a parchment card, show the text modal first.
     const parchmentTrigger = Object.values(triggers).find(t => {
       const inst = newState.instances[t.sourceInstanceId];
-      return inst && defs[inst.cardId]?.parchmentCard && defs[inst.cardId]?.text;
+      return inst && defs[inst.cardId]?.parchmentCard;
     });
     if (parchmentTrigger) {
       const inst = newState.instances[parchmentTrigger.sourceInstanceId];
@@ -225,7 +227,7 @@ export function GameProvider({
   ) => {
     const gs = aggRef.current.getGameState();
     const inst = gs.instances[instanceId];
-    if (!inst || Object.values(gs.blockingCards).includes(instanceId)) return;
+    if (!inst || cardIsBlocked(instanceId, gs)) return;
 
     const resourcesGained = getEffectiveProductions(chosenResource, inst, stickerDefs);
     triggerProduction(instanceId, resourcesGained);
@@ -234,9 +236,9 @@ export function GameProvider({
   const resolveAction = (instanceId: number, actionId: string, triggerId?: string) => {
     const gs = aggRef.current.getGameState();
     const inst = gs.instances[instanceId];
-    if (!inst || Object.values(gs.blockingCards).includes(instanceId)) return;
+    if (!inst || cardIsBlocked(instanceId, gs)) return;
     const cs = getActiveState(inst, defs);
-    const action = cs.cardEffects?.find(ce => ce.label === actionId);
+    const action = cs.actions?.find(ce => ce.id === actionId);
     if (!action) return;
     if (!canAffordResources(gs.resources, action.cost ?? {})) return;
 
@@ -272,7 +274,7 @@ export function GameProvider({
   const resolveTrackStep = (instanceId: number, stepId: number) => {
     const gs = aggRef.current.getGameState();
     const inst = gs.instances[instanceId];
-    if (!inst || Object.values(gs.blockingCards).includes(instanceId)) return;
+    if (!inst || cardIsBlocked(instanceId, gs)) return;
     const cs = getActiveState(inst, defs);
     const track = cs.track;
     if (!track) return;
@@ -305,7 +307,7 @@ export function GameProvider({
   const resolveUpgrade = (instanceId: number, chosenUpgradeTo?: number) => {
     const gs = aggRef.current.getGameState();
     const inst = gs.instances[instanceId];
-    if (!inst || Object.values(gs.blockingCards).includes(instanceId)) return;
+    if (!inst || cardIsBlocked(instanceId, gs)) return;
     const cs = getActiveState(inst, defs);
     const upgrades = cs.upgrade ?? [];
     if (upgrades.length === 0) return;
@@ -346,7 +348,7 @@ export function GameProvider({
     if (currentProductionRef.current) {
       const { instanceId } = currentProductionRef.current;
       const inst = gs.instances[instanceId];
-      if (!inst || Object.values(gs.blockingCards).includes(instanceId)) return;
+      if (!inst || cardIsBlocked(instanceId, gs)) return;
 
       const base = choice.resources || {};
       const resourcesGained = getEffectiveProductions(base, inst, stickerDefs);
@@ -359,7 +361,7 @@ export function GameProvider({
       const { instanceId, action } = currentActionRef.current;
       const inst = gs.instances[instanceId];
       const def = defs[inst.cardId];
-      if (!inst || Object.values(gs.blockingCards).includes(instanceId)) return;
+      if (!inst || cardIsBlocked(instanceId, gs)) return;
       if (!action) return;
 
       // if the kind of choice is adding resources from a card, extract the resources and add them to the resolved cost
@@ -463,7 +465,7 @@ export function GameProvider({
 
     const parchmentEntry = Object.entries(gs.triggerPile).find(([, t]) => {
       const inst = gs.instances[t.sourceInstanceId];
-      return inst && defs[inst.cardId]?.parchmentCard && defs[inst.cardId]?.text;
+      return inst && defs[inst.cardId]?.parchmentCard;
     });
 
     setParchmentTextPending(null);

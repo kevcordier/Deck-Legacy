@@ -1,7 +1,13 @@
-import type { CardInstance, Effect, Resources, StickerStock } from '@engine/domain/types';
+import type {
+  CardAction,
+  CardInstance,
+  Passive,
+  Resources,
+  StickerStock,
+} from '@engine/domain/types';
 
 export type TriggerEntry = {
-  effectDef: Effect;
+  effectDef: CardAction;
   sourceInstanceId: number;
 };
 
@@ -15,7 +21,7 @@ export type GameState = {
   instances: Record<number, CardInstance>;
   resources: Resources;
   stickerStock: StickerStock;
-  blockingCards: Record<number, number>;
+  boardEffects: Record<number, Passive[]>;
   triggerPile: Record<string, TriggerEntry>;
   lastAddedIds: number[];
   round: number;
