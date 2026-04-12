@@ -1,6 +1,10 @@
 # Deck Legacy
 
-[![Validate Build][buildImg]][buildLnk] ![Lines][testLinesImg] ![Lines][testStatementsImg] ![Lines][testFunctionsImg] ![Lines][testBranchesImg]
+![Branches](./badges/coverage-branches.svg)
+![Functions](./badges/coverage-functions.svg)
+![Lines](./badges/coverage-lines.svg)
+![Statements](./badges/coverage-statements.svg)
+![Coverage total](./badges/coverage-total.svg)
 
 A browser-based single-player deck-building card game with a medieval theme. Build and evolve your deck across multiple rounds, manage resources, and maximize your Glory score.
 

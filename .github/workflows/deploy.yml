@@ -47,6 +47,11 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@3c50566c523e04813df28de8f7c48dd97d663f1c
         with:
           threshold-icons: "{0: '🔴', 80: '🟠', 90: '🟢'}"
+      - name: ⚙️ Generating coverage badges
+        uses: jpb06/coverage-badges-action@latest
+        with:
+          branches: main
+          badges-icon: vitest
 
   sonarqube:
     name: SonarQube
