@@ -36,10 +36,5 @@
     "eslint.config.ts",
     "tailwind.config.js"
   ],
-  "exclude": [
-    "src/engine/application/cardActions.ts",
-    "src/engine/application/turnFlow.ts",
-    "src/engine/application/choices.ts",
-    "src/engine/infrastructure/eventBuilders.ts"
-  ]
+  "exclude": ["node_modules", "dist", "build", "coverage"]
 }

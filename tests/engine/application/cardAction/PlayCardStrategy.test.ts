@@ -1,9 +1,4 @@
-import {
-  makeCardState,
-  makeDef,
-  makeGameState,
-  makeInstance,
-} from '@engine/application/__tests__/testHelpers';
+import { makeCardState, makeDef, makeGameState, makeInstance } from '../testHelpers';
 import { PlayCardStrategy } from '@engine/application/cardAction/PlayCardStrategy';
 import { ActionType, Trigger } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';

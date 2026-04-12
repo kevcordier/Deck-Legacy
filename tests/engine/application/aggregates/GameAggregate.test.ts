@@ -3,7 +3,7 @@ import {
   makeDef,
   makeEmptyResolvedCost,
   makeInstance,
-} from '@engine/application/__tests__/testHelpers';
+} from '../../application/testHelpers';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import { ActionType, GameEventType, Trigger } from '@engine/domain/enums';
 import type {
