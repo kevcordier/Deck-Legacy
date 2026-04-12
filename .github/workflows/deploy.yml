@@ -44,19 +44,9 @@ jobs:
         run: npm run test:coverage
       - name: 'Report Coverage'
         if: always()
-        uses: davelosert/vitest-coverage-report-action@v2
+        uses: davelosert/vitest-coverage-report-action@3c50566c523e04813df28de8f7c48dd97d663f1c
         with:
           threshold-icons: "{0: '🔴', 80: '🟠', 90: '🟢'}"
-      - name: Publish Results Badge
-        uses: wjervis7/vitest-badge-action@v1.0.0
-        if: success() || failure()
-        with:
-          result-type: statements
-          upload-badge: false
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          file_pattern: './badge.svg'
 
   sonarqube:
     name: SonarQube
