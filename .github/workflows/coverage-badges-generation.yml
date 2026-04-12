@@ -1,0 +1,42 @@
+name: ⚡ Coverage badges generation
+
+on:
+  # Runs on pushes targeting the default branch
+  workflow_run:
+    workflows: ['CI']
+    branches: [main]
+    types:
+      - completed
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  coverage-badges-generation:
+    name: 📣 Coverage badges generation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+      - name: ⚙️ Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - name: 📥 Install dependencies
+        run: npm ci --ignore-scripts
+      - name: 🧪 Tests
+        run: npm run test:coverage
+      - name: 😼 Generating coverage badges
+        uses: jpb06/coverage-badges-action@0a7ed097d01918e7a7618152eff8bb62f133322f
+        with:
+          badges-icon: vitest
+          badges-labels-prefix: 'Test coverage –'
+          commit-message: 'chore: updating coverage badges'
+          commit-user: jpb06
+          commit-user-email: jpb.06@outlook.com

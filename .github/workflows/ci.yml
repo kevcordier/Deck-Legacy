@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+      - name: ⚙️ Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - name: 📥 Install dependencies
+        run: npm ci --ignore-scripts
+      - name: 📝 Lint
+        run: npm run lint
+      - name: 🔍 Typecheck
+        run: npm run typecheck
+      - name: 🎨 Format check
+        run: npm run format:check
+      - name: 🧪 Tests
+        run: npm run test:coverage
+      - name: 📊 Report Coverage
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@3c50566c523e04813df28de8f7c48dd97d663f1c
+        with:
+          threshold-icons: "{0: '🔴', 80: '🟠', 90: '🟢'}"
+      - name: 🐳 SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
