@@ -1,5 +1,7 @@
 # Deck Legacy
 
+[![Validate Build][buildImg]][buildLnk] ![Lines][testLinesImg] ![Lines][testStatementsImg] ![Lines][testFunctionsImg] ![Lines][testBranchesImg]
+
 A browser-based single-player deck-building card game with a medieval theme. Build and evolve your deck across multiple rounds, manage resources, and maximize your Glory score.
 
 **[Play now](https://kevcordier.github.io/Deck-Legacy/)**

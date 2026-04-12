@@ -4,14 +4,13 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
+    branches: ['main']
 
   # Runs on pull requests
   pull_request:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
 
 # Allow one concurrent deployment; use a separate group for PRs
 concurrency:
@@ -23,6 +22,7 @@ jobs:
     name: CI
     permissions:
       contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,7 +31,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: "npm"
+          cache: 'npm'
       - name: Install dependencies
         run: npm ci --ignore-scripts
       - name: Lint
@@ -41,7 +41,22 @@ jobs:
       - name: Format check
         run: npm run format:check
       - name: Tests
-        run: npm run test
+        run: npm run test:coverage
+      - name: 'Report Coverage'
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          threshold-icons: "{0: '🔴', 80: '🟠', 90: '🟢'}"
+      - name: Publish Results Badge
+        uses: wjervis7/vitest-badge-action@v1.0.0
+        if: success() || failure()
+        with:
+          result-type: statements
+          upload-badge: false
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: './badge.svg'
 
   sonarqube:
     name: SonarQube
@@ -49,7 +64,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
       - name: Install dependencies
         run: npm ci --ignore-scripts
       - name: Test and coverage
@@ -78,7 +93,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: "npm"
+          cache: 'npm'
       - name: Install dependencies
         run: npm ci --ignore-scripts
       - name: Build
@@ -89,7 +104,7 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           # Upload dist folder
-          path: "./dist"
+          path: './dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

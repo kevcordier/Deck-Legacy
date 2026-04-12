@@ -1,7 +1,7 @@
-import { defineConfig } from 'vitest/config';
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   base: '/Deck-Legacy/',
@@ -24,6 +24,8 @@ export default defineConfig({
     include: ['src/**/*.test.ts'],
     coverage: {
       provider: 'v8',
+      reporter: ['text', 'json-summary', 'json', 'lcov'],
+      reportOnFailure: true,
       include: ['src/engine/**/*.ts'],
       exclude: [
         'src/engine/infrastructure',
