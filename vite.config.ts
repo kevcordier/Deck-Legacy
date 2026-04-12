@@ -27,11 +27,7 @@ export default defineConfig({
       reporter: ['text', 'json-summary', 'json', 'lcov'],
       reportOnFailure: true,
       include: ['src/engine/**/*.ts'],
-      exclude: [
-        'src/engine/infrastructure',
-        'src/engine/**/index.ts',
-        'src/engine/domain/types/**',
-      ],
+      exclude: ['src/engine/infrastructure'],
       thresholds: {
         lines: 100,
         functions: 100,
