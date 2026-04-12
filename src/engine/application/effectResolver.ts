@@ -87,8 +87,20 @@ export function resolveActionEffect(
     }
   }
 
-  if (action.stickerId) {
-    resolverAction.stickerId = action.stickerId;
+  if (action.stickerIds) {
+    if (action.stickerIds.length === 1) {
+      resolverAction.stickerId = action.stickerIds[0];
+    } else {
+      pendingChoice.push({
+        id: `${instanceId}-${action.id}`,
+        kind: action.type,
+        type: PendingChoiceType.CHOOSE_STICKER,
+        sourceInstanceId: instanceId,
+        choices: action.stickerIds,
+        pickCount: 1,
+        isMandatory,
+      });
+    }
   }
 
   if (action.states) {

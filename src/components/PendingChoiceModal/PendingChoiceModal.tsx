@@ -17,7 +17,26 @@ import type {
   TriggerEntry,
 } from '@engine/domain/types';
 import { tCardActionLabel, tCardName } from '@helpers/cardI18n';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
+
+function getChoiceActionLabel(
+  choice: PendingChoice,
+  instances: Record<number, CardInstance>,
+  defs: Record<number, CardDef>,
+  t: TFunction,
+): string | undefined {
+  const actionId = parseInt(choice.id.split('-')[1]);
+  if (isNaN(actionId)) return undefined;
+  const inst = instances[choice.sourceInstanceId];
+  const def = inst ? defs[inst.cardId] : undefined;
+  const state = def?.states.find(s => s.id === inst?.stateId);
+  const effects = state?.cardEffects;
+  if (!effects || !def || !state) return undefined;
+  const effectIdx = effects.findIndex(e => e.actions.some(a => a.id === actionId));
+  if (effectIdx === -1) return undefined;
+  return tCardActionLabel(t, def.id, state.id, effectIdx, effects[effectIdx].label) || undefined;
+}
 
 function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
   return {
@@ -26,6 +45,7 @@ function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
     stateId: state.id,
     stickers: {},
     trackProgress: [],
+    cumulated: 0,
   };
 }
 
@@ -140,6 +160,7 @@ export function PendingChoiceModal({
     };
 
     title = t(`pendingChoice.chooseCard.${choice.kind}`, { count: choice.pickCount });
+    subtitle = getChoiceActionLabel(choice, instances, defs, t);
 
     content = (
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
@@ -170,7 +191,7 @@ export function PendingChoiceModal({
     const cardDef = sourceInst ? defs[sourceInst.cardId] : undefined;
 
     title = t(`pendingChoice.chooseState`);
-    subtitle = t(`pendingChoice.chooseStateSubtitle`);
+    subtitle = getChoiceActionLabel(choice, instances, defs, t);
     content = (
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
         {choice.choices.map(stateId => {
@@ -215,7 +236,7 @@ export function PendingChoiceModal({
     };
 
     title = t(`pendingChoice.chooseResource`);
-    subtitle = t(`pendingChoice.gainResource`);
+    subtitle = getChoiceActionLabel(choice, instances, defs, t);
 
     content = (
       <ResourceChoice
@@ -240,7 +261,7 @@ export function PendingChoiceModal({
     };
 
     title = t(`pendingChoice.chooseSticker`);
-    subtitle = t(`pendingChoice.gainSticker`);
+    subtitle = getChoiceActionLabel(choice, instances, defs, t);
 
     content = (
       <StickerChoice

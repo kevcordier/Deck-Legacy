@@ -1,3 +1,4 @@
+import { makeCardState, makeDef, makeInstance } from './testHelpers';
 import {
   canAffordResources,
   getActiveState,
@@ -9,28 +10,6 @@ import {
 import { ActionType, ResourceType, TargetScope, Trigger } from '@engine/domain/enums';
 import type { CardDef, CardInstance, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
-
-// — helpers —
-
-const makeInstance = (id: number, cardId: number, stateId: number): CardInstance => ({
-  id,
-  cardId,
-  stateId,
-  stickers: {},
-  trackProgress: [],
-});
-
-const makeDef = (id: number, states: CardDef['states'] = []): CardDef => ({
-  id,
-  name: `Card ${id}`,
-  states,
-});
-
-const makeState = (id: number, overrides: Partial<CardDef['states'][number]> = {}) => ({
-  id,
-  name: `State ${id}`,
-  ...overrides,
-});
 
 // — getEffectiveProductions —
 
@@ -48,6 +27,7 @@ describe('getEffectiveProductions', () => {
       stateId: 1,
       stickers: { 1: [101] },
       trackProgress: [],
+      cumulated: 0,
     };
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
@@ -63,6 +43,7 @@ describe('getEffectiveProductions', () => {
       stateId: 2,
       stickers: { 1: [101] }, // stickers for state 1, not active state 2
       trackProgress: [],
+      cumulated: 0,
     };
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
@@ -78,6 +59,7 @@ describe('getEffectiveProductions', () => {
       stateId: 1,
       stickers: { 1: [999] }, // sticker 999 does not exist in stickers map
       trackProgress: [],
+      cumulated: 0,
     };
     const result = getEffectiveProductions({ gold: 2 }, instance, {});
     expect(result).toEqual({ gold: 2 });
@@ -90,6 +72,7 @@ describe('getEffectiveProductions', () => {
       stateId: 1,
       stickers: { 1: [101] },
       trackProgress: [],
+      cumulated: 0,
     };
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'remove', production: ResourceType.GOLD, glory: 0, description: '' },
@@ -162,7 +145,7 @@ describe('getActiveState', () => {
   it('returns the matching card state', () => {
     const instance = makeInstance(1, 10, 2);
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1), makeState(2)]),
+      10: makeDef(10, [makeCardState(1), makeCardState(2)]),
     };
     const state = getActiveState(instance, defs);
     expect(state.id).toBe(2);
@@ -176,7 +159,7 @@ describe('getActiveState', () => {
   it('throws when the state is not found on the card', () => {
     const instance = makeInstance(1, 10, 99);
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1)]),
+      10: makeDef(10, [makeCardState(1)]),
     };
     expect(() => getActiveState(instance, defs)).toThrow('State 99 not found on card 10');
   });
@@ -217,13 +200,13 @@ describe('canAffordResources', () => {
 describe('getTrackGlory', () => {
   it('returns 0 when track is undefined', () => {
     const instance = makeInstance(1, 10, 1);
-    const cs = makeState(1);
+    const cs = makeCardState(1);
     expect(getTrackGlory(instance, cs)).toBe(0);
   });
 
   it('returns 0 when trackProgress is empty even if track exists', () => {
     const instance = makeInstance(1, 10, 1);
-    const cs = makeState(1, {
+    const cs = makeCardState(1, {
       track: {
         steps: [{ id: 1, cost: {}, onClick: { glory: 3 } }],
         inOrder: false,
@@ -241,8 +224,9 @@ describe('getTrackGlory', () => {
       stateId: 1,
       stickers: {},
       trackProgress: [1, 2],
+      cumulated: 0,
     };
-    const cs = makeState(1, {
+    const cs = makeCardState(1, {
       track: {
         steps: [
           { id: 1, cost: {}, onClick: { glory: 3 } },
@@ -263,8 +247,9 @@ describe('getTrackGlory', () => {
       stateId: 1,
       stickers: {},
       trackProgress: [1],
+      cumulated: 0,
     };
-    const cs = makeState(1, {
+    const cs = makeCardState(1, {
       track: {
         steps: [
           { id: 1, cost: {}, onClick: { glory: 4 } },
@@ -285,8 +270,9 @@ describe('getTrackGlory', () => {
       stateId: 1,
       stickers: {},
       trackProgress: [1],
+      cumulated: 0,
     };
-    const cs = makeState(1, {
+    const cs = makeCardState(1, {
       track: {
         steps: [{ id: 1, cost: {}, onClick: {} }],
         inOrder: false,
@@ -304,7 +290,7 @@ describe('getInstancesTriggerEffects', () => {
   it('returns empty array when no instances have the trigger', () => {
     const instance = makeInstance(1, 10, 1);
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1, { cardEffects: [] })]),
+      10: makeDef(10, [makeCardState(1, { cardEffects: [] })]),
     };
     const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY);
     expect(result).toEqual([]);
@@ -319,7 +305,7 @@ describe('getInstancesTriggerEffects', () => {
       optional: false,
     };
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1, { cardEffects: [effect] })]),
+      10: makeDef(10, [makeCardState(1, { cardEffects: [effect] })]),
     };
     const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY);
     expect(result).toHaveLength(1);
@@ -330,7 +316,7 @@ describe('getInstancesTriggerEffects', () => {
   it('injects a CHOOSE_STATE effect for ON_DISCOVER when card has chooseState', () => {
     const instance = makeInstance(1, 10, 1);
     const defs: Record<number, CardDef> = {
-      10: { id: 10, name: 'Card 10', chooseState: true, states: [makeState(1)] },
+      10: { id: 10, name: 'Card 10', chooseState: true, states: [makeCardState(1)] },
     };
     const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_DISCOVER);
     expect(result).toHaveLength(1);
@@ -353,8 +339,8 @@ describe('getInstancesTriggerEffects', () => {
       optional: false,
     };
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1, { cardEffects: [effect1] })]),
-      11: makeDef(11, [makeState(1, { cardEffects: [effect2] })]),
+      10: makeDef(10, [makeCardState(1, { cardEffects: [effect1] })]),
+      11: makeDef(11, [makeCardState(1, { cardEffects: [effect2] })]),
     };
     const result = getInstancesTriggerEffects([inst1, inst2], defs, Trigger.END_OF_TURN);
     expect(result).toHaveLength(2);

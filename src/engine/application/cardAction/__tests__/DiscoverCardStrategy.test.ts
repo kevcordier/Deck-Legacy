@@ -11,6 +11,7 @@ const makeInstance = (id: number, cardId: number, stateId: number): CardInstance
   stateId,
   stickers: {},
   trackProgress: [],
+  cumulated: 0,
 });
 
 const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({

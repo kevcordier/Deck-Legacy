@@ -126,11 +126,10 @@ export function GameBoard() {
         <div
           className="fixed inset-0 z-150 bg-black/40 lg:hidden"
           onClick={() => setOpenSheet(null)}
+          role="button"
+          tabIndex={0}
         >
-          <div
-            className="bg-background border-border absolute right-0 bottom-0 left-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t shadow-2xl"
-            onClick={e => e.stopPropagation()}
-          >
+          <div className="bg-background border-border absolute right-0 bottom-0 left-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t shadow-2xl">
             <DeckViewer
               isSheet
               title={t(openSheet === 'draw' ? 'deckViewer.draw' : 'deckViewer.discard')}

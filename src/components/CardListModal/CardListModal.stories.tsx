@@ -26,9 +26,9 @@ type Story = StoryObj<typeof CardListModal>;
 // --- Shared mock data ---
 
 const instances: CardInstance[] = [
-  { id: 1, cardId: 1, stateId: 1, stickers: {}, trackProgress: [] },
-  { id: 2, cardId: 2, stateId: 1, stickers: {}, trackProgress: [] },
-  { id: 3, cardId: 3, stateId: 1, stickers: {}, trackProgress: [] },
+  { id: 1, cardId: 1, stateId: 1, stickers: {}, trackProgress: [], cumulated: 0 },
+  { id: 2, cardId: 2, stateId: 1, stickers: {}, trackProgress: [], cumulated: 0 },
+  { id: 3, cardId: 3, stateId: 1, stickers: {}, trackProgress: [], cumulated: 0 },
 ];
 
 export const WithCards: Story = {

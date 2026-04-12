@@ -1,43 +1,8 @@
+import { makeDef, makeGameState, makeInstance } from './testHelpers';
 import { resolveCost } from '@engine/application/costResolver';
 import { PendingChoiceType, TargetScope } from '@engine/domain/enums';
-import type { CardDef, CardInstance, GameState } from '@engine/domain/types';
+import type { CardDef } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
-
-// — fixtures —
-
-const makeInstance = (id: number, cardId: number, stateId: number): CardInstance => ({
-  id,
-  cardId,
-  stateId,
-  stickers: {},
-  trackProgress: [],
-});
-
-const makeState = (id: number) => ({ id, name: `State ${id}` });
-
-const makeDef = (id: number): CardDef => ({
-  id,
-  name: `Card ${id}`,
-  states: [makeState(1)],
-});
-
-const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
-  instances: {},
-  drawPile: [],
-  discardPile: [],
-  board: [],
-  destroyedPile: [],
-  permanents: [],
-  blockingCards: {},
-  resources: {},
-  stickerStock: {},
-  discoveryPile: [],
-  triggerPile: {},
-  lastAddedIds: [],
-  round: 0,
-  turn: 0,
-  ...overrides,
-});
 
 // — no cost —
 

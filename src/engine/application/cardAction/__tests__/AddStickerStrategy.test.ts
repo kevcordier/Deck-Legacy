@@ -9,6 +9,7 @@ const makeInstance = (id: number, cardId: number, stateId: number): CardInstance
   stateId,
   stickers: {},
   trackProgress: [],
+  cumulated: 0,
 });
 
 const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
@@ -71,6 +72,7 @@ describe('AddStickerStrategy', () => {
           stateId: 1,
           stickers: { 1: [100] },
           trackProgress: [],
+          cumulated: 0,
         },
       },
       stickerStock: { 101: 2 },

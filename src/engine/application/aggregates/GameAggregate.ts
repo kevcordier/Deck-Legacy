@@ -417,7 +417,7 @@ export class GameAggregate {
           break;
         }
         case ActionType.PLAY_CARD: {
-          cardActionContext.setStrategy(new PlayCardStrategy());
+          cardActionContext.setStrategy(new PlayCardStrategy(this.cardDefs));
           break;
         }
         case ActionType.BOOST_CARD:

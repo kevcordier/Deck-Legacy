@@ -1,36 +1,9 @@
+import { makeGameState, makeInstance } from './testHelpers';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { resolveActionEffect } from '@engine/application/effectResolver';
 import { ActionType, PendingChoiceType, TargetScope } from '@engine/domain/enums';
-import type { Action, CardDef, CardInstance, GameState } from '@engine/domain/types';
+import type { Action, CardDef } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
-
-// — fixtures —
-
-const makeInstance = (id: number, cardId: number, stateId: number): CardInstance => ({
-  id,
-  cardId,
-  stateId,
-  stickers: {},
-  trackProgress: [],
-});
-
-const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
-  instances: {},
-  drawPile: [],
-  discardPile: [],
-  board: [],
-  destroyedPile: [],
-  permanents: [],
-  blockingCards: {},
-  resources: {},
-  stickerStock: {},
-  discoveryPile: [],
-  triggerPile: {},
-  lastAddedIds: [],
-  round: 0,
-  turn: 0,
-  ...overrides,
-});
 
 const makeAction = (overrides: Partial<Action> & Pick<Action, 'id' | 'type'>): Action => ({
   ...overrides,
@@ -205,17 +178,25 @@ describe('resolveActionEffect — resources.cards', () => {
   });
 });
 
-// — stickerId resolution —
+// — stickerIds resolution —
 
-describe('resolveActionEffect — stickerId', () => {
-  it('resolves numeric stickerId directly', () => {
+describe('resolveActionEffect — stickerIds', () => {
+  it('resolves stickerId when only one id given', () => {
     const action = makeAction({
       id: 1,
       type: ActionType.ADD_STICKER,
-      stickerId: 42,
+      stickerIds: [42],
     });
     const [resolved] = resolveActionEffect(action, 1, EMPTY_STATE);
-    expect(resolved.stickerId).toBe(42);
+    expect(resolved.stickerId).toEqual(42);
+  });
+
+  it('creates a pending choice when multiple stickerIds given', () => {
+    const action = makeAction({ id: 1, type: ActionType.ADD_STICKER, stickerIds: [1, 2] });
+    const [, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe(PendingChoiceType.CHOOSE_STICKER);
+    expect(pending[0].choices).toEqual([1, 2]);
   });
 });
 
@@ -312,7 +293,7 @@ describe('resolveActionEffect — BOOST_CARD', () => {
     const action = makeAction({
       id: 1,
       type: ActionType.BOOST_CARD,
-      stickerId: 101,
+      stickerIds: [101],
       cards: { scope: TargetScope.BOARD },
     });
     const [resolved, pending] = resolveActionEffect(action, 1, gs, defs);

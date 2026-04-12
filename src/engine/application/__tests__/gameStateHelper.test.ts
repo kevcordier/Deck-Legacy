@@ -1,3 +1,4 @@
+import { makeGameState, makeInstance } from './testHelpers';
 import {
   computeScore,
   destroyCards,
@@ -8,36 +9,8 @@ import {
   mergeResources,
   spendResources,
 } from '@engine/application/gameStateHelper';
-import type { CardDef, CardInstance, GameState, Sticker } from '@engine/domain/types';
+import type { CardDef, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
-
-// — fixtures —
-
-const makeInstance = (id: number, cardId: number, stateId: number): CardInstance => ({
-  id,
-  cardId,
-  stateId,
-  stickers: {},
-  trackProgress: [],
-});
-
-const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
-  instances: {},
-  drawPile: [],
-  discardPile: [],
-  board: [],
-  destroyedPile: [],
-  permanents: [],
-  blockingCards: {},
-  resources: {},
-  stickerStock: {},
-  discoveryPile: [],
-  triggerPile: {},
-  lastAddedIds: [],
-  round: 0,
-  turn: 0,
-  ...overrides,
-});
 
 // — discardCards —
 
@@ -244,7 +217,14 @@ describe('computeScore', () => {
     const gs = makeGameState({
       drawPile: [1],
       instances: {
-        1: { id: 1, cardId: 10, stateId: 1, stickers: { 1: [101] }, trackProgress: [] },
+        1: {
+          id: 1,
+          cardId: 10,
+          stateId: 1,
+          stickers: { 1: [101] },
+          trackProgress: [],
+          cumulated: 0,
+        },
       },
     });
     const defs: Record<number, CardDef> = {
@@ -271,7 +251,14 @@ describe('computeScore', () => {
     const gs = makeGameState({
       drawPile: [1],
       instances: {
-        1: { id: 1, cardId: 10, stateId: 1, stickers: { 1: [999] }, trackProgress: [] },
+        1: {
+          id: 1,
+          cardId: 10,
+          stateId: 1,
+          stickers: { 1: [999] },
+          trackProgress: [],
+          cumulated: 0,
+        },
       },
     });
     const defs: Record<number, CardDef> = {
@@ -291,6 +278,7 @@ describe('computeScore', () => {
           stateId: 1,
           stickers: {},
           trackProgress: [1, 2],
+          cumulated: 0,
         },
       },
     });

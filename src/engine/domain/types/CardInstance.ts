@@ -6,4 +6,6 @@ export type CardInstance = {
   stickers: Record<number, number[]>;
   /** IDs of validated track steps */
   trackProgress: number[];
+  /** Cumulated resources or points */
+  cumulated: number;
 };

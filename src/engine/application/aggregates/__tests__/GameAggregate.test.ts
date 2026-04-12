@@ -1,36 +1,19 @@
+import {
+  makeCardState,
+  makeDef,
+  makeEmptyResolvedCost,
+  makeInstance,
+} from '@engine/application/__tests__/testHelpers';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import { ActionType, GameEventType, Trigger } from '@engine/domain/enums';
 import type {
   CardDef,
-  CardInstance,
   GameEvent,
   GameState,
   ResolvedAction,
   ResolvedCost,
 } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
-
-// — fixtures —
-
-const makeInstance = (id: number, cardId: number, stateId: number): CardInstance => ({
-  id,
-  cardId,
-  stateId,
-  stickers: {},
-  trackProgress: [],
-});
-
-const makeDef = (id: number, stateIds: number[] = [1]): CardDef => ({
-  id,
-  name: `Card ${id}`,
-  states: stateIds.map(sid => ({ id: sid, name: `State ${sid}` })),
-});
-
-const makeEmptyResolvedCost = (): ResolvedCost => ({
-  resources: {},
-  discardedCardIds: [],
-  destroyedCardIds: [],
-});
 
 const makeAggregate = (
   defs: Record<number, CardDef> = {},
@@ -279,7 +262,7 @@ describe('GameAggregate.pass', () => {
 describe('GameAggregate.upgradeCard', () => {
   it('changes the stateId of the upgraded card', () => {
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [1, 2]),
+      10: makeDef(10, [makeCardState(1), makeCardState(2)]),
       11: makeDef(11),
       12: makeDef(12),
       13: makeDef(13),
@@ -305,7 +288,7 @@ describe('GameAggregate.upgradeCard', () => {
 
   it('spends the cost resources', () => {
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [1, 2]),
+      10: makeDef(10, [makeCardState(1), makeCardState(2)]),
       11: makeDef(11),
       12: makeDef(12),
       13: makeDef(13),
@@ -333,7 +316,7 @@ describe('GameAggregate.upgradeCard', () => {
 
   it('returns the updated game state', () => {
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [1, 2]),
+      10: makeDef(10, [makeCardState(1), makeCardState(2)]),
       11: makeDef(11),
       12: makeDef(12),
       13: makeDef(13),
@@ -850,7 +833,7 @@ describe('GameAggregate.useCardEffect — UPGRADE_CARD', () => {
         },
       },
     };
-    const defs = { 10: makeDef(10, [1, 2]) };
+    const defs = { 10: makeDef(10, [makeCardState(1), makeCardState(2)]) };
     const agg = new GameAggregate([], state, defs);
     const effects: ResolvedAction[] = [
       { id: '1-1', type: ActionType.UPGRADE_CARD, sourceInstanceId: 1, instanceId: 1, stateId: 2 },
@@ -920,6 +903,7 @@ describe('GameAggregate.useCardEffect — BLOCK_CARD', () => {
 
 describe('GameAggregate.useCardEffect — PLAY_CARD', () => {
   it('adds the target card to the board', () => {
+    const defs = { 10: makeDef(10) };
     const state: GameState = {
       ...EMPTY_STATE,
       instances: {
@@ -935,7 +919,7 @@ describe('GameAggregate.useCardEffect — PLAY_CARD', () => {
         },
       },
     };
-    const agg = new GameAggregate([], state, {});
+    const agg = new GameAggregate([], state, defs);
     const effects: ResolvedAction[] = [
       { id: '1-1', type: ActionType.PLAY_CARD, sourceInstanceId: 1, instanceId: 2 },
     ];
@@ -958,7 +942,7 @@ describe('GameAggregate.useCardEffect — CHOOSE_STATE', () => {
         },
       },
     };
-    const defs = { 10: makeDef(10, [1, 2]) };
+    const defs = { 10: makeDef(10, [makeCardState(1), makeCardState(2)]) };
     const agg = new GameAggregate([], state, defs);
     const effects: ResolvedAction[] = [
       { id: '1-1', type: ActionType.CHOOSE_STATE, sourceInstanceId: 1, instanceId: 1, stateId: 2 },

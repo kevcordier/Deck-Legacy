@@ -7,6 +7,8 @@ export type Cost = {
   discard?: CardeSelector;
   /** Card to destroy on use (e.g. self-destruction cost). */
   destroy?: CardeSelector;
+  /** Cumulated resources or points to add (positive) or set (negative). */
+  accumulated?: number;
 };
 
 export type ResolvedCost = {

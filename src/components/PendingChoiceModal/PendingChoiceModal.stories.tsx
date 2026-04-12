@@ -87,9 +87,9 @@ const villageDef: CardDef = {
 const defs: Record<number, CardDef> = { 1: farmDef, 2: smithDef, 3: villageDef };
 
 const instances: Record<number, CardInstance> = {
-  1: { id: 1, cardId: 1, stateId: 1, stickers: {}, trackProgress: [] },
-  2: { id: 2, cardId: 2, stateId: 1, stickers: {}, trackProgress: [] },
-  3: { id: 3, cardId: 3, stateId: 1, stickers: {}, trackProgress: [] },
+  1: { id: 1, cardId: 1, stateId: 1, stickers: {}, trackProgress: [], cumulated: 0 },
+  2: { id: 2, cardId: 2, stateId: 1, stickers: {}, trackProgress: [], cumulated: 0 },
+  3: { id: 3, cardId: 3, stateId: 1, stickers: {}, trackProgress: [], cumulated: 0 },
 };
 
 const stickerDefs: Record<number, Sticker> = {

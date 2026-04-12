@@ -85,7 +85,7 @@ const PERMANENT_STATE: GameState = {
   board: [1, 4, 7],
   instances: {
     ...INSTANCES_BASE,
-    10: { id: 10, cardId: 5, stateId: 1, stickers: {}, trackProgress: [] },
+    10: { id: 10, cardId: 5, stateId: 1, stickers: {}, trackProgress: [], cumulated: 0 },
   },
 };
 
@@ -224,7 +224,7 @@ export const WithStopCard: Story = {
       ...PLAYING_STATE,
       instances: {
         ...INSTANCES_BASE,
-        11: { id: 11, cardId: 6, stateId: 4, stickers: {}, trackProgress: [] },
+        11: { id: 11, cardId: 6, stateId: 4, stickers: {}, trackProgress: [], cumulated: 0 },
       },
       drawPile: [],
       discardPile: Array.from({ length: 22 }, (_, i) => i), // 22 cartes dans la défausse pour tester le stop à 23

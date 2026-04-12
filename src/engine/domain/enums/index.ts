@@ -39,6 +39,9 @@ export enum ActionType {
   CHOOSE_STATE = 'CHOOSE_STATE',
   BOOST_CARD = 'BOOST_CARD',
   COST = 'COST',
+  ADD_CUMULATED = 'ADD_CUMULATED',
+  SET_CUMULATED = 'SET_CUMULATED',
+  TRACK_ADVANCE = 'TRACK_ADVANCE',
 }
 
 export enum ResourceType {

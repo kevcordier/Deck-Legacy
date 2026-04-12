@@ -25,7 +25,7 @@ export interface Action {
     cards?: CardeSelector;
   };
   states?: number[];
-  stickerId?: number;
+  stickerIds?: number[];
   resource_per_card?: {
     amount: number;
     resource: ResourceType;

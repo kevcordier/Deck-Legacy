@@ -13,6 +13,7 @@ export type CardDef = {
 
 export type StepDef = {
   id: number;
+  label?: string;
   cost: Cost;
   onClick: {
     actions?: Action[];
@@ -25,6 +26,7 @@ export type TrackDef = {
   inOrder: boolean;
   cumulative: boolean;
   endsTurn: boolean;
+  preround?: boolean;
 };
 
 export type CardState = {

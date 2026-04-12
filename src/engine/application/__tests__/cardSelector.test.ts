@@ -1,47 +1,8 @@
+import { makeCardState, makeDef, makeGameState, makeInstance } from './testHelpers';
 import { cardSelector } from '@engine/application/cardSelector';
 import { CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
-import type { CardDef, CardInstance, GameState } from '@engine/domain/types';
+import type { CardDef } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
-
-// — fixtures —
-
-const makeInstance = (id: number, cardId: number, stateId: number): CardInstance => ({
-  id,
-  cardId,
-  stateId,
-  stickers: {},
-  trackProgress: [],
-});
-
-const makeState = (id: number, overrides: Partial<CardDef['states'][number]> = {}) => ({
-  id,
-  name: `State ${id}`,
-  ...overrides,
-});
-
-const makeDef = (id: number, states: CardDef['states']): CardDef => ({
-  id,
-  name: `Card ${id}`,
-  states,
-});
-
-const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
-  instances: {},
-  drawPile: [],
-  discardPile: [],
-  board: [],
-  destroyedPile: [],
-  permanents: [],
-  blockingCards: {},
-  resources: {},
-  stickerStock: {},
-  discoveryPile: [],
-  triggerPile: {},
-  lastAddedIds: [],
-  round: 0,
-  turn: 0,
-  ...overrides,
-});
 
 // — SELF scope —
 
@@ -89,9 +50,9 @@ describe('cardSelector — DECK', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1)]),
-      11: makeDef(11, [makeState(1)]),
-      12: makeDef(12, [makeState(1)]),
+      10: makeDef(10, [makeCardState(1)]),
+      11: makeDef(11, [makeCardState(1)]),
+      12: makeDef(12, [makeCardState(1)]),
     };
     const result = cardSelector({ scope: TargetScope.DECK }, 1, gs, defs);
     expect(result).toEqual([2, 3]);
@@ -111,9 +72,9 @@ describe('cardSelector — BOARD', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1)]),
-      11: makeDef(11, [makeState(1)]),
-      12: makeDef(12, [makeState(1)]),
+      10: makeDef(10, [makeCardState(1)]),
+      11: makeDef(11, [makeCardState(1)]),
+      12: makeDef(12, [makeCardState(1)]),
     };
     const result = cardSelector({ scope: TargetScope.BOARD }, 1, gs, defs);
     expect(result).toEqual([2, 3]);
@@ -132,8 +93,8 @@ describe('cardSelector — DISCARD', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1)]),
-      11: makeDef(11, [makeState(1)]),
+      10: makeDef(10, [makeCardState(1)]),
+      11: makeDef(11, [makeCardState(1)]),
     };
     const result = cardSelector({ scope: TargetScope.DISCARD }, 99, gs, defs);
     expect(result).toEqual([4, 5]);
@@ -152,8 +113,8 @@ describe('cardSelector — BLOCKED', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1)]),
-      11: makeDef(11, [makeState(1)]),
+      10: makeDef(10, [makeCardState(1)]),
+      11: makeDef(11, [makeCardState(1)]),
     };
     const result = cardSelector({ scope: TargetScope.BLOCKED }, 99, gs, defs);
     expect(result).toContain(2);
@@ -173,8 +134,8 @@ describe('cardSelector — tag filtering', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1, { tags: [CardTag.BUILDING] })]),
-      11: makeDef(11, [makeState(1, { tags: [CardTag.SEAFARING] })]),
+      10: makeDef(10, [makeCardState(1, { tags: [CardTag.BUILDING] })]),
+      11: makeDef(11, [makeCardState(1, { tags: [CardTag.SEAFARING] })]),
     };
     const result = cardSelector(
       { scope: TargetScope.BOARD, tags: [CardTag.BUILDING] },
@@ -198,8 +159,8 @@ describe('cardSelector — produces filtering', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1, { productions: [{ gold: 2 }] })]),
-      11: makeDef(11, [makeState(1, { productions: [{ wood: 1 }] })]),
+      10: makeDef(10, [makeCardState(1, { productions: [{ gold: 2 }] })]),
+      11: makeDef(11, [makeCardState(1, { productions: [{ wood: 1 }] })]),
     };
     const result = cardSelector(
       { scope: TargetScope.BOARD, produces: [ResourceType.GOLD] },
@@ -224,9 +185,9 @@ describe('cardSelector — ids filtering', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1)]),
-      11: makeDef(11, [makeState(1)]),
-      12: makeDef(12, [makeState(1)]),
+      10: makeDef(10, [makeCardState(1)]),
+      11: makeDef(11, [makeCardState(1)]),
+      12: makeDef(12, [makeCardState(1)]),
     };
     const result = cardSelector({ scope: TargetScope.BOARD, ids: [2, 3] }, 99, gs, defs);
     expect(result).toEqual([2, 3]);
@@ -242,7 +203,7 @@ describe('cardSelector — missing instance in pool', () => {
       instances: { 1: makeInstance(1, 10, 1) },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1)]),
+      10: makeDef(10, [makeCardState(1)]),
     };
     const result = cardSelector({ scope: TargetScope.BOARD }, 99, gs, defs);
     expect(result).toEqual([1]);
@@ -262,8 +223,8 @@ describe('cardSelector — PERMANENTS', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1)]),
-      11: makeDef(11, [makeState(1)]),
+      10: makeDef(10, [makeCardState(1)]),
+      11: makeDef(11, [makeCardState(1)]),
     };
     const result = cardSelector({ scope: TargetScope.PERMANENTS }, 99, gs, defs);
     expect(result).toContain(7);
@@ -288,7 +249,7 @@ describe('cardSelector — ANY', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1)]),
+      10: makeDef(10, [makeCardState(1)]),
     };
     const result = cardSelector({ scope: TargetScope.ANY }, 99, gs, defs);
     expect(result).toContain(1);
@@ -312,7 +273,7 @@ describe('cardSelector — blocked card exclusion', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1)]),
+      10: makeDef(10, [makeCardState(1)]),
     };
     const result = cardSelector({ scope: TargetScope.BOARD }, 99, gs, defs);
     expect(result).not.toContain(2);
@@ -333,8 +294,8 @@ describe('cardSelector — FRIENDLY / ENEMY', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1, { negative: false })]),
-      11: makeDef(11, [makeState(1, { negative: true })]),
+      10: makeDef(10, [makeCardState(1, { negative: false })]),
+      11: makeDef(11, [makeCardState(1, { negative: true })]),
     };
     const result = cardSelector({ scope: TargetScope.FRIENDLY }, 99, gs, defs);
     expect(result).toContain(1);
@@ -350,8 +311,8 @@ describe('cardSelector — FRIENDLY / ENEMY', () => {
       },
     });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeState(1, { negative: false })]),
-      11: makeDef(11, [makeState(1, { negative: true })]),
+      10: makeDef(10, [makeCardState(1, { negative: false })]),
+      11: makeDef(11, [makeCardState(1, { negative: true })]),
     };
     const result = cardSelector({ scope: TargetScope.ENEMY }, 99, gs, defs);
     expect(result).toEqual([2]);

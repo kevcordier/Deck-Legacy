@@ -81,11 +81,8 @@
       "BOOST_CARD_other": "Choisissez {{count}} cartes à améliorer"
     },
     "chooseState": "Choisir un état",
-    "chooseStateSubtitle": "Cette carte a deux faces. Choisissez celle que vous voulez jouer.",
     "chooseResource": "Choisir une ressource",
-    "gainResource": "Quelle ressource voulez-vous gagner ?",
-    "chooseSticker": "Choisir un autocollant",
-    "gainSticker": "Quelle production voulez-vous améliorer ?"
+    "chooseSticker": "Choisir un autocollant"
   },
   "triggerPile": {
     "title": "Effets en attente",

@@ -26,7 +26,7 @@ export function GameUIProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const apply = () => {
-      document.documentElement.setAttribute('data-theme', resolveTheme(theme));
+      document.documentElement.dataset.theme = resolveTheme(theme);
     };
 
     apply();

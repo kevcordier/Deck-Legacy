@@ -1,8 +1,11 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
-import type { ActionType } from '@engine/domain/enums';
-import type { GameState } from '@engine/domain/types';
+import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
+import { type ActionType, Trigger } from '@engine/domain/enums';
+import type { CardDef, GameState } from '@engine/domain/types';
 
 export class PlayCardStrategy implements CardActionStrategy {
+  constructor(private cardDefs: Record<number, CardDef>) {}
+
   applyEffect(
     gameState: GameState,
     payload: {
@@ -12,12 +15,23 @@ export class PlayCardStrategy implements CardActionStrategy {
       instanceId: number;
     },
   ): GameState {
-    // @todo: if has on play trigger, trigger it
-    gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== payload.instanceId);
-    gameState.drawPile = gameState.drawPile.filter(c => c !== payload.instanceId);
-    gameState.destroyedPile = gameState.destroyedPile.filter(c => c !== payload.instanceId);
-    gameState.discardPile = gameState.discardPile.filter(c => c !== payload.instanceId);
-    gameState.board = [...gameState.board, payload.instanceId];
-    return gameState;
+    const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
+
+    const triggerEffects = getInstancesTriggerEffects(
+      [gs.instances[payload.instanceId]],
+      this.cardDefs,
+      Trigger.ON_PLAY,
+    );
+    if (triggerEffects.length > 0) {
+      triggerEffects.forEach(effect => {
+        gs.triggerPile[crypto.randomUUID()] = effect;
+      });
+    }
+    gs.discoveryPile = gs.discoveryPile.filter(c => c !== payload.instanceId);
+    gs.drawPile = gs.drawPile.filter(c => c !== payload.instanceId);
+    gs.destroyedPile = gs.destroyedPile.filter(c => c !== payload.instanceId);
+    gs.discardPile = gs.discardPile.filter(c => c !== payload.instanceId);
+    gs.board = [...gs.board, payload.instanceId];
+    return gs;
   }
 }

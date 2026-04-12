@@ -3,10 +3,10 @@ import { Title } from '@components/ui/Title/Title';
 import type { ReactNode } from 'react';
 
 interface EmptyStateProps {
-  title: string;
-  subtitle?: string;
-  action?: ReactNode;
-  children?: ReactNode;
+  readonly title: string;
+  readonly subtitle?: string;
+  readonly action?: ReactNode;
+  readonly children?: ReactNode;
 }
 
 export function EmptyState({ title, subtitle, action, children }: EmptyStateProps) {

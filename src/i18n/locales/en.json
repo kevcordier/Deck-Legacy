@@ -81,11 +81,8 @@
       "BOOST_CARD_other": "Choose {{count}} cards to boost"
     },
     "chooseState": "Choose a state",
-    "chooseStateSubtitle": "This card has two sides. Choose which one you want to play.",
     "chooseResource": "Choose a resource",
-    "gainResource": "Which resource do you want to gain?",
-    "chooseSticker": "Choose a sticker",
-    "gainSticker": "Which production do you want to boost?"
+    "chooseSticker": "Choose a sticker"
   },
   "triggerPile": {
     "title": "Pending effects",

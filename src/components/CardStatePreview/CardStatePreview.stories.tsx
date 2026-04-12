@@ -50,6 +50,7 @@ const villageInstance: CardInstance = {
   stateId: 1,
   stickers: {},
   trackProgress: [],
+  cumulated: 0,
 };
 
 // --- Card with 3 states ---
@@ -92,6 +93,7 @@ const armyInstance: CardInstance = {
   stateId: 2,
   stickers: {},
   trackProgress: [],
+  cumulated: 0,
 };
 
 // --- Single-state card (button should not render) ---
@@ -115,6 +117,7 @@ const farmInstance: CardInstance = {
   stateId: 1,
   stickers: {},
   trackProgress: [],
+  cumulated: 0,
 };
 
 export const TwoStates: Story = {
