@@ -19,7 +19,8 @@
     "startNew": "⚜ Commencer",
     "readyToPlay": "Prêt à jouer",
     "deckShuffled": "Deck de {{count}} cartes mélangées",
-    "startGame": "▶ Démarrer la partie"
+    "startGame": "▶ Démarrer la partie",
+    "viewRules": "Voir les règles"
   },
   "preround": {
     "roundEnded": "Manche {{round}} terminée",

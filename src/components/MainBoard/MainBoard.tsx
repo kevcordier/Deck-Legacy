@@ -4,10 +4,12 @@ import { Button } from '@components/ui/Button/Button';
 import { EmptyState } from '@components/ui/EmptyState/EmptyState';
 import { Section } from '@components/ui/Section/Section';
 import { useGame } from '@hooks/useGame';
+import { useGameUI } from '@hooks/useGameInterface';
 import { useTranslation } from 'react-i18next';
 
 export function MainBoard() {
   const { state, phase, startGame, startTurn } = useGame();
+  const { setRulesOpen } = useGameUI();
   const { t } = useTranslation();
   return (
     <main className="scrollbar @container/main flex flex-1 flex-col gap-6 p-4">
@@ -20,7 +22,11 @@ export function MainBoard() {
               {t('pregame.startNew')}
             </Button>
           }
-        />
+        >
+          <Button variant="text" color="ink" size="sm" onClick={() => setRulesOpen(true)}>
+            {t('pregame.viewRules')}
+          </Button>
+        </EmptyState>
       )}
 
       {phase === 'roundpreview' && (

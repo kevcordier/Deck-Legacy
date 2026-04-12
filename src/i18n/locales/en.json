@@ -19,7 +19,8 @@
     "startNew": "⚜ Start",
     "readyToPlay": "Ready to play",
     "deckShuffled": "Deck of {{count}} shuffled cards",
-    "startGame": "▶ Start game"
+    "startGame": "▶ Start game",
+    "viewRules": "View rules"
   },
   "preround": {
     "roundEnded": "Round {{round}} ended",

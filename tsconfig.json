@@ -31,6 +31,7 @@
   },
   "include": [
     "src/**/*",
+    "tests/**/*",
     ".storybook/**/*",
     "vite.config.ts",
     "eslint.config.ts",

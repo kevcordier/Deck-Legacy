@@ -31,7 +31,7 @@ export function Modal({ title, subtitle, children, onClose, className = '' }: Mo
             </Button>
           )}
         </div>
-        <div className="scrollbar flex w-full flex-1 flex-col justify-start gap-6 overflow-y-auto p-1">
+        <div className="scrollbar flex min-h-0 w-full flex-1 flex-col justify-start gap-6 overflow-y-auto p-1">
           {children}
         </div>
       </div>

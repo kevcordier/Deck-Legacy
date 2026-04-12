@@ -172,11 +172,10 @@ export function PendingChoiceModal({
           const state = def.states.find(s => s.id === inst.stateId) ?? def.states[0];
           return (
             <div className="relative transition-transform hover:scale-[1.02]" key={id}>
-              <div
-                role="button"
+              <button
                 onClick={() => handleCardClick(id)}
                 className="absolute inset-0 z-12 cursor-pointer!"
-              ></div>
+              ></button>
               <GameCard instance={makePreviewInstance(def, state)} hideStatePreview />
             </div>
           );
@@ -200,8 +199,7 @@ export function PendingChoiceModal({
           if (!cardDef || !state) return null;
           return (
             <div key={stateId} className="relative transition-transform hover:scale-[1.02]">
-              <div
-                role="button"
+              <button
                 onClick={() =>
                   resolvePlayerChoice({
                     id: choice.id,
@@ -211,7 +209,7 @@ export function PendingChoiceModal({
                   })
                 }
                 className="absolute inset-0 z-12 cursor-pointer!"
-              ></div>
+              ></button>
               <GameCard instance={makePreviewInstance(cardDef, state)} hideStatePreview />
             </div>
           );

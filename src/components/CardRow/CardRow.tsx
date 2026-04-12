@@ -14,7 +14,7 @@ export function CardRow({ cardIds, blockingCards, instances }: CardRowProps) {
   return (
     <div
       className={
-        'grid grid-cols-1 gap-2 @xs/main:grid-cols-2 @2xl/main:grid-cols-3 @4xl/main:grid-cols-4'
+        'grid grid-cols-1 gap-2 @xs/main:gap-3 @xs/main:grid-cols-2 @2xl/main:grid-cols-3 @4xl/main:grid-cols-4'
       }
     >
       {cardIds
@@ -42,7 +42,7 @@ export function CardRow({ cardIds, blockingCards, instances }: CardRowProps) {
             );
           }
           return (
-            <div key={id} className={'relative mb-2 shrink-0'}>
+            <div key={id} className={'relative shrink-0'}>
               <GameCard instance={inst} isOnBoard index={index} />
             </div>
           );
