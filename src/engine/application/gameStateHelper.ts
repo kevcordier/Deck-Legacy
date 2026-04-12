@@ -36,10 +36,30 @@ export const destroyCards = (_gameState: GameState, cardIds: number[]): GameStat
   return gameState;
 };
 
-export const endTurn = (_gameState: GameState): GameState => {
+// Sticker ID for the 'stays_in_play' effect (see src/data/stickers.ts)
+const STAYS_IN_PLAY_STICKER_ID = 7;
+
+function cardShouldStayInPlay(
+  instanceId: number,
+  gameState: GameState,
+  cardDefs: Record<number, CardDef>,
+): boolean {
+  const instance = gameState.instances[instanceId];
+  if (!instance) return false;
+  const def = cardDefs[instance.cardId];
+  const state = def?.states.find(s => s.id === instance.stateId);
+  if (state?.stayInPlay) return true;
+  const stickers = instance.stickers[instance.stateId] ?? [];
+  return stickers.includes(STAYS_IN_PLAY_STICKER_ID);
+}
+
+export const endTurn = (_gameState: GameState, cardDefs: Record<number, CardDef>): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
   gameState.resources = {};
-  return { ...gameState, ...discardCards(gameState, gameState.board) };
+  const cardsToDiscard = gameState.board.filter(
+    id => !cardShouldStayInPlay(id, gameState, cardDefs),
+  );
+  return { ...gameState, ...discardCards(gameState, cardsToDiscard) };
 };
 
 export const spendResources = (_gameState: GameState, resources: Resources): GameState => {

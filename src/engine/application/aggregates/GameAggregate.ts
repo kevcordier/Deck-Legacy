@@ -169,6 +169,7 @@ export class GameAggregate {
             discardCards(spendResources(this.gameState, upgradeCardEvent.cost), [
               upgradeCardEvent.cardInstanceId,
             ]),
+            this.cardDefs,
           ),
         };
         break;
@@ -210,7 +211,7 @@ export class GameAggregate {
         break;
       }
       case GameEventType.PASS: {
-        this.gameState = { ...this.gameState, ...endTurn(this.gameState) };
+        this.gameState = { ...this.gameState, ...endTurn(this.gameState, this.cardDefs) };
         break;
       }
       default:

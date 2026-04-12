@@ -123,13 +123,13 @@ describe('destroyCards', () => {
 describe('endTurn', () => {
   it('clears resources', () => {
     const gs = makeGameState({ resources: { gold: 5, wood: 2 }, board: [] });
-    const result = endTurn(gs);
+    const result = endTurn(gs, {});
     expect(result.resources).toEqual({});
   });
 
-  it('discards all board cards', () => {
+  it('discards all board cards without stayInPlay', () => {
     const gs = makeGameState({ board: [1, 2, 3] });
-    const result = endTurn(gs);
+    const result = endTurn(gs, {});
     expect(result.board).toEqual([]);
     expect(result.discardPile).toContain(1);
     expect(result.discardPile).toContain(2);
@@ -138,9 +138,68 @@ describe('endTurn', () => {
 
   it('does not mutate the original game state', () => {
     const gs = makeGameState({ resources: { gold: 3 }, board: [1] });
-    endTurn(gs);
+    endTurn(gs, {});
     expect(gs.resources.gold).toBe(3);
     expect(gs.board).toContain(1);
+  });
+
+  it('keeps cards with stayInPlay on their active state on the board', () => {
+    const gs = makeGameState({
+      board: [1, 2],
+      instances: {
+        1: makeInstance(1, 10, 1),
+        2: makeInstance(2, 11, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'A', states: [{ id: 1, name: 'S1', stayInPlay: true }] },
+      11: { id: 11, name: 'B', states: [{ id: 1, name: 'S1' }] },
+    };
+    const result = endTurn(gs, defs);
+    expect(result.board).toContain(1);
+    expect(result.board).not.toContain(2);
+    expect(result.discardPile).not.toContain(1);
+    expect(result.discardPile).toContain(2);
+  });
+
+  it('keeps cards with the stays_in_play sticker (id 7) on the board', () => {
+    const gs = makeGameState({
+      board: [1, 2],
+      instances: {
+        1: { id: 1, cardId: 10, stateId: 1, stickers: { 1: [7] }, trackProgress: [], cumulated: 0 },
+        2: makeInstance(2, 11, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'A', states: [{ id: 1, name: 'S1' }] },
+      11: { id: 11, name: 'B', states: [{ id: 1, name: 'S1' }] },
+    };
+    const result = endTurn(gs, defs);
+    expect(result.board).toContain(1);
+    expect(result.board).not.toContain(2);
+    expect(result.discardPile).not.toContain(1);
+    expect(result.discardPile).toContain(2);
+  });
+
+  it('keeps both stayInPlay cards and stay_in_play sticker cards when mixed', () => {
+    const gs = makeGameState({
+      board: [1, 2, 3],
+      instances: {
+        1: makeInstance(1, 10, 1),
+        2: { id: 2, cardId: 11, stateId: 1, stickers: { 1: [7] }, trackProgress: [], cumulated: 0 },
+        3: makeInstance(3, 12, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'A', states: [{ id: 1, name: 'S1', stayInPlay: true }] },
+      11: { id: 11, name: 'B', states: [{ id: 1, name: 'S1' }] },
+      12: { id: 12, name: 'C', states: [{ id: 1, name: 'S1' }] },
+    };
+    const result = endTurn(gs, defs);
+    expect(result.board).toContain(1);
+    expect(result.board).toContain(2);
+    expect(result.board).not.toContain(3);
+    expect(result.discardPile).toContain(3);
   });
 });
 
