@@ -29,5 +29,5 @@ export function loadStickerDefs(): Record<number, Sticker> {
 
 /** Returns the global sticker stock as defined in `sticker.json`. */
 export function loadInitialStickerStock(): StickerStock {
-  return globalStock as unknown as StickerStock;
+  return globalStock as StickerStock;
 }

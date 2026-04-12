@@ -1,5 +1,5 @@
 import { cardSelector } from '@engine/application/cardSelector';
-import { PendingChoiceType } from '@engine/domain/enums';
+import { ActionType, PendingChoiceType, ResourceType, TargetScope } from '@engine/domain/enums';
 import type {
   Action,
   CardDef,
@@ -12,7 +12,7 @@ import type {
 export function resolveActionEffect(
   action: Action,
   instanceId: number,
-  gameState?: GameState,
+  gameState: GameState,
   defs?: Record<number, CardDef>,
   isMandatory = false,
 ): [ResolvedAction, PendingChoice[]] {
@@ -22,15 +22,23 @@ export function resolveActionEffect(
     sourceInstanceId: instanceId,
   };
   const pendingChoice: PendingChoice[] = [];
+  if (action.type === ActionType.BOOST_CARD) {
+    action.cards = { ...action.cards, produces: Object.values(ResourceType) };
+  }
+
   if (action.cards) {
     if (action.cards.ids?.length === 1) {
       resolverAction.instanceId = action.cards.ids[0];
     } else {
-      const choices = gameState ? cardSelector(action.cards, instanceId, gameState, defs) : [];
+      const choices = cardSelector(action.cards, instanceId, gameState, defs);
 
       if (choices.length === 0) {
         resolverAction.instanceId = undefined;
-      } else if (choices.length === 1) {
+      } else if (
+        choices.length === 1 ||
+        (action.cards.scope &&
+          [TargetScope.SELF, TargetScope.TOP_OF_DECK].includes(action.cards.scope))
+      ) {
         resolverAction.instanceId = choices[0];
       } else {
         pendingChoice.push({
@@ -58,9 +66,7 @@ export function resolveActionEffect(
         isMandatory,
       });
     } else if (action.resources.cards) {
-      const choices = gameState
-        ? cardSelector(action.resources.cards, instanceId, gameState, defs)
-        : [];
+      const choices = cardSelector(action.resources.cards, instanceId, gameState, defs);
       if (choices.length === 0) {
         resolverAction.resources = {};
       } else if (choices.length === 1) {
@@ -82,11 +88,7 @@ export function resolveActionEffect(
   }
 
   if (action.stickerId) {
-    if (action.stickerId === 'boost' && action.cards) {
-      // choose a production from a card to add with a sticker
-    } else if (typeof action.stickerId === 'number') {
-      resolverAction.stickerId = action.stickerId;
-    }
+    resolverAction.stickerId = action.stickerId;
   }
 
   if (action.states) {

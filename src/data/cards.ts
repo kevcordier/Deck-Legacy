@@ -422,7 +422,6 @@ export const cardsData: CardDef[] = [
                 id: 1,
                 type: ActionType.PLAY_CARD,
                 cards: {
-                  number: 1,
                   tags: [CardTag.LAND, CardTag.BUILDING],
                   scope: TargetScope.DISCARD,
                 },
@@ -463,7 +462,6 @@ export const cardsData: CardDef[] = [
                 id: 1,
                 type: ActionType.PLAY_CARD,
                 cards: {
-                  number: 1,
                   scope: TargetScope.DISCARD,
                 },
               },
@@ -849,7 +847,6 @@ export const cardsData: CardDef[] = [
                 id: 1,
                 type: ActionType.DISCOVER_CARD,
                 cards: {
-                  number: 1,
                   ids: [71, 72, 73, 74],
                 },
               },
@@ -887,6 +884,14 @@ export const cardsData: CardDef[] = [
                   cards: {
                     scope: TargetScope.BOARD,
                     tags: [CardTag.LAND],
+                    produces: [
+                      ResourceType.GOLD,
+                      ResourceType.WOOD,
+                      ResourceType.STONE,
+                      ResourceType.IRON,
+                      ResourceType.WEAPON,
+                      ResourceType.GOODS,
+                    ],
                   },
                 },
               },
@@ -1216,7 +1221,6 @@ export const cardsData: CardDef[] = [
                 id: 1,
                 type: ActionType.DISCOVER_CARD,
                 cards: {
-                  number: 1,
                   ids: [103],
                 },
               },
@@ -1262,7 +1266,6 @@ export const cardsData: CardDef[] = [
                 id: 1,
                 type: ActionType.DISCOVER_CARD,
                 cards: {
-                  number: 1,
                   ids: [104],
                 },
               },
@@ -1374,7 +1377,6 @@ export const cardsData: CardDef[] = [
                 id: 1,
                 type: ActionType.DISCOVER_CARD,
                 cards: {
-                  number: 1,
                   ids: [90],
                 },
               },
@@ -1601,7 +1603,6 @@ export const cardsData: CardDef[] = [
                 id: 1,
                 type: ActionType.DISCOVER_CARD,
                 cards: {
-                  number: 1,
                   ids: [75],
                 },
               },
@@ -1626,7 +1627,6 @@ export const cardsData: CardDef[] = [
                 id: 1,
                 type: ActionType.DISCARD_CARD,
                 cards: {
-                  number: 1,
                   scope: TargetScope.TOP_OF_DECK,
                 },
               },
@@ -1729,16 +1729,13 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
                 type: ActionType.ADD_STICKER,
                 stickerId: 1,
                 cards: {
-                  number: 1,
                   tags: [CardTag.LAND],
                 },
               },
               {
-                id: 1,
-                type: ActionType.ADD_STICKER,
-                stickerId: 'boost',
+                id: 2,
+                type: ActionType.BOOST_CARD,
                 cards: {
-                  number: 1,
                   tags: [CardTag.BUILDING],
                 },
               },
@@ -1893,7 +1890,6 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
                     id: 1,
                     type: ActionType.DISCOVER_CARD,
                     cards: {
-                      number: 1,
                       ids: [135],
                     },
                   },

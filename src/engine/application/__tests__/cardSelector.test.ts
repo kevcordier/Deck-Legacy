@@ -271,6 +271,33 @@ describe('cardSelector — PERMANENTS', () => {
   });
 });
 
+// — ANY scope —
+
+describe('cardSelector — ANY', () => {
+  it('returns cards from drawPile, board, discardPile and permanents', () => {
+    const gs = makeGameState({
+      drawPile: [1],
+      board: [2],
+      discardPile: [3],
+      permanents: [4],
+      instances: {
+        1: makeInstance(1, 10, 1),
+        2: makeInstance(2, 10, 1),
+        3: makeInstance(3, 10, 1),
+        4: makeInstance(4, 10, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeState(1)]),
+    };
+    const result = cardSelector({ scope: TargetScope.ANY }, 99, gs, defs);
+    expect(result).toContain(1);
+    expect(result).toContain(2);
+    expect(result).toContain(3);
+    expect(result).toContain(4);
+  });
+});
+
 // — blocked card exclusion —
 
 describe('cardSelector — blocked card exclusion', () => {

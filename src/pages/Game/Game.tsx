@@ -12,6 +12,7 @@ export function Game() {
   const {
     state: gs,
     defs,
+    stickerDefs,
     pendingChoices,
     triggerPile,
     phase,
@@ -46,6 +47,7 @@ export function Game() {
           triggerPile={triggerPile}
           defs={defs}
           instances={gs.instances}
+          stickerDefs={stickerDefs}
           resolvePlayerChoice={resolvePlayerChoice}
           resolvePayCost={resolvePayCost}
           onResolveTrigger={resolveAction}

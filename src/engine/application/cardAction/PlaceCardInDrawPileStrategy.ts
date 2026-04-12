@@ -1,4 +1,5 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
+import type { ActionType } from '@engine/domain/enums';
 import type { GameState } from '@engine/domain/types';
 
 export class PlaceCardInDrawPileStrategy implements CardActionStrategy {
@@ -6,7 +7,7 @@ export class PlaceCardInDrawPileStrategy implements CardActionStrategy {
     gameState: GameState,
     payload: {
       id: string;
-      type: string;
+      type: ActionType;
       sourceInstanceId: number;
       instanceId: number;
       position: number;

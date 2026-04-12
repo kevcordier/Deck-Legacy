@@ -124,7 +124,7 @@ export function GameBoard() {
       {/* Mobile bottom sheet for deck viewers */}
       {openSheet !== null && (
         <div
-          className="fixed inset-0 z-[150] bg-black/40 lg:hidden"
+          className="fixed inset-0 z-150 bg-black/40 lg:hidden"
           onClick={() => setOpenSheet(null)}
         >
           <div

@@ -109,13 +109,13 @@ describe('GameAggregate.roundStarted', () => {
     expect(agg.getGameState().turn).toBe(0);
   });
 
-  it('returns a ROUND_STARTED event', () => {
+  it('returns the updated game state with round 1', () => {
     const defs = { 10: makeDef(10) };
     const agg = makeAggregate(defs);
     agg.gameStarted([makeInstance(1, 10, 1)], [1], {}, []);
-    const event = agg.roundStarted();
-    expect(event.type).toBe(GameEventType.ROUND_STARTED);
-    expect(event.round).toBe(1);
+    const gs = agg.roundStarted();
+    expect(gs.round).toBe(1);
+    expect(gs.turn).toBe(0);
   });
 
   it('shuffles discard and board back into drawPile on round start', () => {
@@ -158,9 +158,8 @@ describe('GameAggregate.turnStarted', () => {
       drawPile: [1, 2, 3, 4, 5],
     };
     const agg = new GameAggregate([], state, defs);
-    const event = agg.turnStarted();
-    expect(event).toBeDefined();
-    expect(event?.type).toBe(GameEventType.TURN_STARTED);
+    const gs = agg.turnStarted();
+    expect(gs).toBeDefined();
     expect(agg.getGameState().board).toHaveLength(4);
     expect(agg.getGameState().turn).toBe(1);
   });
@@ -174,9 +173,8 @@ describe('GameAggregate.turnStarted', () => {
       discardPile: [1],
     };
     const agg = new GameAggregate([], state, defs);
-    const event = agg.turnStarted();
-    // Should return undefined (round started instead)
-    expect(event).toBeUndefined();
+    agg.turnStarted();
+    // draw pile was empty — a new round was started instead
     expect(agg.getGameState().round).toBe(1);
   });
 });
@@ -209,7 +207,7 @@ describe('GameAggregate.cardProduced', () => {
     expect(agg.getGameState().discardPile).toContain(1);
   });
 
-  it('returns a CARD_PRODUCED event', () => {
+  it('returns the updated game state', () => {
     const defs = { 10: makeDef(10) };
     const state: GameState = {
       ...EMPTY_STATE,
@@ -217,10 +215,9 @@ describe('GameAggregate.cardProduced', () => {
       board: [1],
     };
     const agg = new GameAggregate([], state, defs);
-    const event = agg.cardProduced(1, { wood: 2 });
-    expect(event.type).toBe(GameEventType.CARD_PRODUCED);
-    expect(event.cardInstanceId).toBe(1);
-    expect(event.productions).toEqual({ wood: 2 });
+    const gs = agg.cardProduced(1, { wood: 2 });
+    expect(gs.resources.wood).toBe(2);
+    expect(gs.discardPile).toContain(1);
   });
 });
 
@@ -256,7 +253,7 @@ describe('GameAggregate.pass', () => {
     expect(gs.board).not.toContain(2);
   });
 
-  it('returns a PASS event', () => {
+  it('returns the updated game state after pass', () => {
     const defs: Record<number, CardDef> = {
       10: makeDef(10),
       11: makeDef(11),
@@ -268,11 +265,12 @@ describe('GameAggregate.pass', () => {
       ...EMPTY_STATE,
       instances: Object.fromEntries(instances.map(i => [i.id, i])),
       board: [1],
+      resources: { gold: 3 },
       drawPile: [2, 3, 4],
     };
     const agg = new GameAggregate([], state, defs);
-    const event = agg.pass();
-    expect(event.type).toBe(GameEventType.PASS);
+    const gs = agg.pass();
+    expect(gs.resources).toEqual({});
   });
 });
 
@@ -333,7 +331,7 @@ describe('GameAggregate.upgradeCard', () => {
     expect(agg.getGameState().resources.gold).toBeUndefined();
   });
 
-  it('returns an UPGRADE_CARD event', () => {
+  it('returns the updated game state', () => {
     const defs: Record<number, CardDef> = {
       10: makeDef(10, [1, 2]),
       11: makeDef(11),
@@ -356,10 +354,8 @@ describe('GameAggregate.upgradeCard', () => {
       drawPile: [3, 4, 5],
     };
     const agg = new GameAggregate([], state, defs);
-    const event = agg.upgradeCard(1, 2, { gold: 2 });
-    expect(event.type).toBe(GameEventType.UPGRADE_CARD);
-    expect(event.cardInstanceId).toBe(1);
-    expect(event.stateId).toBe(2);
+    const gs = agg.upgradeCard(1, 2, { gold: 2 });
+    expect(gs.instances[1].stateId).toBe(2);
   });
 });
 
@@ -388,7 +384,7 @@ describe('GameAggregate.skipTrigger', () => {
     );
   });
 
-  it('returns a SKIP_TRIGGER event', () => {
+  it('returns the updated game state with trigger removed', () => {
     const state: GameState = {
       ...EMPTY_STATE,
       triggerPile: {
@@ -399,9 +395,8 @@ describe('GameAggregate.skipTrigger', () => {
       },
     };
     const agg = new GameAggregate([], state, {});
-    const event = agg.skipTrigger('trigger-1');
-    expect(event.type).toBe(GameEventType.SKIP_TRIGGER);
-    expect(event.triggerId).toBe('trigger-1');
+    const gs = agg.skipTrigger('trigger-1');
+    expect(gs.triggerPile['trigger-1']).toBeUndefined();
   });
 });
 
@@ -429,9 +424,8 @@ describe('GameAggregate.useCardEffect', () => {
         resources: { gold: 5 },
       },
     ];
-    const event = agg.useCardEffect(effects, makeEmptyResolvedCost(), false, false, 't1');
-    expect(event.type).toBe(GameEventType.USE_CARD_EFFECT);
-    expect(agg.getGameState().resources.gold).toBe(5);
+    const gs = agg.useCardEffect(effects, makeEmptyResolvedCost(), false, false, 't1');
+    expect(gs.resources.gold).toBe(5);
   });
 
   it('removes the triggerId from the trigger pile', () => {
@@ -647,9 +641,10 @@ describe('GameAggregate.roundStarted with round > 1', () => {
       discoveryPile: [1, 2],
     };
     const agg = new GameAggregate([], state, defs);
-    const event = agg.roundStarted();
-    expect(event.newCards).toContain(1);
-    expect(event.newCards).toContain(2);
+    agg.roundStarted();
+    const gs = agg.getGameState();
+    expect(gs.drawPile).toContain(1);
+    expect(gs.drawPile).toContain(2);
   });
 
   it('picks only one card when the first is a parchmentCard', () => {
@@ -667,9 +662,10 @@ describe('GameAggregate.roundStarted with round > 1', () => {
       discoveryPile: [1, 2],
     };
     const agg = new GameAggregate([], state, defs);
-    const event = agg.roundStarted();
-    expect(event.newCards).toHaveLength(0);
-    expect(event.type).toBe(GameEventType.ROUND_STARTED);
+    agg.roundStarted();
+    const gs = agg.getGameState();
+    // parchmentCard: no cards added to the draw pile
+    expect(gs.drawPile).toHaveLength(0);
   });
 });
 
@@ -689,15 +685,15 @@ describe('GameAggregate.advance', () => {
       drawPile: [1, 2, 3],
     };
     const agg = new GameAggregate([], state, defs);
-    const event = agg.advance();
-    expect(event).toBeDefined();
+    const gs = agg.advance();
+    expect(gs).toBeDefined();
     expect(agg.getGameState().board).toHaveLength(2);
   });
 
-  it('returns undefined when draw pile is empty', () => {
+  it('returns the unchanged state when draw pile is empty', () => {
     const agg = makeAggregate({});
-    const result = agg.advance();
-    expect(result).toBeUndefined();
+    const gs = agg.advance();
+    expect(gs.board).toHaveLength(0);
   });
 });
 
@@ -729,6 +725,35 @@ describe('GameAggregate.useCardEffect — DISCOVER_CARD', () => {
     ];
     agg.useCardEffect(effects, makeEmptyResolvedCost(), false, false, 't1');
     expect(agg.getGameState().discardPile).toContain(5);
+  });
+});
+
+describe('GameAggregate.useCardEffect — BOOST_CARD', () => {
+  it('decrements the sticker stock via AddStickerStrategy (BOOST_CARD fallthrough)', () => {
+    const state: GameState = {
+      ...EMPTY_STATE,
+      instances: { 1: makeInstance(1, 10, 1) },
+      board: [1],
+      stickerStock: { 101: 3 },
+      triggerPile: {
+        t1: {
+          effectDef: { label: '', actions: [], trigger: undefined, optional: false },
+          sourceInstanceId: 1,
+        },
+      },
+    };
+    const agg = new GameAggregate([], state, {});
+    const effects = [
+      {
+        id: '1-1',
+        type: ActionType.BOOST_CARD,
+        sourceInstanceId: 1,
+        stickerId: 101,
+        instanceId: 1,
+      } as unknown as ResolvedAction,
+    ];
+    agg.useCardEffect(effects, makeEmptyResolvedCost(), false, false, 't1');
+    expect(agg.getGameState().stickerStock[101]).toBe(2);
   });
 });
 
@@ -957,7 +982,9 @@ describe('GameAggregate.useCardEffect — unknown action type', () => {
       },
     };
     const agg = new GameAggregate([], state, {});
-    const effects: ResolvedAction[] = [{ id: '1-1', type: 'UNKNOWN_TYPE', sourceInstanceId: 1 }];
+    const effects: ResolvedAction[] = [
+      { id: '1-1', type: 'UNKNOWN_TYPE' as ActionType, sourceInstanceId: 1 },
+    ];
     expect(() => agg.useCardEffect(effects, makeEmptyResolvedCost(), false, false, 't1')).toThrow(
       'Unknown effect type: UNKNOWN_TYPE',
     );
@@ -1036,7 +1063,7 @@ describe('GameAggregate.useCardEffect — validatedStepId with missing instance'
 });
 
 describe('GameAggregate.useCardEffect — empty effects array', () => {
-  it('uses -1 as sourceInstanceId when effects array is empty', () => {
+  it('does not throw when effects array is empty', () => {
     const state: GameState = {
       ...EMPTY_STATE,
       triggerPile: {
@@ -1047,8 +1074,8 @@ describe('GameAggregate.useCardEffect — empty effects array', () => {
       },
     };
     const agg = new GameAggregate([], state, {});
-    const event = agg.useCardEffect([], makeEmptyResolvedCost(), false, false, 't1');
-    expect(event.sourceInstanceId).toBe(-1);
+    expect(() => agg.useCardEffect([], makeEmptyResolvedCost(), false, false, 't1')).not.toThrow();
+    expect(agg.getGameState().triggerPile['t1']).toBeUndefined();
   });
 });
 

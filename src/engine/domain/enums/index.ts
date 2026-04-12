@@ -37,6 +37,8 @@ export enum ActionType {
   PLAY_CARD = 'PLAY_CARD',
   ADD_STICKER = 'ADD_STICKER',
   CHOOSE_STATE = 'CHOOSE_STATE',
+  BOOST_CARD = 'BOOST_CARD',
+  COST = 'COST',
 }
 
 export enum ResourceType {
@@ -65,6 +67,7 @@ export enum PendingChoiceType {
   CHOOSE_CARD = 'choose_card',
   CHOOSE_RESOURCE = 'choose_resource',
   CHOOSE_STATE = 'choose_state',
+  CHOOSE_STICKER = 'choose_sticker',
 }
 
 export enum PaseType {

@@ -10,7 +10,7 @@ import {
 import { getResMeta, renderTextWithIcons } from '@helpers/renderHelpers';
 import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview';
 import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
-import type { CardInstance, Resources } from '@engine/domain/types';
+import type { CardInstance } from '@engine/domain/types';
 import { TargetScope } from '@engine/domain/enums';
 import {
   ActivatedIcon,
@@ -24,6 +24,7 @@ import { Button } from '@components/ui/Button/Button';
 import { Glory } from '@components/ui/Glory/Glory';
 import { CardTrack } from '@components/CardTrack/CardTrack';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
+import { Tag } from '@components/ui/Tag/Tag';
 
 interface GameCardProps {
   instance: CardInstance;
@@ -66,11 +67,11 @@ export function GameCard({
   const upgrades = cs.upgrade ?? [];
   const actions = cs.cardEffects ?? [];
   const glory = cs.glory ?? 0;
-  const resourceOptions = cs.productions as Resources[] | undefined;
+  const resourceOptions = cs.productions ?? undefined;
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
 
   const cardClass = [
-    '@container/card w-full min-w-60 max-w-100 aspect-2/3 rounded-md @3xs/card:rounded-lg',
+    '@container/card w-full min-w-50 max-w-100 aspect-2/3 rounded-md @3xs/card:rounded-lg',
     'border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden animate-fade-in-scale',
   ]
     .filter(Boolean)
@@ -79,7 +80,7 @@ export function GameCard({
   const animationDelayClass = [`delay-50`, `delay-100`, `delay-1500`, `delay-200`][index];
 
   const cardActionsClass =
-    'font-body! bg-white/60 px-3! py-2! rounded-md text-xs backdrop-blur-sm @3xs/card:text-lg';
+    'font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs/card:text-lg';
 
   return (
     <div
@@ -110,12 +111,7 @@ export function GameCard({
 
         <div className="mt-1 flex flex-wrap items-center gap-1">
           {(cs.tags ?? []).map(tag => (
-            <span
-              key={tag}
-              className={`${tagClass(tag, isEnemy)} font-display text-base-ink inline-block gap-1 rounded px-0.5 py-0.5 text-xs @3xs/card:px-1.5 @3xs/card:text-base`}
-            >
-              {tCardTag(t, tag)}
-            </span>
+            <Tag key={tag} label={tCardTag(t, tag)} className={tagClass(tag, isEnemy)} />
           ))}
         </div>
       </div>
@@ -129,10 +125,10 @@ export function GameCard({
         )}
 
         <div className={`relative z-10 flex flex-1 flex-col items-start gap-1 p-1 @3xs/card:p-3`}>
-          {hasProductions && (
+          {hasProductions && resourceOptions && (
             <ResourceChoice
-              onSelect={() => resolveProduction(instance.id)}
-              options={resourceOptions as Resources[]}
+              onSelect={choosenOption => resolveProduction(instance.id, choosenOption)}
+              options={resourceOptions}
               disabled={!canActivate || !isOnBoard || isBlocked}
             />
           )}

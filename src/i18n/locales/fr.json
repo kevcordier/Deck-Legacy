@@ -73,13 +73,19 @@
       "COST_other": "Choisissez {{count}} cartes comme coût",
       "BLOCK_CARD": "Choisissez {{count}} carte à bloquer",
       "BLOCK_CARD_other": "Choisissez {{count}} cartes à bloquer",
+      "ADD_RESOURCES": "Copiez les ressources de {{count}} carte",
+      "ADD_RESOURCES_other": "Copiez les ressources de {{count}} cartes",
       "ADD_STICKER": "Choisissez {{count}} carte pour ajouter un autocollant",
-      "ADD_STICKER_other": "Choisissez {{count}} cartes pour ajouter un autocollant"
+      "ADD_STICKER_other": "Choisissez {{count}} cartes pour ajouter un autocollant",
+      "BOOST_CARD": "Choisissez {{count}} carte à améliorer",
+      "BOOST_CARD_other": "Choisissez {{count}} cartes à améliorer"
     },
     "chooseState": "Choisir un état",
     "chooseStateSubtitle": "Cette carte a deux faces. Choisissez celle que vous voulez jouer.",
     "chooseResource": "Choisir une ressource",
-    "gainResource": "Quelle ressource voulez-vous gagner ?"
+    "gainResource": "Quelle ressource voulez-vous gagner ?",
+    "chooseSticker": "Choisir un autocollant",
+    "gainSticker": "Quelle production voulez-vous améliorer ?"
   },
   "triggerPile": {
     "title": "Effets en attente",

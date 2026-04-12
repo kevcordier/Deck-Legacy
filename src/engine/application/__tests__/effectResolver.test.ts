@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { resolveActionEffect } from '@engine/application/effectResolver';
 import { ActionType, PendingChoiceType, TargetScope } from '@engine/domain/enums';
 import type { Action, CardDef, CardInstance, GameState } from '@engine/domain/types';
+import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 
 // — fixtures —
 
@@ -40,13 +41,13 @@ const makeAction = (overrides: Partial<Action> & Pick<Action, 'id' | 'type'>): A
 describe('resolveActionEffect — base fields', () => {
   it('always sets id as `<instanceId>-<action.id>`', () => {
     const action = makeAction({ id: 5, type: ActionType.ADD_RESOURCES });
-    const [resolved] = resolveActionEffect(action, 10);
+    const [resolved] = resolveActionEffect(action, 10, EMPTY_STATE);
     expect(resolved.id).toBe('10-5');
   });
 
   it('always copies action type and sourceInstanceId', () => {
     const action = makeAction({ id: 1, type: ActionType.ADD_RESOURCES });
-    const [resolved] = resolveActionEffect(action, 7);
+    const [resolved] = resolveActionEffect(action, 7, EMPTY_STATE);
     expect(resolved.type).toBe(ActionType.ADD_RESOURCES);
     expect(resolved.sourceInstanceId).toBe(7);
   });
@@ -61,7 +62,7 @@ describe('resolveActionEffect — card selection', () => {
       type: ActionType.DISCARD_CARD,
       cards: { scope: TargetScope.BOARD, ids: [42] },
     });
-    const [resolved, pending] = resolveActionEffect(action, 1);
+    const [resolved, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
     expect(resolved.instanceId).toBe(42);
     expect(pending).toEqual([]);
   });
@@ -130,7 +131,7 @@ describe('resolveActionEffect — resources', () => {
       type: ActionType.ADD_RESOURCES,
       resources: { gold: 3, wood: 1 },
     });
-    const [resolved, pending] = resolveActionEffect(action, 1);
+    const [resolved, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
     expect(resolved.resources).toEqual({ gold: 3, wood: 1 });
     expect(pending).toEqual([]);
   });
@@ -141,7 +142,7 @@ describe('resolveActionEffect — resources', () => {
       type: ActionType.ADD_RESOURCES,
       resources: { choice: [{ gold: 2 }, { wood: 3 }] },
     });
-    const [, pending] = resolveActionEffect(action, 1);
+    const [, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
     expect(pending).toHaveLength(1);
     expect(pending[0].type).toBe(PendingChoiceType.CHOOSE_RESOURCE);
     expect(pending[0].choices).toEqual([{ gold: 2 }, { wood: 3 }]);
@@ -213,7 +214,7 @@ describe('resolveActionEffect — stickerId', () => {
       type: ActionType.ADD_STICKER,
       stickerId: 42,
     });
-    const [resolved] = resolveActionEffect(action, 1);
+    const [resolved] = resolveActionEffect(action, 1, EMPTY_STATE);
     expect(resolved.stickerId).toBe(42);
   });
 });
@@ -251,7 +252,7 @@ describe('resolveActionEffect — resources.cards without gameState', () => {
       type: ActionType.ADD_RESOURCES,
       resources: { gold: 2, cards: { scope: TargetScope.BOARD } },
     });
-    const [resolved, pending] = resolveActionEffect(action, 1);
+    const [resolved, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
     expect(resolved.resources).toEqual({});
     expect(pending).toEqual([]);
   });
@@ -277,36 +278,6 @@ describe('resolveActionEffect — resources.cards without gameState', () => {
   });
 });
 
-// — stickerId boost without cards —
-
-describe('resolveActionEffect — stickerId boost without cards', () => {
-  it('does not set stickerId when stickerId is boost without cards', () => {
-    const action = makeAction({
-      id: 1,
-      type: ActionType.ADD_STICKER,
-      stickerId: 'boost',
-      // no cards property
-    });
-    const [resolved] = resolveActionEffect(action, 1);
-    expect(resolved.stickerId).toBeUndefined();
-  });
-});
-
-// — stickerId boost —
-
-describe('resolveActionEffect — stickerId boost', () => {
-  it('does not set stickerId when stickerId is boost with cards', () => {
-    const action = makeAction({
-      id: 1,
-      type: ActionType.ADD_STICKER,
-      stickerId: 'boost',
-      cards: { scope: TargetScope.SELF },
-    });
-    const [resolved] = resolveActionEffect(action, 1);
-    expect(resolved.stickerId).toBeUndefined();
-  });
-});
-
 // — resource_per_card —
 
 describe('resolveActionEffect — resource_per_card', () => {
@@ -316,9 +287,38 @@ describe('resolveActionEffect — resource_per_card', () => {
       type: ActionType.ADD_RESOURCES,
       resource_per_card: { amount: 1, resource: 'gold' as never, scope: TargetScope.BOARD },
     });
-    const [resolved, pending] = resolveActionEffect(action, 1);
+    const [resolved, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
     expect(pending).toEqual([]);
     expect(resolved.resources).toBeUndefined();
+  });
+});
+
+// — BOOST_CARD —
+
+describe('resolveActionEffect — BOOST_CARD', () => {
+  it('injects all ResourceType values into cards.produces before card selection', () => {
+    const gs = makeGameState({
+      board: [2],
+      instances: { 2: makeInstance(2, 10, 1) },
+    });
+    const defs: Record<number, CardDef> = {
+      // Card has gold production so it matches the injected produces filter
+      10: {
+        id: 10,
+        name: 'Card',
+        states: [{ id: 1, name: 'State 1', productions: [{ gold: 1 }] }],
+      },
+    };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.BOOST_CARD,
+      stickerId: 101,
+      cards: { scope: TargetScope.BOARD },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 1, gs, defs);
+    // Single match → auto-resolved, no pending
+    expect(resolved.instanceId).toBe(2);
+    expect(pending).toEqual([]);
   });
 });
 
@@ -327,14 +327,14 @@ describe('resolveActionEffect — resource_per_card', () => {
 describe('resolveActionEffect — states', () => {
   it('resolves stateId directly when only one state given', () => {
     const action = makeAction({ id: 1, type: ActionType.CHOOSE_STATE, states: [2] });
-    const [resolved, pending] = resolveActionEffect(action, 1);
+    const [resolved, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
     expect(resolved.stateId).toBe(2);
     expect(pending).toEqual([]);
   });
 
   it('creates a pending choice when multiple states given', () => {
     const action = makeAction({ id: 1, type: ActionType.CHOOSE_STATE, states: [1, 2] });
-    const [, pending] = resolveActionEffect(action, 1);
+    const [, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
     expect(pending).toHaveLength(1);
     expect(pending[0].type).toBe(PendingChoiceType.CHOOSE_STATE);
     expect(pending[0].choices).toEqual([1, 2]);

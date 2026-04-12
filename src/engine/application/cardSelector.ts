@@ -29,6 +29,13 @@ export function cardSelector(
     pool = Object.values(gameState.blockingCards);
   } else if (scope === TargetScope.PERMANENTS) {
     pool = Object.values(gameState.permanents);
+  } else if (scope === TargetScope.ANY) {
+    pool = [
+      ...gameState.drawPile,
+      ...gameState.board,
+      ...gameState.discardPile,
+      ...Object.values(gameState.permanents),
+    ];
   } else {
     pool = Object.values(gameState.instances).map(inst => inst.id);
   }

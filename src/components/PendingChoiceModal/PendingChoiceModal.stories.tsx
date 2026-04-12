@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PendingChoiceModal } from './PendingChoiceModal';
-import type { CardDef, CardInstance } from '@engine/domain/types';
+import type { CardDef, CardInstance, Sticker } from '@engine/domain/types';
 import { CardTag, PendingChoiceType, ActionType, Trigger } from '@engine/domain/enums';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
@@ -92,6 +92,12 @@ const instances: Record<number, CardInstance> = {
   3: { id: 3, cardId: 3, stateId: 1, stickers: {}, trackProgress: [] },
 };
 
+const stickerDefs: Record<number, Sticker> = {
+  1: { id: 1, label: 'Gold', type: 'add', description: '+1 gold', production: 'gold' },
+  2: { id: 2, label: 'Wood', type: 'add', description: '+1 wood', production: 'wood' },
+  3: { id: 3, label: 'Stone', type: 'add', description: '+1 stone', production: 'stone' },
+};
+
 // --- Stories ---
 
 export const ChooseCard: Story = {
@@ -108,6 +114,7 @@ export const ChooseCard: Story = {
     },
     defs,
     instances,
+    stickerDefs,
   },
 };
 
@@ -125,6 +132,7 @@ export const ChooseResource: Story = {
     },
     defs,
     instances,
+    stickerDefs,
   },
 };
 
@@ -142,6 +150,25 @@ export const ChooseState: Story = {
     },
     defs,
     instances,
+    stickerDefs,
+  },
+};
+
+export const ChooseSticker: Story = {
+  name: 'Choose sticker',
+  args: {
+    choice: {
+      id: '1-boost',
+      type: PendingChoiceType.CHOOSE_STICKER,
+      kind: ActionType.BOOST_CARD,
+      sourceInstanceId: 1,
+      pickCount: 1,
+      choices: [1, 2],
+      isMandatory: true,
+    },
+    defs,
+    instances,
+    stickerDefs,
   },
 };
 
@@ -160,6 +187,7 @@ export const TriggerPileOptional: Story = {
     },
     defs,
     instances,
+    stickerDefs,
   },
 };
 
@@ -178,6 +206,7 @@ export const TriggerPileForced: Story = {
     },
     defs,
     instances,
+    stickerDefs,
   },
 };
 
@@ -196,6 +225,7 @@ export const TriggerPileMultiple: Story = {
     },
     defs,
     instances,
+    stickerDefs,
   },
 };
 
@@ -204,5 +234,6 @@ export const NoChoice: Story = {
   args: {
     defs,
     instances,
+    stickerDefs,
   },
 };

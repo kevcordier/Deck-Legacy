@@ -1,5 +1,6 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import { discardCards } from '@engine/application/gameStateHelper';
+import type { ActionType } from '@engine/domain/enums';
 import type { GameState } from '@engine/domain/types';
 
 export class DiscardCardStrategy implements CardActionStrategy {
@@ -7,7 +8,7 @@ export class DiscardCardStrategy implements CardActionStrategy {
     gameState: GameState,
     payload: {
       id: string;
-      type: string;
+      type: ActionType;
       sourceInstanceId: number;
       instanceId: number;
     },

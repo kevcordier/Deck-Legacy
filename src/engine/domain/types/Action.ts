@@ -25,7 +25,7 @@ export interface Action {
     cards?: CardeSelector;
   };
   states?: number[];
-  stickerId?: number | 'boost';
+  stickerId?: number;
   resource_per_card?: {
     amount: number;
     resource: ResourceType;
@@ -43,7 +43,7 @@ export type CardeSelector = {
 
 export type ResolvedAction = {
   id: string;
-  type: string;
+  type: ActionType;
   sourceInstanceId: number;
   instanceId?: number;
   resources?: Resources;

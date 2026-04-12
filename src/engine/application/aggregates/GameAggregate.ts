@@ -227,9 +227,10 @@ export class GameAggregate {
     return a;
   }
 
-  public loadFromHistory(events: GameEvent[]) {
+  public loadFromHistory(events: GameEvent[]): GameState {
     events.forEach(event => this.apply(event));
     this.events = events;
+    return this.gameState;
   }
 
   private save() {
@@ -256,7 +257,7 @@ export class GameAggregate {
     return event;
   }
 
-  public roundStarted(): RoundStartedEvent {
+  public roundStarted(): GameState {
     const round = this.gameState.round + 1;
     const newCards: number[] = [];
     const onDiscoverEvents: TriggerEntry[] = [];
@@ -291,13 +292,13 @@ export class GameAggregate {
     };
     this.apply(event);
     this.save();
-    return event;
+    return this.gameState;
   }
 
-  public turnStarted(): TurnStartedEvent | undefined {
+  public turnStarted(): GameState {
     if (this.gameState.drawPile.length === 0) {
       this.roundStarted();
-      return;
+      return this.gameState;
     }
 
     const turn = this.gameState.turn + 1;
@@ -318,13 +319,10 @@ export class GameAggregate {
     };
     this.apply(event);
     this.save();
-    return event;
+    return this.gameState;
   }
 
-  public cardProduced(
-    cardInstanceId: number,
-    productions: Record<string, number>,
-  ): CardProducedEvent {
+  public cardProduced(cardInstanceId: number, productions: Record<string, number>): GameState {
     const event: CardProducedEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.CARD_PRODUCED,
@@ -334,12 +332,12 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
-    return event;
+    return this.gameState;
   }
 
-  public advance() {
+  public advance(): GameState {
     if (this.gameState.drawPile.length === 0) {
-      return;
+      return this.gameState;
     }
 
     const turnCards: number[] = this.gameState.drawPile.slice(0, 2);
@@ -358,10 +356,10 @@ export class GameAggregate {
     };
     this.apply(event);
     this.save();
-    return event;
+    return this.gameState;
   }
 
-  public upgradeCard(cardInstanceId: number, stateId: number, cost: Resources): UpgradeCardEvent {
+  public upgradeCard(cardInstanceId: number, stateId: number, cost: Resources): GameState {
     const event: UpgradeCardEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.UPGRADE_CARD,
@@ -374,7 +372,7 @@ export class GameAggregate {
     this.events.push(event);
 
     this.turnStarted();
-    return event;
+    return this.gameState;
   }
 
   public useCardEffect(
@@ -385,7 +383,7 @@ export class GameAggregate {
     triggerId: string,
     validatedStepId?: number,
     explicitSourceInstanceId?: number,
-  ): UseCardEffectEvent {
+  ): GameState {
     const cardActionContext = new CardActionContext();
 
     const gameState = effects.reduce((gameState, effect) => {
@@ -422,6 +420,7 @@ export class GameAggregate {
           cardActionContext.setStrategy(new PlayCardStrategy());
           break;
         }
+        case ActionType.BOOST_CARD:
         case ActionType.ADD_STICKER: {
           cardActionContext.setStrategy(new AddStickerStrategy());
           break;
@@ -451,10 +450,10 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
-    return event;
+    return this.gameState;
   }
 
-  public pass(): PassEvent {
+  public pass(): GameState {
     const event: PassEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.PASS,
@@ -464,10 +463,10 @@ export class GameAggregate {
     this.events.push(event);
 
     this.turnStarted();
-    return event;
+    return this.gameState;
   }
 
-  public skipTrigger(triggerId: string) {
+  public skipTrigger(triggerId: string): GameState {
     if (!this.gameState.triggerPile[triggerId]) {
       throw new Error(`Trigger with id ${triggerId} not found in trigger pile`);
     }
@@ -479,7 +478,7 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
-    return event;
+    return this.gameState;
   }
 
   public getGameState() {

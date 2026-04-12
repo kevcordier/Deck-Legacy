@@ -19,7 +19,6 @@ export function ResourceChoice({
     <div className="flex items-center gap-2">
       {options.map((opt, i) => {
         const entries = Object.entries(opt);
-        const [key, val] = entries[0] ?? ['?', 1];
         return (
           <Button
             key={i}
@@ -28,9 +27,11 @@ export function ResourceChoice({
             disabled={disabled}
             className="transition-transform hover:scale-[1.02]"
           >
-            {Array.from({ length: val }, (_, j) => (
-              <ResourcePill key={`${key}-${j}`} resource={key} size={size} />
-            ))}
+            {entries.map(([key, val]) =>
+              Array.from({ length: val }, (_, j) => (
+                <ResourcePill key={`${key}-${j}`} resource={key} size={size} />
+              )),
+            )}
           </Button>
         );
       })}

@@ -36,13 +36,12 @@ type GameContextType = {
     resolvedCost: ResolvedCost,
     triggerId: string,
   ) => void;
-  sync: () => void;
   loadGame: () => void;
   deleteSave: () => void;
   startGame: () => void;
   startRound: () => void;
   startTurn: () => void;
-  resolveProduction: (instanceId: number, chosenResource?: Resources) => void;
+  resolveProduction: (instanceId: number, chosenResource: Resources) => void;
   resolveAction: (instanceId: number, actionId: string) => void;
   resolveTrackStep: (instanceId: number, stepId: number) => void;
   resolveUpgrade: (instanceId: number, chosenUpgradeTo?: number) => void;

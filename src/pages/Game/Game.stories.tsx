@@ -49,6 +49,7 @@ const INSTANCES_BASE = getBaseInstances();
 const PLAYING_STATE: GameState = {
   ...EMPTY_STATE,
   instances: INSTANCES_BASE,
+  stickerStock: { 1: 2, 2: 1, 3: 0, 4: 3, 5: 1, 6: 0 },
   board: [1, 4, 7, 9],
   drawPile: [2, 5, 8, 10, 3, 6],
   discardPile: [],
@@ -223,9 +224,10 @@ export const WithStopCard: Story = {
       ...PLAYING_STATE,
       instances: {
         ...INSTANCES_BASE,
+        11: { id: 11, cardId: 6, stateId: 4, stickers: {}, trackProgress: [] },
       },
       drawPile: [],
-      discardPile: Array.from({ length: 20 }, (_, i) => i + 0), // 20 cartes dans la défausse pour tester le stop à 15
+      discardPile: Array.from({ length: 22 }, (_, i) => i), // 22 cartes dans la défausse pour tester le stop à 23
       discoveryPile: [23, 24, 25, 26, 27],
       board: [],
     },

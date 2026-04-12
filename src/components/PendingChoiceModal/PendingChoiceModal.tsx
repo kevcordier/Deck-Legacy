@@ -7,10 +7,12 @@ import type {
   CardState,
   ResolvedAction,
   ResolvedCost,
+  Sticker,
   TriggerEntry,
 } from '@engine/domain/types';
 import { TriggerIcon } from '@components/ui/Icon/icon';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
+import { StickerChoice } from '@components/ui/StickerChoice/StickerChoice';
 import { GameCard } from '@components/GameCard/GameCard';
 import { PendingChoiceType } from '@engine/domain/enums';
 import { tCardName, tCardActionLabel } from '@helpers/cardI18n';
@@ -32,6 +34,7 @@ interface PendingChoiceModalProps {
   triggerPile?: Record<string, TriggerEntry> | null;
   defs: Record<number, CardDef>;
   instances: Record<number, CardInstance>;
+  stickerDefs: Record<number, Sticker>;
   resolvePlayerChoice(option: ResolvedAction): void;
   resolvePayCost(resolved: ResolvedCost): void;
   onResolveTrigger(sourceInstanceId: number, actionId: string, triggerId: string): void;
@@ -44,6 +47,7 @@ export function PendingChoiceModal({
   triggerPile,
   defs,
   instances,
+  stickerDefs,
   resolvePlayerChoice,
   resolvePayCost,
   onResolveTrigger,
@@ -220,6 +224,32 @@ export function PendingChoiceModal({
         )}
         size="lg"
         onSelect={handleResourceSelect}
+      />
+    );
+  }
+
+  // ── choose_sticker ────────────────────────────────────────────────────
+  if (choice && choice.type === PendingChoiceType.CHOOSE_STICKER) {
+    const handleStickerSelect = (stickerId: number) => {
+      resolvePlayerChoice({
+        id: choice.id,
+        type: choice.kind,
+        sourceInstanceId: choice.sourceInstanceId,
+        stickerId,
+      });
+    };
+
+    title = t(`pendingChoice.chooseSticker`);
+    subtitle = t(`pendingChoice.gainSticker`);
+
+    content = (
+      <StickerChoice
+        options={choice.choices
+          .filter((c): c is number => typeof c === 'number')
+          .map(id => stickerDefs[id])
+          .filter((s): s is NonNullable<typeof s> => s !== undefined)}
+        size="lg"
+        onSelect={handleStickerSelect}
       />
     );
   }
