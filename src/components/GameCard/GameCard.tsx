@@ -71,7 +71,7 @@ export function GameCard({
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
 
   const cardClass = [
-    '@container/card w-full min-w-50 max-w-100 aspect-2/3 rounded-md @3xs/card:rounded-lg',
+    '@container/card w-full min-w-32 max-w-100 aspect-2/3 rounded-md @3xs/card:rounded-lg',
     'border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden animate-fade-in-scale',
   ]
     .filter(Boolean)
