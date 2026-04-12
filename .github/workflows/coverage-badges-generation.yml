@@ -38,5 +38,3 @@ jobs:
           badges-icon: vitest
           badges-labels-prefix: 'Test coverage –'
           commit-message: 'chore: updating coverage badges'
-          commit-user: jpb06
-          commit-user-email: jpb.06@outlook.com
