@@ -119,27 +119,36 @@ export function cardShouldStayInPlay(
   const def = cardDefs[instance.cardId];
   const state = def?.states.find(s => s.id === instance.stateId);
   if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
-  if (getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY).includes(instanceId))
+  if (
+    Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))
+      .flat()
+      .includes(instanceId)
+  )
     return true;
   const stickers = instance.stickers[instance.stateId] ?? [];
   return stickers.includes(STAYS_IN_PLAY_STICKER_ID);
 }
 
 export function cardIsBlocked(instanceId: number, gameState: GameState): boolean {
-  return getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK).includes(instanceId);
+  return Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK))
+    .flat()
+    .includes(instanceId);
 }
 
 export function getAffectedCardsByBoardEffects(
   gameState: GameState,
   passiveType: PassiveType,
-): number[] {
-  const affectedInstanceIds: number[] = [];
-  Object.entries(gameState.boardEffects).forEach(([, effects]) =>
+): Record<number, number[]> {
+  const affectedInstanceIds: Record<number, number[]> = {};
+  Object.entries(gameState.boardEffects).forEach(([sourceId, effects]) =>
     effects
       .filter(be => be.type === passiveType)
       .forEach(be => {
         if (be.cards?.ids) {
-          affectedInstanceIds.push(...be.cards.ids);
+          affectedInstanceIds[Number(sourceId)] = [
+            ...(affectedInstanceIds[Number(sourceId)] ?? []),
+            ...be.cards.ids,
+          ];
         }
       }),
   );

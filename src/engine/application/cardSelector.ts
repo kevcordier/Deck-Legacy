@@ -19,7 +19,9 @@ export function cardSelector(
     return topCardId ? [gameState.instances[topCardId].id] : [];
   }
 
-  const blockedInstanceIds = getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK);
+  const blockedInstanceIds = Object.values(
+    getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK),
+  ).flat();
 
   let pool: number[] = [];
   if (scope === TargetScope.DECK) {

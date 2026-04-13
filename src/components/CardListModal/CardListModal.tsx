@@ -22,10 +22,12 @@ export function CardListModal({ title, subtitle, cards, onClose, emptyText }: Ca
           {emptyText ?? t('cardList.noCards')}
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-          {cards.map(inst => (
-            <GameCard key={inst.id} instance={inst} />
-          ))}
+        <div className="@container">
+          <div className="grid grid-cols-2 gap-4 @4xl:grid-cols-3">
+            {cards.map(inst => (
+              <GameCard key={inst.id} instance={inst} />
+            ))}
+          </div>
         </div>
       )}
     </Modal>

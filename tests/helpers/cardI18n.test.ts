@@ -1,4 +1,5 @@
 import {
+  ICON_PASSTHROUGH,
   tCardActionDescription,
   tCardActionLabel,
   tCardName,
@@ -9,19 +10,6 @@ import {
 } from '@helpers/cardI18n';
 import type { TFunction } from 'i18next';
 import { describe, expect, it, vi } from 'vitest';
-
-const ICON_PASSTHROUGH = {
-  glory: '{{glory}}',
-  gold: '{{gold}}',
-  goods: '{{goods}}',
-  iron: '{{iron}}',
-  ns: 'cards',
-  passif: '{{passif}}',
-  stone: '{{stone}}',
-  time: '{{time}}',
-  weapon: '{{weapon}}',
-  wood: '{{wood}}',
-};
 
 const makeT = (translations: Record<string, string> = {}): TFunction =>
   ((key: string, opts?: Record<string, unknown>) => {
@@ -66,6 +54,7 @@ describe('tCardActionLabel', () => {
     tCardActionLabel(t, 1, 2, 3);
     expect(t).toHaveBeenCalledWith('labels.1_2_a3', {
       ...ICON_PASSTHROUGH,
+      ns: 'cards',
     });
   });
 });
@@ -88,6 +77,7 @@ describe('tCardPassiveLabel', () => {
     tCardPassiveLabel(t, 1, 2, 0);
     expect(t).toHaveBeenCalledWith('labels.1_2_p0', {
       ...ICON_PASSTHROUGH,
+      ns: 'cards',
     });
   });
 });

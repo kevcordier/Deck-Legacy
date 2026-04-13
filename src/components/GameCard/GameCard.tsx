@@ -21,8 +21,8 @@ import {
 } from '@engine/application/cardHelpers';
 import { TargetScope } from '@engine/domain/enums';
 import type { CardInstance } from '@engine/domain/types';
-import { tCardActionDescription, tCardActionLabel, tCardName, tCardTag } from '@helpers/cardI18n';
-import { getResMeta, renderTextWithIcons } from '@helpers/renderHelpers';
+import { tCardActionLabel, tCardName, tCardTag } from '@helpers/cardI18n';
+import { getResMeta } from '@helpers/renderHelpers';
 import { useGame } from '@hooks/useGame';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -164,7 +164,6 @@ export function GameCard({
                 const affordable =
                   !action.cost || canAffordResources(currentResources, action.cost);
                 const actionLabel = tCardActionLabel(t, instance.cardId, cs.id, i);
-                const actionDesc = tCardActionDescription(t, instance.cardId, cs.id, i);
                 const hasDestroyItselfCost = action.cost?.destroy?.scope === TargetScope.SELF;
                 const haveTrigger = !!action.trigger;
                 const isOptional = action.optional;
@@ -173,7 +172,6 @@ export function GameCard({
                     key={i}
                     onClick={() => resolveAction(instance.id, action.id)}
                     disabled={!affordable || !canActivate || haveTrigger}
-                    title={actionDesc}
                     variant="text"
                     color="base-ink"
                     className={`${cardActionsClass} ${haveTrigger ? 'cursor-not-allowed' : ''}`}
@@ -191,7 +189,7 @@ export function GameCard({
                     ) : (
                       <ActivatedIcon color="green" className="size-3 @3xs/card:size-6" />
                     )}{' '}
-                    {renderTextWithIcons(actionLabel)}
+                    {actionLabel}
                   </Button>
                 );
               })}

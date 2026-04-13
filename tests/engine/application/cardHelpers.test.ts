@@ -358,7 +358,7 @@ describe('getInstancesTriggerEffects', () => {
 describe('getAffectedCardsByBoardEffects', () => {
   it('returns empty array when boardEffects is empty', () => {
     const state = makeGameState();
-    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual([]);
+    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({});
   });
 
   it('returns instance ids affected by the matching passive type', () => {
@@ -367,7 +367,7 @@ describe('getAffectedCardsByBoardEffects', () => {
         1: [{ id: 'be1', type: PassiveType.BLOCK, cards: { ids: [10, 11] } }],
       },
     });
-    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual([10, 11]);
+    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({ 1: [10, 11] });
   });
 
   it('ignores effects with a different passive type', () => {
@@ -376,7 +376,7 @@ describe('getAffectedCardsByBoardEffects', () => {
         1: [{ id: 'be1', type: PassiveType.STAY_IN_PLAY, cards: { ids: [10] } }],
       },
     });
-    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual([]);
+    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({});
   });
 
   it('ignores effects without a cards.ids list', () => {
@@ -385,7 +385,7 @@ describe('getAffectedCardsByBoardEffects', () => {
         1: [{ id: 'be1', type: PassiveType.BLOCK }],
       },
     });
-    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual([]);
+    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({});
   });
 
   it('aggregates ids from multiple board effect sources', () => {
@@ -395,7 +395,7 @@ describe('getAffectedCardsByBoardEffects', () => {
         2: [{ id: 'be2', type: PassiveType.BLOCK, cards: { ids: [11] } }],
       },
     });
-    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual([10, 11]);
+    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({ 1: [10], 2: [11] });
   });
 });
 

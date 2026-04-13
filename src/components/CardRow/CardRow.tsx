@@ -3,13 +3,13 @@ import type { CardInstance } from '@engine/domain/types';
 
 interface CardRowProps {
   cardIds: number[];
-  blockingCards: Record<number, number>;
+  blockedCards: Record<number, number>; // key = blockedId, value = blockerId
   instances: Record<number, CardInstance>;
 }
 
-export function CardRow({ cardIds, blockingCards, instances }: CardRowProps) {
-  const blockedIds = new Set(Object.values(blockingCards));
-  const blockerIds = new Set(Object.keys(blockingCards).map(Number));
+export function CardRow({ cardIds, blockedCards, instances }: CardRowProps) {
+  const blockedIds = new Set(Object.keys(blockedCards).map(Number));
+  const blockerIds = new Set(Object.values(blockedCards).map(Number));
 
   return (
     <div
@@ -24,20 +24,17 @@ export function CardRow({ cardIds, blockingCards, instances }: CardRowProps) {
           if (!inst) return null;
           const isBlocked = blockedIds.has(id);
           const blockerEntry = isBlocked
-            ? Object.entries(blockingCards).find(([, v]) => v === id)
+            ? Object.entries(blockedCards).find(([blockedId]) => Number(blockedId) === id)
             : undefined;
-          const blockerId = blockerEntry ? Number(blockerEntry[0]) : null;
+          const blockerId = blockerEntry ? Number(blockerEntry[1]) : null;
           const blockerInst = blockerId !== null ? instances[blockerId] : null;
           if (isBlocked && blockerInst && blockerId !== null) {
             return (
-              <div key={id} className={'relative mb-2 shrink-0'}>
+              <div key={id} className={'relative shrink-0'}>
                 <GameCard instance={inst} isOnBoard index={index} />
-                <GameCard
-                  instance={blockerInst}
-                  isOnBoard
-                  className={'absolute! top-1 left-1 z-30 @sm/card-row:top-2 @sm/card-row:left-2'}
-                  index={index}
-                />
+                <div className={'absolute inset-1 z-30 @sm/card-row:inset-2'}>
+                  <GameCard instance={blockerInst} isOnBoard index={index} />
+                </div>
               </div>
             );
           }
