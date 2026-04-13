@@ -46,28 +46,28 @@ Maximize **Glory** points across all rounds by discovering, upgrading, and chain
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Start the development server (hot reload)
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:5173/Deck-Legacy/](http://localhost:5173/Deck-Legacy/) in your browser.
 
 ### Available Scripts
 
-| Command                 | Description                          |
-| ----------------------- | ------------------------------------ |
-| `npm run dev`           | Development server with hot reload   |
-| `npm run build`         | Production build (`dist/`)           |
-| `npm run test`          | Run unit tests once                  |
-| `npm run test:watch`    | Run tests in watch mode              |
-| `npm run test:coverage` | Coverage report for the engine layer |
-| `npm run lint`          | ESLint (zero-warning policy)         |
-| `npm run lint:fix`      | Auto-fix ESLint violations           |
-| `npm run typecheck`     | TypeScript check without emit        |
-| `npm run format`        | Prettier format `src/`               |
-| `npm run storybook`     | Component explorer on port 6006      |
+| Command              | Description                          |
+| -------------------- | ------------------------------------ |
+| `pnpm dev`           | Development server with hot reload   |
+| `pnpm build`         | Production build (`dist/`)           |
+| `pnpm test`          | Run unit tests once                  |
+| `pnpm test:watch`    | Run tests in watch mode              |
+| `pnpm test:coverage` | Coverage report for the engine layer |
+| `pnpm lint`          | ESLint (zero-warning policy)         |
+| `pnpm lint:fix`      | Auto-fix ESLint violations           |
+| `pnpm typecheck`     | TypeScript check without emit        |
+| `pnpm format`        | Prettier format `src/`               |
+| `pnpm storybook`     | Component explorer on port 6006      |
 
 ---
 

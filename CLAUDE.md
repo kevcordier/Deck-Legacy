@@ -7,17 +7,17 @@ A browser-based deck-building card game built with React 19, TypeScript, and Vit
 ## Quick Reference
 
 ```bash
-npm run dev            # Start dev server (hot reload)
-npm run test           # Run all unit tests once
-npm run test:watch     # Run tests in watch mode
-npm run test:coverage  # Coverage report (engine layer)
-npm run lint           # ESLint (zero warnings policy)
-npm run lint:fix       # Auto-fix ESLint violations
-npm run typecheck      # TypeScript check without emit
-npm run format         # Prettier format src/
-npm run format:check   # Verify formatting
-npm run build          # Production build (tsc + vite)
-npm run storybook      # Component explorer on :6006
+pnpm dev            # Start dev server (hot reload)
+pnpm test           # Run all unit tests once
+pnpm test:watch     # Run tests in watch mode
+pnpm test:coverage  # Coverage report (engine layer)
+pnpm lint           # ESLint (zero warnings policy)
+pnpm lint:fix       # Auto-fix ESLint violations
+pnpm typecheck      # TypeScript check without emit
+pnpm format         # Prettier format src/
+pnpm format:check   # Verify formatting
+pnpm build          # Production build (tsc + vite)
+pnpm storybook      # Component explorer on :6006
 ```
 
 **Node version:** v20.20.1 (see `.nvmrc`)
@@ -158,9 +158,9 @@ The project uses **Tailwind CSS v4** (via `@tailwindcss/vite`). All styling is d
 **Coverage scope:** `src/engine/**/*.ts` (excluding `useGame.ts`, `index.ts`)
 
 ```bash
-npm run test            # Run once
-npm run test:watch      # Watch mode
-npm run test:coverage   # Coverage report
+pnpm test            # Run once
+pnpm test:watch      # Watch mode
+pnpm test:coverage   # Coverage report
 ```
 
 **When adding new engine logic:** always add corresponding unit tests. Keep tests isolated — construct minimal `GameState`/`CardDef` fixtures rather than importing real game data.
@@ -233,8 +233,8 @@ Do not change the Vite base path without updating the GitHub Actions workflow.
 Component stories live alongside components. Run with:
 
 ```bash
-npm run storybook       # Dev server on :6006
-npm run build-storybook # Static build
+pnpm storybook       # Dev server on :6006
+pnpm build-storybook # Static build
 ```
 
 ### Story conventions
