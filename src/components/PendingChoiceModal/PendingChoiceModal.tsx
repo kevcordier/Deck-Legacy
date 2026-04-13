@@ -157,7 +157,7 @@ export function PendingChoiceModal({
 
     content = (
       <div className="@container">
-        <div className="grid grid-cols-2 gap-4 @4xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 @xl:grid-cols-2 @4xl:grid-cols-3">
           {choice.choices.map(id => {
             if (typeof id !== 'number') return null;
             const inst = instances[id];
@@ -188,7 +188,7 @@ export function PendingChoiceModal({
     subtitle = getChoiceActionLabel(choice, instances, defs, t);
     content = (
       <div className="@container">
-        <div className="grid grid-cols-2 gap-4 @4xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 @xl:grid-cols-2 @4xl:grid-cols-3">
           {choice.choices.map(stateId => {
             if (typeof stateId !== 'number') return null;
             const state = cardDef?.states.find(s => s.id === stateId);
@@ -271,9 +271,17 @@ export function PendingChoiceModal({
   }
 
   const onClose = choice?.isMandatory === false ? () => onSkipChoice(choice.id) : undefined;
+  const isCardChoice =
+    choice?.type === PendingChoiceType.CHOOSE_CARD ||
+    choice?.type === PendingChoiceType.CHOOSE_STATE;
 
   return (
-    <Modal title={title} onClose={onClose} subtitle={subtitle}>
+    <Modal
+      title={title}
+      onClose={onClose}
+      subtitle={subtitle}
+      className={isCardChoice ? 'lg:min-w-2xl' : ''}
+    >
       {content}
     </Modal>
   );

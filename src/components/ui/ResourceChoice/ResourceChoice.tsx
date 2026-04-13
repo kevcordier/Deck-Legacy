@@ -16,7 +16,7 @@ export function ResourceChoice({
   size = 'md',
 }: ResourceChoiceProps) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1">
       {options.map((opt, i) => {
         const entries = Object.entries(opt);
         return (
@@ -24,8 +24,9 @@ export function ResourceChoice({
             key={i}
             onClick={() => onSelect(opt)}
             variant="text"
+            color="base-ink"
             disabled={disabled}
-            className="transition-transform hover:scale-[1.02]"
+            className="not-hover:not-disabled:bg-card transition-transform hover:scale-[1.02] rounded-full p-2! flex gap-1 backdrop-blur-sm"
           >
             {entries.map(([key, val]) =>
               Array.from({ length: val }, (_, j) => (

@@ -17,7 +17,7 @@ pnpm typecheck      # TypeScript check without emit
 pnpm format         # Prettier format src/
 pnpm format:check   # Verify formatting
 pnpm build          # Production build (tsc + vite)
-pnpm storybook      # Component explorer on :6006
+pnpm storybook      # Component explorer on :6008
 ```
 
 **Node version:** v20.20.1 (see `.nvmrc`)
@@ -233,7 +233,7 @@ Do not change the Vite base path without updating the GitHub Actions workflow.
 Component stories live alongside components. Run with:
 
 ```bash
-pnpm storybook       # Dev server on :6006
+pnpm storybook       # Dev server on :6008
 pnpm build-storybook # Static build
 ```
 

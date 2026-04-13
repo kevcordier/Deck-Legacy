@@ -72,9 +72,10 @@ function CardStatesModal({
       title={tCardName(t, def.id, 1)}
       subtitle={t('cardPreview.statesMeta', { count: def.states.length, id: instance.id })}
       onClose={onClose}
+      className="lg:min-w-2xl"
     >
       <div className="@container">
-        <div className="grid grid-cols-2 gap-4 @4xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 @xl:grid-cols-2 @4xl:grid-cols-3">
           {def.states.map(s => {
             const isCurrent = s.id === instance.stateId;
             const fakeInstance: CardInstance = {

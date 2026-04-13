@@ -1,14 +1,9 @@
+import { CardAction } from '@components/CardAction/CardAction';
 import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview';
 import { CardTrack } from '@components/CardTrack/CardTrack';
 import { Button } from '@components/ui/Button/Button';
 import { Glory } from '@components/ui/Glory/Glory';
-import {
-  ActivatedIcon,
-  DestroyIcon,
-  PassifIcon,
-  TimeIcon,
-  TriggerIcon,
-} from '@components/ui/Icon/icon';
+import { PassifIcon } from '@components/ui/Icon/icon';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Tag } from '@components/ui/Tag/Tag';
@@ -19,7 +14,6 @@ import {
   getEffectiveProductions,
   tagClass,
 } from '@engine/application/cardHelpers';
-import { TargetScope } from '@engine/domain/enums';
 import type { CardInstance } from '@engine/domain/types';
 import { tCardActionLabel, tCardName, tCardTag } from '@helpers/cardI18n';
 import { getResMeta } from '@helpers/renderHelpers';
@@ -44,15 +38,8 @@ export function GameCard({
   className = '',
 }: GameCardProps) {
   const { t } = useTranslation();
-  const {
-    state,
-    defs,
-    stickerDefs,
-    resolveProduction,
-    resolveAction,
-    resolveUpgrade,
-    resolveTrackStep,
-  } = useGame();
+  const { state, defs, stickerDefs, resolveProduction, resolveUpgrade, resolveTrackStep } =
+    useGame();
   const currentResources = state.resources;
   const isBlocked = isOnBoard && cardIsBlocked(instance.id, state);
   const cs = getActiveState(instance, defs);
@@ -161,36 +148,15 @@ export function GameCard({
             {!isBlocked &&
               !isParchment &&
               actions.map((action, i) => {
-                const affordable =
-                  !action.cost || canAffordResources(currentResources, action.cost);
                 const actionLabel = tCardActionLabel(t, instance.cardId, cs.id, i);
-                const hasDestroyItselfCost = action.cost?.destroy?.scope === TargetScope.SELF;
-                const haveTrigger = !!action.trigger;
-                const isOptional = action.optional;
                 return (
-                  <Button
+                  <CardAction
                     key={i}
-                    onClick={() => resolveAction(instance.id, action.id)}
-                    disabled={!affordable || !canActivate || haveTrigger}
-                    variant="text"
-                    color="base-ink"
-                    className={`${cardActionsClass} ${haveTrigger ? 'cursor-not-allowed' : ''}`}
-                  >
-                    {haveTrigger && !isOptional ? (
-                      <TriggerIcon color="red" className="size-3 @3xs/card:size-6" />
-                    ) : haveTrigger && isOptional ? (
-                      <TriggerIcon color="yellow" className="size-3 @3xs/card:size-6" />
-                    ) : hasDestroyItselfCost ? (
-                      <DestroyIcon color="red" className="size-3 @3xs/card:size-6" />
-                    ) : action.endsTurn ? (
-                      <TimeIcon className="size-3 @3xs/card:size-6" />
-                    ) : action.passive ? (
-                      <PassifIcon className="size-3 @3xs/card:size-6" />
-                    ) : (
-                      <ActivatedIcon color="green" className="size-3 @3xs/card:size-6" />
-                    )}{' '}
-                    {actionLabel}
-                  </Button>
+                    instanceId={instance.id}
+                    action={action}
+                    actionLabel={actionLabel}
+                    disabled={!canActivate}
+                  />
                 );
               })}
 

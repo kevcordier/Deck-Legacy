@@ -46,7 +46,11 @@ export function MainBoard() {
               {state.lastAddedIds.map((id: number) => {
                 const inst = state.instances[id];
                 if (!inst) return null;
-                return <GameCard key={id} instance={inst} className="min-w-xs basis-1/4" />;
+                return (
+                  <div key={id} className="min-w-xs basis-1/4">
+                    <GameCard instance={inst} />
+                  </div>
+                );
               })}
             </div>
           )}

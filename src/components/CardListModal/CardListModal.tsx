@@ -16,14 +16,14 @@ export function CardListModal({ title, subtitle, cards, onClose, emptyText }: Ca
   const { t } = useTranslation();
 
   const modal = (
-    <Modal title={title} subtitle={subtitle} onClose={onClose}>
+    <Modal title={title} subtitle={subtitle} onClose={onClose} className="lg:min-w-2xl">
       {cards.length === 0 ? (
         <p className="p-2 text-center text-sm text-gray-400 italic">
           {emptyText ?? t('cardList.noCards')}
         </p>
       ) : (
         <div className="@container">
-          <div className="grid grid-cols-2 gap-4 @4xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 @xl:grid-cols-2 @4xl:grid-cols-3">
             {cards.map(inst => (
               <GameCard key={inst.id} instance={inst} />
             ))}

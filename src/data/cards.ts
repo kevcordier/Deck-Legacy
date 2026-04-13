@@ -18,6 +18,8 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'Wild Grass',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/6d09374f-b960-4b6b-a2b7-27402db0dc25/original=true,quality=90/01612-3845234348.jpeg',
         upgrade: [
           {
             cost: {
@@ -40,6 +42,8 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Plains',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/ea5be381-3332-462c-b5aa-bf8e03a75814/original=true,quality=90/32A3CA7B52F85F1F6336A4F00BA8A0AEA3AD12AF2B49E2F45F8245CF1A6235C9.jpeg',
         actions: [
           {
             id: '1-2-1',
@@ -81,6 +85,8 @@ export const cardsData: CardDef[] = [
         id: 3,
         name: 'Farmlands',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1ccb9805-79c6-4fbf-9956-1f836a249e5c/original=true,quality=90/HZ283XYYHS6XG3QG47CT1B0EJ0.jpeg',
         upgrade: [
           {
             cost: {
@@ -103,6 +109,8 @@ export const cardsData: CardDef[] = [
         id: 4,
         name: 'Food Barns',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/69f4028b-f52a-4243-afcc-55a038210221/original=true,quality=90/00040-1126433715.jpeg',
         glory: 3,
         productions: [
           {
@@ -121,6 +129,8 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'Distant Mountain',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0e18ba94-f431-433a-9569-1d38cf978d97/original=true,quality=90/00533-1442497315.jpeg',
         upgrade: [
           {
             cost: {
@@ -143,6 +153,8 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Rocky Area',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/91754d5e-54e3-40d3-942f-445a3724bde0/original=true,quality=90/C5B77689692C7248558CEF3DB8DE191F008F1E70177D4D34BB205F3887C6BFDC.jpeg',
         actions: [
           {
             id: '2-2-1',
@@ -187,6 +199,8 @@ export const cardsData: CardDef[] = [
         id: 3,
         name: 'Quarry',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/bb398332-8a0d-4a6f-9757-82ad98d69f24/original=true,quality=90/SNE1X41SFDY147PY0HN1068XE0?sig=CfDJ8J868rbHQQlNuTOL2qbAsuS8128hQnVA7sW5n5sZVPhGH2YDUXnnme4xI7TjGw-qRgzDiJBA--GXM99V3FTYUVvxCM8sYgmsLgYNWzOG2f0Ks2cQukChYnEmwwbmclxgcTESIbHGkrqYsnVk4hyTNjDBkAAtTgjAmzr9I_E8vHQgQBwB2aNWcUhFfCpF1xUDj5MWqDgUh78TN74N2O66lfXzlS8LHXLA7mt3j41ZbkWUZig-QR-e__koTOILBoV4C0aCtAuTke4fAJqBV04wKmFqo7rgpmvUNIeH-QDCGcJM&exp=2026-09-16T11:38:25.jpeg',
         upgrade: [
           {
             cost: {
@@ -210,6 +224,8 @@ export const cardsData: CardDef[] = [
         id: 4,
         name: 'Shallow Mine',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/b4c3bd3b-0202-4f39-8c35-e329d17eb41d/original=true,quality=90/2026-02-05-125447_flux_0.jpeg',
         glory: 3,
         actions: [
           {
@@ -243,6 +259,8 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'Forest',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1d7adfad-280d-4cc5-8c88-97f3a42cb7b5/anim=false,width=450,optimized=true/8088900BBA42AB5468EFEAE413FD1584F4F2ED2F8DB7A12E06D3E3E1E945503D.jpeg',
         upgrade: [
           {
             cost: {
@@ -288,6 +306,8 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Felled Forest',
         tags: [CardTag.LAND],
+        illustration:
+          'https://www.azolifesciences.com/image-handler/ts/20200320043042/ri/673/picture/2020/3/shutterstock_569562037.jpg',
         upgrade: [
           {
             cost: {
@@ -317,6 +337,8 @@ export const cardsData: CardDef[] = [
         id: 3,
         name: 'Lumberjack',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/289541b5-4f30-4dba-936f-68502266080f/original=true,quality=90/00079-3523319267.jpeg',
         glory: 2,
         productions: [
           {
@@ -328,6 +350,8 @@ export const cardsData: CardDef[] = [
         id: 4,
         name: 'Sacred Well',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a4fa3901-a970-4c5b-8e43-002c66fded99/original=true,quality=90/00084.jpeg',
         glory: 2,
         actions: [
           {
@@ -361,6 +385,8 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'Headquarters',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/5a04b232-0a88-4b5c-97ae-399aa109b3d4/original=true,quality=90/1P7KP4HEYR2NJQ5T54PVHXF4A0.jpeg',
         upgrade: [
           {
             cost: {
@@ -384,11 +410,12 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Town Hall',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e33f38e6-50a1-45b8-832a-7d1c07d405cb/original=true,quality=90/5M4AR3T0ACAWE2Q7TEEK1ZFK80.jpeg',
         glory: 3,
         actions: [
           {
             id: '4-2-1',
-            // label: 'Play 1 Land from discard pile.',
             actions: [
               {
                 id: 1,
@@ -424,6 +451,8 @@ export const cardsData: CardDef[] = [
         id: 3,
         name: 'Keep',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/83d38c62-35ff-41e5-917c-df91b3b7c4e0/original=true,quality=90/9BBA545BFEBB64D6E822FBC2DBDBB43070FFC4E76475DAB0A070380A9A229A41.jpeg',
         glory: 7,
         actions: [
           {
@@ -465,6 +494,8 @@ export const cardsData: CardDef[] = [
         id: 4,
         name: 'Castle',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/39e939dc-f7c2-449c-bbd5-2d3e33d5dc5e/original=true,quality=90/00049-2184064133.jpeg',
         glory: 12,
         actions: [
           {
@@ -497,6 +528,8 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'Trader',
         tags: [CardTag.PERSON],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a3c75bb9-fce0-4f97-835b-bab57310e6d3/original=true,quality=90/cyberxl21_41.jpeg',
         actions: [
           {
             id: '5-1-1',
@@ -536,6 +569,8 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Bazaar',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/90745e0d-7ca2-417d-9453-579e41b10885/anim=false,width=450,optimized=true/00006-3168783046.jpeg',
         glory: 1,
         actions: [
           {
@@ -583,6 +618,8 @@ export const cardsData: CardDef[] = [
         id: 3,
         name: 'Market',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/72551fc7-1c5d-4693-b553-0f08265c85b2/original=true,quality=90/7AJB24JBKRCX20WQGBAC85VPQ0.jpeg',
         glory: 3,
         actions: [
           {
@@ -633,6 +670,8 @@ export const cardsData: CardDef[] = [
         id: 4,
         name: 'Festival',
         tags: [CardTag.EVENT],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e6224f49-a89d-4180-8ac3-2264855ced51/original=true,quality=90/00013-2617315028.jpeg',
         glory: 4,
         productions: [
           {
@@ -659,6 +698,8 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'Jungle',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d189302c-ea8e-444f-80ab-e64415e97789/anim=false,width=450,optimized=true/00312-841554700.jpeg',
         actions: [
           {
             id: '6-1-1',
@@ -698,6 +739,8 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Huge Trees',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/56def3aa-dfb9-4cb8-66b9-a7832a433200/anim=false,width=450,optimized=true/311658.jpeg',
         actions: [
           {
             id: '6-2-1',
@@ -742,6 +785,8 @@ export const cardsData: CardDef[] = [
         id: 3,
         name: 'Deep Jungle',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d5c28b95-a4e0-4904-9651-be5379577fb9/anim=false,width=450,optimized=true/775F1ECF5D20E5A39C93164302B69062A32D6ECAB4E710A536DEDB267CE1D2F8.jpeg',
         upgrade: [
           {
             cost: {
@@ -764,6 +809,8 @@ export const cardsData: CardDef[] = [
         id: 4,
         name: 'Treehouses',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8ac9e087-8d36-49b6-8f02-9d422c10faa1/original=true,quality=90/00004-4001576903.jpeg',
         glory: 4,
         productions: [
           {
@@ -783,6 +830,8 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'River',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/eea05c7b-ba60-4dc7-269a-a60c100c3200/original=true,quality=90/303606.jpeg',
         productions: [
           {
             [ResourceType.GOLD]: 1,
@@ -805,6 +854,8 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Bridge',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/84fe0ac9-bf08-43a1-ace2-d8a3bb7e031c/original=true,quality=90/917C9432AD8F6E1400F86041E08556D6B4CEE45B81C1978436B7CA303EF933E1.jpeg',
         productions: [
           {
             [ResourceType.GOLD]: 1,
@@ -827,6 +878,8 @@ export const cardsData: CardDef[] = [
       {
         id: 3,
         name: 'Stone Bridge',
+        illustration:
+          'https://assets.lummi.ai/assets/QmPYBqiJxrZNah6ePyGB78vngDTtkUwzgSv1yoEAGNa1a5?auto=format&w=1500',
         tags: [CardTag.LAND],
         productions: [
           {
@@ -850,6 +903,8 @@ export const cardsData: CardDef[] = [
       {
         id: 4,
         name: 'Explorers',
+        illustration:
+          'https://assets.lummi.ai/assets/QmRN7MxixVDs23HevqGV7pmr9GMAZCcB67NhXpNRcBArp6?auto=format&w=1500',
         tags: [CardTag.PERSON],
         productions: [
           {
@@ -891,6 +946,8 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'Field Worker',
         tags: [CardTag.PERSON],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a6fb5b03-1fa4-4cda-9387-a7c69c29d745/anim=false,width=450,optimized=true/00333-2099362640.jpeg',
         actions: [
           {
             id: '8-1-1',
@@ -921,6 +978,8 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Servant',
         tags: [CardTag.PERSON],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/9f3f38ed-1c0a-413d-8a60-862efc680b99/anim=false,width=450,optimized=true/servant%20male%201%20photoMovieX.jpeg',
         actions: [
           {
             id: '8-2-1',
@@ -958,7 +1017,8 @@ export const cardsData: CardDef[] = [
         tags: [CardTag.ENEMY],
         negative: true,
         glory: -2,
-        illustration: 'cards/bandit.webp',
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/2f2966e7-17b9-418c-b5ec-842f368f390d/original=true,quality=90/bandit%204%20epic.jpeg',
         actions: [
           {
             id: '9-1-1',
@@ -1048,6 +1108,8 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Worker',
         tags: [CardTag.PERSON],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/649b5682-509e-4cbd-bdb7-7ca61511aa7c/anim=false,width=450,optimized=true/RBB7BJW5YGRBW6WY6P5MTZM1N0.jpeg',
         actions: [
           {
             id: '9-2-1',
@@ -1078,7 +1140,8 @@ export const cardsData: CardDef[] = [
         tags: [CardTag.ENEMY],
         negative: true,
         glory: -2,
-        illustration: 'cards/bandit.webp',
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/2f2966e7-17b9-418c-b5ec-842f368f390d/original=true,quality=90/bandit%204%20epic.jpeg',
         actions: [
           {
             id: '10-1-1',
@@ -1167,6 +1230,8 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Field Worker',
         tags: [CardTag.PERSON],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a6fb5b03-1fa4-4cda-9387-a7c69c29d745/anim=false,width=450,optimized=true/00333-2099362640.jpeg',
         actions: [
           {
             id: '10-2-1',
@@ -1195,6 +1260,8 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'Hill',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0bd7af9f-e425-4ea7-a8a7-eb89823a3e80/anim=false,width=450,optimized=true/00110-3590513962.jpeg',
         productions: [
           {
             [ResourceType.GOLD]: 1,
@@ -1219,6 +1286,8 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Chapel',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/4f400b8e-4ffd-4916-45fc-fe70f9617b00/original=true,quality=90/191194.jpeg',
         productions: [
           {
             [ResourceType.GOLD]: 1,
@@ -1264,6 +1333,8 @@ export const cardsData: CardDef[] = [
         id: 3,
         name: 'Church',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/06e9ad48-aa32-475d-a4a7-a4b079629dd1/anim=false,width=450,optimized=true/00024-1545763525.jpeg',
         productions: [
           {
             [ResourceType.GOLD]: 1,
@@ -1310,6 +1381,8 @@ export const cardsData: CardDef[] = [
         id: 4,
         name: 'Cathedral',
         tags: [CardTag.BUILDING],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8e57ba5b-479a-402f-5963-ae2e0275ed00/anim=false,width=450,optimized=true/02136-1053066258-modelshoot%20style,%20(extremely%20detailed%20CG%20unity%208k%20wallpaper),%20full%20shot%20body%20photo%20of%20the%20most%20beautiful%20artwork%20in%20the%20world,%20e.jpeg',
         productions: [
           {
             [ResourceType.GOLD]: 1,
@@ -1349,6 +1422,8 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'East Cliffs',
         tags: [CardTag.LAND],
+        illustration:
+          'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0b355473-abc7-45b7-8454-f9fcc0767d43/original=true,quality=90/PRQ3CTSP15QFNGQN1ZYVTJ0DN0.jpeg',
         productions: [
           {
             [ResourceType.STONE]: 1,

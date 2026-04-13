@@ -67,7 +67,7 @@ Open [http://localhost:5173/Deck-Legacy/](http://localhost:5173/Deck-Legacy/) in
 | `pnpm lint:fix`      | Auto-fix ESLint violations           |
 | `pnpm typecheck`     | TypeScript check without emit        |
 | `pnpm format`        | Prettier format `src/`               |
-| `pnpm storybook`     | Component explorer on port 6006      |
+| `pnpm storybook`     | Component explorer on port 6008      |
 
 ---
 

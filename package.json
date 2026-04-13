@@ -16,7 +16,7 @@
     "prepare": "husky",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6008",
     "build-storybook": "storybook build",
     "depcruise": "depcruise src --config .dependency-cruiser.cjs",
     "verify": "pnpm format && pnpm lint:fix && pnpm typecheck && pnpm depcruise && pnpm test:coverage"

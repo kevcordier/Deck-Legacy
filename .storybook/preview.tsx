@@ -1,10 +1,10 @@
-import type { Preview } from '@storybook/react-vite';
+import i18n from '../src/helpers/i18n';
 import '../src/styles/game.css';
+import { withThemeByDataAttribute } from '@storybook/addon-themes';
+import type { Preview } from '@storybook/react-vite';
 import { Suspense, useEffect } from 'react';
 import { I18nextProvider } from 'react-i18next';
-import i18n from '../src/helpers/i18n';
 import type { DecoratorFunction } from 'storybook/internal/types';
-import { withThemeByDataAttribute } from '@storybook/addon-themes';
 
 const withI18next: DecoratorFunction = (Story, context) => {
   const { locale } = context.globals;
@@ -50,6 +50,7 @@ const preview: Preview = {
       attributeName: 'data-theme',
     }),
   ],
+  tags: ['autodocs'],
 };
 
 export default preview;
