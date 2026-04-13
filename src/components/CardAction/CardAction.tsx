@@ -31,20 +31,20 @@ export function CardAction({ instanceId, disabled, action, actionLabel }: CardAc
       disabled={!affordable || disabled || haveTrigger}
       variant="text"
       color="base-ink"
-      className={`font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs/card:text-lg ${haveTrigger ? 'cursor-not-allowed' : ''}`}
+      className={`font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-lg ${haveTrigger ? 'cursor-not-allowed' : ''}`}
     >
       {haveTrigger && !isOptional ? (
-        <TriggerIcon color="red" className="size-3 @3xs/card:size-6" />
+        <TriggerIcon color="red" className="size-3 @3xs:size-6" />
       ) : haveTrigger && isOptional ? (
-        <TriggerIcon color="yellow" className="size-3 @3xs/card:size-6" />
+        <TriggerIcon color="yellow" className="size-3 @3xs:size-6" />
       ) : hasDestroyItselfCost ? (
-        <DestroyIcon color="red" className="size-3 @3xs/card:size-6" />
+        <DestroyIcon color="red" className="size-3 @3xs:size-6" />
       ) : action.endsTurn ? (
-        <TimeIcon className="size-3 @3xs/card:size-6" />
+        <TimeIcon className="size-3 @3xs:size-6" />
       ) : action.passive ? (
-        <PassifIcon className="size-3 @3xs/card:size-6" />
+        <PassifIcon className="size-3 @3xs:size-6" />
       ) : (
-        <ActivatedIcon color="green" className="size-3 @3xs/card:size-6" />
+        <ActivatedIcon color="green" className="size-3 @3xs:size-6" />
       )}{' '}
       {actionLabel}
     </Button>

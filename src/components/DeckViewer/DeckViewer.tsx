@@ -28,7 +28,7 @@ export function DeckViewer({
 
   return (
     <section
-      className={`bg-background scrollbar flex shrink-0 flex-col ${isSheet ? 'w-full' : 'h-full w-64'}`}
+      className={`bg-background scrollbar flex shrink-0 flex-col ${isSheet ? 'w-full' : 'h-full w-48 xl:w-64'}`}
     >
       <div className="border-b-border flex min-h-11 items-center justify-between border-b p-2">
         <Title level={4}>{title}</Title>
@@ -54,8 +54,8 @@ export function DeckViewer({
       {deck.length > 0 ? (
         <div className="flex flex-wrap justify-center lg:flex-col">
           {displayedCard && (
-            <div className="flex min-w-xs flex-col items-center p-2 lg:min-w-0">
-              <GameCard instance={displayedCard} />
+            <div className="@container flex min-w-xs flex-col items-center p-2 lg:min-w-0">
+              <GameCard instance={displayedCard} className="w-full" />
             </div>
           )}
           {deck.length > 1 && (
@@ -88,10 +88,15 @@ export function DeckViewer({
         <CardListModal
           title={t('deckViewer.title')}
           subtitle={t('deckViewer.modalSubtitle', { count: deck.length })}
-          cards={deck}
           onClose={() => setModalOpen(false)}
           emptyText={t('deckViewer.emptyDeck')}
-        />
+        >
+          {deck.map(inst => (
+            <div key={inst.id} className="@container">
+              <GameCard instance={inst} className="w-full" />
+            </div>
+          ))}
+        </CardListModal>
       )}
     </section>
   );

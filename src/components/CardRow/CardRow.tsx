@@ -14,7 +14,7 @@ export function CardRow({ cardIds, blockedCards, instances }: CardRowProps) {
   return (
     <div
       className={
-        'grid grid-cols-1 gap-2 @xs/main:gap-3 @xs/main:grid-cols-2 @2xl/main:grid-cols-3 @4xl/main:grid-cols-4'
+        'grid grid-cols-1 gap-2 @xs/main:gap-3 @2xs/main:grid-cols-2 @3xl/main:grid-cols-3 @5xl/main:grid-cols-4'
       }
     >
       {cardIds
@@ -30,16 +30,16 @@ export function CardRow({ cardIds, blockedCards, instances }: CardRowProps) {
           const blockerInst = blockerId !== null ? instances[blockerId] : null;
           if (isBlocked && blockerInst && blockerId !== null) {
             return (
-              <div key={id} className={'relative shrink-0'}>
+              <div key={id} className={'relative shrink-0 @container'}>
                 <GameCard instance={inst} isOnBoard index={index} />
-                <div className={'absolute inset-1 z-30 @sm/card-row:inset-2'}>
+                <div className={'absolute inset-1 z-30'}>
                   <GameCard instance={blockerInst} isOnBoard index={index} />
                 </div>
               </div>
             );
           }
           return (
-            <div key={id} className={'relative shrink-0'}>
+            <div key={id} className={'relative shrink-0 @container'}>
               <GameCard instance={inst} isOnBoard index={index} />
             </div>
           );

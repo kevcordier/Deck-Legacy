@@ -3,18 +3,13 @@ import { useTranslation } from 'react-i18next';
 
 interface ResourcePillProps {
   readonly resource: string;
-  readonly size?: 'xs' | 'sm' | 'md' | 'lg';
+  readonly size?: 'sm' | 'md' | 'lg';
 }
 
-export function ResourcePill({ resource, size = 'md' }: ResourcePillProps) {
+const sizeMap = { sm: 'size-5', md: 'size-8', lg: 'size-10' };
+
+export function ResourcePill({ resource, size = 'lg' }: ResourcePillProps) {
   const { t } = useTranslation();
   const meta = getResMeta(resource);
-  return (
-    meta.icon && (
-      <meta.icon
-        className={`${meta.cls} ${size === 'xs' ? 'size-4' : size === 'sm' ? 'size-7' : size === 'lg' ? 'size-12' : 'size-10'}`}
-        alt={t(meta.label)}
-      />
-    )
-  );
+  return meta.icon && <meta.icon className={`${meta.cls} ${sizeMap[size]}`} alt={t(meta.label)} />;
 }

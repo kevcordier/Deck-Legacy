@@ -6,7 +6,7 @@ interface ResourceChoiceProps {
   readonly options: Resources[];
   readonly disabled?: boolean;
   readonly onSelect: (r: Resources) => void;
-  readonly size?: 'xs' | 'sm' | 'md' | 'lg';
+  readonly size?: 'sm' | 'md' | 'lg';
 }
 
 export function ResourceChoice({

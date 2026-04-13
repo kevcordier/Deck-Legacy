@@ -10,14 +10,14 @@ interface StickerChoiceProps {
   readonly options: Sticker[];
   readonly disabled?: boolean;
   readonly onSelect: (stickerId: number) => void;
-  readonly size?: 'xs' | 'sm' | 'md' | 'lg';
+  readonly size?: 'sm' | 'md' | 'lg';
 }
 
 export function StickerChoice({
   options,
   disabled = false,
   onSelect,
-  size = 'md',
+  size = 'lg',
 }: StickerChoiceProps) {
   const { t } = useTranslation();
   return (
@@ -30,8 +30,8 @@ export function StickerChoice({
             return <Glory glory={sticker.glory} />;
           } else if (sticker.effectId === 'stays_in_play') {
             return (
-              <span className="font-body! text-base-ink rounded-md bg-white/60 px-3! py-2! text-xs backdrop-blur-sm @3xs/card:text-lg">
-                <PassifIcon className="size-3 @3xs/card:size-6" /> {t('card.stayInPlay')}
+              <span className="font-body! text-base-ink rounded-md bg-white/60 px-3! py-2! text-xs backdrop-blur-sm @3xs:text-lg">
+                <PassifIcon className="size-3 @3xs:size-6" /> {t('card.stayInPlay')}
               </span>
             );
           } else if (sticker.tags) {

@@ -53,7 +53,7 @@ export const AllResources: Story = {
         <div key={size} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <span style={{ color: 'var(--cream)', width: '24px', fontSize: '12px' }}>{size}</span>
           {['gold', 'wood', 'stone', 'iron', 'weapon', 'goods', 'glory'].map(r => (
-            <ResourcePill key={r} resource={r} size={size} />
+            <ResourcePill key={r} resource={r} />
           ))}
         </div>
       ))}

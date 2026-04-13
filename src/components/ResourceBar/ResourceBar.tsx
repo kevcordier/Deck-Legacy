@@ -49,15 +49,17 @@ export function ResourceBar() {
 
         <div className="flex shrink-0 items-stretch gap-2">
           <Divider orientation="vertical" />
-          <div className="relative">
-            <GloryIcon color={IconColors.gold} className="size-8" />
-            <span className="font-display text-primary absolute top-0 left-0 flex size-8 items-center justify-center text-sm font-bold">
-              {score}
+          <div className="flex items-center gap-1">
+            <div className="relative">
+              <GloryIcon color={IconColors.gold} className="size-7" />
+              <span className="font-display text-primary absolute top-0 left-0 flex size-7 items-center justify-center text-xs font-bold">
+                {score}
+              </span>
+            </div>
+            <span className="text-primary hidden text-xs uppercase lg:inline">
+              {t('resourceBar.glory')}
             </span>
           </div>
-          <span className="text-primary hidden text-xs uppercase lg:inline">
-            {t('resourceBar.glory')}
-          </span>
         </div>
       </div>
     </div>

@@ -1,34 +1,33 @@
-import { GameCard } from '@components/GameCard/GameCard';
 import { Modal } from '@components/ui/Modal/Modal';
-import type { CardInstance } from '@engine/domain/types';
+import React from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
 interface CardListModalProps {
-  title: string;
-  subtitle?: string;
-  cards: CardInstance[];
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
   onClose: () => void;
   emptyText?: string;
+  children?: React.ReactNode;
 }
 
-export function CardListModal({ title, subtitle, cards, onClose, emptyText }: CardListModalProps) {
+export function CardListModal({
+  title,
+  subtitle,
+  onClose,
+  emptyText,
+  children,
+}: CardListModalProps) {
   const { t } = useTranslation();
 
   const modal = (
-    <Modal title={title} subtitle={subtitle} onClose={onClose} className="lg:min-w-2xl">
-      {cards.length === 0 ? (
+    <Modal title={title} subtitle={subtitle} onClose={onClose} className="lg:min-w-5xl!">
+      {React.Children.count(children) === 0 ? (
         <p className="p-2 text-center text-sm text-gray-400 italic">
           {emptyText ?? t('cardList.noCards')}
         </p>
       ) : (
-        <div className="@container">
-          <div className="grid grid-cols-1 gap-4 @xl:grid-cols-2 @4xl:grid-cols-3">
-            {cards.map(inst => (
-              <GameCard key={inst.id} instance={inst} />
-            ))}
-          </div>
-        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">{children}</div>
       )}
     </Modal>
   );
