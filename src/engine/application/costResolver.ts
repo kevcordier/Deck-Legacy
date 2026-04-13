@@ -54,7 +54,9 @@ export function resolveCost(
   }
 
   if (cost.destroy) {
-    const candidates = gameState.board.filter(id => id !== instanceId);
+    const candidates = cardSelector(cost.destroy, instanceId, gameState, defs).filter(id =>
+      gameState.board.includes(id),
+    );
     if (candidates.length === 0) {
       resolvedCost.destroyedCardIds = [];
     } else if (candidates.length === cost.destroy.number) {
