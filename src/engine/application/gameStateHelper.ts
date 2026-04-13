@@ -11,9 +11,9 @@ export const discardCards = (_gameState: GameState, cardIds: number[]): GameStat
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
   cardIds.forEach(cardId => {
     gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== cardId);
-    gameState.board = gameState.board.filter(c => c !== cardId);
-    gameState.drawPile = gameState.drawPile.filter(c => c !== cardId);
-    gameState.discardPile.push(cardId);
+    gameState.board = [...new Set(gameState.board.filter(c => c !== cardId))];
+    gameState.drawPile = [...new Set(gameState.drawPile.filter(c => c !== cardId))];
+    gameState.discardPile = [...new Set([...gameState.discardPile, cardId])];
     delete gameState.boardEffects[cardId];
   });
   return gameState;
@@ -21,8 +21,8 @@ export const discardCards = (_gameState: GameState, cardIds: number[]): GameStat
 
 export const drawCards = (_gameState: GameState, turnCards: number[]): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
-  gameState.drawPile = gameState.drawPile.filter(id => !turnCards.includes(id));
-  gameState.board = [...gameState.board, ...turnCards];
+  gameState.drawPile = [...new Set(gameState.drawPile.filter(id => !turnCards.includes(id)))];
+  gameState.board = [...new Set([...gameState.board, ...turnCards])];
 
   return gameState;
 };
@@ -31,10 +31,10 @@ export const destroyCards = (_gameState: GameState, cardIds: number[]): GameStat
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
   cardIds.forEach(cardId => {
     gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== cardId);
-    gameState.board = gameState.board.filter(c => c !== cardId);
-    gameState.drawPile = gameState.drawPile.filter(c => c !== cardId);
-    gameState.discardPile = gameState.discardPile.filter(c => c !== cardId);
-    gameState.destroyedPile.push(cardId);
+    gameState.board = [...new Set(gameState.board.filter(c => c !== cardId))];
+    gameState.drawPile = [...new Set(gameState.drawPile.filter(c => c !== cardId))];
+    gameState.discardPile = [...new Set(gameState.discardPile.filter(c => c !== cardId))];
+    gameState.destroyedPile = [...new Set([...gameState.destroyedPile, cardId])];
     delete gameState.boardEffects[cardId];
   });
   return gameState;
@@ -43,6 +43,9 @@ export const destroyCards = (_gameState: GameState, cardIds: number[]): GameStat
 export const endTurn = (_gameState: GameState, cardDefs: Record<number, CardDef>): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
   gameState.resources = {};
+
+  // TODO: check ON_END_TURN effects and apply them insted of discarding cards
+
   const cardsToDiscard = gameState.board.filter(
     id => !cardShouldStayInPlay(id, gameState, cardDefs),
   );
