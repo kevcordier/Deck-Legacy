@@ -51,9 +51,9 @@ const smithDef: CardDef = {
       name: 'Forgeron',
       tags: [CardTag.PERSON],
       productions: [{ gold: 1 }],
-      cardEffects: [
+      actions: [
         {
-          label: 'Forger',
+          id: 'e1',
           actions: [],
           trigger: Trigger.END_OF_TURN,
           optional: true,
@@ -179,7 +179,7 @@ export const TriggerPileOptional: Story = {
       'trigger-uuid-1': {
         sourceInstanceId: 2,
         effectDef: {
-          label: 'Forger',
+          id: 'e1',
           actions: [],
           optional: true,
         },
@@ -198,7 +198,7 @@ export const TriggerPileForced: Story = {
       'trigger-uuid-2': {
         sourceInstanceId: 2,
         effectDef: {
-          label: 'Forger',
+          id: 'e1',
           actions: [],
           optional: false,
         },
@@ -216,11 +216,11 @@ export const TriggerPileMultiple: Story = {
     triggerPile: {
       'trigger-uuid-a': {
         sourceInstanceId: 1,
-        effectDef: { label: 'Récolte', actions: [], optional: true },
+        effectDef: { id: 'e1', actions: [], optional: true },
       },
       'trigger-uuid-b': {
         sourceInstanceId: 2,
-        effectDef: { label: 'Forger', actions: [], optional: false },
+        effectDef: { id: 'e2', actions: [], optional: false },
       },
     },
     defs,

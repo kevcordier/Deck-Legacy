@@ -1,7 +1,7 @@
 import type { GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import type {
+  CardAction,
   CardDef,
-  Effect,
   GameState,
   PendingChoice,
   ResolvedAction,
@@ -25,14 +25,14 @@ type GameContextType = {
   } | null>;
   currentActionRef: React.RefObject<{
     instanceId: number;
-    action: Effect;
+    action: CardAction;
     resolvedCost: ResolvedCost | null;
     resolvedAction: ResolvedAction[];
     triggerId: string;
   } | null>;
   triggerAction: (
     instanceId: number,
-    effect: Effect,
+    effect: CardAction,
     resolvedCost: ResolvedCost,
     triggerId: string,
   ) => void;

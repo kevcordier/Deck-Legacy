@@ -1,8 +1,10 @@
+import { renderTextWithIcons } from '@helpers/renderHelpers';
 import type { TFunction } from 'i18next';
+import type React from 'react';
 
 // Pass {{resource}} tokens as literal values so that i18next leaves them unchanged;
 // renderTextWithIcons then converts them into icons.
-const ICON_PASSTHROUGH = {
+export const ICON_PASSTHROUGH = {
   gold: '{{gold}}',
   wood: '{{wood}}',
   stone: '{{stone}}',
@@ -14,36 +16,26 @@ const ICON_PASSTHROUGH = {
   passif: '{{passif}}',
 };
 
-export function tCardName(t: TFunction, cardId = 0, stateId = 0, fallback = ''): string {
-  return t(`names.${cardId}_${stateId}`, { ns: 'cards', defaultValue: fallback });
+export function tCardName(t: TFunction, cardId = 0, stateId = 0): React.ReactNode {
+  return renderTextWithIcons(t(`names.${cardId}_${stateId}`, { ns: 'cards' }));
 }
 
-export function tCardActionLabel(
-  t: TFunction,
-  cardId = 0,
-  stateId = 0,
-  idx = 0,
-  fallback = '',
-): string {
-  return t(`labels.${cardId}_${stateId}_a${idx}`, {
-    ns: 'cards',
-    defaultValue: fallback,
-    ...ICON_PASSTHROUGH,
-  });
+export function tCardActionLabel(t: TFunction, cardId = 0, stateId = 0, idx = 0): React.ReactNode {
+  return renderTextWithIcons(
+    t(`labels.${cardId}_${stateId}_a${idx}`, {
+      ns: 'cards',
+      ...ICON_PASSTHROUGH,
+    }),
+  );
 }
 
-export function tCardPassiveLabel(
-  t: TFunction,
-  cardId = 0,
-  stateId = 0,
-  idx = 0,
-  fallback = '',
-): string {
-  return t(`labels.${cardId}_${stateId}_p${idx}`, {
-    ns: 'cards',
-    defaultValue: fallback,
-    ...ICON_PASSTHROUGH,
-  });
+export function tCardPassiveLabel(t: TFunction, cardId = 0, stateId = 0, idx = 0): React.ReactNode {
+  return renderTextWithIcons(
+    t(`labels.${cardId}_${stateId}_p${idx}`, {
+      ns: 'cards',
+      ...ICON_PASSTHROUGH,
+    }),
+  );
 }
 
 export function tCardActionDescription(
@@ -51,33 +43,21 @@ export function tCardActionDescription(
   cardId = 0,
   stateId = 0,
   idx = 0,
-  fallback = '',
-): string {
-  return t(`descriptions.${cardId}_${stateId}_a${idx}`, {
-    ns: 'cards',
-    defaultValue: fallback,
-  });
+): React.ReactNode {
+  return renderTextWithIcons(
+    t(`descriptions.${cardId}_${stateId}_a${idx}`, {
+      ns: 'cards',
+    }),
+  );
 }
 
-export function tCardStateDescription(
-  t: TFunction,
-  cardId = 0,
-  stateId = 0,
-  fallback = '',
-): string {
-  return t(`descriptions.${cardId}_${stateId}`, { ns: 'cards', defaultValue: fallback });
+export function tCardStateDescription(t: TFunction, cardId = 0, stateId = 0): string {
+  return t(`descriptions.${cardId}_${stateId}`, { ns: 'cards' });
 }
 
-export function tCardPassiveDescription(
-  t: TFunction,
-  cardId = 0,
-  stateId = 0,
-  idx = 0,
-  fallback = '',
-): string {
+export function tCardPassiveDescription(t: TFunction, cardId = 0, stateId = 0, idx = 0): string {
   return t(`descriptions.${cardId}_${stateId}_p${idx}`, {
     ns: 'cards',
-    defaultValue: fallback,
   });
 }
 
@@ -85,6 +65,6 @@ export function tCardTag(t: TFunction, tag: string): string {
   return t(`tags.${tag}`, { ns: 'cards', defaultValue: tag });
 }
 
-export function tCardParchmentText(t: TFunction, cardId = 0, fallback = ''): string {
-  return t(`texts.${cardId}`, { ns: 'cards', defaultValue: fallback, ...ICON_PASSTHROUGH });
+export function tCardParchmentText(t: TFunction, cardId = 0): string {
+  return t(`texts.${cardId}`, { ns: 'cards', ...ICON_PASSTHROUGH });
 }

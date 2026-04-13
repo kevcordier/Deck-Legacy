@@ -1,6 +1,6 @@
 import { makeCardState, makeDef, makeGameState, makeInstance } from './testHelpers';
 import { cardSelector } from '@engine/application/cardSelector';
-import { CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
+import { CardTag, PassiveType, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -106,7 +106,10 @@ describe('cardSelector — DISCARD', () => {
 describe('cardSelector — BLOCKED', () => {
   it('returns all values of blockingCards', () => {
     const gs = makeGameState({
-      blockingCards: { 1: 2, 3: 4 },
+      boardEffects: {
+        1: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [2] } }],
+        3: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [4] } }],
+      },
       instances: {
         2: makeInstance(2, 10, 1),
         4: makeInstance(4, 11, 1),
@@ -265,7 +268,7 @@ describe('cardSelector — blocked card exclusion', () => {
   it('excludes blocked cards from non-BLOCKED scope results', () => {
     const gs = makeGameState({
       board: [1, 2, 3],
-      blockingCards: { 99: 2 }, // card 2 is blocked by 99
+      boardEffects: { 99: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [2] } }] }, // card 2 is blocked by 99
       instances: {
         1: makeInstance(1, 10, 1),
         2: makeInstance(2, 10, 1),

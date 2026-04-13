@@ -1,25 +1,7 @@
+import { makeGameState } from '../testHelpers';
 import { AddResourceStrategy } from '@engine/application/cardAction/AddResourceStrategy';
 import { ActionType } from '@engine/domain/enums';
-import type { GameState } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
-
-const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
-  instances: {},
-  drawPile: [],
-  discardPile: [],
-  board: [],
-  destroyedPile: [],
-  permanents: [],
-  blockingCards: {},
-  resources: {},
-  stickerStock: {},
-  discoveryPile: [],
-  triggerPile: {},
-  lastAddedIds: [],
-  round: 0,
-  turn: 0,
-  ...overrides,
-});
 
 describe('AddResourceStrategy', () => {
   const strategy = new AddResourceStrategy();

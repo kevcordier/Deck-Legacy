@@ -1,26 +1,9 @@
+import { makeGameState } from '../testHelpers';
 import { CardActionContext } from '@engine/application/cardAction/CardActionContext';
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import { ActionType } from '@engine/domain/enums';
-import type { GameState, ResolvedAction } from '@engine/domain/types';
+import type { ResolvedAction } from '@engine/domain/types';
 import { describe, expect, it, vi } from 'vitest';
-
-const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
-  instances: {},
-  drawPile: [],
-  discardPile: [],
-  board: [],
-  destroyedPile: [],
-  permanents: [],
-  blockingCards: {},
-  resources: {},
-  stickerStock: {},
-  discoveryPile: [],
-  triggerPile: {},
-  lastAddedIds: [],
-  round: 0,
-  turn: 0,
-  ...overrides,
-});
 
 const makeResolvedAction = (overrides: Partial<ResolvedAction> = {}): ResolvedAction => ({
   id: '1-1',

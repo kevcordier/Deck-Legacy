@@ -3,6 +3,7 @@ import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { createInstance } from '@engine/application/factory';
 import type { CardInstance, Resources } from '@engine/domain/types';
+import { CardPassives } from '@engine/domain/types/effects';
 import { loadCardDefs } from '@engine/infrastructure/loaders';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -45,7 +46,9 @@ const meta: Meta<GameCardContainerProps> = {
         initialState={{
           ...EMPTY_STATE,
           resources: currentResources as Resources,
-          blockingCards: isBlocked ? [instance.id] : [],
+          boardEffects: isBlocked
+            ? { [1]: [{ ...CardPassives.block_card, cards: { ids: [instance.id] } }] }
+            : {},
         }}
       >
         <GameCard

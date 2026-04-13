@@ -1,36 +1,7 @@
+import { makeGameState, makeInstance } from '../testHelpers';
 import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
 import { ActionType, Trigger } from '@engine/domain/enums';
-import type { CardInstance, GameState } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
-
-// — fixtures —
-
-const makeInstance = (id: number, cardId: number, stateId: number): CardInstance => ({
-  id,
-  cardId,
-  stateId,
-  stickers: {},
-  trackProgress: [],
-  cumulated: 0,
-});
-
-const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
-  instances: {},
-  drawPile: [],
-  discardPile: [],
-  board: [],
-  destroyedPile: [],
-  permanents: [],
-  blockingCards: {},
-  resources: {},
-  stickerStock: {},
-  discoveryPile: [],
-  triggerPile: {},
-  lastAddedIds: [],
-  round: 0,
-  turn: 0,
-  ...overrides,
-});
 
 const makePayload = (instanceId: number) => ({
   id: `${instanceId}-1`,
@@ -43,6 +14,7 @@ const makePayload = (instanceId: number) => ({
 
 describe('DiscoverCardStrategy', () => {
   const onDiscoverEffect = {
+    id: 'e1',
     label: 'Test trigger',
     actions: [{ id: 1, type: ActionType.ADD_RESOURCES }],
     trigger: Trigger.ON_DISCOVER,
@@ -56,9 +28,9 @@ describe('DiscoverCardStrategy', () => {
     12: {
       id: 12,
       name: 'Card 12',
-      states: [{ id: 1, name: 'State 1', cardEffects: [onDiscoverEffect] }],
+      states: [{ id: 1, name: 'State 1', actions: [onDiscoverEffect] }],
     },
-    14: { id: 14, name: 'Card 14', states: [{ id: 1, name: 'State 1', cardEffects: [] }] },
+    14: { id: 14, name: 'Card 14', states: [{ id: 1, name: 'State 1', actions: [] }] },
     15: { id: 15, name: 'Card 15', parchmentCard: true, states: [{ id: 1, name: 'State 1' }] },
   });
 

@@ -1,5 +1,13 @@
-import { ActionType, CardTag, ResourceType, TargetScope, Trigger } from '@engine/domain/enums';
+import {
+  ActionType,
+  CardTag,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+  Trigger,
+} from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
+import { CardPassives } from '@engine/domain/types/effects';
 
 export const cardsData: CardDef[] = [
   {
@@ -32,9 +40,9 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Plains',
         tags: [CardTag.LAND],
-        cardEffects: [
+        actions: [
           {
-            label: 'Discard a friendly card to gain 2 gold.',
+            id: '1-2-1',
             cost: {
               discard: {
                 scope: TargetScope.FRIENDLY,
@@ -96,12 +104,12 @@ export const cardsData: CardDef[] = [
         name: 'Food Barns',
         tags: [CardTag.BUILDING],
         glory: 3,
-        stayInPlay: true,
         productions: [
           {
             [ResourceType.GOLD]: 2,
           },
         ],
+        passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       },
     ],
   },
@@ -135,9 +143,9 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Rocky Area',
         tags: [CardTag.LAND],
-        cardEffects: [
+        actions: [
           {
-            label: 'Spend 1 gold to gain 2 stones.',
+            id: '2-2-1',
             cost: {
               resources: [
                 {
@@ -203,9 +211,9 @@ export const cardsData: CardDef[] = [
         name: 'Shallow Mine',
         tags: [CardTag.LAND],
         glory: 3,
-        cardEffects: [
+        actions: [
           {
-            label: 'Discover Mine (84/85).',
+            id: '2-4-1',
             cost: {
               destroy: { scope: TargetScope.SELF },
             },
@@ -247,9 +255,10 @@ export const cardsData: CardDef[] = [
             upgradeTo: 4,
           },
         ],
-        cardEffects: [
+        actions: [
           {
-            label: 'Gain 3 woods, then upgrade.',
+            id: '3-1-1',
+            // label: 'Gain 3 woods, then upgrade.',
             actions: [
               {
                 id: 1,
@@ -320,9 +329,10 @@ export const cardsData: CardDef[] = [
         name: 'Sacred Well',
         tags: [CardTag.BUILDING],
         glory: 2,
-        cardEffects: [
+        actions: [
           {
-            label: 'Discover Shrine (82/83).',
+            id: '3-4-1',
+            // label: 'Discover Shrine (82/83).',
             cost: {
               destroy: { scope: TargetScope.SELF },
             },
@@ -375,9 +385,10 @@ export const cardsData: CardDef[] = [
         name: 'Town Hall',
         tags: [CardTag.BUILDING],
         glory: 3,
-        cardEffects: [
+        actions: [
           {
-            label: 'Play 1 Land from discard pile.',
+            id: '4-2-1',
+            // label: 'Play 1 Land from discard pile.',
             actions: [
               {
                 id: 1,
@@ -414,9 +425,10 @@ export const cardsData: CardDef[] = [
         name: 'Keep',
         tags: [CardTag.BUILDING],
         glory: 7,
-        cardEffects: [
+        actions: [
           {
-            label: 'Play 1 Land or Building from discard pile.',
+            id: '4-3-1',
+            // label: 'Play 1 Land or Building from discard pile.',
             actions: [
               {
                 id: 1,
@@ -454,9 +466,10 @@ export const cardsData: CardDef[] = [
         name: 'Castle',
         tags: [CardTag.BUILDING],
         glory: 12,
-        cardEffects: [
+        actions: [
           {
-            label: 'Play 1 card from discard pile.',
+            id: '4-4-1',
+            // label: 'Play 1 card from discard pile.',
             actions: [
               {
                 id: 1,
@@ -484,9 +497,10 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'Trader',
         tags: [CardTag.PERSON],
-        cardEffects: [
+        actions: [
           {
-            label: 'Spend 1 gold to gain 1 Wood.',
+            id: '5-1-1',
+            // label: 'Spend 1 gold to gain 1 Wood.',
             cost: {
               resources: [
                 {
@@ -523,9 +537,10 @@ export const cardsData: CardDef[] = [
         name: 'Bazaar',
         tags: [CardTag.BUILDING],
         glory: 1,
-        cardEffects: [
+        actions: [
           {
-            label: 'Spend 1 gold to gain 1 Wood or Stone.',
+            id: '5-2-1',
+            // label: 'Spend 1 gold to gain 1 Wood or Stone.',
             cost: {
               resources: [
                 {
@@ -569,9 +584,10 @@ export const cardsData: CardDef[] = [
         name: 'Market',
         tags: [CardTag.BUILDING],
         glory: 3,
-        cardEffects: [
+        actions: [
           {
-            label: 'Spend 1 gold to gain 1 Wood, Stone, or Iron.',
+            id: '5-3-1',
+            // label: 'Spend 1 gold to gain 1 Wood, Stone, or Iron.',
             cost: {
               resources: [
                 {
@@ -643,9 +659,10 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'Jungle',
         tags: [CardTag.LAND],
-        cardEffects: [
+        actions: [
           {
-            label: 'Spend 1 gold to gain 1 Wood.',
+            id: '6-1-1',
+            // label: 'Spend 1 gold to gain 1 Wood.',
             cost: {
               resources: [
                 {
@@ -681,9 +698,10 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Huge Trees',
         tags: [CardTag.LAND],
-        cardEffects: [
+        actions: [
           {
-            label: 'Spend 1 gold to gain 2 Wood.',
+            id: '6-2-1',
+            // label: 'Spend 1 gold to gain 2 Wood.',
             cost: {
               resources: [
                 {
@@ -747,13 +765,13 @@ export const cardsData: CardDef[] = [
         name: 'Treehouses',
         tags: [CardTag.BUILDING],
         glory: 4,
-        stayInPlay: true,
         productions: [
           {
             [ResourceType.GOLD]: 1,
             [ResourceType.WOOD]: 2,
           },
         ],
+        passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       },
     ],
   },
@@ -839,9 +857,9 @@ export const cardsData: CardDef[] = [
           },
         ],
         glory: 4,
-        cardEffects: [
+        actions: [
           {
-            label: 'Discover a new region (71/72/73/74). Then upgrade.',
+            id: '7-4-1',
             actions: [
               {
                 id: 1,
@@ -873,9 +891,9 @@ export const cardsData: CardDef[] = [
         id: 1,
         name: 'Field Worker',
         tags: [CardTag.PERSON],
-        cardEffects: [
+        actions: [
           {
-            label: 'Choose a Land in play. Gain its productions as resources.',
+            id: '8-1-1',
             actions: [
               {
                 id: 1,
@@ -903,9 +921,9 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Servant',
         tags: [CardTag.PERSON],
-        cardEffects: [
+        actions: [
           {
-            label: 'Gain 1 Gold/Wood/Stone.',
+            id: '8-2-1',
             actions: [
               {
                 id: 1,
@@ -941,9 +959,9 @@ export const cardsData: CardDef[] = [
         negative: true,
         glory: -2,
         illustration: 'cards/bandit.webp',
-        cardEffects: [
+        actions: [
           {
-            label: 'When played, blocks 1 card with gold productions.',
+            id: '9-1-1',
             trigger: Trigger.ON_PLAY,
             optional: false,
             actions: [
@@ -959,7 +977,8 @@ export const cardsData: CardDef[] = [
             ],
           },
           {
-            label: 'Spend 1 weapon to defeat (destroy this card) and gain any 2 resources.',
+            id: '9-1-2',
+            // label: 'Spend 1 weapon to defeat (destroy this card) and gain any 2 resources.',
             cost: {
               resources: [
                 {
@@ -1029,9 +1048,9 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Worker',
         tags: [CardTag.PERSON],
-        cardEffects: [
+        actions: [
           {
-            label: 'Choose a Building in play. Gain its productions as resources.',
+            id: '9-2-1',
             actions: [
               {
                 id: 1,
@@ -1060,9 +1079,9 @@ export const cardsData: CardDef[] = [
         negative: true,
         glory: -2,
         illustration: 'cards/bandit.webp',
-        cardEffects: [
+        actions: [
           {
-            label: 'When played, blocks 1 card with gold productions.',
+            id: '10-1-1',
             trigger: Trigger.ON_PLAY,
             optional: false,
             actions: [
@@ -1078,7 +1097,7 @@ export const cardsData: CardDef[] = [
             ],
           },
           {
-            label: 'Spend 1 weapon to defeat (destroy this card) and gain any 2 resources.',
+            id: '10-1-2',
             cost: {
               resources: [
                 {
@@ -1148,9 +1167,9 @@ export const cardsData: CardDef[] = [
         id: 2,
         name: 'Field Worker',
         tags: [CardTag.PERSON],
-        cardEffects: [
+        actions: [
           {
-            label: 'Choose a Land in play. Gain its productions as resources.',
+            id: '10-2-1',
             actions: [
               {
                 id: 1,
@@ -1206,9 +1225,9 @@ export const cardsData: CardDef[] = [
           },
         ],
         glory: 1,
-        cardEffects: [
+        actions: [
           {
-            label: 'Spend 3 gold to discover a Missionary (103).',
+            id: '11-2-1',
             cost: {
               resources: [
                 {
@@ -1251,9 +1270,9 @@ export const cardsData: CardDef[] = [
           },
         ],
         glory: 3,
-        cardEffects: [
+        actions: [
           {
-            label: 'Spend 4 gold to discover a Priest (104).',
+            id: '11-3-1',
             cost: {
               resources: [
                 {
@@ -1297,9 +1316,10 @@ export const cardsData: CardDef[] = [
           },
         ],
         glory: 7,
-        cardEffects: [
+        actions: [
           {
-            label: 'This card has +1 gold production for each person you have in play.',
+            id: '11-4-1',
+            // label: 'This card has +1 gold production for each person you have in play.',
             passive: true,
             actions: [
               // {
@@ -1369,9 +1389,10 @@ export const cardsData: CardDef[] = [
           },
         ],
         glory: 1,
-        cardEffects: [
+        actions: [
           {
-            label: 'Reset to discover Jewellery (90).',
+            id: '12-2-1',
+            // label: 'Reset to discover Jewellery (90).',
             actions: [
               {
                 id: 1,
@@ -1415,9 +1436,10 @@ export const cardsData: CardDef[] = [
           },
         ],
         glory: 4,
-        cardEffects: [
+        actions: [
           {
-            label: 'Gain 1 Weapon for each Person in play.',
+            id: '12-3-1',
+            // label: 'Gain 1 Weapon for each Person in play.',
             actions: [
               {
                 id: 1,
@@ -1443,7 +1465,7 @@ export const cardsData: CardDef[] = [
           },
         ],
         glory: 3,
-        stayInPlay: true,
+        passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       },
     ],
   },
@@ -1595,9 +1617,10 @@ export const cardsData: CardDef[] = [
           },
         ],
         glory: 1,
-        cardEffects: [
+        actions: [
           {
-            label: 'Discover Shore 75.',
+            id: '14-3-1',
+            // label: 'Discover Shore 75.',
             actions: [
               {
                 id: 1,
@@ -1615,12 +1638,11 @@ export const cardsData: CardDef[] = [
         name: 'Lighthouse',
         tags: [CardTag.BUILDING],
         glory: 5,
-        stayInPlay: true,
-        cardEffects: [
+        passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
+        actions: [
           {
-            label: 'As long as this card is in play, you may discard the top card of your deck.',
-            description:
-              'As long as this card is in play, you may discard the top card of your deck. You may do this repeatedly, and this card is not discarded by doing so.',
+            id: '14-4-1',
+            // label: 'As long as this card is in play, you may discard the top card of your deck.',
             passive: true,
             actions: [
               {
@@ -1640,25 +1662,14 @@ export const cardsData: CardDef[] = [
     id: 15,
     name: 'Stop',
     parchmentCard: true,
-    text: `
-## Stop! 
-Now that you have got the hang of the game, you may reset to start again if you like to give it your best shot. If you continue, you will discover 4 cards, cards 24-27. Look at them now and THEN decide if you want to restart or continue.
-
-Cards 25, 26, and 27 are **permanent** cards, meaning they are never shuffled into your deck and cannot be discarded. They are always visible and active, but are not counted as "in play"
-
-The Army and Treasury are track cards. They let you spend your turn ({{time}}) and resources ({{weapon}}/{{gold}}) to gain fame . Export is a tally card. It doesn't end your turn ({{passif}}) and lets you spend trade goods ({{goods}}) to gain stickers, new cards, and other cool effects.
-
-You will not be able to complete all tracks before the game ends. Try to get as far as possible!
-    `,
     states: [
       {
         id: 1,
         name: 'Stop',
-        cardEffects: [
+        actions: [
           {
-            label: 'Stop',
-            description:
-              'Now that you have got the hang of the game, you may reset to start again if you like to give it your best shot. If you continue, you will discover 4 cards, cards 24-27. Look at them now and THEN decide if you want to restart or continue. After this card comes the legacy part of the game, where some cards will permanently change over the course of the game. You will not be able to reset the game once you continue down this road.',
+            id: '15-1-1',
+            // label: 'Stop',
             trigger: Trigger.ON_DISCOVER,
             actions: [
               {
@@ -1699,29 +1710,14 @@ You will not be able to complete all tracks before the game ends. Try to get as 
     id: 16,
     name: 'Stop',
     parchmentCard: true,
-    text: `
-## Fertile Soil 
-
-This land seems to grow anything you put into the ground.
-
-Add sticker 1 ({{gold}}) as production to a land.
-
-## Efficiency 
-
-You're getting the hang of this!
-
-Choose 1 **building** and **boost** its production (add a resource sticker to it to make it produce 1 more of a resource it already produces. Resource stickers are numbered 1-6 on the sticker sheet).
-
-(Reminder: When discovering a parchment card like this, follow all its instructions, then destroy this.)
-    `,
     states: [
       {
         id: 1,
         name: 'Stop',
-        cardEffects: [
+        actions: [
           {
-            label: '',
-            description: '',
+            id: '16-1-1',
+            // label: '',
             trigger: Trigger.ON_DISCOVER,
             actions: [
               {
@@ -2257,10 +2253,11 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
         id: 1,
         name: 'Export',
         description: 'Make yourself invaluable for your neighbours, it will surely pay off.',
-        cardEffects: [
+        actions: [
           {
+            id: '19-1-1',
             passive: true,
-            label: 'Spend goods and keep track of how much you have spent.',
+            // label: 'Spend goods and keep track of how much you have spent.',
             actions: [
               {
                 id: 1,
@@ -2287,7 +2284,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
           steps: [
             {
               id: 1,
-              label: 'Sticker 1/2/3 on 1 land.',
+              // label: 'Sticker 1/2/3 on 1 land.',
               cost: {
                 accumulated: 10,
               },
@@ -2306,7 +2303,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
             },
             {
               id: 2,
-              label: 'Sticker 7 on 1 person.',
+              // label: 'Sticker 7 on 1 person.',
               cost: {
                 accumulated: 20,
               },
@@ -2325,7 +2322,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
             },
             {
               id: 3,
-              label: 'Discover Dubing (86).',
+              // label: 'Discover Dubing (86).',
               cost: {
                 accumulated: 30,
               },
@@ -2343,7 +2340,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
             },
             {
               id: 4,
-              label: 'Sticker 4/5/6 on 1 building.',
+              // label: 'Sticker 4/5/6 on 1 building.',
               cost: {
                 accumulated: 40,
               },
@@ -2362,7 +2359,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
             },
             {
               id: 5,
-              label: 'Sticker 2/3/4 on 1 friendly card.',
+              // label: 'Sticker 2/3/4 on 1 friendly card.',
               cost: {
                 accumulated: 55,
               },
@@ -2381,7 +2378,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
             },
             {
               id: 6,
-              label: 'Sticker 10 on any card.',
+              // label: 'Sticker 10 on any card.',
               cost: {
                 accumulated: 75,
               },
@@ -2400,7 +2397,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
             },
             {
               id: 7,
-              label: 'Upgrade.',
+              // label: 'Upgrade.',
               cost: {
                 accumulated: 100,
               },
@@ -2425,10 +2422,11 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
         name: 'Extended Treasury',
         glory: 25,
         description: 'I want to be unreasonably rich and put King Midas to shame.',
-        cardEffects: [
+        actions: [
           {
+            id: '19-2-1',
             passive: true,
-            label: 'Spend goods and keep track of how much you have spent.',
+            // label: 'Spend goods and keep track of how much you have spent.',
             actions: [
               {
                 id: 1,
@@ -2454,7 +2452,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
           steps: [
             {
               id: 8,
-              label: 'Sticker 8 on 2 different lands.',
+              // label: 'Sticker 8 on 2 different lands.',
               cost: {
                 accumulated: 50,
               },
@@ -2481,7 +2479,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
             },
             {
               id: 9,
-              label: 'Sticker 10 on 1 person.',
+              // label: 'Sticker 10 on 1 person.',
               cost: {
                 accumulated: 50,
               },
@@ -2500,7 +2498,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
             },
             {
               id: 10,
-              label: 'Discover Royal Visit (107).',
+              // label: 'Discover Royal Visit (107).',
               cost: {
                 accumulated: 75,
               },
@@ -2518,7 +2516,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
             },
             {
               id: 11,
-              label: 'Sticker 10 on 1 building.',
+              // label: 'Sticker 10 on 1 building.',
               cost: {
                 accumulated: 100,
               },
@@ -2537,7 +2535,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
             },
             {
               id: 12,
-              label: 'check 1 other permanent card, gain any effect.',
+              // label: 'check 1 other permanent card, gain any effect.',
               cost: {
                 accumulated: 150,
               },
@@ -2555,7 +2553,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
             },
             {
               id: 13,
-              label: 'check all other permanent cards you want.',
+              // label: 'check all other permanent cards you want.',
               cost: {
                 accumulated: 200,
               },
@@ -2573,7 +2571,7 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
             },
             {
               id: 14,
-              label: 'Discover Trade Relations (117).',
+              // label: 'Discover Trade Relations (117).',
               cost: {
                 accumulated: 200,
               },
@@ -2594,4 +2592,207 @@ Choose 1 **building** and **boost** its production (add a resource sticker to it
       },
     ],
   },
+  {
+    id: 20,
+    name: 'Mine',
+    states: [
+      {
+        id: 1,
+        name: 'Mine',
+        tags: [CardTag.BUILDING],
+        glory: 4,
+        productions: [
+          {
+            [ResourceType.STONE]: 1,
+            [ResourceType.IRON]: 1,
+          },
+        ],
+        upgrade: [
+          {
+            cost: {
+              resources: [
+                {
+                  [ResourceType.WOOD]: 3,
+                },
+              ],
+            },
+            upgradeTo: 2,
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'Deep Mine',
+        tags: [CardTag.BUILDING],
+        glory: 6,
+        productions: [
+          {
+            [ResourceType.STONE]: 1,
+            [ResourceType.IRON]: 2,
+          },
+        ],
+        upgrade: [
+          {
+            cost: {
+              resources: [
+                {
+                  [ResourceType.GOLD]: 2,
+                  [ResourceType.WOOD]: 3,
+                },
+              ],
+            },
+            upgradeTo: 3,
+          },
+        ],
+      },
+      {
+        id: 3,
+        name: 'Ruby Mine',
+        tags: [CardTag.BUILDING],
+        glory: 9,
+        productions: [
+          {
+            [ResourceType.STONE]: 1,
+            [ResourceType.IRON]: 2,
+            [ResourceType.GOODS]: 1,
+          },
+        ],
+        upgrade: [
+          {
+            cost: {
+              resources: [
+                {
+                  [ResourceType.GOLD]: 2,
+                  [ResourceType.WOOD]: 2,
+                  [ResourceType.STONE]: 2,
+                },
+              ],
+            },
+            upgradeTo: 4,
+          },
+        ],
+      },
+      {
+        id: 4,
+        name: 'Diamond Mine',
+        glory: 13,
+        tags: [CardTag.BUILDING],
+        productions: [
+          {
+            [ResourceType.STONE]: 1,
+            [ResourceType.IRON]: 2,
+            [ResourceType.GOODS]: 2,
+          },
+        ],
+      },
+    ],
+  },
+  // {
+  //   id: 21,
+  //   name: 'Shrine',
+  //   states: [
+  //     {
+  //       id: 1,
+  //       name: 'Shrine',
+  //       tags: [CardTag.LAND],
+  //       glory: 3,
+  //       actions: [
+  //         {
+  //           // label: 'End of Turn: Discard to make 1 other card stay in play.',
+  //           trigger: Trigger.END_TURN,
+  //           optional: true,
+  //           actions: [
+  //             {
+  //               id: 1,
+  //               type: ActionType.ADD_BOARD_EFFECT,
+  //               cards: {
+  //                 scope: TargetScope.BOARD,
+  //               },
+  //               effect: {
+  //                 // label: 'This card stays in play.',
+  //               },
+  //             },
+  //           ],
+  //         },
+  //       ],
+  //       upgrade: [
+  //         {
+  //           cost: {
+  //             resources: [
+  //               {
+  //                 [ResourceType.GOLD]: 3,
+  //               },
+  //             ],
+  //           },
+  //           upgradeTo: 2,
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       id: 2,
+  //       name: 'Sanctuary',
+  //       tags: [CardTag.BUILDING],
+  //       glory: 5,
+  //       actions: [
+  //         {
+  //           // label: 'End of Turn: Discard to make 2 other cards stay in play.',
+  //           trigger: Trigger.END_TURN,
+  //           optional: true,
+  //         },
+  //       ],
+  //       upgrade: [
+  //         {
+  //           cost: {
+  //             resources: [
+  //               {
+  //                 [ResourceType.GOLD]: 3,
+  //                 [ResourceType.STONE]: 2,
+  //               },
+  //             ],
+  //           },
+  //           upgradeTo: 3,
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       id: 3,
+  //       name: 'Oratory',
+  //       tags: [CardTag.BUILDING],
+  //       glory: 9,
+  //       actions: [
+  //         {
+  //           // label: 'End of Turn: Discard to make 3 other cards stay in play.',
+  //           trigger: Trigger.END_TURN,
+  //           optional: true,
+  //         },
+  //       ],
+  //       upgrade: [
+  //         {
+  //           cost: {
+  //             resources: [
+  //               {
+  //                 [ResourceType.GOLD]: 2,
+  //                 [ResourceType.WOOD]: 2,
+  //               },
+  //             ],
+  //           },
+  //           upgradeTo: 4,
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       id: 4,
+  //       name: 'Temple',
+  //       tags: [CardTag.BUILDING],
+  //       glory: 15,
+  //       actions: [
+  //         {
+  //           // label: 'End of Turn: Discard to make 4 other cards stay in play.',
+  //           trigger: Trigger.END_TURN,
+  //           optional: true,
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
 ];

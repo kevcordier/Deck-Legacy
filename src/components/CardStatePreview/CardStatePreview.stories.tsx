@@ -70,9 +70,9 @@ const armyDef: CardDef = {
       name: 'Armée',
       tags: [CardTag.PERSON],
       productions: [{ weapon: 2 }],
-      cardEffects: [
+      actions: [
         {
-          label: 'Attaquer',
+          id: 'attack',
           actions: [{ id: 1, type: ActionType.DESTROY_CARD, cards: { scope: undefined } }],
         },
       ],

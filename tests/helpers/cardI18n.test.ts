@@ -1,4 +1,5 @@
 import {
+  ICON_PASSTHROUGH,
   tCardActionDescription,
   tCardActionLabel,
   tCardName,
@@ -9,19 +10,6 @@ import {
 } from '@helpers/cardI18n';
 import type { TFunction } from 'i18next';
 import { describe, expect, it, vi } from 'vitest';
-
-const ICON_PASSTHROUGH = {
-  glory: '{{glory}}',
-  gold: '{{gold}}',
-  goods: '{{goods}}',
-  iron: '{{iron}}',
-  ns: 'cards',
-  passif: '{{passif}}',
-  stone: '{{stone}}',
-  time: '{{time}}',
-  weapon: '{{weapon}}',
-  wood: '{{wood}}',
-};
 
 const makeT = (translations: Record<string, string> = {}): TFunction =>
   ((key: string, opts?: Record<string, unknown>) => {
@@ -36,11 +24,6 @@ describe('tCardName', () => {
     expect(tCardName(t, 3, 2)).toBe('Village');
   });
 
-  it('returns fallback when key is missing', () => {
-    const t = makeT();
-    expect(tCardName(t, 1, 0, 'Fallback')).toBe('Fallback');
-  });
-
   it('defaults cardId, stateId to 0', () => {
     const t = makeT({ 'names.0_0': 'Zero' });
     expect(tCardName(t)).toBe('Zero');
@@ -48,8 +31,8 @@ describe('tCardName', () => {
 
   it('passes ns: cards to t', () => {
     const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
-    tCardName(t, 5, 1, 'fb');
-    expect(t).toHaveBeenCalledWith('names.5_1', { ns: 'cards', defaultValue: 'fb' });
+    tCardName(t, 5, 1);
+    expect(t).toHaveBeenCalledWith('names.5_1', { ns: 'cards' });
   });
 });
 
@@ -63,15 +46,15 @@ describe('tCardActionLabel', () => {
 
   it('returns fallback when key is missing', () => {
     const t = makeT();
-    expect(tCardActionLabel(t, 1, 0, 0, 'My fallback')).toBe('My fallback');
+    expect(tCardActionLabel(t, 1, 0, 0)).toBe('labels.1_0_a0');
   });
 
   it('passes ICON_PASSTHROUGH values to t', () => {
     const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
-    tCardActionLabel(t, 1, 2, 3, 'fb');
+    tCardActionLabel(t, 1, 2, 3);
     expect(t).toHaveBeenCalledWith('labels.1_2_a3', {
-      defaultValue: 'fb',
       ...ICON_PASSTHROUGH,
+      ns: 'cards',
     });
   });
 });
@@ -86,15 +69,15 @@ describe('tCardPassiveLabel', () => {
 
   it('returns fallback when key is missing', () => {
     const t = makeT();
-    expect(tCardPassiveLabel(t, 0, 0, 0, 'fb')).toBe('fb');
+    expect(tCardPassiveLabel(t, 0, 0, 0)).toBe('labels.0_0_p0');
   });
 
   it('passes ICON_PASSTHROUGH values to t', () => {
     const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
-    tCardPassiveLabel(t, 1, 2, 0, 'fb');
+    tCardPassiveLabel(t, 1, 2, 0);
     expect(t).toHaveBeenCalledWith('labels.1_2_p0', {
-      defaultValue: 'fb',
       ...ICON_PASSTHROUGH,
+      ns: 'cards',
     });
   });
 });
@@ -109,13 +92,13 @@ describe('tCardActionDescription', () => {
 
   it('returns fallback when key is missing', () => {
     const t = makeT();
-    expect(tCardActionDescription(t, 0, 0, 0, 'default desc')).toBe('default desc');
+    expect(tCardActionDescription(t, 0, 0, 0)).toBe('descriptions.0_0_a0');
   });
 
   it('does not pass ICON_PASSTHROUGH to t', () => {
     const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
-    tCardActionDescription(t, 1, 0, 0, 'fb');
-    expect(t).toHaveBeenCalledWith('descriptions.1_0_a0', { ns: 'cards', defaultValue: 'fb' });
+    tCardActionDescription(t, 1, 0, 0);
+    expect(t).toHaveBeenCalledWith('descriptions.1_0_a0', { ns: 'cards' });
   });
 });
 
@@ -129,13 +112,13 @@ describe('tCardStateDescription', () => {
 
   it('returns fallback when key is missing', () => {
     const t = makeT();
-    expect(tCardStateDescription(t, 0, 0, 'fallback state')).toBe('fallback state');
+    expect(tCardStateDescription(t, 0, 0)).toBe('descriptions.0_0');
   });
 
-  it('passes ns: cards and defaultValue to t', () => {
+  it('passes ns: cards to t', () => {
     const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
-    tCardStateDescription(t, 2, 1, 'fb');
-    expect(t).toHaveBeenCalledWith('descriptions.2_1', { ns: 'cards', defaultValue: 'fb' });
+    tCardStateDescription(t, 2, 1);
+    expect(t).toHaveBeenCalledWith('descriptions.2_1', { ns: 'cards' });
   });
 });
 
@@ -149,13 +132,13 @@ describe('tCardPassiveDescription', () => {
 
   it('returns fallback when key is missing', () => {
     const t = makeT();
-    expect(tCardPassiveDescription(t, 0, 0, 0, 'pf')).toBe('pf');
+    expect(tCardPassiveDescription(t, 0, 0, 0)).toBe('descriptions.0_0_p0');
   });
 
   it('does not pass ICON_PASSTHROUGH to t', () => {
     const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
-    tCardPassiveDescription(t, 3, 1, 2, 'fb');
-    expect(t).toHaveBeenCalledWith('descriptions.3_1_p2', { ns: 'cards', defaultValue: 'fb' });
+    tCardPassiveDescription(t, 3, 1, 2);
+    expect(t).toHaveBeenCalledWith('descriptions.3_1_p2', { ns: 'cards' });
   });
 });
 
@@ -172,7 +155,7 @@ describe('tCardTag', () => {
     expect(tCardTag(t, 'unknown_tag')).toBe('unknown_tag');
   });
 
-  it('passes ns: cards and defaultValue to t', () => {
+  it('passes ns: cards to t', () => {
     const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
     tCardTag(t, 'land');
     expect(t).toHaveBeenCalledWith('tags.land', { ns: 'cards', defaultValue: 'land' });

@@ -1,13 +1,16 @@
-import { makeCardState, makeDef, makeInstance } from './testHelpers';
+import { makeCardState, makeDef, makeGameState, makeInstance } from './testHelpers';
 import {
   canAffordResources,
+  cardIsBlocked,
+  cardShouldStayInPlay,
   getActiveState,
+  getAffectedCardsByBoardEffects,
   getEffectiveProductions,
   getInstancesTriggerEffects,
   getTrackGlory,
   tagClass,
 } from '@engine/application/cardHelpers';
-import { ActionType, ResourceType, TargetScope, Trigger } from '@engine/domain/enums';
+import { ActionType, PassiveType, ResourceType, TargetScope, Trigger } from '@engine/domain/enums';
 import type { CardDef, CardInstance, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -290,7 +293,7 @@ describe('getInstancesTriggerEffects', () => {
   it('returns empty array when no instances have the trigger', () => {
     const instance = makeInstance(1, 10, 1);
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { cardEffects: [] })]),
+      10: makeDef(10, [makeCardState(1, { actions: [] })]),
     };
     const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY);
     expect(result).toEqual([]);
@@ -299,13 +302,14 @@ describe('getInstancesTriggerEffects', () => {
   it('collects effects matching the trigger', () => {
     const instance = makeInstance(1, 10, 1);
     const effect = {
+      id: 'effect1',
       label: 'Test',
       actions: [{ id: 1, type: ActionType.ADD_RESOURCES, cards: { scope: TargetScope.SELF } }],
       trigger: Trigger.ON_PLAY,
       optional: false,
     };
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { cardEffects: [effect] })]),
+      10: makeDef(10, [makeCardState(1, { actions: [effect] })]),
     };
     const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY);
     expect(result).toHaveLength(1);
@@ -327,22 +331,150 @@ describe('getInstancesTriggerEffects', () => {
     const inst1 = makeInstance(1, 10, 1);
     const inst2 = makeInstance(2, 11, 1);
     const effect1 = {
+      id: 'e1',
       label: 'E1',
       actions: [{ id: 1, type: ActionType.ADD_RESOURCES }],
       trigger: Trigger.END_OF_TURN,
       optional: false,
     };
     const effect2 = {
+      id: 'e2',
       label: 'E2',
       actions: [{ id: 1, type: ActionType.DISCARD_CARD }],
       trigger: Trigger.END_OF_TURN,
       optional: false,
     };
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { cardEffects: [effect1] })]),
-      11: makeDef(11, [makeCardState(1, { cardEffects: [effect2] })]),
+      10: makeDef(10, [makeCardState(1, { actions: [effect1] })]),
+      11: makeDef(11, [makeCardState(1, { actions: [effect2] })]),
     };
     const result = getInstancesTriggerEffects([inst1, inst2], defs, Trigger.END_OF_TURN);
     expect(result).toHaveLength(2);
+  });
+});
+
+// — getAffectedCardsByBoardEffects —
+
+describe('getAffectedCardsByBoardEffects', () => {
+  it('returns empty array when boardEffects is empty', () => {
+    const state = makeGameState();
+    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({});
+  });
+
+  it('returns instance ids affected by the matching passive type', () => {
+    const state = makeGameState({
+      boardEffects: {
+        1: [{ id: 'be1', type: PassiveType.BLOCK, cards: { ids: [10, 11] } }],
+      },
+    });
+    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({ 1: [10, 11] });
+  });
+
+  it('ignores effects with a different passive type', () => {
+    const state = makeGameState({
+      boardEffects: {
+        1: [{ id: 'be1', type: PassiveType.STAY_IN_PLAY, cards: { ids: [10] } }],
+      },
+    });
+    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({});
+  });
+
+  it('ignores effects without a cards.ids list', () => {
+    const state = makeGameState({
+      boardEffects: {
+        1: [{ id: 'be1', type: PassiveType.BLOCK }],
+      },
+    });
+    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({});
+  });
+
+  it('aggregates ids from multiple board effect sources', () => {
+    const state = makeGameState({
+      boardEffects: {
+        1: [{ id: 'be1', type: PassiveType.BLOCK, cards: { ids: [10] } }],
+        2: [{ id: 'be2', type: PassiveType.BLOCK, cards: { ids: [11] } }],
+      },
+    });
+    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({ 1: [10], 2: [11] });
+  });
+});
+
+// — cardIsBlocked —
+
+describe('cardIsBlocked', () => {
+  it('returns false when no board effects block any card', () => {
+    const state = makeGameState();
+    expect(cardIsBlocked(1, state)).toBe(false);
+  });
+
+  it('returns true when the instance id is in a BLOCK board effect', () => {
+    const state = makeGameState({
+      boardEffects: {
+        99: [{ id: 'be1', type: PassiveType.BLOCK, cards: { ids: [1] } }],
+      },
+    });
+    expect(cardIsBlocked(1, state)).toBe(true);
+  });
+
+  it('returns false when another instance is blocked but not this one', () => {
+    const state = makeGameState({
+      boardEffects: {
+        99: [{ id: 'be1', type: PassiveType.BLOCK, cards: { ids: [2] } }],
+      },
+    });
+    expect(cardIsBlocked(1, state)).toBe(false);
+  });
+});
+
+// — cardShouldStayInPlay —
+
+describe('cardShouldStayInPlay', () => {
+  it('returns false when the instance does not exist', () => {
+    const state = makeGameState();
+    expect(cardShouldStayInPlay(99, state, {})).toBe(false);
+  });
+
+  it('returns true when the active state has a STAY_IN_PLAY passive', () => {
+    const instance = makeInstance(1, 10, 1);
+    const defs = {
+      10: makeDef(10, [
+        makeCardState(1, { passives: [{ id: 'p1', type: PassiveType.STAY_IN_PLAY }] }),
+      ]),
+    };
+    const state = makeGameState({ instances: { 1: instance } });
+    expect(cardShouldStayInPlay(1, state, defs)).toBe(true);
+  });
+
+  it('returns true when the instance is covered by a STAY_IN_PLAY board effect', () => {
+    const instance = makeInstance(1, 10, 1);
+    const defs = { 10: makeDef(10, [makeCardState(1)]) };
+    const state = makeGameState({
+      instances: { 1: instance },
+      boardEffects: {
+        99: [{ id: 'be1', type: PassiveType.STAY_IN_PLAY, cards: { ids: [1] } }],
+      },
+    });
+    expect(cardShouldStayInPlay(1, state, defs)).toBe(true);
+  });
+
+  it('returns true when the instance has the stays_in_play sticker (id 7)', () => {
+    const instance: CardInstance = {
+      id: 1,
+      cardId: 10,
+      stateId: 1,
+      stickers: { 1: [7] },
+      trackProgress: [],
+      cumulated: 0,
+    };
+    const defs = { 10: makeDef(10, [makeCardState(1)]) };
+    const state = makeGameState({ instances: { 1: instance } });
+    expect(cardShouldStayInPlay(1, state, defs)).toBe(true);
+  });
+
+  it('returns false when none of the stay-in-play conditions apply', () => {
+    const instance = makeInstance(1, 10, 1);
+    const defs = { 10: makeDef(10, [makeCardState(1)]) };
+    const state = makeGameState({ instances: { 1: instance } });
+    expect(cardShouldStayInPlay(1, state, defs)).toBe(false);
   });
 });

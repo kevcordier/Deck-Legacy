@@ -1,25 +1,7 @@
+import { makeGameState } from '../testHelpers';
 import { PlaceCardInDrawPileStrategy } from '@engine/application/cardAction/PlaceCardInDrawPileStrategy';
-import { ActionType } from '@engine/domain/enums';
-import type { GameState } from '@engine/domain/types';
+import { ActionType, PassiveType } from '@engine/domain/enums';
 import { describe, expect, it } from 'vitest';
-
-const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
-  instances: {},
-  drawPile: [],
-  discardPile: [],
-  board: [],
-  destroyedPile: [],
-  permanents: [],
-  blockingCards: {},
-  resources: {},
-  stickerStock: {},
-  discoveryPile: [],
-  triggerPile: {},
-  lastAddedIds: [],
-  round: 0,
-  turn: 0,
-  ...overrides,
-});
 
 describe('PlaceCardInDrawPileStrategy', () => {
   const strategy = new PlaceCardInDrawPileStrategy();
@@ -73,8 +55,10 @@ describe('PlaceCardInDrawPileStrategy', () => {
     expect(result.discoveryPile).toEqual([6]);
   });
 
-  it('removes the card from blockingCards before placing', () => {
-    const gs = makeGameState({ blockingCards: { 5: 20 } });
+  it('removes the card from boardEffects before placing', () => {
+    const gs = makeGameState({
+      boardEffects: { 5: [{ id: '5', type: PassiveType.STAY_IN_PLAY }] },
+    });
     const result = strategy.applyEffect(gs, {
       id: '1-1',
       type: ActionType.PLACE_CARD_IN_DRAW_PILE,
@@ -82,6 +66,6 @@ describe('PlaceCardInDrawPileStrategy', () => {
       instanceId: 5,
       position: 0,
     });
-    expect(result.blockingCards[5]).toBeUndefined();
+    expect(result.boardEffects[5]).toBeUndefined();
   });
 });

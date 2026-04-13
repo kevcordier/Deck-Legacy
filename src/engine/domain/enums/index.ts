@@ -12,6 +12,7 @@ export enum Trigger {
   END_OF_TURN = 'end_of_turn',
   ON_DISCOVER = 'on_discover',
   ON_PLAY = 'on_play',
+  END_TURN = 'end_turn',
 }
 
 export enum GameEventType {
@@ -42,6 +43,11 @@ export enum ActionType {
   ADD_CUMULATED = 'ADD_CUMULATED',
   SET_CUMULATED = 'SET_CUMULATED',
   TRACK_ADVANCE = 'TRACK_ADVANCE',
+}
+
+export enum PassiveType {
+  BLOCK = 'BLOCK',
+  STAY_IN_PLAY = 'STAY_IN_PLAY',
 }
 
 export enum ResourceType {

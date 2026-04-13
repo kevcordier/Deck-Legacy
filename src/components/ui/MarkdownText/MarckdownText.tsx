@@ -43,7 +43,11 @@ function IconImg({ src, alt, className }: { src?: string; alt?: string; classNam
   return <img src={src} alt={alt} className={className} />;
 }
 
-export function MarkdownText({ text }: { text: string }) {
+type MarkdownTextProps = {
+  readonly text: string;
+};
+
+export function MarkdownText({ text }: MarkdownTextProps) {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}

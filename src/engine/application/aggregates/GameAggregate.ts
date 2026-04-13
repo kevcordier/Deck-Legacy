@@ -48,10 +48,10 @@ export const EMPTY_STATE: GameState = {
   board: [],
   destroyedPile: [],
   permanents: [],
-  blockingCards: {},
   resources: {},
   stickerStock: {},
   discoveryPile: [],
+  boardEffects: {},
   triggerPile: {},
   lastAddedIds: [],
   round: 0,
@@ -108,6 +108,7 @@ export class GameAggregate {
           },
           {} as Record<string, TriggerEntry>,
         );
+        this.gameState.boardEffects = {};
         this.gameState.discardPile = [];
         this.gameState.board = [];
         break;

@@ -1,14 +1,12 @@
 import React from 'react';
 
-export function Title({
-  children,
-  level = 1 | 2 | 3,
-  className = '',
-}: {
-  children: React.ReactNode;
-  level?: number;
-  className?: string;
-}) {
+type TitleProps = {
+  readonly children: React.ReactNode;
+  readonly level?: 0 | 1 | 2 | 3 | 4;
+  readonly className?: string;
+};
+
+export function Title({ children, level = 1, className = '' }: TitleProps) {
   const CustomTag = `h${level}` as React.ElementType;
   const sizeClass = [
     '',

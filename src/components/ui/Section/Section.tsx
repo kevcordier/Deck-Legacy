@@ -3,10 +3,10 @@ import { Title } from '@components/ui/Title/Title';
 import type { ReactNode } from 'react';
 
 interface SectionProps {
-  title: string;
-  subtitle?: string;
-  children: ReactNode;
-  className?: string;
+  readonly title: string;
+  readonly subtitle?: string;
+  readonly children: ReactNode;
+  readonly className?: string;
 }
 
 export function Section({ title, subtitle, children, className = '' }: SectionProps) {

@@ -14,14 +14,15 @@ import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Tag } from '@components/ui/Tag/Tag';
 import {
   canAffordResources,
+  cardIsBlocked,
   getActiveState,
   getEffectiveProductions,
   tagClass,
 } from '@engine/application/cardHelpers';
 import { TargetScope } from '@engine/domain/enums';
 import type { CardInstance } from '@engine/domain/types';
-import { tCardActionDescription, tCardActionLabel, tCardName, tCardTag } from '@helpers/cardI18n';
-import { getResMeta, renderTextWithIcons } from '@helpers/renderHelpers';
+import { tCardActionLabel, tCardName, tCardTag } from '@helpers/cardI18n';
+import { getResMeta } from '@helpers/renderHelpers';
 import { useGame } from '@hooks/useGame';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -53,7 +54,7 @@ export function GameCard({
     resolveTrackStep,
   } = useGame();
   const currentResources = state.resources;
-  const isBlocked = isOnBoard && Object.values(state.blockingCards ?? {}).includes(instance.id);
+  const isBlocked = isOnBoard && cardIsBlocked(instance.id, state);
   const cs = getActiveState(instance, defs);
   const def = defs[instance.cardId];
   const isEnemy = cs.negative === true;
@@ -65,7 +66,7 @@ export function GameCard({
   const hasProductions = Object.keys(productions).length > 0;
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
-  const actions = cs.cardEffects ?? [];
+  const actions = cs.actions ?? [];
   const glory = cs.glory ?? 0;
   const resourceOptions = cs.productions ?? undefined;
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
@@ -104,7 +105,7 @@ export function GameCard({
                 <span className={`mr-1 rounded bg-black/6 px-1 font-bold`}>#{instance.id}</span>
               )}
               <span className={`font-display truncate font-bold ${isEnemy ? 'text-red-600' : ''}`}>
-                {tCardName(t, instance.cardId, cs.id, cs.name)}
+                {tCardName(t, instance.cardId, cs.id)}
               </span>
             </span>
             {!hideStatePreview && <CardStatePreview instance={instance} defs={defs} />}
@@ -136,24 +137,6 @@ export function GameCard({
 
             {glory !== 0 && <Glory glory={glory} />}
 
-            {isParchment &&
-              actions.map((action, i) => {
-                return (
-                  <div className="flex flex-col gap-2" key={i}>
-                    <span
-                      className={`font-display text-base-ink text-center text-sm font-semibold @3xs/card:text-2xl`}
-                    >
-                      {tCardActionLabel(t, instance.cardId, cs.id, i, action.label)}
-                    </span>
-                    {action.description && (
-                      <p className={`text-center text-xs text-gray-600 italic @3xs/card:text-base`}>
-                        {renderTextWithIcons(action.description)}
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
-
             {currentStateStickers.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {currentStateStickers.map((stickerId, i) => {
@@ -169,7 +152,7 @@ export function GameCard({
           </div>
 
           <div className={`relative z-10 flex flex-col items-center gap-1 p-1 @3xs/card:p-3`}>
-            {cs.stayInPlay && (
+            {cs.passives && (
               <span className={cardActionsClass}>
                 <PassifIcon className="size-3 @3xs/card:size-6" /> {t('card.stayInPlay')}
               </span>
@@ -180,23 +163,15 @@ export function GameCard({
               actions.map((action, i) => {
                 const affordable =
                   !action.cost || canAffordResources(currentResources, action.cost);
-                const actionLabel = tCardActionLabel(t, instance.cardId, cs.id, i, action.label);
-                const actionDesc = tCardActionDescription(
-                  t,
-                  instance.cardId,
-                  cs.id,
-                  i,
-                  actionLabel,
-                );
+                const actionLabel = tCardActionLabel(t, instance.cardId, cs.id, i);
                 const hasDestroyItselfCost = action.cost?.destroy?.scope === TargetScope.SELF;
                 const haveTrigger = !!action.trigger;
                 const isOptional = action.optional;
                 return (
                   <Button
                     key={i}
-                    onClick={() => resolveAction(instance.id, action.label)}
+                    onClick={() => resolveAction(instance.id, action.id)}
                     disabled={!affordable || !canActivate || haveTrigger}
-                    title={actionDesc}
                     variant="text"
                     color="base-ink"
                     className={`${cardActionsClass} ${haveTrigger ? 'cursor-not-allowed' : ''}`}
@@ -214,7 +189,7 @@ export function GameCard({
                     ) : (
                       <ActivatedIcon color="green" className="size-3 @3xs/card:size-6" />
                     )}{' '}
-                    {renderTextWithIcons(actionLabel)}
+                    {actionLabel}
                   </Button>
                 );
               })}
@@ -244,7 +219,7 @@ export function GameCard({
                   >
                     ⬆{' '}
                     {targetState
-                      ? tCardName(t, def.id, targetState.id, targetState.name)
+                      ? tCardName(t, def.id, targetState.id)
                       : t('card.state', { id: upg.upgradeTo })}
                     {upg.cost.resources?.[0] && (
                       <span>

@@ -1,4 +1,9 @@
-export function Stat({ label, value }: { label: string; value: number | string }) {
+type StatProps = {
+  readonly label: string;
+  readonly value: number | string;
+};
+
+export function Stat({ label, value }: StatProps) {
   return (
     <div className="font-body flex flex-col items-start gap-1">
       <div className="text-xs">{label}</div>

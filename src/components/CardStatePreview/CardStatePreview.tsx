@@ -69,27 +69,29 @@ function CardStatesModal({
 
   return createPortal(
     <Modal
-      title={tCardName(t, def.id, 1, def.name)}
+      title={tCardName(t, def.id, 1)}
       subtitle={t('cardPreview.statesMeta', { count: def.states.length, id: instance.id })}
       onClose={onClose}
     >
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-        {def.states.map(s => {
-          const isCurrent = s.id === instance.stateId;
-          const fakeInstance: CardInstance = {
-            ...instance,
-            stateId: s.id,
-            trackProgress: isCurrent ? instance.trackProgress : [],
-          };
-          return (
-            <GameCard
-              key={s.id}
-              instance={fakeInstance}
-              className={`${isCurrent ? 'ring-primary ring-3' : ''}`}
-              hideStatePreview
-            />
-          );
-        })}
+      <div className="@container">
+        <div className="grid grid-cols-2 gap-4 @4xl:grid-cols-3">
+          {def.states.map(s => {
+            const isCurrent = s.id === instance.stateId;
+            const fakeInstance: CardInstance = {
+              ...instance,
+              stateId: s.id,
+              trackProgress: isCurrent ? instance.trackProgress : [],
+            };
+            return (
+              <GameCard
+                key={s.id}
+                instance={fakeInstance}
+                className={`${isCurrent ? 'ring-primary ring-3' : ''}`}
+                hideStatePreview
+              />
+            );
+          })}
+        </div>
       </div>
     </Modal>,
     document.body,

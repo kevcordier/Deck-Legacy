@@ -1,7 +1,7 @@
 type DividerProps = {
-  orientation?: 'vertical' | 'horizontal';
-  color?: 'ink' | 'border' | 'gradient';
-  className?: string;
+  readonly orientation?: 'vertical' | 'horizontal';
+  readonly color?: 'ink' | 'border' | 'gradient';
+  readonly className?: string;
 };
 
 export function Divider({

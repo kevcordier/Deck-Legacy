@@ -25,17 +25,17 @@ function getChoiceActionLabel(
   instances: Record<number, CardInstance>,
   defs: Record<number, CardDef>,
   t: TFunction,
-): string | undefined {
+): React.ReactNode | undefined {
   const actionId = parseInt(choice.id.split('-')[1]);
   if (isNaN(actionId)) return undefined;
   const inst = instances[choice.sourceInstanceId];
   const def = inst ? defs[inst.cardId] : undefined;
   const state = def?.states.find(s => s.id === inst?.stateId);
-  const effects = state?.cardEffects;
+  const effects = state?.actions;
   if (!effects || !def || !state) return undefined;
   const effectIdx = effects.findIndex(e => e.actions.some(a => a.id === actionId));
   if (effectIdx === -1) return undefined;
-  return tCardActionLabel(t, def.id, state.id, effectIdx, effects[effectIdx].label) || undefined;
+  return tCardActionLabel(t, def.id, state.id, effectIdx) || undefined;
 }
 
 function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
@@ -89,16 +89,9 @@ export function PendingChoiceModal({
           const inst = instances[trigger.sourceInstanceId];
           const def = inst ? defs[inst.cardId] : undefined;
           const state = def?.states.find(s => s.id === inst?.stateId) ?? def?.states[0];
-          const actionIdx =
-            state?.cardEffects?.findIndex(e => e.label === trigger.effectDef.label) ?? -1;
-          const cardName = tCardName(t, def?.id, state?.id, state?.name);
-          const actionLabel = tCardActionLabel(
-            t,
-            def?.id,
-            state?.id,
-            actionIdx,
-            trigger.effectDef.label,
-          );
+          const actionIdx = state?.actions?.findIndex(e => e.id === trigger.effectDef.id) ?? -1;
+          const cardName = tCardName(t, def?.id, state?.id);
+          const actionLabel = tCardActionLabel(t, def?.id, state?.id, actionIdx);
           return (
             <div
               key={triggerId}
@@ -121,7 +114,7 @@ export function PendingChoiceModal({
                   size="sm"
                   color="base-primary"
                   onClick={() =>
-                    onResolveTrigger(trigger.sourceInstanceId, trigger.effectDef.label, triggerId)
+                    onResolveTrigger(trigger.sourceInstanceId, trigger.effectDef.id, triggerId)
                   }
                 >
                   {t('triggerPile.resolve')}
@@ -163,23 +156,25 @@ export function PendingChoiceModal({
     subtitle = getChoiceActionLabel(choice, instances, defs, t);
 
     content = (
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-        {choice.choices.map(id => {
-          if (typeof id !== 'number') return null;
-          const inst = instances[id];
-          const def = inst ? defs[inst.cardId] : undefined;
-          if (!def || !inst) return null;
-          const state = def.states.find(s => s.id === inst.stateId) ?? def.states[0];
-          return (
-            <div className="relative transition-transform hover:scale-[1.02]" key={id}>
-              <button
-                onClick={() => handleCardClick(id)}
-                className="absolute inset-0 z-12 cursor-pointer!"
-              ></button>
-              <GameCard instance={makePreviewInstance(def, state)} hideStatePreview />
-            </div>
-          );
-        })}
+      <div className="@container">
+        <div className="grid grid-cols-2 gap-4 @4xl:grid-cols-3">
+          {choice.choices.map(id => {
+            if (typeof id !== 'number') return null;
+            const inst = instances[id];
+            const def = inst ? defs[inst.cardId] : undefined;
+            if (!def || !inst) return null;
+            const state = def.states.find(s => s.id === inst.stateId) ?? def.states[0];
+            return (
+              <div className="relative transition-transform hover:scale-[1.02]" key={id}>
+                <button
+                  onClick={() => handleCardClick(id)}
+                  className="absolute inset-0 z-12 cursor-pointer!"
+                ></button>
+                <GameCard instance={makePreviewInstance(def, state)} hideStatePreview />
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }
@@ -192,28 +187,30 @@ export function PendingChoiceModal({
     title = t(`pendingChoice.chooseState`);
     subtitle = getChoiceActionLabel(choice, instances, defs, t);
     content = (
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-        {choice.choices.map(stateId => {
-          if (typeof stateId !== 'number') return null;
-          const state = cardDef?.states.find(s => s.id === stateId);
-          if (!cardDef || !state) return null;
-          return (
-            <div key={stateId} className="relative transition-transform hover:scale-[1.02]">
-              <button
-                onClick={() =>
-                  resolvePlayerChoice({
-                    id: choice.id,
-                    type: choice.kind,
-                    sourceInstanceId: choice.sourceInstanceId,
-                    stateId,
-                  })
-                }
-                className="absolute inset-0 z-12 cursor-pointer!"
-              ></button>
-              <GameCard instance={makePreviewInstance(cardDef, state)} hideStatePreview />
-            </div>
-          );
-        })}
+      <div className="@container">
+        <div className="grid grid-cols-2 gap-4 @4xl:grid-cols-3">
+          {choice.choices.map(stateId => {
+            if (typeof stateId !== 'number') return null;
+            const state = cardDef?.states.find(s => s.id === stateId);
+            if (!cardDef || !state) return null;
+            return (
+              <div key={stateId} className="relative transition-transform hover:scale-[1.02]">
+                <button
+                  onClick={() =>
+                    resolvePlayerChoice({
+                      id: choice.id,
+                      type: choice.kind,
+                      sourceInstanceId: choice.sourceInstanceId,
+                      stateId,
+                    })
+                  }
+                  className="absolute inset-0 z-12 cursor-pointer!"
+                ></button>
+                <GameCard instance={makePreviewInstance(cardDef, state)} hideStatePreview />
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }

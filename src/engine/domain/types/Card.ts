@@ -1,5 +1,12 @@
-import type { CardTag, Trigger } from '@engine/domain/enums';
-import type { Action, Cost, Resources } from '@engine/domain/types';
+import type {
+  ActionType,
+  CardTag,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+  Trigger,
+} from '@engine/domain/enums';
+import type { Cost, Resources } from '@engine/domain/types';
 
 export type CardDef = {
   id: number;
@@ -8,7 +15,6 @@ export type CardDef = {
   chooseState?: boolean; // the player chooses the state at discovery time
   states: CardState[];
   parchmentCard?: boolean;
-  text?: string;
 };
 
 export type StepDef = {
@@ -37,16 +43,21 @@ export type CardState = {
   negative?: boolean;
   productions?: Resources[];
   glory?: number;
-  stayInPlay?: boolean;
-  cardEffects?: Effect[];
+  actions?: CardAction[];
+  passives?: Passive[];
+  triggers?: Trigger[];
   upgrade?: UpgradeDef[];
   track?: TrackDef;
   illustration?: string;
 };
 
-export type Effect = {
-  label: string;
-  description?: string;
+export type UpgradeDef = {
+  cost: Cost;
+  upgradeTo: number; // id of a state within the same card
+};
+
+export type CardAction = {
+  id: string;
   actions: Action[];
   passive?: boolean;
   cost?: Cost;
@@ -55,7 +66,74 @@ export type Effect = {
   optional?: boolean;
 };
 
-export type UpgradeDef = {
-  cost: Cost;
-  upgradeTo: number; // id of a state within the same card
+export type Action = {
+  id: number;
+  type: ActionType;
+  cards?: CardeSelector;
+  resources?: {
+    gold?: number;
+    wood?: number;
+    stone?: number;
+    food?: number;
+    iron?: number;
+    weapon?: number;
+    goods?: number;
+    choice?: {
+      gold?: number;
+      wood?: number;
+      stone?: number;
+      food?: number;
+      iron?: number;
+      weapon?: number;
+      goods?: number;
+    }[];
+    cards?: CardeSelector;
+  };
+  states?: number[];
+  stickerIds?: number[];
+  resource_per_card?: {
+    amount: number;
+    resource: ResourceType;
+  } & CardeSelector;
+};
+
+export type Passive = {
+  id: string;
+  type: PassiveType;
+  cards?: CardeSelector;
+  resources?: {
+    gold?: number;
+    wood?: number;
+    stone?: number;
+    food?: number;
+    iron?: number;
+    weapon?: number;
+    goods?: number;
+  };
+  states?: number[];
+  stickerIds?: number[];
+  resource_per_card?: {
+    amount: number;
+    resource: ResourceType;
+  } & CardeSelector;
+};
+
+export type CardeSelector = {
+  number?: number;
+  ids?: number[];
+  tags?: string[];
+  scope?: TargetScope;
+  label?: string;
+  produces?: ResourceType[];
+};
+
+export type ResolvedAction = {
+  id: string;
+  type: ActionType;
+  sourceInstanceId: number;
+  instanceId?: number;
+  resources?: Resources;
+  stickerId?: number;
+  stateId?: number;
+  position?: number;
 };

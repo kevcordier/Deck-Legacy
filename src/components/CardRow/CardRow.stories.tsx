@@ -37,7 +37,7 @@ export const SingleCard: Story = {
   args: (() => {
     const instances = makeInstances([1]);
     const ids = Object.keys(instances).map(Number);
-    return { cardIds: ids, blockingCards: {}, instances };
+    return { cardIds: ids, blockedCards: {}, instances };
   })(),
 };
 
@@ -45,7 +45,7 @@ export const MultipleCards: Story = {
   args: (() => {
     const instances = makeInstances([1, 2, 3]);
     const ids = Object.keys(instances).map(Number);
-    return { cardIds: ids, blockingCards: {}, instances };
+    return { cardIds: ids, blockedCards: {}, instances };
   })(),
 };
 
@@ -57,7 +57,7 @@ export const WithBlockingCard: Story = {
     const instances = { [blocked.id]: blocked, [blocker.id]: blocker };
     return {
       cardIds: [blocked.id, blocker.id],
-      blockingCards: { [blocker.id]: blocked.id },
+      blockedCards: { [blocked.id]: blocker.id },
       instances,
     };
   })(),

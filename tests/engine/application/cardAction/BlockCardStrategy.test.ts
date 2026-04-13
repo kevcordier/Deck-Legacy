@@ -1,28 +1,14 @@
+import { makeGameState } from '../testHelpers';
 import { BlockCardStrategy } from '@engine/application/cardAction/BlockCardStrategy';
-import { ActionType } from '@engine/domain/enums';
-import type { GameState } from '@engine/domain/types';
+import { ActionType, PassiveType } from '@engine/domain/enums';
+import type { Passive } from '@engine/domain/types';
+import { CardPassives } from '@engine/domain/types/effects';
 import { describe, expect, it } from 'vitest';
-
-const makeGameState = (overrides: Partial<GameState> = {}): GameState => ({
-  instances: {},
-  drawPile: [],
-  discardPile: [],
-  board: [],
-  destroyedPile: [],
-  permanents: [],
-  blockingCards: {},
-  resources: {},
-  stickerStock: {},
-  discoveryPile: [],
-  triggerPile: {},
-  lastAddedIds: [],
-  round: 0,
-  turn: 0,
-  ...overrides,
-});
 
 describe('BlockCardStrategy', () => {
   const strategy = new BlockCardStrategy();
+
+  const boardEffect: Passive = { ...CardPassives[PassiveType.BLOCK], cards: { ids: [10] } };
 
   it('returns the modified game state', () => {
     const gs = makeGameState();
@@ -32,17 +18,18 @@ describe('BlockCardStrategy', () => {
       sourceInstanceId: 5,
       instanceId: 10,
     });
-    expect(result).toEqual({ ...gs, blockingCards: { ...gs.blockingCards, 5: 10 } }); // should return the same game state object
-    expect(result.blockingCards[5]).toBe(10);
+    expect(result).toEqual({ ...gs, boardEffects: { ...gs.boardEffects, 5: [boardEffect] } });
   });
 
-  it('does not modify blockingCards if instanceId is undefined', () => {
-    const gs = makeGameState({ blockingCards: { 5: 99 } });
+  it('does not modify boardEffects if instanceId is undefined', () => {
+    const gs = makeGameState({
+      boardEffects: { 5: [boardEffect] },
+    });
     const result = strategy.applyEffect(gs, {
       id: '1-1',
       type: ActionType.BLOCK_CARD,
       sourceInstanceId: 5,
     });
-    expect(result.blockingCards[5]).toBe(99); // should remain unchanged
+    expect(result.boardEffects[5]).toEqual([boardEffect]); // should remain unchanged
   });
 });
