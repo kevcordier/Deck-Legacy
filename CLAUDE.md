@@ -179,7 +179,7 @@ A **pre-commit hook** (Husky + lint-staged, `.husky/pre-commit`) blocks commits 
 
 CI (`.github/workflows/deploy.yml`) also runs lint → typecheck → format check → tests before deploying to GitHub Pages.
 
-Fix all issues before committing; do not use `--no-verify`.
+Use `pnpm verify` then fix all issues before committing; do not use `--no-verify`.
 
 ---
 

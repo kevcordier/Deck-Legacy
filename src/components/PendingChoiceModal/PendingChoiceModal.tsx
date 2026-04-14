@@ -57,7 +57,11 @@ interface PendingChoiceModalProps {
   readonly stickerDefs: Record<number, Sticker>;
   readonly resolvePlayerChoice: (option: ResolvedAction) => void;
   readonly resolvePayCost: (resolved: ResolvedCost) => void;
-  readonly onResolveTrigger: (sourceInstanceId: number, actionId: string, triggerId: string) => void;
+  readonly onResolveTrigger: (
+    sourceInstanceId: number,
+    actionId: string,
+    triggerId: string,
+  ) => void;
   readonly onSkipTrigger: (uuid: string) => void;
   readonly onSkipChoice: (uuid: string) => void;
 }
