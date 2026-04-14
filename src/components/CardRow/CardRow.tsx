@@ -2,9 +2,9 @@ import { GameCard } from '@components/GameCard/GameCard';
 import type { CardInstance } from '@engine/domain/types';
 
 interface CardRowProps {
-  cardIds: number[];
-  blockedCards: Record<number, number>; // key = blockedId, value = blockerId
-  instances: Record<number, CardInstance>;
+  readonly cardIds: number[];
+  readonly blockedCards: Record<number, number>; // key = blockedId, value = blockerId
+  readonly instances: Record<number, CardInstance>;
 }
 
 export function CardRow({ cardIds, blockedCards, instances }: CardRowProps) {

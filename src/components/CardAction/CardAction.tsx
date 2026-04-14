@@ -13,10 +13,10 @@ import { useGame } from '@hooks/useGame';
 import type { ReactNode } from 'react';
 
 type CardActionProps = {
-  instanceId: number;
-  action: CardAction;
-  disabled?: boolean;
-  actionLabel: ReactNode;
+  readonly instanceId: number;
+  readonly action: CardAction;
+  readonly disabled?: boolean;
+  readonly actionLabel: ReactNode;
 };
 
 export function CardAction({ instanceId, disabled, action, actionLabel }: CardActionProps) {

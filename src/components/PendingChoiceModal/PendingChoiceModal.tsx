@@ -50,16 +50,16 @@ function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
 }
 
 interface PendingChoiceModalProps {
-  choice?: PendingChoice;
-  triggerPile?: Record<string, TriggerEntry> | null;
-  defs: Record<number, CardDef>;
-  instances: Record<number, CardInstance>;
-  stickerDefs: Record<number, Sticker>;
-  resolvePlayerChoice(option: ResolvedAction): void;
-  resolvePayCost(resolved: ResolvedCost): void;
-  onResolveTrigger(sourceInstanceId: number, actionId: string, triggerId: string): void;
-  onSkipTrigger(uuid: string): void;
-  onSkipChoice(uuid: string): void;
+  readonly choice?: PendingChoice;
+  readonly triggerPile?: Record<string, TriggerEntry> | null;
+  readonly defs: Record<number, CardDef>;
+  readonly instances: Record<number, CardInstance>;
+  readonly stickerDefs: Record<number, Sticker>;
+  readonly resolvePlayerChoice: (option: ResolvedAction) => void;
+  readonly resolvePayCost: (resolved: ResolvedCost) => void;
+  readonly onResolveTrigger: (sourceInstanceId: number, actionId: string, triggerId: string) => void;
+  readonly onSkipTrigger: (uuid: string) => void;
+  readonly onSkipChoice: (uuid: string) => void;
 }
 
 export function PendingChoiceModal({

@@ -7,12 +7,12 @@ import { getResMeta } from '@helpers/renderHelpers';
 import React from 'react';
 
 interface CardTrackProps {
-  track: TrackDef;
-  validatedSteps: number[];
-  currentResources: Resources;
-  canActivate: boolean;
-  onStep: (stepId: number) => void;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  readonly track: TrackDef;
+  readonly validatedSteps: number[];
+  readonly currentResources: Resources;
+  readonly canActivate: boolean;
+  readonly onStep: (stepId: number) => void;
+  readonly size?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export function CardTrack({

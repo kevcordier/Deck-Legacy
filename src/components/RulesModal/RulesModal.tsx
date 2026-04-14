@@ -5,7 +5,7 @@ import { Modal } from '@components/ui/Modal/Modal';
 import { useTranslation } from 'react-i18next';
 
 interface RulesModalProps {
-  onClose: () => void;
+  readonly onClose: () => void;
 }
 
 const rulesContent: Record<string, string> = {

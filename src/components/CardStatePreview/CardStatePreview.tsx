@@ -25,8 +25,8 @@ function EyeIcon() {
 }
 
 interface CardStatePreviewProps {
-  instance: CardInstance;
-  defs: Record<number, CardDef>;
+  readonly instance: CardInstance;
+  readonly defs: Record<number, CardDef>;
 }
 
 export function CardStatePreview({ instance, defs }: CardStatePreviewProps) {
@@ -55,15 +55,13 @@ export function CardStatePreview({ instance, defs }: CardStatePreviewProps) {
   );
 }
 
-function CardStatesModal({
-  instance,
-  def,
-  onClose,
-}: {
-  instance: CardInstance;
-  def: CardDef;
-  onClose: () => void;
-}) {
+type CardStatesModalProps = {
+  readonly instance: CardInstance;
+  readonly def: CardDef;
+  readonly onClose: () => void;
+};
+
+function CardStatesModal({ instance, def, onClose }: CardStatesModalProps) {
   const { t } = useTranslation();
 
   return (
