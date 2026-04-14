@@ -8,19 +8,21 @@ import { useGame } from '@hooks/useGame';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+type DeckViewerProps = {
+  readonly title: string;
+  readonly emptyText?: string;
+  readonly deck: CardInstance[];
+  readonly displayedCard?: CardInstance;
+  readonly isSheet?: boolean;
+};
+
 export function DeckViewer({
   title,
   emptyText,
   deck,
   displayedCard,
   isSheet = false,
-}: {
-  title: string;
-  emptyText?: string;
-  deck: CardInstance[];
-  displayedCard?: CardInstance;
-  isSheet?: boolean;
-}) {
+}: DeckViewerProps) {
   const { defs } = useGame();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);

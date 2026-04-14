@@ -3,9 +3,9 @@ import { GloryIcon } from '@components/ui/Icon/icon';
 import { useTranslation } from 'react-i18next';
 
 interface GameOverScreenProps {
-  score: number;
-  round: number;
-  onNewGame: () => void;
+  readonly score: number;
+  readonly round: number;
+  readonly onNewGame: () => void;
 }
 
 export function GameOverScreen({ score, round, onNewGame }: GameOverScreenProps) {

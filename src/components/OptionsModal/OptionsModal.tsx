@@ -7,8 +7,8 @@ import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface OptionsModalProps {
-  onClose: () => void;
-  onReset: () => void;
+  readonly onClose: () => void;
+  readonly onReset: () => void;
 }
 
 export function OptionsModal({ onClose, onReset }: OptionsModalProps) {

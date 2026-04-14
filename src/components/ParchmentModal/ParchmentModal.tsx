@@ -6,8 +6,8 @@ import { tCardParchmentText } from '@helpers/cardI18n';
 import { useTranslation } from 'react-i18next';
 
 interface ParchmentModalProps {
-  def: CardDef;
-  onContinue: () => void;
+  readonly def: CardDef;
+  readonly onContinue: () => void;
 }
 
 export function ParchmentModal({ def, onContinue }: ParchmentModalProps) {

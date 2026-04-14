@@ -4,11 +4,11 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
 interface CardListModalProps {
-  title: React.ReactNode;
-  subtitle?: React.ReactNode;
-  onClose: () => void;
-  emptyText?: string;
-  children?: React.ReactNode;
+  readonly title: React.ReactNode;
+  readonly subtitle?: React.ReactNode;
+  readonly onClose: () => void;
+  readonly emptyText?: string;
+  readonly children?: React.ReactNode;
 }
 
 export function CardListModal({

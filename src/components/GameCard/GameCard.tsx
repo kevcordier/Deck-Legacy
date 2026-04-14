@@ -22,12 +22,12 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface GameCardProps {
-  instance: CardInstance;
-  style?: React.CSSProperties;
-  index?: number;
-  hideStatePreview?: boolean;
-  isOnBoard?: boolean;
-  className?: string;
+  readonly instance: CardInstance;
+  readonly style?: React.CSSProperties;
+  readonly index?: number;
+  readonly hideStatePreview?: boolean;
+  readonly isOnBoard?: boolean;
+  readonly className?: string;
 }
 
 export function GameCard({
