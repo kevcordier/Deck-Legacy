@@ -83,8 +83,8 @@
     "12_2_a0": "Réinitialisez pour découvrir Bijouterie (90).",
     "12_3_a0": "Gagnez {{weapon}} par Personne en jeu.",
     "14_3_a0": "Découvrez Rivage 75.",
-    "11_4_p0": "Cette carte a +1 production d'{{gold}} pour chaque personne en jeu.",
-    "14_4_p0": "Tant que cette carte est en jeu, vous pouvez défausser la carte au sommet de votre pioche.",
+    "11_4_p0": "Cette carte a 1+{{gold}} de production pour chaque personne en jeu.",
+    "14_4_a0": "Tant que cette carte est en jeu, vous pouvez défausser la carte au sommet de votre pioche.",
     "15_1_a0": "Stop",
     "16_1_a0": "Terre fertile",
     "16_1_a1": "Efficacité"
@@ -106,7 +106,7 @@
     "11_2_a0": "Dépensez 3 or pour découvrir un Missionnaire (103).",
     "11_3_a0": "Dépensez 4 or pour découvrir un Prêtre (104).",
     "12_3_a0": "Gagnez 1 épée par Personne en jeu.",
-    "11_4_p0": "Cette carte a +1 production d'or pour chaque personne en jeu."
+    "11_4_p0": "Cette carte a +1 or de production pour chaque personne en jeu."
   },
   "texts": {
     "15": "## Stop !\nMaintenant que vous avez pris le coup de main, vous pouvez réinitialiser la partie pour tenter votre meilleur score. Si vous continuez, vous allez découvrir 4 cartes, les cartes 24-27. Regardez-les maintenant et PUIS décidez si vous voulez recommencer ou continuer.\n\nLes cartes 25, 26 et 27 sont des cartes **permanentes**, ce qui signifie qu'elles ne sont jamais mélangées dans votre deck et ne peuvent pas être défaussées. Elles sont toujours visibles et actives, mais ne comptent pas comme « en jeu ».\n\nL'Armée et le Trésor sont des cartes de progression. Elles vous permettent de dépenser votre tour ({{time}}) et des ressources ({{weapon}}/{{gold}}) pour gagner de la gloire. L'Exportation est une carte de décompte. Elle ne met pas fin à votre tour ({{passif}}) et vous permet de dépenser des marchandises ({{goods}}) pour obtenir des autocollants, de nouvelles cartes et d'autres effets intéressants.\n\nVous ne pourrez pas terminer toutes les pistes avant la fin de la partie. Essayez d'aller le plus loin possible !",

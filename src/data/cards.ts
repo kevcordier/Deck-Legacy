@@ -276,7 +276,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '3-1-1',
-            // label: 'Gain 3 woods, then upgrade.',
             actions: [
               {
                 id: 1,
@@ -356,7 +355,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '3-4-1',
-            // label: 'Discover Shrine (82/83).',
             cost: {
               destroy: { scope: TargetScope.SELF },
             },
@@ -457,7 +455,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '4-3-1',
-            // label: 'Play 1 Land or Building from discard pile.',
             actions: [
               {
                 id: 1,
@@ -500,7 +497,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '4-4-1',
-            // label: 'Play 1 card from discard pile.',
             actions: [
               {
                 id: 1,
@@ -533,7 +529,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '5-1-1',
-            // label: 'Spend 1 gold to gain 1 Wood.',
             cost: {
               resources: [
                 {
@@ -575,7 +570,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '5-2-1',
-            // label: 'Spend 1 gold to gain 1 Wood or Stone.',
             cost: {
               resources: [
                 {
@@ -624,7 +618,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '5-3-1',
-            // label: 'Spend 1 gold to gain 1 Wood, Stone, or Iron.',
             cost: {
               resources: [
                 {
@@ -703,7 +696,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '6-1-1',
-            // label: 'Spend 1 gold to gain 1 Wood.',
             cost: {
               resources: [
                 {
@@ -744,7 +736,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '6-2-1',
-            // label: 'Spend 1 gold to gain 2 Wood.',
             cost: {
               resources: [
                 {
@@ -1038,7 +1029,6 @@ export const cardsData: CardDef[] = [
           },
           {
             id: '9-1-2',
-            // label: 'Spend 1 weapon to defeat (destroy this card) and gain any 2 resources.',
             cost: {
               resources: [
                 {
@@ -1389,26 +1379,21 @@ export const cardsData: CardDef[] = [
           },
         ],
         glory: 7,
-        actions: [
+        passives: [
           {
-            id: '11-4-1',
-            // label: 'This card has +1 gold production for each person you have in play.',
-            passive: true,
-            actions: [
-              // {
-              //   id: 1,
-              //   type: 'increase_production',
-              //   cards: {
-              //     scope: TargetScope.SELF,
-              //   },
-              //   resource_per_card: {
-              //     resource: ResourceType.GOLD,
-              //     amount: 1,
-              //     scope: TargetScope.BOARD,
-              //     tags: [CardTag.PERSON],
-              //   },
-              // },
-            ],
+            id: 'increase_production',
+            type: PassiveType.INCREASE_PRODUCTION,
+            cards: {
+              scope: TargetScope.SELF,
+            },
+            resource_per_card: {
+              resource: ResourceType.GOLD,
+              amount: 1,
+              cards: {
+                scope: TargetScope.BOARD,
+                tags: [CardTag.PERSON],
+              },
+            },
           },
         ],
       },
@@ -1467,7 +1452,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '12-2-1',
-            // label: 'Reset to discover Jewellery (90).',
             actions: [
               {
                 id: 1,
@@ -1514,7 +1498,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '12-3-1',
-            // label: 'Gain 1 Weapon for each Person in play.',
             actions: [
               {
                 id: 1,
@@ -1695,7 +1678,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '14-3-1',
-            // label: 'Discover Shore 75.',
             actions: [
               {
                 id: 1,
@@ -1717,7 +1699,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '14-4-1',
-            // label: 'As long as this card is in play, you may discard the top card of your deck.',
             passive: true,
             actions: [
               {
@@ -1744,7 +1725,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '15-1-1',
-            // label: 'Stop',
             trigger: Trigger.ON_DISCOVER,
             actions: [
               {
@@ -1792,7 +1772,6 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '16-1-1',
-            // label: '',
             trigger: Trigger.ON_DISCOVER,
             actions: [
               {
@@ -2332,7 +2311,6 @@ export const cardsData: CardDef[] = [
           {
             id: '19-1-1',
             passive: true,
-            // label: 'Spend goods and keep track of how much you have spent.',
             actions: [
               {
                 id: 1,
@@ -2359,7 +2337,6 @@ export const cardsData: CardDef[] = [
           steps: [
             {
               id: 1,
-              // label: 'Sticker 1/2/3 on 1 land.',
               cost: {
                 accumulated: 10,
               },
@@ -2378,7 +2355,6 @@ export const cardsData: CardDef[] = [
             },
             {
               id: 2,
-              // label: 'Sticker 7 on 1 person.',
               cost: {
                 accumulated: 20,
               },
@@ -2397,7 +2373,6 @@ export const cardsData: CardDef[] = [
             },
             {
               id: 3,
-              // label: 'Discover Dubing (86).',
               cost: {
                 accumulated: 30,
               },
@@ -2415,7 +2390,6 @@ export const cardsData: CardDef[] = [
             },
             {
               id: 4,
-              // label: 'Sticker 4/5/6 on 1 building.',
               cost: {
                 accumulated: 40,
               },
@@ -2434,7 +2408,6 @@ export const cardsData: CardDef[] = [
             },
             {
               id: 5,
-              // label: 'Sticker 2/3/4 on 1 friendly card.',
               cost: {
                 accumulated: 55,
               },
@@ -2453,7 +2426,6 @@ export const cardsData: CardDef[] = [
             },
             {
               id: 6,
-              // label: 'Sticker 10 on any card.',
               cost: {
                 accumulated: 75,
               },
@@ -2472,7 +2444,6 @@ export const cardsData: CardDef[] = [
             },
             {
               id: 7,
-              // label: 'Upgrade.',
               cost: {
                 accumulated: 100,
               },
@@ -2501,7 +2472,6 @@ export const cardsData: CardDef[] = [
           {
             id: '19-2-1',
             passive: true,
-            // label: 'Spend goods and keep track of how much you have spent.',
             actions: [
               {
                 id: 1,
@@ -2527,7 +2497,6 @@ export const cardsData: CardDef[] = [
           steps: [
             {
               id: 8,
-              // label: 'Sticker 8 on 2 different lands.',
               cost: {
                 accumulated: 50,
               },
@@ -2554,7 +2523,6 @@ export const cardsData: CardDef[] = [
             },
             {
               id: 9,
-              // label: 'Sticker 10 on 1 person.',
               cost: {
                 accumulated: 50,
               },
@@ -2573,7 +2541,6 @@ export const cardsData: CardDef[] = [
             },
             {
               id: 10,
-              // label: 'Discover Royal Visit (107).',
               cost: {
                 accumulated: 75,
               },
@@ -2591,7 +2558,6 @@ export const cardsData: CardDef[] = [
             },
             {
               id: 11,
-              // label: 'Sticker 10 on 1 building.',
               cost: {
                 accumulated: 100,
               },
@@ -2610,7 +2576,6 @@ export const cardsData: CardDef[] = [
             },
             {
               id: 12,
-              // label: 'check 1 other permanent card, gain any effect.',
               cost: {
                 accumulated: 150,
               },
@@ -2628,7 +2593,6 @@ export const cardsData: CardDef[] = [
             },
             {
               id: 13,
-              // label: 'check all other permanent cards you want.',
               cost: {
                 accumulated: 200,
               },
@@ -2646,7 +2610,6 @@ export const cardsData: CardDef[] = [
             },
             {
               id: 14,
-              // label: 'Discover Trade Relations (117).',
               cost: {
                 accumulated: 200,
               },
@@ -2773,8 +2736,7 @@ export const cardsData: CardDef[] = [
   //       glory: 3,
   //       actions: [
   //         {
-  //           // label: 'End of Turn: Discard to make 1 other card stay in play.',
-  //           trigger: Trigger.END_TURN,
+  //             //           trigger: Trigger.END_TURN,
   //           optional: true,
   //           actions: [
   //             {
@@ -2784,8 +2746,7 @@ export const cardsData: CardDef[] = [
   //                 scope: TargetScope.BOARD,
   //               },
   //               effect: {
-  //                 // label: 'This card stays in play.',
-  //               },
+  //                   //               },
   //             },
   //           ],
   //         },
@@ -2810,8 +2771,7 @@ export const cardsData: CardDef[] = [
   //       glory: 5,
   //       actions: [
   //         {
-  //           // label: 'End of Turn: Discard to make 2 other cards stay in play.',
-  //           trigger: Trigger.END_TURN,
+  //             //           trigger: Trigger.END_TURN,
   //           optional: true,
   //         },
   //       ],
@@ -2836,8 +2796,7 @@ export const cardsData: CardDef[] = [
   //       glory: 9,
   //       actions: [
   //         {
-  //           // label: 'End of Turn: Discard to make 3 other cards stay in play.',
-  //           trigger: Trigger.END_TURN,
+  //             //           trigger: Trigger.END_TURN,
   //           optional: true,
   //         },
   //       ],
@@ -2862,8 +2821,7 @@ export const cardsData: CardDef[] = [
   //       glory: 15,
   //       actions: [
   //         {
-  //           // label: 'End of Turn: Discard to make 4 other cards stay in play.',
-  //           trigger: Trigger.END_TURN,
+  //             //           trigger: Trigger.END_TURN,
   //           optional: true,
   //         },
   //       ],

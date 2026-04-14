@@ -19,7 +19,10 @@ import { describe, expect, it } from 'vitest';
 describe('getEffectiveProductions', () => {
   it('returns base resources when no stickers are present', () => {
     const instance = makeInstance(1, 10, 1);
-    const result = getEffectiveProductions({ gold: 2, wood: 1 }, instance);
+    const cs = makeCardState(1);
+    const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
+    const gs = makeGameState({ instances: { 1: instance } });
+    const result = getEffectiveProductions({ gold: 2, wood: 1 }, cs, gs, defs, instance);
     expect(result).toEqual({ gold: 2, wood: 1 });
   });
 
@@ -35,7 +38,10 @@ describe('getEffectiveProductions', () => {
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
     };
-    const result = getEffectiveProductions({ gold: 2 }, instance, stickers);
+    const cs = makeCardState(1);
+    const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
+    const gs = makeGameState({ instances: { 1: instance } });
+    const result = getEffectiveProductions({ gold: 2 }, cs, gs, defs, instance, stickers);
     expect(result).toEqual({ gold: 3 });
   });
 
@@ -51,7 +57,10 @@ describe('getEffectiveProductions', () => {
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
     };
-    const result = getEffectiveProductions({ gold: 2 }, instance, stickers);
+    const cs = makeCardState(2);
+    const defs: Record<number, CardDef> = { 10: makeDef(10, [makeCardState(1), cs]) };
+    const gs = makeGameState({ instances: { 1: instance } });
+    const result = getEffectiveProductions({ gold: 2 }, cs, gs, defs, instance, stickers);
     expect(result).toEqual({ gold: 2 });
   });
 
@@ -64,7 +73,10 @@ describe('getEffectiveProductions', () => {
       trackProgress: [],
       cumulated: 0,
     };
-    const result = getEffectiveProductions({ gold: 2 }, instance, {});
+    const cs = makeCardState(1);
+    const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
+    const gs = makeGameState({ instances: { 1: instance } });
+    const result = getEffectiveProductions({ gold: 2 }, cs, gs, defs, instance, {});
     expect(result).toEqual({ gold: 2 });
   });
 
@@ -80,8 +92,123 @@ describe('getEffectiveProductions', () => {
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'remove', production: ResourceType.GOLD, glory: 0, description: '' },
     };
-    const result = getEffectiveProductions({ gold: 2 }, instance, stickers);
+    const cs = makeCardState(1);
+    const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
+    const gs = makeGameState({ instances: { 1: instance } });
+    const result = getEffectiveProductions({ gold: 2 }, cs, gs, defs, instance, stickers);
     expect(result).toEqual({ gold: 2 });
+  });
+
+  it('adds resource_per_card bonus based on matching board cards', () => {
+    const instance = makeInstance(1, 10, 1);
+    const other1 = makeInstance(2, 20, 1);
+    const other2 = makeInstance(3, 21, 1);
+    const activeState = makeCardState(1, {
+      passives: [
+        {
+          id: 'p1',
+          type: PassiveType.INCREASE_PRODUCTION,
+          resource_per_card: {
+            amount: 2,
+            resource: ResourceType.GOLD,
+            cards: { scope: TargetScope.BOARD },
+          },
+        },
+      ],
+    });
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [activeState]),
+      20: makeDef(20, [makeCardState(1)]),
+      21: makeDef(21, [makeCardState(1)]),
+    };
+    const gameState = makeGameState({
+      instances: { 1: instance, 2: other1, 3: other2 },
+      board: [1, 2, 3],
+    });
+    const result = getEffectiveProductions({ gold: 1 }, activeState, gameState, defs, instance, {});
+    // 2 matching cards on board (self excluded by cardSelector), 2 gold each → +4, base 1 → 5
+    expect(result).toEqual({ gold: 5 });
+  });
+
+  it('adds nothing when no cards match the selector', () => {
+    const instance = makeInstance(1, 10, 1);
+    const activeState = makeCardState(1, {
+      passives: [
+        {
+          id: 'p1',
+          type: PassiveType.INCREASE_PRODUCTION,
+          resource_per_card: {
+            amount: 3,
+            resource: ResourceType.WOOD,
+            cards: { scope: TargetScope.BOARD },
+          },
+        },
+      ],
+    });
+    const defs: Record<number, CardDef> = { 10: makeDef(10, [activeState]) };
+    const gameState = makeGameState({
+      instances: { 1: instance },
+      board: [1],
+    });
+    const result = getEffectiveProductions({ wood: 1 }, activeState, gameState, defs, instance, {});
+    expect(result).toEqual({ wood: 1 });
+  });
+
+  it('ignores INCREASE_PRODUCTION passive without resource_per_card', () => {
+    const instance = makeInstance(1, 10, 1);
+    const activeState = makeCardState(1, {
+      passives: [{ id: 'p1', type: PassiveType.INCREASE_PRODUCTION }],
+    });
+    const defs: Record<number, CardDef> = { 10: makeDef(10, [activeState]) };
+    const gameState = makeGameState({ instances: { 1: instance }, board: [1] });
+    const result = getEffectiveProductions({ gold: 2 }, activeState, gameState, defs, instance, {});
+    expect(result).toEqual({ gold: 2 });
+  });
+
+  it('stacks sticker bonus and resource_per_card bonus', () => {
+    const instance: CardInstance = {
+      id: 1,
+      cardId: 10,
+      stateId: 1,
+      stickers: { 1: [101] },
+      trackProgress: [],
+      cumulated: 0,
+    };
+    const other = makeInstance(2, 20, 1);
+    const stickers: Record<number, Sticker> = {
+      101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
+    };
+    const activeState = makeCardState(1, {
+      passives: [
+        {
+          id: 'p1',
+          type: PassiveType.INCREASE_PRODUCTION,
+          resource_per_card: {
+            amount: 1,
+            resource: ResourceType.GOLD,
+            cards: { scope: TargetScope.BOARD },
+          },
+        },
+      ],
+    });
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [activeState]),
+      20: makeDef(20, [makeCardState(1)]),
+    };
+    const gameState = makeGameState({
+      instances: { 1: instance, 2: other },
+      board: [1, 2],
+    });
+    // base gold: 2, sticker: +1, resource_per_card: 1 matching card × 1 = +1 → total 4
+    const result = getEffectiveProductions(
+      { gold: 2 },
+      activeState,
+      gameState,
+      defs,
+      instance,
+      stickers,
+    );
+    expect(result).toEqual({ gold: 4 });
   });
 });
 

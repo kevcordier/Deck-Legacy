@@ -94,7 +94,10 @@ export type Action = {
   resource_per_card?: {
     amount: number;
     resource: ResourceType;
-  } & CardeSelector;
+    scope?: TargetScope;
+    tags?: string[];
+    ids?: number[];
+  };
 };
 
 export type Passive = {
@@ -115,7 +118,8 @@ export type Passive = {
   resource_per_card?: {
     amount: number;
     resource: ResourceType;
-  } & CardeSelector;
+    cards: CardeSelector;
+  };
 };
 
 export type CardeSelector = {

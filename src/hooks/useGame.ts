@@ -6,7 +6,6 @@ import type {
   PendingChoice,
   ResolvedAction,
   ResolvedCost,
-  Resources,
   Sticker,
   TriggerEntry,
 } from '@engine/domain/types';
@@ -28,7 +27,7 @@ export type GameHook = {
   startGame: () => void;
   startRound: () => void;
   startTurn: () => void;
-  resolveProduction: (instanceId: number, chosenResource: Resources) => void;
+  resolveProduction: (instanceId: number, chosenResource: number) => void;
   resolveAction: (instanceId: number, actionId: string) => void;
   resolveTrackStep: (instanceId: number, stepId: number) => void;
   resolveUpgrade: (instanceId: number, chosenUpgradeTo?: number) => void;

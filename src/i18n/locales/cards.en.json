@@ -83,8 +83,8 @@
     "12_2_a0": "Reset to discover Jewellery (90).",
     "12_3_a0": "Gain {{weapon}} for each Person in play.",
     "14_3_a0": "Discover Shore 75.",
-    "11_4_p0": "This card has +1 {{gold}} production for each person you have in play.",
-    "14_4_p0": "As long as this card is in play, you may discard the top card of your deck.",
+    "11_4_p0": "This card has 1+{{gold}} production for each person in play.",
+    "14_4_a0": "As long as this card is in play, you may discard the top card of your deck.",
     "15_1_a0": "Stop",
     "16_1_a0": "Fertile Soil",
     "16_1_a1": "Efficiency"
@@ -106,7 +106,7 @@
     "11_2_a0": "Spend 3 gold to discover a Missionary (103).",
     "11_3_a0": "Spend 4 gold to discover a Priest (104).",
     "12_3_a0": "Gain 1 weapon for each Person in play.",
-    "11_4_p0": "This card has +1 gold production for each person you have in play."
+    "11_4_p0": "This card has +1 gold production for each person in play."
   },
   "texts": {
     "15": "## Stop!\nNow that you have got the hang of the game, you may reset to start again if you like to give it your best shot. If you continue, you will discover 4 cards, cards 24-27. Look at them now and THEN decide if you want to restart or continue.\n\nCards 25, 26, and 27 are **permanent** cards, meaning they are never shuffled into your deck and cannot be discarded. They are always visible and active, but are not counted as \"in play\".\n\nThe Army and Treasury are track cards. They let you spend your turn ({{time}}) and resources ({{weapon}}/{{gold}}) to gain fame. Export is a tally card. It doesn't end your turn ({{passif}}) and lets you spend trade goods ({{goods}}) to gain stickers, new cards, and other cool effects.\n\nYou will not be able to complete all tracks before the game ends. Try to get as far as possible!",

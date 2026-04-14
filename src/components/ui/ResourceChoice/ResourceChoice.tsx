@@ -5,7 +5,7 @@ import type { Resources } from '@engine/domain/types';
 interface ResourceChoiceProps {
   readonly options: Resources[];
   readonly disabled?: boolean;
-  readonly onSelect: (r: Resources) => void;
+  readonly onSelect: (index: number) => void;
   readonly size?: 'sm' | 'md' | 'lg';
 }
 
@@ -22,7 +22,7 @@ export function ResourceChoice({
         return (
           <Button
             key={i}
-            onClick={() => onSelect(opt)}
+            onClick={() => onSelect(i)}
             variant="text"
             color="base-ink"
             disabled={disabled}

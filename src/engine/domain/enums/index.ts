@@ -48,6 +48,8 @@ export enum ActionType {
 export enum PassiveType {
   BLOCK = 'BLOCK',
   STAY_IN_PLAY = 'STAY_IN_PLAY',
+  INCREASE_GLORY = 'INCREASE_GLORY',
+  INCREASE_PRODUCTION = 'INCREASE_PRODUCTION',
 }
 
 export enum ResourceType {

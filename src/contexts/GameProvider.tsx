@@ -11,7 +11,7 @@ import { resolveCost } from '@engine/application/costResolver';
 import { resolveActionEffect } from '@engine/application/effectResolver';
 import { createInstance } from '@engine/application/factory';
 import { mergeResources } from '@engine/application/gameStateHelper';
-import { ActionType, PendingChoiceType, type ResourceType } from '@engine/domain/enums';
+import { ActionType, PendingChoiceType } from '@engine/domain/enums';
 import type {
   CardAction,
   CardDef,
@@ -221,15 +221,20 @@ export function GameProvider({
     sync(aggRef.current.cardProduced(instanceId, resourcesGained));
   };
 
-  const resolveProduction = (
-    instanceId: number,
-    chosenResource: Partial<Record<ResourceType, number>>,
-  ) => {
+  const resolveProduction = (instanceId: number, chosenResource: number) => {
     const gs = aggRef.current.getGameState();
     const inst = gs.instances[instanceId];
     if (!inst || cardIsBlocked(instanceId, gs)) return;
 
-    const resourcesGained = getEffectiveProductions(chosenResource, inst, stickerDefs);
+    const resourcesGained = getEffectiveProductions(
+      defs[inst.cardId].states.find(s => s.id === inst.stateId)?.productions?.[chosenResource] ||
+        {},
+      getActiveState(inst, defs),
+      gs,
+      defs,
+      inst,
+      stickerDefs,
+    );
     triggerProduction(instanceId, resourcesGained);
   };
 
@@ -351,7 +356,14 @@ export function GameProvider({
       if (!inst || cardIsBlocked(instanceId, gs)) return;
 
       const base = choice.resources || {};
-      const resourcesGained = getEffectiveProductions(base, inst, stickerDefs);
+      const resourcesGained = getEffectiveProductions(
+        base,
+        getActiveState(inst, defs),
+        gs,
+        defs,
+        inst,
+        stickerDefs,
+      );
       triggerProduction(instanceId, resourcesGained);
       currentProductionRef.current = null;
     }

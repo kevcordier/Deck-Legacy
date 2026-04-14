@@ -217,6 +217,34 @@ export const WithOnDiscoverChooseStates: Story = {
   },
 };
 
+// Cathedral (Hill state 4) + 3 person cards on board
+// Expected: Cathedral shows 4 gold production (1 base + 3 from persons)
+const CATHEDRAL_STATE: GameState = {
+  ...EMPTY_STATE,
+  instances: {
+    ...INSTANCES_BASE,
+    // Instance 17 (Hill card) upgraded to Cathedral state
+    17: { id: 17, cardId: 11, stateId: 4, stickers: {}, trackProgress: [], cumulated: 0 },
+    // Instance 12 (River card) upgraded to Explorers state (PERSON)
+    12: { id: 12, cardId: 7, stateId: 4, stickers: {}, trackProgress: [], cumulated: 0 },
+  },
+  // board: Cathedral + Trader (PERSON) + Explorers (PERSON) + Field Worker (PERSON)
+  board: [17, 10, 12, 13],
+  drawPile: [1, 2, 3, 4, 5, 6],
+  discardPile: [],
+  permanents: [],
+  resources: { gold: 3 },
+  round: 2,
+  turn: 1,
+};
+
+export const CathedralIncreaseProduction: Story = {
+  name: 'Cathedral — increase_production (3 personnes → +3 or)',
+  args: {
+    saveState: CATHEDRAL_STATE,
+  },
+};
+
 export const WithStopCard: Story = {
   name: 'With ON_DISCOVER stop card',
   args: {

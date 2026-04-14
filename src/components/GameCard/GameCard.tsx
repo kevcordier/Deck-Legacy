@@ -15,7 +15,7 @@ import {
   tagClass,
 } from '@engine/application/cardHelpers';
 import type { CardInstance } from '@engine/domain/types';
-import { tCardActionLabel, tCardName, tCardTag } from '@helpers/cardI18n';
+import { tCardActionLabel, tCardName, tCardPassiveLabel, tCardTag } from '@helpers/cardI18n';
 import { getResMeta } from '@helpers/renderHelpers';
 import { useGame } from '@hooks/useGame';
 import React from 'react';
@@ -47,9 +47,8 @@ export function GameCard({
   const isEnemy = cs.negative === true;
   const isPermanent = def?.permanent;
   const isParchment = def?.parchmentCard ?? false;
-  const sc = getActiveState(instance, defs);
-  const base = sc.productions?.[0] || {};
-  const productions = getEffectiveProductions(base, instance, stickerDefs);
+  const base = cs.productions?.[0] || {};
+  const productions = getEffectiveProductions(base, cs, state, defs, instance, stickerDefs);
   const hasProductions = Object.keys(productions).length > 0;
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
@@ -116,7 +115,9 @@ export function GameCard({
           {hasProductions && resourceOptions && (
             <ResourceChoice
               onSelect={choosenOption => resolveProduction(instance.id, choosenOption)}
-              options={resourceOptions}
+              options={resourceOptions.map(opt =>
+                getEffectiveProductions(opt, cs, state, defs, instance, stickerDefs),
+              )}
               disabled={!canActivate || !isOnBoard || isBlocked}
             />
           )}
@@ -138,11 +139,14 @@ export function GameCard({
         </div>
 
         <div className={`relative z-10 flex flex-col items-center gap-1 p-1 @3xs:p-3`}>
-          {cs.passives && (
-            <span className={cardActionsClass}>
-              <PassifIcon className="size-3 @3xs:size-6" /> {t('card.stayInPlay')}
+          {(cs.passives ?? []).map((passive, i) => (
+            <span key={i} className={cardActionsClass}>
+              <PassifIcon className="size-3 @3xs:size-6" />{' '}
+              {passive.type === 'STAY_IN_PLAY'
+                ? t('card.stayInPlay')
+                : tCardPassiveLabel(t, def.id, cs.id, i)}
             </span>
-          )}
+          ))}
 
           {!isBlocked &&
             !isParchment &&
@@ -197,7 +201,7 @@ export function GameCard({
                             {ci > 0 && ', '}
                             {v}
                             {meta.icon && (
-                              <meta.icon className={`size-4 align-middle ${meta.cls}`} alt={k} />
+                              <meta.icon className={`size-4 align-baseline ${meta.cls}`} alt={k} />
                             )}
                           </React.Fragment>
                         );

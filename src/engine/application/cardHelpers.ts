@@ -1,3 +1,5 @@
+import { getAffectedCardsByBoardEffects } from '@engine/application/boardEffectHelpers';
+import { cardSelector } from '@engine/application/cardSelector';
 import { mergeResources } from '@engine/application/gameStateHelper';
 import { ActionType, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
 import type {
@@ -11,8 +13,13 @@ import type {
   TriggerEntry,
 } from '@engine/domain/types';
 
+export { getAffectedCardsByBoardEffects };
+
 export function getEffectiveProductions(
   base: Resources,
+  activeState: CardState,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
   instance: CardInstance,
   stickers: Record<number, Sticker> = {},
 ): Resources {
@@ -32,7 +39,18 @@ export function getEffectiveProductions(
     {},
   );
 
-  return mergeResources(base, stickerBonus);
+  let passiveBonus: Resources = {};
+  for (const passive of activeState.passives ?? []) {
+    if (passive.type === PassiveType.INCREASE_PRODUCTION && passive.resource_per_card) {
+      const { amount, resource, cards: sel } = passive.resource_per_card;
+      const count = cardSelector(sel, instance.id, gameState, defs).length;
+      if (count > 0) {
+        passiveBonus = mergeResources(passiveBonus, { [resource]: amount * count });
+      }
+    }
+  }
+
+  return mergeResources(mergeResources(base, stickerBonus), passiveBonus);
 }
 
 export function tagClass(tag: string, isEnemy: boolean): string {
@@ -133,25 +151,4 @@ export function cardIsBlocked(instanceId: number, gameState: GameState): boolean
   return Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK))
     .flat()
     .includes(instanceId);
-}
-
-export function getAffectedCardsByBoardEffects(
-  gameState: GameState,
-  passiveType: PassiveType,
-): Record<number, number[]> {
-  const affectedInstanceIds: Record<number, number[]> = {};
-  Object.entries(gameState.boardEffects).forEach(([sourceId, effects]) =>
-    effects
-      .filter(be => be.type === passiveType)
-      .forEach(be => {
-        if (be.cards?.ids) {
-          affectedInstanceIds[Number(sourceId)] = [
-            ...(affectedInstanceIds[Number(sourceId)] ?? []),
-            ...be.cards.ids,
-          ];
-        }
-      }),
-  );
-
-  return affectedInstanceIds;
 }

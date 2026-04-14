@@ -10,4 +10,12 @@ export const CardPassives: Record<string, Passive> = {
     id: 'block',
     type: PassiveType.BLOCK,
   },
+  [PassiveType.INCREASE_GLORY]: {
+    id: 'increase_glory',
+    type: PassiveType.INCREASE_GLORY,
+  },
+  [PassiveType.INCREASE_PRODUCTION]: {
+    id: 'increase_production',
+    type: PassiveType.INCREASE_PRODUCTION,
+  },
 };

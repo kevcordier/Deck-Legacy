@@ -217,7 +217,8 @@ export function PendingChoiceModal({
 
   // ── choose_resource ────────────────────────────────────────────────────
   if (choice && choice.type === PendingChoiceType.CHOOSE_RESOURCE) {
-    const handleResourceSelect = (r: Resources) => {
+    const handleResourceSelect = (i: number) => {
+      const r = choice.choices[i] as Resources;
       if (choice.kind === 'COST') {
         resolvePayCost({ resources: r, discardedCardIds: [], destroyedCardIds: [] });
       } else {
