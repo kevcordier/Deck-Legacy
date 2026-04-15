@@ -54,7 +54,7 @@ export function DeckViewer({
         )}
       </div>
       {deck.length > 0 ? (
-        <div className="flex flex-wrap justify-center lg:flex-col">
+        <>
           {displayedCard && (
             <div className="@container flex min-w-xs flex-col items-center p-2 lg:min-w-0">
               <GameCard instance={displayedCard} className="w-full" />
@@ -82,7 +82,7 @@ export function DeckViewer({
               })}
             </div>
           )}
-        </div>
+        </>
       ) : (
         emptyText && <p className="p-2 text-center text-sm text-gray-400 italic">{emptyText}</p>
       )}

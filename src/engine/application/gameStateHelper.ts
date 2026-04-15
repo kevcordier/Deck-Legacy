@@ -44,8 +44,6 @@ export const endTurn = (_gameState: GameState, cardDefs: Record<number, CardDef>
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
   gameState.resources = {};
 
-  // TODO: check ON_END_TURN effects and apply them insted of discarding cards
-
   const cardsToDiscard = gameState.board.filter(
     id => !cardShouldStayInPlay(id, gameState, cardDefs),
   );

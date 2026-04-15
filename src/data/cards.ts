@@ -2737,7 +2737,7 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '21-1-1',
-            trigger: Trigger.END_TURN,
+            trigger: Trigger.END_OF_TURN,
             optional: true,
             actions: [
               {
@@ -2777,7 +2777,7 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '21-2-1',
-            trigger: Trigger.END_TURN,
+            trigger: Trigger.END_OF_TURN,
             optional: true,
             actions: [
               {
@@ -2786,19 +2786,7 @@ export const cardsData: CardDef[] = [
                 cards: {
                   scope: TargetScope.BOARD,
                 },
-                effect: {
-                  ...CardPassives[PassiveType.STAY_IN_PLAY],
-                  cards: {
-                    scope: TargetScope.SELF,
-                  },
-                },
-              },
-              {
-                id: 2,
-                type: ActionType.ADD_BOARD_EFFECT,
-                cards: {
-                  scope: TargetScope.BOARD,
-                },
+                numberOfTimes: 2,
                 effect: {
                   ...CardPassives[PassiveType.STAY_IN_PLAY],
                   cards: {
@@ -2831,38 +2819,13 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '21-3-1',
-            trigger: Trigger.END_TURN,
+            trigger: Trigger.END_OF_TURN,
             optional: true,
             actions: [
               {
                 id: 1,
                 type: ActionType.ADD_BOARD_EFFECT,
-                cards: {
-                  scope: TargetScope.BOARD,
-                },
-                effect: {
-                  ...CardPassives[PassiveType.STAY_IN_PLAY],
-                  cards: {
-                    scope: TargetScope.SELF,
-                  },
-                },
-              },
-              {
-                id: 2,
-                type: ActionType.ADD_BOARD_EFFECT,
-                cards: {
-                  scope: TargetScope.BOARD,
-                },
-                effect: {
-                  ...CardPassives[PassiveType.STAY_IN_PLAY],
-                  cards: {
-                    scope: TargetScope.SELF,
-                  },
-                },
-              },
-              {
-                id: 3,
-                type: ActionType.ADD_BOARD_EFFECT,
+                numberOfTimes: 3,
                 cards: {
                   scope: TargetScope.BOARD,
                 },
@@ -2898,7 +2861,7 @@ export const cardsData: CardDef[] = [
         actions: [
           {
             id: '21-4-1',
-            trigger: Trigger.END_TURN,
+            trigger: Trigger.END_OF_TURN,
             optional: true,
             actions: [
               {
@@ -2907,45 +2870,7 @@ export const cardsData: CardDef[] = [
                 cards: {
                   scope: TargetScope.BOARD,
                 },
-                effect: {
-                  ...CardPassives[PassiveType.STAY_IN_PLAY],
-                  cards: {
-                    scope: TargetScope.SELF,
-                  },
-                },
-              },
-              {
-                id: 2,
-                type: ActionType.ADD_BOARD_EFFECT,
-                cards: {
-                  scope: TargetScope.BOARD,
-                },
-                effect: {
-                  ...CardPassives[PassiveType.STAY_IN_PLAY],
-                  cards: {
-                    scope: TargetScope.SELF,
-                  },
-                },
-              },
-              {
-                id: 3,
-                type: ActionType.ADD_BOARD_EFFECT,
-                cards: {
-                  scope: TargetScope.BOARD,
-                },
-                effect: {
-                  ...CardPassives[PassiveType.STAY_IN_PLAY],
-                  cards: {
-                    scope: TargetScope.SELF,
-                  },
-                },
-              },
-              {
-                id: 3,
-                type: ActionType.ADD_BOARD_EFFECT,
-                cards: {
-                  scope: TargetScope.BOARD,
-                },
+                numberOfTimes: 4,
                 effect: {
                   ...CardPassives[PassiveType.STAY_IN_PLAY],
                   cards: {

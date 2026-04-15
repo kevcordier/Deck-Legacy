@@ -299,6 +299,29 @@ export class GameAggregate {
   }
 
   public turnStarted(): GameState {
+    // const onEndTurnEvents = getInstancesTriggerEffects(
+    //   this.gameState.board.map(cardId => this.gameState.instances[cardId]),
+    //   this.cardDefs,
+    //   Trigger.END_OF_TURN,
+    // );
+
+    // if (onEndTurnEvents.length > 0) {
+    //   onEndTurnEvents.map(e => {
+    //     const event: UseCardEffectEvent = {
+    //       id: crypto.randomUUID(),
+    //       type: GameEventType.USE_CARD_EFFECT,
+    //       timestamp: Date.now(),
+    //       gameState: this.gameState,
+    //       sourceInstanceId: e.sourceInstanceId ?? -1,
+    //       triggerId: crypto.randomUUID(),
+    //       resolvedCost: { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
+    //     };
+    //     this.apply(event);
+    //     this.events.push(event);
+    //   });
+
+    //   return this.gameState;
+    // }
     if (this.gameState.drawPile.length === 0) {
       this.roundStarted();
       return this.gameState;
@@ -383,6 +406,7 @@ export class GameAggregate {
     resolvedCost: ResolvedCost,
     isDiscarded = false,
     isDestroyed = false,
+    endsTurn = false,
     triggerId: string,
     validatedStepId?: number,
     explicitSourceInstanceId?: number,
@@ -457,6 +481,9 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
+    if (endsTurn) {
+      this.turnStarted();
+    }
     return this.gameState;
   }
 

@@ -110,6 +110,7 @@ export function GameProvider({
       resolvedCost,
       !effect.passive && !effect.trigger,
       def.parchmentCard,
+      effect.endsTurn,
       triggerId,
     );
   };
@@ -302,6 +303,7 @@ export function GameProvider({
         resolvedCost,
         false,
         false,
+        cs.track?.endsTurn ?? false,
         triggerId,
         stepId,
         instanceId,
@@ -464,6 +466,7 @@ export function GameProvider({
             resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
             !action.passive && !action.trigger,
             def.parchmentCard,
+            action.endsTurn,
             triggerId,
           ),
         );

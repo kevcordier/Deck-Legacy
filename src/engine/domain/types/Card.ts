@@ -70,6 +70,7 @@ export type Action = {
   id: number;
   type: ActionType;
   cards?: CardeSelector;
+  numberOfTimes?: number; // TODO: multiple effect with differant target
   resources?: {
     gold?: number;
     wood?: number;
