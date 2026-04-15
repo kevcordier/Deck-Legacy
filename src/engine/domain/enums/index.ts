@@ -43,6 +43,7 @@ export enum ActionType {
   ADD_CUMULATED = 'ADD_CUMULATED',
   SET_CUMULATED = 'SET_CUMULATED',
   TRACK_ADVANCE = 'TRACK_ADVANCE',
+  ADD_BOARD_EFFECT = 'ADD_BOARD_EFFECT',
 }
 
 export enum PassiveType {

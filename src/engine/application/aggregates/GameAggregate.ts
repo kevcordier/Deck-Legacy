@@ -1,4 +1,5 @@
 import {
+  AddBoardEffectStrategy,
   AddResourceStrategy,
   AddStickerStrategy,
   BlockCardStrategy,
@@ -416,6 +417,10 @@ export class GameAggregate {
         }
         case ActionType.BLOCK_CARD: {
           cardActionContext.setStrategy(new BlockCardStrategy());
+          break;
+        }
+        case ActionType.ADD_BOARD_EFFECT: {
+          cardActionContext.setStrategy(new AddBoardEffectStrategy());
           break;
         }
         case ActionType.PLAY_CARD: {

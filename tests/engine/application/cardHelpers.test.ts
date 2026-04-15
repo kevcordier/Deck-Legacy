@@ -99,7 +99,7 @@ describe('getEffectiveProductions', () => {
     expect(result).toEqual({ gold: 2 });
   });
 
-  it('adds resource_per_card bonus based on matching board cards', () => {
+  it('adds resourcePerCard bonus based on matching board cards', () => {
     const instance = makeInstance(1, 10, 1);
     const other1 = makeInstance(2, 20, 1);
     const other2 = makeInstance(3, 21, 1);
@@ -108,7 +108,7 @@ describe('getEffectiveProductions', () => {
         {
           id: 'p1',
           type: PassiveType.INCREASE_PRODUCTION,
-          resource_per_card: {
+          resourcePerCard: {
             amount: 2,
             resource: ResourceType.GOLD,
             cards: { scope: TargetScope.BOARD },
@@ -137,7 +137,7 @@ describe('getEffectiveProductions', () => {
         {
           id: 'p1',
           type: PassiveType.INCREASE_PRODUCTION,
-          resource_per_card: {
+          resourcePerCard: {
             amount: 3,
             resource: ResourceType.WOOD,
             cards: { scope: TargetScope.BOARD },
@@ -154,7 +154,7 @@ describe('getEffectiveProductions', () => {
     expect(result).toEqual({ wood: 1 });
   });
 
-  it('ignores INCREASE_PRODUCTION passive without resource_per_card', () => {
+  it('ignores INCREASE_PRODUCTION passive without resourcePerCard', () => {
     const instance = makeInstance(1, 10, 1);
     const activeState = makeCardState(1, {
       passives: [{ id: 'p1', type: PassiveType.INCREASE_PRODUCTION }],
@@ -165,7 +165,7 @@ describe('getEffectiveProductions', () => {
     expect(result).toEqual({ gold: 2 });
   });
 
-  it('stacks sticker bonus and resource_per_card bonus', () => {
+  it('stacks sticker bonus and resourcePerCard bonus', () => {
     const instance: CardInstance = {
       id: 1,
       cardId: 10,
@@ -183,7 +183,7 @@ describe('getEffectiveProductions', () => {
         {
           id: 'p1',
           type: PassiveType.INCREASE_PRODUCTION,
-          resource_per_card: {
+          resourcePerCard: {
             amount: 1,
             resource: ResourceType.GOLD,
             cards: { scope: TargetScope.BOARD },
@@ -199,7 +199,7 @@ describe('getEffectiveProductions', () => {
       instances: { 1: instance, 2: other },
       board: [1, 2],
     });
-    // base gold: 2, sticker: +1, resource_per_card: 1 matching card × 1 = +1 → total 4
+    // base gold: 2, sticker: +1, resourcePerCard: 1 matching card × 1 = +1 → total 4
     const result = getEffectiveProductions(
       { gold: 2 },
       activeState,

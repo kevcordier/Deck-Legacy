@@ -41,8 +41,8 @@ export function getEffectiveProductions(
 
   let passiveBonus: Resources = {};
   for (const passive of activeState.passives ?? []) {
-    if (passive.type === PassiveType.INCREASE_PRODUCTION && passive.resource_per_card) {
-      const { amount, resource, cards: sel } = passive.resource_per_card;
+    if (passive.type === PassiveType.INCREASE_PRODUCTION && passive.resourcePerCard) {
+      const { amount, resource, cards: sel } = passive.resourcePerCard;
       const count = cardSelector(sel, instance.id, gameState, defs).length;
       if (count > 0) {
         passiveBonus = mergeResources(passiveBonus, { [resource]: amount * count });

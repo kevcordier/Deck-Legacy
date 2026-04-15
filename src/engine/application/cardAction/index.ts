@@ -1,3 +1,4 @@
+export * from '@engine/application/cardAction/AddBoardEffectStrategy';
 export * from '@engine/application/cardAction/AddResourceStrategy';
 export * from '@engine/application/cardAction/AddStickerStrategy';
 export * from '@engine/application/cardAction/BlockCardStrategy';

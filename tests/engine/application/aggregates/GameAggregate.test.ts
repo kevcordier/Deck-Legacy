@@ -903,6 +903,38 @@ describe('GameAggregate.useCardEffect — BLOCK_CARD', () => {
   });
 });
 
+describe('GameAggregate.useCardEffect — ADD_BOARD_EFFECT', () => {
+  it('adds the board effect to the target instances', () => {
+    const state: GameState = {
+      ...EMPTY_STATE,
+      instances: {
+        1: makeInstance(1, 10, 1),
+        2: makeInstance(2, 10, 1),
+      },
+      board: [1, 2],
+      triggerPile: {
+        t1: {
+          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          sourceInstanceId: 1,
+        },
+      },
+    };
+    const agg = new GameAggregate([], state, {});
+    const effects: ResolvedAction[] = [
+      {
+        id: '1-1',
+        type: ActionType.ADD_BOARD_EFFECT,
+        sourceInstanceId: 1,
+        instanceIds: [2],
+        effect: { id: 'test-effect', type: 'BOOST' },
+      } as unknown as ResolvedAction,
+    ];
+    agg.useCardEffect(effects, makeEmptyResolvedCost(), false, false, 't1');
+    expect(agg.getGameState().boardEffects[2]).toBeDefined();
+    expect(agg.getGameState().boardEffects[2][0].id).toBe('test-effect');
+  });
+});
+
 describe('GameAggregate.useCardEffect — PLAY_CARD', () => {
   it('adds the target card to the board', () => {
     const defs = { 10: makeDef(10) };

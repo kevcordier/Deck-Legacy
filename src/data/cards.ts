@@ -1386,7 +1386,7 @@ export const cardsData: CardDef[] = [
             cards: {
               scope: TargetScope.SELF,
             },
-            resource_per_card: {
+            resourcePerCard: {
               resource: ResourceType.GOLD,
               amount: 1,
               cards: {
@@ -1502,7 +1502,7 @@ export const cardsData: CardDef[] = [
               {
                 id: 1,
                 type: ActionType.ADD_RESOURCES,
-                resource_per_card: {
+                resourcePerCard: {
                   amount: 1,
                   resource: ResourceType.WEAPON,
                   scope: TargetScope.BOARD,
@@ -2725,107 +2725,238 @@ export const cardsData: CardDef[] = [
       },
     ],
   },
-  // {
-  //   id: 21,
-  //   name: 'Shrine',
-  //   states: [
-  //     {
-  //       id: 1,
-  //       name: 'Shrine',
-  //       tags: [CardTag.LAND],
-  //       glory: 3,
-  //       actions: [
-  //         {
-  //             //           trigger: Trigger.END_TURN,
-  //           optional: true,
-  //           actions: [
-  //             {
-  //               id: 1,
-  //               type: ActionType.ADD_BOARD_EFFECT,
-  //               cards: {
-  //                 scope: TargetScope.BOARD,
-  //               },
-  //               effect: {
-  //                   //               },
-  //             },
-  //           ],
-  //         },
-  //       ],
-  //       upgrade: [
-  //         {
-  //           cost: {
-  //             resources: [
-  //               {
-  //                 [ResourceType.GOLD]: 3,
-  //               },
-  //             ],
-  //           },
-  //           upgradeTo: 2,
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       id: 2,
-  //       name: 'Sanctuary',
-  //       tags: [CardTag.BUILDING],
-  //       glory: 5,
-  //       actions: [
-  //         {
-  //             //           trigger: Trigger.END_TURN,
-  //           optional: true,
-  //         },
-  //       ],
-  //       upgrade: [
-  //         {
-  //           cost: {
-  //             resources: [
-  //               {
-  //                 [ResourceType.GOLD]: 3,
-  //                 [ResourceType.STONE]: 2,
-  //               },
-  //             ],
-  //           },
-  //           upgradeTo: 3,
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       id: 3,
-  //       name: 'Oratory',
-  //       tags: [CardTag.BUILDING],
-  //       glory: 9,
-  //       actions: [
-  //         {
-  //             //           trigger: Trigger.END_TURN,
-  //           optional: true,
-  //         },
-  //       ],
-  //       upgrade: [
-  //         {
-  //           cost: {
-  //             resources: [
-  //               {
-  //                 [ResourceType.GOLD]: 2,
-  //                 [ResourceType.WOOD]: 2,
-  //               },
-  //             ],
-  //           },
-  //           upgradeTo: 4,
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       id: 4,
-  //       name: 'Temple',
-  //       tags: [CardTag.BUILDING],
-  //       glory: 15,
-  //       actions: [
-  //         {
-  //             //           trigger: Trigger.END_TURN,
-  //           optional: true,
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // },
+  {
+    id: 21,
+    name: 'Shrine',
+    states: [
+      {
+        id: 1,
+        name: 'Shrine',
+        tags: [CardTag.LAND],
+        glory: 3,
+        actions: [
+          {
+            id: '21-1-1',
+            trigger: Trigger.END_TURN,
+            optional: true,
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_BOARD_EFFECT,
+                cards: {
+                  scope: TargetScope.BOARD,
+                },
+                effect: {
+                  ...CardPassives[PassiveType.STAY_IN_PLAY],
+                  cards: {
+                    scope: TargetScope.SELF,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+        upgrade: [
+          {
+            cost: {
+              resources: [
+                {
+                  [ResourceType.GOLD]: 3,
+                },
+              ],
+            },
+            upgradeTo: 2,
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'Sanctuary',
+        tags: [CardTag.BUILDING],
+        glory: 5,
+        actions: [
+          {
+            id: '21-2-1',
+            trigger: Trigger.END_TURN,
+            optional: true,
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_BOARD_EFFECT,
+                cards: {
+                  scope: TargetScope.BOARD,
+                },
+                effect: {
+                  ...CardPassives[PassiveType.STAY_IN_PLAY],
+                  cards: {
+                    scope: TargetScope.SELF,
+                  },
+                },
+              },
+              {
+                id: 2,
+                type: ActionType.ADD_BOARD_EFFECT,
+                cards: {
+                  scope: TargetScope.BOARD,
+                },
+                effect: {
+                  ...CardPassives[PassiveType.STAY_IN_PLAY],
+                  cards: {
+                    scope: TargetScope.SELF,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+        upgrade: [
+          {
+            cost: {
+              resources: [
+                {
+                  [ResourceType.GOLD]: 3,
+                  [ResourceType.STONE]: 2,
+                },
+              ],
+            },
+            upgradeTo: 3,
+          },
+        ],
+      },
+      {
+        id: 3,
+        name: 'Oratory',
+        tags: [CardTag.BUILDING],
+        glory: 9,
+        actions: [
+          {
+            id: '21-3-1',
+            trigger: Trigger.END_TURN,
+            optional: true,
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_BOARD_EFFECT,
+                cards: {
+                  scope: TargetScope.BOARD,
+                },
+                effect: {
+                  ...CardPassives[PassiveType.STAY_IN_PLAY],
+                  cards: {
+                    scope: TargetScope.SELF,
+                  },
+                },
+              },
+              {
+                id: 2,
+                type: ActionType.ADD_BOARD_EFFECT,
+                cards: {
+                  scope: TargetScope.BOARD,
+                },
+                effect: {
+                  ...CardPassives[PassiveType.STAY_IN_PLAY],
+                  cards: {
+                    scope: TargetScope.SELF,
+                  },
+                },
+              },
+              {
+                id: 3,
+                type: ActionType.ADD_BOARD_EFFECT,
+                cards: {
+                  scope: TargetScope.BOARD,
+                },
+                effect: {
+                  ...CardPassives[PassiveType.STAY_IN_PLAY],
+                  cards: {
+                    scope: TargetScope.SELF,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+        upgrade: [
+          {
+            cost: {
+              resources: [
+                {
+                  [ResourceType.GOLD]: 2,
+                  [ResourceType.WOOD]: 2,
+                },
+              ],
+            },
+            upgradeTo: 4,
+          },
+        ],
+      },
+      {
+        id: 4,
+        name: 'Temple',
+        tags: [CardTag.BUILDING],
+        glory: 15,
+        actions: [
+          {
+            id: '21-4-1',
+            trigger: Trigger.END_TURN,
+            optional: true,
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_BOARD_EFFECT,
+                cards: {
+                  scope: TargetScope.BOARD,
+                },
+                effect: {
+                  ...CardPassives[PassiveType.STAY_IN_PLAY],
+                  cards: {
+                    scope: TargetScope.SELF,
+                  },
+                },
+              },
+              {
+                id: 2,
+                type: ActionType.ADD_BOARD_EFFECT,
+                cards: {
+                  scope: TargetScope.BOARD,
+                },
+                effect: {
+                  ...CardPassives[PassiveType.STAY_IN_PLAY],
+                  cards: {
+                    scope: TargetScope.SELF,
+                  },
+                },
+              },
+              {
+                id: 3,
+                type: ActionType.ADD_BOARD_EFFECT,
+                cards: {
+                  scope: TargetScope.BOARD,
+                },
+                effect: {
+                  ...CardPassives[PassiveType.STAY_IN_PLAY],
+                  cards: {
+                    scope: TargetScope.SELF,
+                  },
+                },
+              },
+              {
+                id: 3,
+                type: ActionType.ADD_BOARD_EFFECT,
+                cards: {
+                  scope: TargetScope.BOARD,
+                },
+                effect: {
+                  ...CardPassives[PassiveType.STAY_IN_PLAY],
+                  cards: {
+                    scope: TargetScope.SELF,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ];

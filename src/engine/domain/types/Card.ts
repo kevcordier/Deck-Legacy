@@ -91,19 +91,21 @@ export type Action = {
   };
   states?: number[];
   stickerIds?: number[];
-  resource_per_card?: {
+  resourcePerCard?: {
     amount: number;
     resource: ResourceType;
     scope?: TargetScope;
     tags?: string[];
     ids?: number[];
   };
+  effect?: Passive;
 };
 
 export type Passive = {
   id: string;
   type: PassiveType;
   cards?: CardeSelector;
+  onPlayCards?: CardeSelector;
   resources?: {
     gold?: number;
     wood?: number;
@@ -115,7 +117,7 @@ export type Passive = {
   };
   states?: number[];
   stickerIds?: number[];
-  resource_per_card?: {
+  resourcePerCard?: {
     amount: number;
     resource: ResourceType;
     cards: CardeSelector;
@@ -136,6 +138,8 @@ export type ResolvedAction = {
   type: ActionType;
   sourceInstanceId: number;
   instanceId?: number;
+  instanceIds?: number[];
+  effect?: Passive;
   resources?: Resources;
   stickerId?: number;
   stateId?: number;

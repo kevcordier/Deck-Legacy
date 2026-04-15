@@ -22,6 +22,31 @@ export function resolveActionEffect(
     sourceInstanceId: instanceId,
   };
   const pendingChoice: PendingChoice[] = [];
+
+  if (action.type === ActionType.ADD_BOARD_EFFECT) {
+    if (action.cards) {
+      const instanceIds = cardSelector(action.cards, instanceId, gameState, defs);
+
+      if (instanceIds.length > 1) {
+        pendingChoice.push({
+          id: `${instanceId}-${action.id}`,
+          kind: action.type,
+          type: PendingChoiceType.CHOOSE_CARD,
+          sourceInstanceId: instanceId,
+          choices: instanceIds,
+          pickCount: 1,
+          isMandatory,
+        });
+      } else if (instanceIds.length === 1) {
+        resolverAction.instanceId = instanceIds[0];
+      }
+    }
+    if (action.effect) {
+      resolverAction.effect = action.effect;
+    }
+    return [resolverAction, pendingChoice];
+  }
+
   if (action.type === ActionType.BOOST_CARD) {
     action.cards = { ...action.cards, produces: Object.values(ResourceType) };
   }
@@ -119,7 +144,7 @@ export function resolveActionEffect(
     }
   }
 
-  if (action.resource_per_card) {
+  if (action.resourcePerCard) {
     // calcule the total resources to add based on the number of cards matching the selector
   }
 

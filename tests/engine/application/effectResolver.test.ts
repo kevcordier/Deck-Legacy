@@ -1,8 +1,9 @@
 import { makeGameState, makeInstance } from './testHelpers';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { resolveActionEffect } from '@engine/application/effectResolver';
-import { ActionType, PendingChoiceType, TargetScope } from '@engine/domain/enums';
+import { ActionType, PassiveType, PendingChoiceType, TargetScope } from '@engine/domain/enums';
 import type { Action, CardDef } from '@engine/domain/types';
+import { CardPassives } from '@engine/domain/types/effects';
 import { describe, expect, it } from 'vitest';
 
 const makeAction = (overrides: Partial<Action> & Pick<Action, 'id' | 'type'>): Action => ({
@@ -259,14 +260,110 @@ describe('resolveActionEffect — resources.cards without gameState', () => {
   });
 });
 
-// — resource_per_card —
+// — ADD_BOARD_EFFECT —
 
-describe('resolveActionEffect — resource_per_card', () => {
-  it('ignores resource_per_card (not yet implemented)', () => {
+describe('resolveActionEffect — ADD_BOARD_EFFECT', () => {
+  it('resolves all matching cards into instanceIds without pending choice', () => {
+    const gs = makeGameState({
+      board: [2, 3],
+      instances: {
+        2: makeInstance(2, 10, 1),
+        3: makeInstance(3, 10, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'Card', states: [{ id: 1, name: 'State 1' }] },
+    };
+    const effect = CardPassives[PassiveType.STAY_IN_PLAY];
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_BOARD_EFFECT,
+      cards: { scope: TargetScope.BOARD },
+      effect,
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe(PendingChoiceType.CHOOSE_CARD);
+    expect(pending[0].choices).toEqual([2, 3]);
+    expect(resolved.effect).toEqual(effect);
+  });
+
+  it('resolves instanceId directly when exactly one card matches', () => {
+    const gs = makeGameState({
+      board: [2],
+      instances: { 2: makeInstance(2, 10, 1) },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'Card', states: [{ id: 1, name: 'State 1' }] },
+    };
+    const effect = CardPassives[PassiveType.STAY_IN_PLAY];
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_BOARD_EFFECT,
+      cards: { scope: TargetScope.BOARD },
+      effect,
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(pending).toEqual([]);
+    expect(resolved.instanceId).toBe(2);
+    expect(resolved.effect).toEqual(effect);
+  });
+
+  it('resolves to empty instanceIds when no cards match', () => {
+    const gs = makeGameState({ board: [], instances: {} });
+    const defs: Record<number, CardDef> = {};
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_BOARD_EFFECT,
+      cards: { scope: TargetScope.BOARD },
+      effect: CardPassives[PassiveType.STAY_IN_PLAY],
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(resolved.instanceIds).toBeUndefined();
+    expect(pending).toEqual([]);
+  });
+
+  it('resolves without effect when action.effect is absent', () => {
+    const gs = makeGameState({
+      board: [2],
+      instances: { 2: makeInstance(2, 10, 1) },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'Card', states: [{ id: 1, name: 'State 1' }] },
+    };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_BOARD_EFFECT,
+      cards: { scope: TargetScope.BOARD },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(pending).toEqual([]);
+    expect(resolved.effect).toBeUndefined();
+    expect(resolved.instanceId).toBe(2);
+  });
+
+  it('resolves effect without cards selector', () => {
+    const effect = CardPassives[PassiveType.STAY_IN_PLAY];
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_BOARD_EFFECT,
+      effect,
+    });
+    const [resolved, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
+    expect(resolved.instanceIds).toBeUndefined();
+    expect(resolved.effect).toEqual(effect);
+    expect(pending).toEqual([]);
+  });
+});
+
+// — resourcePerCard —
+
+describe('resolveActionEffect — resourcePerCard', () => {
+  it('ignores resourcePerCard (not yet implemented)', () => {
     const action = makeAction({
       id: 1,
       type: ActionType.ADD_RESOURCES,
-      resource_per_card: { amount: 1, resource: 'gold' as never, scope: TargetScope.BOARD },
+      resourcePerCard: { amount: 1, resource: 'gold' as never, scope: TargetScope.BOARD },
     });
     const [resolved, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
     expect(pending).toEqual([]);
