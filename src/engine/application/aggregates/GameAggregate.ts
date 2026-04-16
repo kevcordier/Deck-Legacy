@@ -4,6 +4,7 @@ import {
   AddStickerStrategy,
   BlockCardStrategy,
   CardActionContext,
+  type CardActionStrategy,
   DestroyCardStrategy,
   DiscardCardStrategy,
   PlaceCardInDrawPileStrategy,
@@ -401,6 +402,28 @@ export class GameAggregate {
     return this.gameState;
   }
 
+  private getStrategy(effectType: ActionType): CardActionStrategy {
+    const strategies: Partial<Record<ActionType, CardActionStrategy>> = {
+      [ActionType.ADD_RESOURCES]: new AddResourceStrategy(),
+      [ActionType.DISCARD_CARD]: new DiscardCardStrategy(),
+      [ActionType.DISCOVER_CARD]: new DiscoverCardStrategy(this.cardDefs),
+      [ActionType.DESTROY_CARD]: new DestroyCardStrategy(),
+      [ActionType.UPGRADE_CARD]: new UpgradeCardStrategy(),
+      [ActionType.PLACE_CARD_IN_DRAW_PILE]: new PlaceCardInDrawPileStrategy(),
+      [ActionType.BLOCK_CARD]: new BlockCardStrategy(),
+      [ActionType.ADD_BOARD_EFFECT]: new AddBoardEffectStrategy(),
+      [ActionType.PLAY_CARD]: new PlayCardStrategy(this.cardDefs),
+      [ActionType.BOOST_CARD]: new AddStickerStrategy(),
+      [ActionType.ADD_STICKER]: new AddStickerStrategy(),
+      [ActionType.CHOOSE_STATE]: new ChoseStateStrategy(),
+    };
+    const strategy = strategies[effectType];
+    if (!strategy) {
+      throw new Error(`Unknown effect type: ${effectType}`);
+    }
+    return strategy;
+  }
+
   public useCardEffect(
     effects: ResolvedAction[],
     resolvedCost: ResolvedCost,
@@ -413,58 +436,9 @@ export class GameAggregate {
   ): GameState {
     const cardActionContext = new CardActionContext();
 
-    const gameState = effects.reduce((gameState, effect) => {
-      switch (effect.type) {
-        case ActionType.ADD_RESOURCES: {
-          cardActionContext.setStrategy(new AddResourceStrategy());
-          break;
-        }
-        case ActionType.DISCARD_CARD: {
-          cardActionContext.setStrategy(new DiscardCardStrategy());
-          break;
-        }
-        case ActionType.DISCOVER_CARD: {
-          cardActionContext.setStrategy(new DiscoverCardStrategy(this.cardDefs));
-          break;
-        }
-        case ActionType.DESTROY_CARD: {
-          cardActionContext.setStrategy(new DestroyCardStrategy());
-          break;
-        }
-        case ActionType.UPGRADE_CARD: {
-          cardActionContext.setStrategy(new UpgradeCardStrategy());
-          break;
-        }
-        case ActionType.PLACE_CARD_IN_DRAW_PILE: {
-          cardActionContext.setStrategy(new PlaceCardInDrawPileStrategy());
-          break;
-        }
-        case ActionType.BLOCK_CARD: {
-          cardActionContext.setStrategy(new BlockCardStrategy());
-          break;
-        }
-        case ActionType.ADD_BOARD_EFFECT: {
-          cardActionContext.setStrategy(new AddBoardEffectStrategy());
-          break;
-        }
-        case ActionType.PLAY_CARD: {
-          cardActionContext.setStrategy(new PlayCardStrategy(this.cardDefs));
-          break;
-        }
-        case ActionType.BOOST_CARD:
-        case ActionType.ADD_STICKER: {
-          cardActionContext.setStrategy(new AddStickerStrategy());
-          break;
-        }
-        case ActionType.CHOOSE_STATE: {
-          cardActionContext.setStrategy(new ChoseStateStrategy());
-          break;
-        }
-        default:
-          throw new Error(`Unknown effect type: ${effect.type}`);
-      }
-
-      return cardActionContext.applyEffect(gameState, effect);
+    const gameState = effects.reduce((gs, effect) => {
+      cardActionContext.setStrategy(this.getStrategy(effect.type));
+      return cardActionContext.applyEffect(gs, effect);
     }, this.gameState);
 
     const event: UseCardEffectEvent = {
