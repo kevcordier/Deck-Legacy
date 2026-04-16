@@ -66,6 +66,147 @@ interface PendingChoiceModalProps {
   readonly onSkipChoice: (uuid: string) => void;
 }
 
+type ChoiceSection = {
+  title: string;
+  subtitle: React.ReactNode;
+  content: React.ReactNode;
+};
+
+function getChoiceSection(
+  choice: PendingChoice,
+  instances: Record<number, CardInstance>,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+  t: TFunction,
+  resolvePlayerChoice: (option: ResolvedAction) => void,
+  resolvePayCost: (resolved: ResolvedCost) => void,
+): ChoiceSection {
+  if (choice.type === PendingChoiceType.CHOOSE_CARD) {
+    const handleCardClick = (instanceId: number) => {
+      if (choice.kind === 'COST') {
+        resolvePayCost({ resources: {}, discardedCardIds: [instanceId], destroyedCardIds: [] });
+      } else {
+        resolvePlayerChoice({
+          id: choice.id,
+          type: choice.kind,
+          sourceInstanceId: choice.sourceInstanceId,
+          instanceId,
+        });
+      }
+    };
+    return {
+      title: t(`pendingChoice.chooseCard.${choice.kind}`, { count: choice.pickCount }),
+      subtitle: getChoiceActionLabel(choice, instances, defs, t),
+      content: (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {choice.choices.map(id => {
+            if (typeof id !== 'number') return null;
+            const inst = instances[id];
+            const def = inst ? defs[inst.cardId] : undefined;
+            if (!def || !inst) return null;
+            const state = def.states.find(s => s.id === inst.stateId) ?? def.states[0];
+            return (
+              <div className="relative transition-transform hover:scale-[1.02]" key={id}>
+                <button
+                  onClick={() => handleCardClick(id)}
+                  className="absolute inset-0 z-12 cursor-pointer!"
+                ></button>
+                <GameCard instance={makePreviewInstance(def, state)} hideStatePreview />
+              </div>
+            );
+          })}
+        </div>
+      ),
+    };
+  }
+
+  if (choice.type === PendingChoiceType.CHOOSE_STATE) {
+    const sourceInst = instances[choice.sourceInstanceId];
+    const cardDef = sourceInst ? defs[sourceInst.cardId] : undefined;
+    return {
+      title: t(`pendingChoice.chooseState`),
+      subtitle: getChoiceActionLabel(choice, instances, defs, t),
+      content: (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {choice.choices.map(stateId => {
+            if (typeof stateId !== 'number') return null;
+            const state = cardDef?.states.find(s => s.id === stateId);
+            if (!cardDef || !state) return null;
+            return (
+              <div key={stateId} className="relative transition-transform hover:scale-[1.02]">
+                <button
+                  onClick={() =>
+                    resolvePlayerChoice({
+                      id: choice.id,
+                      type: choice.kind,
+                      sourceInstanceId: choice.sourceInstanceId,
+                      stateId,
+                    })
+                  }
+                  className="absolute inset-0 z-12 cursor-pointer!"
+                ></button>
+                <GameCard instance={makePreviewInstance(cardDef, state)} hideStatePreview />
+              </div>
+            );
+          })}
+        </div>
+      ),
+    };
+  }
+
+  if (choice.type === PendingChoiceType.CHOOSE_RESOURCE) {
+    const handleResourceSelect = (i: number) => {
+      const r = choice.choices[i] as Resources;
+      if (choice.kind === 'COST') {
+        resolvePayCost({ resources: r, discardedCardIds: [], destroyedCardIds: [] });
+      } else {
+        resolvePlayerChoice({
+          id: choice.id,
+          type: choice.kind,
+          sourceInstanceId: choice.sourceInstanceId,
+          resources: r,
+        });
+      }
+    };
+    return {
+      title: t(`pendingChoice.chooseResource`),
+      subtitle: getChoiceActionLabel(choice, instances, defs, t),
+      content: (
+        <ResourceChoice
+          options={choice.choices.filter(
+            (c): c is Resources => typeof c !== 'number' && typeof c !== 'string',
+          )}
+          size="lg"
+          onSelect={handleResourceSelect}
+        />
+      ),
+    };
+  }
+
+  const handleStickerSelect = (stickerId: number) => {
+    resolvePlayerChoice({
+      id: choice.id,
+      type: choice.kind,
+      sourceInstanceId: choice.sourceInstanceId,
+      stickerId,
+    });
+  };
+  return {
+    title: t(`pendingChoice.chooseSticker`),
+    subtitle: getChoiceActionLabel(choice, instances, defs, t),
+    content: (
+      <StickerChoice
+        options={choice.choices
+          .filter((c): c is number => typeof c === 'number')
+          .map(id => stickerDefs[id])
+          .filter((s): s is NonNullable<typeof s> => s !== undefined)}
+        size="lg"
+        onSelect={handleStickerSelect}
+      />
+    ),
+  };
+}
+
 export function PendingChoiceModal({
   choice,
   triggerPile,
@@ -83,6 +224,7 @@ export function PendingChoiceModal({
   let content;
   let title = '';
   let subtitle;
+
   // ── trigger_pile ───────────────────────────────────────────────────────
   if (triggerPile && Object.keys(triggerPile).length > 0) {
     title = t('triggerPile.title');
@@ -141,134 +283,17 @@ export function PendingChoiceModal({
     );
   }
 
-  // ── choose_card ──────────────────────────────────────────────────────
-  if (choice && choice.type === PendingChoiceType.CHOOSE_CARD) {
-    const handleCardClick = (instanceId: number) => {
-      if (choice.kind === 'COST') {
-        resolvePayCost({ resources: {}, discardedCardIds: [instanceId], destroyedCardIds: [] });
-      } else {
-        resolvePlayerChoice({
-          id: choice.id,
-          type: choice.kind,
-          sourceInstanceId: choice.sourceInstanceId,
-          instanceId,
-        });
-      }
-    };
-
-    title = t(`pendingChoice.chooseCard.${choice.kind}`, { count: choice.pickCount });
-    subtitle = getChoiceActionLabel(choice, instances, defs, t);
-
-    content = (
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {choice.choices.map(id => {
-          if (typeof id !== 'number') return null;
-          const inst = instances[id];
-          const def = inst ? defs[inst.cardId] : undefined;
-          if (!def || !inst) return null;
-          const state = def.states.find(s => s.id === inst.stateId) ?? def.states[0];
-          return (
-            <div className="relative transition-transform hover:scale-[1.02]" key={id}>
-              <button
-                onClick={() => handleCardClick(id)}
-                className="absolute inset-0 z-12 cursor-pointer!"
-              ></button>
-              <GameCard instance={makePreviewInstance(def, state)} hideStatePreview />
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  // ── choose_state ───────────────────────────────────────────────────────
-  if (choice && choice.type === PendingChoiceType.CHOOSE_STATE) {
-    const sourceInst = instances[choice.sourceInstanceId];
-    const cardDef = sourceInst ? defs[sourceInst.cardId] : undefined;
-
-    title = t(`pendingChoice.chooseState`);
-    subtitle = getChoiceActionLabel(choice, instances, defs, t);
-    content = (
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {choice.choices.map(stateId => {
-          if (typeof stateId !== 'number') return null;
-          const state = cardDef?.states.find(s => s.id === stateId);
-          if (!cardDef || !state) return null;
-          return (
-            <div key={stateId} className="relative transition-transform hover:scale-[1.02]">
-              <button
-                onClick={() =>
-                  resolvePlayerChoice({
-                    id: choice.id,
-                    type: choice.kind,
-                    sourceInstanceId: choice.sourceInstanceId,
-                    stateId,
-                  })
-                }
-                className="absolute inset-0 z-12 cursor-pointer!"
-              ></button>
-              <GameCard instance={makePreviewInstance(cardDef, state)} hideStatePreview />
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  // ── choose_resource ────────────────────────────────────────────────────
-  if (choice && choice.type === PendingChoiceType.CHOOSE_RESOURCE) {
-    const handleResourceSelect = (i: number) => {
-      const r = choice.choices[i] as Resources;
-      if (choice.kind === 'COST') {
-        resolvePayCost({ resources: r, discardedCardIds: [], destroyedCardIds: [] });
-      } else {
-        resolvePlayerChoice({
-          id: choice.id,
-          type: choice.kind,
-          sourceInstanceId: choice.sourceInstanceId,
-          resources: r,
-        });
-      }
-    };
-
-    title = t(`pendingChoice.chooseResource`);
-    subtitle = getChoiceActionLabel(choice, instances, defs, t);
-
-    content = (
-      <ResourceChoice
-        options={choice.choices.filter(
-          (c): c is Resources => typeof c !== 'number' && typeof c !== 'string',
-        )}
-        size="lg"
-        onSelect={handleResourceSelect}
-      />
-    );
-  }
-
-  // ── choose_sticker ────────────────────────────────────────────────────
-  if (choice && choice.type === PendingChoiceType.CHOOSE_STICKER) {
-    const handleStickerSelect = (stickerId: number) => {
-      resolvePlayerChoice({
-        id: choice.id,
-        type: choice.kind,
-        sourceInstanceId: choice.sourceInstanceId,
-        stickerId,
-      });
-    };
-
-    title = t(`pendingChoice.chooseSticker`);
-    subtitle = getChoiceActionLabel(choice, instances, defs, t);
-
-    content = (
-      <StickerChoice
-        options={choice.choices
-          .filter((c): c is number => typeof c === 'number')
-          .map(id => stickerDefs[id])
-          .filter((s): s is NonNullable<typeof s> => s !== undefined)}
-        size="lg"
-        onSelect={handleStickerSelect}
-      />
-    );
+  // ── pending choice ─────────────────────────────────────────────────────
+  if (choice) {
+    ({ title, subtitle, content } = getChoiceSection(
+      choice,
+      instances,
+      defs,
+      stickerDefs,
+      t,
+      resolvePlayerChoice,
+      resolvePayCost,
+    ));
   }
 
   const onClose = choice?.isMandatory === false ? () => onSkipChoice(choice.id) : undefined;
