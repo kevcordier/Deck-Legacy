@@ -23,7 +23,7 @@ export function ResourceBar() {
 
       <div className="flex shrink-0 grow flex-wrap items-center gap-2 lg:gap-4">
         {entries.length === 0 ? (
-          <p className="text-sm text-gray-400 italic">{t('resourceBar.noResources')}</p>
+          <p className="text-sm text-ink/50 italic">{t('resourceBar.noResources')}</p>
         ) : (
           entries.map(([k, v]) => {
             return (

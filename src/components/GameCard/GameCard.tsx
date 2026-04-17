@@ -71,10 +71,10 @@ export function GameCard({
 
   return (
     <div
-      className={`${cardClass} ${className} ${animationDelayClass} ${isPermanent ? 'border-5 border-gray-400' : ''}`}
+      className={`${cardClass} ${className} ${animationDelayClass} ${isPermanent ? 'border-5 border-permanent' : ''}`}
     >
       {isBlocked && (
-        <div className="bg-opacity-50 absolute inset-0 z-20 flex items-center justify-center bg-red-950/60">
+        <div className="bg-opacity-50 absolute inset-0 z-20 flex items-center justify-center bg-tag-enemy/60">
           <span className="font-display text-danger rounded bg-black px-2 py-1 uppercase">
             {t('card.blocked')}
           </span>
@@ -89,7 +89,7 @@ export function GameCard({
             {instance.id !== undefined && instance.id !== 0 && (
               <span className={`mr-1 rounded bg-black/6 px-1 font-bold`}>#{instance.id}</span>
             )}
-            <span className={`font-display truncate font-bold ${isEnemy ? 'text-red-600' : ''}`}>
+            <span className={`font-display truncate font-bold ${isEnemy ? 'text-tag-enemy' : ''}`}>
               {tCardName(t, instance.cardId, cs.id)}
             </span>
           </span>

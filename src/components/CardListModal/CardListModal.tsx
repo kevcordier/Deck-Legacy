@@ -25,7 +25,7 @@ export function CardListModal({
       {children === null ||
       children === undefined ||
       (Array.isArray(children) && children.length === 0) ? (
-        <p className="p-2 text-center text-sm text-gray-400 italic">
+        <p className="p-2 text-center text-sm text-ink/50 italic">
           {emptyText ?? t('cardList.noCards')}
         </p>
       ) : (

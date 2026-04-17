@@ -55,14 +55,14 @@ export function getEffectiveProductions(
 
 export function tagClass(tag: string, isEnemy: boolean): string {
   const t = tag.toLowerCase();
-  let tagClass = 'bg-base-ink/10 border border-base-ink/20';
-  if (isEnemy) tagClass += ' bg-red-500/10 border-red-500/20';
-  if (t === 'building') tagClass += ' bg-gray-500/10 border-gray-300/20';
-  if (t === 'person') tagClass += ' bg-yellow-500/10 border-yellow-500/20';
-  if (t === 'seafaring') tagClass += ' bg-sky-500/10 border-sky-300/20';
-  if (t === 'land') tagClass += ' bg-green-500/10 border-green-500/20';
-  if (t === 'livestock') tagClass += ' bg-orange-500/10 border-orange-500/20';
-  return tagClass;
+  const tagClass = 'border';
+  if (isEnemy) return tagClass + ' bg-tag-enemy/10 border-tag-enemy';
+  if (t === 'building') return tagClass + ' bg-tag-building/10 border-tag-building';
+  if (t === 'person') return tagClass + ' bg-tag-person/10 border-tag-person';
+  if (t === 'seafaring') return tagClass + ' bg-tag-seafaring/10 border-tag-seafaring';
+  if (t === 'land') return tagClass + ' bg-tag-land/10 border-tag-land';
+  if (t === 'livestock') return tagClass + ' bg-tag-livestock/10 border-tag-livestock';
+  return tagClass + ' bg-tag-tag/10 border-tag-tag';
 }
 
 /** Retourne l'état actif d'une instance (lève une erreur si la définition ou l'état est introuvable). */

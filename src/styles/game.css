@@ -1,38 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel+Decorative:wght@400;700&display=swap');
 @import 'tailwindcss';
+@import './tokens.css';
+
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @theme {
-  /* ── Brand colors ───────────────────────────────────────────────────── */
-  --color-background: #fff2e0;
-  --color-base-ink: #664a26;
-  --color-ink: var(--color-base-ink);
-  --color-border: #bda887;
-  --color-base-primary: #c79233;
-  --color-primary: var(--color-base-primary);
-  --color-card: #f0e4be;
-
-  --spacing-2xs: 0.5rem;
-
-  /* ── Semantic colors ─────────────────────────────────────────────────────── */
-  --color-danger: #c2554f;
-  --color-success: #00b286;
-
-  /* ── Card type colors ────────────────────────────────────────────────────── */
-  --color-type-discover: #5566aa;
-  --color-type-upgrade: #8866cc;
-  --color-type-building: #a0a8d8;
-  --color-type-action: #a0c0e0;
-  --color-type-seafaring: #80b8e8;
-  --color-type-passive: #8090a8;
-  --color-type-stay-in-play: #90c890;
-  --color-type-event: #e0a080;
-
-  /* ── Fonts ───────────────────────────────────────────────────────────────── */
-  --font-display: 'Cinzel', serif;
-  --font-deco: 'Cinzel Decorative', serif;
-  --font-body: 'EB Garamond', serif;
-
   --animate-fade-in-scale: fade-in-scale 0.5s ease;
   @keyframes fade-in-scale {
     0% {
@@ -50,10 +22,10 @@
   :root,
   :host {
     @variant dark {
-      --color-primary: #ffd07c;
-      --color-ink: #fff2e0;
-      --color-background: #3b342a;
-      --color-border: #65553c;
+      /* --color-primary: var(--color-dark-primary);
+      --color-ink: var(--color-dark-ink);
+      --color-background: var(--color-dark-background);
+      --color-border: var(--color-dark-border); */
     }
   }
 }

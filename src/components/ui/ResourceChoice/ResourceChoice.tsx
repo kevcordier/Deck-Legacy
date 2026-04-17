@@ -26,7 +26,7 @@ export function ResourceChoice({
             variant="text"
             color="base-ink"
             disabled={disabled}
-            className="not-hover:not-disabled:bg-card transition-transform hover:scale-[1.02] rounded-full p-2! flex gap-1 backdrop-blur-sm"
+            className="not-hover:not-disabled:bg-card transition-transform hover:scale-[1.02] rounded-full! p-2! flex gap-1 backdrop-blur-sm"
           >
             {entries.map(([key, val]) =>
               Array.from({ length: val }, (_, j) => (

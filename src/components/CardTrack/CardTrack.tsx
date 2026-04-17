@@ -2,7 +2,7 @@ import { Button } from '@components/ui/Button/Button';
 import { Glory } from '@components/ui/Glory/Glory';
 import { canAffordResources } from '@engine/application/cardHelpers';
 import { ActionType } from '@engine/domain/enums';
-import type { Resources, TrackDef } from '@engine/domain/types';
+import type { Action, Resources, TrackDef } from '@engine/domain/types';
 import { getResMeta } from '@helpers/renderHelpers';
 import React from 'react';
 
@@ -12,7 +12,6 @@ interface CardTrackProps {
   readonly currentResources: Resources;
   readonly canActivate: boolean;
   readonly onStep: (stepId: number) => void;
-  readonly size?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export function CardTrack({
@@ -21,7 +20,6 @@ export function CardTrack({
   currentResources,
   canActivate,
   onStep,
-  size = 'md',
 }: CardTrackProps) {
   const firstPendingId = track.inOrder
     ? track.steps.find(s => !validatedSteps.includes(s.id))?.id
@@ -44,50 +42,44 @@ export function CardTrack({
         const actions = step.onClick.actions ?? [];
 
         const contents: React.ReactNode[] = [];
-        const glorySize = size === 'lg' ? 'md' : 'sm';
         if (glory !== undefined && glory !== 0) {
-          contents.push(<Glory key="glory" glory={glory} size={glorySize} />);
+          contents.push(<Glory key="glory" glory={glory} size="sm" />);
         }
-        actions.forEach(action => {
+
+        const getActionContent = (action: Action) => {
           if (action.type === ActionType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
-            contents.push(<span key={action.id}>#{action.cards.ids[0]}</span>);
-          } else if (action.type === ActionType.UPGRADE_CARD) {
-            contents.push(<span key={action.id}>⬆</span>);
-          } else if (action.type === ActionType.ADD_RESOURCES && action.resources) {
-            const [resKey] =
-              Object.entries(action.resources).filter(([k]) => k !== 'choice')[0] ?? [];
+            return <span key={action.id}>#{action.cards.ids[0]}</span>;
+          }
+
+          if (action.type === ActionType.UPGRADE_CARD) {
+            return <span key={action.id}>⬆</span>;
+          }
+
+          if (action.type === ActionType.ADD_RESOURCES && action.resources) {
+            const [resKey] = Object.entries(action.resources).find(([k]) => k !== 'choice') ?? [];
             if (resKey) {
               const meta = getResMeta(resKey);
-              contents.push(
-                meta.icon ? (
-                  <meta.icon
-                    className={`${meta.cls} ${size === 'xs' || size === 'sm' ? 'size-3' : size === 'lg' ? 'size-4' : 'size-5'}`}
-                    alt={resKey}
-                    key={action.id}
-                  />
-                ) : null,
-              );
+              return meta.icon ? (
+                <meta.icon className={`${meta.cls} size-3`} alt={resKey} key={action.id} />
+              ) : null;
             }
           }
+        };
+
+        actions.forEach(action => {
+          contents.push(getActionContent(action));
         });
 
         return (
           <div key={step.id} className="flex flex-col items-center gap-1">
             {costEntry && (
-              <div
-                className={`flex items-center gap-0.5 ${size === 'xs' || size === 'sm' ? 'text-xs' : 'text-base'} text-gray-500`}
-              >
+              <div className={`flex items-center gap-0.5 text-base text-ink/50`}>
                 {Object.entries(costEntry).map(([k, v]) => {
                   const meta = getResMeta(k);
                   return (
                     <React.Fragment key={k}>
                       {v}
-                      {meta.icon && (
-                        <meta.icon
-                          className={`${meta.cls} ${size === 'xs' ? 'size-3' : size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-4'}`}
-                          alt={k}
-                        />
-                      )}
+                      {meta.icon && <meta.icon className={`${meta.cls} size-4`} alt={k} />}
                     </React.Fragment>
                   );
                 })}
@@ -95,8 +87,8 @@ export function CardTrack({
             )}
             <Button
               className={[
-                `${size === 'xs' ? 'size-5' : size === 'sm' ? 'size-6' : size === 'lg' ? 'size-12' : 'size-10'} ${size === 'xs' || size === 'sm' ? 'text-xs' : 'text-base'} flex flex-col items-center justify-center rounded-sm border-2 border-gray-300 leading-none font-bold`,
-                isValidated ? 'border-green-700 bg-green-700/20! text-green-700' : '',
+                `size-10 text-base flex flex-col items-center justify-center border-2 leading-none font-bold`,
+                isValidated ? 'border-success bg-success/20! text-success' : '',
               ].join(' ')}
               disabled={!isClickable && !isValidated}
               variant="text"

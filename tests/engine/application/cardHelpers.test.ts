@@ -216,56 +216,36 @@ describe('getEffectiveProductions', () => {
 
 describe('tagClass', () => {
   it('returns tag class for "enemy"', () => {
-    expect(tagClass('enemy', true)).toBe(
-      'bg-base-ink/10 border border-base-ink/20 bg-red-500/10 border-red-500/20',
-    );
+    expect(tagClass('enemy', true)).toBe('border bg-tag-enemy/10 border-tag-enemy');
   });
 
   it('returns tag class for "building"', () => {
-    expect(tagClass('building', false)).toBe(
-      'bg-base-ink/10 border border-base-ink/20 bg-gray-500/10 border-gray-300/20',
-    );
+    expect(tagClass('building', false)).toBe('border bg-tag-building/10 border-tag-building');
   });
 
   it('returns tag class for "person"', () => {
-    expect(tagClass('person', false)).toBe(
-      'bg-base-ink/10 border border-base-ink/20 bg-yellow-500/10 border-yellow-500/20',
-    );
+    expect(tagClass('person', false)).toBe('border bg-tag-person/10 border-tag-person');
   });
 
   it('returns tag class for "seafaring"', () => {
-    expect(tagClass('seafaring', false)).toBe(
-      'bg-base-ink/10 border border-base-ink/20 bg-sky-500/10 border-sky-300/20',
-    );
+    expect(tagClass('seafaring', false)).toBe('border bg-tag-seafaring/10 border-tag-seafaring');
   });
 
   it('returns tag class for "land"', () => {
-    expect(tagClass('land', false)).toBe(
-      'bg-base-ink/10 border border-base-ink/20 bg-green-500/10 border-green-500/20',
-    );
+    expect(tagClass('land', false)).toBe('border bg-tag-land/10 border-tag-land');
   });
 
   it('returns tag class for "livestock"', () => {
-    expect(tagClass('livestock', false)).toBe(
-      'bg-base-ink/10 border border-base-ink/20 bg-orange-500/10 border-orange-500/20',
-    );
-  });
-
-  it('returns tag class for "event"', () => {
-    expect(tagClass('event', false)).toBe('bg-base-ink/10 border border-base-ink/20');
+    expect(tagClass('livestock', false)).toBe('border bg-tag-livestock/10 border-tag-livestock');
   });
 
   it('is case-insensitive', () => {
-    expect(tagClass('ENEMY', true)).toBe(
-      'bg-base-ink/10 border border-base-ink/20 bg-red-500/10 border-red-500/20',
-    );
-    expect(tagClass('Building', false)).toBe(
-      'bg-base-ink/10 border border-base-ink/20 bg-gray-500/10 border-gray-300/20',
-    );
+    expect(tagClass('ENEMY', true)).toBe('border bg-tag-enemy/10 border-tag-enemy');
+    expect(tagClass('Building', false)).toBe('border bg-tag-building/10 border-tag-building');
   });
 
   it('returns generic tag class for unknown tags', () => {
-    expect(tagClass('unknown', false)).toBe('bg-base-ink/10 border border-base-ink/20');
+    expect(tagClass('unknown', false)).toBe('border bg-tag-tag/10 border-tag-tag');
   });
 });
 
