@@ -44,20 +44,15 @@ export function CardTrack({
         const actions = step.onClick.actions ?? [];
 
         const contents: React.ReactNode[] = [];
+        const glorySize = size === 'lg' ? 'md' : 'sm';
         if (glory !== undefined && glory !== 0) {
-          contents.push(
-            <Glory
-              key="glory"
-              glory={glory}
-              size={size === 'xs' || size === 'sm' ? 'sm' : size === 'lg' ? 'md' : 'sm'}
-            />,
-          );
+          contents.push(<Glory key="glory" glory={glory} size={glorySize} />);
         }
-        actions.forEach((action, i) => {
+        actions.forEach(action => {
           if (action.type === ActionType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
-            contents.push(<span key={i}>#{action.cards.ids[0]}</span>);
+            contents.push(<span key={action.id}>#{action.cards.ids[0]}</span>);
           } else if (action.type === ActionType.UPGRADE_CARD) {
-            contents.push(<span key={i}>⬆</span>);
+            contents.push(<span key={action.id}>⬆</span>);
           } else if (action.type === ActionType.ADD_RESOURCES && action.resources) {
             const [resKey] =
               Object.entries(action.resources).filter(([k]) => k !== 'choice')[0] ?? [];
@@ -68,7 +63,7 @@ export function CardTrack({
                   <meta.icon
                     className={`${meta.cls} ${size === 'xs' || size === 'sm' ? 'size-3' : size === 'lg' ? 'size-4' : 'size-5'}`}
                     alt={resKey}
-                    key={i}
+                    key={action.id}
                   />
                 ) : null,
               );

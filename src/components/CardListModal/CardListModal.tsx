@@ -1,14 +1,14 @@
 import { Modal } from '@components/ui/Modal/Modal';
-import React from 'react';
+import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
 interface CardListModalProps {
-  readonly title: React.ReactNode;
-  readonly subtitle?: React.ReactNode;
+  readonly title: ReactNode;
+  readonly subtitle?: ReactNode;
   readonly onClose: () => void;
   readonly emptyText?: string;
-  readonly children?: React.ReactNode;
+  readonly children?: ReactNode;
 }
 
 export function CardListModal({
@@ -22,7 +22,9 @@ export function CardListModal({
 
   const modal = (
     <Modal title={title} subtitle={subtitle} onClose={onClose} className="lg:min-w-5xl!">
-      {React.Children.count(children) === 0 ? (
+      {children === null ||
+      children === undefined ||
+      (Array.isArray(children) && children.length === 0) ? (
         <p className="p-2 text-center text-sm text-gray-400 italic">
           {emptyText ?? t('cardList.noCards')}
         </p>

@@ -105,7 +105,7 @@ export function GameProvider({
       return;
     }
     // If no pending choices are needed to resolve the effects, proceed to trigger the action immediately
-    return aggRef.current.useCardEffect(
+    return aggRef.current.applyCardEffect(
       effects,
       resolvedCost,
       !effect.passive && !effect.trigger,
@@ -298,7 +298,7 @@ export function GameProvider({
 
     const triggerId = crypto.randomUUID();
     sync(
-      aggRef.current.useCardEffect(
+      aggRef.current.applyCardEffect(
         effects,
         resolvedCost,
         false,
@@ -461,7 +461,7 @@ export function GameProvider({
         currentActionRef.current = null;
 
         sync(
-          aggRef.current.useCardEffect(
+          aggRef.current.applyCardEffect(
             resolvedAction,
             resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
             !action.passive && !action.trigger,
@@ -573,7 +573,7 @@ export function GameProvider({
   };
 
   return (
-    <GameContext.Provider
+    <GameContext
       value={{
         gameState,
         defs,
@@ -606,6 +606,6 @@ export function GameProvider({
       }}
     >
       {children}
-    </GameContext.Provider>
+    </GameContext>
   );
 }

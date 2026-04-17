@@ -29,8 +29,8 @@ export function ButtonGroup({
       >
         {options.map(option => (
           <Button
-            {...option}
             key={option.value || JSON.stringify(option.children)}
+            {...option}
             color={value === option.value ? 'primary' : 'ink'}
             size={size}
             font={font}

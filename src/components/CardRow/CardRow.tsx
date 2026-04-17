@@ -27,7 +27,7 @@ export function CardRow({ cardIds, blockedCards, instances }: CardRowProps) {
             ? Object.entries(blockedCards).find(([blockedId]) => Number(blockedId) === id)
             : undefined;
           const blockerId = blockerEntry ? Number(blockerEntry[1]) : null;
-          const blockerInst = blockerId !== null ? instances[blockerId] : null;
+          const blockerInst = blockerId ? instances[blockerId] : null;
           if (isBlocked && blockerInst && blockerId !== null) {
             return (
               <div key={id} className={'relative shrink-0 @container'}>

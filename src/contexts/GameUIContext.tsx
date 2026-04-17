@@ -7,7 +7,7 @@ type GameUIContextType = {
   rulesOpen: boolean;
   setRulesOpen: (open: boolean) => void;
   theme: Theme;
-  setTheme: (theme: Theme) => void;
+  applyTheme: (theme: Theme) => void;
 };
 
 export const GameUIContext = createContext<GameUIContextType>({} as GameUIContextType);

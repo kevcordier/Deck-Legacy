@@ -17,11 +17,11 @@ function resolveTheme(theme: Theme): 'light' | 'dark' {
 export function GameUIProvider({ children }: { children: ReactNode }) {
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [rulesOpen, setRulesOpen] = useState(false);
-  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
 
-  function setTheme(newTheme: Theme) {
+  function applyTheme(newTheme: Theme) {
     localStorage.setItem('deck_legacy_theme', newTheme);
-    setThemeState(newTheme);
+    setTheme(newTheme);
   }
 
   useEffect(() => {
@@ -39,17 +39,17 @@ export function GameUIProvider({ children }: { children: ReactNode }) {
   }, [theme]);
 
   return (
-    <GameUIContext.Provider
+    <GameUIContext
       value={{
         optionsOpen,
         setOptionsOpen,
         rulesOpen,
         setRulesOpen,
         theme,
-        setTheme,
+        applyTheme,
       }}
     >
       {children}
-    </GameUIContext.Provider>
+    </GameUIContext>
   );
 }

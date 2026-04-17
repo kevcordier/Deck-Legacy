@@ -126,12 +126,12 @@ export function GameCard({
 
           {currentStateStickers.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {currentStateStickers.map((stickerId, i) => {
+              {currentStateStickers.map(stickerId => {
                 const sticker = stickerDefs[stickerId];
                 if (!sticker) return null;
                 if (sticker.production)
-                  return <ResourcePill key={i} resource={sticker.production} />;
-                if (sticker.glory) return <Glory key={i} glory={sticker.glory} />;
+                  return <ResourcePill key={stickerId} resource={sticker.production} />;
+                if (sticker.glory) return <Glory key={stickerId} glory={sticker.glory} />;
                 return null;
               })}
             </div>
@@ -140,7 +140,7 @@ export function GameCard({
 
         <div className={`relative z-10 flex flex-col items-center gap-1 p-1 @3xs:p-3`}>
           {(cs.passives ?? []).map((passive, i) => (
-            <span key={i} className={cardActionsClass}>
+            <span key={passive.id} className={cardActionsClass}>
               <PassifIcon className="size-3 @3xs:size-6" />{' '}
               {passive.type === 'STAY_IN_PLAY'
                 ? t('card.stayInPlay')
@@ -154,7 +154,7 @@ export function GameCard({
               const actionLabel = tCardActionLabel(t, instance.cardId, cs.id, i);
               return (
                 <CardAction
-                  key={i}
+                  key={action.id}
                   instanceId={instance.id}
                   action={action}
                   actionLabel={actionLabel}
@@ -174,14 +174,14 @@ export function GameCard({
           )}
 
           {!isBlocked &&
-            upgrades.map((upg, i) => {
+            upgrades.map(upg => {
               const affordable = canAffordResources(currentResources, upg.cost);
               const targetState = def?.states.find(s => s.id === upg.upgradeTo);
               return (
                 <Button
                   variant="text"
                   color="base-ink"
-                  key={i}
+                  key={upg.upgradeTo}
                   onClick={() => resolveUpgrade(instance.id, upg.upgradeTo)}
                   disabled={!affordable || !canActivate}
                   className={cardActionsClass}

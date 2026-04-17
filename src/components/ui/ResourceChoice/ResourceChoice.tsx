@@ -21,7 +21,7 @@ export function ResourceChoice({
         const entries = Object.entries(opt);
         return (
           <Button
-            key={i}
+            key={JSON.stringify(opt)}
             onClick={() => onSelect(i)}
             variant="text"
             color="base-ink"

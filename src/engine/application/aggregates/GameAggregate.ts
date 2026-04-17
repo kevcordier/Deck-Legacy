@@ -424,7 +424,7 @@ export class GameAggregate {
     return strategy;
   }
 
-  public useCardEffect(
+  public applyCardEffect(
     effects: ResolvedAction[],
     resolvedCost: ResolvedCost,
     isDiscarded = false,

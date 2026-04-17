@@ -10,7 +10,7 @@ import type {
   TriggerEntry,
 } from '@engine/domain/types';
 import type { Phase } from '@engine/domain/types/Phase';
-import { useContext, useMemo } from 'react';
+import { use, useMemo } from 'react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -71,7 +71,7 @@ export function useGame(): GameHook {
     dismissParchmentText,
     canRewind,
     rewindEvent,
-  } = useContext(GameContext);
+  } = use(GameContext);
 
   // ── Score ─────────────────────────────────────────────────────────────────
 

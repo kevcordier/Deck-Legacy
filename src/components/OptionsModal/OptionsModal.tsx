@@ -3,7 +3,7 @@ import { ButtonGroup } from '@components/ui/ButtonGroup/ButtonGroup';
 import { Modal } from '@components/ui/Modal/Modal';
 import { GameUIContext } from '@contexts/GameUIContext';
 import type { Theme } from '@contexts/GameUIProvider';
-import { useContext, useState } from 'react';
+import { use, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface OptionsModalProps {
@@ -14,7 +14,7 @@ interface OptionsModalProps {
 export function OptionsModal({ onClose, onReset }: OptionsModalProps) {
   const { t, i18n } = useTranslation();
   const [confirmReset, setConfirmReset] = useState(false);
-  const { theme, setTheme } = useContext(GameUIContext);
+  const { theme, applyTheme } = use(GameUIContext);
 
   function handleReset() {
     onReset();
@@ -26,7 +26,7 @@ export function OptionsModal({ onClose, onReset }: OptionsModalProps) {
       <ButtonGroup
         label={t('options.theme')}
         value={theme}
-        onChange={value => setTheme(value as Theme)}
+        onChange={value => applyTheme(value as Theme)}
         size="sm"
         font="body"
         options={[

@@ -1,5 +1,5 @@
 import { GameUIContext } from '@contexts/GameUIContext';
-import { useContext } from 'react';
+import { use } from 'react';
 
 type GameUIHook = {
   setOptionsOpen: (open: boolean) => void;
@@ -9,7 +9,7 @@ type GameUIHook = {
 };
 
 export function useGameUI(): GameUIHook {
-  const { setOptionsOpen, setRulesOpen, optionsOpen, rulesOpen } = useContext(GameUIContext);
+  const { setOptionsOpen, setRulesOpen, optionsOpen, rulesOpen } = use(GameUIContext);
 
   return {
     setOptionsOpen,
