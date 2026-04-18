@@ -1,12 +1,14 @@
 name: Code quality checks and tests
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      config-path:
+        required: true
+        type: string
+    secrets:
+      personal_access_token:
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -46,7 +48,3 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@3c50566c523e04813df28de8f7c48dd97d663f1c
         with:
           threshold-icons: "{0: '🔴', 80: '🟠', 90: '🟢'}"
-      - name: 🐳 SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

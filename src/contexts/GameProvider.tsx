@@ -31,10 +31,7 @@ import {
 import { deleteSave, loadSave, saveGame } from '@engine/infrastructure/persistence';
 import { type ReactNode, useMemo, useRef, useState } from 'react';
 
-function makeAggregate(
-  state: GameState = { ...EMPTY_STATE },
-  cardDefs: Record<number, CardDef>,
-): GameAggregate {
+function makeAggregate(state: GameState, cardDefs: Record<number, CardDef>): GameAggregate {
   return new GameAggregate([], JSON.parse(JSON.stringify(state)) as GameState, cardDefs);
 }
 
@@ -49,7 +46,7 @@ export function GameProvider({
 }) {
   const defs = useMemo(() => loadCardDefs(), []);
   const stickerDefs = useMemo(() => loadStickerDefs(), []);
-  const agg = makeAggregate(initialState, defs);
+  const agg = makeAggregate(initialState || EMPTY_STATE, defs);
   agg.loadFromHistory(initialEvents);
   const aggRef = useRef<GameAggregate>(agg);
   const [gameState, setGameState] = useState<GameState>(agg.getGameState());

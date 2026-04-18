@@ -3,7 +3,6 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   workflow_run:
-    workflows: ['Code quality checks and tests']
     branches: [main]
     types:
       - completed
@@ -17,6 +16,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  ci:
+    name: CI
+    uses: kevcordier/Deck-Legacy/.github/workflows/ci.yml@main
   deploy:
     name: Deploy
     permissions:
@@ -54,3 +56,27 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+  sonar:
+    name: SonarQube Analysis
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+      - name: 🏗️ Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: ⚙️ Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'pnpm'
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: 🐳 SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

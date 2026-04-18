@@ -69,8 +69,8 @@ export const NoResources: Story = {
     resources: {},
     round: 1,
     turn: 1,
-    drawPile: Array(12).fill(0),
-    discardPile: Array(0).fill(0),
+    drawPile: new Array(12).fill(0),
+    discardPile: new Array(0).fill(0),
   },
 };
 
@@ -79,8 +79,8 @@ export const RichResources: Story = {
     resources: { gold: 5, wood: 3, stone: 2, iron: 1, weapon: 2, goods: 4 },
     round: 5,
     turn: 8,
-    drawPile: Array(4).fill(0),
-    discardPile: Array(10).fill(0),
+    drawPile: new Array(4).fill(0),
+    discardPile: new Array(10).fill(0),
   },
 };
 
@@ -90,7 +90,7 @@ export const GameStart: Story = {
     score: 0,
     round: 0,
     turn: 0,
-    drawPile: Array(15).fill(0),
-    discardPile: Array(0).fill(0),
+    drawPile: new Array(15).fill(0),
+    discardPile: new Array(0).fill(0),
   },
 };
