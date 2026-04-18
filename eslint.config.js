@@ -50,8 +50,8 @@ export default tseslint.config(
 
       // Disable sonarjs duplicate of @typescript-eslint/no-unused-vars (which already ignores _-prefixed vars)
       'sonarjs/no-unused-vars': 'off',
-      'sonarjs/todo-tag': 'warn',
-      'sonarjs/no-commented-code': 'warn',
+      'sonarjs/todo-tag': 'off',
+      'sonarjs/no-commented-code': 'off',
 
       // General
       'no-console': ['warn', { allow: ['warn', 'error'] }],
