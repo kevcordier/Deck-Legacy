@@ -12,7 +12,7 @@ import {
 } from '@components/ui/Icon/icon';
 import { Title } from '@components/ui/Title/Title';
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 const ICON_MAP: Record<string, React.ComponentType> = {
@@ -55,28 +55,27 @@ type MarkdownTextProps = {
   readonly text: string;
 };
 
+const components: Components = {
+  img: ({ src, alt }) => <IconImg src={src} alt={alt} className="inline-block size-5" />,
+  h1: () => '',
+  h2: ({ children }) => (
+    <Title level={2} className="mb-1 not-first-of-type:mt-3">
+      {children}
+    </Title>
+  ),
+  h3: ({ children }) => (
+    <Title level={3} className="mb-1 not-first-of-type:mt-3">
+      {children}
+    </Title>
+  ),
+  strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+  hr: () => <Divider color="border" />,
+  p: ({ children }) => <p className="mt-2">{children}</p>,
+};
+
 export function MarkdownText({ text }: MarkdownTextProps) {
   return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      components={{
-        img: ({ src, alt }) => <IconImg src={src} alt={alt} className="inline-block size-5" />,
-        h1: () => '',
-        h2: ({ children }) => (
-          <Title level={2} className="mb-1 not-first-of-type:mt-3">
-            {children}
-          </Title>
-        ),
-        h3: ({ children }) => (
-          <Title level={3} className="mb-1 not-first-of-type:mt-3">
-            {children}
-          </Title>
-        ),
-        strong: ({ children }) => <strong className="font-bold">{children}</strong>,
-        hr: () => <Divider color="border" />,
-        p: ({ children }) => <p className="mt-2">{children}</p>,
-      }}
-    >
+    <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
       {injectIcons(text)}
     </ReactMarkdown>
   );

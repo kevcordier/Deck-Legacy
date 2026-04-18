@@ -70,7 +70,7 @@ export type Action = {
   id: number;
   type: ActionType;
   cards?: CardeSelector;
-  numberOfTimes?: number; // TODO: multiple effect with differant target
+  numberOfTimes?: number;
   resources?: ResourceSelector;
   states?: number[];
   stickerIds?: number[];

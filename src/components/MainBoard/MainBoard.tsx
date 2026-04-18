@@ -65,11 +65,9 @@ export function MainBoard() {
           <CardRow
             cardIds={state.board}
             blockedCards={Object.fromEntries(
-              Object.entries(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK))
-                .map(([blockerId, blockedIds]) =>
-                  blockedIds.map(blockedId => [blockedId, blockerId]),
-                )
-                .flat(),
+              Object.entries(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).flatMap(
+                ([blockerId, blockedIds]) => blockedIds.map(blockedId => [blockedId, blockerId]),
+              ) as [number, number][],
             )}
             instances={state.instances}
           />
@@ -84,11 +82,9 @@ export function MainBoard() {
           <CardRow
             cardIds={state.permanents}
             blockedCards={Object.fromEntries(
-              Object.entries(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK))
-                .map(([blockerId, blockedIds]) =>
-                  blockedIds.map(blockedId => [blockedId, blockerId]),
-                )
-                .flat(),
+              Object.entries(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).flatMap(
+                ([blockerId, blockedIds]) => blockedIds.map(blockedId => [blockedId, blockerId]),
+              ) as [number, number][],
             )}
             instances={state.instances}
           />
