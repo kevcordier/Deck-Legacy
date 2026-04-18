@@ -36,7 +36,7 @@ export function Modal({ title, subtitle, children, onClose, className = '' }: Mo
   return (
     <dialog
       ref={dialogRef}
-      className={`bg-background border-border m-auto flex h-screen w-screen flex-col items-start justify-start gap-6 rounded-none border-0 p-4 outline-none backdrop:bg-black/60 backdrop:backdrop-blur-md lg:h-auto lg:max-h-[80vh] lg:w-auto lg:min-w-md lg:max-w-[70vw] lg:rounded-2xl lg:border lg:p-6 ${className}`}
+      className={`bg-background border-border m-auto text-ink flex h-screen w-screen flex-col items-start justify-start gap-6 rounded-none border-0 p-4 outline-none backdrop:bg-black/60 backdrop:backdrop-blur-md lg:h-auto lg:max-h-[80vh] lg:w-auto lg:min-w-md lg:max-w-[70vw] lg:rounded-2xl lg:border lg:p-6 ${className}`}
     >
       <div className="flex w-full items-start justify-between">
         {title || subtitle ? (

@@ -71,6 +71,24 @@ const components: Components = {
   strong: ({ children }) => <strong className="font-bold">{children}</strong>,
   hr: () => <Divider color="border" />,
   p: ({ children }) => <p className="mt-2">{children}</p>,
+  table: ({ children }) => (
+    <div className="mt-2 overflow-x-auto">
+      <table className="w-full border-collapse text-sm">{children}</table>
+    </div>
+  ),
+  thead: ({ children }) => <thead className="bg-background-secondary">{children}</thead>,
+  tbody: ({ children }) => <tbody className="divide-y divide-border">{children}</tbody>,
+  tr: ({ children }) => (
+    <tr className="hover:bg-background-secondary/50 transition-colors">{children}</tr>
+  ),
+  th: ({ children }) => (
+    <th className="border border-border px-3 py-2 text-left font-semibold text-primary">
+      {children}
+    </th>
+  ),
+  td: ({ children }) => (
+    <td className="border border-border px-3 py-2 text-secondary">{children}</td>
+  ),
 };
 
 export function MarkdownText({ text }: MarkdownTextProps) {
