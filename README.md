@@ -98,7 +98,7 @@ src/
 ├── components/          # React UI components (feature folders)
 ├── hooks/               # Custom React hooks (useGame integration point)
 ├── data/                # Static game data (cards, stickers, deck)
-├── i18n/                # i18next setup + EN/FR locale files
+│   ├── locales/         # EN/FR locale files
 └── styles/              # Global CSS
 ```
 
@@ -114,8 +114,8 @@ For full architectural details, see [CLAUDE.md](./CLAUDE.md).
 
 The full game rules are available in both languages:
 
-- [Rules (English)](src/i18n/locales/rules.en.md)
-- [Règles (Français)](src/i18n/locales/rules.fr.md)
+- [Rules (English)](src/data/locales/rules.en.md)
+- [Règles (Français)](src/data/locales/rules.fr.md)
 
 In-game, click the **Rules** button in the header to open the rules modal at any time.
 
@@ -123,7 +123,7 @@ In-game, click the **Rules** button in the header to open the rules modal at any
 
 ## Localization
 
-The UI is fully localized in **English** and **French**. Language preference is saved to `localStorage`. Locale files are in `src/i18n/locales/`.
+The UI is fully localized in **English** and **French**. Language preference is saved to `localStorage`. Locale files are in `src/data/locales/`.
 
 ---
 

@@ -70,7 +70,7 @@ export const ResourceIcons: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '16px', alignItems: 'center', color: 'var(--cream)' }}>
       {(['sm', 'md', 'lg'] as const).map(size => {
-        const sizeClass = size === 'sm' ? 'size-4' : size === 'lg' ? 'size-12' : 'size-8';
+        const sizeClasses = { sm: 'size-4', md: 'size-8', lg: 'size-12' }[size];
         return (
           <div
             key={size}
@@ -78,10 +78,10 @@ export const ResourceIcons: Story = {
           >
             <span style={{ fontSize: '11px' }}>{size}</span>
             <div style={{ display: 'flex', gap: '8px' }}>
-              <GoldIcon color={IconColors.gold} className={sizeClass} />
-              <WoodIcon color={IconColors.wood} className={sizeClass} />
-              <StoneIcon color={IconColors.stone} className={sizeClass} />
-              <IronIcon color={IconColors.iron} className={sizeClass} />
+              <GoldIcon color={IconColors.gold} className={sizeClasses} />
+              <WoodIcon color={IconColors.wood} className={sizeClasses} />
+              <StoneIcon color={IconColors.stone} className={sizeClasses} />
+              <IronIcon color={IconColors.iron} className={sizeClasses} />
             </div>
           </div>
         );

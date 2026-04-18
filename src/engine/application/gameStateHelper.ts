@@ -86,16 +86,13 @@ export function computeScore(
 }
 
 export function getCurrentPhase(state: GameState): Phase {
-  let phase: Phase = 'pregame';
   const isGameStarted = state.round > 0 || state.drawPile.length > 0;
+  if (!isGameStarted) return 'pregame';
   const deckEmpty = state.drawPile.length === 0;
-  if (!isGameStarted) phase = 'pregame';
-  else if (state.round === 0 && Object.keys(state.triggerPile).length > 0) phase = 'preround';
-  else if (state.board.length === 0 && state.turn === 0 && !deckEmpty && state.round > 1)
-    phase = 'roundpreview';
-  else phase = 'playing';
-
-  return phase;
+  if (state.round === 0 && Object.keys(state.triggerPile).length > 0) return 'preround';
+  if (state.board.length === 0 && state.turn === 0 && !deckEmpty && state.round > 1)
+    return 'roundpreview';
+  return 'playing';
 }
 
 export function mergeResources(a: Resources, b: Resources): Resources {

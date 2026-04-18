@@ -14,7 +14,7 @@ export function MainBoard() {
   const { setRulesOpen } = useGameUI();
   const { t } = useTranslation();
   return (
-    <main className="scrollbar @container/main flex flex-1 flex-col gap-6 p-4">
+    <main className="scrollbar @container/main flex flex-1 flex-col gap-6 py-4">
       {phase === 'pregame' && (
         <EmptyState
           title={t('game.title')}

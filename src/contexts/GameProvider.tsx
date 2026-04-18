@@ -348,15 +348,71 @@ export function GameProvider({
     return current.map(ra => (ra.id === newPart.id ? { ...ra, ...newPart } : ra));
   };
 
-  // This function is called when the player has made a choice needed.
+  const resolveCardSourcedActionChoice = (
+    choice: ResolvedAction,
+    resolvedAction: ResolvedAction,
+    resolvedActionType: ActionType,
+    gs: GameState,
+  ): boolean => {
+    const actionCurrent = currentActionRef.current;
+    const { instanceId } = choice;
+    if (!actionCurrent || !instanceId) return false;
+
+    const state = getActiveState(gs.instances[instanceId], defs);
+    if (!state.productions?.length) {
+      choice.resources = {};
+      return false;
+    }
+    if (state.productions.length === 1) {
+      if (resolvedActionType === ActionType.BOOST_CARD) {
+        const stickerChoices = Object.keys(state.productions[0])
+          .map(rt => Object.values(stickerDefs).find(s => s.production === rt)?.id)
+          .filter((id): id is number => id !== undefined && (gs.stickerStock[id] ?? 0) > 0);
+        if (stickerChoices.length > 1) {
+          actionCurrent.resolvedAction = mergeResolvedChoice(actionCurrent.resolvedAction, choice);
+          setPendingChoices([
+            {
+              id: resolvedAction.id,
+              kind: resolvedActionType,
+              type: PendingChoiceType.CHOOSE_STICKER,
+              sourceInstanceId: choice.sourceInstanceId,
+              choices: stickerChoices,
+              pickCount: 1,
+              isMandatory: true,
+            },
+            ...(pendingChoices?.slice(1) ?? []),
+          ]);
+          return true;
+        }
+        choice.stickerId = stickerChoices[0];
+        return false;
+      }
+      choice.resources = state.productions[0];
+      return false;
+    }
+    actionCurrent.resolvedAction = mergeResolvedChoice(actionCurrent.resolvedAction, choice);
+    setPendingChoices([
+      {
+        id: resolvedAction.id,
+        kind: resolvedActionType,
+        type: PendingChoiceType.CHOOSE_RESOURCE,
+        sourceInstanceId: instanceId,
+        choices: state.productions as Resources[],
+        pickCount: 1,
+        isMandatory: true,
+      },
+      ...(pendingChoices?.slice(1) ?? []),
+    ]);
+    return true;
+  };
+
   const resolvePlayerChoice = (choice: ResolvedAction) => {
     const gs = aggRef.current.getGameState();
-    // This function handles the resolution of a pending choice, whether it's for choosing a production, paying an action cost, or any other type of choice. It checks the current pending choice and applies the appropriate logic to resolve it, then triggers any resulting events and synchronizes the state.
+
     if (currentProductionRef.current) {
       const { instanceId } = currentProductionRef.current;
       const inst = gs.instances[instanceId];
       if (!inst || cardIsBlocked(instanceId, gs)) return;
-
       const base = choice.resources || {};
       const resourcesGained = getEffectiveProductions(
         base,
@@ -370,109 +426,46 @@ export function GameProvider({
       currentProductionRef.current = null;
     }
 
-    // If the resolved choice is for an action, merge any resolved cost with the current resolved cost and check if there are any pending choices left to resolve for the action. If not, trigger the action.
-    if (currentActionRef.current) {
-      const { instanceId, action } = currentActionRef.current;
-      const inst = gs.instances[instanceId];
-      const def = defs[inst.cardId];
-      if (!inst || cardIsBlocked(instanceId, gs)) return;
-      if (!action) return;
+    if (!currentActionRef.current) return;
+    const { instanceId, action } = currentActionRef.current;
+    const inst = gs.instances[instanceId];
+    const def = defs[inst.cardId];
+    if (!inst || cardIsBlocked(instanceId, gs)) return;
+    if (!action) return;
 
-      // if the kind of choice is adding resources from a card, extract the resources and add them to the resolved cost
-      const resolvedAction = currentActionRef.current.resolvedAction.find(
-        ra => ra.id === choice.id,
-      );
-      const resolvedActionType = resolvedAction?.type;
-      if (
-        resolvedAction !== undefined &&
-        resolvedActionType !== undefined &&
-        [ActionType.ADD_RESOURCES, ActionType.BOOST_CARD].includes(resolvedActionType) &&
-        choice.instanceId
-      ) {
-        const state = getActiveState(gs.instances[choice.instanceId], defs);
-        if (state.productions?.length === 0) {
-          choice.resources = {};
-        } else if (state.productions?.length === 1) {
-          if (resolvedActionType === ActionType.BOOST_CARD) {
-            const stickerChoices = Object.keys(state.productions[0])
-              .map(
-                resourceType =>
-                  Object.values(stickerDefs).find(s => s.production === resourceType)?.id,
-              )
-              .filter((id): id is number => id !== undefined && (gs.stickerStock[id] ?? 0) > 0);
-            if (stickerChoices.length > 1) {
-              // if the production has multiple resources, we need to ask the player to choose which one they want to boost
-              currentActionRef.current.resolvedAction = mergeResolvedChoice(
-                currentActionRef.current.resolvedAction,
-                choice,
-              );
-              setPendingChoices([
-                {
-                  id: resolvedAction.id,
-                  kind: resolvedActionType,
-                  type: PendingChoiceType.CHOOSE_STICKER,
-                  sourceInstanceId: choice.sourceInstanceId,
-                  choices: stickerChoices,
-                  pickCount: 1,
-                  isMandatory: true,
-                },
-                ...(pendingChoices?.slice(1) ?? []),
-              ]);
-              return;
-            } else {
-              choice.stickerId = stickerChoices[0];
-            }
-          } else {
-            choice.resources = state.productions[0];
-          }
-        } else {
-          // if there are multiple productions, asked the player to choose one
-          currentActionRef.current.resolvedAction = mergeResolvedChoice(
-            currentActionRef.current.resolvedAction,
-            choice,
-          );
-          setPendingChoices([
-            {
-              id: resolvedAction.id,
-              kind: resolvedActionType,
-              type: PendingChoiceType.CHOOSE_RESOURCE,
-              sourceInstanceId: choice.instanceId,
-              choices: state.productions as Resources[],
-              pickCount: 1,
-              isMandatory: true,
-            },
-            ...(pendingChoices?.slice(1) ?? []),
-          ]);
-          return;
-        }
-      }
-
-      // Merge the resolved choice with any previously resolved part of the action
-      currentActionRef.current.resolvedAction = mergeResolvedChoice(
-        currentActionRef.current.resolvedAction,
-        choice,
-      );
-
-      // If there are no more pending choices to resolve for the action, trigger it
-      if (pendingChoices?.length === 1) {
-        const resolvedAction = currentActionRef.current.resolvedAction;
-        const resolvedCost = currentActionRef.current.resolvedCost;
-        const triggerId = currentActionRef.current.triggerId;
-        currentActionRef.current = null;
-
-        sync(
-          aggRef.current.applyCardEffect(
-            resolvedAction,
-            resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
-            !action.passive && !action.trigger,
-            def.parchmentCard,
-            action.endsTurn,
-            triggerId,
-          ),
-        );
-      }
-      setPendingChoices(pendingChoices?.slice(1) ?? null);
+    const resolvedAction = currentActionRef.current.resolvedAction.find(ra => ra.id === choice.id);
+    const resolvedActionType = resolvedAction?.type;
+    if (
+      resolvedAction !== undefined &&
+      resolvedActionType !== undefined &&
+      [ActionType.ADD_RESOURCES, ActionType.BOOST_CARD].includes(resolvedActionType) &&
+      choice.instanceId
+    ) {
+      if (resolveCardSourcedActionChoice(choice, resolvedAction, resolvedActionType, gs)) return;
     }
+
+    currentActionRef.current.resolvedAction = mergeResolvedChoice(
+      currentActionRef.current.resolvedAction,
+      choice,
+    );
+
+    if (pendingChoices?.length === 1) {
+      const resolvedActions = currentActionRef.current.resolvedAction;
+      const resolvedCost = currentActionRef.current.resolvedCost;
+      const triggerId = currentActionRef.current.triggerId;
+      currentActionRef.current = null;
+      sync(
+        aggRef.current.applyCardEffect(
+          resolvedActions,
+          resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
+          !action.passive && !action.trigger,
+          def.parchmentCard,
+          action.endsTurn,
+          triggerId,
+        ),
+      );
+    }
+    setPendingChoices(pendingChoices?.slice(1) ?? null);
   };
 
   const dismissParchmentText = () => {

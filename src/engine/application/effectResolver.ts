@@ -24,27 +24,15 @@ export function resolveActionEffect(
   const pendingChoice: PendingChoice[] = [];
 
   if (action.type === ActionType.ADD_BOARD_EFFECT) {
-    if (action.cards) {
-      const instanceIds = cardSelector(action.cards, instanceId, gameState, defs);
-
-      if (instanceIds.length > 1) {
-        pendingChoice.push({
-          id: `${instanceId}-${action.id}`,
-          kind: action.type,
-          type: PendingChoiceType.CHOOSE_CARD,
-          sourceInstanceId: instanceId,
-          choices: instanceIds,
-          pickCount: 1,
-          isMandatory,
-        });
-      } else if (instanceIds.length === 1) {
-        resolverAction.instanceId = instanceIds[0];
-      }
-    }
-    if (action.effect) {
-      resolverAction.effect = action.effect;
-    }
-    return [resolverAction, pendingChoice];
+    return resolveBoardEffect(
+      action,
+      instanceId,
+      gameState,
+      defs,
+      isMandatory,
+      resolverAction,
+      pendingChoice,
+    );
   }
 
   if (action.type === ActionType.BOOST_CARD) {
@@ -52,103 +40,196 @@ export function resolveActionEffect(
   }
 
   if (action.cards) {
-    if (action.cards.ids?.length === 1) {
-      resolverAction.instanceId = action.cards.ids[0];
-    } else {
-      const choices = cardSelector(action.cards, instanceId, gameState, defs);
-
-      if (choices.length === 0) {
-        resolverAction.instanceId = undefined;
-      } else if (
-        choices.length === 1 ||
-        (action.cards.scope &&
-          [TargetScope.SELF, TargetScope.TOP_OF_DECK].includes(action.cards.scope))
-      ) {
-        resolverAction.instanceId = choices[0];
-      } else {
-        pendingChoice.push({
-          id: `${instanceId}-${action.id}`,
-          kind: action.type,
-          type: PendingChoiceType.CHOOSE_CARD,
-          sourceInstanceId: instanceId,
-          choices,
-          pickCount: action.cards.number ?? 1,
-          isMandatory,
-        });
-      }
-    }
+    resolveCardTarget(
+      action,
+      instanceId,
+      gameState,
+      defs,
+      isMandatory,
+      resolverAction,
+      pendingChoice,
+    );
   }
 
   if (action.resources) {
-    if (action.resources.choice && action.resources.choice.length > 1) {
-      pendingChoice.push({
-        id: `${instanceId}-${action.id}`,
-        kind: action.type,
-        type: PendingChoiceType.CHOOSE_RESOURCE,
-        sourceInstanceId: instanceId,
-        choices: action.resources.choice as Resources[],
-        pickCount: 1,
-        isMandatory,
-      });
-    } else if (action.resources.cards) {
-      const choices = cardSelector(action.resources.cards, instanceId, gameState, defs);
-      if (choices.length === 0) {
-        resolverAction.resources = {};
-      } else if (choices.length === 1) {
-        resolverAction.resources = extractResources(action.resources);
-      } else {
-        pendingChoice.push({
-          id: `${instanceId}-${action.id}`,
-          kind: action.type,
-          type: PendingChoiceType.CHOOSE_CARD,
-          sourceInstanceId: instanceId,
-          choices,
-          pickCount: action.resources.cards.number ?? 1,
-          isMandatory,
-        });
-      }
-    } else {
-      resolverAction.resources = extractResources(action.resources);
-    }
+    resolveResourceTarget(
+      action,
+      instanceId,
+      gameState,
+      defs,
+      isMandatory,
+      resolverAction,
+      pendingChoice,
+    );
   }
 
   if (action.stickerIds) {
-    if (action.stickerIds.length === 1) {
-      resolverAction.stickerId = action.stickerIds[0];
-    } else {
-      pendingChoice.push({
-        id: `${instanceId}-${action.id}`,
-        kind: action.type,
-        type: PendingChoiceType.CHOOSE_STICKER,
-        sourceInstanceId: instanceId,
-        choices: action.stickerIds,
-        pickCount: 1,
-        isMandatory,
-      });
-    }
+    resolveStickerTarget(action, instanceId, isMandatory, resolverAction, pendingChoice);
   }
 
   if (action.states) {
-    if (action.states.length === 1) {
-      resolverAction.stateId = action.states[0];
+    resolveStateTarget(action, instanceId, isMandatory, resolverAction, pendingChoice);
+  }
+
+  return [resolverAction, pendingChoice];
+}
+
+function resolveBoardEffect(
+  action: Action,
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef> | undefined,
+  isMandatory: boolean,
+  resolverAction: ResolvedAction,
+  pendingChoice: PendingChoice[],
+): [ResolvedAction, PendingChoice[]] {
+  if (action.cards) {
+    const instanceIds = cardSelector(action.cards, instanceId, gameState, defs);
+    if (instanceIds.length > 1) {
+      pendingChoice.push({
+        id: `${instanceId}-${action.id}`,
+        kind: action.type,
+        type: PendingChoiceType.CHOOSE_CARD,
+        sourceInstanceId: instanceId,
+        choices: instanceIds,
+        pickCount: 1,
+        isMandatory,
+      });
+    } else if (instanceIds.length === 1) {
+      resolverAction.instanceId = instanceIds[0];
+    }
+  }
+  if (action.effect) {
+    resolverAction.effect = action.effect;
+  }
+  return [resolverAction, pendingChoice];
+}
+
+function resolveCardTarget(
+  action: Action,
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef> | undefined,
+  isMandatory: boolean,
+  resolverAction: ResolvedAction,
+  pendingChoice: PendingChoice[],
+): void {
+  if (!action.cards) return;
+  if (action.cards.ids?.length === 1) {
+    resolverAction.instanceId = action.cards.ids[0];
+    return;
+  }
+  const choices = cardSelector(action.cards, instanceId, gameState, defs);
+  if (choices.length === 0) {
+    resolverAction.instanceId = undefined;
+    return;
+  }
+  if (
+    choices.length === 1 ||
+    (action.cards.scope && [TargetScope.SELF, TargetScope.TOP_OF_DECK].includes(action.cards.scope))
+  ) {
+    resolverAction.instanceId = choices[0];
+    return;
+  }
+  pendingChoice.push({
+    id: `${instanceId}-${action.id}`,
+    kind: action.type,
+    type: PendingChoiceType.CHOOSE_CARD,
+    sourceInstanceId: instanceId,
+    choices,
+    pickCount: action.cards.number ?? 1,
+    isMandatory,
+  });
+}
+
+function resolveResourceTarget(
+  action: Action,
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef> | undefined,
+  isMandatory: boolean,
+  resolverAction: ResolvedAction,
+  pendingChoice: PendingChoice[],
+): void {
+  if (!action.resources) return;
+  if (action.resources.choice && action.resources.choice.length > 1) {
+    pendingChoice.push({
+      id: `${instanceId}-${action.id}`,
+      kind: action.type,
+      type: PendingChoiceType.CHOOSE_RESOURCE,
+      sourceInstanceId: instanceId,
+      choices: action.resources.choice as Resources[],
+      pickCount: 1,
+      isMandatory,
+    });
+    return;
+  }
+  if (action.resources.cards) {
+    const choices = cardSelector(action.resources.cards, instanceId, gameState, defs);
+    if (choices.length === 0) {
+      resolverAction.resources = {};
+    } else if (choices.length === 1) {
+      resolverAction.resources = extractResources(action.resources);
     } else {
       pendingChoice.push({
         id: `${instanceId}-${action.id}`,
         kind: action.type,
-        type: PendingChoiceType.CHOOSE_STATE,
+        type: PendingChoiceType.CHOOSE_CARD,
         sourceInstanceId: instanceId,
-        choices: action.states,
-        pickCount: 1,
+        choices,
+        pickCount: action.resources.cards.number ?? 1,
         isMandatory,
       });
     }
+    return;
   }
+  resolverAction.resources = extractResources(action.resources);
+}
 
-  if (action.resourcePerCard) {
-    // calcule the total resources to add based on the number of cards matching the selector
+function resolveStickerTarget(
+  action: Action,
+  instanceId: number,
+  isMandatory: boolean,
+  resolverAction: ResolvedAction,
+  pendingChoice: PendingChoice[],
+): void {
+  if (!action.stickerIds) return;
+  if (action.stickerIds.length === 1) {
+    resolverAction.stickerId = action.stickerIds[0];
+    return;
   }
+  pendingChoice.push({
+    id: `${instanceId}-${action.id}`,
+    kind: action.type,
+    type: PendingChoiceType.CHOOSE_STICKER,
+    sourceInstanceId: instanceId,
+    choices: action.stickerIds,
+    pickCount: 1,
+    isMandatory,
+  });
+}
 
-  return [resolverAction, pendingChoice];
+function resolveStateTarget(
+  action: Action,
+  instanceId: number,
+  isMandatory: boolean,
+  resolverAction: ResolvedAction,
+  pendingChoice: PendingChoice[],
+): void {
+  if (!action.states) return;
+  if (action.states.length === 1) {
+    resolverAction.stateId = action.states[0];
+    return;
+  }
+  pendingChoice.push({
+    id: `${instanceId}-${action.id}`,
+    kind: action.type,
+    type: PendingChoiceType.CHOOSE_STATE,
+    sourceInstanceId: instanceId,
+    choices: action.states,
+    pickCount: 1,
+    isMandatory,
+  });
 }
 
 /** Strips the `choice` and `cards` sub-fields from Action.resources to get plain Resources. */

@@ -38,7 +38,7 @@ export function resolveCost(
     );
     if (candidates.length === 0) {
       resolvedCost.discardedCardIds = [];
-    } else if (candidates.length === cost.discard.number) {
+    } else if (candidates.length === (cost.discard.number || 1)) {
       resolvedCost.discardedCardIds = candidates;
     } else {
       pendingChoices.push({
@@ -59,7 +59,7 @@ export function resolveCost(
     );
     if (candidates.length === 0) {
       resolvedCost.destroyedCardIds = [];
-    } else if (candidates.length === cost.destroy.number) {
+    } else if (candidates.length === (cost.destroy.number || 1)) {
       resolvedCost.destroyedCardIds = candidates;
     } else {
       pendingChoices.push({

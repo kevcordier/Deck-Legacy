@@ -1,7 +1,7 @@
-import cardsEn from '../i18n/locales/cards.en.json';
-import cardsFr from '../i18n/locales/cards.fr.json';
-import en from '../i18n/locales/en.json';
-import fr from '../i18n/locales/fr.json';
+import cardsEn from '../data/locales/cards.en.json';
+import cardsFr from '../data/locales/cards.fr.json';
+import en from '../data/locales/en.json';
+import fr from '../data/locales/fr.json';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 

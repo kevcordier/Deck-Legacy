@@ -38,7 +38,7 @@ src/
 ├── helpers/             # Helpers use in React
 ├── hooks/               # Custom React hooks
 ├── data/                # Static game data (cards, stickers, deck)
-├── i18n/                # i18next setup + EN/FR locale files
+│   ├── locales/         # EN/FR locale files
 └── styles/              # Global CSS
 ```
 
@@ -120,7 +120,6 @@ rewindEvent()  canRewind()
 | `@data/*`       | `src/data/*`       |
 | `@hooks/*`      | `src/hooks/*`      |
 | `@helpers/*`    | `src/helpers/*`    |
-| `@i18n/*`       | `src/i18n/*`       |
 | `@styles/*`     | `src/styles/*`     |
 
 Always use aliases, never relative `../../` chains across major directories.
@@ -187,9 +186,9 @@ Use `pnpm verify` then fix all issues before committing; do not use `--no-verify
 
 - Library: i18next + react-i18next
 - Languages: English (`en`) and French (`fr`)
-- UI strings: `src/i18n/locales/en.json`, `src/i18n/locales/fr.json`
-- Card text: `src/i18n/locales/cards.en.json`, `src/i18n/locales/cards.fr.json`
-- Game rules: `src/i18n/locales/rules.en.md`, `src/i18n/locales/rules.fr.md` — Markdown files imported as raw strings by `RulesModal` and rendered with `react-markdown`. Icon placeholders (`{{gold}}`, `{{glory}}`, …) are replaced with inline SVG icons at render time.
+- UI strings: `src/data/locales/en.json`, `src/data/locales/fr.json`
+- Card text: `src/data/locales/cards.en.json`, `src/data/locales/cards.fr.json`
+- Game rules: `src/data/locales/rules.en.md`, `src/data/locales/rules.fr.md` — Markdown files imported as raw strings by `RulesModal` and rendered with `react-markdown`. Icon placeholders (`{{gold}}`, `{{glory}}`, …) are replaced with inline SVG icons at render time.
 - Language preference persisted to `localStorage` key `deck_legacy_lang`
 - When adding new UI strings, add to **both** locale files. Card name/description additions go in both `cards.*.json` files.
 - Keep locale files lean — only add keys that are actively used in the UI. Remove keys when their component is deleted or refactored away.

@@ -1,5 +1,5 @@
-import rulesEn from '../../i18n/locales/rules.en.md?raw';
-import rulesFr from '../../i18n/locales/rules.fr.md?raw';
+import rulesEn from '../../data/locales/rules.en.md?raw';
+import rulesFr from '../../data/locales/rules.fr.md?raw';
 import { MarkdownText } from '@components/ui/MarkdownText/MarckdownText';
 import { Modal } from '@components/ui/Modal/Modal';
 import { useTranslation } from 'react-i18next';

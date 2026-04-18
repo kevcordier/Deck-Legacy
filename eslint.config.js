@@ -6,6 +6,7 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import prettierPlugin from 'eslint-plugin-prettier';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
+import sonarjs from 'eslint-plugin-sonarjs';
 import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -13,9 +14,12 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
   { ignores: ['dist', 'node_modules'] }, // Base JS rules
   js.configs.recommended,
-  ...tseslint.configs.strict, // TypeScript
+  tseslint.configs.strict, // TypeScript
+  sonarjs.configs.recommended, // SonarJS
   eslintReact.configs['recommended-typescript'], // React
   jsxA11y.flatConfigs.strict, // Accessibility
+  prettier, // Relaxed rules for data files
+  storybook.configs['flat/recommended'], // Storybook
   {
     files: ['**/*.{ts,tsx}'],
     plugins: {
@@ -44,6 +48,11 @@ export default tseslint.config(
         { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
       ],
 
+      // Disable sonarjs duplicate of @typescript-eslint/no-unused-vars (which already ignores _-prefixed vars)
+      'sonarjs/no-unused-vars': 'off',
+      'sonarjs/todo-tag': 'warn',
+      'sonarjs/no-commented-code': 'warn',
+
       // General
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'prefer-const': 'error',
@@ -53,13 +62,5 @@ export default tseslint.config(
       'no-duplicate-imports': 'error',
       'prettier/prettier': 'error',
     },
-  }, // Prettier — must be last to override formatting rules
-  prettier, // Relaxed rules for data files
-  {
-    files: ['src/engine/init.ts', 'src/engine/reducer.ts'],
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-    },
   },
-  storybook.configs['flat/recommended'],
 );
