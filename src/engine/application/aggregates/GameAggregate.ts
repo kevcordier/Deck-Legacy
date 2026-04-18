@@ -408,12 +408,21 @@ export class GameAggregate {
     effects: ResolvedAction[],
     resolvedCost: ResolvedCost,
     triggerId: string,
-    isDiscarded = false,
-    isDestroyed = false,
-    endsTurn = false,
-    validatedStepId?: number,
-    explicitSourceInstanceId?: number,
+    options: {
+      isDiscarded?: boolean;
+      isDestroyed?: boolean;
+      endsTurn?: boolean;
+      validatedStepId?: number;
+      explicitSourceInstanceId?: number;
+    } = {},
   ): GameState {
+    const {
+      isDiscarded = false,
+      isDestroyed = false,
+      endsTurn = false,
+      validatedStepId,
+      explicitSourceInstanceId,
+    } = options;
     const cardActionContext = new CardActionContext();
 
     const gameState = effects.reduce((gs, effect) => {

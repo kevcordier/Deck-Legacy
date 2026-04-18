@@ -102,14 +102,11 @@ export function GameProvider({
       return;
     }
     // If no pending choices are needed to resolve the effects, proceed to trigger the action immediately
-    return aggRef.current.applyCardEffect(
-      effects,
-      resolvedCost,
-      triggerId,
-      !effect.passive && !effect.trigger,
-      def.parchmentCard,
-      effect.endsTurn,
-    );
+    return aggRef.current.applyCardEffect(effects, resolvedCost, triggerId, {
+      isDiscarded: !effect.passive && !effect.trigger,
+      isDestroyed: def.parchmentCard,
+      endsTurn: effect.endsTurn,
+    });
   };
 
   const sync = (newState: GameState) => {
@@ -295,16 +292,11 @@ export function GameProvider({
 
     const triggerId = crypto.randomUUID();
     sync(
-      aggRef.current.applyCardEffect(
-        effects,
-        resolvedCost,
-        triggerId,
-        false,
-        false,
-        cs.track?.endsTurn ?? false,
-        stepId,
-        instanceId,
-      ),
+      aggRef.current.applyCardEffect(effects, resolvedCost, triggerId, {
+        endsTurn: cs.track?.endsTurn ?? false,
+        validatedStepId: stepId,
+        explicitSourceInstanceId: instanceId,
+      }),
     );
   };
 
@@ -453,9 +445,11 @@ export function GameProvider({
           resolvedActions,
           resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
           triggerId,
-          !action.passive && !action.trigger,
-          def.parchmentCard,
-          action.endsTurn,
+          {
+            isDiscarded: !action.passive && !action.trigger,
+            isDestroyed: def.parchmentCard,
+            endsTurn: action.endsTurn,
+          },
         ),
       );
     }

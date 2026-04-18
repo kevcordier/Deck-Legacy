@@ -407,7 +407,7 @@ describe('GameAggregate.applyCardEffect', () => {
         resources: { gold: 5 },
       },
     ];
-    const gs = agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false);
+    const gs = agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(gs.resources.gold).toBe(5);
   });
 
@@ -432,7 +432,7 @@ describe('GameAggregate.applyCardEffect', () => {
         resources: { wood: 2 },
       },
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't2', false, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't2');
     expect(agg.getGameState().triggerPile['t2']).toBeUndefined();
   });
 
@@ -457,7 +457,7 @@ describe('GameAggregate.applyCardEffect', () => {
         resources: {},
       },
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't3', true, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't3', { isDiscarded: true });
     expect(agg.getGameState().board).not.toContain(1);
     expect(agg.getGameState().discardPile).toContain(1);
   });
@@ -483,7 +483,7 @@ describe('GameAggregate.applyCardEffect', () => {
         resources: {},
       },
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't4', false, true, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't4', { isDestroyed: true });
     expect(agg.getGameState().board).not.toContain(1);
     expect(agg.getGameState().discardPile).not.toContain(1);
   });
@@ -706,7 +706,7 @@ describe('GameAggregate.applyCardEffect — DISCOVER_CARD', () => {
         cardDefs: defs,
       } as unknown as ResolvedAction,
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().discardPile).toContain(5);
   });
 });
@@ -735,7 +735,7 @@ describe('GameAggregate.applyCardEffect — BOOST_CARD', () => {
         instanceId: 1,
       } as unknown as ResolvedAction,
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().stickerStock[101]).toBe(2);
   });
 });
@@ -764,7 +764,7 @@ describe('GameAggregate.applyCardEffect — ADD_STICKER', () => {
         instanceId: 1,
       } as unknown as ResolvedAction,
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().stickerStock[101]).toBe(2);
   });
 });
@@ -789,7 +789,7 @@ describe('GameAggregate.applyCardEffect — DISCARD_CARD', () => {
     const effects: ResolvedAction[] = [
       { id: '1-1', type: ActionType.DISCARD_CARD, sourceInstanceId: 1, instanceId: 2 },
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().discardPile).toContain(2);
   });
 });
@@ -814,7 +814,7 @@ describe('GameAggregate.applyCardEffect — DESTROY_CARD', () => {
     const effects: ResolvedAction[] = [
       { id: '1-1', type: ActionType.DESTROY_CARD, sourceInstanceId: 1, instanceId: 2 },
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().destroyedPile).toContain(2);
     expect(agg.getGameState().board).not.toContain(2);
   });
@@ -838,7 +838,7 @@ describe('GameAggregate.applyCardEffect — UPGRADE_CARD', () => {
     const effects: ResolvedAction[] = [
       { id: '1-1', type: ActionType.UPGRADE_CARD, sourceInstanceId: 1, instanceId: 1, stateId: 2 },
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().instances[1].stateId).toBe(2);
   });
 });
@@ -870,7 +870,7 @@ describe('GameAggregate.applyCardEffect — PLACE_CARD_IN_DRAW_PILE', () => {
         position: 0,
       },
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().board).not.toContain(1);
     expect(agg.getGameState().drawPile).toContain(1);
   });
@@ -896,7 +896,7 @@ describe('GameAggregate.applyCardEffect — BLOCK_CARD', () => {
     const effects: ResolvedAction[] = [
       { id: '1-1', type: ActionType.BLOCK_CARD, sourceInstanceId: 1, instanceId: 2 },
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().boardEffects[1]).toEqual([
       { id: 'block', type: 'BLOCK', cards: { ids: [2] } },
     ]);
@@ -929,7 +929,7 @@ describe('GameAggregate.applyCardEffect — ADD_BOARD_EFFECT', () => {
         effect: { id: 'test-effect', type: 'BOOST' },
       } as unknown as ResolvedAction,
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().boardEffects[2]).toBeDefined();
     expect(agg.getGameState().boardEffects[2][0].id).toBe('test-effect');
   });
@@ -957,7 +957,7 @@ describe('GameAggregate.applyCardEffect — PLAY_CARD', () => {
     const effects: ResolvedAction[] = [
       { id: '1-1', type: ActionType.PLAY_CARD, sourceInstanceId: 1, instanceId: 2 },
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().board).toContain(2);
     expect(agg.getGameState().discardPile).not.toContain(2);
   });
@@ -978,7 +978,7 @@ describe('GameAggregate.applyCardEffect — ends turn', () => {
     const effects: ResolvedAction[] = [
       { id: '1-1', type: ActionType.ADD_RESOURCES, sourceInstanceId: 1, resources: {} },
     ];
-    const gs = agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, true);
+    const gs = agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', { endsTurn: true });
     expect(gs.turn).toEqual(2);
   });
 });
@@ -1001,7 +1001,7 @@ describe('GameAggregate.applyCardEffect — CHOOSE_STATE', () => {
     const effects: ResolvedAction[] = [
       { id: '1-1', type: ActionType.CHOOSE_STATE, sourceInstanceId: 1, instanceId: 1, stateId: 2 },
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().instances[1].stateId).toBe(2);
   });
 });
@@ -1023,9 +1023,9 @@ describe('GameAggregate.applyCardEffect — unknown action type', () => {
     const effects: ResolvedAction[] = [
       { id: '1-1', type: 'UNKNOWN_TYPE' as ActionType, sourceInstanceId: 1 },
     ];
-    expect(() =>
-      agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false),
-    ).toThrow('Unknown effect type: UNKNOWN_TYPE');
+    expect(() => agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1')).toThrow(
+      'Unknown effect type: UNKNOWN_TYPE',
+    );
   });
 });
 
@@ -1046,7 +1046,7 @@ describe('GameAggregate.applyCardEffect — validatedStepId', () => {
     const effects: ResolvedAction[] = [
       { id: '1-1', type: ActionType.ADD_RESOURCES, sourceInstanceId: 1, resources: {} },
     ];
-    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false, 42);
+    agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', { validatedStepId: 42 });
     expect(agg.getGameState().instances[1].trackProgress).toContain(42);
   });
 });
@@ -1072,9 +1072,7 @@ describe('GameAggregate.applyCardEffect — resolvedCost without arrays', () => 
     ];
     // resolvedCost without discardedCardIds / destroyedCardIds fields
     const partialCost = { resources: {} } as ResolvedCost;
-    expect(() =>
-      agg.applyCardEffect(effects, partialCost, 't1', false, false, false),
-    ).not.toThrow();
+    expect(() => agg.applyCardEffect(effects, partialCost, 't1')).not.toThrow();
   });
 });
 
@@ -1097,7 +1095,10 @@ describe('GameAggregate.applyCardEffect — validatedStepId with missing instanc
     ];
     // explicitSourceInstanceId 999 does not exist in instances
     expect(() =>
-      agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', false, false, false, 42, 999),
+      agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1', {
+        validatedStepId: 42,
+        explicitSourceInstanceId: 999,
+      }),
     ).not.toThrow();
   });
 });
@@ -1114,9 +1115,7 @@ describe('GameAggregate.applyCardEffect — empty effects array', () => {
       },
     };
     const agg = new GameAggregate(state, {});
-    expect(() =>
-      agg.applyCardEffect([], makeEmptyResolvedCost(), 't1', false, false, false),
-    ).not.toThrow();
+    expect(() => agg.applyCardEffect([], makeEmptyResolvedCost(), 't1')).not.toThrow();
     expect(agg.getGameState().triggerPile['t1']).toBeUndefined();
   });
 });
