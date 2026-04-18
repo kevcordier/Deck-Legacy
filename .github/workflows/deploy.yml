@@ -1,11 +1,9 @@
 name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
-  workflow_run:
-    branches: [main]
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -18,7 +16,8 @@ concurrency:
 jobs:
   ci:
     name: CI
-    uses: kevcordier/Deck-Legacy/.github/workflows/ci.yml@main
+    uses: ./.github/workflows/ci.yml
+
   deploy:
     name: Deploy
     permissions:

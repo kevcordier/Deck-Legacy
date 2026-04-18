@@ -1,5 +1,6 @@
 # Deck Legacy
 
+[![Code quality checks and tests](https://github.com/kevcordier/Deck-Legacy/actions/workflows/ci.yml/badge.svg)](https://github.com/kevcordier/Deck-Legacy/actions/workflows/ci.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kevcordier_Deck-Legacy&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=kevcordier_Deck-Legacy)
 
 A browser-based single-player deck-building card game with a medieval theme. Build and evolve your deck across multiple rounds, manage resources, and maximize your Glory score.

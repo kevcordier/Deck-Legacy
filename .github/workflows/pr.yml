@@ -12,4 +12,4 @@ concurrency:
 jobs:
   ci:
     name: CI
-    uses: kevcordier/Deck-Legacy/.github/workflows/ci.yml@main
+    uses: ./.github/workflows/ci.yml
