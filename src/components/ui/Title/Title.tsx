@@ -14,7 +14,7 @@ export function Title({ children, level = 1, className = '' }: TitleProps) {
     'text-xl font-bold tracking-widest',
     'text-lg font-bold font-body!',
     'text-xs',
-  ][level] as string;
+  ][level];
 
   return React.createElement(
     CustomTag,

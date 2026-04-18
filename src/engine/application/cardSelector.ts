@@ -1,4 +1,4 @@
-import { getAffectedCardsByBoardEffects } from '@engine/application/boardEffectHelpers';
+import { getAffectedCardsByBoardEffects } from '@engine/application/cardHelpers';
 import { type CardTag, PassiveType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, CardeSelector, GameState } from '@engine/domain/types';
 

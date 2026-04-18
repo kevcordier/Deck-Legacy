@@ -8,8 +8,6 @@ export interface IconProps {
   readonly alt?: string;
 }
 
-export { IconColors };
-
 export function ActivatedIcon({ color = 'currentColor', className, style, alt }: IconProps) {
   return (
     <svg

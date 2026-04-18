@@ -1,5 +1,6 @@
 import { Divider } from '@components/ui/Divider/Divider';
-import { GloryIcon, IconColors } from '@components/ui/Icon/icon';
+import { GloryIcon } from '@components/ui/Icon/icon';
+import { IconColors } from '@components/ui/Icon/iconColors';
 import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Stat } from '@components/ui/Stat/Stat';
 import { useGame } from '@hooks/useGame';

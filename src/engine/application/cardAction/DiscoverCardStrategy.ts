@@ -5,7 +5,7 @@ import { type ActionType, Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState } from '@engine/domain/types';
 
 export class DiscoverCardStrategy implements CardActionStrategy {
-  constructor(private cardDefs: Record<number, CardDef>) {}
+  constructor(private readonly cardDefs: Record<number, CardDef>) {}
 
   applyEffect(
     gameState: GameState,

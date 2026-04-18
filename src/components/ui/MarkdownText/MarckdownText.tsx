@@ -34,7 +34,15 @@ function injectIcons(content: string): string {
   );
 }
 
-function IconImg({ src, alt, className }: { src?: string; alt?: string; className?: string }) {
+function IconImg({
+  src,
+  alt,
+  className,
+}: {
+  readonly src?: string;
+  readonly alt?: string;
+  readonly className?: string;
+}) {
   const key = src?.replace('./', '').replace('.svg', '') ?? '';
   const Icon = ICON_MAP[key];
   if (Icon) {

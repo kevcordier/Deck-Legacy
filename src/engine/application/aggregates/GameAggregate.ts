@@ -454,7 +454,7 @@ export class GameAggregate {
       triggerId,
       isDiscarded,
       isDestroyed,
-      ...(validatedStepId !== undefined ? { validatedStepId } : {}),
+      validatedStepId,
     };
     this.apply(event);
     this.events.push(event);

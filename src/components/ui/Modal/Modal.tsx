@@ -16,16 +16,15 @@ export function Modal({ title, subtitle, children, onClose, className = '' }: Mo
         onClose();
       }
     }
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    globalThis.addEventListener('keydown', handleKeyDown);
+    return () => globalThis.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
   return (
     <div className="fixed inset-0 z-200 flex items-center justify-center bg-black/60 backdrop-blur-md">
-      <div
-        role="dialog"
+      <dialog
         aria-modal="true"
-        aria-labelledby={title ? title.toString() : 'modal'}
+        aria-labelledby="modal"
         className={`bg-background border-border flex h-screen w-screen flex-col items-start justify-start gap-6 rounded-none border-0 p-4 lg:h-auto lg:max-h-[80vh] lg:w-auto lg:min-w-md lg:max-w-[70vw] lg:rounded-2xl lg:border lg:p-6 ${className}`}
       >
         <div className="flex w-full items-start justify-between">
@@ -44,7 +43,7 @@ export function Modal({ title, subtitle, children, onClose, className = '' }: Mo
         <div className="scrollbar flex min-h-0 w-full flex-1 flex-col justify-start gap-6 overflow-y-auto p-1">
           {children}
         </div>
-      </div>
+      </dialog>
     </div>
   );
 }

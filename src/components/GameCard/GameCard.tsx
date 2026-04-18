@@ -23,7 +23,6 @@ import { useTranslation } from 'react-i18next';
 
 interface GameCardProps {
   readonly instance: CardInstance;
-  readonly style?: React.CSSProperties;
   readonly index?: number;
   readonly hideStatePreview?: boolean;
   readonly isOnBoard?: boolean;

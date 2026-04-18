@@ -1,4 +1,3 @@
-import { getAffectedCardsByBoardEffects } from '@engine/application/boardEffectHelpers';
 import { cardSelector } from '@engine/application/cardSelector';
 import { mergeResources } from '@engine/application/gameStateHelper';
 import { ActionType, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
@@ -13,7 +12,26 @@ import type {
   TriggerEntry,
 } from '@engine/domain/types';
 
-export { getAffectedCardsByBoardEffects };
+export function getAffectedCardsByBoardEffects(
+  gameState: GameState,
+  passiveType: PassiveType,
+): Record<number, number[]> {
+  const affectedInstanceIds: Record<number, number[]> = {};
+  Object.entries(gameState.boardEffects).forEach(([sourceId, effects]) =>
+    effects
+      .filter(be => be.type === passiveType)
+      .forEach(be => {
+        if (be.cards?.ids) {
+          affectedInstanceIds[Number(sourceId)] = [
+            ...(affectedInstanceIds[Number(sourceId)] ?? []),
+            ...be.cards.ids,
+          ];
+        }
+      }),
+  );
+
+  return affectedInstanceIds;
+}
 
 export function getEffectiveProductions(
   base: Resources,

@@ -40,9 +40,9 @@ export function GameProvider({
   initialState,
   initialEvents = [],
 }: {
-  children: ReactNode;
-  initialState?: GameState;
-  initialEvents?: GameEvent[];
+  readonly children: ReactNode;
+  readonly initialState?: GameState;
+  readonly initialEvents?: GameEvent[];
 }) {
   const defs = useMemo(() => loadCardDefs(), []);
   const stickerDefs = useMemo(() => loadStickerDefs(), []);
@@ -316,10 +316,7 @@ export function GameProvider({
     const upgrades = cs.upgrade ?? [];
     if (upgrades.length === 0) return;
 
-    const upgrade =
-      chosenUpgradeTo !== undefined
-        ? upgrades.find(u => u.upgradeTo === chosenUpgradeTo)
-        : upgrades[0];
+    const upgrade = upgrades.find(u => u.upgradeTo === chosenUpgradeTo);
     if (!upgrade) return;
     if (!canAffordResources(gs.resources, upgrade.cost)) return;
 
@@ -394,7 +391,7 @@ export function GameProvider({
         kind: resolvedActionType,
         type: PendingChoiceType.CHOOSE_RESOURCE,
         sourceInstanceId: instanceId,
-        choices: state.productions as Resources[],
+        choices: state.productions,
         pickCount: 1,
         isMandatory: true,
       },

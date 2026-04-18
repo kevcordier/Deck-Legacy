@@ -11,10 +11,10 @@ function getInitialTheme(): Theme {
 
 function resolveTheme(theme: Theme): 'light' | 'dark' {
   if (theme !== 'system') return theme;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return globalThis.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-export function GameUIProvider({ children }: { children: ReactNode }) {
+export function GameUIProvider({ children }: { readonly children: ReactNode }) {
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [rulesOpen, setRulesOpen] = useState(false);
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
@@ -32,7 +32,7 @@ export function GameUIProvider({ children }: { children: ReactNode }) {
     apply();
 
     if (theme === 'system') {
-      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      const mq = globalThis.matchMedia('(prefers-color-scheme: dark)');
       mq.addEventListener('change', apply);
       return () => mq.removeEventListener('change', apply);
     }
