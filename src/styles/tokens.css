@@ -26,11 +26,4 @@
   --font-display: 'Cinzel', serif;
   --font-deco: 'Cinzel Decorative', serif;
   --font-body: 'EB Garamond', serif;
-
-  @variant dark {
-    --color-primary: var(--color-dark-primary);
-    --color-ink: var(--color-dark-ink);
-    --color-background: var(--color-dark-background);
-    --color-border: var(--color-dark-border);
-  }
 }

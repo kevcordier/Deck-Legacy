@@ -205,12 +205,16 @@ export class GameAggregate {
             discardedCardIds,
           ),
         };
-        delete this.gameState.triggerPile[useCardEffectEvent.triggerId];
+        const { [useCardEffectEvent.triggerId]: _usedTrigger, ...restTriggers } =
+          this.gameState.triggerPile;
+        this.gameState = { ...this.gameState, triggerPile: restTriggers };
         break;
       }
       case GameEventType.SKIP_TRIGGER: {
         const skipTriggerEvent = event as SkipTriggerEvent;
-        delete this.gameState.triggerPile[skipTriggerEvent.triggerId];
+        const { [skipTriggerEvent.triggerId]: _skippedTrigger, ...restSkipTriggers } =
+          this.gameState.triggerPile;
+        this.gameState = { ...this.gameState, triggerPile: restSkipTriggers };
         break;
       }
       case GameEventType.PASS: {

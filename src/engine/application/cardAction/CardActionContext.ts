@@ -4,8 +4,6 @@ import type { GameState, ResolvedAction } from '@engine/domain/types';
 export class CardActionContext {
   private strategy?: CardActionStrategy;
 
-  constructor() {}
-
   setStrategy(strategy: CardActionStrategy) {
     this.strategy = strategy;
   }

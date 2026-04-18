@@ -502,9 +502,8 @@ export function GameProvider({
 
   const skipTrigger = (uuid: string) => {
     setTriggerPile(prev => {
-      const updated = { ...prev };
-      delete updated[uuid];
-      return Object.keys(updated).length > 0 ? updated : null;
+      const { [uuid]: _skipped, ...rest } = prev ?? {};
+      return Object.keys(rest).length > 0 ? rest : null;
     });
   };
 

@@ -14,7 +14,8 @@ export const discardCards = (_gameState: GameState, cardIds: number[]): GameStat
     gameState.board = [...new Set(gameState.board.filter(c => c !== cardId))];
     gameState.drawPile = [...new Set(gameState.drawPile.filter(c => c !== cardId))];
     gameState.discardPile = [...new Set([...gameState.discardPile, cardId])];
-    delete gameState.boardEffects[cardId];
+    const { [cardId]: _discarded, ...restDiscardEffects } = gameState.boardEffects;
+    gameState.boardEffects = restDiscardEffects;
   });
   return gameState;
 };
@@ -35,7 +36,8 @@ export const destroyCards = (_gameState: GameState, cardIds: number[]): GameStat
     gameState.drawPile = [...new Set(gameState.drawPile.filter(c => c !== cardId))];
     gameState.discardPile = [...new Set(gameState.discardPile.filter(c => c !== cardId))];
     gameState.destroyedPile = [...new Set([...gameState.destroyedPile, cardId])];
-    delete gameState.boardEffects[cardId];
+    const { [cardId]: _destroyed, ...restDestroyEffects } = gameState.boardEffects;
+    gameState.boardEffects = restDestroyEffects;
   });
   return gameState;
 };
@@ -56,7 +58,8 @@ export const spendResources = (_gameState: GameState, resources: Resources): Gam
     const key = resourceKey as ResourceType;
     const newValue = (gameState.resources[key] ?? 0) - number;
     if (newValue <= 0) {
-      delete gameState.resources[key];
+      const { [key]: _spent, ...restResources } = gameState.resources;
+      gameState.resources = restResources;
     } else {
       gameState.resources[key] = newValue;
     }

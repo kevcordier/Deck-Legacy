@@ -26,8 +26,8 @@ function getChoiceActionLabel(
   defs: Record<number, CardDef>,
   t: TFunction,
 ): React.ReactNode | undefined {
-  const actionId = parseInt(choice.id.split('-')[1]);
-  if (isNaN(actionId)) return undefined;
+  const actionId = Number.parseInt(choice.id.split('-')[1]);
+  if (Number.isNaN(actionId)) return undefined;
   const inst = instances[choice.sourceInstanceId];
   const def = inst ? defs[inst.cardId] : undefined;
   const state = def?.states.find(s => s.id === inst?.stateId);

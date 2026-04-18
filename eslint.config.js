@@ -2,6 +2,7 @@
 import eslintReact from '@eslint-react/eslint-plugin';
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
 import prettierPlugin from 'eslint-plugin-prettier';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
@@ -11,9 +12,10 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   { ignores: ['dist', 'node_modules'] }, // Base JS rules
-  js.configs.recommended, // TypeScript
-  ...tseslint.configs.recommended,
+  js.configs.recommended,
+  ...tseslint.configs.strict, // TypeScript
   eslintReact.configs['recommended-typescript'], // React
+  jsxA11y.flatConfigs.strict, // Accessibility
   {
     files: ['**/*.{ts,tsx}'],
     plugins: {

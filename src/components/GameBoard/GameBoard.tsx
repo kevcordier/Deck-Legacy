@@ -1,6 +1,7 @@
 import { DeckViewer } from '@components/DeckViewer/DeckViewer';
 import { MainBoard } from '@components/MainBoard/MainBoard';
 import { Button } from '@components/ui/Button/Button';
+import { Modal } from '@components/ui/Modal/Modal';
 import { useGame } from '@hooks/useGame';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -123,23 +124,18 @@ export function GameBoard() {
 
       {/* Mobile bottom sheet for deck viewers */}
       {openSheet !== null && (
-        <div
-          className="fixed inset-0 z-150 bg-black/40 lg:hidden"
-          onClick={() => setOpenSheet(null)}
+        <Modal
+          onClose={() => setOpenSheet(null)}
+          className="bg-background border-border absolute right-0 bottom-0 left-0 max-h-[90vh] overflow-y-auto rounded-t-2xl border-t shadow-2xl"
         >
-          <div
-            className="bg-background border-border absolute right-0 bottom-0 left-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t shadow-2xl"
-            onClick={e => e.stopPropagation()}
-          >
-            <DeckViewer
-              isSheet
-              title={t(openSheet === 'draw' ? 'deckViewer.draw' : 'deckViewer.discard')}
-              emptyText={t('deckViewer.empty')}
-              deck={openSheet === 'draw' ? drawDeck : discardDeck}
-              displayedCard={openSheet === 'draw' ? nextCard : discardDeck[discardDeck.length - 1]}
-            />
-          </div>
-        </div>
+          <DeckViewer
+            isSheet
+            title={t(openSheet === 'draw' ? 'deckViewer.draw' : 'deckViewer.discard')}
+            emptyText={t('deckViewer.empty')}
+            deck={openSheet === 'draw' ? drawDeck : discardDeck}
+            displayedCard={openSheet === 'draw' ? nextCard : discardDeck[discardDeck.length - 1]}
+          />
+        </Modal>
       )}
     </div>
   );
