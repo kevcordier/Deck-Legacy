@@ -1,6 +1,9 @@
+import { CardListModal } from '@components/CardListModal/CardListModal';
 import { DeckViewer } from '@components/DeckViewer/DeckViewer';
+import { GameCard } from '@components/GameCard/GameCard';
 import { MainBoard } from '@components/MainBoard/MainBoard';
 import { Button } from '@components/ui/Button/Button';
+import { DestroyIcon, DiscardIcon, DrawCardIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
 import { useGame } from '@hooks/useGame';
 import { useMemo, useState } from 'react';
@@ -18,9 +21,10 @@ export function GameBoard() {
     pendingChoices,
     triggerPile,
   } = useGame();
-  const { drawPile, discardPile, instances } = state;
+  const { drawPile, discardPile, destroyedPile, instances } = state;
 
-  const [openSheet, setOpenSheet] = useState<'draw' | 'discard' | null>(null);
+  const [openSheet, setOpenSheet] = useState<'draw' | 'discard' | 'destroyed' | null>(null);
+  const [destroyedModalOpen, setDestroyedModalOpen] = useState(false);
 
   const nextCard = instances[drawPile[0]];
 
@@ -35,6 +39,10 @@ export function GameBoard() {
     return [...discardPile].map(id => instances[id]).filter(Boolean);
   }, [discardPile, instances]);
 
+  const destroyedDeck = useMemo(() => {
+    return [...destroyedPile].map(id => instances[id]).filter(Boolean);
+  }, [destroyedPile, instances]);
+
   const deckEmpty = drawPile.length === 0;
   const haveChoiceToDo =
     (!!pendingChoices && pendingChoices.length > 0) ||
@@ -48,6 +56,7 @@ export function GameBoard() {
           <div className="hidden lg:contents">
             <DeckViewer
               title={t('deckViewer.draw')}
+              icon={<DrawCardIcon className="size-4" />}
               emptyText={t('deckViewer.empty')}
               deck={drawDeck}
               displayedCard={nextCard}
@@ -61,8 +70,23 @@ export function GameBoard() {
           <div className="hidden lg:contents">
             <DeckViewer
               title={t('deckViewer.discard')}
+              icon={<DiscardIcon className="size-4" />}
               deck={discardDeck}
               displayedCard={discardDeck[discardDeck.length - 1]}
+              footer={
+                destroyedPile.length > 0 ? (
+                  <Button
+                    onClick={() => setDestroyedModalOpen(true)}
+                    variant="text"
+                    color="danger"
+                    size="xs"
+                    className="w-full"
+                  >
+                    <DestroyIcon className="size-4" />
+                    {t('deckViewer.destroyed')} ({destroyedPile.length})
+                  </Button>
+                ) : null
+              }
             />
           </div>
         )}
@@ -77,7 +101,7 @@ export function GameBoard() {
             color="ink"
             size="sm"
           >
-            {t('deckViewer.draw')} ({drawPile.length})
+            <DrawCardIcon className="size-4" alt={t('deckViewer.draw')} /> ({drawPile.length})
           </Button>
 
           <div className="flex items-center gap-1">
@@ -111,15 +135,44 @@ export function GameBoard() {
             </Button>
           </div>
 
-          <Button
-            onClick={() => setOpenSheet(o => (o === 'discard' ? null : 'discard'))}
-            variant="outlined"
-            color="ink"
-            size="sm"
-          >
-            {t('deckViewer.discard')} ({discardPile.length})
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              onClick={() => setOpenSheet(o => (o === 'discard' ? null : 'discard'))}
+              variant="outlined"
+              color="ink"
+              size="sm"
+            >
+              <DiscardIcon className="size-4" alt={t('deckViewer.discard')} /> ({discardPile.length}
+              )
+            </Button>
+            {destroyedPile.length > 0 && (
+              <Button
+                onClick={() => setOpenSheet(o => (o === 'destroyed' ? null : 'destroyed'))}
+                variant="outlined"
+                color="danger"
+                size="sm"
+              >
+                <DestroyIcon className="size-4" alt={t('deckViewer.destroyed')} /> (
+                {destroyedPile.length})
+              </Button>
+            )}
+          </div>
         </nav>
+      )}
+
+      {/* Destroyed cards modal (desktop) */}
+      {destroyedModalOpen && (
+        <CardListModal
+          title={t('deckViewer.destroyed')}
+          subtitle={t('deckViewer.modalSubtitle', { count: destroyedDeck.length })}
+          onClose={() => setDestroyedModalOpen(false)}
+        >
+          {destroyedDeck.map(inst => (
+            <div key={inst.id} className="@container">
+              <GameCard instance={inst} className="w-full" />
+            </div>
+          ))}
+        </CardListModal>
       )}
 
       {/* Mobile bottom sheet for deck viewers */}
@@ -130,10 +183,35 @@ export function GameBoard() {
         >
           <DeckViewer
             isSheet
-            title={t(openSheet === 'draw' ? 'deckViewer.draw' : 'deckViewer.discard')}
+            icon={
+              {
+                draw: <DrawCardIcon className="size-4" />,
+                discard: <DiscardIcon className="size-4" />,
+                destroyed: <DestroyIcon className="size-4" />,
+              }[openSheet]
+            }
+            title={
+              {
+                draw: t('deckViewer.draw'),
+                discard: t('deckViewer.discard'),
+                destroyed: t('deckViewer.destroyed'),
+              }[openSheet]
+            }
             emptyText={t('deckViewer.empty')}
-            deck={openSheet === 'draw' ? drawDeck : discardDeck}
-            displayedCard={openSheet === 'draw' ? nextCard : discardDeck[discardDeck.length - 1]}
+            deck={
+              {
+                draw: drawDeck,
+                discard: discardDeck,
+                destroyed: destroyedDeck,
+              }[openSheet]
+            }
+            displayedCard={
+              {
+                draw: nextCard,
+                discard: discardDeck[discardDeck.length - 1],
+                destroyed: destroyedDeck[destroyedDeck.length - 1],
+              }[openSheet]
+            }
           />
         </Modal>
       )}

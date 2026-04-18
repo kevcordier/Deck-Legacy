@@ -95,6 +95,7 @@
     "title": "Cards list",
     "draw": "Deck",
     "discard": "Discard",
+    "destroyed": "Destroyed",
     "viewAll": "⊞ View all",
     "empty": "Empty",
     "modalSubtitle": "{{count}} card",

@@ -94,6 +94,7 @@
     "title": "Liste des cartes",
     "draw": "Pioche",
     "discard": "Défausse",
+    "destroyed": "Détruites",
     "viewAll": "⊞ Voir tout",
     "empty": "Vide",
     "modalSubtitle": "{{count}} carte",

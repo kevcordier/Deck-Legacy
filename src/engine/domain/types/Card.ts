@@ -71,25 +71,7 @@ export type Action = {
   type: ActionType;
   cards?: CardeSelector;
   numberOfTimes?: number; // TODO: multiple effect with differant target
-  resources?: {
-    gold?: number;
-    wood?: number;
-    stone?: number;
-    food?: number;
-    iron?: number;
-    weapon?: number;
-    goods?: number;
-    choice?: {
-      gold?: number;
-      wood?: number;
-      stone?: number;
-      food?: number;
-      iron?: number;
-      weapon?: number;
-      goods?: number;
-    }[];
-    cards?: CardeSelector;
-  };
+  resources?: ResourceSelector;
   states?: number[];
   stickerIds?: number[];
   resourcePerCard?: {
@@ -132,6 +114,26 @@ export type CardeSelector = {
   scope?: TargetScope;
   label?: string;
   produces?: ResourceType[];
+};
+
+export type ResourceSelector = {
+  gold?: number;
+  wood?: number;
+  stone?: number;
+  food?: number;
+  iron?: number;
+  weapon?: number;
+  goods?: number;
+  choice?: {
+    gold?: number;
+    wood?: number;
+    stone?: number;
+    food?: number;
+    iron?: number;
+    weapon?: number;
+    goods?: number;
+  }[];
+  cards?: CardeSelector;
 };
 
 export type ResolvedAction = {

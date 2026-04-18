@@ -5,23 +5,27 @@ import { Title } from '@components/ui/Title/Title';
 import { getActiveState } from '@engine/application/cardHelpers';
 import type { CardInstance } from '@engine/domain/types';
 import { useGame } from '@hooks/useGame';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type DeckViewerProps = {
   readonly title: string;
+  readonly icon: ReactNode;
   readonly emptyText?: string;
   readonly deck: CardInstance[];
   readonly displayedCard?: CardInstance;
   readonly isSheet?: boolean;
+  readonly footer?: ReactNode;
 };
 
 export function DeckViewer({
   title,
+  icon,
   emptyText,
   deck,
   displayedCard,
   isSheet = false,
+  footer,
 }: DeckViewerProps) {
   const { defs } = useGame();
   const { t } = useTranslation();
@@ -33,7 +37,9 @@ export function DeckViewer({
       className={`bg-background scrollbar flex shrink-0 flex-col ${isSheet ? 'w-full' : 'h-full w-48 xl:w-64'}`}
     >
       <div className="border-b-border flex min-h-11 items-center justify-between border-b p-2">
-        <Title level={4}>{title}</Title>
+        <Title level={4}>
+          {icon} {title}
+        </Title>
         {deck.length <= 1 ? (
           <span className="font-display text-xs">{deck.length}</span>
         ) : (
@@ -86,6 +92,7 @@ export function DeckViewer({
       ) : (
         emptyText && <p className="p-2 text-center text-sm text-ink/50 italic">{emptyText}</p>
       )}
+      {footer && <div className="border-t-border mt-auto border-t p-2">{footer}</div>}
       {modalOpen && (
         <CardListModal
           title={t('deckViewer.title')}

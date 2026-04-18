@@ -194,15 +194,15 @@ export class GameAggregate {
         }
         this.gameState = {
           ...this.gameState,
-          ...discardCards(
-            destroyCards(
+          ...destroyCards(
+            discardCards(
               spendResources(
                 useCardEffectEvent.gameState,
                 useCardEffectEvent.resolvedCost.resources,
               ),
-              destroyedCardIds,
+              discardedCardIds,
             ),
-            discardedCardIds,
+            destroyedCardIds,
           ),
         };
         const { [useCardEffectEvent.triggerId]: _usedTrigger, ...restTriggers } =
