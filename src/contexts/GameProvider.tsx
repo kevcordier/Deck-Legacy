@@ -32,7 +32,7 @@ import { deleteSave, loadSave, saveGame } from '@engine/infrastructure/persisten
 import { type ReactNode, useMemo, useRef, useState } from 'react';
 
 function makeAggregate(state: GameState, cardDefs: Record<number, CardDef>): GameAggregate {
-  return new GameAggregate([], JSON.parse(JSON.stringify(state)) as GameState, cardDefs);
+  return new GameAggregate(JSON.parse(JSON.stringify(state)) as GameState, cardDefs);
 }
 
 export function GameProvider({
@@ -105,10 +105,10 @@ export function GameProvider({
     return aggRef.current.applyCardEffect(
       effects,
       resolvedCost,
+      triggerId,
       !effect.passive && !effect.trigger,
       def.parchmentCard,
       effect.endsTurn,
-      triggerId,
     );
   };
 
@@ -298,10 +298,10 @@ export function GameProvider({
       aggRef.current.applyCardEffect(
         effects,
         resolvedCost,
+        triggerId,
         false,
         false,
         cs.track?.endsTurn ?? false,
-        triggerId,
         stepId,
         instanceId,
       ),
@@ -455,10 +455,10 @@ export function GameProvider({
         aggRef.current.applyCardEffect(
           resolvedActions,
           resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
+          triggerId,
           !action.passive && !action.trigger,
           def.parchmentCard,
           action.endsTurn,
-          triggerId,
         ),
       );
     }

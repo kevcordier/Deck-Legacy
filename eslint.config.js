@@ -47,6 +47,7 @@ export default tseslint.config(
         'error',
         { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
       ],
+      '@typescript-eslint/default-param-last': 'error',
 
       // Disable sonarjs duplicate of @typescript-eslint/no-unused-vars (which already ignores _-prefixed vars)
       'sonarjs/no-unused-vars': 'off',

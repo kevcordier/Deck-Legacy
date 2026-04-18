@@ -21,12 +21,8 @@ export function ButtonGroup({
 }: ButtonGroupProps) {
   return (
     <div className={`flex flex-col items-start justify-start gap-2 ${className}`}>
-      <span className="text-xs">{label}</span>
-      <div
-        className="rounded-base inline-flex -space-x-px shadow-xs"
-        role="group"
-        aria-label={label}
-      >
+      <fieldset className="rounded-base inline-flex -space-x-px shadow-xs" aria-label={label}>
+        <legend className="text-xs">{label}</legend>
         {options.map(option => (
           <Button
             key={option.value || JSON.stringify(option.children)}
@@ -40,7 +36,7 @@ export function ButtonGroup({
             {option.children}
           </Button>
         ))}
-      </div>
+      </fieldset>
     </div>
   );
 }

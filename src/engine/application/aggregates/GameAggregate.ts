@@ -64,17 +64,15 @@ export class GameAggregate {
   private events: GameEvent[];
   private gameState: GameState;
   private saveState: GameState;
-  private cardDefs: Record<number, CardDef>;
 
   constructor(
-    eventHistory: GameEvent[] = [],
-    initialState: GameState,
-    cardDefs: Record<number, CardDef>,
+    readonly initialState: GameState,
+    readonly cardDefs: Record<number, CardDef>,
+    readonly eventHistory: GameEvent[] = [],
   ) {
     this.events = eventHistory;
     this.gameState = initialState;
     this.saveState = JSON.parse(JSON.stringify(initialState)) as GameState;
-    this.cardDefs = cardDefs;
   }
 
   private apply(event: GameEvent) {
@@ -432,10 +430,10 @@ export class GameAggregate {
   public applyCardEffect(
     effects: ResolvedAction[],
     resolvedCost: ResolvedCost,
+    triggerId: string,
     isDiscarded = false,
     isDestroyed = false,
     endsTurn = false,
-    triggerId: string,
     validatedStepId?: number,
     explicitSourceInstanceId?: number,
   ): GameState {

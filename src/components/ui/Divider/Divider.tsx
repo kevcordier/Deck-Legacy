@@ -16,9 +16,8 @@ export function Divider({
     gradient: 'bg-linear-to-r from-transparent via-primary to-transparent',
   }[color];
   return (
-    <div
-      className={`${colorClass} ${orientationClass} ${className}`}
-      role="separator"
+    <hr
+      className={`${colorClass} ${orientationClass} border-none ${className}`}
       aria-orientation={orientation}
     />
   );
