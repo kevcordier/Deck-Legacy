@@ -28,6 +28,8 @@ export function cardSelector(
     pool = gameState.drawPile;
   } else if (scope === TargetScope.BOARD) {
     pool = gameState.board;
+  } else if (scope === TargetScope.DISCOVERY) {
+    pool = gameState.discoveryPile;
   } else if (scope === TargetScope.DISCARD) {
     pool = gameState.discardPile;
   } else if (scope === TargetScope.BLOCKED) {

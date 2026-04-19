@@ -20,8 +20,8 @@ export type CardDef = {
 export type StepDef = {
   id: number;
   label?: string;
-  cost: Cost;
-  onClick: {
+  cost?: Cost;
+  onAccess?: {
     actions?: Action[];
     glory?: number;
   };
@@ -32,6 +32,7 @@ export type TrackDef = {
   inOrder: boolean;
   cumulative: boolean;
   endsTurn: boolean;
+  vertical?: boolean;
   preround?: boolean;
 };
 
@@ -53,6 +54,7 @@ export type CardState = {
 
 export type UpgradeDef = {
   cost: Cost;
+  destroy?: CardeSelector;
   upgradeTo: number; // id of a state within the same card
 };
 

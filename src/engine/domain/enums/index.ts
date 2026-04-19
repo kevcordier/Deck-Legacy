@@ -1,11 +1,13 @@
 export enum CardTag {
+  LAND = 'land',
   BUILDING = 'building',
   PERSON = 'person',
-  SEAFARING = 'seafaring',
-  LAND = 'land',
-  LIVESTOCK = 'livestock',
   EVENT = 'event',
   ENEMY = 'enemy',
+  SEAFARING = 'seafaring',
+  GOAL = 'goal',
+  KNIGHT = 'knight',
+  ELDER = 'elder',
 }
 
 export enum Trigger {
@@ -66,6 +68,7 @@ export enum TargetScope {
   BOARD = 'board',
   DECK = 'deck',
   DISCARD = 'discard',
+  DISCOVERY = 'discovery',
   PERMANENTS = 'permanents',
   BLOCKED = 'blocked',
   FRIENDLY = 'friendly',

@@ -24,7 +24,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 1,
             },
           },
@@ -37,7 +37,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 2,
             },
           },
@@ -50,7 +50,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 3,
             },
           },
@@ -63,7 +63,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 5,
             },
           },
@@ -76,7 +76,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 7,
             },
           },
@@ -89,7 +89,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 10,
             },
           },
@@ -102,7 +102,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 14,
             },
           },
@@ -115,7 +115,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 19,
             },
           },
@@ -128,7 +128,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 25,
             },
           },
@@ -141,7 +141,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 32,
             },
           },
@@ -154,7 +154,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 40,
             },
           },
@@ -167,7 +167,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 2,
@@ -202,7 +202,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 10,
             },
           },
@@ -215,7 +215,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 20,
             },
           },
@@ -228,7 +228,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 30,
             },
           },
@@ -241,7 +241,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 40,
             },
           },
@@ -254,7 +254,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 50,
             },
           },

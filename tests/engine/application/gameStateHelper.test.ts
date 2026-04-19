@@ -378,8 +378,8 @@ describe('computeScore', () => {
             glory: 0,
             track: {
               steps: [
-                { id: 1, cost: {}, onClick: { glory: 4 } },
-                { id: 2, cost: {}, onClick: { glory: 3 } },
+                { id: 1, cost: {}, onAccess: { glory: 4 } },
+                { id: 2, cost: {}, onAccess: { glory: 3 } },
               ],
               inOrder: false,
               cumulative: false,

@@ -1,6 +1,4 @@
-import { Button } from '@components/ui/Button/Button';
 import { Glory } from '@components/ui/Glory/Glory';
-import { canAffordResources } from '@engine/application/cardHelpers';
 import { ActionType } from '@engine/domain/enums';
 import type { Action, Resources, TrackDef } from '@engine/domain/types';
 import { getResMeta } from '@helpers/renderHelpers';
@@ -14,32 +12,19 @@ interface CardTrackProps {
   readonly onStep: (stepId: number) => void;
 }
 
-export function CardTrack({
-  track,
-  validatedSteps,
-  currentResources,
-  canActivate,
-  onStep,
-}: CardTrackProps) {
-  const firstPendingId = track.inOrder
-    ? track.steps.find(s => !validatedSteps.includes(s.id))?.id
-    : undefined;
-
+export function CardTrack({ track, validatedSteps }: CardTrackProps) {
   return (
-    <div className="flex flex-wrap items-center gap-2 py-1">
+    <div
+      className={`flex ${track.vertical ? 'flex-col' : 'flex-row'} justify-start flex-wrap gap-2`}
+    >
       {track.steps.map(step => {
         const isValidated = validatedSteps.includes(step.id);
-        const isClickable =
-          canActivate &&
-          !isValidated &&
-          (!track.inOrder || step.id === firstPendingId) &&
-          canAffordResources(currentResources, step.cost);
 
-        const costEntry = step.cost.resources?.[0];
+        const costEntry = step.cost?.resources?.[0];
 
         // Determine step button content
-        const glory = step.onClick.glory;
-        const actions = step.onClick.actions ?? [];
+        const glory = step.onAccess?.glory;
+        const actions = step.onAccess?.actions ?? [];
 
         const contents: React.ReactNode[] = [];
         if (glory !== undefined && glory !== 0) {
@@ -64,6 +49,12 @@ export function CardTrack({
               ) : null;
             }
           }
+
+          return (
+            <span className="font-display font-bold text-3xl" key={action.id}>
+              *
+            </span>
+          );
         };
 
         actions.forEach(action => {
@@ -71,9 +62,12 @@ export function CardTrack({
         });
 
         return (
-          <div key={step.id} className="flex flex-col items-center gap-1">
+          <div
+            key={step.id}
+            className={`flex ${track.vertical ? ' ' : 'flex-col '}items-center gap-1`}
+          >
             {costEntry && (
-              <div className={`flex items-center gap-0.5 text-base text-ink/50`}>
+              <div className={`flex items-center gap-0.5 text-base text-base-ink/50`}>
                 {Object.entries(costEntry).map(([k, v]) => {
                   const meta = getResMeta(k);
                   return (
@@ -85,18 +79,15 @@ export function CardTrack({
                 })}
               </div>
             )}
-            <Button
+            <div
               className={[
-                `size-10 text-base flex flex-col items-center justify-center border-2 leading-none font-bold`,
+                `size-10 text-base flex flex-col items-center justify-center border-2 leading-none font-bold rounded-md text-base-ink border-base-ink`,
                 isValidated ? 'border-success bg-success/20! text-success' : '',
               ].join(' ')}
-              disabled={!isClickable && !isValidated}
-              variant="text"
-              onClick={() => onStep(step.id)}
               title={isValidated ? '✓' : undefined}
             >
               {isValidated ? <span>✓</span> : contents}
-            </Button>
+            </div>
           </div>
         );
       })}

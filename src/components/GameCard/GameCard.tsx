@@ -154,16 +154,6 @@ export function GameCard({
               );
             })}
 
-          {!isBlocked && cs.track && (
-            <CardTrack
-              track={cs.track}
-              validatedSteps={instance.trackProgress}
-              currentResources={currentResources}
-              canActivate={canActivate}
-              onStep={stepId => resolveTrackStep(instance.id, stepId)}
-            />
-          )}
-
           {!isBlocked &&
             upgrades.map(upg => {
               const affordable = canAffordResources(currentResources, upg.cost);
@@ -204,6 +194,18 @@ export function GameCard({
               );
             })}
         </div>
+
+        {!isBlocked && cs.track && (
+          <div className="flex flex-col items-start justify-center gap-1 p-1 @3xs:p-3">
+            <CardTrack
+              track={cs.track}
+              validatedSteps={instance.trackProgress}
+              currentResources={currentResources}
+              canActivate={canActivate}
+              onStep={stepId => resolveTrackStep(instance.id, stepId)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

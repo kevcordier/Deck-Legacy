@@ -96,7 +96,8 @@ export const getActiveState = (
 };
 
 /** Vérifie si les ressources disponibles suffisent pour payer un coût. */
-export function canAffordResources(available: Resources, cost: Cost): boolean {
+export function canAffordResources(available: Resources, cost?: Cost): boolean {
+  if (!cost?.resources) return true;
   if (!cost.resources?.[0]) return true;
   return Object.entries(cost.resources[0]).every(
     ([k, v]) => (available[k as keyof Resources] ?? 0) >= v,
@@ -108,7 +109,7 @@ export function getTrackGlory(instance: CardInstance, cs: CardState): number {
   if (!cs.track || instance.trackProgress.length === 0) return 0;
   return cs.track.steps.reduce((sum, step) => {
     if (instance.trackProgress.includes(step.id)) {
-      return sum + (step.onClick.glory ?? 0);
+      return sum + (step.onAccess?.glory ?? 0);
     }
     return sum;
   }, 0);

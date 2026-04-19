@@ -23,7 +23,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 1,
             },
           },
@@ -36,7 +36,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 4,
             },
           },
@@ -49,7 +49,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 7,
             },
           },
@@ -62,7 +62,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 10,
             },
           },
@@ -75,7 +75,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 14,
             },
           },
@@ -88,7 +88,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 19,
             },
           },
@@ -101,7 +101,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 25,
             },
           },
@@ -114,7 +114,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 32,
             },
           },
@@ -127,7 +127,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 40,
             },
           },
@@ -140,7 +140,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -181,7 +181,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 10,
             },
           },
@@ -194,7 +194,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 20,
             },
           },
@@ -207,7 +207,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 30,
             },
           },
@@ -220,7 +220,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 40,
             },
           },
@@ -233,7 +233,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            onClick: {
+            onAccess: {
               glory: 50,
             },
           },

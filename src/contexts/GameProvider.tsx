@@ -283,9 +283,11 @@ export function GameProvider({
     if (inst.trackProgress.includes(stepId)) return;
     if (!canAffordResources(gs.resources, step.cost)) return;
 
-    const [resolvedCost] = resolveCost(step.cost, instanceId, gs, defs);
+    const [resolvedCost] = step.cost
+      ? resolveCost(step.cost, instanceId, gs, defs)
+      : [{ resources: {}, discardedCardIds: [], destroyedCardIds: [] }, []];
 
-    const effects = (step.onClick.actions ?? []).flatMap(action => {
+    const effects = (step.onAccess?.actions ?? []).flatMap(action => {
       const [resolved] = resolveActionEffect(action, instanceId, gs, defs);
       return [resolved];
     });

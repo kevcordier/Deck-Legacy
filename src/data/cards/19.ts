@@ -37,13 +37,14 @@ export const exportation: CardDef = {
         inOrder: true,
         endsTurn: false,
         preround: true,
+        vertical: true,
         steps: [
           {
             id: 1,
             cost: {
               accumulated: 10,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -61,7 +62,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: 20,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -79,7 +80,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: 30,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -96,7 +97,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: 40,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -114,7 +115,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: 55,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -132,7 +133,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: 75,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -150,7 +151,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: 100,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -197,13 +198,14 @@ export const exportation: CardDef = {
         cumulative: false,
         inOrder: true,
         endsTurn: false,
+        vertical: true,
         steps: [
           {
             id: 8,
             cost: {
               accumulated: 50,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -229,7 +231,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: 50,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -247,7 +249,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: 75,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -264,7 +266,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: 100,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -282,7 +284,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: 150,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -299,7 +301,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: 200,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,
@@ -316,7 +318,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: 200,
             },
-            onClick: {
+            onAccess: {
               actions: [
                 {
                   id: 1,

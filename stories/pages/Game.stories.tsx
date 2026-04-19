@@ -248,13 +248,9 @@ export const WithStopCard: Story = {
   args: {
     saveState: {
       ...PLAYING_STATE,
-      instances: {
-        ...INSTANCES_BASE,
-        11: { id: 11, cardId: 6, stateId: 4, stickers: {}, trackProgress: [], cumulated: 0 },
-      },
       drawPile: [],
-      discardPile: Array.from({ length: 22 }, (_, i) => i), // 22 cartes dans la défausse pour tester le stop à 23
-      discoveryPile: [23, 24, 25, 26, 27],
+      discardPile: Array.from({ length: 30 }, (_, i) => i),
+      discoveryPile: Array.from({ length: 5 }, (_, i) => 30 + i),
       board: [],
     },
   },

@@ -318,7 +318,7 @@ describe('getTrackGlory', () => {
     const instance = makeInstance(1, 10, 1);
     const cs = makeCardState(1, {
       track: {
-        steps: [{ id: 1, cost: {}, onClick: { glory: 3 } }],
+        steps: [{ id: 1, cost: {}, onAccess: { glory: 3 } }],
         inOrder: false,
         cumulative: false,
         endsTurn: false,
@@ -339,8 +339,8 @@ describe('getTrackGlory', () => {
     const cs = makeCardState(1, {
       track: {
         steps: [
-          { id: 1, cost: {}, onClick: { glory: 3 } },
-          { id: 2, cost: {}, onClick: { glory: 5 } },
+          { id: 1, cost: {}, onAccess: { glory: 3 } },
+          { id: 2, cost: {}, onAccess: { glory: 5 } },
         ],
         inOrder: false,
         cumulative: false,
@@ -362,8 +362,8 @@ describe('getTrackGlory', () => {
     const cs = makeCardState(1, {
       track: {
         steps: [
-          { id: 1, cost: {}, onClick: { glory: 4 } },
-          { id: 2, cost: {}, onClick: { glory: 6 } },
+          { id: 1, cost: {}, onAccess: { glory: 4 } },
+          { id: 2, cost: {}, onAccess: { glory: 6 } },
         ],
         inOrder: false,
         cumulative: false,
@@ -384,7 +384,7 @@ describe('getTrackGlory', () => {
     };
     const cs = makeCardState(1, {
       track: {
-        steps: [{ id: 1, cost: {}, onClick: {} }],
+        steps: [{ id: 1, cost: {}, onAccess: {} }],
         inOrder: false,
         cumulative: false,
         endsTurn: false,

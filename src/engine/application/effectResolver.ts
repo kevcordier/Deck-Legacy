@@ -57,7 +57,7 @@ export function resolveActionEffect(
   }
 
   if (action.cards) {
-    resolveCardTarget(ctx, action.cards);
+    resolveCardTarget(ctx, action.cards, action.numberOfTimes);
   }
 
   if (action.resources) {
@@ -118,7 +118,7 @@ function resolveBoardEffect(
   return [resolverAction, pendingChoices];
 }
 
-function resolveCardTarget(ctx: ResolveContext, cards: CardeSelector): void {
+function resolveCardTarget(ctx: ResolveContext, cards: CardeSelector, numberOfTimes = 1): void {
   const {
     actionId,
     actionType,
@@ -146,15 +146,18 @@ function resolveCardTarget(ctx: ResolveContext, cards: CardeSelector): void {
     resolverAction.instanceId = choices[0];
     return;
   }
-  pendingChoices.push({
-    id: `${instanceId}-${actionId}`,
-    kind: actionType,
-    type: PendingChoiceType.CHOOSE_CARD,
-    sourceInstanceId: instanceId,
-    choices,
-    pickCount: cards.number ?? 1,
-    isMandatory,
-  });
+  // Player must pick numberOfTimes cards one at a time; same id so they merge into the same ResolvedAction
+  for (let i = 0; i < numberOfTimes; i++) {
+    pendingChoices.push({
+      id: `${instanceId}-${actionId}`,
+      kind: actionType,
+      type: PendingChoiceType.CHOOSE_CARD,
+      sourceInstanceId: instanceId,
+      choices,
+      pickCount: cards.number ?? 1,
+      isMandatory,
+    });
+  }
 }
 
 function resolveResourceTarget(ctx: ResolveContext, resources: ResourceSelector): void {

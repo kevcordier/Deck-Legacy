@@ -58,14 +58,22 @@
     "18_2": "Extended Treasury",
     "19_1": "Export",
     "19_2": "Mass Export",
-    "20_1": "Mine",
-    "20_2": "Deep Mine",
-    "20_3": "Ruby Mine",
-    "20_4": "Diamond Mine",
-    "21_1": "Shrine",
-    "21_2": "Sanctuary",
-    "21_3": "Oratory",
-    "21_4": "Temple"
+    "20_1": "Volcanic Eruption",
+    "20_2": "Ashlands",
+    "20_3": "Young Forest",
+    "21_1": "Opportunist",
+    "21_2": "Recruit",
+    "21_3": "Labourer",
+    "21_4": "Pretend Nobel",
+    "22_1": "Stop",
+    "68_1": "Shrine",
+    "68_2": "Sanctuary",
+    "68_3": "Oratory",
+    "68_4": "Temple",
+    "69_1": "Mine",
+    "69_2": "Deep Mine",
+    "69_3": "Ruby Mine",
+    "69_4": "Diamond Mine"
   },
   "labels": {
     "1_2_a0": "Discard a friendly card to gain 2 {{gold}}.",
@@ -96,14 +104,18 @@
     "12_3_a0": "Gain {{weapon}} for each Person in play.",
     "14_3_a0": "Discover Shore 75.",
     "11_4_p0": "This card has 1+{{gold}} production for each person in play.",
-    "14_4_a0": "As long as this card is in play, you may discard the top card of your deck.",
+    "14_4_a0": "Discard the top card of your deck.",
     "15_1_a0": "Stop",
     "16_1_a0": "Fertile Soil",
     "16_1_a1": "Efficiency",
-    "21_1_a0": "End of Turn: Discard to make up to 1 other card stay in play.",
-    "21_2_a0": "End of Turn: Discard to make up to 2 other cards stay in play.",
-    "21_3_a0": "End of Turn: Discard to make up to 3 other cards stay in play.",
-    "21_4_a0": "End of Turn: Discard to make up to 4 other cards stay in play."
+    "19_1_a0": "Spend {{goods}} to gain {{goods}} on this card.",
+    "19_2_a0": "Spend {{goods}} to gain {{goods}} on this card.",
+    "20_3_a0": "Mark 1 track. When you mark a *, add sticker 2 as production here.",
+    "21_4_a0": "Reset to add any resource sticker as production on any stage of this card without stickers.",
+    "68_1_a0": "End of Turn: Discard to make up to 1 other card stay in play.",
+    "68_2_a0": "End of Turn: Discard to make up to 2 other cards stay in play.",
+    "68_3_a0": "End of Turn: Discard to make up to 3 other cards stay in play.",
+    "68_4_a0": "End of Turn: Discard to make up to 4 other cards stay in play."
   },
   "descriptions": {
     "1_2_a0": "Discard a friendly card to gain 2 gold.",
@@ -126,14 +138,18 @@
   },
   "texts": {
     "15": "## Stop!\nNow that you have got the hang of the game, you may reset to start again if you like to give it your best shot. If you continue, you will discover 4 cards, cards 24-27. Look at them now and THEN decide if you want to restart or continue.\n\nCards 25, 26, and 27 are **permanent** cards, meaning they are never shuffled into your deck and cannot be discarded. They are always visible and active, but are not counted as \"in play\".\n\nThe Army and Treasury are track cards. They let you spend your turn ({{time}}) and resources ({{weapon}}/{{gold}}) to gain fame. Export is a tally card. It doesn't end your turn ({{passif}}) and lets you spend trade goods ({{goods}}) to gain stickers, new cards, and other cool effects.\n\nYou will not be able to complete all tracks before the game ends. Try to get as far as possible!",
-    "16": "## Fertile Soil\n\nThis land seems to grow anything you put into the ground.\n\nAdd sticker 1 ({{gold}}) as production to a land.\n\n## Efficiency\n\nYou're getting the hang of this!\n\nChoose 1 **building** and **boost** its production (add a resource sticker to it to make it produce 1 more of a resource it already produces. Resource stickers are numbered 1-6 on the sticker sheet).\n\n(Reminder: When discovering a parchment card like this, follow all its instructions, then destroy this.)"
+    "16": "## Fertile Soil\n\nThis land seems to grow anything you put into the ground.\n\nAdd sticker 1 ({{gold}}) as production to a land.\n\n## Efficiency\n\nYou're getting the hang of this!\n\nChoose 1 **building** and **boost** its production (add a resource sticker to it to make it produce 1 more of a resource it already produces. Resource stickers are numbered 1-6 on the sticker sheet).\n\n(Reminder: When discovering a parchment card like this, follow all its instructions, then destroy this.)",
+    "22": "## Stop!\n\nWith your kingdom growing and flourishing, many are coming here to pursue their dreams.\n\nThis round, instead of discovering the next 2 cards, look at the 4 next cards of the box (cards 31-34).\n\nChoose 2 of them to discover and destroy the other 2."
   },
   "tags": {
     "Land": "Land",
     "Building": "Building",
     "Person": "Person",
+    "Event": "Event",
     "Enemy": "Enemy",
     "Seafaring": "Seafaring",
-    "Event": "Event"
+    "Goal": "Goal",
+    "Knight": "Knight",
+    "Elder": "Elder"
   }
 }

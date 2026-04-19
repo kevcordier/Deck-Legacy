@@ -53,7 +53,7 @@
     "15_1": "Stop",
     "16_1": "Stop",
     "17_1": "Armée",
-    "17_2": "Armée"
+    "17_2": "Grande Armée"
   },
   "labels": {
     "1_2_a0": "Défaussez une carte alliée pour gagner {{gold}} {{gold}}.",
@@ -84,7 +84,7 @@
     "12_3_a0": "Gagnez {{weapon}} par Personne en jeu.",
     "14_3_a0": "Découvrez Rivage 75.",
     "11_4_p0": "Cette carte a 1+{{gold}} de production pour chaque personne en jeu.",
-    "14_4_a0": "Tant que cette carte est en jeu, vous pouvez défausser la carte au sommet de votre pioche.",
+    "14_4_a0": "Défausser la carte au sommet de votre pioche.",
     "15_1_a0": "Stop",
     "16_1_a0": "Terre fertile",
     "16_1_a1": "Efficacité"
@@ -117,7 +117,10 @@
     "Building": "Bâtiment",
     "Person": "Personne",
     "Enemy": "Ennemi",
+    "Event": "Événement",
     "Seafaring": "Maritime",
-    "Event": "Événement"
+    "Goal": "Objectif",
+    "Knight": "Chevalier",
+    "Elder": "Ancien"
   }
 }

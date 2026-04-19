@@ -101,6 +101,26 @@ describe('cardSelector — DISCARD', () => {
   });
 });
 
+// — DISCOVERY scope —
+
+describe('cardSelector — DISCOVERY', () => {
+  it('returns all cards in the discovery pile', () => {
+    const gs = makeGameState({
+      discoveryPile: [6, 7],
+      instances: {
+        6: makeInstance(6, 10, 1),
+        7: makeInstance(7, 11, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeCardState(1)]),
+      11: makeDef(11, [makeCardState(1)]),
+    };
+    const result = cardSelector({ scope: TargetScope.DISCOVERY }, 99, gs, defs);
+    expect(result).toEqual([6, 7]);
+  });
+});
+
 // — BLOCKED scope —
 
 describe('cardSelector — BLOCKED', () => {
