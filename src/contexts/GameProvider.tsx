@@ -412,11 +412,7 @@ export function GameProvider({
 
   const handleBoardEffectChoice = (choice: ResolvedAction, gs: GameState, instanceId: number) => {
     const resolvedAction = currentActionRef.current?.resolvedAction.find(ra => ra.id === choice.id);
-    if (
-      !resolvedAction ||
-      resolvedAction.type !== ActionType.ADD_BOARD_EFFECT ||
-      choice.instanceId === undefined
-    ) {
+    if (resolvedAction?.type !== ActionType.ADD_BOARD_EFFECT || choice.instanceId === undefined) {
       return false;
     }
 
@@ -439,7 +435,7 @@ export function GameProvider({
       const resolvedActions = currentAction.resolvedAction;
       const resolvedCost = currentAction.resolvedCost;
       const triggerId = currentAction.triggerId;
-      const cardAction = currentAction.action;
+      const { action: currentCardAction } = currentAction;
       const currentDef = defs[gs.instances[instanceId].cardId];
       currentActionRef.current = null;
       setPendingChoices(null);
@@ -449,9 +445,9 @@ export function GameProvider({
           resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
           triggerId,
           {
-            isDiscarded: !cardAction.passive && !cardAction.trigger,
+            isDiscarded: !currentCardAction.passive && !currentCardAction.trigger,
             isDestroyed: currentDef.parchmentCard,
-            endsTurn: cardAction.endsTurn,
+            endsTurn: currentCardAction.endsTurn,
           },
         ),
       );
@@ -468,14 +464,16 @@ export function GameProvider({
     action: CardAction,
   ) => {
     const def = defs[gs.instances[instanceId].cardId];
-    const currentAction = currentActionRef.current;
-    if (!currentAction) return;
-    currentAction.resolvedAction = mergeResolvedChoice(currentAction.resolvedAction, choice);
+    if (!currentActionRef.current) return;
+    currentActionRef.current.resolvedAction = mergeResolvedChoice(
+      currentActionRef.current.resolvedAction,
+      choice,
+    );
 
     if (pendingChoices?.length === 1) {
-      const resolvedActions = currentAction.resolvedAction;
-      const resolvedCost = currentAction.resolvedCost;
-      const triggerId = currentAction.triggerId;
+      const resolvedActions = currentActionRef.current.resolvedAction;
+      const resolvedCost = currentActionRef.current.resolvedCost;
+      const triggerId = currentActionRef.current.triggerId;
       currentActionRef.current = null;
       sync(
         aggRef.current.applyCardEffect(

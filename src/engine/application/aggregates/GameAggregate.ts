@@ -484,10 +484,8 @@ export class GameAggregate {
       if (Object.keys(this.gameState.triggerPile).length === 0) {
         return this.turnStarted();
       }
-    } else {
-      if (endsTurn) {
-        return this.turnEnded();
-      }
+    } else if (endsTurn) {
+      return this.turnEnded();
     }
     return this.gameState;
   }
