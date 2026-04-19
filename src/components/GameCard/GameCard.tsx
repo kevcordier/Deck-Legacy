@@ -37,8 +37,7 @@ export function GameCard({
   className = '',
 }: GameCardProps) {
   const { t } = useTranslation();
-  const { state, defs, stickerDefs, resolveProduction, resolveUpgrade, resolveTrackStep } =
-    useGame();
+  const { state, defs, stickerDefs, resolveProduction, resolveUpgrade } = useGame();
   const currentResources = state.resources;
   const isBlocked = isOnBoard && cardIsBlocked(instance.id, state);
   const cs = getActiveState(instance, defs);
@@ -96,10 +95,13 @@ export function GameCard({
 
       <div className="relative flex flex-1 flex-col overflow-hidden">
         {cs.illustration && (
-          <div
-            className="absolute inset-0 z-0 bg-cover bg-center opacity-60"
-            style={{ backgroundImage: `url(${cs.illustration})` }}
-          />
+          <>
+            <div
+              className="absolute inset-0 z-0 bg-cover bg-center opacity-60"
+              style={{ backgroundImage: `url(${cs.illustration})` }}
+            />
+            <div className="absolute inset-x-0 bottom-0 z-0 h-2/3 bg-linear-to-t from-card via-card/70 to-transparent" />
+          </>
         )}
 
         <div className={`relative z-10 flex flex-1 flex-col items-start gap-1 p-1 @3xs:p-3`}>
@@ -196,14 +198,8 @@ export function GameCard({
         </div>
 
         {!isBlocked && cs.track && (
-          <div className="flex flex-col items-start justify-center gap-1 p-1 @3xs:p-3">
-            <CardTrack
-              track={cs.track}
-              validatedSteps={instance.trackProgress}
-              currentResources={currentResources}
-              canActivate={canActivate}
-              onStep={stepId => resolveTrackStep(instance.id, stepId)}
-            />
+          <div className="z-10 flex flex-col items-start justify-center gap-1 p-1 @3xs:p-3">
+            <CardTrack track={cs.track} validatedSteps={instance.trackProgress} />
           </div>
         )}
       </div>

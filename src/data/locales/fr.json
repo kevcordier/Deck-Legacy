@@ -85,7 +85,8 @@
     },
     "chooseState": "Choisir un état",
     "chooseResource": "Choisir une ressource",
-    "chooseSticker": "Choisir un autocollant"
+    "chooseSticker": "Choisir un autocollant",
+    "confirm": "Confirmer ({{selected}}/{{total}})"
   },
   "triggerPile": {
     "title": "Effets en attente",

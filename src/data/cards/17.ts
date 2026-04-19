@@ -9,6 +9,8 @@ export const army: CardDef = {
     {
       id: 1,
       name: 'Army',
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c482b4a9-396c-4bdd-a45d-3a8866cec739/original=true,quality=90/2025-07-18-235304_Flux%20CopaxTimeless_xplus4_0.jpeg',
       track: {
         cumulative: false,
         inOrder: true,
@@ -167,6 +169,8 @@ export const army: CardDef = {
       id: 2,
       name: 'Grand Army',
       glory: 50,
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c482b4a9-396c-4bdd-a45d-3a8866cec739/original=true,quality=90/2025-07-18-235304_Flux%20CopaxTimeless_xplus4_0.jpeg',
       track: {
         cumulative: false,
         inOrder: true,

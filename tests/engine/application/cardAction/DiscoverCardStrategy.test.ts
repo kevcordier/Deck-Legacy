@@ -106,4 +106,32 @@ describe('DiscoverCardStrategy', () => {
     const result = strategy.applyEffect(gs, makePayload(5));
     expect(result.lastAddedIds).toContain(5);
   });
+
+  it('discovers multiple cards when instanceIds is provided', () => {
+    const inst5 = makeInstance(5, 10, 1);
+    const inst6 = makeInstance(6, 10, 1);
+    const gs = makeGameState({
+      instances: { 5: inst5, 6: inst6 },
+      discoveryPile: [5, 6],
+    });
+    const result = strategy.applyEffect(gs, {
+      id: '0-1',
+      type: ActionType.DISCOVER_CARD,
+      sourceInstanceId: 0,
+      instanceIds: [5, 6],
+    });
+    expect(result.discardPile).toContain(5);
+    expect(result.discardPile).toContain(6);
+  });
+
+  it('is a no-op when neither instanceId nor instanceIds is provided', () => {
+    const gs = makeGameState({ discoveryPile: [5] });
+    const result = strategy.applyEffect(gs, {
+      id: '0-1',
+      type: ActionType.DISCOVER_CARD,
+      sourceInstanceId: 0,
+    });
+    expect(result.discardPile).toEqual([]);
+    expect(result.discoveryPile).toEqual([5]);
+  });
 });

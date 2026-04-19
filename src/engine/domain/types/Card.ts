@@ -72,7 +72,6 @@ export type Action = {
   id: number;
   type: ActionType;
   cards?: CardeSelector;
-  numberOfTimes?: number;
   resources?: ResourceSelector;
   states?: number[];
   stickerIds?: number[];

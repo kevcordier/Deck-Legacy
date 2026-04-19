@@ -201,6 +201,31 @@ describe('resolveActionEffect — stickerIds', () => {
   });
 });
 
+// — cards.number less than or equal to matches —
+
+describe('resolveActionEffect — cards count <= pickCount', () => {
+  it('sets instanceIds when choices count equals pickCount (multiple auto-resolved)', () => {
+    const gs = makeGameState({
+      board: [2, 3],
+      instances: {
+        2: makeInstance(2, 10, 1),
+        3: makeInstance(3, 10, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'Card', states: [{ id: 1, name: 'State 1' }] },
+    };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.DISCARD_CARD,
+      cards: { scope: TargetScope.BOARD, number: 2 },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(resolved.instanceIds).toEqual([2, 3]);
+    expect(pending).toEqual([]);
+  });
+});
+
 // — cards.number fallback —
 
 describe('resolveActionEffect — cards.number fallback', () => {

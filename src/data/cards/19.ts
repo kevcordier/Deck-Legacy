@@ -9,7 +9,8 @@ export const exportation: CardDef = {
     {
       id: 1,
       name: 'Export',
-      description: 'Make yourself invaluable for your neighbours, it will surely pay off.',
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/79ac89da-591d-45ef-b60d-23263d511b35/anim=false,width=450,optimized=true/00009-3241185049.jpeg',
       actions: [
         {
           id: '19-1-1',
@@ -169,9 +170,10 @@ export const exportation: CardDef = {
     },
     {
       id: 2,
-      name: 'Extended Treasury',
+      name: 'Mass Export',
       glory: 25,
-      description: 'I want to be unreasonably rich and put King Midas to shame.',
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/79ac89da-591d-45ef-b60d-23263d511b35/anim=false,width=450,optimized=true/00009-3241185049.jpeg',
       actions: [
         {
           id: '19-2-1',

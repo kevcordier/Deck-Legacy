@@ -41,4 +41,28 @@ describe('DestroyCardStrategy', () => {
     expect(result.discardPile).toEqual([]);
     expect(result.destroyedPile).toContain(7);
   });
+
+  it('destroys multiple cards when instanceIds is provided', () => {
+    const gs = makeGameState({ board: [1, 2, 3] });
+    const result = strategy.applyEffect(gs, {
+      id: '1-1',
+      type: ActionType.DESTROY_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [1, 2],
+    });
+    expect(result.board).toEqual([3]);
+    expect(result.destroyedPile).toContain(1);
+    expect(result.destroyedPile).toContain(2);
+  });
+
+  it('is a no-op when neither instanceId nor instanceIds is provided', () => {
+    const gs = makeGameState({ board: [1, 2] });
+    const result = strategy.applyEffect(gs, {
+      id: '1-1',
+      type: ActionType.DESTROY_CARD,
+      sourceInstanceId: 99,
+    });
+    expect(result.board).toEqual([1, 2]);
+    expect(result.destroyedPile).toEqual([]);
+  });
 });

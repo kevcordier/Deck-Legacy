@@ -1,19 +1,12 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import { destroyCards } from '@engine/application/gameStateHelper';
-import type { ActionType } from '@engine/domain/enums';
-import type { GameState } from '@engine/domain/types';
+import type { GameState, ResolvedAction } from '@engine/domain/types';
 
 export class DestroyCardStrategy implements CardActionStrategy {
-  applyEffect(
-    gameState: GameState,
-    payload: {
-      id: string;
-      type: ActionType;
-      sourceInstanceId: number;
-      instanceId: number;
-    },
-  ): GameState {
-    const gs = JSON.parse(JSON.stringify(gameState)) as GameState; // Deep clone to avoid mutating original state
-    return { ...gs, ...destroyCards(gs, [payload.instanceId]) };
+  applyEffect(gameState: GameState, payload: ResolvedAction): GameState {
+    const ids =
+      payload.instanceIds ?? (payload.instanceId !== undefined ? [payload.instanceId] : []);
+    const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
+    return { ...gs, ...destroyCards(gs, ids) };
   }
 }

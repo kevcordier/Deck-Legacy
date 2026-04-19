@@ -18,6 +18,7 @@ import type {
 } from '@engine/domain/types';
 import { tCardActionLabel, tCardName } from '@helpers/cardI18n';
 import type { TFunction } from 'i18next';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 function getChoiceActionLabel(
@@ -80,9 +81,17 @@ function getChoiceSection(
   t: TFunction,
   resolvePlayerChoice: (option: ResolvedAction) => void,
   resolvePayCost: (resolved: ResolvedCost) => void,
+  selectedIds: number[],
+  onToggleId: (id: number) => void,
 ): ChoiceSection {
   if (choice.type === PendingChoiceType.CHOOSE_CARD) {
+    const isMultiSelect = choice.pickCount > 1;
+
     const handleCardClick = (instanceId: number) => {
+      if (isMultiSelect) {
+        onToggleId(instanceId);
+        return;
+      }
       if (choice.kind === 'COST') {
         resolvePayCost({ resources: {}, discardedCardIds: [instanceId], destroyedCardIds: [] });
       } else {
@@ -105,8 +114,12 @@ function getChoiceSection(
             const def = inst ? defs[inst.cardId] : undefined;
             if (!def || !inst) return null;
             const state = def.states.find(s => s.id === inst.stateId) ?? def.states[0];
+            const isSelected = isMultiSelect && selectedIds.includes(id);
             return (
-              <div className="relative transition-transform hover:scale-[1.02]" key={id}>
+              <div
+                className={`relative transition-transform hover:scale-[1.02]${isSelected ? ' ring-primary rounded-xl ring-2' : ''}`}
+                key={id}
+              >
                 <button
                   onClick={() => handleCardClick(id)}
                   className="absolute inset-0 z-12 cursor-pointer!"
@@ -220,6 +233,28 @@ export function PendingChoiceModal({
   onSkipChoice,
 }: PendingChoiceModalProps) {
   const { t } = useTranslation();
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+  const onToggleId = (id: number) => {
+    setSelectedIds(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]));
+  };
+
+  const isMultiSelect =
+    (choice?.pickCount ?? 1) > 1 && choice?.type === PendingChoiceType.CHOOSE_CARD;
+
+  const handleMultiConfirm = () => {
+    if (!choice || selectedIds.length !== choice.pickCount) return;
+    if (choice.kind === 'COST') {
+      resolvePayCost({ resources: {}, discardedCardIds: selectedIds, destroyedCardIds: [] });
+    } else {
+      resolvePlayerChoice({
+        id: choice.id,
+        type: choice.kind,
+        sourceInstanceId: choice.sourceInstanceId,
+        instanceIds: selectedIds,
+      });
+    }
+  };
 
   let content;
   let title = '';
@@ -293,6 +328,8 @@ export function PendingChoiceModal({
       t,
       resolvePlayerChoice,
       resolvePayCost,
+      selectedIds,
+      onToggleId,
     ));
   }
 
@@ -309,6 +346,20 @@ export function PendingChoiceModal({
       className={isCardChoice ? 'lg:min-w-2xl' : ''}
     >
       {content}
+      {isMultiSelect && choice && (
+        <div className="flex justify-end pt-2">
+          <Button
+            onClick={handleMultiConfirm}
+            disabled={selectedIds.length !== choice.pickCount}
+            color="base-primary"
+          >
+            {t('pendingChoice.confirm', {
+              selected: selectedIds.length,
+              total: choice.pickCount,
+            })}
+          </Button>
+        </div>
+      )}
     </Modal>
   );
 }

@@ -18,8 +18,8 @@ export const stop3: CardDef = {
             {
               id: 1,
               type: ActionType.DISCOVER_CARD,
-              numberOfTimes: 2,
               cards: {
+                number: 2,
                 scope: TargetScope.DISCOVERY,
                 ids: [31, 32, 33, 34],
               },
@@ -27,8 +27,8 @@ export const stop3: CardDef = {
             {
               id: 2,
               type: ActionType.DESTROY_CARD,
-              numberOfTimes: 2,
               cards: {
+                number: 2,
                 scope: TargetScope.DISCOVERY,
                 ids: [31, 32, 33, 34],
               },

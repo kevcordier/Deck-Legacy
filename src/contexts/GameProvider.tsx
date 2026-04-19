@@ -63,50 +63,63 @@ export function GameProvider({
     resolvedCost: ResolvedCost | null;
     resolvedAction: ResolvedAction[];
     triggerId: string;
+    nextEffectIndex?: number;
   } | null>(null);
 
   // ─── Sync ───────────────────────────────────────────────────────────────
+
+  const emptyResolvedCost: ResolvedCost = {
+    resources: {},
+    discardedCardIds: [],
+    destroyedCardIds: [],
+  };
 
   const triggerAction = (
     instanceId: number,
     effect: CardAction,
     resolvedCost: ResolvedCost,
     triggerId: string,
+    startEffectIndex = 0,
   ): GameState | undefined => {
-    const gs = aggRef.current.getGameState();
-    const inst = gs.instances[instanceId];
+    const initialGs = aggRef.current.getGameState();
+    const inst = initialGs.instances[instanceId];
     const def = defs[inst.cardId];
 
-    if (!inst || cardIsBlocked(instanceId, gs)) return;
+    if (!inst || cardIsBlocked(instanceId, initialGs)) return;
     if (!effect) return;
 
-    // Resolve all effects of the action and gather any pending choices needed to resolve them
-    const effects: ResolvedAction[] = [];
-    const choices: PendingChoice[] = [];
-    for (const eff of effect.actions) {
-      const [resolvedAction, pendingChoices] = resolveActionEffect(eff, instanceId, gs, defs, true);
+    for (let i = startEffectIndex; i < effect.actions.length; i++) {
+      const gs = aggRef.current.getGameState();
+      const eff = effect.actions[i];
+      const [resolvedAction, choices] = resolveActionEffect(eff, instanceId, gs, defs, true);
+      const isLast = i === effect.actions.length - 1;
 
-      effects.push(resolvedAction);
-      choices.push(...pendingChoices);
-    }
-    // If there are pending choices to resolve the effects, set them and return early to wait for resolution
-    if (choices.length > 0) {
-      currentActionRef.current = {
-        instanceId,
-        action: effect,
-        resolvedCost,
-        resolvedAction: effects,
+      if (choices.length > 0) {
+        currentActionRef.current = {
+          instanceId,
+          action: effect,
+          resolvedCost,
+          resolvedAction: [resolvedAction],
+          triggerId,
+          nextEffectIndex: i,
+        };
+        setPendingChoices(choices);
+        return undefined;
+      }
+
+      aggRef.current.applyCardEffect(
+        [resolvedAction],
+        isLast ? resolvedCost : emptyResolvedCost,
         triggerId,
-      };
-      setPendingChoices(choices);
-      return;
+        {
+          isDiscarded: isLast && !effect.passive && !effect.trigger,
+          isDestroyed: isLast && !!def.parchmentCard,
+          endsTurn: isLast && !!effect.endsTurn,
+        },
+      );
     }
-    // If no pending choices are needed to resolve the effects, proceed to trigger the action immediately
-    return aggRef.current.applyCardEffect(effects, resolvedCost, triggerId, {
-      isDiscarded: !effect.passive && !effect.trigger,
-      isDestroyed: def.parchmentCard,
-      endsTurn: effect.endsTurn,
-    });
+
+    return aggRef.current.getGameState();
   };
 
   const sync = (newState: GameState) => {
@@ -271,37 +284,6 @@ export function GameProvider({
     sync(newState);
   };
 
-  const resolveTrackStep = (instanceId: number, stepId: number) => {
-    const gs = aggRef.current.getGameState();
-    const inst = gs.instances[instanceId];
-    if (!inst || cardIsBlocked(instanceId, gs)) return;
-    const cs = getActiveState(inst, defs);
-    const track = cs.track;
-    if (!track) return;
-    const step = track.steps.find(s => s.id === stepId);
-    if (!step) return;
-    if (inst.trackProgress.includes(stepId)) return;
-    if (!canAffordResources(gs.resources, step.cost)) return;
-
-    const [resolvedCost] = step.cost
-      ? resolveCost(step.cost, instanceId, gs, defs)
-      : [{ resources: {}, discardedCardIds: [], destroyedCardIds: [] }, []];
-
-    const effects = (step.onAccess?.actions ?? []).flatMap(action => {
-      const [resolved] = resolveActionEffect(action, instanceId, gs, defs);
-      return [resolved];
-    });
-
-    const triggerId = crypto.randomUUID();
-    sync(
-      aggRef.current.applyCardEffect(effects, resolvedCost, triggerId, {
-        endsTurn: cs.track?.endsTurn ?? false,
-        validatedStepId: stepId,
-        explicitSourceInstanceId: instanceId,
-      }),
-    );
-  };
-
   const resolveUpgrade = (instanceId: number, chosenUpgradeTo?: number) => {
     const gs = aggRef.current.getGameState();
     const inst = gs.instances[instanceId];
@@ -434,25 +416,42 @@ export function GameProvider({
       .map(pc => ({ ...pc, choices: pc.choices.filter(c => c !== choice.instanceId) }));
 
     if (remaining.length === 0) {
-      const resolvedActions = currentAction.resolvedAction;
-      const resolvedCost = currentAction.resolvedCost;
-      const triggerId = currentAction.triggerId;
-      const { action: currentCardAction } = currentAction;
+      const {
+        resolvedAction: resolvedActions,
+        resolvedCost,
+        triggerId,
+        action: currentCardAction,
+        nextEffectIndex = 0,
+      } = currentAction;
       const currentDef = defs[gs.instances[instanceId].cardId];
+      const isLast = nextEffectIndex === currentCardAction.actions.length - 1;
+
       currentActionRef.current = null;
       setPendingChoices(null);
-      sync(
-        aggRef.current.applyCardEffect(
-          resolvedActions,
-          resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
-          triggerId,
-          {
-            isDiscarded: !currentCardAction.passive && !currentCardAction.trigger,
-            isDestroyed: currentDef.parchmentCard,
-            endsTurn: currentCardAction.endsTurn,
-          },
-        ),
+
+      aggRef.current.applyCardEffect(
+        resolvedActions,
+        isLast ? (resolvedCost ?? emptyResolvedCost) : emptyResolvedCost,
+        triggerId,
+        {
+          isDiscarded: isLast && !currentCardAction.passive && !currentCardAction.trigger,
+          isDestroyed: isLast && !!currentDef.parchmentCard,
+          endsTurn: isLast && !!currentCardAction.endsTurn,
+        },
       );
+
+      if (isLast) {
+        sync(aggRef.current.getGameState());
+      } else {
+        const nextState = triggerAction(
+          instanceId,
+          currentCardAction,
+          resolvedCost ?? emptyResolvedCost,
+          triggerId,
+          nextEffectIndex + 1,
+        );
+        if (nextState) sync(nextState);
+      }
     } else {
       setPendingChoices(remaining);
     }
@@ -473,23 +472,40 @@ export function GameProvider({
     );
 
     if (pendingChoices?.length === 1) {
-      const resolvedActions = currentActionRef.current.resolvedAction;
-      const resolvedCost = currentActionRef.current.resolvedCost;
-      const triggerId = currentActionRef.current.triggerId;
+      const {
+        resolvedAction,
+        resolvedCost,
+        triggerId,
+        nextEffectIndex = 0,
+      } = currentActionRef.current;
+      const isLast = nextEffectIndex === action.actions.length - 1;
+
       currentActionRef.current = null;
       setPendingChoices(null);
-      sync(
-        aggRef.current.applyCardEffect(
-          resolvedActions,
-          resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
-          triggerId,
-          {
-            isDiscarded: !action.passive && !action.trigger,
-            isDestroyed: def.parchmentCard,
-            endsTurn: action.endsTurn,
-          },
-        ),
+
+      aggRef.current.applyCardEffect(
+        resolvedAction,
+        isLast ? (resolvedCost ?? emptyResolvedCost) : emptyResolvedCost,
+        triggerId,
+        {
+          isDiscarded: isLast && !action.passive && !action.trigger,
+          isDestroyed: isLast && !!def.parchmentCard,
+          endsTurn: isLast && !!action.endsTurn,
+        },
       );
+
+      if (isLast) {
+        sync(aggRef.current.getGameState());
+      } else {
+        const nextState = triggerAction(
+          instanceId,
+          action,
+          resolvedCost ?? emptyResolvedCost,
+          triggerId,
+          nextEffectIndex + 1,
+        );
+        if (nextState) sync(nextState);
+      }
     } else {
       setPendingChoices(pendingChoices?.slice(1) ?? null);
     }
@@ -634,7 +650,6 @@ export function GameProvider({
         startTurn,
         resolveProduction,
         resolveAction,
-        resolveTrackStep,
         resolveUpgrade,
         progress,
         endTurnVoluntary,

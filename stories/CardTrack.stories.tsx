@@ -8,9 +8,6 @@ const meta: Meta<typeof CardTrack> = {
   parameters: {
     layout: 'centered',
   },
-  argTypes: {
-    onStep: { action: 'stepClicked' },
-  },
 };
 
 export default meta;
@@ -89,8 +86,6 @@ export const InOrderNoProgress: Story = {
   args: {
     track: gloryTrack,
     validatedSteps: [],
-    currentResources: { weapon: 3 },
-    canActivate: true,
   },
 };
 
@@ -99,8 +94,6 @@ export const InOrderPartialProgress: Story = {
   args: {
     track: gloryTrack,
     validatedSteps: [1, 2],
-    currentResources: { weapon: 3 },
-    canActivate: true,
   },
 };
 
@@ -109,8 +102,6 @@ export const InOrderComplete: Story = {
   args: {
     track: gloryTrack,
     validatedSteps: [1, 2, 3, 4, 5],
-    currentResources: {},
-    canActivate: true,
   },
 };
 
@@ -119,8 +110,6 @@ export const InOrderCannotAfford: Story = {
   args: {
     track: gloryTrack,
     validatedSteps: [1],
-    currentResources: { weapon: 1 },
-    canActivate: true,
   },
 };
 
@@ -129,8 +118,6 @@ export const FreeStepsMixedContent: Story = {
   args: {
     track: freeTrack,
     validatedSteps: [1],
-    currentResources: { gold: 3 },
-    canActivate: true,
   },
 };
 
@@ -139,8 +126,6 @@ export const FreeStepsNotOnBoard: Story = {
   args: {
     track: freeTrack,
     validatedSteps: [],
-    currentResources: { gold: 5 },
-    canActivate: false,
   },
 };
 
@@ -149,7 +134,5 @@ export const EmptySteps: Story = {
   args: {
     track: emptyStep,
     validatedSteps: [],
-    currentResources: {},
-    canActivate: true,
   },
 };

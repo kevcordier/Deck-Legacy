@@ -263,7 +263,7 @@ export const WithEndTurnTrigger: Story = {
       ...PLAYING_STATE,
       instances: {
         ...INSTANCES_BASE,
-        82: { id: 82, cardId: 21, stateId: 1, stickers: {}, trackProgress: [], cumulated: 0 },
+        82: { ...INSTANCES_BASE[82], stateId: 3 },
       },
       drawPile: [1, 2, 3],
       board: [4, 7, 82],

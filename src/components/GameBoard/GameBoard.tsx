@@ -165,6 +165,7 @@ export function GameBoard() {
       {((pendingChoices && pendingChoices.length > 0) ||
         (triggerPile && Object.keys(triggerPile).length > 0)) && (
         <PendingChoiceModal
+          key={pendingChoices?.[0]?.id}
           choice={pendingChoices?.[0]}
           triggerPile={triggerPile}
           defs={defs}

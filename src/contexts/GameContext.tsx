@@ -29,6 +29,7 @@ type GameContextType = {
     resolvedCost: ResolvedCost | null;
     resolvedAction: ResolvedAction[];
     triggerId: string;
+    nextEffectIndex?: number;
   } | null>;
   triggerAction: (
     instanceId: number,
@@ -43,7 +44,6 @@ type GameContextType = {
   startTurn: () => void;
   resolveProduction: (instanceId: number, chosenResource: number) => void;
   resolveAction: (instanceId: number, actionId: string) => void;
-  resolveTrackStep: (instanceId: number, stepId: number) => void;
   resolveUpgrade: (instanceId: number, chosenUpgradeTo?: number) => void;
   progress: () => void;
   endTurnVoluntary: () => void;

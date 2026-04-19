@@ -1,15 +1,12 @@
 import { Glory } from '@components/ui/Glory/Glory';
 import { ActionType } from '@engine/domain/enums';
-import type { Action, Resources, TrackDef } from '@engine/domain/types';
+import type { Action, TrackDef } from '@engine/domain/types';
 import { getResMeta } from '@helpers/renderHelpers';
 import React from 'react';
 
 interface CardTrackProps {
   readonly track: TrackDef;
   readonly validatedSteps: number[];
-  readonly currentResources: Resources;
-  readonly canActivate: boolean;
-  readonly onStep: (stepId: number) => void;
 }
 
 export function CardTrack({ track, validatedSteps }: CardTrackProps) {
@@ -67,7 +64,7 @@ export function CardTrack({ track, validatedSteps }: CardTrackProps) {
             className={`flex ${track.vertical ? ' ' : 'flex-col '}items-center gap-1`}
           >
             {costEntry && (
-              <div className={`flex items-center gap-0.5 text-base text-base-ink/50`}>
+              <div className={`flex items-center gap-0.5 text-base text-base-ink`}>
                 {Object.entries(costEntry).map(([k, v]) => {
                   const meta = getResMeta(k);
                   return (
@@ -81,7 +78,7 @@ export function CardTrack({ track, validatedSteps }: CardTrackProps) {
             )}
             <div
               className={[
-                `size-10 text-base flex flex-col items-center justify-center border-2 leading-none font-bold rounded-md text-base-ink border-base-ink`,
+                `size-10 text-base flex flex-col items-center justify-center border-2 leading-none font-bold rounded-md text-base-ink bg-card border-base-ink`,
                 isValidated ? 'border-success bg-success/20! text-success' : '',
               ].join(' ')}
               title={isValidated ? '✓' : undefined}

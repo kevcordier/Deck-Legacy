@@ -1,45 +1,37 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { discardCards } from '@engine/application/gameStateHelper';
-import { type ActionType, Trigger } from '@engine/domain/enums';
-import type { CardDef, GameState } from '@engine/domain/types';
+import { Trigger } from '@engine/domain/enums';
+import type { CardDef, GameState, ResolvedAction } from '@engine/domain/types';
 
 export class DiscoverCardStrategy implements CardActionStrategy {
   constructor(private readonly cardDefs: Record<number, CardDef>) {}
 
-  applyEffect(
-    gameState: GameState,
-    payload: {
-      id: string;
-      type: ActionType;
-      sourceInstanceId: number;
-      instanceId: number;
-    },
-  ): GameState {
-    const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
+  applyEffect(gameState: GameState, payload: ResolvedAction): GameState {
+    const ids =
+      payload.instanceIds ?? (payload.instanceId !== undefined ? [payload.instanceId] : []);
 
-    const cardDef = this.cardDefs[gameState.instances[payload.instanceId].cardId];
-    const triggerEffects = getInstancesTriggerEffects(
-      [gameState.instances[payload.instanceId]],
-      this.cardDefs,
-      Trigger.ON_DISCOVER,
-    );
-    if (triggerEffects.length > 0) {
-      triggerEffects.forEach(effect => {
-        gs.triggerPile[crypto.randomUUID()] = effect;
-      });
-    }
-    if (!cardDef.parchmentCard) {
-      gs.lastAddedIds.push(payload.instanceId);
-    }
-    if (cardDef.permanent) {
-      gs.permanents.push(payload.instanceId);
-
-      return {
-        ...gs,
-        permanents: gs.permanents,
-      };
-    }
-    return { ...gs, ...discardCards(gs, [payload.instanceId]) };
+    return ids.reduce((gs, instanceId) => {
+      const cloned = JSON.parse(JSON.stringify(gs)) as GameState;
+      const cardDef = this.cardDefs[gs.instances[instanceId].cardId];
+      const triggerEffects = getInstancesTriggerEffects(
+        [gs.instances[instanceId]],
+        this.cardDefs,
+        Trigger.ON_DISCOVER,
+      );
+      if (triggerEffects.length > 0) {
+        triggerEffects.forEach(effect => {
+          cloned.triggerPile[crypto.randomUUID()] = effect;
+        });
+      }
+      if (!cardDef.parchmentCard) {
+        cloned.lastAddedIds.push(instanceId);
+      }
+      if (cardDef.permanent) {
+        cloned.permanents.push(instanceId);
+        return { ...cloned, permanents: cloned.permanents };
+      }
+      return { ...cloned, ...discardCards(cloned, [instanceId]) };
+    }, gameState);
   }
 }

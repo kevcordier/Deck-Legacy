@@ -14,7 +14,7 @@ export function Glory({ glory, size = 'md', noPlus = false }: GloryProps) {
     <div
       className={`text-base-ink relative inline-flex items-center justify-center ${glory < 0 ? 'text-danger' : ''}`}
     >
-      <GloryIcon color={IconColors.gold} className={`${iconClasses} fill-amber-200/90`} />
+      <GloryIcon color={IconColors.gold} className={`${iconClasses} fill-primary/90`} />
       <span className={`font-display absolute font-bold ${textClasses}`}>
         {!noPlus && glory > 0 ? '+' : ''}
         {glory}

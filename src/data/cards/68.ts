@@ -79,8 +79,8 @@ export const shrine: CardDef = {
               type: ActionType.ADD_BOARD_EFFECT,
               cards: {
                 scope: TargetScope.BOARD,
+                number: 2,
               },
-              numberOfTimes: 2,
               effect: {
                 ...CardPassives[PassiveType.STAY_IN_PLAY],
                 cards: {
@@ -124,9 +124,9 @@ export const shrine: CardDef = {
             {
               id: 1,
               type: ActionType.ADD_BOARD_EFFECT,
-              numberOfTimes: 3,
               cards: {
                 scope: TargetScope.BOARD,
+                number: 3,
               },
               effect: {
                 ...CardPassives[PassiveType.STAY_IN_PLAY],
@@ -173,8 +173,8 @@ export const shrine: CardDef = {
               type: ActionType.ADD_BOARD_EFFECT,
               cards: {
                 scope: TargetScope.BOARD,
+                number: 4,
               },
-              numberOfTimes: 4,
               effect: {
                 ...CardPassives[PassiveType.STAY_IN_PLAY],
                 cards: {
