@@ -83,12 +83,8 @@ const RICH_STATE: GameState = {
 // Permanent card on the board
 const PERMANENT_STATE: GameState = {
   ...PLAYING_STATE,
-  permanents: [10],
+  permanents: [25, 26, 27],
   board: [1, 4, 7],
-  instances: {
-    ...INSTANCES_BASE,
-    10: { id: 10, cardId: 5, stateId: 1, stickers: {}, trackProgress: [], cumulated: 0 },
-  },
 };
 
 // ─── Meta ─────────────────────────────────────────────────────────────────────

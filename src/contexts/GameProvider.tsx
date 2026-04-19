@@ -475,6 +475,7 @@ export function GameProvider({
       const resolvedCost = currentActionRef.current.resolvedCost;
       const triggerId = currentActionRef.current.triggerId;
       currentActionRef.current = null;
+      setPendingChoices(null);
       sync(
         aggRef.current.applyCardEffect(
           resolvedActions,
