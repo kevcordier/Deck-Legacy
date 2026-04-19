@@ -324,7 +324,7 @@ export function GameProvider({
   };
 
   const endTurnVoluntary = () => {
-    const newState = aggRef.current.pass();
+    const newState = aggRef.current.turnEnded();
     sync(newState);
   };
 
@@ -392,30 +392,116 @@ export function GameProvider({
     return true;
   };
 
+  const handleProductionChoice = (choice: ResolvedAction, gs: GameState) => {
+    if (!currentProductionRef.current) return;
+    const { instanceId } = currentProductionRef.current;
+    const inst = gs.instances[instanceId];
+    if (!inst || cardIsBlocked(instanceId, gs)) return;
+    const base = choice.resources || {};
+    const resourcesGained = getEffectiveProductions(
+      base,
+      getActiveState(inst, defs),
+      gs,
+      defs,
+      inst,
+      stickerDefs,
+    );
+    triggerProduction(instanceId, resourcesGained);
+    currentProductionRef.current = null;
+  };
+
+  const handleBoardEffectChoice = (choice: ResolvedAction, gs: GameState, instanceId: number) => {
+    const resolvedAction = currentActionRef.current?.resolvedAction.find(ra => ra.id === choice.id);
+    if (
+      !resolvedAction ||
+      resolvedAction.type !== ActionType.ADD_BOARD_EFFECT ||
+      choice.instanceId === undefined
+    ) {
+      return false;
+    }
+
+    const currentAction = currentActionRef.current;
+    if (!currentAction) return false;
+
+    const accumulated = [...(resolvedAction.instanceIds ?? []), choice.instanceId];
+    const mergedChoice: ResolvedAction = {
+      ...choice,
+      instanceIds: accumulated,
+      instanceId: undefined,
+    };
+    currentAction.resolvedAction = mergeResolvedChoice(currentAction.resolvedAction, mergedChoice);
+
+    const remaining = (pendingChoices ?? [])
+      .slice(1)
+      .map(pc => ({ ...pc, choices: pc.choices.filter(c => c !== choice.instanceId) }));
+
+    if (remaining.length === 0) {
+      const resolvedActions = currentAction.resolvedAction;
+      const resolvedCost = currentAction.resolvedCost;
+      const triggerId = currentAction.triggerId;
+      const cardAction = currentAction.action;
+      const currentDef = defs[gs.instances[instanceId].cardId];
+      currentActionRef.current = null;
+      setPendingChoices(null);
+      sync(
+        aggRef.current.applyCardEffect(
+          resolvedActions,
+          resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
+          triggerId,
+          {
+            isDiscarded: !cardAction.passive && !cardAction.trigger,
+            isDestroyed: currentDef.parchmentCard,
+            endsTurn: cardAction.endsTurn,
+          },
+        ),
+      );
+    } else {
+      setPendingChoices(remaining);
+    }
+    return true;
+  };
+
+  const handleFinalChoice = (
+    choice: ResolvedAction,
+    gs: GameState,
+    instanceId: number,
+    action: CardAction,
+  ) => {
+    const def = defs[gs.instances[instanceId].cardId];
+    const currentAction = currentActionRef.current;
+    if (!currentAction) return;
+    currentAction.resolvedAction = mergeResolvedChoice(currentAction.resolvedAction, choice);
+
+    if (pendingChoices?.length === 1) {
+      const resolvedActions = currentAction.resolvedAction;
+      const resolvedCost = currentAction.resolvedCost;
+      const triggerId = currentAction.triggerId;
+      currentActionRef.current = null;
+      sync(
+        aggRef.current.applyCardEffect(
+          resolvedActions,
+          resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
+          triggerId,
+          {
+            isDiscarded: !action.passive && !action.trigger,
+            isDestroyed: def.parchmentCard,
+            endsTurn: action.endsTurn,
+          },
+        ),
+      );
+    } else {
+      setPendingChoices(pendingChoices?.slice(1) ?? null);
+    }
+  };
+
   const resolvePlayerChoice = (choice: ResolvedAction) => {
     const gs = aggRef.current.getGameState();
 
-    if (currentProductionRef.current) {
-      const { instanceId } = currentProductionRef.current;
-      const inst = gs.instances[instanceId];
-      if (!inst || cardIsBlocked(instanceId, gs)) return;
-      const base = choice.resources || {};
-      const resourcesGained = getEffectiveProductions(
-        base,
-        getActiveState(inst, defs),
-        gs,
-        defs,
-        inst,
-        stickerDefs,
-      );
-      triggerProduction(instanceId, resourcesGained);
-      currentProductionRef.current = null;
-    }
+    handleProductionChoice(choice, gs);
 
     if (!currentActionRef.current) return;
     const { instanceId, action } = currentActionRef.current;
     const inst = gs.instances[instanceId];
-    const def = defs[inst.cardId];
     if (!inst || cardIsBlocked(instanceId, gs)) return;
     if (!action) return;
 
@@ -430,30 +516,9 @@ export function GameProvider({
       if (resolveCardSourcedActionChoice(choice, resolvedAction, resolvedActionType, gs)) return;
     }
 
-    currentActionRef.current.resolvedAction = mergeResolvedChoice(
-      currentActionRef.current.resolvedAction,
-      choice,
-    );
+    if (handleBoardEffectChoice(choice, gs, instanceId)) return;
 
-    if (pendingChoices?.length === 1) {
-      const resolvedActions = currentActionRef.current.resolvedAction;
-      const resolvedCost = currentActionRef.current.resolvedCost;
-      const triggerId = currentActionRef.current.triggerId;
-      currentActionRef.current = null;
-      sync(
-        aggRef.current.applyCardEffect(
-          resolvedActions,
-          resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
-          triggerId,
-          {
-            isDiscarded: !action.passive && !action.trigger,
-            isDestroyed: def.parchmentCard,
-            endsTurn: action.endsTurn,
-          },
-        ),
-      );
-    }
-    setPendingChoices(pendingChoices?.slice(1) ?? null);
+    handleFinalChoice(choice, gs, instanceId, action);
   };
 
   const dismissParchmentText = () => {
@@ -482,10 +547,7 @@ export function GameProvider({
   };
 
   const skipTrigger = (uuid: string) => {
-    setTriggerPile(prev => {
-      const { [uuid]: _skipped, ...rest } = prev ?? {};
-      return Object.keys(rest).length > 0 ? rest : null;
-    });
+    sync(aggRef.current.skipTrigger(uuid));
   };
 
   const skipChoice = (uuid: string) => {

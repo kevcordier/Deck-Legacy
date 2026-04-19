@@ -70,6 +70,7 @@ export interface SkipTriggerEvent extends GameEvent {
   triggerId: string;
 }
 
-export interface PassEvent extends GameEvent {
-  type: GameEventType.PASS;
+export interface TurnEndedEvent extends GameEvent {
+  type: GameEventType.TURN_ENDED;
+  onTurnEndedEvents: TriggerEntry[];
 }

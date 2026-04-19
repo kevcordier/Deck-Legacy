@@ -1,60 +1,48 @@
 import { GameBoard } from '@components/GameBoard/GameBoard';
+import { GameOverScreen } from '@components/GameOverScreen/GameOverScreen';
 import { Header } from '@components/Header/Header';
 import { OptionsModal } from '@components/OptionsModal/OptionsModal';
-import { ParchmentModal } from '@components/ParchmentModal/ParchmentModal';
-import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
 import { ResourceBar } from '@components/ResourceBar/ResourceBar';
 import { RulesModal } from '@components/RulesModal/RulesModal';
+import { Button } from '@components/ui/Button/Button';
+import { EmptyState } from '@components/ui/EmptyState/EmptyState';
+import { Phase } from '@engine/domain/types/Phase';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
+import { useTranslation } from 'react-i18next';
 
 export function Game() {
-  const {
-    state: gs,
-    defs,
-    stickerDefs,
-    pendingChoices,
-    triggerPile,
-    phase,
-    deleteSave,
-    resolveAction,
-    resolvePlayerChoice,
-    resolvePayCost,
-    skipTrigger,
-    skipChoice,
-    parchmentTextPending,
-    dismissParchmentText,
-  } = useGame();
-
+  const { state, deleteSave, startGame } = useGame();
+  const { t } = useTranslation();
   const { setOptionsOpen, setRulesOpen, optionsOpen, rulesOpen } = useGameUI();
+
+  const isGamePlaying = state.phase !== Phase.PREGAME && state.phase !== Phase.GAME_OVER;
 
   return (
     <div className="z-1 flex h-screen flex-col">
       <Header />
 
-      {phase !== 'pregame' && <ResourceBar />}
+      {isGamePlaying && <ResourceBar />}
 
-      <GameBoard />
+      {isGamePlaying && <GameBoard />}
 
-      {parchmentTextPending && (
-        <ParchmentModal def={parchmentTextPending} onContinue={dismissParchmentText} />
+      {state.phase === Phase.PREGAME && (
+        <EmptyState
+          title={t('game.title')}
+          subtitle={t('game.subtitle')}
+          action={
+            <Button onClick={startGame} color="primary" size="md">
+              {t('pregame.startNew')}
+            </Button>
+          }
+        >
+          <Button variant="text" color="ink" size="sm" onClick={() => setRulesOpen(true)}>
+            {t('pregame.viewRules')}
+          </Button>
+        </EmptyState>
       )}
 
-      {((pendingChoices && pendingChoices.length > 0) ||
-        (triggerPile && Object.keys(triggerPile).length > 0)) && (
-        <PendingChoiceModal
-          choice={pendingChoices?.[0]}
-          triggerPile={triggerPile}
-          defs={defs}
-          instances={gs.instances}
-          stickerDefs={stickerDefs}
-          resolvePlayerChoice={resolvePlayerChoice}
-          resolvePayCost={resolvePayCost}
-          onResolveTrigger={resolveAction}
-          onSkipTrigger={skipTrigger}
-          onSkipChoice={skipChoice}
-        />
-      )}
+      {state.phase === Phase.GAME_OVER && <GameOverScreen />}
 
       {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}
 

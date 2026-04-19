@@ -23,14 +23,14 @@ export function ButtonGroup({
     <div className={`flex flex-col items-start justify-start gap-2 ${className}`}>
       <fieldset className="rounded-base inline-flex -space-x-px shadow-xs" aria-label={label}>
         <legend className="text-xs">{label}</legend>
-        {options.map(option => (
+        {options.map((option, index) => (
           <Button
             key={option.value || JSON.stringify(option.children)}
             {...option}
             color={value === option.value ? 'primary' : 'ink'}
             size={size}
             font={font}
-            className="not-first:not-last:rounded-none first:rounded-e-none last:rounded-s-none"
+            className={`rounded-none! ${index === 0 ? 'rounded-l-sm!' : ''} ${index === options.length - 1 ? 'rounded-r-sm!' : ''}`}
             onClick={e => (onChange ? onChange(option.value || '') : option.onClick?.(e))}
           >
             {option.children}

@@ -305,7 +305,7 @@ describe('resolveActionEffect — ADD_BOARD_EFFECT', () => {
     });
     const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
     expect(pending).toEqual([]);
-    expect(resolved.instanceId).toBe(2);
+    expect(resolved.instanceIds).toEqual([2]);
     expect(resolved.effect).toEqual(effect);
   });
 

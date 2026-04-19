@@ -1,21 +1,14 @@
 import { Button } from '@components/ui/Button/Button';
 import { Title } from '@components/ui/Title/Title';
+import { Phase } from '@engine/domain/types/Phase';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useTranslation } from 'react-i18next';
 
 export function Header() {
   const { t } = useTranslation();
-  const {
-    progress,
-    endTurnVoluntary,
-    rewindEvent,
-    canRewind,
-    pendingChoices,
-    triggerPile,
-    state,
-    phase,
-  } = useGame();
+  const { progress, endTurnVoluntary, rewindEvent, canRewind, pendingChoices, triggerPile, state } =
+    useGame();
   const { setOptionsOpen, setRulesOpen } = useGameUI();
   const deckEmpty = state.drawPile.length === 0;
 
@@ -28,7 +21,7 @@ export function Header() {
 
       <div className="align-center flex gap-2">
         {/* Gameplay buttons — hidden on mobile (moved to bottom action bar) */}
-        {phase === 'playing' && (
+        {state.phase === Phase.PLAYING && (
           <div className="hidden items-center gap-2 lg:flex">
             {canRewind() && (
               <Button

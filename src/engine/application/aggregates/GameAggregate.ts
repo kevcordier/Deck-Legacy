@@ -31,17 +31,18 @@ import type {
   GameEvent,
   GameStartedEvent,
   GameState,
-  PassEvent,
   ResolvedAction,
   ResolvedCost,
   Resources,
   RoundStartedEvent,
   SkipTriggerEvent,
   TriggerEntry,
+  TurnEndedEvent,
   TurnStartedEvent,
   UpgradeCardEvent,
   UseCardEffectEvent,
 } from '@engine/domain/types';
+import { Phase } from '@engine/domain/types/Phase';
 
 export const EMPTY_STATE: GameState = {
   instances: {},
@@ -58,6 +59,7 @@ export const EMPTY_STATE: GameState = {
   lastAddedIds: [],
   round: 0,
   turn: 0,
+  phase: Phase.PREGAME,
 };
 
 export class GameAggregate {
@@ -87,6 +89,7 @@ export class GameAggregate {
         this.gameState.discoveryPile = gameStartedEvent.discoveryPile;
         this.gameState.round = 0;
         this.gameState.turn = 0;
+        this.gameState.phase = Phase.PREGAME;
         break;
       }
       case GameEventType.ROUND_STARTED: {
@@ -111,6 +114,7 @@ export class GameAggregate {
         this.gameState.boardEffects = {};
         this.gameState.discardPile = [];
         this.gameState.board = [];
+        this.gameState.phase = Phase.START_ROUND;
         break;
       }
       case GameEventType.TURN_STARTED: {
@@ -118,7 +122,10 @@ export class GameAggregate {
         this.gameState = {
           ...this.gameState,
           ...drawCards(
-            { ...this.gameState, lastAddedIds: [], turn: turnStartedEvent.turn },
+            endTurn(
+              { ...this.gameState, lastAddedIds: [], turn: turnStartedEvent.turn },
+              this.cardDefs,
+            ),
             turnStartedEvent.turnCards,
           ),
         };
@@ -130,6 +137,7 @@ export class GameAggregate {
           },
           {} as Record<string, TriggerEntry>,
         );
+        this.gameState.phase = Phase.PLAYING;
         break;
       }
       case GameEventType.CARD_PRODUCED: {
@@ -166,12 +174,9 @@ export class GameAggregate {
           upgradeCardEvent.stateId;
         this.gameState = {
           ...this.gameState,
-          ...endTurn(
-            discardCards(spendResources(this.gameState, upgradeCardEvent.cost), [
-              upgradeCardEvent.cardInstanceId,
-            ]),
-            this.cardDefs,
-          ),
+          ...discardCards(spendResources(this.gameState, upgradeCardEvent.cost), [
+            upgradeCardEvent.cardInstanceId,
+          ]),
         };
         break;
       }
@@ -215,8 +220,17 @@ export class GameAggregate {
         this.gameState = { ...this.gameState, triggerPile: restSkipTriggers };
         break;
       }
-      case GameEventType.PASS: {
-        this.gameState = { ...this.gameState, ...endTurn(this.gameState, this.cardDefs) };
+      case GameEventType.TURN_ENDED: {
+        const turnEndedEvent = event as TurnEndedEvent;
+        this.gameState.triggerPile = turnEndedEvent.onTurnEndedEvents.reduce(
+          (acc, { effectDef, sourceInstanceId }) => {
+            const triggerId = crypto.randomUUID();
+            acc[triggerId] = { effectDef, sourceInstanceId };
+            return acc;
+          },
+          {} as Record<string, TriggerEntry>,
+        );
+        this.gameState.phase = Phase.END_TURN;
         break;
       }
       default:
@@ -329,6 +343,28 @@ export class GameAggregate {
     return this.gameState;
   }
 
+  public turnEnded(): GameState {
+    const onTurnEndedEvents = getInstancesTriggerEffects(
+      this.gameState.board.map(cardId => this.gameState.instances[cardId]),
+      this.cardDefs,
+      Trigger.END_OF_TURN,
+    );
+
+    const event: TurnEndedEvent = {
+      id: crypto.randomUUID(),
+      type: GameEventType.TURN_ENDED,
+      timestamp: Date.now(),
+      onTurnEndedEvents,
+    };
+    this.apply(event);
+    this.events.push(event);
+
+    if (onTurnEndedEvents.length === 0) {
+      return this.turnStarted();
+    }
+    return this.gameState;
+  }
+
   public cardProduced(cardInstanceId: number, productions: Record<string, number>): GameState {
     const event: CardProducedEvent = {
       id: crypto.randomUUID(),
@@ -378,7 +414,7 @@ export class GameAggregate {
     this.apply(event);
     this.events.push(event);
 
-    this.turnStarted();
+    this.turnEnded();
     return this.gameState;
   }
 
@@ -444,22 +480,15 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
-    if (endsTurn) {
-      this.turnStarted();
+    if (this.gameState.phase === Phase.END_TURN) {
+      if (Object.keys(this.gameState.triggerPile).length === 0) {
+        return this.turnStarted();
+      }
+    } else {
+      if (endsTurn) {
+        return this.turnEnded();
+      }
     }
-    return this.gameState;
-  }
-
-  public pass(): GameState {
-    const event: PassEvent = {
-      id: crypto.randomUUID(),
-      type: GameEventType.PASS,
-      timestamp: Date.now(),
-    };
-    this.apply(event);
-    this.events.push(event);
-
-    this.turnStarted();
     return this.gameState;
   }
 
@@ -475,6 +504,12 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
+    if (
+      this.gameState.phase === Phase.END_TURN &&
+      Object.keys(this.gameState.triggerPile).length === 0
+    ) {
+      return this.turnStarted();
+    }
     return this.gameState;
   }
 

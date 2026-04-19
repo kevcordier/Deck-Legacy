@@ -5,6 +5,7 @@ import type {
   Resources,
   StickerStock,
 } from '@engine/domain/types';
+import type { Phase } from '@engine/domain/types/Phase';
 
 export type TriggerEntry = {
   effectDef: CardAction;
@@ -26,4 +27,5 @@ export type GameState = {
   lastAddedIds: number[];
   round: number;
   turn: number;
+  phase: Phase;
 };

@@ -72,14 +72,6 @@ export function GameCard({
     <div
       className={`${cardClass} ${className} ${animationDelayClass} ${isPermanent ? 'border-5 border-permanent' : ''}`}
     >
-      {isBlocked && (
-        <div className="bg-opacity-50 absolute inset-0 z-20 flex items-center justify-center bg-tag-enemy/60">
-          <span className="font-display text-danger rounded bg-black px-2 py-1 uppercase">
-            {t('card.blocked')}
-          </span>
-        </div>
-      )}
-
       <div className={`border-b border-black/10 bg-black/5 p-1 pb-2 @3xs:p-3`}>
         <div className="flex items-start justify-between gap-2">
           <span

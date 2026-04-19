@@ -55,6 +55,9 @@
   },
   "card": {
     "blocked": "Bloquée",
+    "stayInPlay": "Reste en jeu",
+    "increaseGlory": "Bonus de gloire",
+    "increaseProduction": "Production améliorée",
     "state": "État {{id}}"
   },
   "cardPreview": {

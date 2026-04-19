@@ -2739,6 +2739,11 @@ export const cardsData: CardDef[] = [
             id: '21-1-1',
             trigger: Trigger.END_OF_TURN,
             optional: true,
+            cost: {
+              discard: {
+                scope: TargetScope.SELF,
+              },
+            },
             actions: [
               {
                 id: 1,
@@ -2779,6 +2784,11 @@ export const cardsData: CardDef[] = [
             id: '21-2-1',
             trigger: Trigger.END_OF_TURN,
             optional: true,
+            cost: {
+              discard: {
+                scope: TargetScope.SELF,
+              },
+            },
             actions: [
               {
                 id: 1,
@@ -2821,6 +2831,11 @@ export const cardsData: CardDef[] = [
             id: '21-3-1',
             trigger: Trigger.END_OF_TURN,
             optional: true,
+            cost: {
+              discard: {
+                scope: TargetScope.SELF,
+              },
+            },
             actions: [
               {
                 id: 1,
@@ -2863,6 +2878,11 @@ export const cardsData: CardDef[] = [
             id: '21-4-1',
             trigger: Trigger.END_OF_TURN,
             optional: true,
+            cost: {
+              discard: {
+                scope: TargetScope.SELF,
+              },
+            },
             actions: [
               {
                 id: 1,

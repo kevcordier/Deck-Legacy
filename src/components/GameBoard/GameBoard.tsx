@@ -2,6 +2,8 @@ import { CardListModal } from '@components/CardListModal/CardListModal';
 import { DeckViewer } from '@components/DeckViewer/DeckViewer';
 import { GameCard } from '@components/GameCard/GameCard';
 import { MainBoard } from '@components/MainBoard/MainBoard';
+import { ParchmentModal } from '@components/ParchmentModal/ParchmentModal';
+import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
 import { Button } from '@components/ui/Button/Button';
 import { DestroyIcon, DiscardIcon, DrawCardIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
@@ -13,13 +15,21 @@ export function GameBoard() {
   const { t } = useTranslation();
   const {
     state,
-    phase,
+    defs,
+    stickerDefs,
     progress,
     endTurnVoluntary,
     rewindEvent,
     canRewind,
     pendingChoices,
     triggerPile,
+    parchmentTextPending,
+    dismissParchmentText,
+    resolveAction,
+    resolvePlayerChoice,
+    resolvePayCost,
+    skipTrigger,
+    skipChoice,
   } = useGame();
   const { drawPile, discardPile, destroyedPile, instances } = state;
 
@@ -52,112 +62,120 @@ export function GameBoard() {
     <div className="flex h-full flex-1 flex-col overflow-hidden">
       {/* Main content row — sidebars hidden on mobile */}
       <div className="flex flex-1 items-stretch gap-4 overflow-hidden">
-        {phase !== 'pregame' && (
-          <div className="hidden lg:contents">
-            <DeckViewer
-              title={t('deckViewer.draw')}
-              icon={<DrawCardIcon className="size-4" />}
-              emptyText={t('deckViewer.empty')}
-              deck={drawDeck}
-              displayedCard={nextCard}
-            />
-          </div>
-        )}
+        <div className="hidden lg:contents">
+          <DeckViewer
+            title={t('deckViewer.draw')}
+            icon={<DrawCardIcon className="size-4" />}
+            emptyText={t('deckViewer.empty')}
+            deck={drawDeck}
+            displayedCard={nextCard}
+          />
+        </div>
 
         <MainBoard />
 
-        {phase !== 'pregame' && (
-          <div className="hidden lg:contents">
-            <DeckViewer
-              title={t('deckViewer.discard')}
-              icon={<DiscardIcon className="size-4" />}
-              deck={discardDeck}
-              displayedCard={discardDeck[discardDeck.length - 1]}
-              footer={
-                destroyedPile.length > 0 ? (
-                  <Button
-                    onClick={() => setDestroyedModalOpen(true)}
-                    variant="text"
-                    color="danger"
-                    size="xs"
-                    className="w-full"
-                  >
-                    <DestroyIcon className="size-4" />
-                    {t('deckViewer.destroyed')} ({destroyedPile.length})
-                  </Button>
-                ) : null
-              }
-            />
-          </div>
-        )}
+        <div className="hidden lg:contents">
+          <DeckViewer
+            title={t('deckViewer.discard')}
+            icon={<DiscardIcon className="size-4" />}
+            deck={discardDeck}
+            displayedCard={discardDeck[discardDeck.length - 1]}
+            footer={
+              destroyedPile.length > 0 ? (
+                <Button
+                  onClick={() => setDestroyedModalOpen(true)}
+                  variant="text"
+                  color="danger"
+                  size="xs"
+                  className="w-full"
+                >
+                  <DestroyIcon className="size-4" />
+                  {t('deckViewer.destroyed')} ({destroyedPile.length})
+                </Button>
+              ) : null
+            }
+          />
+        </div>
       </div>
 
       {/* Mobile action bar */}
-      {phase !== 'pregame' && (
-        <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t px-2 py-2 lg:hidden">
+      <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t px-2 py-2 lg:hidden">
+        <Button
+          onClick={() => setOpenSheet(o => (o === 'draw' ? null : 'draw'))}
+          variant="outlined"
+          color="ink"
+          size="sm"
+        >
+          <DrawCardIcon className="size-4" alt={t('deckViewer.draw')} /> ({drawPile.length})
+        </Button>
+
+        <div className="flex items-center gap-1">
+          {canRewind() && (
+            <Button
+              onClick={() => rewindEvent()}
+              title={t('header.undoTitle')}
+              color="danger"
+              size="sm"
+            >
+              ↩
+            </Button>
+          )}
           <Button
-            onClick={() => setOpenSheet(o => (o === 'draw' ? null : 'draw'))}
+            onClick={progress}
+            disabled={deckEmpty || haveChoiceToDo}
+            variant="outlined"
+            size="sm"
+          >
+            <span className="hidden lg:inline">›› </span>
+            {t('header.progress')}
+            {deckEmpty ? '' : ` (${Math.min(2, drawPile.length)})`}
+          </Button>
+          <Button onClick={endTurnVoluntary} disabled={haveChoiceToDo} variant="outlined" size="sm">
+            {t('header.endTurn')}
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <Button
+            onClick={() => setOpenSheet(o => (o === 'discard' ? null : 'discard'))}
             variant="outlined"
             color="ink"
             size="sm"
           >
-            <DrawCardIcon className="size-4" alt={t('deckViewer.draw')} /> ({drawPile.length})
+            <DiscardIcon className="size-4" alt={t('deckViewer.discard')} /> ({discardPile.length})
           </Button>
+          {destroyedPile.length > 0 && (
+            <Button
+              onClick={() => setOpenSheet(o => (o === 'destroyed' ? null : 'destroyed'))}
+              variant="outlined"
+              color="danger"
+              size="sm"
+            >
+              <DestroyIcon className="size-4" alt={t('deckViewer.destroyed')} /> (
+              {destroyedPile.length})
+            </Button>
+          )}
+        </div>
+      </nav>
 
-          <div className="flex items-center gap-1">
-            {canRewind() && (
-              <Button
-                onClick={() => rewindEvent()}
-                title={t('header.undoTitle')}
-                color="danger"
-                size="sm"
-              >
-                ↩
-              </Button>
-            )}
-            <Button
-              onClick={progress}
-              disabled={deckEmpty || haveChoiceToDo}
-              variant="outlined"
-              size="sm"
-            >
-              <span className="hidden lg:inline">›› </span>
-              {t('header.progress')}
-              {deckEmpty ? '' : ` (${Math.min(2, drawPile.length)})`}
-            </Button>
-            <Button
-              onClick={endTurnVoluntary}
-              disabled={haveChoiceToDo}
-              variant="outlined"
-              size="sm"
-            >
-              {t('header.endTurn')}
-            </Button>
-          </div>
+      {parchmentTextPending && (
+        <ParchmentModal def={parchmentTextPending} onContinue={dismissParchmentText} />
+      )}
 
-          <div className="flex items-center gap-1">
-            <Button
-              onClick={() => setOpenSheet(o => (o === 'discard' ? null : 'discard'))}
-              variant="outlined"
-              color="ink"
-              size="sm"
-            >
-              <DiscardIcon className="size-4" alt={t('deckViewer.discard')} /> ({discardPile.length}
-              )
-            </Button>
-            {destroyedPile.length > 0 && (
-              <Button
-                onClick={() => setOpenSheet(o => (o === 'destroyed' ? null : 'destroyed'))}
-                variant="outlined"
-                color="danger"
-                size="sm"
-              >
-                <DestroyIcon className="size-4" alt={t('deckViewer.destroyed')} /> (
-                {destroyedPile.length})
-              </Button>
-            )}
-          </div>
-        </nav>
+      {((pendingChoices && pendingChoices.length > 0) ||
+        (triggerPile && Object.keys(triggerPile).length > 0)) && (
+        <PendingChoiceModal
+          choice={pendingChoices?.[0]}
+          triggerPile={triggerPile}
+          defs={defs}
+          instances={state.instances}
+          stickerDefs={stickerDefs}
+          resolvePlayerChoice={resolvePlayerChoice}
+          resolvePayCost={resolvePayCost}
+          onResolveTrigger={resolveAction}
+          onSkipTrigger={skipTrigger}
+          onSkipChoice={skipChoice}
+        />
       )}
 
       {/* Destroyed cards modal (desktop) */}

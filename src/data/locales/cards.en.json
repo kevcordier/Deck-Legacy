@@ -53,7 +53,19 @@
     "15_1": "Stop",
     "16_1": "Stop",
     "17_1": "Army",
-    "17_2": "Army"
+    "17_2": "Grand Army",
+    "18_1": "Treasury",
+    "18_2": "Extended Treasury",
+    "19_1": "Export",
+    "19_2": "Mass Export",
+    "20_1": "Mine",
+    "20_2": "Deep Mine",
+    "20_3": "Ruby Mine",
+    "20_4": "Diamond Mine",
+    "21_1": "Shrine",
+    "21_2": "Sanctuary",
+    "21_3": "Oratory",
+    "21_4": "Temple"
   },
   "labels": {
     "1_2_a0": "Discard a friendly card to gain 2 {{gold}}.",
@@ -87,7 +99,11 @@
     "14_4_a0": "As long as this card is in play, you may discard the top card of your deck.",
     "15_1_a0": "Stop",
     "16_1_a0": "Fertile Soil",
-    "16_1_a1": "Efficiency"
+    "16_1_a1": "Efficiency",
+    "21_1_a0": "End of Turn: Discard to make up to 1 other card stay in play.",
+    "21_2_a0": "End of Turn: Discard to make up to 2 other cards stay in play.",
+    "21_3_a0": "End of Turn: Discard to make up to 3 other cards stay in play.",
+    "21_4_a0": "End of Turn: Discard to make up to 4 other cards stay in play."
   },
   "descriptions": {
     "1_2_a0": "Discard a friendly card to gain 2 gold.",

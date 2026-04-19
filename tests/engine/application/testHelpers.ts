@@ -1,4 +1,5 @@
 import type { CardDef, CardInstance, GameState, ResolvedCost } from '@engine/domain/types';
+import { Phase } from '@engine/domain/types/Phase';
 
 export const makeInstance = (id: number, cardId: number, stateId: number): CardInstance => ({
   id,
@@ -36,6 +37,7 @@ export const makeGameState = (overrides: Partial<GameState> = {}): GameState => 
   lastAddedIds: [],
   round: 0,
   turn: 0,
+  phase: Phase.START_ROUND,
   ...overrides,
 });
 

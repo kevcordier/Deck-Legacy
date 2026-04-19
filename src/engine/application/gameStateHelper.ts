@@ -5,7 +5,6 @@ import {
 } from '@engine/application/cardHelpers';
 import type { ResourceType } from '@engine/domain/enums';
 import type { CardDef, GameState, Resources, Sticker } from '@engine/domain/types';
-import type { Phase } from '@engine/domain/types/Phase';
 
 export const discardCards = (_gameState: GameState, cardIds: number[]): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
@@ -83,16 +82,6 @@ export function computeScore(
     const trackGlory = getTrackGlory(instance, cs);
     return total + (cs.glory ?? 0) + stickerGlory + trackGlory;
   }, 0);
-}
-
-export function getCurrentPhase(state: GameState): Phase {
-  const isGameStarted = state.round > 0 || state.drawPile.length > 0;
-  if (!isGameStarted) return 'pregame';
-  const deckEmpty = state.drawPile.length === 0;
-  if (state.round === 0 && Object.keys(state.triggerPile).length > 0) return 'preround';
-  if (state.board.length === 0 && state.turn === 0 && !deckEmpty && state.round > 1)
-    return 'roundpreview';
-  return 'playing';
 }
 
 export function mergeResources(a: Resources, b: Resources): Resources {

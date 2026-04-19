@@ -1,15 +1,11 @@
 import { Button } from '@components/ui/Button/Button';
 import { GloryIcon } from '@components/ui/Icon/icon';
+import { useGame } from '@hooks/useGame';
 import { useTranslation } from 'react-i18next';
 
-interface GameOverScreenProps {
-  readonly score: number;
-  readonly round: number;
-  readonly onNewGame: () => void;
-}
-
-export function GameOverScreen({ score, round, onNewGame }: GameOverScreenProps) {
+export function GameOverScreen() {
   const { t } = useTranslation();
+  const { state, score, startGame } = useGame();
 
   return (
     <div className="bg-background bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center">
@@ -26,12 +22,12 @@ export function GameOverScreen({ score, round, onNewGame }: GameOverScreenProps)
 
         <div className="flex flex-col items-center gap-5">
           <div className="flex flex-col items-center gap-0.5">
-            <span className="font-display text-base-ink font-semibold">{round}</span>
+            <span className="font-display text-base-ink font-semibold">{state.round}</span>
             <span className="font-display text-base-ink/80">{t('gameOver.rounds')}</span>
           </div>
         </div>
 
-        <Button onClick={onNewGame} color="base-primary" size="lg">
+        <Button onClick={startGame} color="base-primary" size="lg">
           {t('gameOver.newGame')}
         </Button>
       </div>

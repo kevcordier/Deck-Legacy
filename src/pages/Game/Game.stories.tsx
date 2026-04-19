@@ -5,6 +5,7 @@ import deckData from '@data/deck.json';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { createInstance } from '@engine/application/factory';
 import type { GameState } from '@engine/domain/types';
+import { Phase } from '@engine/domain/types/Phase';
 import { loadCardDefs } from '@engine/infrastructure/loaders';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -57,19 +58,20 @@ const PLAYING_STATE: GameState = {
   resources: { gold: 3, wood: 2 },
   round: 1,
   turn: 2,
+  phase: Phase.PLAYING,
 };
 
 // End of round: all cards discarded, draw pile empty
 const PREROUND_STATE: GameState = {
-  ...EMPTY_STATE,
-  instances: INSTANCES_BASE,
+  ...PLAYING_STATE,
   board: [],
   drawPile: [],
   discardPile: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   permanents: [],
   resources: { gold: 8, wood: 4, stone: 2 },
-  round: 1,
+  round: 2,
   turn: 0,
+  phase: Phase.START_ROUND,
 };
 
 // Abundant resources for testing expensive actions
@@ -220,7 +222,7 @@ export const WithOnDiscoverChooseStates: Story = {
 // Cathedral (Hill state 4) + 3 person cards on board
 // Expected: Cathedral shows 4 gold production (1 base + 3 from persons)
 const CATHEDRAL_STATE: GameState = {
-  ...EMPTY_STATE,
+  ...PLAYING_STATE,
   instances: {
     ...INSTANCES_BASE,
     // Instance 17 (Hill card) upgraded to Cathedral state
@@ -258,6 +260,36 @@ export const WithStopCard: Story = {
       discardPile: Array.from({ length: 22 }, (_, i) => i), // 22 cartes dans la défausse pour tester le stop à 23
       discoveryPile: [23, 24, 25, 26, 27],
       board: [],
+    },
+  },
+};
+
+export const WithEndTurnTrigger: Story = {
+  name: 'With end turn trigger',
+  args: {
+    saveState: {
+      ...PLAYING_STATE,
+      instances: {
+        ...INSTANCES_BASE,
+        82: { id: 82, cardId: 21, stateId: 1, stickers: {}, trackProgress: [], cumulated: 0 },
+      },
+      drawPile: [1, 2, 3],
+      board: [4, 7, 82],
+    },
+  },
+};
+
+export const CardDestroyed: Story = {
+  name: 'With action destroying a card on board',
+  args: {
+    saveState: {
+      ...PLAYING_STATE,
+      instances: {
+        ...INSTANCES_BASE,
+        6: { id: 6, cardId: 2, stateId: 4, stickers: {}, trackProgress: [], cumulated: 0 },
+      },
+      drawPile: [1, 2, 3],
+      board: [4, 7, 6],
     },
   },
 };

@@ -13,6 +13,7 @@ import type {
   ResolvedAction,
   ResolvedCost,
 } from '@engine/domain/types';
+import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
 const makeAggregate = (
@@ -201,59 +202,6 @@ describe('GameAggregate.cardProduced', () => {
     const gs = agg.cardProduced(1, { wood: 2 });
     expect(gs.resources.wood).toBe(2);
     expect(gs.discardPile).toContain(1);
-  });
-});
-
-// — pass —
-
-describe('GameAggregate.pass', () => {
-  it('discards board cards and clears resources (pass triggers new turn)', () => {
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10),
-      11: makeDef(11),
-      12: makeDef(12),
-      13: makeDef(13),
-      14: makeDef(14),
-    };
-    const instances = [1, 2, 3, 4, 5].map(id => makeInstance(id, 10 + id - 1, 1));
-    const state: GameState = {
-      ...EMPTY_STATE,
-      instances: Object.fromEntries(instances.map(i => [i.id, i])),
-      board: [1, 2],
-      resources: { gold: 5 },
-      drawPile: [3, 4, 5],
-    };
-    const agg = new GameAggregate(state, defs);
-    agg.pass();
-    const gs = agg.getGameState();
-    // Resources cleared by endTurn
-    expect(gs.resources).toEqual({});
-    // Previous board cards (1, 2) were discarded
-    expect(gs.discardPile).toContain(1);
-    expect(gs.discardPile).toContain(2);
-    // New turn was started: cards drawn from draw pile to board
-    expect(gs.board).not.toContain(1);
-    expect(gs.board).not.toContain(2);
-  });
-
-  it('returns the updated game state after pass', () => {
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10),
-      11: makeDef(11),
-      12: makeDef(12),
-      13: makeDef(13),
-    };
-    const instances = [1, 2, 3, 4].map(id => makeInstance(id, 10 + id - 1, 1));
-    const state: GameState = {
-      ...EMPTY_STATE,
-      instances: Object.fromEntries(instances.map(i => [i.id, i])),
-      board: [1],
-      resources: { gold: 3 },
-      drawPile: [2, 3, 4],
-    };
-    const agg = new GameAggregate(state, defs);
-    const gs = agg.pass();
-    expect(gs.resources).toEqual({});
   });
 });
 
@@ -1117,6 +1065,112 @@ describe('GameAggregate.applyCardEffect — empty effects array', () => {
     const agg = new GameAggregate(state, {});
     expect(() => agg.applyCardEffect([], makeEmptyResolvedCost(), 't1')).not.toThrow();
     expect(agg.getGameState().triggerPile['t1']).toBeUndefined();
+  });
+});
+
+// — turnEnded with END_OF_TURN triggers —
+
+describe('GameAggregate.turnEnded — with END_OF_TURN triggers', () => {
+  it('returns game state (not turnStarted) when board cards have END_OF_TURN effects', () => {
+    const endOfTurnEffect = {
+      id: 'end_of_turn',
+      actions: [{ id: 1, type: ActionType.ADD_RESOURCES }],
+      trigger: Trigger.END_OF_TURN,
+      optional: false,
+    };
+    const defs: Record<number, CardDef> = {
+      10: {
+        id: 10,
+        name: 'Card',
+        states: [{ id: 1, name: 'S1', actions: [endOfTurnEffect] }],
+      },
+    };
+    const state: GameState = {
+      ...EMPTY_STATE,
+      phase: Phase.PLAYING,
+      instances: { 1: makeInstance(1, 10, 1) },
+      board: [1],
+    };
+    const agg = new GameAggregate(state, defs);
+    const gs = agg.turnEnded();
+    expect(Object.keys(gs.triggerPile).length).toBeGreaterThan(0);
+    expect(gs.phase).toBe(Phase.END_TURN);
+  });
+});
+
+// — applyCardEffect in END_TURN phase —
+
+describe('GameAggregate.applyCardEffect — END_TURN phase', () => {
+  it('calls turnStarted when phase is END_TURN and last trigger is resolved', () => {
+    const state: GameState = {
+      ...EMPTY_STATE,
+      phase: Phase.END_TURN,
+      instances: { 1: makeInstance(1, 10, 1), 2: makeInstance(2, 10, 1) },
+      board: [1],
+      drawPile: [2],
+      triggerPile: {
+        t1: {
+          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          sourceInstanceId: 1,
+        },
+      },
+    };
+    const agg = new GameAggregate(state, { 10: makeDef(10) });
+    const effects: ResolvedAction[] = [
+      { id: '1-1', type: ActionType.ADD_RESOURCES, sourceInstanceId: 1, resources: {} },
+    ];
+    const gs = agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
+    expect(gs.phase).toBe(Phase.PLAYING);
+  });
+
+  it('stays in END_TURN phase when triggerPile still has entries after resolving', () => {
+    const state: GameState = {
+      ...EMPTY_STATE,
+      phase: Phase.END_TURN,
+      instances: { 1: makeInstance(1, 10, 1) },
+      board: [1],
+      drawPile: [],
+      triggerPile: {
+        t1: {
+          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          sourceInstanceId: 1,
+        },
+        t2: {
+          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          sourceInstanceId: 1,
+        },
+      },
+    };
+    const agg = new GameAggregate(state, { 10: makeDef(10) });
+    const effects: ResolvedAction[] = [
+      { id: '1-1', type: ActionType.ADD_RESOURCES, sourceInstanceId: 1, resources: {} },
+    ];
+    const gs = agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
+    expect(gs.phase).toBe(Phase.END_TURN);
+    expect(gs.triggerPile['t2']).toBeDefined();
+  });
+});
+
+// — skipTrigger in END_TURN phase —
+
+describe('GameAggregate.skipTrigger — END_TURN phase with empty triggerPile', () => {
+  it('calls turnStarted when phase is END_TURN and last trigger is skipped', () => {
+    const state: GameState = {
+      ...EMPTY_STATE,
+      phase: Phase.END_TURN,
+      instances: { 1: makeInstance(1, 10, 1), 2: makeInstance(2, 10, 1) },
+      board: [1],
+      drawPile: [2],
+      triggerPile: {
+        'trigger-1': {
+          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          sourceInstanceId: 1,
+        },
+      },
+    };
+    const agg = new GameAggregate(state, { 10: makeDef(10) });
+    const gs = agg.skipTrigger('trigger-1');
+    expect(gs.phase).toBe(Phase.PLAYING);
   });
 });
 

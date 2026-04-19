@@ -1,5 +1,5 @@
 import { GameContext } from '@contexts/GameContext';
-import { computeScore, getCurrentPhase } from '@engine/application/gameStateHelper';
+import { computeScore } from '@engine/application/gameStateHelper';
 import type {
   CardDef,
   GameState,
@@ -9,7 +9,6 @@ import type {
   Sticker,
   TriggerEntry,
 } from '@engine/domain/types';
-import type { Phase } from '@engine/domain/types/Phase';
 import { use, useMemo } from 'react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -21,7 +20,6 @@ export type GameHook = {
   score: number;
   pendingChoices: PendingChoice[] | null;
   triggerPile: Record<string, TriggerEntry> | null;
-  phase: Phase;
   loadGame: () => void;
   deleteSave: () => void;
   startGame: () => void;
@@ -80,8 +78,6 @@ export function useGame(): GameHook {
     [gameState, defs, stickerDefs],
   );
 
-  const phase = useMemo(() => getCurrentPhase(gameState), [gameState]);
-
   // ── Result ──────────────────────────────────────────────────────────────
 
   return {
@@ -91,7 +87,6 @@ export function useGame(): GameHook {
     score,
     pendingChoices,
     triggerPile,
-    phase,
     loadGame,
     deleteSave,
     startGame,

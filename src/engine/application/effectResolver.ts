@@ -49,7 +49,7 @@ export function resolveActionEffect(
   };
 
   if (action.type === ActionType.ADD_BOARD_EFFECT && action.effect) {
-    return resolveBoardEffect(ctx, action.effect, action.cards);
+    return resolveBoardEffect(ctx, action.effect, action.cards, action.numberOfTimes);
   }
 
   if (action.type === ActionType.BOOST_CARD) {
@@ -79,6 +79,7 @@ function resolveBoardEffect(
   ctx: ResolveContext,
   effect: Passive,
   cards: CardeSelector | undefined,
+  numberOfTimes = 1,
 ): [ResolvedAction, PendingChoice[]] {
   const {
     actionId,
@@ -93,18 +94,22 @@ function resolveBoardEffect(
 
   if (cards) {
     const instanceIds = cardSelector(cards, instanceId, gameState, defs);
-    if (instanceIds.length > 1) {
-      pendingChoices.push({
-        id: `${instanceId}-${actionId}`,
-        kind: actionType,
-        type: PendingChoiceType.CHOOSE_CARD,
-        sourceInstanceId: instanceId,
-        choices: instanceIds,
-        pickCount: 1,
-        isMandatory,
-      });
-    } else if (instanceIds.length === 1) {
-      resolverAction.instanceId = instanceIds[0];
+    if (instanceIds.length > numberOfTimes) {
+      // Player must pick numberOfTimes cards one at a time; same id so they merge into the same ResolvedAction
+      for (let i = 0; i < numberOfTimes; i++) {
+        pendingChoices.push({
+          id: `${instanceId}-${actionId}`,
+          kind: actionType,
+          type: PendingChoiceType.CHOOSE_CARD,
+          sourceInstanceId: instanceId,
+          choices: instanceIds,
+          pickCount: 1,
+          isMandatory,
+        });
+      }
+    } else if (instanceIds.length > 0) {
+      // Fewer or equal candidates than picks needed — apply to all automatically
+      resolverAction.instanceIds = instanceIds;
     }
   }
 

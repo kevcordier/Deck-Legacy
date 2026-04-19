@@ -5,7 +5,6 @@ import {
   discardCards,
   drawCards,
   endTurn,
-  getCurrentPhase,
   mergeResources,
   spendResources,
 } from '@engine/application/gameStateHelper';
@@ -400,56 +399,6 @@ describe('computeScore', () => {
     });
     const defs: Record<number, CardDef> = {};
     expect(computeScore(gs, defs, {})).toBe(0);
-  });
-});
-
-describe('getCurrentPhase', () => {
-  it('returns "pregame" when game has not started', () => {
-    const gs = makeGameState({ round: 0, drawPile: [] });
-    expect(getCurrentPhase(gs)).toBe('pregame');
-  });
-
-  it('returns "preround" when round is 0 but game has started', () => {
-    const gs = makeGameState({
-      round: 0,
-      drawPile: [1, 2, 3],
-      triggerPile: {
-        1: { sourceInstanceId: 1, effectDef: { id: 'E1', actions: [] } },
-      },
-    });
-    expect(getCurrentPhase(gs)).toBe('preround');
-  });
-
-  it('returns "roundpreview" when board is empty, turn is 0, deck is not empty, and round > 1', () => {
-    const gs = makeGameState({ round: 2, board: [], turn: 0, drawPile: [1, 2] });
-    expect(getCurrentPhase(gs)).toBe('roundpreview');
-  });
-
-  it('returns "playing" when in an active turn with cards on board', () => {
-    const gs = makeGameState({ round: 1, board: [1], turn: 0, drawPile: [2, 3] });
-    expect(getCurrentPhase(gs)).toBe('playing');
-  });
-
-  it('returns "playing" when board has cards even if turn is 0', () => {
-    const gs = makeGameState({ round: 1, board: [1], turn: 0, drawPile: [2] });
-    expect(getCurrentPhase(gs)).toBe('playing');
-  });
-
-  it('returns "playing" when deck is empty but board has cards', () => {
-    const gs = makeGameState({ round: 2, board: [1, 2], turn: 1, drawPile: [] });
-    expect(getCurrentPhase(gs)).toBe('playing');
-  });
-
-  it('returns "playing" when turn is greater than 0', () => {
-    const gs = makeGameState({ round: 1, board: [], turn: 1, drawPile: [1] });
-    expect(getCurrentPhase(gs)).toBe('playing');
-  });
-
-  it('does not mutate the original game state', () => {
-    const gs = makeGameState({ round: 1, board: [1], turn: 0, drawPile: [2] });
-    getCurrentPhase(gs);
-    expect(gs.round).toBe(1);
-    expect(gs.board).toEqual([1]);
   });
 });
 

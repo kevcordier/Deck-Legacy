@@ -2,6 +2,7 @@ import { CardRow } from './CardRow';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { createInstance } from '@engine/application/factory';
+import { PassiveType } from '@engine/domain/enums';
 import { loadCardDefs } from '@engine/infrastructure/loaders';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -37,7 +38,7 @@ export const SingleCard: Story = {
   args: (() => {
     const instances = makeInstances([1]);
     const ids = Object.keys(instances).map(Number);
-    return { cardIds: ids, blockedCards: {}, instances };
+    return { cardIds: ids, boardEffects: {}, instances };
   })(),
 };
 
@@ -45,7 +46,7 @@ export const MultipleCards: Story = {
   args: (() => {
     const instances = makeInstances([1, 2, 3]);
     const ids = Object.keys(instances).map(Number);
-    return { cardIds: ids, blockedCards: {}, instances };
+    return { cardIds: ids, boardEffects: {}, instances };
   })(),
 };
 
@@ -57,7 +58,9 @@ export const WithBlockingCard: Story = {
     const instances = { [blocked.id]: blocked, [blocker.id]: blocker };
     return {
       cardIds: [blocked.id, blocker.id],
-      blockedCards: { [blocked.id]: blocker.id },
+      boardEffects: {
+        [blocker.id]: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [blocked.id] } }],
+      },
       instances,
     };
   })(),
