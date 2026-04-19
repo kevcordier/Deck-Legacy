@@ -73,17 +73,28 @@ type ChoiceSection = {
   content: React.ReactNode;
 };
 
-function getChoiceSection(
-  choice: PendingChoice,
-  instances: Record<number, CardInstance>,
-  defs: Record<number, CardDef>,
-  stickerDefs: Record<number, Sticker>,
-  t: TFunction,
-  resolvePlayerChoice: (option: ResolvedAction) => void,
-  resolvePayCost: (resolved: ResolvedCost) => void,
-  selectedIds: number[],
-  onToggleId: (id: number) => void,
-): ChoiceSection {
+type ChoiceSectionContext = {
+  instances: Record<number, CardInstance>;
+  defs: Record<number, CardDef>;
+  stickerDefs: Record<number, Sticker>;
+  t: TFunction;
+  resolvePlayerChoice: (option: ResolvedAction) => void;
+  resolvePayCost: (resolved: ResolvedCost) => void;
+  selectedIds: number[];
+  onToggleId: (id: number) => void;
+};
+
+function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): ChoiceSection {
+  const {
+    instances,
+    defs,
+    stickerDefs,
+    t,
+    resolvePlayerChoice,
+    resolvePayCost,
+    selectedIds,
+    onToggleId,
+  } = ctx;
   if (choice.type === PendingChoiceType.CHOOSE_CARD) {
     const isMultiSelect = choice.pickCount > 1;
 
@@ -99,7 +110,7 @@ function getChoiceSection(
           id: choice.id,
           type: choice.kind,
           sourceInstanceId: choice.sourceInstanceId,
-          instanceId,
+          instanceIds: [instanceId],
         });
       }
     };
@@ -243,7 +254,7 @@ export function PendingChoiceModal({
     (choice?.pickCount ?? 1) > 1 && choice?.type === PendingChoiceType.CHOOSE_CARD;
 
   const handleMultiConfirm = () => {
-    if (!choice || selectedIds.length !== choice.pickCount) return;
+    if (selectedIds.length !== choice?.pickCount) return;
     if (choice.kind === 'COST') {
       resolvePayCost({ resources: {}, discardedCardIds: selectedIds, destroyedCardIds: [] });
     } else {
@@ -320,8 +331,7 @@ export function PendingChoiceModal({
 
   // ── pending choice ─────────────────────────────────────────────────────
   if (choice) {
-    ({ title, subtitle, content } = getChoiceSection(
-      choice,
+    ({ title, subtitle, content } = getChoiceSection(choice, {
       instances,
       defs,
       stickerDefs,
@@ -330,7 +340,7 @@ export function PendingChoiceModal({
       resolvePayCost,
       selectedIds,
       onToggleId,
-    ));
+    }));
   }
 
   const onClose = choice?.isMandatory === false ? () => onSkipChoice(choice.id) : undefined;

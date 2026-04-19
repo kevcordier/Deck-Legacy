@@ -12,7 +12,7 @@ describe('PlaceCardInDrawPileStrategy', () => {
       id: '1-1',
       type: ActionType.PLACE_CARD_IN_DRAW_PILE,
       sourceInstanceId: 99,
-      instanceId: 5,
+      instanceIds: [5],
       position: 1,
     });
     expect(result.drawPile).toEqual([1, 5, 2, 3]);
@@ -24,7 +24,7 @@ describe('PlaceCardInDrawPileStrategy', () => {
       id: '1-1',
       type: ActionType.PLACE_CARD_IN_DRAW_PILE,
       sourceInstanceId: 99,
-      instanceId: 5,
+      instanceIds: [5],
       position: 0,
     });
     expect(result.drawPile[0]).toBe(5);
@@ -36,7 +36,7 @@ describe('PlaceCardInDrawPileStrategy', () => {
       id: '1-1',
       type: ActionType.PLACE_CARD_IN_DRAW_PILE,
       sourceInstanceId: 99,
-      instanceId: 5,
+      instanceIds: [5],
       position: 0,
     });
     expect(result.board).toEqual([10]);
@@ -49,7 +49,7 @@ describe('PlaceCardInDrawPileStrategy', () => {
       id: '1-1',
       type: ActionType.PLACE_CARD_IN_DRAW_PILE,
       sourceInstanceId: 99,
-      instanceId: 5,
+      instanceIds: [5],
       position: 0,
     });
     expect(result.discoveryPile).toEqual([6]);
@@ -63,9 +63,20 @@ describe('PlaceCardInDrawPileStrategy', () => {
       id: '1-1',
       type: ActionType.PLACE_CARD_IN_DRAW_PILE,
       sourceInstanceId: 99,
-      instanceId: 5,
+      instanceIds: [5],
       position: 0,
     });
     expect(result.boardEffects[5]).toBeUndefined();
+  });
+
+  it('is a no-op when instanceIds is not provided', () => {
+    const gs = makeGameState({ drawPile: [1, 2] });
+    const result = strategy.applyEffect(gs, {
+      id: '1-1',
+      type: ActionType.PLACE_CARD_IN_DRAW_PILE,
+      sourceInstanceId: 99,
+      position: 0,
+    });
+    expect(result.drawPile).toEqual([1, 2]);
   });
 });

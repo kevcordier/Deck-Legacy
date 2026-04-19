@@ -12,7 +12,7 @@ describe('DiscardCardStrategy', () => {
       id: '1-1',
       type: ActionType.DISCARD_CARD,
       sourceInstanceId: 99,
-      instanceId: 2,
+      instanceIds: [2],
     });
     expect(result.board).toEqual([1, 3]);
     expect(result.discardPile).toContain(2);
@@ -24,7 +24,7 @@ describe('DiscardCardStrategy', () => {
       id: '1-1',
       type: ActionType.DISCARD_CARD,
       sourceInstanceId: 99,
-      instanceId: 4,
+      instanceIds: [4],
     });
     expect(result.drawPile).toEqual([5]);
     expect(result.discardPile).toContain(4);
@@ -36,9 +36,20 @@ describe('DiscardCardStrategy', () => {
       id: '1-1',
       type: ActionType.DISCARD_CARD,
       sourceInstanceId: 99,
-      instanceId: 10,
+      instanceIds: [10],
     });
     expect(result.discoveryPile).toEqual([]);
     expect(result.discardPile).toContain(10);
+  });
+
+  it('is a no-op when instanceIds is not provided', () => {
+    const gs = makeGameState({ board: [1, 2] });
+    const result = strategy.applyEffect(gs, {
+      id: '1-1',
+      type: ActionType.DISCARD_CARD,
+      sourceInstanceId: 99,
+    });
+    expect(result.board).toEqual([1, 2]);
+    expect(result.discardPile).toEqual([]);
   });
 });

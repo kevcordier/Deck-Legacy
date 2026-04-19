@@ -16,12 +16,34 @@ describe('BlockCardStrategy', () => {
       id: '1-1',
       type: ActionType.BLOCK_CARD,
       sourceInstanceId: 5,
-      instanceId: 10,
+      instanceIds: [10],
     });
     expect(result).toEqual({ ...gs, boardEffects: { ...gs.boardEffects, 5: [boardEffect] } });
   });
 
-  it('does not modify boardEffects if instanceId is undefined', () => {
+  it('appends to existing boardEffects for the same source', () => {
+    const gs = makeGameState({ boardEffects: { 5: [boardEffect] } });
+    const result = strategy.applyEffect(gs, {
+      id: '1-1',
+      type: ActionType.BLOCK_CARD,
+      sourceInstanceId: 5,
+      instanceIds: [10],
+    });
+    expect(result.boardEffects[5]).toHaveLength(2);
+  });
+
+  it('does not modify boardEffects if instanceIds is empty', () => {
+    const gs = makeGameState({ boardEffects: { 5: [boardEffect] } });
+    const result = strategy.applyEffect(gs, {
+      id: '1-1',
+      type: ActionType.BLOCK_CARD,
+      sourceInstanceId: 5,
+      instanceIds: [],
+    });
+    expect(result.boardEffects[5]).toEqual([boardEffect]);
+  });
+
+  it('does not modify boardEffects if instanceIds is undefined', () => {
     const gs = makeGameState({
       boardEffects: { 5: [boardEffect] },
     });

@@ -8,8 +8,7 @@ export class DiscoverCardStrategy implements CardActionStrategy {
   constructor(private readonly cardDefs: Record<number, CardDef>) {}
 
   applyEffect(gameState: GameState, payload: ResolvedAction): GameState {
-    const ids =
-      payload.instanceIds ?? (payload.instanceId !== undefined ? [payload.instanceId] : []);
+    const ids = payload.instanceIds ?? [];
 
     return ids.reduce((gs, instanceId) => {
       const cloned = JSON.parse(JSON.stringify(gs)) as GameState;

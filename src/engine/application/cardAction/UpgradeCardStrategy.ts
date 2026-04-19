@@ -1,21 +1,13 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import { discardCards } from '@engine/application/gameStateHelper';
-import type { ActionType } from '@engine/domain/enums';
-import type { GameState } from '@engine/domain/types';
+import type { GameState, ResolvedAction } from '@engine/domain/types';
 
 export class UpgradeCardStrategy implements CardActionStrategy {
-  applyEffect(
-    gameState: GameState,
-    payload: {
-      id: string;
-      type: ActionType;
-      sourceInstanceId: number;
-      instanceId: number;
-      stateId: number;
-    },
-  ): GameState {
-    const gs = JSON.parse(JSON.stringify(gameState)) as GameState; // Deep clone to avoid mutating original state
-    gs.instances[payload.instanceId].stateId = payload.stateId;
-    return { ...gs, ...discardCards(gs, [payload.instanceId]) };
+  applyEffect(gameState: GameState, payload: ResolvedAction): GameState {
+    const instanceId = payload.instanceIds?.[0];
+    if (instanceId === undefined || payload.stateId === undefined) return gameState;
+    const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
+    gs.instances[instanceId].stateId = payload.stateId;
+    return { ...gs, ...discardCards(gs, [instanceId]) };
   }
 }

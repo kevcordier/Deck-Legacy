@@ -325,7 +325,7 @@ export function GameProvider({
     gs: GameState,
   ): boolean => {
     const actionCurrent = currentActionRef.current;
-    const { instanceId } = choice;
+    const instanceId = choice.instanceIds?.[0];
     if (!actionCurrent || !instanceId) return false;
 
     const state = getActiveState(gs.instances[instanceId], defs);
@@ -396,62 +396,45 @@ export function GameProvider({
 
   const handleBoardEffectChoice = (choice: ResolvedAction, gs: GameState, instanceId: number) => {
     const resolvedAction = currentActionRef.current?.resolvedAction.find(ra => ra.id === choice.id);
-    if (resolvedAction?.type !== ActionType.ADD_BOARD_EFFECT || choice.instanceId === undefined) {
+    if (resolvedAction?.type !== ActionType.ADD_BOARD_EFFECT || !choice.instanceIds?.length) {
       return false;
     }
 
     const currentAction = currentActionRef.current;
     if (!currentAction) return false;
 
-    const accumulated = [...(resolvedAction.instanceIds ?? []), choice.instanceId];
+    const accumulated = [...(resolvedAction.instanceIds ?? []), ...choice.instanceIds];
     const mergedChoice: ResolvedAction = {
       ...choice,
       instanceIds: accumulated,
-      instanceId: undefined,
     };
     currentAction.resolvedAction = mergeResolvedChoice(currentAction.resolvedAction, mergedChoice);
 
-    const remaining = (pendingChoices ?? [])
-      .slice(1)
-      .map(pc => ({ ...pc, choices: pc.choices.filter(c => c !== choice.instanceId) }));
+    const remaining = (pendingChoices ?? []).slice(1).map(pc => ({
+      ...pc,
+      choices: pc.choices.filter(c => !choice.instanceIds?.includes(c as number)),
+    }));
 
     if (remaining.length === 0) {
-      const {
-        resolvedAction: resolvedActions,
-        resolvedCost,
-        triggerId,
-        action: currentCardAction,
-        nextEffectIndex = 0,
-      } = currentAction;
+      const resolvedActions = currentAction.resolvedAction;
+      const resolvedCost = currentAction.resolvedCost;
+      const triggerId = currentAction.triggerId;
+      const { action: currentCardAction } = currentAction;
       const currentDef = defs[gs.instances[instanceId].cardId];
-      const isLast = nextEffectIndex === currentCardAction.actions.length - 1;
-
       currentActionRef.current = null;
       setPendingChoices(null);
-
-      aggRef.current.applyCardEffect(
-        resolvedActions,
-        isLast ? (resolvedCost ?? emptyResolvedCost) : emptyResolvedCost,
-        triggerId,
-        {
-          isDiscarded: isLast && !currentCardAction.passive && !currentCardAction.trigger,
-          isDestroyed: isLast && !!currentDef.parchmentCard,
-          endsTurn: isLast && !!currentCardAction.endsTurn,
-        },
-      );
-
-      if (isLast) {
-        sync(aggRef.current.getGameState());
-      } else {
-        const nextState = triggerAction(
-          instanceId,
-          currentCardAction,
-          resolvedCost ?? emptyResolvedCost,
+      sync(
+        aggRef.current.applyCardEffect(
+          resolvedActions,
+          resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
           triggerId,
-          nextEffectIndex + 1,
-        );
-        if (nextState) sync(nextState);
-      }
+          {
+            isDiscarded: !currentCardAction.passive && !currentCardAction.trigger,
+            isDestroyed: currentDef.parchmentCard,
+            endsTurn: currentCardAction.endsTurn,
+          },
+        ),
+      );
     } else {
       setPendingChoices(remaining);
     }
@@ -528,7 +511,7 @@ export function GameProvider({
       resolvedAction !== undefined &&
       resolvedActionType !== undefined &&
       [ActionType.ADD_RESOURCES, ActionType.BOOST_CARD].includes(resolvedActionType) &&
-      choice.instanceId
+      choice.instanceIds?.[0]
     ) {
       if (resolveCardSourcedActionChoice(choice, resolvedAction, resolvedActionType, gs)) return;
     }

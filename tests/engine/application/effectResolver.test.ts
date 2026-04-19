@@ -37,7 +37,7 @@ describe('resolveActionEffect — card selection', () => {
       cards: { scope: TargetScope.BOARD, ids: [42] },
     });
     const [resolved, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
-    expect(resolved.instanceId).toBe(42);
+    expect(resolved.instanceIds).toEqual([42]);
     expect(pending).toEqual([]);
   });
 
@@ -55,7 +55,7 @@ describe('resolveActionEffect — card selection', () => {
       cards: { scope: TargetScope.BOARD },
     });
     const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
-    expect(resolved.instanceId).toBe(2);
+    expect(resolved.instanceIds).toEqual([2]);
     expect(pending).toEqual([]);
   });
 
@@ -76,13 +76,13 @@ describe('resolveActionEffect — card selection', () => {
       cards: { scope: TargetScope.BOARD, number: 1 },
     });
     const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
-    expect(resolved.instanceId).toBeUndefined();
+    expect(resolved.instanceIds).toBeUndefined();
     expect(pending).toHaveLength(1);
     expect(pending[0].type).toBe(PendingChoiceType.CHOOSE_CARD);
     expect(pending[0].id).toBe('99-1');
   });
 
-  it('sets instanceId to undefined when no cards match', () => {
+  it('sets instanceIds to undefined when no cards match', () => {
     const gs = makeGameState({ board: [], instances: {} });
     const defs: Record<number, CardDef> = {};
     const action = makeAction({
@@ -91,7 +91,7 @@ describe('resolveActionEffect — card selection', () => {
       cards: { scope: TargetScope.BOARD },
     });
     const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
-    expect(resolved.instanceId).toBeUndefined();
+    expect(resolved.instanceIds).toBeUndefined();
     expect(pending).toEqual([]);
   });
 });
@@ -364,7 +364,7 @@ describe('resolveActionEffect — ADD_BOARD_EFFECT', () => {
     const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
     expect(pending).toEqual([]);
     expect(resolved.effect).toBeUndefined();
-    expect(resolved.instanceId).toBe(2);
+    expect(resolved.instanceIds).toEqual([2]);
   });
 
   it('resolves effect without cards selector', () => {
@@ -420,7 +420,7 @@ describe('resolveActionEffect — BOOST_CARD', () => {
     });
     const [resolved, pending] = resolveActionEffect(action, 1, gs, defs);
     // Single match → auto-resolved, no pending
-    expect(resolved.instanceId).toBe(2);
+    expect(resolved.instanceIds).toEqual([2]);
     expect(pending).toEqual([]);
   });
 });

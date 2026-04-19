@@ -15,7 +15,7 @@ describe('UpgradeCardStrategy', () => {
       id: '1-1',
       type: ActionType.UPGRADE_CARD,
       sourceInstanceId: 99,
-      instanceId: 1,
+      instanceIds: [1],
       stateId: 3,
     });
     expect(result.instances[1].stateId).toBe(3);
@@ -33,10 +33,21 @@ describe('UpgradeCardStrategy', () => {
       id: '1-1',
       type: ActionType.UPGRADE_CARD,
       sourceInstanceId: 99,
-      instanceId: 1,
+      instanceIds: [1],
       stateId: 2,
     });
     expect(result.board).toEqual([2]);
     expect(result.discardPile).toContain(1);
+  });
+
+  it('is a no-op when instanceIds is not provided', () => {
+    const gs = makeGameState({ board: [1], instances: { 1: makeInstance(1, 10, 1) } });
+    const result = strategy.applyEffect(gs, {
+      id: '1-1',
+      type: ActionType.UPGRADE_CARD,
+      sourceInstanceId: 99,
+      stateId: 2,
+    });
+    expect(result.board).toEqual([1]);
   });
 });

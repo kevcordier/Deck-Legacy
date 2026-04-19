@@ -128,12 +128,12 @@ function resolveCardTarget(ctx: ResolveContext, cards: CardeSelector): void {
   } = ctx;
 
   if (cards.ids?.length === 1) {
-    resolverAction.instanceId = cards.ids[0];
+    resolverAction.instanceIds = [cards.ids[0]];
     return;
   }
   const choices = cardSelector(cards, instanceId, gameState, defs);
   if (choices.length === 0) {
-    resolverAction.instanceId = undefined;
+    resolverAction.instanceIds = undefined;
     return;
   }
   const pickCount = cards.number ?? 1;
@@ -141,7 +141,7 @@ function resolveCardTarget(ctx: ResolveContext, cards: CardeSelector): void {
     choices.length === 1 ||
     (cards.scope && [TargetScope.SELF, TargetScope.TOP_OF_DECK].includes(cards.scope))
   ) {
-    resolverAction.instanceId = choices[0];
+    resolverAction.instanceIds = [choices[0]];
     return;
   }
   if (choices.length <= pickCount) {

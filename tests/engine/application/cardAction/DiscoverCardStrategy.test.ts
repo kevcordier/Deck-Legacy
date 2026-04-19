@@ -7,7 +7,7 @@ const makePayload = (instanceId: number) => ({
   id: `${instanceId}-1`,
   type: ActionType.DISCOVER_CARD,
   sourceInstanceId: 0,
-  instanceId,
+  instanceIds: [instanceId],
 });
 
 // — DiscoverCardStrategy —
@@ -124,7 +124,7 @@ describe('DiscoverCardStrategy', () => {
     expect(result.discardPile).toContain(6);
   });
 
-  it('is a no-op when neither instanceId nor instanceIds is provided', () => {
+  it('is a no-op when instanceIds is not provided', () => {
     const gs = makeGameState({ discoveryPile: [5] });
     const result = strategy.applyEffect(gs, {
       id: '0-1',

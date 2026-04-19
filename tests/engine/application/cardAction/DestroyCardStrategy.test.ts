@@ -12,7 +12,7 @@ describe('DestroyCardStrategy', () => {
       id: '1-1',
       type: ActionType.DESTROY_CARD,
       sourceInstanceId: 99,
-      instanceId: 2,
+      instanceIds: [2],
     });
     expect(result.board).toEqual([1, 3]);
     expect(result.destroyedPile).toContain(2);
@@ -24,7 +24,7 @@ describe('DestroyCardStrategy', () => {
       id: '1-1',
       type: ActionType.DESTROY_CARD,
       sourceInstanceId: 99,
-      instanceId: 5,
+      instanceIds: [5],
     });
     expect(result.drawPile).toEqual([]);
     expect(result.destroyedPile).toContain(5);
@@ -36,7 +36,7 @@ describe('DestroyCardStrategy', () => {
       id: '1-1',
       type: ActionType.DESTROY_CARD,
       sourceInstanceId: 99,
-      instanceId: 7,
+      instanceIds: [7],
     });
     expect(result.discardPile).toEqual([]);
     expect(result.destroyedPile).toContain(7);

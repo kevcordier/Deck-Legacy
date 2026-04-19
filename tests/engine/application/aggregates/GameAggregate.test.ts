@@ -650,7 +650,7 @@ describe('GameAggregate.applyCardEffect — DISCOVER_CARD', () => {
         id: '5-1',
         type: ActionType.DISCOVER_CARD,
         sourceInstanceId: 5,
-        instanceId: 5,
+        instanceIds: [5],
         cardDefs: defs,
       } as unknown as ResolvedAction,
     ];
@@ -680,7 +680,7 @@ describe('GameAggregate.applyCardEffect — BOOST_CARD', () => {
         type: ActionType.BOOST_CARD,
         sourceInstanceId: 1,
         stickerId: 101,
-        instanceId: 1,
+        instanceIds: [1],
       } as unknown as ResolvedAction,
     ];
     agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
@@ -709,7 +709,7 @@ describe('GameAggregate.applyCardEffect — ADD_STICKER', () => {
         type: ActionType.ADD_STICKER,
         sourceInstanceId: 1,
         stickerId: 101,
-        instanceId: 1,
+        instanceIds: [1],
       } as unknown as ResolvedAction,
     ];
     agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
@@ -735,7 +735,7 @@ describe('GameAggregate.applyCardEffect — DISCARD_CARD', () => {
     };
     const agg = new GameAggregate(state, {});
     const effects: ResolvedAction[] = [
-      { id: '1-1', type: ActionType.DISCARD_CARD, sourceInstanceId: 1, instanceId: 2 },
+      { id: '1-1', type: ActionType.DISCARD_CARD, sourceInstanceId: 1, instanceIds: [2] },
     ];
     agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().discardPile).toContain(2);
@@ -760,7 +760,7 @@ describe('GameAggregate.applyCardEffect — DESTROY_CARD', () => {
     };
     const agg = new GameAggregate(state, {});
     const effects: ResolvedAction[] = [
-      { id: '1-1', type: ActionType.DESTROY_CARD, sourceInstanceId: 1, instanceId: 2 },
+      { id: '1-1', type: ActionType.DESTROY_CARD, sourceInstanceId: 1, instanceIds: [2] },
     ];
     agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().destroyedPile).toContain(2);
@@ -784,7 +784,13 @@ describe('GameAggregate.applyCardEffect — UPGRADE_CARD', () => {
     const defs = { 10: makeDef(10, [makeCardState(1), makeCardState(2)]) };
     const agg = new GameAggregate(state, defs);
     const effects: ResolvedAction[] = [
-      { id: '1-1', type: ActionType.UPGRADE_CARD, sourceInstanceId: 1, instanceId: 1, stateId: 2 },
+      {
+        id: '1-1',
+        type: ActionType.UPGRADE_CARD,
+        sourceInstanceId: 1,
+        instanceIds: [1],
+        stateId: 2,
+      },
     ];
     agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().instances[1].stateId).toBe(2);
@@ -814,7 +820,7 @@ describe('GameAggregate.applyCardEffect — PLACE_CARD_IN_DRAW_PILE', () => {
         id: '1-1',
         type: ActionType.PLACE_CARD_IN_DRAW_PILE,
         sourceInstanceId: 1,
-        instanceId: 1,
+        instanceIds: [1],
         position: 0,
       },
     ];
@@ -842,7 +848,7 @@ describe('GameAggregate.applyCardEffect — BLOCK_CARD', () => {
     };
     const agg = new GameAggregate(state, {});
     const effects: ResolvedAction[] = [
-      { id: '1-1', type: ActionType.BLOCK_CARD, sourceInstanceId: 1, instanceId: 2 },
+      { id: '1-1', type: ActionType.BLOCK_CARD, sourceInstanceId: 1, instanceIds: [2] },
     ];
     agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().boardEffects[1]).toEqual([
@@ -903,7 +909,7 @@ describe('GameAggregate.applyCardEffect — PLAY_CARD', () => {
     };
     const agg = new GameAggregate(state, defs);
     const effects: ResolvedAction[] = [
-      { id: '1-1', type: ActionType.PLAY_CARD, sourceInstanceId: 1, instanceId: 2 },
+      { id: '1-1', type: ActionType.PLAY_CARD, sourceInstanceId: 1, instanceIds: [2] },
     ];
     agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().board).toContain(2);
@@ -947,7 +953,13 @@ describe('GameAggregate.applyCardEffect — CHOOSE_STATE', () => {
     const defs = { 10: makeDef(10, [makeCardState(1), makeCardState(2)]) };
     const agg = new GameAggregate(state, defs);
     const effects: ResolvedAction[] = [
-      { id: '1-1', type: ActionType.CHOOSE_STATE, sourceInstanceId: 1, instanceId: 1, stateId: 2 },
+      {
+        id: '1-1',
+        type: ActionType.CHOOSE_STATE,
+        sourceInstanceId: 1,
+        instanceIds: [1],
+        stateId: 2,
+      },
     ];
     agg.applyCardEffect(effects, makeEmptyResolvedCost(), 't1');
     expect(agg.getGameState().instances[1].stateId).toBe(2);

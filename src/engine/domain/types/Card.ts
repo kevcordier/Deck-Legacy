@@ -141,7 +141,6 @@ export type ResolvedAction = {
   id: string;
   type: ActionType;
   sourceInstanceId: number;
-  instanceId?: number;
   instanceIds?: number[];
   effect?: Passive;
   resources?: Resources;

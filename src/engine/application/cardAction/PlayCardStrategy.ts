@@ -1,24 +1,18 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
-import { type ActionType, Trigger } from '@engine/domain/enums';
-import type { CardDef, GameState } from '@engine/domain/types';
+import { Trigger } from '@engine/domain/enums';
+import type { CardDef, GameState, ResolvedAction } from '@engine/domain/types';
 
 export class PlayCardStrategy implements CardActionStrategy {
   constructor(private readonly cardDefs: Record<number, CardDef>) {}
 
-  applyEffect(
-    gameState: GameState,
-    payload: {
-      id: string;
-      type: ActionType;
-      sourceInstanceId: number;
-      instanceId: number;
-    },
-  ): GameState {
+  applyEffect(gameState: GameState, payload: ResolvedAction): GameState {
+    const instanceId = payload.instanceIds?.[0];
+    if (instanceId === undefined) return gameState;
     const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
 
     const triggerEffects = getInstancesTriggerEffects(
-      [gs.instances[payload.instanceId]],
+      [gs.instances[instanceId]],
       this.cardDefs,
       Trigger.ON_PLAY,
     );
@@ -27,11 +21,11 @@ export class PlayCardStrategy implements CardActionStrategy {
         gs.triggerPile[crypto.randomUUID()] = effect;
       });
     }
-    gs.discoveryPile = gs.discoveryPile.filter(c => c !== payload.instanceId);
-    gs.drawPile = gs.drawPile.filter(c => c !== payload.instanceId);
-    gs.destroyedPile = gs.destroyedPile.filter(c => c !== payload.instanceId);
-    gs.discardPile = gs.discardPile.filter(c => c !== payload.instanceId);
-    gs.board = [...gs.board, payload.instanceId];
+    gs.discoveryPile = gs.discoveryPile.filter(c => c !== instanceId);
+    gs.drawPile = gs.drawPile.filter(c => c !== instanceId);
+    gs.destroyedPile = gs.destroyedPile.filter(c => c !== instanceId);
+    gs.discardPile = gs.discardPile.filter(c => c !== instanceId);
+    gs.board = [...gs.board, instanceId];
     return gs;
   }
 }

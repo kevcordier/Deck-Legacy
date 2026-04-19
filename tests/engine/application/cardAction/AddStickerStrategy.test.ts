@@ -16,7 +16,7 @@ describe('AddStickerStrategy', () => {
       type: ActionType.ADD_STICKER,
       sourceInstanceId: 99,
       stickerId: 101,
-      instanceId: 1,
+      instanceIds: [1],
     });
     expect(result.instances[1].stickers[2]).toContain(101);
   });
@@ -31,7 +31,7 @@ describe('AddStickerStrategy', () => {
       type: ActionType.ADD_STICKER,
       sourceInstanceId: 99,
       stickerId: 101,
-      instanceId: 1,
+      instanceIds: [1],
     });
     expect(result.stickerStock[101]).toBe(4);
   });
@@ -55,8 +55,22 @@ describe('AddStickerStrategy', () => {
       type: ActionType.ADD_STICKER,
       sourceInstanceId: 99,
       stickerId: 101,
-      instanceId: 1,
+      instanceIds: [1],
     });
     expect(result.instances[1].stickers[1]).toEqual([100, 101]);
+  });
+
+  it('is a no-op when instanceIds is not provided', () => {
+    const gs = makeGameState({
+      instances: { 1: makeInstance(1, 10, 1) },
+      stickerStock: { 101: 3 },
+    });
+    const result = strategy.applyEffect(gs, {
+      id: '1-1',
+      type: ActionType.ADD_STICKER,
+      sourceInstanceId: 99,
+      stickerId: 101,
+    });
+    expect(result.stickerStock[101]).toBe(3);
   });
 });

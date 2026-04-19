@@ -32,7 +32,7 @@ const payload = {
   id: '1-1',
   type: ActionType.PLAY_CARD,
   sourceInstanceId: 99,
-  instanceId,
+  instanceIds: [instanceId],
 };
 
 describe('PlayCardStrategy', () => {
@@ -65,6 +65,16 @@ describe('PlayCardStrategy', () => {
     const gs = makeGameState({ destroyedPile: [5, 9], instances: { [instanceId]: instance } });
     const result = strategy.applyEffect(gs, payload);
     expect(result.destroyedPile).toEqual([9]);
+  });
+
+  it('is a no-op when instanceIds is not provided', () => {
+    const gs = makeGameState({ board: [1] });
+    const result = strategy.applyEffect(gs, {
+      id: '1-1',
+      type: ActionType.PLAY_CARD,
+      sourceInstanceId: 99,
+    });
+    expect(result.board).toEqual([1]);
   });
 
   it('adds ON_PLAY trigger effects to the triggerPile', () => {
