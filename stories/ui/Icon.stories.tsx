@@ -12,7 +12,7 @@ import {
   TriggerIcon,
   WeaponIcon,
   WoodIcon,
-} from './icon';
+} from '@components/ui/Icon/icon';
 import { IconColors } from '@components/ui/Icon/iconColors';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

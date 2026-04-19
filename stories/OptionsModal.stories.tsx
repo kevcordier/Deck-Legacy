@@ -1,4 +1,4 @@
-import { OptionsModal } from './OptionsModal';
+import { OptionsModal } from '@components/OptionsModal/OptionsModal';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof OptionsModal> = {

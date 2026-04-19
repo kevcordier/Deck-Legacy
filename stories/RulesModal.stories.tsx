@@ -1,4 +1,4 @@
-import { RulesModal } from './RulesModal';
+import { RulesModal } from '@components/RulesModal/RulesModal';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof RulesModal> = {

@@ -1,4 +1,4 @@
-import { PendingChoiceModal } from './PendingChoiceModal';
+import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { ActionType, CardTag, PendingChoiceType, Trigger } from '@engine/domain/enums';

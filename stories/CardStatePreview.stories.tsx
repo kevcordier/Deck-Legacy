@@ -1,4 +1,4 @@
-import { CardStatePreview } from './CardStatePreview';
+import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { ActionType, CardTag } from '@engine/domain/enums';

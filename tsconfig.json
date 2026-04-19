@@ -8,7 +8,8 @@
       "@helpers/*": ["./src/helpers/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@contexts/*": ["./src/contexts/*"],
-      "@styles/*": ["./src/styles/*"]
+      "@styles/*": ["./src/styles/*"],
+      "@stories/*": ["./src/stories/*"]
     },
     "target": "ES2020",
     "useDefineForClassFields": true,
@@ -35,7 +36,8 @@
     ".storybook/**/*",
     "vite.config.ts",
     "eslint.config.ts",
-    "tailwind.config.js"
+    "tailwind.config.js",
+    "stories/**/*"
   ],
   "exclude": ["node_modules", "dist", "build", "coverage"]
 }

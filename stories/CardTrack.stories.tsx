@@ -1,4 +1,4 @@
-import { CardTrack } from './CardTrack';
+import { CardTrack } from '@components/CardTrack/CardTrack';
 import { ActionType } from '@engine/domain/enums';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

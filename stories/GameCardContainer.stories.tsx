@@ -1,4 +1,4 @@
-import { GameCard } from './GameCard';
+import { GameCard } from '../src/components/GameCard/GameCard';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { createInstance } from '@engine/application/factory';

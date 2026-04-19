@@ -1,4 +1,4 @@
-import { CardRow } from './CardRow';
+import { CardRow } from '@components/CardRow/CardRow';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { createInstance } from '@engine/application/factory';

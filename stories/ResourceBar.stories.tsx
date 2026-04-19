@@ -1,4 +1,4 @@
-import { ResourceBar } from './ResourceBar';
+import { ResourceBar } from '../src/components/ResourceBar/ResourceBar';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import type { CardInstance } from '@engine/domain/types';

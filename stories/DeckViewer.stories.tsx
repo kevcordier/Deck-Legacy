@@ -1,4 +1,4 @@
-import { DeckViewer } from './DeckViewer';
+import { DeckViewer } from '@components/DeckViewer/DeckViewer';
 import { GameProvider } from '@contexts/GameProvider';
 import deckData from '@data/deck.json';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';

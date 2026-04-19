@@ -1,4 +1,4 @@
-import { ButtonGroup } from './ButtonGroup';
+import { ButtonGroup } from '@components/ui/ButtonGroup/ButtonGroup';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof ButtonGroup> = {

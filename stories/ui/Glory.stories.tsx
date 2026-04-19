@@ -1,4 +1,4 @@
-import { Glory } from './Glory';
+import { Glory } from '@components/ui/Glory/Glory';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof Glory> = {

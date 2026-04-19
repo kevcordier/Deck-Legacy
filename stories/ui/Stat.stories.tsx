@@ -1,4 +1,4 @@
-import { Stat } from './Stat';
+import { Stat } from '@components/ui/Stat/Stat';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

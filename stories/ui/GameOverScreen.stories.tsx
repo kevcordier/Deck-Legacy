@@ -1,8 +1,8 @@
-import { GameOverScreen } from './GameOverScreen';
+import { GameOverScreen } from '@components/ui/GameOverScreen/GameOverScreen';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof GameOverScreen> = {
-  title: 'Components/GameOverScreen',
+  title: 'UI/GameOverScreen',
   component: GameOverScreen,
   parameters: {
     layout: 'fullscreen',
@@ -10,7 +10,7 @@ const meta: Meta<typeof GameOverScreen> = {
   argTypes: {
     score: { control: { type: 'number', min: 0 } },
     round: { control: { type: 'number', min: 1 } },
-    onNewGame: { action: 'newGame' },
+    onStartNewGame: { action: 'start new game' },
   },
 };
 
@@ -21,26 +21,5 @@ export const Default: Story = {
   args: {
     score: 42,
     round: 8,
-  },
-};
-
-export const LowScore: Story = {
-  args: {
-    score: 5,
-    round: 3,
-  },
-};
-
-export const HighScore: Story = {
-  args: {
-    score: 150,
-    round: 20,
-  },
-};
-
-export const ZeroScore: Story = {
-  args: {
-    score: 0,
-    round: 1,
   },
 };

@@ -1,4 +1,3 @@
-import { Game } from './Game';
 import { GameProvider } from '@contexts/GameProvider';
 import { GameUIProvider } from '@contexts/GameUIProvider';
 import deckData from '@data/deck.json';
@@ -7,6 +6,7 @@ import { createInstance } from '@engine/application/factory';
 import type { GameState } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 import { loadCardDefs } from '@engine/infrastructure/loaders';
+import { Game } from '@pages/Game/Game';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 // ─── Debug wrapper ────────────────────────────────────────────────────────────

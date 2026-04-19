@@ -1,4 +1,4 @@
-import { Modal } from './Modal';
+import { Modal } from '@components/ui/Modal/Modal';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof Modal> = {

@@ -1,5 +1,5 @@
-import { EmptyState } from './EmptyState';
 import { Button } from '@components/ui/Button/Button';
+import { EmptyState } from '@components/ui/EmptyState/EmptyState';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof EmptyState> = {

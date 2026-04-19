@@ -1,4 +1,4 @@
-import { StickerChoice } from './StickerChoice';
+import { StickerChoice } from '@components/ui/StickerChoice/StickerChoice';
 import { stickerData } from '@data/stickers';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

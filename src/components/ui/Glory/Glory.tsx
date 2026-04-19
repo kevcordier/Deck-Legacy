@@ -4,9 +4,10 @@ import { IconColors } from '@components/ui/Icon/iconColors';
 type GloryProps = {
   readonly glory: number;
   readonly size?: 'xs' | 'sm' | 'md' | 'lg';
+  readonly noPlus?: boolean;
 };
 
-export function Glory({ glory, size = 'md' }: GloryProps) {
+export function Glory({ glory, size = 'md', noPlus = false }: GloryProps) {
   const iconClasses = { xs: 'size-5', sm: 'size-7', md: 'size-10', lg: 'size-15' }[size];
   const textClasses = { xs: 'text-[9px]', sm: 'text-xs', md: 'text-lg', lg: 'text-2xl' }[size];
   return (
@@ -15,7 +16,7 @@ export function Glory({ glory, size = 'md' }: GloryProps) {
     >
       <GloryIcon color={IconColors.gold} className={`${iconClasses} fill-amber-200/90`} />
       <span className={`font-display absolute font-bold ${textClasses}`}>
-        {glory > 0 ? '+' : ''}
+        {!noPlus && glory > 0 ? '+' : ''}
         {glory}
       </span>
     </div>

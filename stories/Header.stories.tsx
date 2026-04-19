@@ -1,4 +1,4 @@
-import { Header } from './Header';
+import { Header } from '@components/Header/Header';
 import { GameProvider } from '@contexts/GameProvider';
 import { GameUIProvider } from '@contexts/GameUIProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';

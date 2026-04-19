@@ -1,4 +1,4 @@
-import { ResourceChoice } from './ResourceChoice';
+import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof ResourceChoice> = {
