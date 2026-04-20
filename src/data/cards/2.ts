@@ -45,7 +45,7 @@ export const distantMountain: CardDef = {
               },
             ],
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,
@@ -113,7 +113,7 @@ export const distantMountain: CardDef = {
           cost: {
             destroy: { scope: TargetScope.SELF },
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.DISCOVER_CARD,

@@ -1,7 +1,7 @@
 import { cardSelector } from '@engine/application/cardSelector';
 import { ActionType, PendingChoiceType, ResourceType, TargetScope } from '@engine/domain/enums';
 import type {
-  Action,
+  ActionEffect,
   CardDef,
   CardeSelector,
   GameState,
@@ -24,7 +24,7 @@ interface ResolveContext {
 }
 
 export function resolveActionEffect(
-  action: Action,
+  action: ActionEffect,
   instanceId: number,
   gameState: GameState,
   defs?: Record<number, CardDef>,
@@ -242,7 +242,7 @@ function resolveStateTarget(ctx: ResolveContext, states: number[]): void {
 }
 
 /** Strips the `choice` and `cards` sub-fields from Action.resources to get plain Resources. */
-function extractResources(raw: NonNullable<Action['resources']>): Resources {
+function extractResources(raw: NonNullable<ActionEffect['resources']>): Resources {
   const { choice: _choice, cards: _cards, ...rest } = raw;
   return rest as Resources;
 }

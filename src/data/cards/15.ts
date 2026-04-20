@@ -13,7 +13,7 @@ export const stop1: CardDef = {
         {
           id: '15-1-1',
           trigger: Trigger.ON_DISCOVER,
-          actions: [
+          actionEffects: [
             {
               id: 2,
               type: ActionType.DISCOVER_CARD,

@@ -14,7 +14,7 @@ export const stop3: CardDef = {
           id: '22-1-1',
           passive: true,
           trigger: Trigger.ON_DISCOVER,
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.DISCOVER_CARD,

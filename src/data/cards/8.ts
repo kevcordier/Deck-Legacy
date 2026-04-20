@@ -15,7 +15,7 @@ export const fieldWorker: CardDef = {
       actions: [
         {
           id: '8-1-1',
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,
@@ -47,7 +47,7 @@ export const fieldWorker: CardDef = {
       actions: [
         {
           id: '8-2-1',
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,

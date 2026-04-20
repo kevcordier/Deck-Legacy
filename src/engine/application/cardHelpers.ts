@@ -127,7 +127,7 @@ export function getInstancesTriggerEffects(
     if (effect === Trigger.ON_DISCOVER && cardDef.chooseState) {
       effects.push({
         id: 'choose_state',
-        actions: [
+        actionEffects: [
           {
             id: 0,
             type: ActionType.CHOOSE_STATE,

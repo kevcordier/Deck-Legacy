@@ -1,6 +1,7 @@
 import { makeGameState, makeInstance } from '../testHelpers';
 import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
 import { ActionType, Trigger } from '@engine/domain/enums';
+import type { CardAction } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
 const makePayload = (instanceId: number) => ({
@@ -13,10 +14,9 @@ const makePayload = (instanceId: number) => ({
 // — DiscoverCardStrategy —
 
 describe('DiscoverCardStrategy', () => {
-  const onDiscoverEffect = {
+  const onDiscoverEffect: CardAction = {
     id: 'e1',
-    label: 'Test trigger',
-    actions: [{ id: 1, type: ActionType.ADD_RESOURCES }],
+    actionEffects: [{ id: 1, type: ActionType.ADD_RESOURCES }],
     trigger: Trigger.ON_DISCOVER,
     optional: false,
   };

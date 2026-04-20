@@ -11,7 +11,6 @@ export const treasury: CardDef = {
       name: 'Treasury',
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/12e629f3-73f2-4edb-91ce-bfb83fa2c2d2/anim=false,width=450,optimized=true/3EDE5F2CA834FA6C31BA7A57752727C762B454184E7180BF089258EA6C299E19.jpeg',
-      description: 'Store up those riches, you never know when you might need them!',
       track: {
         cumulative: false,
         inOrder: true,
@@ -189,7 +188,6 @@ export const treasury: CardDef = {
       id: 2,
       name: 'Extended Treasury',
       glory: 50,
-      description: 'I want to be unreasonably rich and put King Midas to shame.',
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/12e629f3-73f2-4edb-91ce-bfb83fa2c2d2/anim=false,width=450,optimized=true/3EDE5F2CA834FA6C31BA7A57752727C762B454184E7180BF089258EA6C299E19.jpeg',
       track: {

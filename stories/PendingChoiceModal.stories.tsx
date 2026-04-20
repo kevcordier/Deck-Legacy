@@ -54,7 +54,7 @@ const smithDef: CardDef = {
       actions: [
         {
           id: 'e1',
-          actions: [],
+          actionEffects: [],
           trigger: Trigger.END_OF_TURN,
           optional: true,
         },
@@ -180,7 +180,7 @@ export const TriggerPileOptional: Story = {
         sourceInstanceId: 2,
         effectDef: {
           id: 'e1',
-          actions: [],
+          actionEffects: [],
           optional: true,
         },
       },
@@ -199,7 +199,7 @@ export const TriggerPileForced: Story = {
         sourceInstanceId: 2,
         effectDef: {
           id: 'e1',
-          actions: [],
+          actionEffects: [],
           optional: false,
         },
       },
@@ -216,11 +216,11 @@ export const TriggerPileMultiple: Story = {
     triggerPile: {
       'trigger-uuid-a': {
         sourceInstanceId: 1,
-        effectDef: { id: 'e1', actions: [], optional: true },
+        effectDef: { id: 'e1', actionEffects: [], optional: true },
       },
       'trigger-uuid-b': {
         sourceInstanceId: 2,
-        effectDef: { id: 'e2', actions: [], optional: false },
+        effectDef: { id: 'e2', actionEffects: [], optional: false },
       },
     },
     defs,

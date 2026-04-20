@@ -28,18 +28,30 @@ pnpm storybook      # Component explorer on :6008
 
 The codebase follows Clean Architecture / Domain-Driven Design, split into three explicit layers under `src/engine/`:
 
-```
+```text
 src/
 ├── engine/              # Agnostic engine
 │   ├── domain/          # Pure types, enums, interfaces — zero logic
 │   ├── application/     # Use cases, business logic, orchestration
 │   └── infrastructure/  # localStorage persistence, data loaders
 ├── components/          # React UI components (feature folders)
-├── helpers/             # Helpers use in React
+├── contexts/            # React contexts (GameContext, GameProvider, GameUIContext, GameUIProvider)
+├── helpers/             # Helpers used in React
 ├── hooks/               # Custom React hooks
-├── data/                # Static game data (cards, stickers, deck)
-│   ├── locales/         # EN/FR locale files
+├── data/                # Static game data
+│   ├── cards/           # One file per card (1.ts … N.ts) + index.ts
+│   ├── stickers/        # One file per sticker (1.ts … N.ts) + index.ts
+│   ├── deck.json        # Initial deck composition
+│   ├── stickerStock.json# Initial sticker stock
+│   └── locales/         # EN/FR locale files
 └── styles/              # Global CSS
+stories/                 # Storybook stories (top-level, outside src/)
+├── ui/                  # Stories for src/components/ui/ primitives
+├── pages/               # Stories for page-level components
+└── tokens/              # Color & Typography MDX docs
+tests/                   # Unit tests (top-level, outside src/)
+└── engine/
+    └── application/     # Tests for the engine application layer
 ```
 
 ### Layer Rules
@@ -74,6 +86,130 @@ The entire game state is derived by replaying an ordered list of `GameEvent` obj
 | `Resource`        | `{gold, wood, stone, iron, weapon, goods}`                            |
 | `Sticker`         | Persistent card modifier (production bonus, glory, stay-in-play)      |
 
+### Card Structure
+
+A card is defined by a `CardDef` object. Each card has one or more `CardState`s — the current state determines what the card produces and what actions it exposes.
+
+```typescript
+CardDef {
+  id: number              // unique card identifier
+  name: string            // visual name of the card (not use in code, local string use instead)
+  permanent?: boolean     // stays on board instead of going to discard at the end of turn
+  chooseState?: boolean   // player picks the initial state at discovery time
+  parchmentCard?: boolean // special UI rendering at discovery time and distroyed after it's effect
+  states: CardState[]
+}
+
+CardState {
+  id: number                  // unique state identifier
+  name: string                // visual name of the state (not use in code, local string use instead)
+  tags?: CardTag[]            // LAND | BUILDING | PERSON | EVENT | ENEMY | SEAFARING | GOAL | KNIGHT | ELDER
+  negative?: boolean          // define if a card is an alies or an enemy
+  productions?: Resources[]   // resources generated on production action
+  glory?: number              // glory point worth if this state is active
+  actions?: CardAction[]      // liste of state activation
+  passives?: Passive[]        // liste of state passive effect
+  upgrade?: UpgradeDef[]      // paths to evolve this state into another
+  track?: TrackDef            // optional multi-step track
+  illustration?: string.      // url or path to background image of the state
+}
+
+CardAction {
+  id: string              // unique action identifier structured as cardID_stateId_id
+  actions: Action[]       // list of atomic effects to resolve
+  cost?: Cost             // resource or card cost to pay
+  endsTurn?: boolean.     // if it's true then ends turn after this action resolution
+  trigger?: Trigger       // fired automatically on the given trigger
+  passive?: boolean       // resolved without player interaction
+  optional?: boolean      // only use for trigger effect, if optional then allow to skip trigger
+}
+
+Action {
+  id: number                    // unique action effect identifier
+  type: ActionType              // ADD_RESOURCES | DISCARD_CARD | DISCOVER_CARD | DESTROY_CARD |
+                                // UPGRADE_CARD | PLACE_CARD_IN_DRAW_PILE | BLOCK_CARD | PLAY_CARD |
+                                // ADD_STICKER | CHOOSE_STATE | BOOST_CARD | TRACK_ADVANCE | …
+  cards?: CardeSelector         // target card filter (scope, tags, ids…)
+  resources?: ResourceSelector  // target resource filter
+  states?: number[]             // state ids choice
+  stickerIds?: number[]         // sticker ids choice
+}
+
+TrackDef {
+  steps: StepDef[]        // ordered list of steps
+  inOrder: boolean        // must be accessed sequentially
+  cumulative: boolean     // bonuses accumulate across steps
+  vertical?: boolean      // display flag
+  preround?: boolean      // track resets each round
+}
+
+StepDef {
+  id: number                                        // unique step identifier
+  label?: string                                    // visual name of the step (not use in code, local string use instead)
+  cost?: Cost                                       // resource or card cost to pay to access this step
+  onAccess?: { actions?: Action[]; glory?: number } // action of this step
+}
+```
+
+### GameState Structure
+
+`GameState` is a pure snapshot rebuilt by replaying all `GameEvent`s. Never mutate it directly — dispatch an event and let `GameAggregate` reconstruct the state.
+
+```typescript
+GameState {
+  // Piles — arrays of CardInstance IDs
+  drawPile:       number[]   // cards to be drawn this round
+  discoveryPile:  number[]   // cards available for discovery
+  discardPile:    number[]   // cards discarded after play
+  destroyedPile:  number[]   // permanently removed cards
+  board:          number[]   // cards in play this turn
+  permanents:     number[]   // cards that stay on board across turns
+
+  // Card runtime data
+  instances: Record<number, CardInstance>  // all live instances keyed by instance ID
+
+  // Economy
+  resources:    Resources      // Partial<Record<ResourceType, number>> — current player resources
+  stickerStock: StickerStock   // Record<number, number> — available sticker counts by sticker ID
+
+  // Effects
+  boardEffects:  Record<number, Passive[]>      // passive effects on board, keyed by instance ID
+  triggerPile:   Record<string, TriggerEntry>   // pending triggers awaiting resolution
+  lastAddedIds:  number[]                       // instance IDs added last (discovery, etc.)
+
+  // Turn tracking
+  round: number
+  turn:  number
+  phase: Phase  // PREGAME | START_ROUND | PLAYING | END_TURN | GAME_OVER
+}
+
+CardInstance {
+  id:            number                     // unique runtime ID
+  cardId:        number                     // references CardDef.id
+  stateId:       number                     // current CardState.id
+  stickers:      Record<number, number[]>   // stickers[stateId] = [stickerId, …]
+  trackProgress: number[]                   // IDs of validated track steps
+  cumulated:     number                     // accumulated value for cumulative tracks
+}
+
+TriggerEntry {
+  effectDef:        CardAction   // the action to fire
+  sourceInstanceId: number       // instance that owns the trigger
+}
+```
+
+**Phase transitions:**
+
+```text
+PREGAME → START_ROUND → PLAYING → END_TURN → START_ROUND → … → GAME_OVER
+```
+
+- `PREGAME` — initial state before the first round.
+- `START_ROUND` — new cards added to discovery pile; player starts a round.
+- `PLAYING` — active turn: cards are drawn and resolved.
+- `END_TURN` — pending triggers resolved; board cleared.
+- `GAME_OVER` — all rounds completed.
+
 ### Strategy Pattern (Card Actions)
 
 `src/engine/application/cardAction/` contains 11 strategies implementing `CardActionStrategy`:
@@ -107,8 +243,7 @@ rewindEvent()  canRewind()
 ### Components
 
 - Each component lives in its own subdirectory: `src/components/ComponentName/`
-- Co-located tests if needed: `ComponentName.test.ts`
-- Shared UI primitives live under `src/components/ui/` (Button, ButtonGroup, Divider, Glory, Icon, Modal, ResourceChoice, ResourcePill, Section, Stat, Title)
+- Shared UI primitives live under `src/components/ui/` (Button, ButtonGroup, Divider, EmptyState, Glory, Icon, GameOverScreen, MarkdownText, Modal, ResourceChoice, ResourcePill, Section, Stat, StickerChoice, Tag, Title)
 
 ### Path Aliases (tsconfig.json)
 
@@ -116,6 +251,7 @@ rewindEvent()  canRewind()
 | --------------- | ------------------ |
 | `@engine/*`     | `src/engine/*`     |
 | `@components/*` | `src/components/*` |
+| `@contexts/*`   | `src/contexts/*`   |
 | `@pages/*`      | `src/pages/*`      |
 | `@data/*`       | `src/data/*`       |
 | `@hooks/*`      | `src/hooks/*`      |
@@ -150,11 +286,49 @@ The project uses **Tailwind CSS v4** (via `@tailwindcss/vite`). All styling is d
 
 ---
 
+## Linting
+
+ESLint config: `eslint.config.js` (flat config format).
+
+**Active plugin sets:**
+
+| Plugin                        | Ruleset                  |
+| ----------------------------- | ------------------------ |
+| `@eslint/js`                  | `recommended`            |
+| `typescript-eslint`           | `strict`                 |
+| `eslint-plugin-sonarjs`       | `recommended`            |
+| `@eslint-react/eslint-plugin` | `recommended-typescript` |
+| `eslint-plugin-jsx-a11y`      | `strict`                 |
+| `eslint-plugin-react-hooks`   | `recommended`            |
+| `eslint-plugin-storybook`     | `flat/recommended`       |
+| `eslint-plugin-prettier`      | formatting as errors     |
+
+**Key rule overrides:**
+
+| Rule                                         | Level | Note                                       |
+| -------------------------------------------- | ----- | ------------------------------------------ |
+| `@typescript-eslint/no-explicit-any`         | warn  | allowed for JSON casts only                |
+| `@typescript-eslint/consistent-type-imports` | error | enforces `import type`                     |
+| `@typescript-eslint/no-unused-vars`          | error | `_`-prefixed names ignored                 |
+| `@typescript-eslint/no-non-null-assertion`   | warn  |                                            |
+| `no-console`                                 | warn  | `console.warn` and `console.error` allowed |
+| `prefer-const` / `no-var`                    | error |                                            |
+| `eqeqeq`                                     | error | always strict equality                     |
+| `object-shorthand`                           | error |                                            |
+| `no-duplicate-imports`                       | error |                                            |
+| `sonarjs/no-unused-vars`                     | off   | duplicate of TS rule                       |
+| `sonarjs/todo-tag`                           | off   |                                            |
+| `sonarjs/no-commented-code`                  | off   |                                            |
+
+Zero-warning policy: all warnings are treated as failures in CI.
+
+---
+
 ## Testing
 
 **Framework:** Vitest with v8 coverage  
-**Test files:** `src/**/*.test.ts`  
-**Coverage scope:** `src/engine/**/*.ts` (excluding `useGame.ts`, `index.ts`)
+**Test files:** `tests/**/*.test.ts` (top-level directory, outside `src/`)  
+**Coverage scope:** `src/engine/**/*.ts` — `src/engine/infrastructure` is **excluded**
 
 ```bash
 pnpm test            # Run once
@@ -162,7 +336,16 @@ pnpm test:watch      # Watch mode
 pnpm test:coverage   # Coverage report
 ```
 
-**When adding new engine logic:** always add corresponding unit tests. Keep tests isolated — construct minimal `GameState`/`CardDef` fixtures rather than importing real game data.
+**Coverage thresholds (enforced by Vitest):**
+
+| Metric     | Threshold |
+| ---------- | --------- |
+| Lines      | 100 %     |
+| Functions  | 100 %     |
+| Branches   | 100 %     |
+| Statements | 100 %     |
+
+Every new function or branch added to `src/engine/application/` or `src/engine/domain/` must be fully covered. Tests must stay isolated — construct minimal `GameState`/`CardDef` fixtures; never import real game data.
 
 ---
 
@@ -199,11 +382,12 @@ Use `pnpm verify` then fix all issues before committing; do not use `--no-verify
 
 Static data lives in `src/data/`:
 
-- `cards.ts` — `CardDef[]` array defining all cards (states, productions, upgrades, effects)
-- `stickers.ts` — Sticker definitions (production bonuses, glory, stay-in-play)
+- `cards/` — One TypeScript file per card (`1.ts` … `N.ts`) + `index.ts` that re-exports the full `CardDef[]` array
+- `stickers/` — One TypeScript file per sticker (`1.ts` … `N.ts`) + `index.ts`
 - `deck.json` — Initial deck composition (card IDs + instance counts)
+- `stickerStock.json` — Initial sticker stock available at game start
 
-When adding or modifying cards, update the corresponding locale files (`cards.en.json`, `cards.fr.json`) for name and description strings.
+When adding a new card, create `src/data/cards/<id>.ts`, register it in `src/data/cards/index.ts`, and update both locale files (`cards.en.json`, `cards.fr.json`). Same pattern for stickers.
 
 ---
 
@@ -238,11 +422,12 @@ pnpm build-storybook # Static build
 
 ### Story conventions
 
-- Stories are co-located next to their component: `ComponentName/ComponentName.stories.tsx`
-- All shared UI primitives under `src/components/ui/` have stories (Button, ButtonGroup, Divider, Glory, Icon, Modal, ResourceChoice, ResourcePill, Section, Stat, Title).
+- Stories live in the top-level `stories/` directory, **not** co-located with components in `src/`.
+- Structure mirrors the component hierarchy: `stories/ui/` for primitives, `stories/pages/` for page components, `stories/tokens/` for design token docs.
+- Feature component stories sit directly under `stories/` (e.g. `stories/CardTrack.stories.tsx`).
 - Feature components that require game context use `GameProvider` with `EMPTY_STATE` as a decorator or inside `render`.
 - Use `title: 'UI/ComponentName'` for primitives and `title: 'Components/ComponentName'` for feature components.
-- When adding a new UI primitive or feature component, add a corresponding `.stories.tsx` file.
+- When adding a new UI primitive or feature component, add a corresponding `.stories.tsx` file in the appropriate `stories/` subdirectory.
 
 ---
 

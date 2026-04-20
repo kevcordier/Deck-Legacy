@@ -26,7 +26,7 @@ export const forest: CardDef = {
       actions: [
         {
           id: '3-1-1',
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,
@@ -108,7 +108,7 @@ export const forest: CardDef = {
           cost: {
             destroy: { scope: TargetScope.SELF },
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.DISCOVER_CARD,

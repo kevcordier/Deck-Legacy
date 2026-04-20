@@ -22,7 +22,7 @@ export const jungle: CardDef = {
               },
             ],
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,
@@ -62,7 +62,7 @@ export const jungle: CardDef = {
               },
             ],
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,

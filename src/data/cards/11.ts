@@ -53,7 +53,7 @@ export const hill: CardDef = {
               },
             ],
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.DISCOVER_CARD,
@@ -100,7 +100,7 @@ export const hill: CardDef = {
               },
             ],
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.DISCOVER_CARD,

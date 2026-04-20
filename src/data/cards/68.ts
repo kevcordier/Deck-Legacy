@@ -28,7 +28,7 @@ export const shrine: CardDef = {
               scope: TargetScope.SELF,
             },
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_BOARD_EFFECT,
@@ -73,7 +73,7 @@ export const shrine: CardDef = {
               scope: TargetScope.SELF,
             },
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_BOARD_EFFECT,
@@ -120,7 +120,7 @@ export const shrine: CardDef = {
               scope: TargetScope.SELF,
             },
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_BOARD_EFFECT,
@@ -167,7 +167,7 @@ export const shrine: CardDef = {
               scope: TargetScope.SELF,
             },
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_BOARD_EFFECT,

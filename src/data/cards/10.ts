@@ -18,7 +18,7 @@ export const bandit2: CardDef = {
           id: '10-1-1',
           trigger: Trigger.ON_PLAY,
           optional: false,
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.BLOCK_CARD,
@@ -40,7 +40,7 @@ export const bandit2: CardDef = {
             ],
             destroy: { scope: TargetScope.SELF },
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,
@@ -106,7 +106,7 @@ export const bandit2: CardDef = {
       actions: [
         {
           id: '10-2-1',
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,

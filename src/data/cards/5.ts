@@ -21,7 +21,7 @@ export const trader: CardDef = {
               },
             ],
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,
@@ -62,7 +62,7 @@ export const trader: CardDef = {
               },
             ],
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,
@@ -110,7 +110,7 @@ export const trader: CardDef = {
               },
             ],
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,

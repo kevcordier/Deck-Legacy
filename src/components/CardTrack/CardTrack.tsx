@@ -1,6 +1,6 @@
 import { Glory } from '@components/ui/Glory/Glory';
 import { ActionType } from '@engine/domain/enums';
-import type { Action, TrackDef } from '@engine/domain/types';
+import type { ActionEffect, TrackDef } from '@engine/domain/types';
 import { getResMeta } from '@helpers/renderHelpers';
 import React from 'react';
 
@@ -28,7 +28,7 @@ export function CardTrack({ track, validatedSteps }: CardTrackProps) {
           contents.push(<Glory key="glory" glory={glory} size="sm" />);
         }
 
-        const getActionContent = (action: Action) => {
+        const getActionContent = (action: ActionEffect) => {
           if (action.type === ActionType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
             return <span key={action.id}>#{action.cards.ids[0]}</span>;
           }

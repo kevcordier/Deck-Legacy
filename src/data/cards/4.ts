@@ -40,7 +40,7 @@ export const headquarters: CardDef = {
       actions: [
         {
           id: '4-2-1',
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.PLAY_CARD,
@@ -81,7 +81,7 @@ export const headquarters: CardDef = {
       actions: [
         {
           id: '4-3-1',
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.PLAY_CARD,
@@ -123,7 +123,7 @@ export const headquarters: CardDef = {
       actions: [
         {
           id: '4-4-1',
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.PLAY_CARD,

@@ -34,7 +34,7 @@ function getChoiceActionLabel(
   const state = def?.states.find(s => s.id === inst?.stateId);
   const effects = state?.actions;
   if (!effects || !def || !state) return undefined;
-  const effectIdx = effects.findIndex(e => e.actions.some(a => a.id === actionId));
+  const effectIdx = effects.findIndex(e => e.actionEffects.some(a => a.id === actionId));
   if (effectIdx === -1) return undefined;
   return tCardActionLabel(t, def.id, state.id, effectIdx) || undefined;
 }

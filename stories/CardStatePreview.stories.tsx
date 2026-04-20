@@ -73,7 +73,7 @@ const armyDef: CardDef = {
       actions: [
         {
           id: 'attack',
-          actions: [{ id: 1, type: ActionType.DESTROY_CARD, cards: { scope: undefined } }],
+          actionEffects: [{ id: 1, type: ActionType.DESTROY_CARD, cards: { scope: undefined } }],
         },
       ],
     },

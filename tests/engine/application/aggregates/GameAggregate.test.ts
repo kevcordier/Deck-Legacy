@@ -7,6 +7,7 @@ import {
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import { ActionType, GameEventType, Trigger } from '@engine/domain/enums';
 import type {
+  CardAction,
   CardDef,
   GameEvent,
   GameState,
@@ -298,7 +299,7 @@ describe('GameAggregate.skipTrigger', () => {
       ...EMPTY_STATE,
       triggerPile: {
         'trigger-1': {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -320,7 +321,7 @@ describe('GameAggregate.skipTrigger', () => {
       ...EMPTY_STATE,
       triggerPile: {
         'trigger-1': {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -341,7 +342,7 @@ describe('GameAggregate.applyCardEffect', () => {
       board: [1],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -366,7 +367,7 @@ describe('GameAggregate.applyCardEffect', () => {
       board: [1],
       triggerPile: {
         t2: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -391,7 +392,7 @@ describe('GameAggregate.applyCardEffect', () => {
       board: [1],
       triggerPile: {
         t3: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -417,7 +418,7 @@ describe('GameAggregate.applyCardEffect', () => {
       board: [1],
       triggerPile: {
         t4: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -464,16 +465,16 @@ describe('GameAggregate.loadFromHistory', () => {
 
 // — trigger reduce callbacks —
 
-const makeOnPlayEffect = () => ({
+const makeOnPlayEffect = (): CardAction => ({
   id: 'on_play',
-  actions: [{ id: 1, type: ActionType.ADD_RESOURCES }],
+  actionEffects: [{ id: 1, type: ActionType.ADD_RESOURCES }],
   trigger: Trigger.ON_PLAY,
   optional: false,
 });
 
-const makeOnDiscoverEffect = () => ({
+const makeOnDiscoverEffect = (): CardAction => ({
   id: 'on_discover',
-  actions: [{ id: 1, type: ActionType.ADD_RESOURCES }],
+  actionEffects: [{ id: 1, type: ActionType.ADD_RESOURCES }],
   trigger: Trigger.ON_DISCOVER,
   optional: false,
 });
@@ -639,7 +640,7 @@ describe('GameAggregate.applyCardEffect — DISCOVER_CARD', () => {
       discoveryPile: [5],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 5,
         },
       },
@@ -668,7 +669,7 @@ describe('GameAggregate.applyCardEffect — BOOST_CARD', () => {
       stickerStock: { 101: 3 },
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -697,7 +698,7 @@ describe('GameAggregate.applyCardEffect — ADD_STICKER', () => {
       stickerStock: { 101: 3 },
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -728,7 +729,7 @@ describe('GameAggregate.applyCardEffect — DISCARD_CARD', () => {
       board: [1, 2],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -753,7 +754,7 @@ describe('GameAggregate.applyCardEffect — DESTROY_CARD', () => {
       board: [1, 2],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -776,7 +777,7 @@ describe('GameAggregate.applyCardEffect — UPGRADE_CARD', () => {
       board: [1],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -809,7 +810,7 @@ describe('GameAggregate.applyCardEffect — PLACE_CARD_IN_DRAW_PILE', () => {
       drawPile: [2],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -841,7 +842,7 @@ describe('GameAggregate.applyCardEffect — BLOCK_CARD', () => {
       board: [1, 2],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -868,7 +869,7 @@ describe('GameAggregate.applyCardEffect — ADD_BOARD_EFFECT', () => {
       board: [1, 2],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -902,7 +903,7 @@ describe('GameAggregate.applyCardEffect — PLAY_CARD', () => {
       board: [1],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -945,7 +946,7 @@ describe('GameAggregate.applyCardEffect — CHOOSE_STATE', () => {
       board: [1],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -974,7 +975,7 @@ describe('GameAggregate.applyCardEffect — unknown action type', () => {
       board: [1],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -997,7 +998,7 @@ describe('GameAggregate.applyCardEffect — validatedStepId', () => {
       board: [1],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -1021,7 +1022,7 @@ describe('GameAggregate.applyCardEffect — resolvedCost without arrays', () => 
       board: [1],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -1044,7 +1045,7 @@ describe('GameAggregate.applyCardEffect — validatedStepId with missing instanc
       board: [1],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -1069,7 +1070,7 @@ describe('GameAggregate.applyCardEffect — empty effects array', () => {
       ...EMPTY_STATE,
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -1084,9 +1085,9 @@ describe('GameAggregate.applyCardEffect — empty effects array', () => {
 
 describe('GameAggregate.turnEnded — with END_OF_TURN triggers', () => {
   it('returns game state (not turnStarted) when board cards have END_OF_TURN effects', () => {
-    const endOfTurnEffect = {
+    const endOfTurnEffect: CardAction = {
       id: 'end_of_turn',
-      actions: [{ id: 1, type: ActionType.ADD_RESOURCES }],
+      actionEffects: [{ id: 1, type: ActionType.ADD_RESOURCES }],
       trigger: Trigger.END_OF_TURN,
       optional: false,
     };
@@ -1122,7 +1123,7 @@ describe('GameAggregate.applyCardEffect — END_TURN phase', () => {
       drawPile: [2],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -1144,11 +1145,11 @@ describe('GameAggregate.applyCardEffect — END_TURN phase', () => {
       drawPile: [],
       triggerPile: {
         t1: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
         t2: {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },
@@ -1175,7 +1176,7 @@ describe('GameAggregate.skipTrigger — END_TURN phase with empty triggerPile', 
       drawPile: [2],
       triggerPile: {
         'trigger-1': {
-          effectDef: { id: '', actions: [], trigger: undefined, optional: false },
+          effectDef: { id: '', actionEffects: [], trigger: undefined, optional: false },
           sourceInstanceId: 1,
         },
       },

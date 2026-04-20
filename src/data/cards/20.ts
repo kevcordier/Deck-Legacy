@@ -38,7 +38,7 @@ export const volcanicEruption: CardDef = {
         {
           id: '20-3-a0',
           endsTurn: true,
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.TRACK_ADVANCE,

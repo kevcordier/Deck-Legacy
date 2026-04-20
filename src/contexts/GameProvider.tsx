@@ -88,11 +88,11 @@ export function GameProvider({
     if (!inst || cardIsBlocked(instanceId, initialGs)) return;
     if (!effect) return;
 
-    for (let i = startEffectIndex; i < effect.actions.length; i++) {
+    for (let i = startEffectIndex; i < effect.actionEffects.length; i++) {
       const gs = aggRef.current.getGameState();
-      const eff = effect.actions[i];
+      const eff = effect.actionEffects[i];
       const [resolvedAction, choices] = resolveActionEffect(eff, instanceId, gs, defs, true);
-      const isLast = i === effect.actions.length - 1;
+      const isLast = i === effect.actionEffects.length - 1;
 
       if (choices.length > 0) {
         currentActionRef.current = {
@@ -461,7 +461,7 @@ export function GameProvider({
         triggerId,
         nextEffectIndex = 0,
       } = currentActionRef.current;
-      const isLast = nextEffectIndex === action.actions.length - 1;
+      const isLast = nextEffectIndex === action.actionEffects.length - 1;
 
       currentActionRef.current = null;
       setPendingChoices(null);

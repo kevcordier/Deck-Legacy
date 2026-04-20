@@ -81,7 +81,7 @@ export const lake: CardDef = {
       actions: [
         {
           id: '14-3-1',
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.DISCOVER_CARD,
@@ -105,7 +105,7 @@ export const lake: CardDef = {
         {
           id: '14-4-1',
           passive: true,
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.DISCARD_CARD,

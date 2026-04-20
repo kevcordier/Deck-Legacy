@@ -61,7 +61,7 @@ export const opportunist: CardDef = {
       actions: [
         {
           id: '21-4-a0',
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_STICKER,

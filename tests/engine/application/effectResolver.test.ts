@@ -2,11 +2,13 @@ import { makeGameState, makeInstance } from './testHelpers';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { resolveActionEffect } from '@engine/application/effectResolver';
 import { ActionType, PassiveType, PendingChoiceType, TargetScope } from '@engine/domain/enums';
-import type { Action, CardDef } from '@engine/domain/types';
+import type { ActionEffect, CardDef } from '@engine/domain/types';
 import { CardPassives } from '@engine/domain/types/effects';
 import { describe, expect, it } from 'vitest';
 
-const makeAction = (overrides: Partial<Action> & Pick<Action, 'id' | 'type'>): Action => ({
+const makeAction = (
+  overrides: Partial<ActionEffect> & Pick<ActionEffect, 'id' | 'type'>,
+): ActionEffect => ({
   ...overrides,
 });
 

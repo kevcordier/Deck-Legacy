@@ -94,7 +94,7 @@ export const river: CardDef = {
       actions: [
         {
           id: '7-4-1',
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.DISCOVER_CARD,

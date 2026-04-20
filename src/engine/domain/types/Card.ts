@@ -22,7 +22,7 @@ export type StepDef = {
   label?: string;
   cost?: Cost;
   onAccess?: {
-    actions?: Action[];
+    actions?: ActionEffect[];
     glory?: number;
   };
 };
@@ -40,13 +40,11 @@ export type CardState = {
   id: number;
   name: string;
   tags?: CardTag[];
-  description?: string;
   negative?: boolean;
   productions?: Resources[];
   glory?: number;
   actions?: CardAction[];
   passives?: Passive[];
-  triggers?: Trigger[];
   upgrade?: UpgradeDef[];
   track?: TrackDef;
   illustration?: string;
@@ -60,7 +58,7 @@ export type UpgradeDef = {
 
 export type CardAction = {
   id: string;
-  actions: Action[];
+  actionEffects: ActionEffect[];
   passive?: boolean;
   cost?: Cost;
   endsTurn?: boolean;
@@ -68,7 +66,7 @@ export type CardAction = {
   optional?: boolean;
 };
 
-export type Action = {
+export type ActionEffect = {
   id: number;
   type: ActionType;
   cards?: CardeSelector;

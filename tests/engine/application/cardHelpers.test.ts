@@ -11,7 +11,7 @@ import {
   tagClass,
 } from '@engine/application/cardHelpers';
 import { ActionType, PassiveType, ResourceType, TargetScope, Trigger } from '@engine/domain/enums';
-import type { CardDef, CardInstance, Sticker } from '@engine/domain/types';
+import type { CardAction, CardDef, CardInstance, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
 // — getEffectiveProductions —
@@ -408,19 +408,25 @@ describe('getInstancesTriggerEffects', () => {
 
   it('collects effects matching the trigger', () => {
     const instance = makeInstance(1, 10, 1);
-    const effect = {
-      id: 'effect1',
-      label: 'Test',
-      actions: [{ id: 1, type: ActionType.ADD_RESOURCES, cards: { scope: TargetScope.SELF } }],
+    const action: CardAction = {
+      id: '1',
+      actionEffects: [
+        {
+          id: 1,
+          type: ActionType.ADD_RESOURCES,
+          cards: { scope: TargetScope.SELF },
+          resources: { gold: 2 },
+        },
+      ],
       trigger: Trigger.ON_PLAY,
       optional: false,
     };
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { actions: [effect] })]),
+      10: makeDef(10, [makeCardState(1, { actions: [action] })]),
     };
     const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY);
     expect(result).toHaveLength(1);
-    expect(result[0].effectDef).toBe(effect);
+    expect(result[0].effectDef).toBe(action);
     expect(result[0].sourceInstanceId).toBe(1);
   });
 
@@ -431,23 +437,34 @@ describe('getInstancesTriggerEffects', () => {
     };
     const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_DISCOVER);
     expect(result).toHaveLength(1);
-    expect(result[0].effectDef.actions[0].type).toBe(ActionType.CHOOSE_STATE);
+    expect(result[0].effectDef.actionEffects[0].type).toBe(ActionType.CHOOSE_STATE);
   });
 
   it('aggregates effects from multiple instances', () => {
     const inst1 = makeInstance(1, 10, 1);
     const inst2 = makeInstance(2, 11, 1);
-    const effect1 = {
-      id: 'e1',
-      label: 'E1',
-      actions: [{ id: 1, type: ActionType.ADD_RESOURCES }],
+    const effect1: CardAction = {
+      id: '1',
+      actionEffects: [
+        {
+          id: 1,
+          type: ActionType.ADD_RESOURCES,
+          cards: { scope: TargetScope.SELF },
+          resources: { gold: 2 },
+        },
+      ],
       trigger: Trigger.END_OF_TURN,
       optional: false,
     };
-    const effect2 = {
-      id: 'e2',
-      label: 'E2',
-      actions: [{ id: 1, type: ActionType.DISCARD_CARD }],
+    const effect2: CardAction = {
+      id: '2',
+      actionEffects: [
+        {
+          id: 1,
+          type: ActionType.DISCARD_CARD,
+          cards: { scope: TargetScope.SELF },
+        },
+      ],
       trigger: Trigger.END_OF_TURN,
       optional: false,
     };

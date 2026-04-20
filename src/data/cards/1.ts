@@ -44,7 +44,7 @@ export const wildGrass: CardDef = {
               scope: TargetScope.FRIENDLY,
             },
           },
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,

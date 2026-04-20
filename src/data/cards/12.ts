@@ -57,7 +57,7 @@ export const eastCliffs: CardDef = {
       actions: [
         {
           id: '12-2-1',
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.DISCOVER_CARD,
@@ -105,7 +105,7 @@ export const eastCliffs: CardDef = {
       actions: [
         {
           id: '12-3-1',
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,

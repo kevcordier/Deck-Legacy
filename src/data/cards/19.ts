@@ -15,7 +15,7 @@ export const exportation: CardDef = {
         {
           id: '19-1-1',
           passive: true,
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_CUMULATED,
@@ -178,7 +178,7 @@ export const exportation: CardDef = {
         {
           id: '19-2-1',
           passive: true,
-          actions: [
+          actionEffects: [
             {
               id: 1,
               type: ActionType.ADD_CUMULATED,

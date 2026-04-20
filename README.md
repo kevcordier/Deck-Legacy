@@ -80,17 +80,24 @@ No backend. All game logic runs client-side; save data is stored in `localStorag
 
 The codebase follows Clean Architecture / Domain-Driven Design with three explicit layers:
 
-```
+```text
 src/
 ├── engine/
 │   ├── domain/          # Pure types, enums, interfaces — zero logic
 │   ├── application/     # Use cases, business logic, event sourcing
 │   └── infrastructure/  # localStorage persistence, data loaders
 ├── components/          # React UI components (feature folders)
+├── contexts/            # React contexts (GameContext, GameUIContext, providers)
 ├── hooks/               # Custom React hooks (useGame integration point)
-├── data/                # Static game data (cards, stickers, deck)
-│   ├── locales/         # EN/FR locale files
+├── data/
+│   ├── cards/           # One file per card + index.ts
+│   ├── stickers/        # One file per sticker + index.ts
+│   ├── deck.json        # Initial deck composition
+│   ├── stickerStock.json# Initial sticker stock
+│   └── locales/         # EN/FR locale files
 └── styles/              # Global CSS
+stories/                 # Storybook stories (top-level)
+tests/                   # Unit tests (top-level)
 ```
 
 **Event Sourcing** — The entire game state is derived by replaying an ordered list of `GameEvent` objects. Nothing is mutated directly; the undo feature comes for free.
@@ -135,7 +142,8 @@ The project enforces quality gates via a pre-commit hook:
 1. Prettier format check on staged `.ts`/`.tsx`
 2. ESLint (zero warnings)
 3. Full TypeScript type check
-4. Full test suite
+4. Dependency cruiser validation
+5. Full test suite
 
 Fix all issues before committing. Do not bypass the hook with `--no-verify`.
 

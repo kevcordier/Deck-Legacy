@@ -16,7 +16,7 @@ const cardDefsWithTrigger: Record<number, CardDef> = {
           id: 'e1',
           trigger: Trigger.ON_PLAY,
           optional: false,
-          actions: [{ id: 1, type: ActionType.ADD_RESOURCES }],
+          actionEffects: [{ id: 1, type: ActionType.ADD_RESOURCES }],
         },
       ],
     }),
