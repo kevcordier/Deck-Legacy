@@ -6,14 +6,14 @@ import {
   TimeIcon,
   TriggerIcon,
 } from '@components/ui/Icon/icon';
-import { canAffordResources } from '@engine/application/cardHelpers';
-import { TargetScope } from '@engine/domain/enums';
-import type { CardAction } from '@engine/domain/types';
+import { canAffordResources, getFirstAvailableTrackStep } from '@engine/application/cardHelpers';
+import { ActionType, TargetScope } from '@engine/domain/enums';
+import type { CardAction, CardInstance } from '@engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import type { ReactNode } from 'react';
 
 type CardActionProps = {
-  readonly instanceId: number;
+  readonly instance: CardInstance;
   readonly action: CardAction;
   readonly disabled?: boolean;
   readonly actionLabel: ReactNode;
@@ -37,14 +37,20 @@ function getActionIcon(
   return <ActivatedIcon color="green" className="size-3 @3xs:size-6" />;
 }
 
-export function CardAction({ instanceId, disabled, action, actionLabel }: CardActionProps) {
-  const { state, resolveAction } = useGame();
-  const affordable = !action.cost || canAffordResources(state.resources, action.cost);
+export function CardAction({ instance, disabled, action, actionLabel }: CardActionProps) {
+  const { state, defs, resolveAction } = useGame();
+  const hasTrackAdvance = action.actionEffects.some(e => e.type === ActionType.TRACK_ADVANCE);
+  const firstTrackStep = hasTrackAdvance
+    ? getFirstAvailableTrackStep(action.actionEffects, instance.id, state, defs)
+    : undefined;
+  const affordable = hasTrackAdvance
+    ? canAffordResources(state.resources, firstTrackStep?.cost)
+    : !action.cost || canAffordResources(state.resources, action.cost);
   const hasDestroyItselfCost = action.cost?.destroy?.scope === TargetScope.SELF;
   const haveTrigger = !!action.trigger;
   return (
     <Button
-      onClick={() => resolveAction(instanceId, action.id)}
+      onClick={() => resolveAction(instance.id, action.id)}
       disabled={!affordable || disabled || haveTrigger}
       variant="text"
       color="base-ink"

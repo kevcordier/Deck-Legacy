@@ -148,7 +148,7 @@ export function GameCard({
               return (
                 <CardAction
                   key={action.id}
-                  instanceId={instance.id}
+                  instance={instance}
                   action={action}
                   actionLabel={actionLabel}
                   disabled={!canActivate}

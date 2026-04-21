@@ -40,12 +40,9 @@ describe('AddStickerStrategy', () => {
     const gs = makeGameState({
       instances: {
         1: {
-          id: 1,
-          cardId: 10,
-          stateId: 1,
-          stickers: { 1: [100] },
-          trackProgress: [],
-          cumulated: 0,
+          ...makeInstance(1, 10, 1, {
+            stickers: { 1: [100] },
+          }),
         },
       },
       stickerStock: { 101: 2 },

@@ -1,3 +1,4 @@
+import { getActiveState } from '@engine/application/cardHelpers';
 import { cardSelector } from '@engine/application/cardSelector';
 import { ActionType, PendingChoiceType, ResourceType, TargetScope } from '@engine/domain/enums';
 import type {
@@ -188,7 +189,9 @@ function resolveResourceTarget(ctx: ResolveContext, resources: ResourceSelector)
     if (choices.length === 0) {
       resolverAction.resources = {};
     } else if (choices.length === 1) {
-      resolverAction.resources = extractResources(resources);
+      const instance = gameState.instances[choices[0]];
+      const state = instance && defs ? getActiveState(instance, defs) : undefined;
+      resolverAction.resources = state?.productions?.[0] ?? {};
     } else {
       pendingChoices.push({
         id: `${instanceId}-${actionId}`,

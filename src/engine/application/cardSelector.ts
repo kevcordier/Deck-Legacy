@@ -12,7 +12,8 @@ export function cardSelector(
   defs?: Record<number, CardDef>,
 ): number[] {
   const { tags, produces, ids, scope } = selector;
-  if (scope === TargetScope.SELF) return [gameState.instances[instanceId].id];
+
+  if (scope === TargetScope.SELF) return [instanceId];
 
   if (scope === TargetScope.TOP_OF_DECK) {
     const topCardId = gameState.drawPile[gameState.drawPile.length - 1];

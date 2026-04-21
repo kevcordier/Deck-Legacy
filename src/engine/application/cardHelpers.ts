@@ -2,12 +2,14 @@ import { cardSelector } from '@engine/application/cardSelector';
 import { mergeResources } from '@engine/application/gameStateHelper';
 import { ActionType, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
 import type {
+  ActionEffect,
   CardDef,
   CardInstance,
   CardState,
   Cost,
   GameState,
   Resources,
+  StepDef,
   Sticker,
   TriggerEntry,
 } from '@engine/domain/types';
@@ -104,17 +106,6 @@ export function canAffordResources(available: Resources, cost?: Cost): boolean {
   );
 }
 
-/** Retourne la gloire totale gagnée via les steps de track validés. */
-export function getTrackGlory(instance: CardInstance, cs: CardState): number {
-  if (!cs.track || instance.trackProgress.length === 0) return 0;
-  return cs.track.steps.reduce((sum, step) => {
-    if (instance.trackProgress.includes(step.id)) {
-      return sum + (step.onAccess?.glory ?? 0);
-    }
-    return sum;
-  }, 0);
-}
-
 export function getInstancesTriggerEffects(
   instances: CardInstance[],
   defs: Record<number, CardDef>,
@@ -170,4 +161,29 @@ export function cardIsBlocked(instanceId: number, gameState: GameState): boolean
   return Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK))
     .flat()
     .includes(instanceId);
+}
+
+export function getFirstAvailableTrackStep(
+  actionEffects: ActionEffect[],
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+): StepDef | undefined {
+  const trackEffect = actionEffects.find(e => e.type === ActionType.TRACK_ADVANCE);
+  if (!trackEffect?.cards) return undefined;
+
+  const targetIds = cardSelector(trackEffect.cards, instanceId, gameState, defs);
+
+  for (const targetId of targetIds) {
+    const instance = gameState.instances[targetId];
+    if (!instance) continue;
+    const def = defs[instance.cardId];
+    const state = def?.states.find(s => s.id === instance.stateId);
+    const track = state?.track;
+    if (!track) continue;
+    const step = track.steps.find(s => !instance.trackProgress.includes(s.id));
+    if (step) return step;
+  }
+
+  return undefined;
 }

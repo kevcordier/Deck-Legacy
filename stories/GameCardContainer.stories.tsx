@@ -1,16 +1,16 @@
 import { GameCard } from '../src/components/GameCard/GameCard';
+import { makeInstance } from '../tests/engine/application/testHelpers';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
-import { createInstance } from '@engine/application/factory';
-import type { CardInstance } from '@engine/domain/types';
 import { CardPassives } from '@engine/domain/types/effects';
 import { loadCardDefs } from '@engine/infrastructure/loaders';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 type GameCardContainerProps = {
   cardId: number;
-  stateId: number;
-  instance: CardInstance;
+  stickers: Record<number, number[]>;
+  trackProgress: number[];
+  cumulated: Record<string, number>;
   wood: number;
   gold: number;
   stone: number;
@@ -23,7 +23,6 @@ type GameCardContainerProps = {
 
 const meta: Meta<GameCardContainerProps> = {
   title: 'Components/GameCard',
-  component: GameCard,
   parameters: {
     layout: 'fullscreen',
   },
@@ -40,7 +39,9 @@ const meta: Meta<GameCardContainerProps> = {
   },
   render: ({
     cardId,
-    stateId,
+    stickers = {},
+    trackProgress = [],
+    cumulated = {},
     isOnBoard,
     isBlocked,
     wood,
@@ -54,15 +55,17 @@ const meta: Meta<GameCardContainerProps> = {
     const defs = loadCardDefs();
 
     const validCardId = defs[cardId] ? cardId : 1;
-    const maxStateId = defs[validCardId]?.states.length ?? 0;
-    const validStateId = stateId > 0 && stateId <= maxStateId ? stateId : 1;
-    const instance = createInstance(cardId, validCardId, validStateId, defs);
+    const instance = makeInstance(cardId, validCardId, 1, {
+      stickers,
+      trackProgress,
+      cumulated,
+    });
 
     return (
       <GameProvider
         key={JSON.stringify({
           cardId,
-          stateId,
+          instance,
           isOnBoard,
           isBlocked,
           wood,
@@ -78,6 +81,7 @@ const meta: Meta<GameCardContainerProps> = {
           boardEffects: isBlocked
             ? { [1]: [{ ...CardPassives.block_card, cards: { ids: [instance.id] } }] }
             : {},
+          instances: { [instance.id]: instance },
         }}
       >
         <div className="grid gap-3 grid-cols-4 p-3">
@@ -104,6 +108,9 @@ type Story = StoryObj<GameCardContainerProps>;
 export const GameCardPreview: Story = {
   args: {
     cardId: 1,
+    stickers: {},
+    trackProgress: [],
+    cumulated: {},
     wood: 2,
     gold: 2,
     stone: 2,

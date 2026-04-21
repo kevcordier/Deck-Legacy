@@ -36,134 +36,119 @@ export const exportation: CardDef = {
       track: {
         cumulative: true,
         inOrder: true,
-        endsTurn: false,
         preround: true,
         vertical: true,
         steps: [
           {
             id: 1,
             cost: {
-              accumulated: 10,
+              accumulated: { goods: 10 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_STICKER,
-                  stickerIds: [1, 2, 3],
-                  cards: {
-                    tags: [CardTag.LAND],
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerIds: [1, 2, 3],
+                cards: {
+                  tags: [CardTag.LAND],
                 },
-              ],
-            },
+              },
+            ],
           },
           {
             id: 2,
             cost: {
-              accumulated: 20,
+              accumulated: { goods: 20 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_STICKER,
-                  stickerIds: [7],
-                  cards: {
-                    tags: [CardTag.PERSON],
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerIds: [7],
+                cards: {
+                  tags: [CardTag.PERSON],
                 },
-              ],
-            },
+              },
+            ],
           },
           {
             id: 3,
             cost: {
-              accumulated: 30,
+              accumulated: { goods: 30 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.DISCOVER_CARD,
-                  cards: {
-                    ids: [86],
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  ids: [86],
                 },
-              ],
-            },
+              },
+            ],
           },
           {
             id: 4,
             cost: {
-              accumulated: 40,
+              accumulated: { goods: 40 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_STICKER,
-                  stickerIds: [4, 5, 6],
-                  cards: {
-                    tags: [CardTag.BUILDING],
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerIds: [4, 5, 6],
+                cards: {
+                  tags: [CardTag.BUILDING],
                 },
-              ],
-            },
+              },
+            ],
           },
           {
             id: 5,
             cost: {
-              accumulated: 55,
+              accumulated: { goods: 55 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_STICKER,
-                  stickerIds: [2, 3, 4],
-                  cards: {
-                    scope: TargetScope.FRIENDLY,
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerIds: [2, 3, 4],
+                cards: {
+                  scope: TargetScope.FRIENDLY,
                 },
-              ],
-            },
+              },
+            ],
           },
           {
             id: 6,
             cost: {
-              accumulated: 75,
+              accumulated: { goods: 75 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_STICKER,
-                  stickerIds: [10],
-                  cards: {
-                    scope: TargetScope.ANY,
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerIds: [10],
+                cards: {
+                  scope: TargetScope.ANY,
                 },
-              ],
-            },
+              },
+            ],
           },
           {
             id: 7,
             cost: {
-              accumulated: 100,
+              accumulated: { goods: 100 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.UPGRADE_CARD,
-                  states: [2],
-                  cards: {
-                    scope: TargetScope.SELF,
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.UPGRADE_CARD,
+                states: [2],
+                cards: {
+                  scope: TargetScope.SELF,
                 },
-              ],
-            },
+              },
+            ],
           },
         ],
       },
@@ -199,138 +184,123 @@ export const exportation: CardDef = {
       track: {
         cumulative: false,
         inOrder: true,
-        endsTurn: false,
         vertical: true,
         steps: [
           {
             id: 8,
             cost: {
-              accumulated: 50,
+              accumulated: { goods: 50 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_STICKER,
-                  stickerIds: [8],
-                  cards: {
-                    tags: [CardTag.LAND],
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerIds: [8],
+                cards: {
+                  tags: [CardTag.LAND],
                 },
-                {
-                  id: 1,
-                  type: ActionType.ADD_STICKER,
-                  stickerIds: [8],
-                  cards: {
-                    tags: [CardTag.LAND],
-                  },
+              },
+              {
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerIds: [8],
+                cards: {
+                  tags: [CardTag.LAND],
                 },
-              ],
-            },
+              },
+            ],
           },
           {
             id: 9,
             cost: {
-              accumulated: 50,
+              accumulated: { goods: 50 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_STICKER,
-                  stickerIds: [10],
-                  cards: {
-                    tags: [CardTag.PERSON],
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerIds: [10],
+                cards: {
+                  tags: [CardTag.PERSON],
                 },
-              ],
-            },
+              },
+            ],
           },
           {
             id: 10,
             cost: {
-              accumulated: 75,
+              accumulated: { goods: 75 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.DISCOVER_CARD,
-                  cards: {
-                    ids: [107],
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  ids: [107],
                 },
-              ],
-            },
+              },
+            ],
           },
           {
             id: 11,
             cost: {
-              accumulated: 100,
+              accumulated: { goods: 100 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_STICKER,
-                  stickerIds: [10],
-                  cards: {
-                    tags: [CardTag.BUILDING],
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerIds: [10],
+                cards: {
+                  tags: [CardTag.BUILDING],
                 },
-              ],
-            },
+              },
+            ],
           },
           {
             id: 12,
             cost: {
-              accumulated: 150,
+              accumulated: { goods: 150 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.TRACK_ADVANCE,
-                  cards: {
-                    scope: TargetScope.PERMANENTS,
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.TRACK_ADVANCE,
+                cards: {
+                  scope: TargetScope.PERMANENTS,
                 },
-              ],
-            },
+              },
+            ],
           },
           {
             id: 13,
             cost: {
-              accumulated: 200,
+              accumulated: { goods: 200 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.TRACK_ADVANCE,
-                  cards: {
-                    scope: TargetScope.PERMANENTS,
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.TRACK_ADVANCE,
+                cards: {
+                  scope: TargetScope.PERMANENTS,
                 },
-              ],
-            },
+              },
+            ],
           },
           {
             id: 14,
             cost: {
-              accumulated: 200,
+              accumulated: { goods: 200 },
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.DISCOVER_CARD,
-                  cards: {
-                    ids: [117],
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  ids: [117],
                 },
-              ],
-            },
+              },
+            ],
           },
         ],
       },

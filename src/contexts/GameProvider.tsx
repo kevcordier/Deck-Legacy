@@ -11,7 +11,7 @@ import { resolveCost } from '@engine/application/costResolver';
 import { resolveActionEffect } from '@engine/application/effectResolver';
 import { createInstance } from '@engine/application/factory';
 import { mergeResources } from '@engine/application/gameStateHelper';
-import { ActionType, PendingChoiceType } from '@engine/domain/enums';
+import { ActionType, GameEventType, PendingChoiceType } from '@engine/domain/enums';
 import type {
   CardAction,
   CardDef,
@@ -22,6 +22,7 @@ import type {
   ResolvedCost,
   Resources,
   TriggerEntry,
+  UseCardEffectEvent,
 } from '@engine/domain/types';
 import {
   loadCardDefs,
@@ -76,7 +77,7 @@ export function GameProvider({
 
   const triggerAction = (
     instanceId: number,
-    effect: CardAction,
+    cardAction: CardAction,
     resolvedCost: ResolvedCost,
     triggerId: string,
     startEffectIndex = 0,
@@ -86,18 +87,18 @@ export function GameProvider({
     const def = defs[inst.cardId];
 
     if (!inst || cardIsBlocked(instanceId, initialGs)) return;
-    if (!effect) return;
+    if (!cardAction) return;
 
-    for (let i = startEffectIndex; i < effect.actionEffects.length; i++) {
+    for (let i = startEffectIndex; i < cardAction.actionEffects.length; i++) {
       const gs = aggRef.current.getGameState();
-      const eff = effect.actionEffects[i];
+      const eff = cardAction.actionEffects[i];
       const [resolvedAction, choices] = resolveActionEffect(eff, instanceId, gs, defs, true);
-      const isLast = i === effect.actionEffects.length - 1;
+      const isLast = i === cardAction.actionEffects.length - 1;
 
       if (choices.length > 0) {
         currentActionRef.current = {
           instanceId,
-          action: effect,
+          action: cardAction,
           resolvedCost,
           resolvedAction: [resolvedAction],
           triggerId,
@@ -108,13 +109,14 @@ export function GameProvider({
       }
 
       aggRef.current.applyCardEffect(
+        cardAction.id,
         [resolvedAction],
         isLast ? resolvedCost : emptyResolvedCost,
         triggerId,
         {
-          isDiscarded: isLast && !effect.passive && !effect.trigger,
+          isDiscarded: isLast && !cardAction.passive && !cardAction.trigger,
           isDestroyed: isLast && !!def.parchmentCard,
-          endsTurn: isLast && !!effect.endsTurn,
+          endsTurn: isLast && !!cardAction.endsTurn,
         },
       );
     }
@@ -124,7 +126,7 @@ export function GameProvider({
 
   const sync = (newState: GameState) => {
     setGameState(newState);
-    saveGame(aggRef.current.getEvents(), aggRef.current.getSaveState());
+    saveGame(aggRef.current.getEvents());
 
     const triggers = newState.triggerPile;
 
@@ -211,7 +213,7 @@ export function GameProvider({
   const loadGame = () => {
     const save = loadSave();
     if (!save) return;
-    const agg = makeAggregate(save.saveState, defs);
+    const agg = makeAggregate(EMPTY_STATE, defs);
     agg.loadFromHistory(save.events);
     aggRef.current = agg;
     sync(aggRef.current.getGameState());
@@ -403,10 +405,10 @@ export function GameProvider({
     const currentAction = currentActionRef.current;
     if (!currentAction) return false;
 
-    const accumulated = [...(resolvedAction.instanceIds ?? []), ...choice.instanceIds];
+    const instanceIds = [...(resolvedAction.instanceIds ?? []), ...choice.instanceIds];
     const mergedChoice: ResolvedAction = {
       ...choice,
-      instanceIds: accumulated,
+      instanceIds,
     };
     currentAction.resolvedAction = mergeResolvedChoice(currentAction.resolvedAction, mergedChoice);
 
@@ -425,6 +427,7 @@ export function GameProvider({
       setPendingChoices(null);
       sync(
         aggRef.current.applyCardEffect(
+          currentCardAction.id,
           resolvedActions,
           resolvedCost ?? { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
           triggerId,
@@ -467,6 +470,7 @@ export function GameProvider({
       setPendingChoices(null);
 
       aggRef.current.applyCardEffect(
+        action.id,
         resolvedAction,
         isLast ? (resolvedCost ?? emptyResolvedCost) : emptyResolvedCost,
         triggerId,
@@ -605,11 +609,25 @@ export function GameProvider({
   };
 
   const rewindEvent = () => {
-    const aggEvent = aggRef.current.getEvents();
-    if (aggEvent.length === 0) return;
-    const saveState = aggRef.current.getSaveState();
-    const agg = makeAggregate(saveState, defs);
-    agg.loadFromHistory(aggEvent.slice(0, -1));
+    const events = aggRef.current.getEvents();
+    if (events.length === 0) return;
+
+    const last = events[events.length - 1];
+    let cutIndex = events.length - 1;
+
+    if (last.type === GameEventType.USE_CARD_EFFECT) {
+      const { actionId } = last as UseCardEffectEvent;
+      while (
+        cutIndex > 0 &&
+        events[cutIndex - 1].type === GameEventType.USE_CARD_EFFECT &&
+        (events[cutIndex - 1] as UseCardEffectEvent).actionId === actionId
+      ) {
+        cutIndex--;
+      }
+    }
+
+    const agg = makeAggregate(EMPTY_STATE, defs);
+    agg.loadFromHistory(events.slice(0, cutIndex));
     aggRef.current = agg;
     sync(agg.getGameState());
   };

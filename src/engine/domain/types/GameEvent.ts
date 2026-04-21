@@ -56,7 +56,8 @@ export interface UpgradeCardEvent extends GameEvent {
 
 export interface UseCardEffectEvent extends GameEvent {
   type: GameEventType.USE_CARD_EFFECT;
-  gameState: GameState;
+  actionId: string;
+  gameStateChanges: Partial<GameState>;
   resolvedCost: ResolvedCost;
   triggerId: string;
   sourceInstanceId: number;

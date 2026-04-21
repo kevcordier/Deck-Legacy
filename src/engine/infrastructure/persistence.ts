@@ -9,30 +9,24 @@
  * localStorage key: `deck_legacy_save`
  * Layer: Infrastructure — depends only on the domain.
  */
-import type { GameEvent, GameState } from '@engine/domain/types';
+import type { GameEvent } from '@engine/domain/types';
 
 const SAVE_KEY = 'deck_legacy_save';
 
 export type SaveData = {
   events: GameEvent[];
-  saveState: GameState;
   savedAt: number; // timestamp ms
-  round: number;
-  turn: number;
 };
 
 /**
  * Saves the current game to `localStorage`.
  * Only called when `pendingChoice === null` (game is in a stable state).
  */
-export function saveGame(events: GameEvent[], saveState: GameState): void {
+export function saveGame(events: GameEvent[]): void {
   try {
     const data: SaveData = {
       events,
       savedAt: Date.now(),
-      round: saveState.round,
-      turn: saveState.turn,
-      saveState,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   } catch (e) {

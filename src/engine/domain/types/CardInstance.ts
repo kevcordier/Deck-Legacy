@@ -7,5 +7,5 @@ export type CardInstance = {
   /** IDs of validated track steps */
   trackProgress: number[];
   /** Cumulated resources or points */
-  cumulated: number;
+  cumulated: Record<string, number>;
 };

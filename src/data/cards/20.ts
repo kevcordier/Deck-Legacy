@@ -52,49 +52,42 @@ export const volcanicEruption: CardDef = {
       track: {
         cumulative: false,
         inOrder: true,
-        endsTurn: false,
         steps: [
           {
             id: 1,
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_STICKER,
-                  stickerIds: [2],
-                },
-              ],
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerIds: [2],
+              },
+            ],
           },
           {
             id: 2,
           },
           {
             id: 3,
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_STICKER,
-                  stickerIds: [2],
-                },
-              ],
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerIds: [2],
+              },
+            ],
           },
           {
             id: 4,
           },
           {
             id: 5,
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_STICKER,
-                  stickerIds: [2],
-                },
-              ],
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.ADD_STICKER,
+                stickerIds: [2],
+              },
+            ],
           },
         ],
       },

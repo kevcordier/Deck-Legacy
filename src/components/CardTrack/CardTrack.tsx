@@ -20,13 +20,28 @@ export function CardTrack({ track, validatedSteps }: CardTrackProps) {
         const costEntry = step.cost?.resources?.[0];
 
         // Determine step button content
-        const glory = step.onAccess?.glory;
-        const actions = step.onAccess?.actions ?? [];
+        const actions = step.actions ?? [];
 
         const contents: React.ReactNode[] = [];
-        if (glory !== undefined && glory !== 0) {
-          contents.push(<Glory key="glory" glory={glory} size="sm" />);
-        }
+
+        const getResourceContent = (resKey: string, actionId: number): React.ReactNode => {
+          const meta = getResMeta(resKey);
+          return meta.icon ? (
+            <meta.icon className={`${meta.cls} size-3`} alt={resKey} key={actionId} />
+          ) : null;
+        };
+
+        const getAccumulatedContent = (action: ActionEffect): React.ReactNode => {
+          const [resKey] =
+            Object.entries(action.accumulated ?? {}).find(([k]) => k !== 'choice') ?? [];
+          if (resKey === 'glory') {
+            return <Glory glory={action.accumulated?.glory ?? 0} size="sm" key={action.id} />;
+          }
+          if (resKey) {
+            return getResourceContent(resKey, action.id);
+          }
+          return null;
+        };
 
         const getActionContent = (action: ActionEffect) => {
           if (action.type === ActionType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
@@ -37,14 +52,16 @@ export function CardTrack({ track, validatedSteps }: CardTrackProps) {
             return <span key={action.id}>⬆</span>;
           }
 
-          if (action.type === ActionType.ADD_RESOURCES && action.resources) {
+          if (action.resources) {
             const [resKey] = Object.entries(action.resources).find(([k]) => k !== 'choice') ?? [];
             if (resKey) {
-              const meta = getResMeta(resKey);
-              return meta.icon ? (
-                <meta.icon className={`${meta.cls} size-3`} alt={resKey} key={action.id} />
-              ) : null;
+              return getResourceContent(resKey, action.id);
             }
+          }
+
+          if (action.accumulated) {
+            const content = getAccumulatedContent(action);
+            if (content) return content;
           }
 
           return (

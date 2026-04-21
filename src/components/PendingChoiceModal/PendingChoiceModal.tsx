@@ -46,7 +46,7 @@ function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
     stateId: state.id,
     stickers: {},
     trackProgress: [],
-    cumulated: 0,
+    cumulated: {},
   };
 }
 

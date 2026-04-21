@@ -11,10 +11,24 @@ export const army: CardDef = {
       name: 'Army',
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c482b4a9-396c-4bdd-a45d-3a8866cec739/original=true,quality=90/2025-07-18-235304_Flux%20CopaxTimeless_xplus4_0.jpeg',
+      actions: [
+        {
+          id: '17_1_1',
+          endsTurn: true,
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionType.TRACK_ADVANCE,
+              cards: {
+                scope: TargetScope.SELF,
+              },
+            },
+          ],
+        },
+      ],
       track: {
         cumulative: false,
         inOrder: true,
-        endsTurn: true,
         steps: [
           {
             id: 1,
@@ -25,9 +39,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 1,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 1 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 2,
@@ -38,9 +59,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 4,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 4 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 3,
@@ -51,9 +79,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 7,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 7 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 4,
@@ -64,9 +99,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 10,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 10 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 5,
@@ -77,9 +119,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 14,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 14 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 6,
@@ -90,9 +139,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 19,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 19 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 7,
@@ -103,9 +159,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 25,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 25 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 8,
@@ -116,9 +179,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 32,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 32 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 9,
@@ -129,9 +199,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 40,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 40 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 10,
@@ -142,25 +219,23 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.DISCOVER_CARD,
-                  cards: {
-                    ids: [135],
-                  },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.DISCOVER_CARD,
+                cards: {
+                  ids: [135],
                 },
-                {
-                  id: 2,
-                  type: ActionType.UPGRADE_CARD,
-                  cards: {
-                    scope: TargetScope.SELF,
-                  },
-                  states: [2],
+              },
+              {
+                id: 2,
+                type: ActionType.UPGRADE_CARD,
+                cards: {
+                  scope: TargetScope.SELF,
                 },
-              ],
-            },
+                states: [2],
+              },
+            ],
           },
         ],
       },
@@ -171,10 +246,24 @@ export const army: CardDef = {
       glory: 50,
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c482b4a9-396c-4bdd-a45d-3a8866cec739/original=true,quality=90/2025-07-18-235304_Flux%20CopaxTimeless_xplus4_0.jpeg',
+      actions: [
+        {
+          id: '17_2_1',
+          endsTurn: true,
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionType.TRACK_ADVANCE,
+              cards: {
+                scope: TargetScope.SELF,
+              },
+            },
+          ],
+        },
+      ],
       track: {
         cumulative: false,
         inOrder: true,
-        endsTurn: true,
         steps: [
           {
             id: 11,
@@ -185,9 +274,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 10,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 10 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 12,
@@ -198,9 +294,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 20,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 20 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 13,
@@ -211,9 +314,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 30,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 30 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 14,
@@ -224,9 +334,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 40,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 40 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
           {
             id: 15,
@@ -237,9 +354,16 @@ export const army: CardDef = {
                 },
               ],
             },
-            onAccess: {
-              glory: 50,
-            },
+            actions: [
+              {
+                id: 1,
+                type: ActionType.SET_CUMULATED,
+                accumulated: { glory: 50 },
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+              },
+            ],
           },
         ],
       },

@@ -1,8 +1,4 @@
-import {
-  cardShouldStayInPlay,
-  getActiveState,
-  getTrackGlory,
-} from '@engine/application/cardHelpers';
+import { cardShouldStayInPlay, getActiveState } from '@engine/application/cardHelpers';
 import type { ResourceType } from '@engine/domain/enums';
 import type { CardDef, GameState, Resources, Sticker } from '@engine/domain/types';
 
@@ -79,8 +75,8 @@ export function computeScore(
     const stickerGlory =
       instance.stickers[instance.stateId]?.reduce((sum, s) => sum + (stickers[s]?.glory ?? 0), 0) ??
       0;
-    const trackGlory = getTrackGlory(instance, cs);
-    return total + (cs.glory ?? 0) + stickerGlory + trackGlory;
+    const accumulatedGlory = instance.cumulated['glory'] ?? 0;
+    return total + (cs.glory ?? 0) + stickerGlory + accumulatedGlory;
   }, 0);
 }
 
@@ -90,4 +86,12 @@ export function mergeResources(a: Resources, b: Resources): Resources {
     result[k as keyof Resources] = (result[k as keyof Resources] ?? 0) + v;
   }
   return result;
+}
+
+export function computeGameStateDiff(before: GameState, after: GameState): Partial<GameState> {
+  return Object.fromEntries(
+    (Object.keys(after) as (keyof GameState)[])
+      .filter(key => JSON.stringify(before[key]) !== JSON.stringify(after[key]))
+      .map(key => [key, after[key]]),
+  ) as Partial<GameState>;
 }

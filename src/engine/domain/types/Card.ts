@@ -21,17 +21,13 @@ export type StepDef = {
   id: number;
   label?: string;
   cost?: Cost;
-  onAccess?: {
-    actions?: ActionEffect[];
-    glory?: number;
-  };
+  actions?: ActionEffect[];
 };
 
 export type TrackDef = {
   steps: StepDef[];
   inOrder: boolean;
   cumulative: boolean;
-  endsTurn: boolean;
   vertical?: boolean;
   preround?: boolean;
 };
@@ -71,6 +67,7 @@ export type ActionEffect = {
   type: ActionType;
   cards?: CardeSelector;
   resources?: ResourceSelector;
+  accumulated?: Record<string, number>;
   states?: number[];
   stickerIds?: number[];
   resourcePerCard?: {

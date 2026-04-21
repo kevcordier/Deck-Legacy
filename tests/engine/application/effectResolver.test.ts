@@ -147,15 +147,31 @@ describe('resolveActionEffect — resources.cards', () => {
       instances: { 2: makeInstance(2, 10, 1) },
     });
     const defs: Record<number, CardDef> = {
-      10: { id: 10, name: 'Card', states: [{ id: 1, name: 'State 1' }] },
+      10: {
+        id: 10,
+        name: 'Card',
+        states: [{ id: 1, name: 'State 1', productions: [{ gold: 3 }] }],
+      },
     };
     const action = makeAction({
       id: 1,
       type: ActionType.ADD_RESOURCES,
-      resources: { gold: 3, cards: { scope: TargetScope.BOARD } },
+      resources: { cards: { scope: TargetScope.BOARD } },
     });
     const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
     expect(resolved.resources).toEqual({ gold: 3 });
+    expect(pending).toEqual([]);
+  });
+
+  it('sets resources to empty when the matched card has no instance data', () => {
+    // SELF scope returns [instanceId] without filtering — cover the !instance branch
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_RESOURCES,
+      resources: { cards: { scope: TargetScope.SELF } },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, EMPTY_STATE);
+    expect(resolved.resources).toEqual({});
     expect(pending).toEqual([]);
   });
 

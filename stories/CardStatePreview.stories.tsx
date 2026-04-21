@@ -1,8 +1,9 @@
+import { makeInstance } from '../tests/engine/application/testHelpers';
 import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { ActionType, CardTag } from '@engine/domain/enums';
-import type { CardDef, CardInstance } from '@engine/domain/types';
+import type { CardDef } from '@engine/domain/types';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof CardStatePreview> = {
@@ -44,14 +45,7 @@ const villageDef: CardDef = {
   ],
 };
 
-const villageInstance: CardInstance = {
-  id: 3,
-  cardId: 3,
-  stateId: 1,
-  stickers: {},
-  trackProgress: [],
-  cumulated: 0,
-};
+const villageInstance = makeInstance(1, 3, 1);
 
 // --- Card with 3 states ---
 
@@ -87,14 +81,7 @@ const armyDef: CardDef = {
   ],
 };
 
-const armyInstance: CardInstance = {
-  id: 6,
-  cardId: 6,
-  stateId: 2,
-  stickers: {},
-  trackProgress: [],
-  cumulated: 0,
-};
+const armyInstance = makeInstance(6, 6, 2);
 
 // --- Single-state card (button should not render) ---
 
@@ -111,14 +98,7 @@ const farmDef: CardDef = {
   ],
 };
 
-const farmInstance: CardInstance = {
-  id: 1,
-  cardId: 1,
-  stateId: 1,
-  stickers: {},
-  trackProgress: [],
-  cumulated: 0,
-};
+const farmInstance = makeInstance(1, 1, 1);
 
 export const TwoStates: Story = {
   name: 'Card with 2 states',

@@ -9,7 +9,7 @@ export default function App() {
 
   return (
     <GameUIProvider>
-      <GameProvider initialState={save?.saveState} initialEvents={save?.events}>
+      <GameProvider initialEvents={save?.events}>
         <Game />
       </GameProvider>
     </GameUIProvider>

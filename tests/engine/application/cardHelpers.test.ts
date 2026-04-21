@@ -6,12 +6,12 @@ import {
   getActiveState,
   getAffectedCardsByBoardEffects,
   getEffectiveProductions,
+  getFirstAvailableTrackStep,
   getInstancesTriggerEffects,
-  getTrackGlory,
   tagClass,
 } from '@engine/application/cardHelpers';
 import { ActionType, PassiveType, ResourceType, TargetScope, Trigger } from '@engine/domain/enums';
-import type { CardAction, CardDef, CardInstance, Sticker } from '@engine/domain/types';
+import type { ActionEffect, CardAction, CardDef, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
 // — getEffectiveProductions —
@@ -27,14 +27,9 @@ describe('getEffectiveProductions', () => {
   });
 
   it('adds sticker production bonuses to base', () => {
-    const instance: CardInstance = {
-      id: 1,
-      cardId: 10,
-      stateId: 1,
+    const instance = makeInstance(1, 10, 1, {
       stickers: { 1: [101] },
-      trackProgress: [],
-      cumulated: 0,
-    };
+    });
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
     };
@@ -46,14 +41,9 @@ describe('getEffectiveProductions', () => {
   });
 
   it('ignores stickers of a different stateId', () => {
-    const instance: CardInstance = {
-      id: 1,
-      cardId: 10,
-      stateId: 2,
+    const instance = makeInstance(1, 10, 2, {
       stickers: { 1: [101] }, // stickers for state 1, not active state 2
-      trackProgress: [],
-      cumulated: 0,
-    };
+    });
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
     };
@@ -65,14 +55,9 @@ describe('getEffectiveProductions', () => {
   });
 
   it('ignores sticker ids that have no entry in the stickers record', () => {
-    const instance: CardInstance = {
-      id: 1,
-      cardId: 10,
-      stateId: 1,
+    const instance = makeInstance(1, 10, 1, {
       stickers: { 1: [999] }, // sticker 999 does not exist in stickers map
-      trackProgress: [],
-      cumulated: 0,
-    };
+    });
     const cs = makeCardState(1);
     const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
     const gs = makeGameState({ instances: { 1: instance } });
@@ -81,14 +66,9 @@ describe('getEffectiveProductions', () => {
   });
 
   it('ignores non-add sticker types', () => {
-    const instance: CardInstance = {
-      id: 1,
-      cardId: 10,
-      stateId: 1,
+    const instance = makeInstance(1, 10, 1, {
       stickers: { 1: [101] },
-      trackProgress: [],
-      cumulated: 0,
-    };
+    });
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'remove', production: ResourceType.GOLD, glory: 0, description: '' },
     };
@@ -166,14 +146,9 @@ describe('getEffectiveProductions', () => {
   });
 
   it('stacks sticker bonus and resourcePerCard bonus', () => {
-    const instance: CardInstance = {
-      id: 1,
-      cardId: 10,
-      stateId: 1,
+    const instance = makeInstance(1, 10, 1, {
       stickers: { 1: [101] },
-      trackProgress: [],
-      cumulated: 0,
-    };
+    });
     const other = makeInstance(2, 20, 1);
     const stickers: Record<number, Sticker> = {
       101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
@@ -302,95 +277,6 @@ describe('canAffordResources', () => {
 
   it('returns false when a required resource is missing', () => {
     expect(canAffordResources({ wood: 5 }, { resources: [{ gold: 1 }] })).toBe(false);
-  });
-});
-
-// — getTrackGlory —
-
-describe('getTrackGlory', () => {
-  it('returns 0 when track is undefined', () => {
-    const instance = makeInstance(1, 10, 1);
-    const cs = makeCardState(1);
-    expect(getTrackGlory(instance, cs)).toBe(0);
-  });
-
-  it('returns 0 when trackProgress is empty even if track exists', () => {
-    const instance = makeInstance(1, 10, 1);
-    const cs = makeCardState(1, {
-      track: {
-        steps: [{ id: 1, cost: {}, onAccess: { glory: 3 } }],
-        inOrder: false,
-        cumulative: false,
-        endsTurn: false,
-      },
-    });
-    expect(getTrackGlory(instance, cs)).toBe(0);
-  });
-
-  it('sums glory from completed track steps', () => {
-    const instance: CardInstance = {
-      id: 1,
-      cardId: 10,
-      stateId: 1,
-      stickers: {},
-      trackProgress: [1, 2],
-      cumulated: 0,
-    };
-    const cs = makeCardState(1, {
-      track: {
-        steps: [
-          { id: 1, cost: {}, onAccess: { glory: 3 } },
-          { id: 2, cost: {}, onAccess: { glory: 5 } },
-        ],
-        inOrder: false,
-        cumulative: false,
-        endsTurn: false,
-      },
-    });
-    expect(getTrackGlory(instance, cs)).toBe(8);
-  });
-
-  it('ignores track steps not in trackProgress', () => {
-    const instance: CardInstance = {
-      id: 1,
-      cardId: 10,
-      stateId: 1,
-      stickers: {},
-      trackProgress: [1],
-      cumulated: 0,
-    };
-    const cs = makeCardState(1, {
-      track: {
-        steps: [
-          { id: 1, cost: {}, onAccess: { glory: 4 } },
-          { id: 2, cost: {}, onAccess: { glory: 6 } },
-        ],
-        inOrder: false,
-        cumulative: false,
-        endsTurn: false,
-      },
-    });
-    expect(getTrackGlory(instance, cs)).toBe(4);
-  });
-
-  it('treats missing onClick.glory as 0', () => {
-    const instance: CardInstance = {
-      id: 1,
-      cardId: 10,
-      stateId: 1,
-      stickers: {},
-      trackProgress: [1],
-      cumulated: 0,
-    };
-    const cs = makeCardState(1, {
-      track: {
-        steps: [{ id: 1, cost: {}, onAccess: {} }],
-        inOrder: false,
-        cumulative: false,
-        endsTurn: false,
-      },
-    });
-    expect(getTrackGlory(instance, cs)).toBe(0);
   });
 });
 
@@ -582,14 +468,7 @@ describe('cardShouldStayInPlay', () => {
   });
 
   it('returns true when the instance has the stays_in_play sticker (id 7)', () => {
-    const instance: CardInstance = {
-      id: 1,
-      cardId: 10,
-      stateId: 1,
-      stickers: { 1: [7] },
-      trackProgress: [],
-      cumulated: 0,
-    };
+    const instance = makeInstance(1, 10, 1, { stickers: { 1: [7] } }); // sticker id 7 is "stays in play"
     const defs = { 10: makeDef(10, [makeCardState(1)]) };
     const state = makeGameState({ instances: { 1: instance } });
     expect(cardShouldStayInPlay(1, state, defs)).toBe(true);
@@ -600,5 +479,74 @@ describe('cardShouldStayInPlay', () => {
     const defs = { 10: makeDef(10, [makeCardState(1)]) };
     const state = makeGameState({ instances: { 1: instance } });
     expect(cardShouldStayInPlay(1, state, defs)).toBe(false);
+  });
+});
+
+// — getFirstAvailableTrackStep —
+
+describe('getFirstAvailableTrackStep', () => {
+  it('returns undefined when no TRACK_ADVANCE effect is present', () => {
+    const effects: ActionEffect[] = [{ id: 1, type: ActionType.ADD_RESOURCES }];
+    const gs = makeGameState();
+    expect(getFirstAvailableTrackStep(effects, 1, gs, {})).toBeUndefined();
+  });
+
+  it('returns undefined when TRACK_ADVANCE effect has no cards selector', () => {
+    const effects: ActionEffect[] = [{ id: 1, type: ActionType.TRACK_ADVANCE }];
+    const gs = makeGameState();
+    expect(getFirstAvailableTrackStep(effects, 1, gs, {})).toBeUndefined();
+  });
+
+  it('skips target IDs whose instance is not in gameState', () => {
+    // scope SELF returns [instanceId] without needing board/instances
+    const effects: ActionEffect[] = [
+      { id: 1, type: ActionType.TRACK_ADVANCE, cards: { scope: TargetScope.SELF } },
+    ];
+    const gs = makeGameState({ instances: {} }); // instanceId 1 absent
+    expect(getFirstAvailableTrackStep(effects, 1, gs, {})).toBeUndefined();
+  });
+
+  it('skips instances whose active state has no track', () => {
+    const effects: ActionEffect[] = [
+      { id: 1, type: ActionType.TRACK_ADVANCE, cards: { scope: TargetScope.SELF } },
+    ];
+    const instance = makeInstance(1, 10, 1);
+    const defs: Record<number, CardDef> = { 10: makeDef(10, [makeCardState(1)]) };
+    const gs = makeGameState({ instances: { 1: instance } });
+    expect(getFirstAvailableTrackStep(effects, 1, gs, defs)).toBeUndefined();
+  });
+
+  it('returns undefined when all track steps are already completed', () => {
+    const effects: ActionEffect[] = [
+      { id: 1, type: ActionType.TRACK_ADVANCE, cards: { scope: TargetScope.SELF } },
+    ];
+    const instance = makeInstance(1, 10, 1, { trackProgress: [10] });
+    const cs = makeCardState(1, {
+      track: { steps: [{ id: 10, label: 'Step 1' }], inOrder: true, cumulative: false },
+    });
+    const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
+    const gs = makeGameState({ instances: { 1: instance } });
+    expect(getFirstAvailableTrackStep(effects, 1, gs, defs)).toBeUndefined();
+  });
+
+  it('returns the first unfinished track step', () => {
+    const effects: ActionEffect[] = [
+      { id: 1, type: ActionType.TRACK_ADVANCE, cards: { scope: TargetScope.SELF } },
+    ];
+    const instance = makeInstance(1, 10, 1, { trackProgress: [10] });
+    const cs = makeCardState(1, {
+      track: {
+        steps: [
+          { id: 10, label: 'Step 1' },
+          { id: 11, label: 'Step 2' },
+        ],
+        inOrder: true,
+        cumulative: false,
+      },
+    });
+    const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
+    const gs = makeGameState({ instances: { 1: instance } });
+    const result = getFirstAvailableTrackStep(effects, 1, gs, defs);
+    expect(result).toEqual({ id: 11, label: 'Step 2' });
   });
 });

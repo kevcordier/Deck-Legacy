@@ -182,7 +182,14 @@ describe('endTurn', () => {
     const gs = makeGameState({
       board: [1, 2],
       instances: {
-        1: { id: 1, cardId: 10, stateId: 1, stickers: { 1: [7] }, trackProgress: [], cumulated: 0 },
+        1: {
+          id: 1,
+          cardId: 10,
+          stateId: 1,
+          stickers: { 1: [7] },
+          trackProgress: [],
+          cumulated: {},
+        },
         2: makeInstance(2, 11, 1),
       },
     });
@@ -202,7 +209,14 @@ describe('endTurn', () => {
       board: [1, 2, 3],
       instances: {
         1: makeInstance(1, 10, 1),
-        2: { id: 2, cardId: 11, stateId: 1, stickers: { 1: [7] }, trackProgress: [], cumulated: 0 },
+        2: {
+          id: 2,
+          cardId: 11,
+          stateId: 1,
+          stickers: { 1: [7] },
+          trackProgress: [],
+          cumulated: {},
+        },
         3: makeInstance(3, 12, 1),
       },
     });
@@ -308,7 +322,7 @@ describe('computeScore', () => {
           stateId: 1,
           stickers: { 1: [101] },
           trackProgress: [],
-          cumulated: 0,
+          cumulated: {},
         },
       },
     });
@@ -342,7 +356,7 @@ describe('computeScore', () => {
           stateId: 1,
           stickers: { 1: [999] },
           trackProgress: [],
-          cumulated: 0,
+          cumulated: {},
         },
       },
     });
@@ -353,7 +367,7 @@ describe('computeScore', () => {
     expect(computeScore(gs, defs, {})).toBe(2);
   });
 
-  it('adds track glory from completed steps to the score', () => {
+  it('adds accumulated glory to the score', () => {
     const gs = makeGameState({
       drawPile: [1],
       instances: {
@@ -362,8 +376,10 @@ describe('computeScore', () => {
           cardId: 10,
           stateId: 1,
           stickers: {},
-          trackProgress: [1, 2],
-          cumulated: 0,
+          trackProgress: [],
+          cumulated: {
+            glory: 4,
+          },
         },
       },
     });
@@ -376,20 +392,11 @@ describe('computeScore', () => {
             id: 1,
             name: 'S1',
             glory: 0,
-            track: {
-              steps: [
-                { id: 1, cost: {}, onAccess: { glory: 4 } },
-                { id: 2, cost: {}, onAccess: { glory: 3 } },
-              ],
-              inOrder: false,
-              cumulative: false,
-              endsTurn: false,
-            },
           },
         ],
       },
     };
-    expect(computeScore(gs, defs, {})).toBe(7);
+    expect(computeScore(gs, defs, {})).toBe(4);
   });
 
   it('ignores cards without a matching instance', () => {

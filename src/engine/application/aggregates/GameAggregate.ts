@@ -15,6 +15,7 @@ import { ChoseStateStrategy } from '@engine/application/cardAction/ChoseStateStr
 import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
 import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import {
+  computeGameStateDiff,
   destroyCards,
   discardCards,
   drawCards,
@@ -65,7 +66,6 @@ export const EMPTY_STATE: GameState = {
 export class GameAggregate {
   private events: GameEvent[];
   private gameState: GameState;
-  private saveState: GameState;
 
   constructor(
     readonly initialState: GameState,
@@ -74,7 +74,6 @@ export class GameAggregate {
   ) {
     this.events = eventHistory;
     this.gameState = initialState;
-    this.saveState = JSON.parse(JSON.stringify(initialState)) as GameState;
   }
 
   private apply(event: GameEvent) {
@@ -95,6 +94,9 @@ export class GameAggregate {
       case GameEventType.ROUND_STARTED: {
         const roundStartedEvent = event as RoundStartedEvent;
         this.gameState.round = roundStartedEvent.round;
+        this.gameState.discoveryPile = this.gameState.discoveryPile.filter(
+          id => !roundStartedEvent.newCards.includes(id),
+        );
         this.gameState.turn = 0;
         this.gameState.lastAddedIds = roundStartedEvent.newCards;
         this.gameState.drawPile = this.shuffle([
@@ -200,7 +202,7 @@ export class GameAggregate {
           ...destroyCards(
             discardCards(
               spendResources(
-                useCardEffectEvent.gameState,
+                { ...this.gameState, ...useCardEffectEvent.gameStateChanges },
                 useCardEffectEvent.resolvedCost.resources,
               ),
               discardedCardIds,
@@ -254,11 +256,6 @@ export class GameAggregate {
     return this.gameState;
   }
 
-  private save() {
-    this.saveState = JSON.parse(JSON.stringify(this.gameState)) as GameState;
-    this.events = [];
-  }
-
   public gameStarted(
     cardInstances: CardInstance[],
     initialDeck: number[],
@@ -275,6 +272,7 @@ export class GameAggregate {
       discoveryPile,
     };
     this.apply(event);
+    this.events.push(event);
     return event;
   }
 
@@ -312,7 +310,7 @@ export class GameAggregate {
       onDiscoverEvents,
     };
     this.apply(event);
-    this.save();
+    this.events.push(event);
     return this.gameState;
   }
 
@@ -339,7 +337,7 @@ export class GameAggregate {
       onPlayEvents,
     };
     this.apply(event);
-    this.save();
+    this.events.push(event);
     return this.gameState;
   }
 
@@ -398,7 +396,7 @@ export class GameAggregate {
       onPlayEvents,
     };
     this.apply(event);
-    this.save();
+    this.events.push(event);
     return this.gameState;
   }
 
@@ -441,6 +439,7 @@ export class GameAggregate {
   }
 
   public applyCardEffect(
+    actionId: string,
     effects: ResolvedAction[],
     resolvedCost: ResolvedCost,
     triggerId: string,
@@ -461,6 +460,7 @@ export class GameAggregate {
     } = options;
     const cardActionContext = new CardActionContext();
 
+    const prevState = this.gameState;
     const gameState = effects.reduce((gs, effect) => {
       cardActionContext.setStrategy(this.getStrategy(effect.type));
       return cardActionContext.applyEffect(gs, effect);
@@ -468,9 +468,10 @@ export class GameAggregate {
 
     const event: UseCardEffectEvent = {
       id: crypto.randomUUID(),
+      actionId,
       type: GameEventType.USE_CARD_EFFECT,
       timestamp: Date.now(),
-      gameState,
+      gameStateChanges: computeGameStateDiff(prevState, gameState),
       resolvedCost,
       sourceInstanceId: explicitSourceInstanceId ?? effects[0]?.sourceInstanceId ?? -1,
       triggerId,
@@ -517,9 +518,5 @@ export class GameAggregate {
 
   public getEvents(): GameEvent[] {
     return this.events;
-  }
-
-  public getSaveState() {
-    return this.saveState;
   }
 }

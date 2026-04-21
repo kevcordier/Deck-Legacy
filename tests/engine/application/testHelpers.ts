@@ -1,13 +1,19 @@
 import type { CardDef, CardInstance, GameState, ResolvedCost } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 
-export const makeInstance = (id: number, cardId: number, stateId: number): CardInstance => ({
+export const makeInstance = (
+  id: number,
+  cardId: number,
+  stateId: number,
+  overrides: Partial<CardInstance> = {},
+): CardInstance => ({
   id,
   cardId,
   stateId,
   stickers: {},
   trackProgress: [],
-  cumulated: 0,
+  cumulated: {},
+  ...overrides,
 });
 
 export const makeCardState = (id: number, overrides: Partial<CardDef['states'][number]> = {}) => ({

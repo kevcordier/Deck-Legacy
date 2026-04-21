@@ -144,10 +144,10 @@ TrackDef {
 }
 
 StepDef {
-  id: number                                        // unique step identifier
-  label?: string                                    // visual name of the step (not use in code, local string use instead)
-  cost?: Cost                                       // resource or card cost to pay to access this step
-  onAccess?: { actions?: Action[]; glory?: number } // action of this step
+  id: number         // unique step identifier
+  label?: string     // visual name of the step (not use in code, local string use instead)
+  cost?: Cost        // resource or card cost to pay to access this step
+  actions?: Action[] // actions of this step
 }
 ```
 
