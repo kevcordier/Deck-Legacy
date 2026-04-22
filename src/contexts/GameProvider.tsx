@@ -358,7 +358,7 @@ export function GameProvider({
     if (availableSteps.length === 0) return;
 
     if (track.inOrder) {
-      const step = availableSteps.reduce((min, s) => (s.id < min.id ? s : min));
+      const step = availableSteps.reduce((min, s) => (s.id < min.id ? s : min), availableSteps[0]);
       executeTrackStep(instanceId, action, targetId, step, triggerId);
     } else {
       currentActionRef.current = {
@@ -785,7 +785,7 @@ export function GameProvider({
 
   useEffect(() => {
     if (!import.meta.env.DEV) return;
-    (window as unknown as Record<string, unknown>).__cheat = {
+    (globalThis as unknown as Record<string, unknown>).__cheat = {
       addResources: (resources: Record<string, number>) => {
         sync(aggRef.current.cardProduced(0, resources));
       },
@@ -891,7 +891,7 @@ export function GameProvider({
       },
     };
     return () => {
-      delete (window as unknown as Record<string, unknown>).__cheat;
+      delete (globalThis as unknown as Record<string, unknown>).__cheat;
     };
   });
 

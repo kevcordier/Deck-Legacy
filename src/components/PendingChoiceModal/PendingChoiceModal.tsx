@@ -146,14 +146,13 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
     };
   }
 
-  if (choice.type === PendingChoiceType.CHOOSE_STEP) {
-    const targetInst =
-      choice.targetInstanceId !== undefined ? instances[choice.targetInstanceId] : undefined;
+  if (choice.type === PendingChoiceType.CHOOSE_STEP && choice.targetInstanceId) {
+    const targetInst = instances[choice.targetInstanceId];
     const targetDef = targetInst ? defs[targetInst.cardId] : undefined;
     const targetState = targetDef?.states.find(s => s.id === targetInst?.stateId);
     const track = targetState?.track;
-    const stepIds = choice.choices.filter((c): c is number => typeof c === 'number');
-    const steps: StepDef[] = track?.steps.filter(s => stepIds.includes(s.id)) ?? [];
+    const stepIds = new Set(choice.choices.filter((c): c is number => typeof c === 'number'));
+    const steps: StepDef[] = track?.steps.filter(s => stepIds.has(s.id)) ?? [];
 
     return {
       title: t('pendingChoice.chooseStep'),

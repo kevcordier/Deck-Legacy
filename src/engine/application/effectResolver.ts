@@ -116,7 +116,7 @@ function resolveTrackAdvanceEffect(
   resolverAction.instanceIds = [targetId];
 
   if (track.inOrder) {
-    const step = availableSteps.reduce((min, s) => (s.id < min.id ? s : min));
+    const step = availableSteps.reduce((min, s) => (s.id < min.id ? s : min), availableSteps[0]);
     resolverAction.stepId = step.id;
   } else {
     pendingChoices.push({
