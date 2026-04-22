@@ -7,6 +7,7 @@ import type {
   ResolvedAction,
   ResolvedCost,
   Resources,
+  StepDef,
   TriggerEntry,
 } from '@engine/domain/types';
 import type { loadCardDefs, loadStickerDefs } from '@engine/infrastructure/loaders';
@@ -30,6 +31,8 @@ type GameContextType = {
     resolvedAction: ResolvedAction[];
     triggerId: string;
     nextEffectIndex?: number;
+    trackStep?: StepDef;
+    trackTargetId?: number;
   } | null>;
   triggerAction: (
     instanceId: number,

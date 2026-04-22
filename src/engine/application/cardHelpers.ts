@@ -145,6 +145,7 @@ export function cardShouldStayInPlay(
   const instance = gameState.instances[instanceId];
   if (!instance) return false;
   const def = cardDefs[instance.cardId];
+  if (def?.permanent) return true;
   const state = def?.states.find(s => s.id === instance.stateId);
   if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
   if (

@@ -12,7 +12,7 @@ interface CardTrackProps {
 export function CardTrack({ track, validatedSteps }: CardTrackProps) {
   return (
     <div
-      className={`flex ${track.vertical ? 'flex-col' : 'flex-row'} justify-start flex-wrap gap-2`}
+      className={`flex ${track.vertical ? 'flex-col' : 'flex-row'} justify-start flex-wrap gap-1`}
     >
       {track.steps.map(step => {
         const isValidated = validatedSteps.includes(step.id);
@@ -20,7 +20,7 @@ export function CardTrack({ track, validatedSteps }: CardTrackProps) {
         const costEntry = step.cost?.resources?.[0];
 
         // Determine step button content
-        const actions = step.actions ?? [];
+        const actions = step.effects ?? [];
 
         const contents: React.ReactNode[] = [];
 

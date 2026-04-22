@@ -137,14 +137,20 @@ export function GameCard({
               <PassifIcon className="size-3 @3xs:size-6" />{' '}
               {passive.type === 'STAY_IN_PLAY'
                 ? t('card.stayInPlay')
-                : tCardPassiveLabel(t, def.id, cs.id, i)}
+                : tCardPassiveLabel(t, def.id, cs.id, i, instance.cumulated)}
             </span>
           ))}
 
           {!isBlocked &&
             !isParchment &&
             actions.map((action, i) => {
-              const actionLabel = tCardActionLabel(t, instance.cardId, cs.id, i);
+              const actionLabel = tCardActionLabel(
+                t,
+                instance.cardId,
+                cs.id,
+                i,
+                instance.cumulated,
+              );
               return (
                 <CardAction
                   key={action.id}
@@ -198,7 +204,7 @@ export function GameCard({
         </div>
 
         {!isBlocked && cs.track && (
-          <div className="z-10 flex flex-col items-start justify-center gap-1 p-1 @3xs:p-3">
+          <div className="z-10 flex flex-col items-start justify-center gap-1 p-1 @3xs:p-2">
             <CardTrack track={cs.track} validatedSteps={instance.trackProgress} />
           </div>
         )}

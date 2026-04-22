@@ -444,6 +444,13 @@ describe('cardShouldStayInPlay', () => {
     expect(cardShouldStayInPlay(99, state, {})).toBe(false);
   });
 
+  it('returns true when the card def has permanent: true', () => {
+    const instance = makeInstance(1, 10, 1);
+    const defs = { 10: { ...makeDef(10, [makeCardState(1)]), permanent: true } };
+    const state = makeGameState({ instances: { 1: instance } });
+    expect(cardShouldStayInPlay(1, state, defs)).toBe(true);
+  });
+
   it('returns true when the active state has a STAY_IN_PLAY passive', () => {
     const instance = makeInstance(1, 10, 1);
     const defs = {

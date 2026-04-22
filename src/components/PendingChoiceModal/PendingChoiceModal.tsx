@@ -4,7 +4,7 @@ import { TriggerIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { StickerChoice } from '@components/ui/StickerChoice/StickerChoice';
-import { PendingChoiceType } from '@engine/domain/enums';
+import { ActionType, PendingChoiceType } from '@engine/domain/enums';
 import type {
   CardDef,
   CardInstance,
@@ -13,12 +13,14 @@ import type {
   ResolvedAction,
   ResolvedCost,
   Resources,
+  StepDef,
   Sticker,
   TriggerEntry,
 } from '@engine/domain/types';
 import { tCardActionLabel, tCardName } from '@helpers/cardI18n';
+import { getResMeta } from '@helpers/renderHelpers';
 import type { TFunction } from 'i18next';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 function getChoiceActionLabel(
@@ -36,7 +38,7 @@ function getChoiceActionLabel(
   if (!effects || !def || !state) return undefined;
   const effectIdx = effects.findIndex(e => e.actionEffects.some(a => a.id === actionId));
   if (effectIdx === -1) return undefined;
-  return tCardActionLabel(t, def.id, state.id, effectIdx) || undefined;
+  return tCardActionLabel(t, def.id, state.id, effectIdx, { ...inst.cumulated }) || undefined;
 }
 
 function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
@@ -137,6 +139,57 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
                 ></button>
                 <GameCard instance={makePreviewInstance(def, state)} hideStatePreview />
               </div>
+            );
+          })}
+        </div>
+      ),
+    };
+  }
+
+  if (choice.type === PendingChoiceType.CHOOSE_STEP) {
+    const targetInst =
+      choice.targetInstanceId !== undefined ? instances[choice.targetInstanceId] : undefined;
+    const targetDef = targetInst ? defs[targetInst.cardId] : undefined;
+    const targetState = targetDef?.states.find(s => s.id === targetInst?.stateId);
+    const track = targetState?.track;
+    const stepIds = choice.choices.filter((c): c is number => typeof c === 'number');
+    const steps: StepDef[] = track?.steps.filter(s => stepIds.includes(s.id)) ?? [];
+
+    return {
+      title: t('pendingChoice.chooseStep'),
+      subtitle: getChoiceActionLabel(choice, instances, defs, t),
+      content: (
+        <div className="flex flex-wrap gap-3">
+          {steps.map(step => {
+            const costEntry = step.cost?.resources?.[0];
+            return (
+              <button
+                key={step.id}
+                onClick={() =>
+                  resolvePlayerChoice({
+                    id: choice.id,
+                    type: ActionType.TRACK_ADVANCE,
+                    sourceInstanceId: choice.sourceInstanceId,
+                    stepId: step.id,
+                  })
+                }
+                className="flex min-w-16 flex-col items-center gap-1 rounded-md border-2 border-base-ink bg-card p-3 hover:bg-base-ink/10"
+              >
+                {costEntry && (
+                  <div className="flex items-center gap-0.5 text-sm text-base-ink">
+                    {Object.entries(costEntry).map(([k, v]) => {
+                      const meta = getResMeta(k);
+                      return (
+                        <Fragment key={k}>
+                          {v}
+                          {meta.icon && <meta.icon className={`${meta.cls} size-4`} alt={k} />}
+                        </Fragment>
+                      );
+                    })}
+                  </div>
+                )}
+                <span className="font-display text-xs text-base-ink">#{step.id}</span>
+              </button>
             );
           })}
         </div>
@@ -283,7 +336,9 @@ export function PendingChoiceModal({
           const state = def?.states.find(s => s.id === inst?.stateId) ?? def?.states[0];
           const actionIdx = state?.actions?.findIndex(e => e.id === trigger.effectDef.id) ?? -1;
           const cardName = tCardName(t, def?.id, state?.id);
-          const actionLabel = tCardActionLabel(t, def?.id, state?.id, actionIdx);
+          const actionLabel = tCardActionLabel(t, def?.id, state?.id, actionIdx, {
+            ...inst.cumulated,
+          });
           return (
             <div
               key={triggerId}

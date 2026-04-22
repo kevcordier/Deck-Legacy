@@ -270,6 +270,12 @@ describe('spendResources', () => {
     spendResources(gs, { gold: 4 });
     expect(gs.resources.gold).toBe(4);
   });
+
+  it('treats missing resource as 0 when spending a key not in state', () => {
+    const gs = makeGameState({ resources: {} });
+    const result = spendResources(gs, { gold: 2 });
+    expect(result.resources.gold).toBeUndefined();
+  });
 });
 
 // — computeScore —

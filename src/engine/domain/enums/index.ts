@@ -82,6 +82,7 @@ export enum PendingChoiceType {
   CHOOSE_RESOURCE = 'choose_resource',
   CHOOSE_STATE = 'choose_state',
   CHOOSE_STICKER = 'choose_sticker',
+  CHOOSE_STEP = 'choose_step',
 }
 
 export enum PaseType {

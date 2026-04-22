@@ -53,6 +53,10 @@ export function resolveActionEffect(
     return resolveBoardEffect(ctx, action.effect, action.cards);
   }
 
+  if (action.type === ActionType.TRACK_ADVANCE && action.cards) {
+    return resolveTrackAdvanceEffect(ctx, action.cards);
+  }
+
   if (action.type === ActionType.BOOST_CARD) {
     action.cards = { ...action.cards, produces: Object.values(ResourceType) };
   }
@@ -71,6 +75,60 @@ export function resolveActionEffect(
 
   if (action.states) {
     resolveStateTarget(ctx, action.states);
+  }
+
+  if (action.accumulated) {
+    resolverAction.accumulated = action.accumulated;
+  }
+
+  return [resolverAction, pendingChoices];
+}
+
+function resolveTrackAdvanceEffect(
+  ctx: ResolveContext,
+  cards: CardeSelector | undefined,
+): [ResolvedAction, PendingChoice[]] {
+  const {
+    actionId,
+    actionType,
+    instanceId,
+    isMandatory,
+    gameState,
+    defs,
+    resolverAction,
+    pendingChoices,
+  } = ctx;
+
+  if (!cards || !defs) return [resolverAction, pendingChoices];
+
+  const targetIds = cardSelector(cards, instanceId, gameState, defs);
+  if (targetIds.length === 0) return [resolverAction, pendingChoices];
+
+  const targetId = targetIds[0];
+  const targetInst = gameState.instances[targetId];
+  const targetState = getActiveState(targetInst, defs);
+  const track = targetState.track;
+  if (!track) return [resolverAction, pendingChoices];
+
+  const availableSteps = track.steps.filter(s => !targetInst.trackProgress.includes(s.id));
+  if (availableSteps.length === 0) return [resolverAction, pendingChoices];
+
+  resolverAction.instanceIds = [targetId];
+
+  if (track.inOrder) {
+    const step = availableSteps.reduce((min, s) => (s.id < min.id ? s : min));
+    resolverAction.stepId = step.id;
+  } else {
+    pendingChoices.push({
+      id: `${instanceId}-${actionId}`,
+      kind: actionType,
+      type: PendingChoiceType.CHOOSE_STEP,
+      sourceInstanceId: instanceId,
+      targetInstanceId: targetId,
+      choices: availableSteps.map(s => s.id),
+      pickCount: 1,
+      isMandatory,
+    });
   }
 
   return [resolverAction, pendingChoices];

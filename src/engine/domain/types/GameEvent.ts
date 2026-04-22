@@ -25,6 +25,7 @@ export interface RoundStartedEvent extends GameEvent {
   type: GameEventType.ROUND_STARTED;
   round: number;
   newCards: number[];
+  newDrawPile: number[];
   onDiscoverEvents: TriggerEntry[];
 }
 
@@ -63,7 +64,6 @@ export interface UseCardEffectEvent extends GameEvent {
   sourceInstanceId: number;
   isDiscarded?: boolean;
   isDestroyed?: boolean;
-  validatedStepId?: number;
 }
 
 export interface SkipTriggerEvent extends GameEvent {

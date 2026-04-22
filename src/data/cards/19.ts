@@ -22,6 +22,7 @@ export const exportation: CardDef = {
               cards: {
                 scope: TargetScope.SELF,
               },
+              accumulated: { goods: 1 },
             },
           ],
           cost: {
@@ -44,7 +45,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 10 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
@@ -60,7 +61,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 20 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
@@ -76,7 +77,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 30 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.DISCOVER_CARD,
@@ -91,7 +92,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 40 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
@@ -107,7 +108,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 55 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
@@ -123,7 +124,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 75 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
@@ -139,7 +140,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 100 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.UPGRADE_CARD,
@@ -170,6 +171,7 @@ export const exportation: CardDef = {
               cards: {
                 scope: TargetScope.SELF,
               },
+              accumulated: { goods: 1 },
             },
           ],
           cost: {
@@ -191,7 +193,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 50 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
@@ -215,7 +217,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 50 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
@@ -231,7 +233,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 75 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.DISCOVER_CARD,
@@ -246,7 +248,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 100 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
@@ -262,7 +264,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 150 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.TRACK_ADVANCE,
@@ -277,7 +279,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 200 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.TRACK_ADVANCE,
@@ -292,7 +294,7 @@ export const exportation: CardDef = {
             cost: {
               accumulated: { goods: 200 },
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.DISCOVER_CARD,

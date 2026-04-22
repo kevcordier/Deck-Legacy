@@ -24,7 +24,6 @@ export const bandit: CardDef = {
               type: ActionType.BLOCK_CARD,
               cards: {
                 scope: TargetScope.BOARD,
-                tags: [CardTag.LAND],
                 produces: [ResourceType.GOLD],
               },
             },

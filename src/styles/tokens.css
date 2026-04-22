@@ -13,6 +13,7 @@
   --color-primary: var(--color-base-primary);
   --color-dark-primary: #ffd07c;
   --color-card: #f0e4be;
+  --color-gray: oklch(87.2% 0.01 258.338);
   --color-permanent: oklch(27.4% 0.006 286.033);
   --color-danger: #c2554f;
   --color-success: #00b286;

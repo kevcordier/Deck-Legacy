@@ -21,7 +21,7 @@ export type StepDef = {
   id: number;
   label?: string;
   cost?: Cost;
-  actions?: ActionEffect[];
+  effects?: ActionEffect[];
 };
 
 export type TrackDef = {
@@ -142,4 +142,6 @@ export type ResolvedAction = {
   stickerId?: number;
   stateId?: number;
   position?: number;
+  stepId?: number;
+  accumulated?: Record<string, number>;
 };

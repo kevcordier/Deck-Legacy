@@ -399,6 +399,210 @@ describe('resolveActionEffect — ADD_BOARD_EFFECT', () => {
   });
 });
 
+// — accumulated —
+
+describe('resolveActionEffect — accumulated', () => {
+  it('copies action.accumulated into the resolved action', () => {
+    const action = makeAction({
+      id: 1,
+      type: ActionType.ADD_CUMULATED,
+      accumulated: { glory: 3 },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
+    expect(resolved.accumulated).toEqual({ glory: 3 });
+    expect(pending).toEqual([]);
+  });
+});
+
+// — TRACK_ADVANCE —
+
+describe('resolveActionEffect — TRACK_ADVANCE', () => {
+  const makeTrackDef = (inOrder: boolean) => ({
+    id: 10,
+    name: 'Card',
+    states: [
+      {
+        id: 1,
+        name: 'S1',
+        track: {
+          inOrder,
+          cumulative: false,
+          steps: [
+            { id: 20, label: 'Step A' },
+            { id: 21, label: 'Step B' },
+          ],
+        },
+      },
+    ],
+  });
+
+  it('returns unchanged when action has no cards selector', () => {
+    const action = makeAction({ id: 1, type: ActionType.TRACK_ADVANCE });
+    const [resolved, pending] = resolveActionEffect(action, 1, EMPTY_STATE);
+    expect(resolved.instanceIds).toBeUndefined();
+    expect(pending).toEqual([]);
+  });
+
+  it('returns unchanged when defs is undefined', () => {
+    const gs = makeGameState({ board: [1], instances: { 1: makeInstance(1, 10, 1) } });
+    const action = makeAction({
+      id: 1,
+      type: ActionType.TRACK_ADVANCE,
+      cards: { scope: TargetScope.BOARD },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs);
+    expect(resolved.instanceIds).toBeUndefined();
+    expect(pending).toEqual([]);
+  });
+
+  it('returns unchanged when no cards match the selector', () => {
+    const gs = makeGameState({ board: [], instances: {} });
+    const defs: Record<number, CardDef> = {
+      10: makeTrackDef(true),
+    };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.TRACK_ADVANCE,
+      cards: { scope: TargetScope.BOARD },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(resolved.instanceIds).toBeUndefined();
+    expect(pending).toEqual([]);
+  });
+
+  it('returns unchanged when target instance is not found', () => {
+    const gs = makeGameState({ board: [99], instances: {} });
+    const defs: Record<number, CardDef> = { 10: makeTrackDef(true) };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.TRACK_ADVANCE,
+      cards: { scope: TargetScope.BOARD },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 1, gs, defs);
+    expect(resolved.instanceIds).toBeUndefined();
+    expect(pending).toEqual([]);
+  });
+
+  it('returns unchanged when the target card has no track', () => {
+    const gs = makeGameState({ board: [1], instances: { 1: makeInstance(1, 10, 1) } });
+    const defs: Record<number, CardDef> = {
+      10: { id: 10, name: 'Card', states: [{ id: 1, name: 'S1' }] },
+    };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.TRACK_ADVANCE,
+      cards: { scope: TargetScope.BOARD },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(resolved.instanceIds).toBeUndefined();
+    expect(pending).toEqual([]);
+  });
+
+  it('returns unchanged when all track steps are already done', () => {
+    const instance = makeInstance(1, 10, 1, { trackProgress: [20, 21] });
+    const gs = makeGameState({ board: [1], instances: { 1: instance } });
+    const defs: Record<number, CardDef> = { 10: makeTrackDef(true) };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.TRACK_ADVANCE,
+      cards: { scope: TargetScope.BOARD },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(resolved.instanceIds).toBeUndefined();
+    expect(pending).toEqual([]);
+  });
+
+  it('resolves stepId to the lowest available step when inOrder is true', () => {
+    const instance = makeInstance(1, 10, 1, { trackProgress: [20] });
+    const gs = makeGameState({ board: [1], instances: { 1: instance } });
+    const defs: Record<number, CardDef> = { 10: makeTrackDef(true) };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.TRACK_ADVANCE,
+      cards: { scope: TargetScope.BOARD },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(resolved.instanceIds).toEqual([1]);
+    expect(resolved.stepId).toBe(21);
+    expect(pending).toEqual([]);
+  });
+
+  it('picks the lowest id step when steps are stored in non-ascending id order', () => {
+    const defReversed: CardDef = {
+      id: 10,
+      name: 'Card',
+      states: [
+        {
+          id: 1,
+          name: 'S1',
+          track: {
+            inOrder: true,
+            cumulative: false,
+            steps: [
+              { id: 21, label: 'Step B' },
+              { id: 20, label: 'Step A' },
+            ],
+          },
+        },
+      ],
+    };
+    const gs = makeGameState({ board: [1], instances: { 1: makeInstance(1, 10, 1) } });
+    const defs: Record<number, CardDef> = { 10: defReversed };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.TRACK_ADVANCE,
+      cards: { scope: TargetScope.BOARD },
+    });
+    const [resolved] = resolveActionEffect(action, 99, gs, defs);
+    expect(resolved.stepId).toBe(20);
+  });
+
+  it('keeps the current minimum when a later step has a higher id (ascending order)', () => {
+    const defAscending: CardDef = {
+      id: 10,
+      name: 'Card',
+      states: [
+        {
+          id: 1,
+          name: 'S1',
+          track: {
+            inOrder: true,
+            cumulative: false,
+            steps: [
+              { id: 20, label: 'Step A' },
+              { id: 21, label: 'Step B' },
+            ],
+          },
+        },
+      ],
+    };
+    const gs = makeGameState({ board: [1], instances: { 1: makeInstance(1, 10, 1) } });
+    const defs: Record<number, CardDef> = { 10: defAscending };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.TRACK_ADVANCE,
+      cards: { scope: TargetScope.BOARD },
+    });
+    const [resolved] = resolveActionEffect(action, 99, gs, defs);
+    expect(resolved.stepId).toBe(20);
+  });
+
+  it('creates a pending choice when inOrder is false', () => {
+    const gs = makeGameState({ board: [1], instances: { 1: makeInstance(1, 10, 1) } });
+    const defs: Record<number, CardDef> = { 10: makeTrackDef(false) };
+    const action = makeAction({
+      id: 1,
+      type: ActionType.TRACK_ADVANCE,
+      cards: { scope: TargetScope.BOARD },
+    });
+    const [resolved, pending] = resolveActionEffect(action, 99, gs, defs);
+    expect(resolved.instanceIds).toEqual([1]);
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe(PendingChoiceType.CHOOSE_STEP);
+    expect(pending[0].choices).toEqual([20, 21]);
+  });
+});
+
 // — resourcePerCard —
 
 describe('resolveActionEffect — resourcePerCard', () => {

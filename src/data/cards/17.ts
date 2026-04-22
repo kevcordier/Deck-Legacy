@@ -39,7 +39,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -59,7 +59,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -79,7 +79,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -99,7 +99,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -119,7 +119,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -139,7 +139,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -159,7 +159,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -179,7 +179,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -199,7 +199,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -219,7 +219,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.DISCOVER_CARD,
@@ -274,7 +274,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -294,7 +294,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -314,7 +314,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -334,7 +334,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -354,7 +354,7 @@ export const army: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,

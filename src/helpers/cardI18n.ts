@@ -20,20 +20,34 @@ export function tCardName(t: TFunction, cardId = 0, stateId = 0): React.ReactNod
   return renderTextWithIcons(t(`names.${cardId}_${stateId}`, { ns: 'cards' }));
 }
 
-export function tCardActionLabel(t: TFunction, cardId = 0, stateId = 0, idx = 0): React.ReactNode {
+export function tCardActionLabel(
+  t: TFunction,
+  cardId = 0,
+  stateId = 0,
+  idx = 0,
+  accumulated?: Record<string, number>,
+): React.ReactNode {
   return renderTextWithIcons(
     t(`labels.${cardId}_${stateId}_a${idx}`, {
       ns: 'cards',
+      accumulated: Object.values(accumulated || {}).reduce((acc, value) => acc + value, 0),
       ...ICON_PASSTHROUGH,
     }),
   );
 }
 
-export function tCardPassiveLabel(t: TFunction, cardId = 0, stateId = 0, idx = 0): React.ReactNode {
+export function tCardPassiveLabel(
+  t: TFunction,
+  cardId = 0,
+  stateId = 0,
+  idx = 0,
+  accumulated?: Record<string, number>,
+): React.ReactNode {
   return renderTextWithIcons(
     t(`labels.${cardId}_${stateId}_p${idx}`, {
       ns: 'cards',
       ...ICON_PASSTHROUGH,
+      accumulated: Object.values(accumulated || {}).reduce((acc, value) => acc + value, 0),
     }),
   );
 }

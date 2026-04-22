@@ -1,4 +1,5 @@
 export * from '@engine/application/cardAction/AddBoardEffectStrategy';
+export * from '@engine/application/cardAction/AddCumulatedStrategy';
 export * from '@engine/application/cardAction/AddResourceStrategy';
 export * from '@engine/application/cardAction/AddStickerStrategy';
 export * from '@engine/application/cardAction/BlockCardStrategy';
@@ -8,4 +9,5 @@ export * from '@engine/application/cardAction/DestroyCardStrategy';
 export * from '@engine/application/cardAction/DiscardCardStrategy';
 export * from '@engine/application/cardAction/PlaceCardInDrawPileStrategy';
 export * from '@engine/application/cardAction/PlayCardStrategy';
+export * from '@engine/application/cardAction/SetCumulatedStrategy';
 export * from '@engine/application/cardAction/UpgradeCardStrategy';

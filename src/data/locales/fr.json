@@ -83,6 +83,7 @@
       "BOOST_CARD": "Choisissez {{count}} carte à améliorer",
       "BOOST_CARD_other": "Choisissez {{count}} cartes à améliorer"
     },
+    "chooseStep": "Choisir une étape",
     "chooseState": "Choisir un état",
     "chooseResource": "Choisir une ressource",
     "chooseSticker": "Choisir un autocollant",

@@ -39,7 +39,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -59,7 +59,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -79,7 +79,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -99,7 +99,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -119,7 +119,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -139,7 +139,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -159,7 +159,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -179,7 +179,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -199,7 +199,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -219,7 +219,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -239,7 +239,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -259,7 +259,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 2,
                 type: ActionType.UPGRADE_CARD,
@@ -307,7 +307,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -327,7 +327,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -347,7 +347,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -367,7 +367,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
@@ -387,7 +387,7 @@ export const treasury: CardDef = {
                 },
               ],
             },
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.SET_CUMULATED,

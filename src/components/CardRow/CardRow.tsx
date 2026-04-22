@@ -77,7 +77,7 @@ export function CardRow({ cardIds, instances, boardEffects }: CardRowProps) {
                   {effects.map(({ sourceId, passive: be }) => (
                     <span
                       key={`${sourceId}-${be.id}`}
-                      className="font-body! flex items-center gap-1 last-of-type:rounded-b-md border px-3 py-2 text-xs text-base-ink backdrop-blur-sm border-black/40 bg-black/15"
+                      className="font-body! flex items-center gap-1 last-of-type:rounded-b-md border px-3 py-2 text-xs text-base-ink backdrop-blur-sm border-black/40 bg-gray"
                     >
                       <PassifIcon className="size-3" />
                       {effectLabel(be.type)}

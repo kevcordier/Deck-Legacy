@@ -6,6 +6,7 @@ export type PendingChoice = {
   kind: ActionType;
   type: PendingChoiceType;
   sourceInstanceId: number;
+  targetInstanceId?: number;
   choices: (number | string | Resources)[];
   pickCount: number;
   isMandatory: boolean;

@@ -55,7 +55,7 @@ export const volcanicEruption: CardDef = {
         steps: [
           {
             id: 1,
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
@@ -68,7 +68,7 @@ export const volcanicEruption: CardDef = {
           },
           {
             id: 3,
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
@@ -81,7 +81,7 @@ export const volcanicEruption: CardDef = {
           },
           {
             id: 5,
-            actions: [
+            effects: [
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,

@@ -83,6 +83,7 @@
       "BOOST_CARD": "Choose {{count}} card to boost",
       "BOOST_CARD_other": "Choose {{count}} cards to boost"
     },
+    "chooseStep": "Choose a track step",
     "chooseState": "Choose a state",
     "chooseResource": "Choose a resource",
     "chooseSticker": "Choose a sticker",
