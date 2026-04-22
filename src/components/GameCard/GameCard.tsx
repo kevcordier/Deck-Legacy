@@ -205,7 +205,11 @@ export function GameCard({
 
         {!isBlocked && cs.track && (
           <div className="z-10 flex flex-col items-start justify-center gap-1 p-1 @3xs:p-2">
-            <CardTrack track={cs.track} validatedSteps={instance.trackProgress} />
+            <CardTrack
+              instance={instance}
+              track={cs.track}
+              validatedSteps={instance.trackProgress}
+            />
           </div>
         )}
       </div>

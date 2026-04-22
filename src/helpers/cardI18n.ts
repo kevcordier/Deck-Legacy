@@ -52,6 +52,14 @@ export function tCardPassiveLabel(
   );
 }
 
+export function tCardTrackAction(t: TFunction, cardId = 0, stateId = 0, idx = 0): React.ReactNode {
+  return renderTextWithIcons(
+    t(`labels.${cardId}_${stateId}_t${idx}`, {
+      ns: 'cards',
+    }),
+  );
+}
+
 export function tCardActionDescription(
   t: TFunction,
   cardId = 0,

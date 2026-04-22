@@ -1,3 +1,4 @@
+import { makeInstance } from '../tests/engine/application/testHelpers';
 import { CardTrack } from '@components/CardTrack/CardTrack';
 import { ActionType } from '@engine/domain/enums';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -84,6 +85,7 @@ const emptyStep = {
 export const InOrderNoProgress: Story = {
   name: 'inOrder — no progress',
   args: {
+    instance: makeInstance(1, 1, 1),
     track: gloryTrack,
     validatedSteps: [],
   },
@@ -92,6 +94,7 @@ export const InOrderNoProgress: Story = {
 export const InOrderPartialProgress: Story = {
   name: 'inOrder — 2 steps done',
   args: {
+    instance: makeInstance(1, 1, 1),
     track: gloryTrack,
     validatedSteps: [1, 2],
   },
@@ -100,6 +103,7 @@ export const InOrderPartialProgress: Story = {
 export const InOrderComplete: Story = {
   name: 'inOrder — all steps done',
   args: {
+    instance: makeInstance(1, 1, 1),
     track: gloryTrack,
     validatedSteps: [1, 2, 3, 4, 5],
   },
@@ -108,6 +112,7 @@ export const InOrderComplete: Story = {
 export const InOrderCannotAfford: Story = {
   name: 'inOrder — cannot afford next step',
   args: {
+    instance: makeInstance(1, 1, 1),
     track: gloryTrack,
     validatedSteps: [1],
   },
@@ -116,6 +121,7 @@ export const InOrderCannotAfford: Story = {
 export const FreeStepsMixedContent: Story = {
   name: 'free steps — mixed content (resource/glory/discover/upgrade)',
   args: {
+    instance: makeInstance(1, 1, 1),
     track: freeTrack,
     validatedSteps: [1],
   },
@@ -124,6 +130,7 @@ export const FreeStepsMixedContent: Story = {
 export const FreeStepsNotOnBoard: Story = {
   name: 'free steps — card not on board (canActivate=false)',
   args: {
+    instance: makeInstance(1, 1, 1),
     track: freeTrack,
     validatedSteps: [],
   },
@@ -132,6 +139,7 @@ export const FreeStepsNotOnBoard: Story = {
 export const EmptySteps: Story = {
   name: 'empty step content (no cost, no onClick)',
   args: {
+    instance: makeInstance(1, 1, 1),
     track: emptyStep,
     validatedSteps: [],
   },

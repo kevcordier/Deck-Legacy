@@ -39,6 +39,7 @@ export const exportation: CardDef = {
         inOrder: true,
         preround: true,
         vertical: true,
+        inverse: true,
         steps: [
           {
             id: 1,
@@ -143,6 +144,14 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
+                type: ActionType.SET_CUMULATED,
+                cards: {
+                  scope: TargetScope.SELF,
+                },
+                accumulated: { goods: 0 },
+              },
+              {
+                id: 2,
                 type: ActionType.UPGRADE_CARD,
                 states: [2],
                 cards: {
@@ -187,11 +196,12 @@ export const exportation: CardDef = {
         cumulative: false,
         inOrder: true,
         vertical: true,
+        inverse: true,
         steps: [
           {
             id: 8,
             cost: {
-              accumulated: { goods: 50 },
+              accumulated: { goods: 25 },
             },
             effects: [
               {
@@ -292,7 +302,7 @@ export const exportation: CardDef = {
           {
             id: 14,
             cost: {
-              accumulated: { goods: 200 },
+              accumulated: { goods: 250 },
             },
             effects: [
               {

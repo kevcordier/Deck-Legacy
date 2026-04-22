@@ -61,6 +61,10 @@ const meta: Meta<GameCardContainerProps> = {
       cumulated,
     });
 
+    const colClass = ['grid-cols-1', 'grid-cols-2', 'grid-cols-3', 'grid-cols-4'][
+      defs[cardId].states.length - 1
+    ];
+
     return (
       <GameProvider
         key={JSON.stringify({
@@ -84,7 +88,7 @@ const meta: Meta<GameCardContainerProps> = {
           instances: { [instance.id]: instance },
         }}
       >
-        <div className="grid gap-3 grid-cols-4 p-3">
+        <div className={`grid gap-3 ${colClass} p-3`}>
           {defs[cardId].states.map(state => {
             return (
               <div className="@container" key={`game-card-${instance.id}-${state.id}`}>

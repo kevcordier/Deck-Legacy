@@ -1,28 +1,48 @@
 import { Glory } from '@components/ui/Glory/Glory';
 import { ActionType } from '@engine/domain/enums';
-import type { ActionEffect, TrackDef } from '@engine/domain/types';
+import type { ActionEffect, CardInstance, TrackDef } from '@engine/domain/types';
+import { tCardTrackAction } from '@helpers/cardI18n';
 import { getResMeta } from '@helpers/renderHelpers';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface CardTrackProps {
+  readonly instance: CardInstance;
   readonly track: TrackDef;
   readonly validatedSteps: number[];
 }
 
-export function CardTrack({ track, validatedSteps }: CardTrackProps) {
+export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
+  const { t } = useTranslation();
   return (
     <div
-      className={`flex ${track.vertical ? 'flex-col' : 'flex-row'} justify-start flex-wrap gap-1`}
+      className={`flex ${track.vertical ? 'flex-col justify-start' : 'flex-row'} flex-wrap gap-1`}
     >
       {track.steps.map(step => {
         const isValidated = validatedSteps.includes(step.id);
 
-        const costEntry = step.cost?.resources?.[0];
-
         // Determine step button content
         const actions = step.effects ?? [];
-
         const contents: React.ReactNode[] = [];
+        const cost: React.ReactNode[] = [];
+
+        if (step.cost?.resources) {
+          const costEntry = step.cost?.resources?.[0];
+          cost.push(
+            Object.entries(costEntry).map(([k, v]) => {
+              const meta = getResMeta(k);
+              return (
+                <React.Fragment key={k}>
+                  {v}
+                  {meta.icon && <meta.icon className={`${meta.cls} size-4`} alt={k} />}
+                </React.Fragment>
+              );
+            }),
+          );
+        }
+        if (step.cost?.accumulated) {
+          cost.push(Object.values(step.cost.accumulated).reduce((acc, value) => acc + value, 0));
+        }
 
         const getResourceContent = (resKey: string, actionId: number): React.ReactNode => {
           const meta = getResMeta(resKey);
@@ -71,36 +91,36 @@ export function CardTrack({ track, validatedSteps }: CardTrackProps) {
           );
         };
 
-        actions.forEach(action => {
-          contents.push(getActionContent(action));
-        });
+        if (track.inverse) {
+          contents.push(
+            <span key={step.id} className="font-display font-bold text-xs">
+              {tCardTrackAction(t, instance.cardId, instance.stateId, step.id)}
+            </span>,
+          );
+        } else {
+          actions.forEach(action => {
+            contents.push(getActionContent(action));
+          });
+        }
 
         return (
           <div
             key={step.id}
-            className={`flex ${track.vertical ? ' ' : 'flex-col '}items-center gap-1`}
+            className={`flex ${track.vertical ? 'flex-row-reverse justify-end' : 'flex-col justify-center'} items-center gap-1`}
           >
-            {costEntry && (
+            {cost && (
               <div className={`flex items-center gap-0.5 text-base text-base-ink`}>
-                {Object.entries(costEntry).map(([k, v]) => {
-                  const meta = getResMeta(k);
-                  return (
-                    <React.Fragment key={k}>
-                      {v}
-                      {meta.icon && <meta.icon className={`${meta.cls} size-4`} alt={k} />}
-                    </React.Fragment>
-                  );
-                })}
+                {track.inverse ? contents : cost}
               </div>
             )}
             <div
               className={[
-                `size-10 text-base flex flex-col items-center justify-center border-2 leading-none font-bold rounded-md text-base-ink bg-card border-base-ink`,
+                `${track.vertical ? 'size-7' : 'size-10'} text-base flex flex-col items-center justify-center border-2 leading-none font-bold rounded-md text-base-ink bg-card border-base-ink`,
                 isValidated ? 'border-success bg-success/20! text-success' : '',
               ].join(' ')}
               title={isValidated ? '✓' : undefined}
             >
-              {isValidated ? <span>✓</span> : contents}
+              {track.inverse ? cost : contents}
             </div>
           </div>
         );

@@ -29,6 +29,7 @@ export type TrackDef = {
   inOrder: boolean;
   cumulative: boolean;
   vertical?: boolean;
+  inverse?: boolean;
   preround?: boolean;
 };
 
