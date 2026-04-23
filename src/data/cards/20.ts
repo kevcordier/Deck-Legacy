@@ -1,4 +1,4 @@
-import { ActionType, CardTag, TargetScope } from '@engine/domain/enums';
+import { ActionType, CardTag, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const volcanicEruption: CardDef = {
@@ -12,7 +12,49 @@ export const volcanicEruption: CardDef = {
       tags: [CardTag.EVENT],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c0a9fb7a-78c2-452f-a2f4-947f4c527cd8/anim=false,width=450,optimized=true/38CERAJFMBW55EYDDDX8W2T1M0.jpeg',
-      actions: [],
+      actions: [
+        {
+          id: '20-1-0',
+          trigger: Trigger.ON_PLAY,
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionType.ADD_BOARD_EFFECT,
+              cards: {
+                scope: TargetScope.SELF,
+              },
+              effect: {
+                id: '1',
+                type: PassiveType.ADD_TRIGGER,
+                trigger: {
+                  type: Trigger.ON_PLAY,
+                  cards: {
+                    scope: TargetScope.DRAWN,
+                    tags: [CardTag.LAND],
+                  },
+                  actions: [
+                    {
+                      id: 1,
+                      type: ActionType.DESTROY_CARD,
+                      cards: {
+                        scope: TargetScope.SELF,
+                      },
+                    },
+                    {
+                      id: 2,
+                      type: ActionType.UPGRADE_CARD,
+                      cards: {
+                        ids: [28],
+                      },
+                      states: [2],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      ],
     },
     {
       id: 2,
@@ -59,6 +101,9 @@ export const volcanicEruption: CardDef = {
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
+                cards: {
+                  scope: TargetScope.SELF,
+                },
                 stickerIds: [2],
               },
             ],
@@ -72,6 +117,9 @@ export const volcanicEruption: CardDef = {
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
+                cards: {
+                  scope: TargetScope.SELF,
+                },
                 stickerIds: [2],
               },
             ],
@@ -85,6 +133,9 @@ export const volcanicEruption: CardDef = {
               {
                 id: 1,
                 type: ActionType.ADD_STICKER,
+                cards: {
+                  scope: TargetScope.SELF,
+                },
                 stickerIds: [2],
               },
             ],

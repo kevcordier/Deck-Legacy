@@ -85,7 +85,11 @@ export type Passive = {
   id: string;
   type: PassiveType;
   cards?: CardeSelector;
-  onPlayCards?: CardeSelector;
+  trigger?: {
+    type: Trigger;
+    cards?: CardeSelector;
+    actions?: ActionEffect[];
+  };
   resources?: {
     gold?: number;
     wood?: number;

@@ -16,7 +16,7 @@ export function ResourceChoice({
   size = 'md',
 }: ResourceChoiceProps) {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 flex-wrap justify-center">
       {options.map((opt, i) => {
         const entries = Object.entries(opt);
         return (

@@ -27,6 +27,8 @@ export function cardSelector(
   let pool: number[] = [];
   if (scope === TargetScope.DECK) {
     pool = gameState.drawPile;
+  } else if (scope === TargetScope.DRAWN) {
+    pool = gameState.lastDrawnCards;
   } else if (scope === TargetScope.BOARD) {
     pool = gameState.board;
   } else if (scope === TargetScope.DISCOVERY) {

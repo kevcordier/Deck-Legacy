@@ -5,7 +5,7 @@ import { Button } from '@components/ui/Button/Button';
 import { Glory } from '@components/ui/Glory/Glory';
 import { PassifIcon } from '@components/ui/Icon/icon';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
-import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
+import { StickerDisplay } from '@components/ui/StickerDisplay/StickerDisplay';
 import { Tag } from '@components/ui/Tag/Tag';
 import {
   canAffordResources,
@@ -45,14 +45,14 @@ export function GameCard({
   const isEnemy = cs.negative === true;
   const isPermanent = def?.permanent;
   const isParchment = def?.parchmentCard ?? false;
-  const base = cs.productions?.[0] || {};
-  const productions = getEffectiveProductions(base, cs, state, defs, instance, stickerDefs);
-  const hasProductions = Object.keys(productions).length > 0;
+  const productions = cs.productions?.map(base =>
+    getEffectiveProductions(base, cs, state, defs, instance, stickerDefs),
+  ) || [getEffectiveProductions({}, cs, state, defs, instance, stickerDefs)];
+  const hasProductions = productions?.some(prod => Object.keys(prod).length > 0) ?? false;
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
   const actions = cs.actions ?? [];
   const glory = cs.glory ?? 0;
-  const resourceOptions = cs.productions ?? undefined;
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
 
   const cardClass = [
@@ -105,12 +105,10 @@ export function GameCard({
         )}
 
         <div className={`relative z-10 flex flex-1 flex-col items-start gap-1 p-1 @3xs:p-3`}>
-          {hasProductions && resourceOptions && (
+          {hasProductions && productions && (
             <ResourceChoice
               onSelect={choosenOption => resolveProduction(instance.id, choosenOption)}
-              options={resourceOptions.map(opt =>
-                getEffectiveProductions(opt, cs, state, defs, instance, stickerDefs),
-              )}
+              options={productions}
               disabled={!canActivate || !isOnBoard || isBlocked}
             />
           )}
@@ -119,13 +117,17 @@ export function GameCard({
 
           {currentStateStickers.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {currentStateStickers.map(stickerId => {
+              {currentStateStickers.map((stickerId, index) => {
                 const sticker = stickerDefs[stickerId];
                 if (!sticker) return null;
-                if (sticker.production)
-                  return <ResourcePill key={stickerId} resource={sticker.production} />;
-                if (sticker.glory) return <Glory key={stickerId} glory={sticker.glory} />;
-                return null;
+                return (
+                  <StickerDisplay
+                    key={`${stickerId}-${index.toString()}`}
+                    sticker={sticker}
+                    size="sm"
+                    className="rounded-md bg-white/70 border-2 border-danger p-1"
+                  />
+                );
               })}
             </div>
           )}

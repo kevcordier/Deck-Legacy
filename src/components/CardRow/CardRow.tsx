@@ -72,7 +72,8 @@ export function CardRow({ cardIds, instances, boardEffects }: CardRowProps) {
                 )}
               </div>
 
-              {effects.length > 0 && (
+              {effects.filter(({ passive }) => passive.type !== PassiveType.ADD_TRIGGER).length >
+                0 && (
                 <div className="flex flex-col justify-stretch">
                   {effects.map(({ sourceId, passive: be }) => (
                     <span

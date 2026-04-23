@@ -341,3 +341,25 @@ describe('cardSelector — FRIENDLY / ENEMY', () => {
     expect(result).toEqual([2]);
   });
 });
+
+// — DRAWN scope —
+
+describe('cardSelector — DRAWN', () => {
+  it('returns cards from lastDrawnCards excluding self', () => {
+    const gs = makeGameState({
+      lastDrawnCards: [1, 2, 3],
+      instances: {
+        1: makeInstance(1, 10, 1),
+        2: makeInstance(2, 11, 1),
+        3: makeInstance(3, 12, 1),
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeCardState(1)]),
+      11: makeDef(11, [makeCardState(1)]),
+      12: makeDef(12, [makeCardState(1)]),
+    };
+    const result = cardSelector({ scope: TargetScope.DRAWN }, 1, gs, defs);
+    expect(result).toEqual([2, 3]);
+  });
+});

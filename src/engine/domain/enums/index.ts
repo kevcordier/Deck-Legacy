@@ -52,6 +52,7 @@ export enum PassiveType {
   STAY_IN_PLAY = 'STAY_IN_PLAY',
   INCREASE_GLORY = 'INCREASE_GLORY',
   INCREASE_PRODUCTION = 'INCREASE_PRODUCTION',
+  ADD_TRIGGER = 'ADD_TRIGGER',
 }
 
 export enum ResourceType {
@@ -75,6 +76,7 @@ export enum TargetScope {
   ENEMY = 'enemy',
   SELF = 'self',
   TOP_OF_DECK = 'top_of_deck',
+  DRAWN = 'drawn',
 }
 
 export enum PendingChoiceType {
@@ -83,10 +85,4 @@ export enum PendingChoiceType {
   CHOOSE_STATE = 'choose_state',
   CHOOSE_STICKER = 'choose_sticker',
   CHOOSE_STEP = 'choose_step',
-}
-
-export enum PaseType {
-  PASE_1 = 'pase_1',
-  PASE_2 = 'pase_2',
-  PASE_3 = 'pase_3',
 }

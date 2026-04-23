@@ -889,6 +889,29 @@ export function GameProvider({
           ),
         );
       },
+      setCardState: (instanceId: number, stateId: number) => {
+        sync(
+          aggRef.current.applyCardEffect(
+            `cheat-update-${instanceId}-${Date.now()}`,
+            [
+              {
+                id: `update-${instanceId}-${Date.now()}`,
+                type: ActionType.UPGRADE_CARD,
+                sourceInstanceId: instanceId,
+                instanceIds: [instanceId],
+                stateId,
+              },
+            ],
+            { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
+            `cheat-trigger-${instanceId}-${Date.now()}`,
+            {
+              isDiscarded: false,
+              isDestroyed: false,
+              endsTurn: false,
+            },
+          ),
+        );
+      },
     };
     return () => {
       delete (globalThis as unknown as Record<string, unknown>).__cheat;

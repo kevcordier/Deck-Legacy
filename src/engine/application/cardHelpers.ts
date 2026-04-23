@@ -3,6 +3,7 @@ import { mergeResources } from '@engine/application/gameStateHelper';
 import { ActionType, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
 import type {
   ActionEffect,
+  CardAction,
   CardDef,
   CardInstance,
   CardState,
@@ -106,12 +107,46 @@ export function canAffordResources(available: Resources, cost?: Cost): boolean {
   );
 }
 
+function getBoardEffectTriggersAction(
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  trigger: Trigger,
+): TriggerEntry[] {
+  return Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) => {
+    const cardActions: CardAction[] = [];
+    let instanceId = Number(sourceId);
+    passives
+      .filter(be => be.type === PassiveType.ADD_TRIGGER && be.trigger?.type === trigger)
+      .forEach(be => {
+        if (be.trigger?.cards) {
+          const selectedCards = cardSelector(be.trigger.cards, instanceId, gameState, defs);
+
+          if (selectedCards.length === 0) return;
+
+          instanceId = selectedCards[0];
+        }
+        if (be.trigger?.actions) {
+          cardActions.push({
+            id: `board_effect_${sourceId}`,
+            actionEffects: be.trigger.actions.map(ae => ({
+              ...ae,
+              cards: ae.cards?.scope === TargetScope.SELF ? { ids: [instanceId] } : ae.cards,
+            })),
+          });
+        }
+      });
+
+    return cardActions.map(effectDef => ({ effectDef, sourceInstanceId: Number(sourceId) }));
+  });
+}
+
 export function getInstancesTriggerEffects(
   instances: CardInstance[],
   defs: Record<number, CardDef>,
   effect: Trigger,
+  gameState: GameState,
 ): TriggerEntry[] {
-  return instances.reduce<TriggerEntry[]>((acc, instance) => {
+  const effects = instances.reduce<TriggerEntry[]>((acc, instance) => {
     const state = getActiveState(instance, defs);
     const cardDef = defs[instance.cardId];
     const effects = state.actions?.filter(ce => ce.trigger === effect) ?? [];
@@ -130,8 +165,13 @@ export function getInstancesTriggerEffects(
         optional: false,
       });
     }
+
     return [...acc, ...effects.map(effectDef => ({ effectDef, sourceInstanceId: instance.id }))];
   }, [] as TriggerEntry[]);
+
+  effects.push(...getBoardEffectTriggersAction(gameState, defs, effect));
+
+  return effects;
 }
 
 // Sticker ID for the 'stays_in_play' effect (see src/data/stickers.ts)

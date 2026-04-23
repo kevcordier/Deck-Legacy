@@ -41,6 +41,7 @@ export const makeGameState = (overrides: Partial<GameState> = {}): GameState => 
   discoveryPile: [],
   triggerPile: {},
   lastAddedIds: [],
+  lastDrawnCards: [],
   round: 0,
   turn: 0,
   phase: Phase.START_ROUND,

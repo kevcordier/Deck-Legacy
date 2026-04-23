@@ -54,6 +54,7 @@ export const EMPTY_STATE: GameState = {
   boardEffects: {},
   triggerPile: {},
   lastAddedIds: [],
+  lastDrawnCards: [],
   round: 0,
   turn: 0,
   phase: Phase.PREGAME,
@@ -124,7 +125,12 @@ export class GameAggregate {
       const cardDef = this.cardDefs[cardInstance.cardId];
 
       onDiscoverEvents.push(
-        ...getInstancesTriggerEffects([cardInstance], this.cardDefs, Trigger.ON_DISCOVER),
+        ...getInstancesTriggerEffects(
+          [cardInstance],
+          this.cardDefs,
+          Trigger.ON_DISCOVER,
+          this.gameState,
+        ),
       );
 
       if (!cardDef.parchmentCard) {
@@ -134,7 +140,12 @@ export class GameAggregate {
         const cardInstance = this.gameState.instances[secondDiscoveredCard];
 
         onDiscoverEvents.push(
-          ...getInstancesTriggerEffects([cardInstance], this.cardDefs, Trigger.ON_DISCOVER),
+          ...getInstancesTriggerEffects(
+            [cardInstance],
+            this.cardDefs,
+            Trigger.ON_DISCOVER,
+            this.gameState,
+          ),
         );
       }
     }
@@ -160,16 +171,17 @@ export class GameAggregate {
 
   public turnStarted(): GameState {
     if (this.gameState.drawPile.length === 0) {
-      this.roundStarted();
-      return this.gameState.drawPile.length > 0 ? this.turnStarted() : this.gameState;
+      return this.roundStarted();
     }
 
     const turn = this.gameState.turn + 1;
     const turnCards: number[] = this.gameState.drawPile.slice(0, 4);
+    this.gameState.lastDrawnCards = turnCards; // Should be set by the PlayCardStrategy, but setting it here to make sure it's available for triggers on turn start
     const onPlayEvents = getInstancesTriggerEffects(
       turnCards.map(cardId => this.gameState.instances[cardId]),
       this.cardDefs,
       Trigger.ON_PLAY,
+      this.gameState,
     );
 
     const event: TurnStartedEvent = {
@@ -190,6 +202,7 @@ export class GameAggregate {
       this.gameState.board.map(cardId => this.gameState.instances[cardId]),
       this.cardDefs,
       Trigger.END_OF_TURN,
+      this.gameState,
     );
 
     const event: TurnEndedEvent = {
@@ -226,10 +239,12 @@ export class GameAggregate {
     }
 
     const turnCards: number[] = this.gameState.drawPile.slice(0, 2);
+    this.gameState.lastDrawnCards = turnCards; // Should be set by the PlayCardStrategy, but setting it here to make sure it's available for triggers on advance
     const onPlayEvents = getInstancesTriggerEffects(
       turnCards.map(cardId => this.gameState.instances[cardId]),
       this.cardDefs,
       Trigger.ON_PLAY,
+      this.gameState,
     );
 
     const event: AdvanceEvent = {

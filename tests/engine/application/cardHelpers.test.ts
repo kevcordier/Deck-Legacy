@@ -288,7 +288,7 @@ describe('getInstancesTriggerEffects', () => {
     const defs: Record<number, CardDef> = {
       10: makeDef(10, [makeCardState(1, { actions: [] })]),
     };
-    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY);
+    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, makeGameState());
     expect(result).toEqual([]);
   });
 
@@ -310,7 +310,7 @@ describe('getInstancesTriggerEffects', () => {
     const defs: Record<number, CardDef> = {
       10: makeDef(10, [makeCardState(1, { actions: [action] })]),
     };
-    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY);
+    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, makeGameState());
     expect(result).toHaveLength(1);
     expect(result[0].effectDef).toBe(action);
     expect(result[0].sourceInstanceId).toBe(1);
@@ -321,7 +321,12 @@ describe('getInstancesTriggerEffects', () => {
     const defs: Record<number, CardDef> = {
       10: { id: 10, name: 'Card 10', chooseState: true, states: [makeCardState(1)] },
     };
-    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_DISCOVER);
+    const result = getInstancesTriggerEffects(
+      [instance],
+      defs,
+      Trigger.ON_DISCOVER,
+      makeGameState(),
+    );
     expect(result).toHaveLength(1);
     expect(result[0].effectDef.actionEffects[0].type).toBe(ActionType.CHOOSE_STATE);
   });
@@ -358,8 +363,224 @@ describe('getInstancesTriggerEffects', () => {
       10: makeDef(10, [makeCardState(1, { actions: [effect1] })]),
       11: makeDef(11, [makeCardState(1, { actions: [effect2] })]),
     };
-    const result = getInstancesTriggerEffects([inst1, inst2], defs, Trigger.END_OF_TURN);
+    const result = getInstancesTriggerEffects(
+      [inst1, inst2],
+      defs,
+      Trigger.END_OF_TURN,
+      makeGameState(),
+    );
     expect(result).toHaveLength(2);
+  });
+
+  it('includes board effects with ADD_TRIGGER passives', () => {
+    const instance = makeInstance(1, 10, 1);
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeCardState(1, { actions: [] })]),
+    };
+    const gameState = makeGameState({
+      instances: { 1: instance },
+      boardEffects: {
+        99: [
+          {
+            id: 'be1',
+            type: PassiveType.ADD_TRIGGER,
+            trigger: {
+              type: Trigger.ON_PLAY,
+              actions: [
+                {
+                  id: 1,
+                  type: ActionType.ADD_RESOURCES,
+                  resources: { gold: 1 },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    });
+    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
+    expect(result).toHaveLength(1);
+    expect(result[0].sourceInstanceId).toBe(99);
+  });
+
+  it('ignores board effects with a different trigger type', () => {
+    const instance = makeInstance(1, 10, 1);
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeCardState(1, { actions: [] })]),
+    };
+    const gameState = makeGameState({
+      instances: { 1: instance },
+      boardEffects: {
+        99: [
+          {
+            id: 'be1',
+            type: PassiveType.ADD_TRIGGER,
+            trigger: {
+              type: Trigger.END_OF_TURN,
+              actions: [
+                {
+                  id: 1,
+                  type: ActionType.ADD_RESOURCES,
+                  resources: { gold: 1 },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    });
+    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
+    expect(result).toHaveLength(0);
+  });
+
+  it('ignores board effects without ADD_TRIGGER type', () => {
+    const instance = makeInstance(1, 10, 1);
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeCardState(1, { actions: [] })]),
+    };
+    const gameState = makeGameState({
+      instances: { 1: instance },
+      boardEffects: {
+        99: [{ id: 'be1', type: PassiveType.BLOCK, cards: { ids: [1] } }],
+      },
+    });
+    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
+    expect(result).toHaveLength(0);
+  });
+
+  it('applies card selector when trigger.cards is defined', () => {
+    const instance = makeInstance(1, 10, 1);
+    const target = makeInstance(2, 11, 1);
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeCardState(1, { actions: [] })]),
+      11: makeDef(11, [makeCardState(1, { actions: [] })]),
+    };
+    const gameState = makeGameState({
+      instances: { 1: instance, 2: target },
+      board: [1, 2],
+      boardEffects: {
+        99: [
+          {
+            id: 'be1',
+            type: PassiveType.ADD_TRIGGER,
+            trigger: {
+              type: Trigger.ON_PLAY,
+              cards: { scope: TargetScope.BOARD },
+              actions: [
+                {
+                  id: 1,
+                  type: ActionType.ADD_RESOURCES,
+                  resources: { gold: 1 },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    });
+    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
+    expect(result).toHaveLength(1);
+    // The first card on the board should be used as the target
+    expect(result[0].sourceInstanceId).toBe(99);
+  });
+
+  it('ignores board effects when card selector returns empty list', () => {
+    const instance = makeInstance(1, 10, 1);
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeCardState(1, { actions: [] })]),
+    };
+    const gameState = makeGameState({
+      instances: { 1: instance },
+      boardEffects: {
+        99: [
+          {
+            id: 'be1',
+            type: PassiveType.ADD_TRIGGER,
+            trigger: {
+              type: Trigger.ON_PLAY,
+              cards: { scope: TargetScope.DISCOVERY }, // no cards in discovery pile
+              actions: [
+                {
+                  id: 1,
+                  type: ActionType.ADD_RESOURCES,
+                  resources: { gold: 1 },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    });
+    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
+    expect(result).toHaveLength(0);
+  });
+
+  it('ignores board effects without actions', () => {
+    const instance = makeInstance(1, 10, 1);
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeCardState(1, { actions: [] })]),
+    };
+    const gameState = makeGameState({
+      instances: { 1: instance },
+      boardEffects: {
+        99: [
+          {
+            id: 'be1',
+            type: PassiveType.ADD_TRIGGER,
+            trigger: {
+              type: Trigger.ON_PLAY,
+            },
+          },
+        ],
+      },
+    });
+    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
+    expect(result).toHaveLength(0);
+  });
+
+  it('applies card selector to trigger.cards and transforms action cards based on scope', () => {
+    const instance = makeInstance(1, 10, 1);
+    const target = makeInstance(2, 11, 1);
+    const defs: Record<number, CardDef> = {
+      10: makeDef(10, [makeCardState(1, { actions: [] })]),
+      11: makeDef(11, [makeCardState(1, { actions: [] })]),
+    };
+    const gameState = makeGameState({
+      instances: { 1: instance, 2: target },
+      board: [1, 2],
+      boardEffects: {
+        99: [
+          {
+            id: 'be1',
+            type: PassiveType.ADD_TRIGGER,
+            trigger: {
+              type: Trigger.ON_PLAY,
+              cards: { scope: TargetScope.BOARD },
+              actions: [
+                {
+                  id: 1,
+                  type: ActionType.ADD_RESOURCES,
+                  cards: { scope: TargetScope.BOARD }, // non-SELF scope
+                  resources: { gold: 1 },
+                },
+                {
+                  id: 2,
+                  type: ActionType.DISCARD_CARD,
+                  cards: { scope: TargetScope.SELF }, // SELF scope should be transformed to ids
+                },
+              ],
+            },
+          },
+        ],
+      },
+    });
+    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
+    expect(result).toHaveLength(1);
+    expect(result[0].effectDef.actionEffects).toHaveLength(2);
+    // The first action should keep its original cards scope (non-SELF)
+    expect(result[0].effectDef.actionEffects[0].cards).toEqual({ scope: TargetScope.BOARD });
+    // The second action should be transformed to use ids with the selected card
+    expect(result[0].effectDef.actionEffects[1].cards).toEqual({ ids: [1] }); // First board card (instance 1)
   });
 });
 

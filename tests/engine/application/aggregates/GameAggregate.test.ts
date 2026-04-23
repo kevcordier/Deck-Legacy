@@ -171,9 +171,8 @@ describe('GameAggregate.turnStarted', () => {
     const agg = new GameAggregate(state, { 10: makeDef(10) });
     agg.turnStarted();
 
-    expect(applySpy).toHaveBeenCalledTimes(2);
+    expect(applySpy).toHaveBeenCalledTimes(1);
     expect(applySpy.mock.calls[0][1]).toMatchObject({ type: GameEventType.ROUND_STARTED });
-    expect(applySpy.mock.calls[1][1]).toMatchObject({ type: GameEventType.TURN_STARTED });
   });
 
   it('returns the state returned by apply', () => {

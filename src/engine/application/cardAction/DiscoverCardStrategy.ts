@@ -8,21 +8,22 @@ export class DiscoverCardStrategy implements CardActionStrategy {
   constructor(private readonly cardDefs: Record<number, CardDef>) {}
 
   applyEffect(gameState: GameState, payload: ResolvedAction): GameState {
+    const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
     const ids = payload.instanceIds ?? [];
-
-    return ids.reduce((gs, instanceId) => {
-      const cloned = JSON.parse(JSON.stringify(gs)) as GameState;
+    const triggerEffects = getInstancesTriggerEffects(
+      ids.map(cardId => gs.instances[cardId]),
+      this.cardDefs,
+      Trigger.ON_DISCOVER,
+      gs,
+    );
+    if (triggerEffects.length > 0) {
+      triggerEffects.forEach(effect => {
+        gs.triggerPile[crypto.randomUUID()] = effect;
+      });
+    }
+    return ids.reduce((cloned, instanceId) => {
       const cardDef = this.cardDefs[gs.instances[instanceId].cardId];
-      const triggerEffects = getInstancesTriggerEffects(
-        [gs.instances[instanceId]],
-        this.cardDefs,
-        Trigger.ON_DISCOVER,
-      );
-      if (triggerEffects.length > 0) {
-        triggerEffects.forEach(effect => {
-          cloned.triggerPile[crypto.randomUUID()] = effect;
-        });
-      }
+
       if (!cardDef.parchmentCard) {
         cloned.lastAddedIds.push(instanceId);
       }
@@ -31,6 +32,6 @@ export class DiscoverCardStrategy implements CardActionStrategy {
         return { ...cloned, permanents: cloned.permanents };
       }
       return { ...cloned, ...discardCards(cloned, [instanceId]) };
-    }, gameState);
+    }, gs);
   }
 }
