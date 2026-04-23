@@ -59,7 +59,9 @@ export function CardRow({ cardIds, instances, boardEffects }: CardRowProps) {
           const isBlocked = blockedIds.has(id);
           const blockerId = blockedByMap[id] ?? null;
           const blockerInst = blockerId ? instances[blockerId] : null;
-          const effects = effectsOnCard(boardEffects, id);
+          const effects = effectsOnCard(boardEffects, id).filter(
+            ({ passive }) => passive.type !== PassiveType.ADD_TRIGGER,
+          );
 
           return (
             <div key={id} className="@container shrink-0">
@@ -72,8 +74,7 @@ export function CardRow({ cardIds, instances, boardEffects }: CardRowProps) {
                 )}
               </div>
 
-              {effects.filter(({ passive }) => passive.type !== PassiveType.ADD_TRIGGER).length >
-                0 && (
+              {effects.length > 0 && (
                 <div className="flex flex-col justify-stretch">
                   {effects.map(({ sourceId, passive: be }) => (
                     <span
