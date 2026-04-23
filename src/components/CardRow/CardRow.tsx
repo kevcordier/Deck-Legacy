@@ -1,30 +1,39 @@
 import { GameCard } from '@components/GameCard/GameCard';
 import { PassifIcon } from '@components/ui/Icon/icon';
+import { cardSelector } from '@engine/application/cardSelector';
 import { PassiveType } from '@engine/domain/enums';
-import type { CardInstance, Passive } from '@engine/domain/types';
+import type { CardDef, GameState, Passive } from '@engine/domain/types';
 import { useTranslation } from 'react-i18next';
 
 interface CardRowProps {
   readonly cardIds: number[];
-  readonly instances: Record<number, CardInstance>;
-  readonly boardEffects: Record<number, Passive[]>;
+  readonly gameState: GameState;
+  readonly defs: Record<number, CardDef>;
 }
 
 type EffectEntry = { sourceId: number; passive: Passive };
 
-function effectsOnCard(boardEffects: Record<number, Passive[]>, instanceId: number): EffectEntry[] {
-  return Object.entries(boardEffects).flatMap(([sourceId, passives]) =>
+function effectsOnCard(
+  gameState: GameState,
+  instanceId: number,
+  defs: Record<number, CardDef>,
+): EffectEntry[] {
+  return Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) =>
     passives
-      .filter(be => be.cards?.ids?.includes(instanceId))
+      .filter(
+        be =>
+          be.cards &&
+          cardSelector(be.cards, Number(sourceId), gameState, defs)?.includes(instanceId),
+      )
       .map(passive => ({ sourceId: Number(sourceId), passive })),
   );
 }
 
-export function CardRow({ cardIds, instances, boardEffects }: CardRowProps) {
+export function CardRow({ cardIds, gameState, defs }: CardRowProps) {
   const { t } = useTranslation();
 
   const blockedByMap: Record<number, number> = {};
-  Object.entries(boardEffects).forEach(([sourceId, passives]) => {
+  Object.entries(gameState.boardEffects).forEach(([sourceId, passives]) => {
     passives
       .filter(be => be.type === PassiveType.BLOCK)
       .forEach(be => {
@@ -53,14 +62,14 @@ export function CardRow({ cardIds, instances, boardEffects }: CardRowProps) {
       {cardIds
         .filter(id => !blockerIds.has(id))
         .map((id, index) => {
-          const inst = instances[id];
+          const inst = gameState.instances[id];
           if (!inst) return null;
 
           const isBlocked = blockedIds.has(id);
           const blockerId = blockedByMap[id] ?? null;
-          const blockerInst = blockerId ? instances[blockerId] : null;
-          const effects = effectsOnCard(boardEffects, id).filter(
-            ({ passive }) => passive.type !== PassiveType.ADD_TRIGGER,
+          const blockerInst = blockerId ? gameState.instances[blockerId] : null;
+          const effects = effectsOnCard(gameState, id, defs).filter(({ passive }) =>
+            [PassiveType.STAY_IN_PLAY, PassiveType.BLOCK].includes(passive.type),
           );
 
           return (

@@ -38,7 +38,7 @@ export const forest: CardDef = {
               id: 2,
               type: ActionType.UPGRADE_CARD,
               cards: {
-                scope: TargetScope.SELF,
+                scope: [TargetScope.SELF],
               },
               states: [2],
             },
@@ -106,7 +106,7 @@ export const forest: CardDef = {
         {
           id: '3-4-1',
           cost: {
-            destroy: { scope: TargetScope.SELF },
+            destroy: { scope: [TargetScope.SELF] },
           },
           actionEffects: [
             {

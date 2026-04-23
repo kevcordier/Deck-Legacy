@@ -31,6 +31,10 @@
     "subtitle": "Voici les nouvelles cartes découvertes pour cette manche.",
     "start": "▶ Commencer la manche"
   },
+  "endturn": {
+    "title": "Tour {{turn}}",
+    "start": "▶ Commencer le tour"
+  },
   "sections": {
     "permanents": "Permanentes",
     "tableau": "Tableau"

@@ -11,6 +11,7 @@ import {
   canAffordResources,
   cardIsBlocked,
   getActiveState,
+  getEffectiveGlory,
   getEffectiveProductions,
   tagClass,
 } from '@engine/application/cardHelpers';
@@ -52,7 +53,7 @@ export function GameCard({
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
   const actions = cs.actions ?? [];
-  const glory = cs.glory ?? 0;
+  const glory = getEffectiveGlory(cs, state, defs, instance, stickerDefs);
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
 
   const cardClass = [
@@ -113,7 +114,7 @@ export function GameCard({
             />
           )}
 
-          {glory !== 0 && <Glory glory={glory} />}
+          {cs.glory !== undefined && <Glory glory={glory} />}
 
           {currentStateStickers.length > 0 && (
             <div className="flex flex-wrap gap-1">
@@ -124,7 +125,7 @@ export function GameCard({
                   <StickerDisplay
                     key={`${stickerId}-${index.toString()}`}
                     sticker={sticker}
-                    size="sm"
+                    size="md"
                     className="rounded-md bg-white/70 border-2 border-danger p-1"
                   />
                 );
@@ -192,7 +193,7 @@ export function GameCard({
                             {ci > 0 && ', '}
                             {v}
                             {meta.icon && (
-                              <meta.icon className={`size-4 align-baseline ${meta.cls}`} alt={k} />
+                              <meta.icon className={`size-4 align-middle ${meta.cls}`} alt={k} />
                             )}
                           </React.Fragment>
                         );

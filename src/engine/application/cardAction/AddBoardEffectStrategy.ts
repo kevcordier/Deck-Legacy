@@ -6,10 +6,7 @@ export class AddBoardEffectStrategy implements CardActionStrategy {
     if (!payload.instanceIds?.length || !payload.effect) return gameState;
     const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
     for (const id of payload.instanceIds) {
-      gs.boardEffects[id] = [
-        ...(gs.boardEffects[id] ?? []),
-        { ...payload.effect, cards: { ids: [id] } },
-      ];
+      gs.boardEffects[id] = [...(gs.boardEffects[id] ?? []), { ...payload.effect }];
     }
     return gs;
   }

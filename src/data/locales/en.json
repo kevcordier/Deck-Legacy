@@ -31,6 +31,10 @@
     "subtitle": "Here are the new cards discovered for this round.",
     "start": "▶ Start round"
   },
+  "endturn": {
+    "title": "Turn {{turn}}",
+    "start": "▶ Start turn"
+  },
   "sections": {
     "permanents": "Permanents",
     "tableau": "Tableau"

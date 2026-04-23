@@ -110,7 +110,7 @@ export const lake: CardDef = {
               id: 1,
               type: ActionType.DISCARD_CARD,
               cards: {
-                scope: TargetScope.TOP_OF_DECK,
+                scope: [TargetScope.TOP_OF_DECK],
               },
             },
           ],

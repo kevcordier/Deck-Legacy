@@ -111,7 +111,7 @@ export const distantMountain: CardDef = {
         {
           id: '2-4-1',
           cost: {
-            destroy: { scope: TargetScope.SELF },
+            destroy: { scope: [TargetScope.SELF] },
           },
           actionEffects: [
             {

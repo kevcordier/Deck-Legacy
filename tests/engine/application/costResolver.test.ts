@@ -52,7 +52,7 @@ describe('resolveCost — discard', () => {
     });
     const defs: Record<number, CardDef> = { 10: makeDef(10) };
     const [, pending] = resolveCost(
-      { discard: { scope: TargetScope.BOARD } }, // no number specified
+      { discard: { scope: [TargetScope.BOARD] } }, // no number specified
       1,
       gs,
       defs,
@@ -71,7 +71,7 @@ describe('resolveCost — discard', () => {
     });
     const defs: Record<number, CardDef> = { 10: makeDef(10) };
     const [resolved, pending] = resolveCost(
-      { discard: { scope: TargetScope.BOARD, number: 1 } },
+      { discard: { scope: [TargetScope.BOARD], number: 1 } },
       1,
       gs,
       defs,
@@ -93,7 +93,7 @@ describe('resolveCost — discard', () => {
     });
     const defs: Record<number, CardDef> = { 10: makeDef(10) };
     const [resolved, pending] = resolveCost(
-      { discard: { scope: TargetScope.BOARD, number: 1 } },
+      { discard: { scope: [TargetScope.BOARD], number: 1 } },
       1,
       gs,
       defs,
@@ -109,7 +109,7 @@ describe('resolveCost — discard', () => {
     });
     const defs: Record<number, CardDef> = { 10: makeDef(10) };
     const [resolved, pending] = resolveCost(
-      { discard: { scope: TargetScope.BOARD, number: 1 } },
+      { discard: { scope: [TargetScope.BOARD], number: 1 } },
       1,
       gs,
       defs,
@@ -133,7 +133,7 @@ describe('resolveCost — destroy', () => {
     });
     const defs: Record<number, CardDef> = { 10: makeDef(10) };
     const [resolved, pending] = resolveCost(
-      { destroy: { scope: TargetScope.BOARD, number: 1 } },
+      { destroy: { scope: [TargetScope.BOARD], number: 1 } },
       1,
       gs,
       defs,
@@ -155,7 +155,7 @@ describe('resolveCost — destroy', () => {
     });
     const defs: Record<number, CardDef> = { 10: makeDef(10) };
     const [, pending] = resolveCost(
-      { destroy: { scope: TargetScope.BOARD } }, // no number specified
+      { destroy: { scope: [TargetScope.BOARD] } }, // no number specified
       1,
       gs,
       defs,
@@ -174,7 +174,7 @@ describe('resolveCost — destroy', () => {
     });
     const defs: Record<number, CardDef> = { 10: makeDef(10) };
     const [resolved, pending] = resolveCost(
-      { destroy: { scope: TargetScope.BOARD, number: 2 } },
+      { destroy: { scope: [TargetScope.BOARD], number: 2 } },
       1, // instanceId 1 is excluded, leaving [2, 3] — exactly 2
       gs,
       defs,
@@ -190,7 +190,7 @@ describe('resolveCost — destroy', () => {
     });
     const defs: Record<number, CardDef> = { 10: makeDef(10) };
     const [resolved, pending] = resolveCost(
-      { destroy: { scope: TargetScope.BOARD, number: 1 } },
+      { destroy: { scope: [TargetScope.BOARD], number: 1 } },
       1,
       gs,
       defs,

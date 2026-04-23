@@ -69,7 +69,7 @@ export const eastCliffs: CardDef = {
               id: 2,
               type: ActionType.UPGRADE_CARD,
               cards: {
-                scope: TargetScope.SELF,
+                scope: [TargetScope.SELF],
               },
               states: [1],
             },
@@ -109,11 +109,13 @@ export const eastCliffs: CardDef = {
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,
-              resourcePerCard: {
+              valuePerElement: {
                 amount: 1,
-                resource: ResourceType.WEAPON,
-                scope: TargetScope.BOARD,
-                tags: [CardTag.PERSON],
+                resource: [ResourceType.WEAPON],
+                cards: {
+                  scope: [TargetScope.BOARD],
+                  tags: [CardTag.PERSON],
+                },
               },
             },
           ],

@@ -8,7 +8,7 @@ import { useGame } from '@hooks/useGame';
 import { useTranslation } from 'react-i18next';
 
 export function MainBoard() {
-  const { state, startTurn } = useGame();
+  const { state, startTurn, defs } = useGame();
   const { t } = useTranslation();
   return (
     <main className="scrollbar @container/main flex flex-1 flex-col gap-6 py-4">
@@ -38,16 +38,23 @@ export function MainBoard() {
         </EmptyState>
       )}
 
+      {state.phase === Phase.END_TURN && (
+        <EmptyState
+          title={t('endturn.title', { turn: state.turn })}
+          action={
+            <Button onClick={startTurn} color="primary" size="md">
+              {t('endturn.start')}
+            </Button>
+          }
+        />
+      )}
+
       {state.phase === Phase.PLAYING && state.board.length > 0 && (
         <Section
           title={t('sections.tableau')}
           subtitle={`${t('cardCount', { count: state.board.length })}`}
         >
-          <CardRow
-            cardIds={state.board}
-            boardEffects={state.boardEffects}
-            instances={state.instances}
-          />
+          <CardRow cardIds={state.board} gameState={state} defs={defs} />
         </Section>
       )}
 
@@ -56,11 +63,7 @@ export function MainBoard() {
           title={t('sections.permanents')}
           subtitle={t('cardCount', { count: state.permanents.length })}
         >
-          <CardRow
-            cardIds={state.permanents}
-            boardEffects={state.boardEffects}
-            instances={state.instances}
-          />
+          <CardRow cardIds={state.permanents} gameState={state} defs={defs} />
         </Section>
       )}
     </main>

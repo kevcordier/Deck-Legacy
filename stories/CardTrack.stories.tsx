@@ -18,7 +18,6 @@ type Story = StoryObj<typeof CardTrack>;
 
 const gloryTrack = {
   inOrder: true,
-  cumulative: false,
   endsTurn: true,
   steps: [
     { id: 1, cost: { resources: [{ weapon: 1 }] }, onClick: { glory: 1 } },
@@ -37,7 +36,6 @@ const gloryTrack = {
 
 const freeTrack = {
   inOrder: false,
-  cumulative: false,
   endsTurn: false,
   steps: [
     {
@@ -71,8 +69,6 @@ const freeTrack = {
 
 const emptyStep = {
   inOrder: true,
-  cumulative: false,
-  endsTurn: false,
   steps: [
     { id: 1, cost: {}, onClick: {} },
     { id: 2, cost: {}, onClick: {} },

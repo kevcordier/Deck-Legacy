@@ -106,7 +106,7 @@ export const river: CardDef = {
               id: 2,
               type: ActionType.UPGRADE_CARD,
               cards: {
-                scope: TargetScope.SELF,
+                scope: [TargetScope.SELF],
               },
               states: [3],
             },

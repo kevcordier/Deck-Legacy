@@ -20,14 +20,13 @@ export const treasury: CardDef = {
               id: 1,
               type: ActionType.TRACK_ADVANCE,
               cards: {
-                scope: TargetScope.SELF,
+                scope: [TargetScope.SELF],
               },
             },
           ],
         },
       ],
       track: {
-        cumulative: false,
         inOrder: true,
         steps: [
           {
@@ -45,7 +44,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 1 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -65,7 +64,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 2 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -85,7 +84,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 3 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -105,7 +104,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 5 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -125,7 +124,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 7 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -145,7 +144,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 10 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -165,7 +164,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 14 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -185,7 +184,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 19 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -205,7 +204,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 25 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -225,7 +224,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 32 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -245,7 +244,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 40 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -264,7 +263,7 @@ export const treasury: CardDef = {
                 id: 2,
                 type: ActionType.UPGRADE_CARD,
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
                 states: [2],
               },
@@ -288,14 +287,13 @@ export const treasury: CardDef = {
               id: 1,
               type: ActionType.TRACK_ADVANCE,
               cards: {
-                scope: TargetScope.SELF,
+                scope: [TargetScope.SELF],
               },
             },
           ],
         },
       ],
       track: {
-        cumulative: false,
         inOrder: true,
         steps: [
           {
@@ -313,7 +311,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 10 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -333,7 +331,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 20 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -353,7 +351,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 30 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -373,7 +371,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 40 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -393,7 +391,7 @@ export const treasury: CardDef = {
                 type: ActionType.SET_CUMULATED,
                 accumulated: { glory: 50 },
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],

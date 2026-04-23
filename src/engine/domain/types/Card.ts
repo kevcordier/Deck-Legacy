@@ -19,7 +19,6 @@ export type CardDef = {
 
 export type StepDef = {
   id: number;
-  label?: string;
   cost?: Cost;
   effects?: ActionEffect[];
 };
@@ -27,10 +26,8 @@ export type StepDef = {
 export type TrackDef = {
   steps: StepDef[];
   inOrder: boolean;
-  cumulative: boolean;
   vertical?: boolean;
   inverse?: boolean;
-  preround?: boolean;
 };
 
 export type CardState = {
@@ -49,7 +46,6 @@ export type CardState = {
 
 export type UpgradeDef = {
   cost: Cost;
-  destroy?: CardeSelector;
   upgradeTo: number; // id of a state within the same card
 };
 
@@ -63,6 +59,14 @@ export type CardAction = {
   optional?: boolean;
 };
 
+export type ValuePerElement = {
+  amount: number;
+  resource?: ResourceType[];
+  glory?: number;
+  cards?: CardeSelector;
+  accumulation?: string;
+};
+
 export type ActionEffect = {
   id: number;
   type: ActionType;
@@ -71,13 +75,7 @@ export type ActionEffect = {
   accumulated?: Record<string, number>;
   states?: number[];
   stickerIds?: number[];
-  resourcePerCard?: {
-    amount: number;
-    resource: ResourceType;
-    scope?: TargetScope;
-    tags?: string[];
-    ids?: number[];
-  };
+  valuePerElement?: ValuePerElement;
   effect?: Passive;
 };
 
@@ -101,18 +99,15 @@ export type Passive = {
   };
   states?: number[];
   stickerIds?: number[];
-  resourcePerCard?: {
-    amount: number;
-    resource: ResourceType;
-    cards: CardeSelector;
-  };
+  valuePerElement?: ValuePerElement;
 };
 
 export type CardeSelector = {
   number?: number;
   ids?: number[];
-  tags?: string[];
-  scope?: TargetScope;
+  tags?: CardTag[];
+  scope?: TargetScope[];
+  name?: string;
   label?: string;
   produces?: ResourceType[];
 };

@@ -3,6 +3,7 @@ import { Title } from '@components/ui/Title/Title';
 import { Phase } from '@engine/domain/types/Phase';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export function Header() {
@@ -15,44 +16,77 @@ export function Header() {
   const haveChoiceToDo =
     (!!pendingChoices && pendingChoices.length > 0) ||
     (!!triggerPile && Object.keys(triggerPile).length > 0);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target;
+      const isEditableTarget =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT');
+
+      if (isEditableTarget) return;
+
+      const isUndoShortcut =
+        (event.ctrlKey || event.metaKey) &&
+        !event.altKey &&
+        !event.shiftKey &&
+        event.key.toLowerCase() === 'z';
+
+      if (!isUndoShortcut || !canRewind()) return;
+
+      event.preventDefault();
+      rewindEvent();
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [canRewind, rewindEvent]);
+
   return (
     <header className="bg-background border-b-border z-101 flex items-center justify-between border-b px-6 py-3">
       <Title level={2}>{t('game.title')}</Title>
 
       <div className="align-center flex gap-2">
-        {/* Gameplay buttons — hidden on mobile (moved to bottom action bar) */}
-        {state.phase === Phase.PLAYING && (
-          <div className="hidden items-center gap-2 lg:flex">
-            {canRewind() && (
+        <div className="hidden items-center gap-2 lg:flex">
+          {canRewind() && (
+            <Button
+              onClick={() => rewindEvent()}
+              title={t('header.undoTitle')}
+              color="danger"
+              size="xs"
+            >
+              ↩
+            </Button>
+          )}
+          {state.phase === Phase.PLAYING && (
+            <>
               <Button
-                onClick={() => rewindEvent()}
-                title={t('header.undoTitle')}
-                color="danger"
+                onClick={progress}
+                disabled={deckEmpty || haveChoiceToDo}
+                variant="outlined"
                 size="xs"
               >
-                ↩
+                <span className="hidden lg:inline">›› </span>
+                {t('header.progress')}
+                {deckEmpty ? '' : ` (${Math.min(2, state.drawPile.length)})`}
               </Button>
-            )}
-            <Button
-              onClick={progress}
-              disabled={deckEmpty || haveChoiceToDo}
-              variant="outlined"
-              size="xs"
-            >
-              <span className="hidden lg:inline">›› </span>
-              {t('header.progress')}
-              {deckEmpty ? '' : ` (${Math.min(2, state.drawPile.length)})`}
-            </Button>
-            <Button
-              onClick={endTurnVoluntary}
-              disabled={haveChoiceToDo}
-              variant="outlined"
-              size="xs"
-            >
-              {t('header.endTurn')}
-            </Button>
-          </div>
-        )}
+              <Button
+                onClick={endTurnVoluntary}
+                disabled={haveChoiceToDo}
+                variant="outlined"
+                size="xs"
+              >
+                {t('header.endTurn')}
+              </Button>
+            </>
+          )}
+        </div>
         <Button onClick={() => setRulesOpen(true)} color="danger" size="xs" title={t('rules.open')}>
           ?
         </Button>

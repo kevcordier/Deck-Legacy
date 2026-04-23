@@ -20,8 +20,8 @@ describe('AddBoardEffectStrategy', () => {
       instanceIds: [2, 3],
       effect,
     });
-    expect(result.boardEffects[2]).toEqual([{ ...effect, cards: { ids: [2] } }]);
-    expect(result.boardEffects[3]).toEqual([{ ...effect, cards: { ids: [3] } }]);
+    expect(result.boardEffects[2]).toEqual([{ ...effect }]);
+    expect(result.boardEffects[3]).toEqual([{ ...effect }]);
   });
 
   it('appends to existing boardEffects for the same key', () => {
@@ -34,7 +34,7 @@ describe('AddBoardEffectStrategy', () => {
       instanceIds: [2],
       effect,
     });
-    expect(result.boardEffects[2]).toEqual([existing, { ...effect, cards: { ids: [2] } }]);
+    expect(result.boardEffects[2]).toEqual([existing, { ...effect }]);
   });
 
   it('returns unchanged state when instanceIds is empty', () => {

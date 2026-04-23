@@ -21,7 +21,7 @@ export const fieldWorker: CardDef = {
               type: ActionType.ADD_RESOURCES,
               resources: {
                 cards: {
-                  scope: TargetScope.BOARD,
+                  scope: [TargetScope.BOARD],
                   tags: [CardTag.LAND],
                   produces: [
                     ResourceType.GOLD,

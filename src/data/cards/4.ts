@@ -46,7 +46,7 @@ export const headquarters: CardDef = {
               type: ActionType.PLAY_CARD,
               cards: {
                 tags: [CardTag.LAND],
-                scope: TargetScope.DISCARD,
+                scope: [TargetScope.DISCARD],
               },
             },
           ],
@@ -87,7 +87,7 @@ export const headquarters: CardDef = {
               type: ActionType.PLAY_CARD,
               cards: {
                 tags: [CardTag.LAND, CardTag.BUILDING],
-                scope: TargetScope.DISCARD,
+                scope: [TargetScope.DISCARD],
               },
             },
           ],
@@ -128,7 +128,7 @@ export const headquarters: CardDef = {
               id: 1,
               type: ActionType.PLAY_CARD,
               cards: {
-                scope: TargetScope.DISCARD,
+                scope: [TargetScope.DISCARD],
               },
             },
           ],

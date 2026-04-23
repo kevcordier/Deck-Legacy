@@ -64,11 +64,13 @@ export const entrepreneur: CardDef = {
             {
               id: 1,
               type: ActionType.ADD_RESOURCES,
-              resourcePerCard: {
+              valuePerElement: {
                 amount: 1,
-                scope: TargetScope.BOARD,
-                tags: [CardTag.PERSON],
-                resource: ResourceType.GOLD,
+                resource: [ResourceType.GOLD],
+                cards: {
+                  scope: [TargetScope.BOARD],
+                  tags: [CardTag.PERSON],
+                },
               },
             },
           ],
@@ -105,7 +107,7 @@ export const entrepreneur: CardDef = {
           id: '23-3-1',
           cost: {
             discard: {
-              scope: TargetScope.BOARD,
+              scope: [TargetScope.BOARD],
               tags: [CardTag.PERSON],
             },
           },

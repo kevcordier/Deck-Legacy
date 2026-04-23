@@ -74,7 +74,7 @@ export const opportunist: CardDef = {
               id: 1,
               type: ActionType.ADD_STICKER,
               cards: {
-                scope: TargetScope.SELF,
+                scope: [TargetScope.SELF],
               },
               states: [1, 2, 3], // scope state without stickers
               stickerIds: [1, 2, 3, 4, 5, 6],
@@ -83,7 +83,7 @@ export const opportunist: CardDef = {
               id: 2,
               type: ActionType.CHOOSE_STATE,
               cards: {
-                scope: TargetScope.SELF,
+                scope: [TargetScope.SELF],
               },
               states: [1],
             },

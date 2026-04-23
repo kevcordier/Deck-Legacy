@@ -20,7 +20,7 @@ export const exportation: CardDef = {
               id: 1,
               type: ActionType.ADD_CUMULATED,
               cards: {
-                scope: TargetScope.SELF,
+                scope: [TargetScope.SELF],
               },
               accumulated: { goods: 1 },
             },
@@ -35,9 +35,7 @@ export const exportation: CardDef = {
         },
       ],
       track: {
-        cumulative: true,
         inOrder: true,
-        preround: true,
         vertical: true,
         inverse: true,
         steps: [
@@ -115,7 +113,7 @@ export const exportation: CardDef = {
                 type: ActionType.ADD_STICKER,
                 stickerIds: [2, 3, 4],
                 cards: {
-                  scope: TargetScope.FRIENDLY,
+                  scope: [TargetScope.FRIENDLY],
                 },
               },
             ],
@@ -131,7 +129,7 @@ export const exportation: CardDef = {
                 type: ActionType.ADD_STICKER,
                 stickerIds: [10],
                 cards: {
-                  scope: TargetScope.ANY,
+                  scope: [TargetScope.ANY],
                 },
               },
             ],
@@ -146,7 +144,7 @@ export const exportation: CardDef = {
                 id: 1,
                 type: ActionType.SET_CUMULATED,
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
                 accumulated: { goods: 0 },
               },
@@ -155,7 +153,7 @@ export const exportation: CardDef = {
                 type: ActionType.UPGRADE_CARD,
                 states: [2],
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             ],
@@ -178,7 +176,7 @@ export const exportation: CardDef = {
               id: 1,
               type: ActionType.ADD_CUMULATED,
               cards: {
-                scope: TargetScope.SELF,
+                scope: [TargetScope.SELF],
               },
               accumulated: { goods: 1 },
             },
@@ -193,7 +191,6 @@ export const exportation: CardDef = {
         },
       ],
       track: {
-        cumulative: false,
         inOrder: true,
         vertical: true,
         inverse: true,
@@ -279,7 +276,7 @@ export const exportation: CardDef = {
                 id: 1,
                 type: ActionType.TRACK_ADVANCE,
                 cards: {
-                  scope: TargetScope.PERMANENTS,
+                  scope: [TargetScope.PERMANENTS],
                 },
               },
             ],
@@ -294,7 +291,7 @@ export const exportation: CardDef = {
                 id: 1,
                 type: ActionType.TRACK_ADVANCE,
                 cards: {
-                  scope: TargetScope.PERMANENTS,
+                  scope: [TargetScope.PERMANENTS],
                 },
               },
             ],

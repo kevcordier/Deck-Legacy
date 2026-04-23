@@ -27,7 +27,7 @@ export const shrine: CardDef = {
           optional: true,
           cost: {
             discard: {
-              scope: TargetScope.SELF,
+              scope: [TargetScope.SELF],
             },
           },
           actionEffects: [
@@ -35,12 +35,12 @@ export const shrine: CardDef = {
               id: 1,
               type: ActionType.ADD_BOARD_EFFECT,
               cards: {
-                scope: TargetScope.BOARD,
+                scope: [TargetScope.BOARD],
               },
               effect: {
                 ...CardPassives[PassiveType.STAY_IN_PLAY],
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             },
@@ -74,7 +74,7 @@ export const shrine: CardDef = {
           optional: true,
           cost: {
             discard: {
-              scope: TargetScope.SELF,
+              scope: [TargetScope.SELF],
             },
           },
           actionEffects: [
@@ -82,13 +82,13 @@ export const shrine: CardDef = {
               id: 1,
               type: ActionType.ADD_BOARD_EFFECT,
               cards: {
-                scope: TargetScope.BOARD,
+                scope: [TargetScope.BOARD],
                 number: 2,
               },
               effect: {
                 ...CardPassives[PassiveType.STAY_IN_PLAY],
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             },
@@ -123,7 +123,7 @@ export const shrine: CardDef = {
           optional: true,
           cost: {
             discard: {
-              scope: TargetScope.SELF,
+              scope: [TargetScope.SELF],
             },
           },
           actionEffects: [
@@ -131,13 +131,13 @@ export const shrine: CardDef = {
               id: 1,
               type: ActionType.ADD_BOARD_EFFECT,
               cards: {
-                scope: TargetScope.BOARD,
+                scope: [TargetScope.BOARD],
                 number: 3,
               },
               effect: {
                 ...CardPassives[PassiveType.STAY_IN_PLAY],
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             },
@@ -172,7 +172,7 @@ export const shrine: CardDef = {
           optional: true,
           cost: {
             discard: {
-              scope: TargetScope.SELF,
+              scope: [TargetScope.SELF],
             },
           },
           actionEffects: [
@@ -180,13 +180,13 @@ export const shrine: CardDef = {
               id: 1,
               type: ActionType.ADD_BOARD_EFFECT,
               cards: {
-                scope: TargetScope.BOARD,
+                scope: [TargetScope.BOARD],
                 number: 4,
               },
               effect: {
                 ...CardPassives[PassiveType.STAY_IN_PLAY],
                 cards: {
-                  scope: TargetScope.SELF,
+                  scope: [TargetScope.SELF],
                 },
               },
             },

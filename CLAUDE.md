@@ -138,9 +138,7 @@ Action {
 TrackDef {
   steps: StepDef[]        // ordered list of steps
   inOrder: boolean        // must be accessed sequentially
-  cumulative: boolean     // bonuses accumulate across steps
   vertical?: boolean      // display flag
-  preround?: boolean      // track resets each round
 }
 
 StepDef {
@@ -189,7 +187,6 @@ CardInstance {
   stateId:       number                     // current CardState.id
   stickers:      Record<number, number[]>   // stickers[stateId] = [stickerId, …]
   trackProgress: number[]                   // IDs of validated track steps
-  cumulated:     number                     // accumulated value for cumulative tracks
 }
 
 TriggerEntry {

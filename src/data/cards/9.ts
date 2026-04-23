@@ -23,7 +23,7 @@ export const bandit: CardDef = {
               id: 1,
               type: ActionType.BLOCK_CARD,
               cards: {
-                scope: TargetScope.BOARD,
+                scope: [TargetScope.BOARD],
                 produces: [ResourceType.GOLD],
               },
             },
@@ -37,7 +37,7 @@ export const bandit: CardDef = {
                 [ResourceType.WEAPON]: 1,
               },
             ],
-            destroy: { scope: TargetScope.SELF },
+            destroy: { scope: [TargetScope.SELF] },
           },
           actionEffects: [
             {
@@ -111,7 +111,7 @@ export const bandit: CardDef = {
               type: ActionType.ADD_RESOURCES,
               resources: {
                 cards: {
-                  scope: TargetScope.BOARD,
+                  scope: [TargetScope.BOARD],
                   tags: [CardTag.BUILDING],
                 },
               },

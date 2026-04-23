@@ -24,16 +24,41 @@ export function getAffectedCardsByBoardEffects(
     effects
       .filter(be => be.type === passiveType)
       .forEach(be => {
-        if (be.cards?.ids) {
-          affectedInstanceIds[Number(sourceId)] = [
-            ...(affectedInstanceIds[Number(sourceId)] ?? []),
-            ...be.cards.ids,
-          ];
-        }
+        const ids = be.cards?.ids ?? [Number(sourceId)];
+        affectedInstanceIds[Number(sourceId)] = [
+          ...(affectedInstanceIds[Number(sourceId)] ?? []),
+          ...ids,
+        ];
       }),
   );
 
   return affectedInstanceIds;
+}
+
+function getBoardEffectsBonus(
+  instance: CardInstance,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+): Resources {
+  let bonus: Resources = {};
+  for (const [instanceSource, passives] of Object.entries(gameState.boardEffects)) {
+    for (const passive of passives
+      .flat()
+      .filter(p => p.type === PassiveType.INCREASE_PRODUCTION && p.resources)) {
+      if (
+        cardSelector(
+          passive.cards ?? { scope: [TargetScope.BOARD] },
+          Number(instanceSource),
+          gameState,
+          defs,
+        ).includes(instance.id) &&
+        passive.resources
+      ) {
+        bonus = mergeResources(bonus, passive.resources);
+      }
+    }
+  }
+  return bonus;
 }
 
 export function getEffectiveProductions(
@@ -62,16 +87,64 @@ export function getEffectiveProductions(
 
   let passiveBonus: Resources = {};
   for (const passive of activeState.passives ?? []) {
-    if (passive.type === PassiveType.INCREASE_PRODUCTION && passive.resourcePerCard) {
-      const { amount, resource, cards: sel } = passive.resourcePerCard;
-      const count = cardSelector(sel, instance.id, gameState, defs).length;
+    if (
+      passive.type === PassiveType.INCREASE_PRODUCTION &&
+      passive.valuePerElement &&
+      passive.valuePerElement.resource
+    ) {
+      const { amount, resource, cards: sel, accumulation } = passive.valuePerElement;
+      let count = 0;
+      if (sel) {
+        count = cardSelector(sel, instance.id, gameState, defs).length;
+      } else if (accumulation) {
+        count = gameState.instances[instance.id].cumulated?.[accumulation] ?? 0;
+      }
+
       if (count > 0) {
-        passiveBonus = mergeResources(passiveBonus, { [resource]: amount * count });
+        passiveBonus = mergeResources(passiveBonus, { [resource[0]]: amount * count });
       }
     }
   }
 
-  return mergeResources(mergeResources(base, stickerBonus), passiveBonus);
+  const boardEffectsBonus = getBoardEffectsBonus(instance, gameState, defs);
+
+  return mergeResources(
+    mergeResources(base, stickerBonus),
+    mergeResources(passiveBonus, boardEffectsBonus),
+  );
+}
+
+export function getEffectiveGlory(
+  activeState: CardState,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  instance: CardInstance,
+  stickers: Record<number, Sticker> = {},
+): number {
+  const baseGlory = activeState.glory ?? 0;
+  const stickerGlory = (instance.stickers[instance.stateId] ?? []).reduce(
+    (acc, stickerId) => acc + (stickers[stickerId]?.glory ?? 0),
+    0,
+  );
+  const accumulatedGlory = instance.cumulated['glory'] ?? 0;
+
+  const passiveGlory = (activeState.passives ?? []).reduce((acc, passive) => {
+    if (passive.type !== PassiveType.INCREASE_GLORY || !passive.valuePerElement?.glory) {
+      return acc;
+    }
+
+    const { glory, cards: sel, accumulation } = passive.valuePerElement;
+    let count = 0;
+    if (sel) {
+      count = cardSelector(sel, instance.id, gameState, defs).length;
+    } else if (accumulation) {
+      count = gameState.instances[instance.id].cumulated?.[accumulation] ?? 0;
+    }
+
+    return acc + glory * count;
+  }, 0);
+
+  return baseGlory + stickerGlory + accumulatedGlory + passiveGlory;
 }
 
 export function tagClass(tag: string, isEnemy: boolean): string {
@@ -130,7 +203,7 @@ function getBoardEffectTriggersAction(
             id: `board_effect_${sourceId}`,
             actionEffects: be.trigger.actions.map(ae => ({
               ...ae,
-              cards: ae.cards?.scope === TargetScope.SELF ? { ids: [instanceId] } : ae.cards,
+              cards: ae.cards?.scope?.includes(TargetScope.SELF) ? { ids: [instanceId] } : ae.cards,
             })),
           });
         }
@@ -157,7 +230,7 @@ export function getInstancesTriggerEffects(
           {
             id: 0,
             type: ActionType.CHOOSE_STATE,
-            cards: { scope: TargetScope.SELF },
+            cards: { scope: [TargetScope.SELF] },
             states: [1, 2],
           },
         ],

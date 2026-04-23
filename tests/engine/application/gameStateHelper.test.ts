@@ -405,6 +405,47 @@ describe('computeScore', () => {
     expect(computeScore(gs, defs, {})).toBe(4);
   });
 
+  it('adds passive INCREASE_GLORY based on accumulation', () => {
+    const gs = makeGameState({
+      drawPile: [1],
+      instances: {
+        1: {
+          id: 1,
+          cardId: 10,
+          stateId: 1,
+          stickers: {},
+          trackProgress: [],
+          cumulated: { accumulation: 2 },
+        },
+      },
+    });
+    const defs: Record<number, CardDef> = {
+      10: {
+        id: 10,
+        name: 'A',
+        states: [
+          {
+            id: 1,
+            name: 'S1',
+            glory: 1,
+            passives: [
+              {
+                id: 'p1',
+                type: PassiveType.INCREASE_GLORY,
+                valuePerElement: {
+                  amount: 1,
+                  glory: 3,
+                  accumulation: 'accumulation',
+                },
+              },
+            ],
+          },
+        ],
+      },
+    };
+    expect(computeScore(gs, defs, {})).toBe(7);
+  });
+
   it('ignores cards without a matching instance', () => {
     const gs = makeGameState({
       drawPile: [99],
@@ -422,6 +463,10 @@ describe('mergeResources', () => {
 
   it('copies values from a when b is empty', () => {
     expect(mergeResources({ gold: 3, wood: 2 }, {})).toEqual({ gold: 3, wood: 2 });
+  });
+
+  it('copies values from a when b is undefined', () => {
+    expect(mergeResources({ gold: 3, wood: 2 }, undefined)).toEqual({ gold: 3, wood: 2 });
   });
 
   it('copies values from b when a is empty', () => {

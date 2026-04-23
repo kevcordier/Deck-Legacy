@@ -1,4 +1,8 @@
-import { cardShouldStayInPlay, getActiveState } from '@engine/application/cardHelpers';
+import {
+  cardShouldStayInPlay,
+  getActiveState,
+  getEffectiveGlory,
+} from '@engine/application/cardHelpers';
 import type { ResourceType } from '@engine/domain/enums';
 import type { CardDef, GameState, Resources, Sticker } from '@engine/domain/types';
 
@@ -72,17 +76,15 @@ export function computeScore(
     const instance = state.instances[id];
     if (!instance) return total;
     const cs = getActiveState(instance, defs);
-    const stickerGlory =
-      instance.stickers[instance.stateId]?.reduce((sum, s) => sum + (stickers[s]?.glory ?? 0), 0) ??
-      0;
-    const accumulatedGlory = instance.cumulated['glory'] ?? 0;
-    return total + (cs.glory ?? 0) + stickerGlory + accumulatedGlory;
+    return (
+      total + getEffectiveGlory(cs, state, defs, instance, stickers as Record<number, Sticker>)
+    );
   }, 0);
 }
 
-export function mergeResources(a: Resources, b: Resources): Resources {
+export function mergeResources(a: Resources, b?: Resources): Resources {
   const result = JSON.parse(JSON.stringify(a)) as Resources;
-  for (const [k, v] of Object.entries(b)) {
+  for (const [k, v] of Object.entries(b ?? {})) {
     result[k as keyof Resources] = (result[k as keyof Resources] ?? 0) + v;
   }
   return result;

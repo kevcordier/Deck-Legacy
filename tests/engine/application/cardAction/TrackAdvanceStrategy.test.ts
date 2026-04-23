@@ -13,11 +13,7 @@ const makeDefWithTrack = (id: number): CardDef => ({
       name: 'State 1',
       track: {
         inOrder: true,
-        cumulative: false,
-        steps: [
-          { id: 10, label: 'Step A' },
-          { id: 11, label: 'Step B' },
-        ],
+        steps: [{ id: 10 }, { id: 11 }],
       },
     },
   ],

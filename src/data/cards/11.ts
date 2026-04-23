@@ -143,13 +143,13 @@ export const hill: CardDef = {
           id: 'increase_production',
           type: PassiveType.INCREASE_PRODUCTION,
           cards: {
-            scope: TargetScope.SELF,
+            scope: [TargetScope.SELF],
           },
-          resourcePerCard: {
-            resource: ResourceType.GOLD,
+          valuePerElement: {
+            resource: [ResourceType.GOLD],
             amount: 1,
             cards: {
-              scope: TargetScope.BOARD,
+              scope: [TargetScope.BOARD],
               tags: [CardTag.PERSON],
             },
           },

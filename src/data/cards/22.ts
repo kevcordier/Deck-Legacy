@@ -20,7 +20,7 @@ export const stop3: CardDef = {
               type: ActionType.DISCOVER_CARD,
               cards: {
                 number: 2,
-                scope: TargetScope.DISCOVERY,
+                scope: [TargetScope.DISCOVERY],
                 ids: [31, 32, 33, 34],
               },
             },
@@ -29,7 +29,7 @@ export const stop3: CardDef = {
               type: ActionType.DESTROY_CARD,
               cards: {
                 number: 2,
-                scope: TargetScope.DISCOVERY,
+                scope: [TargetScope.DISCOVERY],
                 ids: [31, 32, 33, 34],
               },
             },

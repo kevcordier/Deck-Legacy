@@ -11,6 +11,7 @@ import type {
   ResolvedAction,
   ResourceSelector,
   Resources,
+  ValuePerElement,
 } from '@engine/domain/types';
 
 interface ResolveContext {
@@ -59,6 +60,10 @@ export function resolveActionEffect(
 
   if (action.type === ActionType.BOOST_CARD) {
     action.cards = { ...action.cards, produces: Object.values(ResourceType) };
+  }
+
+  if (action.valuePerElement) {
+    resolveValuePerElement(ctx, action.valuePerElement);
   }
 
   if (action.cards) {
@@ -174,6 +179,50 @@ function resolveBoardEffect(
   return [resolverAction, pendingChoices];
 }
 
+function resolveValuePerElement(ctx: ResolveContext, valuePerElement: ValuePerElement): void {
+  const {
+    gameState,
+    instanceId,
+    defs,
+    actionId,
+    resolverAction,
+    actionType,
+    pendingChoices,
+    isMandatory,
+  } = ctx;
+
+  let number = 0;
+  if (valuePerElement.cards) {
+    number = cardSelector(valuePerElement.cards, instanceId, gameState, defs).length;
+  } else if (valuePerElement.accumulation) {
+    number = gameState.instances[instanceId].cumulated?.[valuePerElement.accumulation] ?? 0;
+  }
+
+  if (number === 0) {
+    return;
+  }
+
+  if (valuePerElement.resource && valuePerElement.resource.length === 1) {
+    resolverAction.resources = {
+      [valuePerElement.resource[0]]: number * valuePerElement.amount,
+    };
+  }
+  if (valuePerElement.resource && valuePerElement.resource.length > 1) {
+    Array.from({ length: number }).forEach(() => {
+      pendingChoices.push({
+        // Keep the same id as the resolved action so each pick merges into it.
+        id: `${instanceId}-${actionId}`,
+        kind: actionType,
+        type: PendingChoiceType.CHOOSE_RESOURCE,
+        sourceInstanceId: instanceId,
+        choices: valuePerElement.resource?.map(r => ({ [r]: 1 })) as Resources[],
+        pickCount: 1,
+        isMandatory,
+      });
+    });
+  }
+}
+
 function resolveCardTarget(ctx: ResolveContext, cards: CardeSelector): void {
   const {
     actionId,
@@ -198,7 +247,8 @@ function resolveCardTarget(ctx: ResolveContext, cards: CardeSelector): void {
   const pickCount = cards.number ?? 1;
   if (
     choices.length === 1 ||
-    (cards.scope && [TargetScope.SELF, TargetScope.TOP_OF_DECK].includes(cards.scope))
+    (cards.scope &&
+      (cards.scope.includes(TargetScope.SELF) || cards.scope.includes(TargetScope.TOP_OF_DECK)))
   ) {
     resolverAction.instanceIds = [choices[0]];
     return;

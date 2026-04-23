@@ -79,6 +79,39 @@ export function GameProvider({
     destroyedCardIds: [],
   };
 
+  const buildEffectsToApply = (
+    effect: CardAction['actionEffects'][number],
+    resolvedAction: ResolvedAction,
+  ): ResolvedAction[] => {
+    const effectsToApply: ResolvedAction[] = [resolvedAction];
+    if (
+      effect.type !== ActionType.TRACK_ADVANCE ||
+      resolvedAction.instanceIds?.[0] === undefined ||
+      resolvedAction.stepId === undefined
+    ) {
+      return effectsToApply;
+    }
+
+    const currentGs = aggRef.current.getGameState();
+    const trackTargetId = resolvedAction.instanceIds[0];
+    const targetInst = currentGs.instances[trackTargetId];
+    if (!targetInst) {
+      return effectsToApply;
+    }
+
+    const targetState = getActiveState(targetInst, defs);
+    const step = targetState.track?.steps.find(s => s.id === resolvedAction.stepId);
+    for (const stepEff of step?.effects ?? []) {
+      const [stepResolved] = resolveActionEffect(stepEff, trackTargetId, currentGs, defs, true);
+      effectsToApply.push({
+        ...stepResolved,
+        instanceIds: stepResolved.instanceIds ?? [trackTargetId],
+      });
+    }
+
+    return effectsToApply;
+  };
+
   const triggerAction = (
     instanceId: number,
     cardAction: CardAction,
@@ -112,9 +145,11 @@ export function GameProvider({
         return undefined;
       }
 
+      const effectsToApply = buildEffectsToApply(eff, resolvedAction);
+
       aggRef.current.applyCardEffect(
         cardAction.id,
-        [resolvedAction],
+        effectsToApply,
         isLast ? resolvedCost : emptyResolvedCost,
         triggerId,
         {
@@ -279,7 +314,7 @@ export function GameProvider({
     for (const stepEffect of step.effects ?? []) {
       const [resolved, choices] = resolveActionEffect(stepEffect, targetId, gs, defs, true);
       stepPendingChoices.push(...choices);
-      stepResolvedActions.push(resolved);
+      stepResolvedActions.push({ ...resolved, instanceIds: resolved.instanceIds ?? [targetId] });
     }
 
     const allEffects = [trackResolvedAction, ...stepResolvedActions];
@@ -391,8 +426,14 @@ export function GameProvider({
     const action = cs.actions?.find(ce => ce.id === actionId);
     if (!action) return;
 
-    // TRACK_ADVANCE cost lives on the step, not the CardAction — handle separately
-    if (action.actionEffects.some(e => e.type === ActionType.TRACK_ADVANCE)) {
+    // TRACK_ADVANCE cost lives on the step, not the CardAction — handle separately.
+    // For pure TRACK_ADVANCE actions, use the dedicated path that handles step costs.
+    // For mixed actions (other effects alongside TRACK_ADVANCE), fall through to the
+    // normal flow so all effects are resolved in order (step costs not supported there).
+    if (
+      action.actionEffects.some(e => e.type === ActionType.TRACK_ADVANCE) &&
+      action.actionEffects.length === 1
+    ) {
       resolveTrackAdvanceAction(instanceId, action, triggerId ?? crypto.randomUUID());
       return;
     }
@@ -454,7 +495,17 @@ export function GameProvider({
   // ── Choice resolution ─────────────────────────────────────────────────────
 
   const mergeResolvedChoice = (current: ResolvedAction[], newPart: ResolvedAction) => {
-    return current.map(ra => (ra.id === newPart.id ? { ...ra, ...newPart } : ra));
+    return current.map(ra => {
+      if (ra.id !== newPart.id) return ra;
+      return {
+        ...ra,
+        ...newPart,
+        resources:
+          ra.resources || newPart.resources
+            ? mergeResources(ra.resources ?? {}, newPart.resources ?? {})
+            : undefined,
+      };
+    });
   };
 
   const resolveCardSourcedActionChoice = (
@@ -890,16 +941,34 @@ export function GameProvider({
         );
       },
       setCardState: (instanceId: number, stateId: number) => {
+        aggRef.current.applyCardEffect(
+          `cheat-update-${instanceId}-${Date.now()}`,
+          [
+            {
+              id: `update-${instanceId}-${Date.now()}`,
+              type: ActionType.UPGRADE_CARD,
+              sourceInstanceId: instanceId,
+              instanceIds: [instanceId],
+              stateId,
+            },
+          ],
+          { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
+          `cheat-trigger-${instanceId}-${Date.now()}`,
+          {
+            isDiscarded: false,
+            isDestroyed: false,
+            endsTurn: false,
+          },
+        );
         sync(
           aggRef.current.applyCardEffect(
-            `cheat-update-${instanceId}-${Date.now()}`,
+            `cheat-draw-${instanceId}-${Date.now()}`,
             [
               {
-                id: `update-${instanceId}-${Date.now()}`,
-                type: ActionType.UPGRADE_CARD,
+                id: `draw-${instanceId}-${Date.now()}`,
+                type: ActionType.PLAY_CARD,
                 sourceInstanceId: instanceId,
                 instanceIds: [instanceId],
-                stateId,
               },
             ],
             { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
