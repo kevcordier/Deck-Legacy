@@ -41,10 +41,10 @@ export function Header() {
       rewindEvent();
     };
 
-    window.addEventListener('keydown', onKeyDown);
+    globalThis.addEventListener('keydown', onKeyDown);
 
     return () => {
-      window.removeEventListener('keydown', onKeyDown);
+      globalThis.removeEventListener('keydown', onKeyDown);
     };
   }, [canRewind, rewindEvent]);
 

@@ -12,9 +12,11 @@ import type {
   CardAction,
   CardDef,
   GameEvent,
+  GameStartedEvent,
   GameState,
   ResolvedAction,
   ResolvedCost,
+  UseCardEffectEvent,
 } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -216,6 +218,53 @@ describe('GameAggregate.cardProduced', () => {
     const result = new GameAggregate(state, {}).cardProduced(1, { gold: 3 });
 
     expect(result).toBe(mockState);
+  });
+});
+
+// — setCardName —
+
+describe('GameAggregate.setCardName', () => {
+  it('updates chosenName and dispatches a USE_CARD_EFFECT event', () => {
+    const state = makeGameState({ instances: { 1: makeInstance(1, 10, 1) } });
+    const agg = new GameAggregate(state, {});
+
+    agg.setCardName(1, 'Aethan');
+
+    expect(applySpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        type: GameEventType.USE_CARD_EFFECT,
+        actionId: 'set-card-name-1',
+        sourceInstanceId: 1,
+        gameStateChanges: expect.objectContaining({
+          instances: expect.objectContaining({
+            1: expect.objectContaining({ chosenName: 'Aethan' }),
+          }),
+        }),
+      }),
+    );
+  });
+
+  it('returns unchanged state and does not apply when instance is missing', () => {
+    const state = makeGameState({ instances: {} });
+    const agg = new GameAggregate(state, {});
+
+    const result = agg.setCardName(999, 'Ghost');
+
+    expect(result).toBe(state);
+    expect(applySpy).not.toHaveBeenCalled();
+  });
+
+  it('returns unchanged state and does not apply when chosenName is unchanged', () => {
+    const state = makeGameState({
+      instances: { 1: makeInstance(1, 10, 1, { chosenName: 'Aethan' }) },
+    });
+    const agg = new GameAggregate(state, {});
+
+    const result = agg.setCardName(1, 'Aethan');
+
+    expect(result).toBe(state);
+    expect(applySpy).not.toHaveBeenCalled();
   });
 });
 
@@ -439,6 +488,50 @@ describe('GameAggregate.applyCardEffect', () => {
       expect.any(Object),
       expect.objectContaining({ sourceInstanceId: 99 }),
     );
+  });
+
+  it('adds the actionId to the source instance when consumeAction is true', () => {
+    const state = makeTriggerState();
+
+    new GameAggregate(state, {}).applyCardEffect(
+      'one-time-action',
+      [{ id: '1-1', type: ActionType.ADD_RESOURCES, sourceInstanceId: 1, resources: {} }],
+      makeEmptyResolvedCost(),
+      't1',
+      { consumeAction: true },
+    );
+
+    expect(applySpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        gameStateChanges: expect.objectContaining({
+          instances: expect.objectContaining({
+            1: expect.objectContaining({ usedActionIds: ['one-time-action'] }),
+          }),
+        }),
+      }),
+    );
+  });
+
+  it('does not add the actionId again when the one-time action was already consumed', () => {
+    const state = makeTriggerState({
+      1: makeInstance(1, 10, 1, { usedActionIds: ['one-time-action'] }),
+    });
+
+    new GameAggregate(state, {}).applyCardEffect(
+      'one-time-action',
+      [{ id: '1-1', type: ActionType.ADD_RESOURCES, sourceInstanceId: 1, resources: {} }],
+      makeEmptyResolvedCost(),
+      't1',
+      { consumeAction: true },
+    );
+
+    const [, event] = applySpy.mock.calls[0] as unknown as [
+      GameState,
+      { gameStateChanges: Partial<GameState> },
+    ];
+
+    expect(event.gameStateChanges.instances).toBeUndefined();
   });
 
   it('handles an empty effects array without throwing', () => {
@@ -1072,6 +1165,41 @@ describe('GameAggregate.loadFromHistory', () => {
         { type: 'UNKNOWN', id: 'x', timestamp: 0 } as unknown as GameEvent,
       ]),
     ).toThrow('Unknown event type: UNKNOWN');
+  });
+
+  it('replays consumed one-time actions from history', () => {
+    vi.restoreAllMocks();
+
+    const cardInstance = makeInstance(1, 10, 1);
+    const startEvent: GameStartedEvent = {
+      type: GameEventType.GAME_STARTED,
+      id: 'game-started',
+      timestamp: 0,
+      cardInstances: [cardInstance],
+      initialDeck: [1],
+      stickerStock: {},
+      discoveryPile: [],
+    };
+    const useCardEffectEvent: UseCardEffectEvent = {
+      type: GameEventType.USE_CARD_EFFECT,
+      id: 'effect-used',
+      timestamp: 1,
+      actionId: 'one-time-action',
+      gameStateChanges: {
+        instances: {
+          1: { ...cardInstance, usedActionIds: ['one-time-action'] },
+        },
+      },
+      resolvedCost: makeEmptyResolvedCost(),
+      triggerId: 'trigger-1',
+      sourceInstanceId: 1,
+    };
+    const events: GameEvent[] = [startEvent, useCardEffectEvent];
+
+    const agg = makeAggregate({ 10: makeDef(10) });
+    agg.loadFromHistory(events);
+
+    expect(agg.getGameState().instances[1]?.usedActionIds).toEqual(['one-time-action']);
   });
 });
 

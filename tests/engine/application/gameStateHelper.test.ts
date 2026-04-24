@@ -189,6 +189,7 @@ describe('endTurn', () => {
           stickers: { 1: [7] },
           trackProgress: [],
           cumulated: {},
+          usedActionIds: [],
         },
         2: makeInstance(2, 11, 1),
       },
@@ -216,6 +217,7 @@ describe('endTurn', () => {
           stickers: { 1: [7] },
           trackProgress: [],
           cumulated: {},
+          usedActionIds: [],
         },
         3: makeInstance(3, 12, 1),
       },
@@ -329,6 +331,7 @@ describe('computeScore', () => {
           stickers: { 1: [101] },
           trackProgress: [],
           cumulated: {},
+          usedActionIds: [],
         },
       },
     });
@@ -363,6 +366,7 @@ describe('computeScore', () => {
           stickers: { 1: [999] },
           trackProgress: [],
           cumulated: {},
+          usedActionIds: [],
         },
       },
     });
@@ -386,6 +390,7 @@ describe('computeScore', () => {
           cumulated: {
             glory: 4,
           },
+          usedActionIds: [],
         },
       },
     });
@@ -416,6 +421,7 @@ describe('computeScore', () => {
           stickers: {},
           trackProgress: [],
           cumulated: { accumulation: 2 },
+          usedActionIds: [],
         },
       },
     });
@@ -466,7 +472,7 @@ describe('mergeResources', () => {
   });
 
   it('copies values from a when b is undefined', () => {
-    expect(mergeResources({ gold: 3, wood: 2 }, undefined)).toEqual({ gold: 3, wood: 2 });
+    expect(mergeResources({ gold: 3, wood: 2 })).toEqual({ gold: 3, wood: 2 });
   });
 
   it('copies values from b when a is empty', () => {

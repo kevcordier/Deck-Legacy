@@ -27,7 +27,7 @@ describe('cardSelector — TOP_OF_DECK', () => {
       },
     });
     const result = cardSelector({ scope: [TargetScope.TOP_OF_DECK] }, 99, gs);
-    expect(result).toEqual([3]); // last element = top
+    expect(result).toEqual([1]); // first element = top
   });
 
   it('returns empty array when draw pile is empty', () => {

@@ -202,7 +202,7 @@ function resolveValuePerElement(ctx: ResolveContext, valuePerElement: ValuePerEl
     return;
   }
 
-  if (valuePerElement.resource && valuePerElement.resource.length === 1) {
+  if (valuePerElement.resource?.length === 1) {
     resolverAction.resources = {
       [valuePerElement.resource[0]]: number * valuePerElement.amount,
     };

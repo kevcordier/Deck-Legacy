@@ -75,30 +75,31 @@ function matchesProductions(state: CardState, produces: string[] | undefined): b
   return produces.some(r => state.productions?.some(prod => Object.keys(prod).includes(r)));
 }
 
-function matchesCardCriteria(
-  id: number,
-  instanceId: number,
-  scope: TargetScope[] | undefined,
-  blockedInstanceIds: number[],
-  gameState: GameState,
-  defs: Record<number, CardDef> | undefined,
-  selector: CardeSelector,
-  isFriendly: boolean,
-  isEnemy: boolean,
-  hasBlocked: boolean,
-): boolean {
-  if (!scope?.includes(TargetScope.SELF) && id === instanceId) return false;
-  if (!hasBlocked && blockedInstanceIds.includes(id)) return false;
+interface CardCriteriaContext {
+  instanceId: number;
+  scope: TargetScope[] | undefined;
+  blockedInstanceIds: number[];
+  gameState: GameState;
+  defs: Record<number, CardDef> | undefined;
+  selector: CardeSelector;
+  isFriendly: boolean;
+  isEnemy: boolean;
+  hasBlocked: boolean;
+}
 
-  const inst = gameState.instances[id];
-  if (!inst || !defs) return false;
+function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
+  if (!ctx.scope?.includes(TargetScope.SELF) && id === ctx.instanceId) return false;
+  if (!ctx.hasBlocked && ctx.blockedInstanceIds.includes(id)) return false;
 
-  const state = defs[inst.cardId]?.states.find(s => s.id === inst.stateId);
+  const inst = ctx.gameState.instances[id];
+  if (!inst || !ctx.defs) return false;
+
+  const state = ctx.defs[inst.cardId]?.states.find(s => s.id === inst.stateId);
   if (!state) return false;
 
-  const { tags, produces, name } = selector;
+  const { tags, produces, name } = ctx.selector;
 
-  if (!matchesAlignmentAndName(state, isFriendly, isEnemy, name)) return false;
+  if (!matchesAlignmentAndName(state, ctx.isFriendly, ctx.isEnemy, name)) return false;
   if (!matchesTags(state, tags)) return false;
   if (!matchesProductions(state, produces)) return false;
 
@@ -118,10 +119,8 @@ export function cardSelector(
 
   if (ids) return ids;
   if (scope?.length === 1 && scope?.includes(TargetScope.SELF)) return [instanceId];
-
   if (scope?.includes(TargetScope.TOP_OF_DECK)) {
-    const topCardId = gameState.drawPile[gameState.drawPile.length - 1];
-    return topCardId ? [gameState.instances[topCardId].id] : [];
+    return [gameState.drawPile[0]].filter(Boolean);
   }
 
   const blockedInstanceIds = Object.values(
@@ -136,8 +135,7 @@ export function cardSelector(
   const pool = buildCardPool(locationScopes, gameState, blockedInstanceIds);
 
   return pool.filter(id =>
-    matchesCardCriteria(
-      id,
+    matchesCardCriteria(id, {
       instanceId,
       scope,
       blockedInstanceIds,
@@ -147,6 +145,6 @@ export function cardSelector(
       isFriendly,
       isEnemy,
       hasBlocked,
-    ),
+    }),
   );
 }

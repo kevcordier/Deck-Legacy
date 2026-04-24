@@ -79,6 +79,28 @@ export class GameAggregate {
     this.gameState = this.gameEventContext.apply(this.gameState, event);
   }
 
+  private withConsumedAction(
+    gameState: GameState,
+    sourceInstanceId: number,
+    actionId: string,
+  ): GameState {
+    const sourceInstance = gameState.instances[sourceInstanceId];
+    if (!sourceInstance || sourceInstance.usedActionIds.includes(actionId)) {
+      return gameState;
+    }
+
+    return {
+      ...gameState,
+      instances: {
+        ...gameState.instances,
+        [sourceInstanceId]: {
+          ...sourceInstance,
+          usedActionIds: [...sourceInstance.usedActionIds, actionId],
+        },
+      },
+    };
+  }
+
   public loadFromHistory(events: GameEvent[]): GameState {
     events.forEach(event => this.apply(event));
     this.events = events;
@@ -233,6 +255,41 @@ export class GameAggregate {
     return this.gameState;
   }
 
+  public setCardName(cardInstanceId: number, chosenName: string): GameState {
+    const instance = this.gameState.instances[cardInstanceId];
+    if (!instance) return this.gameState;
+    if ((instance.chosenName ?? '') === chosenName) return this.gameState;
+
+    const prevState = this.gameState;
+    const nextState: GameState = {
+      ...this.gameState,
+      instances: {
+        ...this.gameState.instances,
+        [cardInstanceId]: {
+          ...instance,
+          chosenName,
+        },
+      },
+    };
+
+    const event: UseCardEffectEvent = {
+      id: crypto.randomUUID(),
+      actionId: `set-card-name-${cardInstanceId}`,
+      type: GameEventType.USE_CARD_EFFECT,
+      timestamp: Date.now(),
+      gameStateChanges: computeGameStateDiff(prevState, nextState),
+      resolvedCost: { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
+      sourceInstanceId: cardInstanceId,
+      triggerId: `set-card-name-${cardInstanceId}`,
+      isDiscarded: false,
+      isDestroyed: false,
+    };
+
+    this.apply(event);
+    this.events.push(event);
+    return this.gameState;
+  }
+
   public advance(): GameState {
     if (this.gameState.drawPile.length === 0) {
       return this.gameState;
@@ -310,6 +367,7 @@ export class GameAggregate {
       isDestroyed?: boolean;
       endsTurn?: boolean;
       explicitSourceInstanceId?: number;
+      consumeAction?: boolean;
     } = {},
   ): GameState {
     const {
@@ -317,14 +375,20 @@ export class GameAggregate {
       isDestroyed = false,
       endsTurn = false,
       explicitSourceInstanceId,
+      consumeAction = false,
     } = options;
     const cardActionContext = new CardActionContext();
 
     const prevState = this.gameState;
-    const gameState = effects.reduce((gs, effect) => {
+    const sourceInstanceId = explicitSourceInstanceId ?? effects[0]?.sourceInstanceId ?? -1;
+    const resolvedState = effects.reduce((gs, effect) => {
       cardActionContext.setStrategy(this.getStrategy(effect.type));
       return cardActionContext.applyEffect(gs, effect);
     }, this.gameState);
+    const gameState =
+      consumeAction && sourceInstanceId !== -1
+        ? this.withConsumedAction(resolvedState, sourceInstanceId, actionId)
+        : resolvedState;
 
     const event: UseCardEffectEvent = {
       id: crypto.randomUUID(),
@@ -333,7 +397,7 @@ export class GameAggregate {
       timestamp: Date.now(),
       gameStateChanges: computeGameStateDiff(prevState, gameState),
       resolvedCost,
-      sourceInstanceId: explicitSourceInstanceId ?? effects[0]?.sourceInstanceId ?? -1,
+      sourceInstanceId,
       triggerId,
       isDiscarded,
       isDestroyed,

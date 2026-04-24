@@ -49,6 +49,7 @@ function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
     stickers: {},
     trackProgress: [],
     cumulated: {},
+    usedActionIds: [],
   };
 }
 
@@ -275,7 +276,7 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
         options={choice.choices
           .filter((c): c is number => typeof c === 'number')
           .map(id => stickerDefs[id])
-          .filter((s): s is NonNullable<typeof s> => s !== undefined)}
+          .filter(Boolean)}
         size="lg"
         onSelect={handleStickerSelect}
       />

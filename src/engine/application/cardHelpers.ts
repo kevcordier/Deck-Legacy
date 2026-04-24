@@ -87,11 +87,7 @@ export function getEffectiveProductions(
 
   let passiveBonus: Resources = {};
   for (const passive of activeState.passives ?? []) {
-    if (
-      passive.type === PassiveType.INCREASE_PRODUCTION &&
-      passive.valuePerElement &&
-      passive.valuePerElement.resource
-    ) {
+    if (passive.type === PassiveType.INCREASE_PRODUCTION && passive.valuePerElement?.resource) {
       const { amount, resource, cards: sel, accumulation } = passive.valuePerElement;
       let count = 0;
       if (sel) {

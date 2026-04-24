@@ -48,6 +48,7 @@ type GameContextType = {
   resolveProduction: (instanceId: number, chosenResource: number) => void;
   resolveAction: (instanceId: number, actionId: string) => void;
   resolveUpgrade: (instanceId: number, chosenUpgradeTo?: number) => void;
+  setCardName: (instanceId: number, chosenName: string) => void;
   progress: () => void;
   endTurnVoluntary: () => void;
   resolvePlayerChoice: (choice: ResolvedAction) => void;

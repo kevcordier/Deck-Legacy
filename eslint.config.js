@@ -30,6 +30,9 @@ export default tseslint.config(
     languageOptions: {
       ecmaVersion: 2022,
       globals: { ...globals.browser },
+      parserOptions: {
+        projectService: true,
+      },
     },
     rules: {
       // React hooks
@@ -48,6 +51,7 @@ export default tseslint.config(
         { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
       ],
       '@typescript-eslint/default-param-last': 'error',
+      '@typescript-eslint/prefer-optional-chain': 'error',
 
       // Disable sonarjs duplicate of @typescript-eslint/no-unused-vars (which already ignores _-prefixed vars)
       'sonarjs/no-unused-vars': 'off',
@@ -55,6 +59,7 @@ export default tseslint.config(
       'sonarjs/no-commented-code': 'off',
 
       // General
+      'max-params': ['error', 7],
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'prefer-const': 'error',
       'no-var': 'error',

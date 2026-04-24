@@ -33,6 +33,7 @@ export type TrackDef = {
 export type CardState = {
   id: number;
   name: string;
+  chooseName?: boolean; // if true, the player can choose a name on the card
   tags?: CardTag[];
   negative?: boolean;
   productions?: Resources[];
@@ -57,6 +58,7 @@ export type CardAction = {
   endsTurn?: boolean;
   trigger?: Trigger;
   optional?: boolean;
+  onTime?: boolean; // if true, the action is usable only one time then disappears
 };
 
 export type ValuePerElement = {
@@ -77,6 +79,9 @@ export type ActionEffect = {
   stickerIds?: number[];
   valuePerElement?: ValuePerElement;
   effect?: Passive;
+  pickNumber?: number;
+  pickMin?: number;
+  pickMax?: number;
 };
 
 export type Passive = {

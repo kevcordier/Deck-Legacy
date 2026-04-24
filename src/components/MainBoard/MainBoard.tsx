@@ -11,7 +11,7 @@ export function MainBoard() {
   const { state, startTurn, defs } = useGame();
   const { t } = useTranslation();
   return (
-    <main className="scrollbar @container/main flex flex-1 flex-col gap-6 py-4">
+    <main className="scrollbar @container/main flex flex-1 flex-col gap-6 p-4">
       {state.phase === Phase.START_ROUND && (
         <EmptyState
           title={t('roundpreview.title', { round: state.round })}

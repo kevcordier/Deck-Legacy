@@ -25,5 +25,7 @@ export function createInstance(
     stickers: {},
     trackProgress: [],
     cumulated: {},
+    usedActionIds: [],
+    chosenName: '',
   };
 }

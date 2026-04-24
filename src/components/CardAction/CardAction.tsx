@@ -49,7 +49,9 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
     ? getFirstAvailableTrackStep(action.actionEffects, instance.id, state, defs)
     : undefined;
   const affordable = hasTrackAdvance
-    ? firstTrackStep && canAffordResources(state.resources, firstTrackStep?.cost)
+    ? firstTrackStep &&
+      canAffordResources(state.resources, firstTrackStep?.cost) &&
+      canAffordResources(state.resources, action.cost)
     : !action.cost || canAffordResources(state.resources, action.cost);
   const hasDestroyItselfCost = action.cost?.destroy?.scope?.includes(TargetScope.SELF) ?? false;
   const haveTrigger = !!action.trigger;

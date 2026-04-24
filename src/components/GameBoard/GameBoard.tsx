@@ -61,7 +61,7 @@ export function GameBoard() {
   return (
     <div className="flex h-full flex-1 flex-col overflow-hidden">
       {/* Main content row — sidebars hidden on mobile */}
-      <div className="flex flex-1 items-stretch gap-4 overflow-hidden">
+      <div className="flex flex-1 items-stretch overflow-hidden gap-1">
         <div className="hidden lg:contents">
           <DeckViewer
             title={t('deckViewer.draw')}

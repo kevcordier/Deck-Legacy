@@ -38,7 +38,7 @@ export function GameCard({
   className = '',
 }: GameCardProps) {
   const { t } = useTranslation();
-  const { state, defs, stickerDefs, resolveProduction, resolveUpgrade } = useGame();
+  const { state, defs, stickerDefs, resolveProduction, resolveUpgrade, setCardName } = useGame();
   const currentResources = state.resources;
   const isBlocked = isOnBoard && cardIsBlocked(instance.id, state);
   const cs = getActiveState(instance, defs);
@@ -52,7 +52,12 @@ export function GameCard({
   const hasProductions = productions?.some(prod => Object.keys(prod).length > 0) ?? false;
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
-  const actions = cs.actions ?? [];
+  const actions = (cs.actions ?? []).filter(
+    action => !action.onTime || !instance.usedActionIds.includes(action.id),
+  );
+  const rawCardName = t(`names.${instance.cardId}_${cs.id}`, { ns: 'cards' });
+  const canChooseName = cs.chooseName === true && rawCardName.includes('_____');
+  const [namePrefix, nameSuffix] = canChooseName ? rawCardName.split('_____') : ['', ''];
   const glory = getEffectiveGlory(cs, state, defs, instance, stickerDefs);
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
 
@@ -66,7 +71,7 @@ export function GameCard({
   const animationDelayClass = [`delay-50`, `delay-100`, `delay-1500`, `delay-200`][index];
 
   const cardActionsClass =
-    'font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-lg';
+    'font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md';
 
   return (
     <div
@@ -77,11 +82,25 @@ export function GameCard({
           <span
             className={`text-base-ink flex min-w-0 items-center gap-1 text-xs leading-tight @3xs:text-base`}
           >
-            {instance.id !== undefined && instance.id !== 0 && (
+            {instance.id !== 0 && (
               <span className={`mr-1 rounded bg-black/6 px-1 font-bold`}>#{instance.id}</span>
             )}
             <span className={`font-display truncate font-bold ${isEnemy ? 'text-tag-enemy' : ''}`}>
-              {tCardName(t, instance.cardId, cs.id)}
+              {canChooseName ? (
+                <span className="inline-flex min-w-0 items-baseline gap-1">
+                  {namePrefix}
+                  <input
+                    type="text"
+                    value={instance.chosenName ?? ''}
+                    onChange={event => setCardName(instance.id, event.currentTarget.value)}
+                    className={`min-w-8 flex-1 border-0 bg-transparent cursor-text p-0 text-inherit outline-none ${instance.chosenName ? '' : 'border-b border-base-ink'}`}
+                    aria-label={t('card.name')}
+                  />
+                  {nameSuffix}
+                </span>
+              ) : (
+                tCardName(t, instance.cardId, cs.id)
+              )}
             </span>
           </span>
           {!hideStatePreview && <CardStatePreview instance={instance} defs={defs} />}
@@ -207,7 +226,7 @@ export function GameCard({
         </div>
 
         {!isBlocked && cs.track && (
-          <div className="z-10 flex flex-col items-start justify-center gap-1 p-1 @3xs:p-2">
+          <div className="z-10 flex flex-col items-center justify-center gap-1 p-1 @3xs:p-2">
             <CardTrack
               instance={instance}
               track={cs.track}

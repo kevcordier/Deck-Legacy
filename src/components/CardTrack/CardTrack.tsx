@@ -3,7 +3,7 @@ import { ActionType } from '@engine/domain/enums';
 import type { ActionEffect, CardInstance, TrackDef } from '@engine/domain/types';
 import { tCardTrackAction } from '@helpers/cardI18n';
 import { getResMeta } from '@helpers/renderHelpers';
-import React from 'react';
+import React, { type JSX } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface CardTrackProps {
@@ -44,14 +44,14 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
           cost.push(Object.values(step.cost.accumulated).reduce((acc, value) => acc + value, 0));
         }
 
-        const getResourceContent = (resKey: string, actionId: number): React.ReactNode => {
+        const getResourceContent = (resKey: string, actionId: number): JSX.Element | null => {
           const meta = getResMeta(resKey);
           return meta.icon ? (
             <meta.icon className={`${meta.cls} size-3`} alt={resKey} key={actionId} />
           ) : null;
         };
 
-        const getAccumulatedContent = (action: ActionEffect): React.ReactNode => {
+        const getAccumulatedContent = (action: ActionEffect): JSX.Element | null => {
           const [resKey] =
             Object.entries(action.accumulated ?? {}).find(([k]) => k !== 'choice') ?? [];
           if (resKey === 'glory') {
@@ -63,7 +63,7 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
           return null;
         };
 
-        const getActionContent = (action: ActionEffect) => {
+        const getActionContent = (action: ActionEffect): JSX.Element | null => {
           if (action.type === ActionType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
             return <span key={action.id}>#{action.cards.ids[0]}</span>;
           }

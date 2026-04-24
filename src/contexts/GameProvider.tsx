@@ -121,10 +121,11 @@ export function GameProvider({
   ): GameState | undefined => {
     const initialGs = aggRef.current.getGameState();
     const inst = initialGs.instances[instanceId];
-    const def = defs[inst.cardId];
-
     if (!inst || cardIsBlocked(instanceId, initialGs)) return;
     if (!cardAction) return;
+    if (cardAction.onTime && inst.usedActionIds.includes(cardAction.id)) return;
+
+    const def = defs[inst.cardId];
 
     for (let i = startEffectIndex; i < cardAction.actionEffects.length; i++) {
       const gs = aggRef.current.getGameState();
@@ -156,6 +157,7 @@ export function GameProvider({
           isDiscarded: isLast && !cardAction.passive && !cardAction.trigger && !def.permanent,
           isDestroyed: isLast && !!def.parchmentCard,
           endsTurn: isLast && !!cardAction.endsTurn,
+          consumeAction: isLast && !!cardAction.onTime,
         },
       );
     }
@@ -298,6 +300,8 @@ export function GameProvider({
     const gs = aggRef.current.getGameState();
     const def = defs[gs.instances[instanceId].cardId];
 
+    if (action.onTime && gs.instances[instanceId].usedActionIds.includes(action.id)) return;
+
     const trackEffect = action.actionEffects.find(e => e.type === ActionType.TRACK_ADVANCE);
     if (!trackEffect) return;
 
@@ -341,6 +345,7 @@ export function GameProvider({
         isDestroyed: !!def.parchmentCard,
         endsTurn: !!action.endsTurn,
         explicitSourceInstanceId: instanceId,
+        consumeAction: !!action.onTime,
       },
     );
     sync(newState);
@@ -355,8 +360,32 @@ export function GameProvider({
   ) => {
     const gs = aggRef.current.getGameState();
     if (!canAffordResources(gs.resources, step.cost)) return;
+    if (!canAffordResources(gs.resources, action.cost)) return;
 
-    const [resolvedCost, costPendingChoices] = resolveCost(step.cost ?? {}, instanceId, gs, defs);
+    const [stepResolvedCost, stepPendingChoices] = resolveCost(
+      step.cost ?? {},
+      instanceId,
+      gs,
+      defs,
+    );
+    const [actionResolvedCost, actionPendingChoices] = resolveCost(
+      action.cost ?? {},
+      instanceId,
+      gs,
+      defs,
+    );
+    const resolvedCost: ResolvedCost = {
+      resources: mergeResources(stepResolvedCost.resources, actionResolvedCost.resources),
+      discardedCardIds: [
+        ...stepResolvedCost.discardedCardIds,
+        ...actionResolvedCost.discardedCardIds,
+      ],
+      destroyedCardIds: [
+        ...stepResolvedCost.destroyedCardIds,
+        ...actionResolvedCost.destroyedCardIds,
+      ],
+    };
+    const costPendingChoices = [...stepPendingChoices, ...actionPendingChoices];
 
     if (costPendingChoices.length > 0) {
       currentActionRef.current = {
@@ -425,6 +454,7 @@ export function GameProvider({
     const cs = getActiveState(inst, defs);
     const action = cs.actions?.find(ce => ce.id === actionId);
     if (!action) return;
+    if (action.onTime && inst.usedActionIds.includes(action.id)) return;
 
     // TRACK_ADVANCE cost lives on the step, not the CardAction — handle separately.
     // For pure TRACK_ADVANCE actions, use the dedicated path that handles step costs.
@@ -479,6 +509,10 @@ export function GameProvider({
     sync(
       aggRef.current.upgradeCard(instanceId, upgrade.upgradeTo, upgrade.cost.resources?.[0] ?? {}),
     );
+  };
+
+  const setCardName = (instanceId: number, chosenName: string) => {
+    sync(aggRef.current.setCardName(instanceId, chosenName));
   };
 
   // ── Turn flow ─────────────────────────────────────────────────────────────
@@ -667,6 +701,7 @@ export function GameProvider({
           isDiscarded: isLast && !action.passive && !action.trigger && !def.permanent,
           isDestroyed: isLast && !!def.parchmentCard,
           endsTurn: isLast && !!action.endsTurn,
+          consumeAction: isLast && !!action.onTime,
         },
       );
 
@@ -1038,6 +1073,7 @@ export function GameProvider({
         resolveProduction,
         resolveAction,
         resolveUpgrade,
+        setCardName,
         progress,
         endTurnVoluntary,
         resolvePlayerChoice,

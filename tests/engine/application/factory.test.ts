@@ -12,6 +12,9 @@ describe('createInstance', () => {
     expect(instance.stateId).toBe(1);
     expect(instance.stickers).toEqual({});
     expect(instance.trackProgress).toEqual([]);
+    expect(instance.cumulated).toEqual({});
+    expect(instance.usedActionIds).toEqual([]);
+    expect(instance.chosenName).toBe('');
   });
 
   it('works with any valid stateId on the card', () => {

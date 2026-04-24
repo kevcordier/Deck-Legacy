@@ -13,6 +13,8 @@ export const makeInstance = (
   stickers: {},
   trackProgress: [],
   cumulated: {},
+  usedActionIds: [],
+  chosenName: '',
   ...overrides,
 });
 
