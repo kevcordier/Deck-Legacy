@@ -1,36 +1,30 @@
-import { makeCardState, makeDef } from './testHelpers';
 import { createInstance } from '@engine/application/factory';
 import type { CardDef } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
+const defs: Record<number, CardDef> = {
+  1: { id: 1, name: 'Card', states: [{ id: 10, name: 'Base' }] },
+};
+
 describe('createInstance', () => {
-  it('creates a card instance with the correct fields', () => {
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [makeCardState(1), makeCardState(2)]) };
-    const instance = createInstance(5, 10, 1, defs);
-    expect(instance.id).toBe(5);
-    expect(instance.cardId).toBe(10);
-    expect(instance.stateId).toBe(1);
-    expect(instance.stickers).toEqual({});
-    expect(instance.trackProgress).toEqual([]);
-    expect(instance.cumulated).toEqual({});
-    expect(instance.usedActionIds).toEqual([]);
-    expect(instance.chosenName).toBe('');
+  it('creates an instance with correct fields', () => {
+    const inst = createInstance(42, 1, 10, defs);
+    expect(inst).toEqual({
+      id: 42,
+      cardId: 1,
+      stateId: 10,
+      stickers: {},
+      trackProgress: [],
+      cumulated: {},
+      usedActionIds: [],
+    });
   });
 
-  it('works with any valid stateId on the card', () => {
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1), makeCardState(2), makeCardState(3)]),
-    };
-    const instance = createInstance(1, 10, 3, defs);
-    expect(instance.stateId).toBe(3);
+  it('throws when cardId is not in defs', () => {
+    expect(() => createInstance(1, 99, 10, defs)).toThrow('Card def not found: 99');
   });
 
-  it('throws when the card def is not found', () => {
-    expect(() => createInstance(1, 99, 1, {})).toThrow('Card def not found: 99');
-  });
-
-  it('throws when the state is not found on the card', () => {
-    const defs: Record<number, CardDef> = { 10: makeDef(10) };
-    expect(() => createInstance(1, 10, 99, defs)).toThrow('State 99 not found on card 10');
+  it('throws when stateId does not exist on the card', () => {
+    expect(() => createInstance(1, 1, 99, defs)).toThrow('State 99 not found on card 1');
   });
 });

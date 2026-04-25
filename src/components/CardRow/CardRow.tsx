@@ -3,12 +3,11 @@ import { PassifIcon } from '@components/ui/Icon/icon';
 import { cardSelector } from '@engine/application/cardSelector';
 import { PassiveType } from '@engine/domain/enums';
 import type { CardDef, GameState, Passive } from '@engine/domain/types';
+import { useGame } from '@hooks/useGame';
 import { useTranslation } from 'react-i18next';
 
 interface CardRowProps {
   readonly cardIds: number[];
-  readonly gameState: GameState;
-  readonly defs: Record<number, CardDef>;
 }
 
 type EffectEntry = { sourceId: number; passive: Passive };
@@ -29,8 +28,9 @@ function effectsOnCard(
   );
 }
 
-export function CardRow({ cardIds, gameState, defs }: CardRowProps) {
+export function CardRow({ cardIds }: CardRowProps) {
   const { t } = useTranslation();
+  const { state: gameState, defs } = useGame();
 
   const blockedByMap: Record<number, number> = {};
   Object.entries(gameState.boardEffects).forEach(([sourceId, passives]) => {
@@ -56,7 +56,7 @@ export function CardRow({ cardIds, gameState, defs }: CardRowProps) {
   return (
     <div
       className={
-        'grid grid-cols-1 gap-2 @xs/main:gap-3 @2xs/main:grid-cols-2 @3xl/main:grid-cols-3 @4xl/main:grid-cols-4'
+        'grid grid-cols-1 gap-2 @xs/main:gap-3 @2xs/main:grid-cols-2 @3xl/main:grid-cols-3 @4xl/main:grid-cols-4 @6xl/main:grid-cols-5'
       }
     >
       {cardIds

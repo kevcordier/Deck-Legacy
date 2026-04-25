@@ -4,13 +4,13 @@ import { TriggerIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { StickerChoice } from '@components/ui/StickerChoice/StickerChoice';
-import { ActionType, PendingChoiceType } from '@engine/domain/enums';
+import { ActionEffectType, PendingChoiceType } from '@engine/domain/enums';
 import type {
   CardDef,
   CardInstance,
   CardState,
   PendingChoice,
-  ResolvedAction,
+  ResolvedActionEffect,
   ResolvedCost,
   Resources,
   StepDef,
@@ -38,7 +38,9 @@ function getChoiceActionLabel(
   if (!effects || !def || !state) return undefined;
   const effectIdx = effects.findIndex(e => e.actionEffects.some(a => a.id === actionId));
   if (effectIdx === -1) return undefined;
-  return tCardActionLabel(t, def.id, state.id, effectIdx, { ...inst.cumulated }) || undefined;
+  return (
+    tCardActionLabel(t, def.id, state.id, effectIdx, { ...(inst.cumulated ?? {}) }) || undefined
+  );
 }
 
 function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
@@ -59,7 +61,10 @@ interface PendingChoiceModalProps {
   readonly defs: Record<number, CardDef>;
   readonly instances: Record<number, CardInstance>;
   readonly stickerDefs: Record<number, Sticker>;
-  readonly resolvePlayerChoice: (option: ResolvedAction) => void;
+  readonly resolvePlayerChoice: (
+    option: ResolvedActionEffect,
+    choiceType: PendingChoiceType,
+  ) => void;
   readonly resolvePayCost: (resolved: ResolvedCost) => void;
   readonly onResolveTrigger: (
     sourceInstanceId: number,
@@ -81,10 +86,11 @@ type ChoiceSectionContext = {
   defs: Record<number, CardDef>;
   stickerDefs: Record<number, Sticker>;
   t: TFunction;
-  resolvePlayerChoice: (option: ResolvedAction) => void;
+  resolvePlayerChoice: (option: ResolvedActionEffect, choiceType: PendingChoiceType) => void;
   resolvePayCost: (resolved: ResolvedCost) => void;
   selectedIds: number[];
   onToggleId: (id: number) => void;
+  isMultiSelect: boolean;
 };
 
 function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): ChoiceSection {
@@ -97,9 +103,10 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
     resolvePayCost,
     selectedIds,
     onToggleId,
+    isMultiSelect,
   } = ctx;
   if (choice.type === PendingChoiceType.CHOOSE_CARD) {
-    const isMultiSelect = choice.pickCount > 1;
+    const maxSelect = choice.pickMax ?? choice.pickCount;
 
     const handleCardClick = (instanceId: number) => {
       if (isMultiSelect) {
@@ -109,19 +116,22 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
       if (choice.kind === 'COST') {
         resolvePayCost({ resources: {}, discardedCardIds: [instanceId], destroyedCardIds: [] });
       } else {
-        resolvePlayerChoice({
-          id: choice.id,
-          type: choice.kind,
-          sourceInstanceId: choice.sourceInstanceId,
-          instanceIds: [instanceId],
-        });
+        resolvePlayerChoice(
+          {
+            id: choice.id,
+            type: choice.kind,
+            sourceInstanceId: choice.sourceInstanceId,
+            instanceIds: [instanceId],
+          },
+          choice.type,
+        );
       }
     };
     return {
-      title: t(`pendingChoice.chooseCard.${choice.kind}`, { count: choice.pickCount }),
+      title: t(`pendingChoice.chooseCard.${choice.kind}`, { count: maxSelect }),
       subtitle: getChoiceActionLabel(choice, instances, defs, t),
       content: (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {choice.choices.map(id => {
             if (typeof id !== 'number') return null;
             const inst = instances[id];
@@ -166,12 +176,15 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
               <button
                 key={step.id}
                 onClick={() =>
-                  resolvePlayerChoice({
-                    id: choice.id,
-                    type: ActionType.TRACK_ADVANCE,
-                    sourceInstanceId: choice.sourceInstanceId,
-                    stepId: step.id,
-                  })
+                  resolvePlayerChoice(
+                    {
+                      id: choice.id,
+                      type: ActionEffectType.TRACK_ADVANCE,
+                      sourceInstanceId: choice.sourceInstanceId,
+                      stepId: step.id,
+                    },
+                    choice.type,
+                  )
                 }
                 className="flex min-w-16 flex-col items-center gap-1 rounded-md border-2 border-base-ink bg-card p-3 hover:bg-base-ink/10"
               >
@@ -204,7 +217,7 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
       title: t(`pendingChoice.chooseState`),
       subtitle: getChoiceActionLabel(choice, instances, defs, t),
       content: (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {choice.choices.map(stateId => {
             if (typeof stateId !== 'number') return null;
             const state = cardDef?.states.find(s => s.id === stateId);
@@ -213,12 +226,15 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
               <div key={stateId} className="relative transition-transform hover:scale-[1.02]">
                 <button
                   onClick={() =>
-                    resolvePlayerChoice({
-                      id: choice.id,
-                      type: choice.kind,
-                      sourceInstanceId: choice.sourceInstanceId,
-                      stateId,
-                    })
+                    resolvePlayerChoice(
+                      {
+                        id: choice.id,
+                        type: choice.kind,
+                        sourceInstanceId: choice.sourceInstanceId,
+                        stateId,
+                      },
+                      choice.type,
+                    )
                   }
                   className="absolute inset-0 z-12 cursor-pointer!"
                 ></button>
@@ -237,12 +253,15 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
       if (choice.kind === 'COST') {
         resolvePayCost({ resources: r, discardedCardIds: [], destroyedCardIds: [] });
       } else {
-        resolvePlayerChoice({
-          id: choice.id,
-          type: choice.kind,
-          sourceInstanceId: choice.sourceInstanceId,
-          resources: r,
-        });
+        resolvePlayerChoice(
+          {
+            id: choice.id,
+            type: choice.kind,
+            sourceInstanceId: choice.sourceInstanceId,
+            resources: r,
+          },
+          choice.type,
+        );
       }
     };
     return {
@@ -261,12 +280,15 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
   }
 
   const handleStickerSelect = (stickerId: number) => {
-    resolvePlayerChoice({
-      id: choice.id,
-      type: choice.kind,
-      sourceInstanceId: choice.sourceInstanceId,
-      stickerId,
-    });
+    resolvePlayerChoice(
+      {
+        id: choice.id,
+        type: choice.kind,
+        sourceInstanceId: choice.sourceInstanceId,
+        stickerId,
+      },
+      choice.type,
+    );
   };
   return {
     title: t(`pendingChoice.chooseSticker`),
@@ -299,24 +321,34 @@ export function PendingChoiceModal({
   const { t } = useTranslation();
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
+  const minSelect = choice?.pickMin ?? choice?.pickCount ?? 1;
+  const maxSelect = choice?.pickMax ?? choice?.pickCount ?? 1;
+
   const onToggleId = (id: number) => {
-    setSelectedIds(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]));
+    setSelectedIds(prev => {
+      if (prev.includes(id)) return prev.filter(x => x !== id);
+      if (prev.length >= maxSelect) return prev;
+      return [...prev, id];
+    });
   };
 
-  const isMultiSelect =
-    (choice?.pickCount ?? 1) > 1 && choice?.type === PendingChoiceType.CHOOSE_CARD;
+  const isMultiSelect = minSelect !== maxSelect || minSelect > 1;
 
   const handleMultiConfirm = () => {
-    if (selectedIds.length !== choice?.pickCount) return;
+    if (!choice) return;
+    if (selectedIds.length < minSelect || selectedIds.length > maxSelect) return;
     if (choice.kind === 'COST') {
       resolvePayCost({ resources: {}, discardedCardIds: selectedIds, destroyedCardIds: [] });
     } else {
-      resolvePlayerChoice({
-        id: choice.id,
-        type: choice.kind,
-        sourceInstanceId: choice.sourceInstanceId,
-        instanceIds: selectedIds,
-      });
+      resolvePlayerChoice(
+        {
+          id: choice.id,
+          type: choice.kind,
+          sourceInstanceId: choice.sourceInstanceId,
+          instanceIds: selectedIds,
+        },
+        choice.type,
+      );
     }
   };
 
@@ -337,7 +369,7 @@ export function PendingChoiceModal({
           const actionIdx = state?.actions?.findIndex(e => e.id === trigger.effectDef.id) ?? -1;
           const cardName = tCardName(t, def?.id, state?.id);
           const actionLabel = tCardActionLabel(t, def?.id, state?.id, actionIdx, {
-            ...inst.cumulated,
+            ...(inst.cumulated ?? {}),
           });
           return (
             <div
@@ -395,6 +427,7 @@ export function PendingChoiceModal({
       resolvePayCost,
       selectedIds,
       onToggleId,
+      isMultiSelect,
     }));
   }
 
@@ -412,15 +445,24 @@ export function PendingChoiceModal({
     >
       {content}
       {isMultiSelect && choice && (
-        <div className="flex justify-end pt-2">
+        <div className="flex justify-end items-center gap-2 pt-2">
+          <span>
+            {minSelect === maxSelect
+              ? t('pendingChoice.choices', {
+                  total: minSelect,
+                })
+              : t('pendingChoice.choices-between', {
+                  min: minSelect,
+                  max: maxSelect,
+                })}
+          </span>
           <Button
             onClick={handleMultiConfirm}
-            disabled={selectedIds.length !== choice.pickCount}
+            disabled={selectedIds.length < minSelect || selectedIds.length > maxSelect}
             color="base-primary"
           >
             {t('pendingChoice.confirm', {
               selected: selectedIds.length,
-              total: choice.pickCount,
             })}
           </Button>
         </div>

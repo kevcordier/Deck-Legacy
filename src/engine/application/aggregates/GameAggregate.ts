@@ -1,43 +1,28 @@
-import {
-  AddBoardEffectStrategy,
-  AddCumulatedStrategy,
-  AddResourceStrategy,
-  AddStickerStrategy,
-  BlockCardStrategy,
-  CardActionContext,
-  type CardActionStrategy,
-  DestroyCardStrategy,
-  DiscardCardStrategy,
-  PlaceCardInDrawPileStrategy,
-  PlayCardStrategy,
-  SetCumulatedStrategy,
-  UpgradeCardStrategy,
-} from '@engine/application/cardAction';
-import { ChoseStateStrategy } from '@engine/application/cardAction/ChoseStateStrategy';
-import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
-import { TrackAdvanceStrategy } from '@engine/application/cardAction/TrackAdvanceStrategy';
+import { CardActionAggregate } from '@engine/application/aggregates/CardActionAggregate';
 import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { GameEventContext } from '@engine/application/gameEvent/GameEventContext';
 import { computeGameStateDiff } from '@engine/application/gameStateHelper';
-import { ActionType, GameEventType, Trigger } from '@engine/domain/enums';
+import { GameEventType, type PendingChoiceType, Trigger } from '@engine/domain/enums';
 import type {
   AdvanceEvent,
+  CardAction,
+  CardActionEvent,
   CardDef,
   CardInstance,
   CardProducedEvent,
   GameEvent,
   GameStartedEvent,
   GameState,
-  ResolvedAction,
+  ResolvedActionEffect,
   ResolvedCost,
   Resources,
   RoundStartedEvent,
   SkipTriggerEvent,
+  Sticker,
   TriggerEntry,
   TurnEndedEvent,
   TurnStartedEvent,
   UpgradeCardEvent,
-  UseCardEffectEvent,
 } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 
@@ -64,10 +49,12 @@ export class GameAggregate {
   private events: GameEvent[];
   private gameState: GameState;
   private readonly gameEventContext: GameEventContext;
+  private currentCardAction: CardActionAggregate | null = null;
 
   constructor(
     readonly initialState: GameState,
     readonly cardDefs: Record<number, CardDef>,
+    readonly stickerDefs: Record<number, Sticker>,
     readonly eventHistory: GameEvent[] = [],
   ) {
     this.events = eventHistory;
@@ -77,28 +64,27 @@ export class GameAggregate {
 
   private apply(event: GameEvent) {
     this.gameState = this.gameEventContext.apply(this.gameState, event);
+    this.currentCardAction = null;
   }
 
-  private withConsumedAction(
-    gameState: GameState,
-    sourceInstanceId: number,
-    actionId: string,
-  ): GameState {
-    const sourceInstance = gameState.instances[sourceInstanceId];
-    if (!sourceInstance || sourceInstance.usedActionIds.includes(actionId)) {
-      return gameState;
+  private autoTrigger(): GameState {
+    const newTriggers = this.gameState.triggerPile;
+
+    const firstTriggerEntry = newTriggers[Object.keys(newTriggers)[0]];
+    const sourceInstance =
+      firstTriggerEntry && this.gameState.instances[firstTriggerEntry.sourceInstanceId];
+
+    if (
+      Object.entries(newTriggers).length === 1 &&
+      firstTriggerEntry.effectDef.optional !== true &&
+      sourceInstance &&
+      this.cardDefs[sourceInstance.cardId]?.parchmentCard !== true
+    ) {
+      const [triggerId, trigger] = Object.entries(this.gameState.triggerPile)[0];
+      this.gameState = this.cardAction(trigger.effectDef, trigger.sourceInstanceId, triggerId);
     }
 
-    return {
-      ...gameState,
-      instances: {
-        ...gameState.instances,
-        [sourceInstanceId]: {
-          ...sourceInstance,
-          usedActionIds: [...sourceInstance.usedActionIds, actionId],
-        },
-      },
-    };
+    return this.gameState;
   }
 
   public loadFromHistory(events: GameEvent[]): GameState {
@@ -188,6 +174,7 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
+    this.autoTrigger();
     return this.gameState;
   }
 
@@ -216,6 +203,7 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
+    this.autoTrigger();
     return this.gameState;
   }
 
@@ -255,41 +243,6 @@ export class GameAggregate {
     return this.gameState;
   }
 
-  public setCardName(cardInstanceId: number, chosenName: string): GameState {
-    const instance = this.gameState.instances[cardInstanceId];
-    if (!instance) return this.gameState;
-    if ((instance.chosenName ?? '') === chosenName) return this.gameState;
-
-    const prevState = this.gameState;
-    const nextState: GameState = {
-      ...this.gameState,
-      instances: {
-        ...this.gameState.instances,
-        [cardInstanceId]: {
-          ...instance,
-          chosenName,
-        },
-      },
-    };
-
-    const event: UseCardEffectEvent = {
-      id: crypto.randomUUID(),
-      actionId: `set-card-name-${cardInstanceId}`,
-      type: GameEventType.USE_CARD_EFFECT,
-      timestamp: Date.now(),
-      gameStateChanges: computeGameStateDiff(prevState, nextState),
-      resolvedCost: { resources: {}, discardedCardIds: [], destroyedCardIds: [] },
-      sourceInstanceId: cardInstanceId,
-      triggerId: `set-card-name-${cardInstanceId}`,
-      isDiscarded: false,
-      isDestroyed: false,
-    };
-
-    this.apply(event);
-    this.events.push(event);
-    return this.gameState;
-  }
-
   public advance(): GameState {
     if (this.gameState.drawPile.length === 0) {
       return this.gameState;
@@ -313,6 +266,7 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
+    this.autoTrigger();
     return this.gameState;
   }
 
@@ -332,85 +286,75 @@ export class GameAggregate {
     return this.gameState;
   }
 
-  private getStrategy(effectType: ActionType): CardActionStrategy {
-    const strategies: Partial<Record<ActionType, CardActionStrategy>> = {
-      [ActionType.ADD_RESOURCES]: new AddResourceStrategy(),
-      [ActionType.DISCARD_CARD]: new DiscardCardStrategy(),
-      [ActionType.DISCOVER_CARD]: new DiscoverCardStrategy(this.cardDefs),
-      [ActionType.DESTROY_CARD]: new DestroyCardStrategy(),
-      [ActionType.UPGRADE_CARD]: new UpgradeCardStrategy(),
-      [ActionType.PLACE_CARD_IN_DRAW_PILE]: new PlaceCardInDrawPileStrategy(),
-      [ActionType.BLOCK_CARD]: new BlockCardStrategy(),
-      [ActionType.ADD_BOARD_EFFECT]: new AddBoardEffectStrategy(),
-      [ActionType.PLAY_CARD]: new PlayCardStrategy(this.cardDefs),
-      [ActionType.BOOST_CARD]: new AddStickerStrategy(),
-      [ActionType.ADD_STICKER]: new AddStickerStrategy(),
-      [ActionType.CHOOSE_STATE]: new ChoseStateStrategy(),
-      [ActionType.TRACK_ADVANCE]: new TrackAdvanceStrategy(this.cardDefs),
-      [ActionType.SET_CUMULATED]: new SetCumulatedStrategy(),
-      [ActionType.ADD_CUMULATED]: new AddCumulatedStrategy(),
-    };
-    const strategy = strategies[effectType];
-    if (!strategy) {
-      throw new Error(`Unknown effect type: ${effectType}`);
+  public cardAction(action: CardAction, instanceId: number, triggerId?: string): GameState {
+    this.currentCardAction = new CardActionAggregate(
+      this.cardDefs,
+      this.stickerDefs,
+      this.gameState,
+      this.gameState.instances[instanceId],
+      action,
+      triggerId,
+    );
+
+    this.currentCardAction.resolveAction();
+
+    if (this.currentCardAction.getPendingChoices().length > 0) {
+      return this.gameState;
     }
-    return strategy;
+
+    return this.finalizeCurrentCardAction(this.currentCardAction);
   }
 
-  public applyCardEffect(
-    actionId: string,
-    effects: ResolvedAction[],
-    resolvedCost: ResolvedCost,
-    triggerId: string,
-    options: {
-      isDiscarded?: boolean;
-      isDestroyed?: boolean;
-      endsTurn?: boolean;
-      explicitSourceInstanceId?: number;
-      consumeAction?: boolean;
-    } = {},
+  public resolveCardActionChoice(
+    choice: ResolvedActionEffect,
+    choiceType?: PendingChoiceType,
   ): GameState {
-    const {
-      isDiscarded = false,
-      isDestroyed = false,
-      endsTurn = false,
-      explicitSourceInstanceId,
-      consumeAction = false,
-    } = options;
-    const cardActionContext = new CardActionContext();
+    if (!this.currentCardAction) {
+      return this.gameState;
+    }
 
-    const prevState = this.gameState;
-    const sourceInstanceId = explicitSourceInstanceId ?? effects[0]?.sourceInstanceId ?? -1;
-    const resolvedState = effects.reduce((gs, effect) => {
-      cardActionContext.setStrategy(this.getStrategy(effect.type));
-      return cardActionContext.applyEffect(gs, effect);
-    }, this.gameState);
-    const gameState =
-      consumeAction && sourceInstanceId !== -1
-        ? this.withConsumedAction(resolvedState, sourceInstanceId, actionId)
-        : resolvedState;
+    this.currentCardAction.resolvePlayerChoice(choice, choiceType);
+    if (this.currentCardAction.getPendingChoices().length > 0) {
+      return this.gameState;
+    }
 
-    const event: UseCardEffectEvent = {
+    return this.finalizeCurrentCardAction(this.currentCardAction);
+  }
+
+  public resolveCardActionCost(resolvedCost: ResolvedCost): GameState {
+    if (!this.currentCardAction) {
+      return this.gameState;
+    }
+
+    this.currentCardAction.resolveCostChoice(resolvedCost);
+    if (this.currentCardAction.getPendingChoices().length > 0) {
+      return this.gameState;
+    }
+
+    return this.finalizeCurrentCardAction(this.currentCardAction);
+  }
+
+  private finalizeCurrentCardAction(currentCardAction: CardActionAggregate): GameState {
+    const newGameState = currentCardAction.getGameState();
+
+    const event: CardActionEvent = {
       id: crypto.randomUUID(),
-      actionId,
-      type: GameEventType.USE_CARD_EFFECT,
+      type: GameEventType.CARD_ACTION,
       timestamp: Date.now(),
-      gameStateChanges: computeGameStateDiff(prevState, gameState),
-      resolvedCost,
-      sourceInstanceId,
-      triggerId,
-      isDiscarded,
-      isDestroyed,
+      gameStateChanges: computeGameStateDiff(this.gameState, newGameState),
+      sourceInstanceId: currentCardAction.getSourceInstanceId(),
+      actionId: currentCardAction.getActionId(),
     };
+
+    const isEndTurn = currentCardAction.isEndTurn();
+
     this.apply(event);
     this.events.push(event);
-    if (this.gameState.phase === Phase.END_TURN) {
-      if (Object.keys(this.gameState.triggerPile).length === 0) {
-        return this.turnStarted();
-      }
-    } else if (endsTurn) {
+    this.autoTrigger();
+    if (isEndTurn) {
       return this.turnEnded();
     }
+
     return this.gameState;
   }
 
@@ -441,5 +385,9 @@ export class GameAggregate {
 
   public getEvents(): GameEvent[] {
     return this.events;
+  }
+
+  public getCurrentCardAction(): CardActionAggregate | null {
+    return this.currentCardAction;
   }
 }

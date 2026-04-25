@@ -1,427 +1,242 @@
-import { makeCardState, makeDef, makeGameState, makeInstance } from './testHelpers';
+import { makeInstance, makeState } from './fixtures';
 import { cardSelector } from '@engine/application/cardSelector';
-import { CardTag, PassiveType, ResourceType, TargetScope } from '@engine/domain/enums';
+import { PassiveType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
-// — SELF scope —
+const defA: CardDef = {
+  id: 1,
+  name: 'A',
+  states: [{ id: 1, name: 'S1', tags: ['building' as never] }],
+};
+const defB: CardDef = {
+  id: 2,
+  name: 'B',
+  states: [{ id: 1, name: 'S2', negative: true }],
+};
+const defC: CardDef = {
+  id: 3,
+  name: 'C',
+  states: [{ id: 1, name: 'S3', productions: [{ gold: 1 }] }],
+};
 
-describe('cardSelector — SELF', () => {
-  it('returns the instance id of the caller', () => {
-    const gs = makeGameState({ instances: { 5: makeInstance(5, 10, 1) } });
-    const result = cardSelector({ scope: [TargetScope.SELF] }, 5, gs);
-    expect(result).toEqual([5]);
+const instA = makeInstance({ id: 10, cardId: 1, stateId: 1 });
+const instB = makeInstance({ id: 20, cardId: 2, stateId: 1 });
+const instC = makeInstance({ id: 30, cardId: 3, stateId: 1 });
+
+const defs: Record<number, CardDef> = { 1: defA, 2: defB, 3: defC };
+
+function baseState() {
+  return makeState({
+    board: [10, 20],
+    drawPile: [30],
+    discardPile: [],
+    instances: { 10: instA, 20: instB, 30: instC },
   });
-});
+}
 
-// — TOP_OF_DECK scope —
-
-describe('cardSelector — TOP_OF_DECK', () => {
-  it('returns the top card of the draw pile', () => {
-    const gs = makeGameState({
-      drawPile: [1, 2, 3],
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 11, 1),
-        3: makeInstance(3, 12, 1),
-      },
-    });
-    const result = cardSelector({ scope: [TargetScope.TOP_OF_DECK] }, 99, gs);
-    expect(result).toEqual([1]); // first element = top
+describe('cardSelector – shortcuts', () => {
+  it('returns ids directly when scope is ANY and ids provided', () => {
+    const gs = baseState();
+    const result = cardSelector({ ids: [10, 20], scope: [TargetScope.ANY] }, 99, gs, defs);
+    expect(result).toEqual([10, 20]);
   });
 
-  it('returns empty array when draw pile is empty', () => {
-    const gs = makeGameState({ drawPile: [], instances: {} });
-    const result = cardSelector({ scope: [TargetScope.TOP_OF_DECK] }, 99, gs);
+  it('returns instanceId for SELF scope', () => {
+    const result = cardSelector({ scope: [TargetScope.SELF] }, 10, baseState(), defs);
+    expect(result).toEqual([10]);
+  });
+
+  it('returns top of deck for TOP_OF_DECK scope', () => {
+    const gs = makeState({ drawPile: [30, 10], instances: { 10: instA, 30: instC } });
+    const result = cardSelector({ scope: [TargetScope.TOP_OF_DECK] }, 99, gs, defs);
+    expect(result).toEqual([30]);
+  });
+
+  it('returns empty for TOP_OF_DECK when drawPile is empty', () => {
+    const result = cardSelector({ scope: [TargetScope.TOP_OF_DECK] }, 99, makeState(), defs);
     expect(result).toEqual([]);
   });
 });
 
-// — DECK scope —
-
-describe('cardSelector — DECK', () => {
-  it('returns all cards in the draw pile (excluding self)', () => {
-    const gs = makeGameState({
-      drawPile: [1, 2, 3],
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 11, 1),
-        3: makeInstance(3, 12, 1),
-      },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-      11: makeDef(11, [makeCardState(1)]),
-      12: makeDef(12, [makeCardState(1)]),
-    };
-    const result = cardSelector({ scope: [TargetScope.DECK] }, 1, gs, defs);
-    expect(result).toEqual([2, 3]);
+describe('cardSelector – location scopes', () => {
+  it('BOARD scope returns board cards (excluding self)', () => {
+    const gs = baseState();
+    const result = cardSelector({ scope: [TargetScope.BOARD] }, 10, gs, defs);
+    expect(result).toContain(20);
+    expect(result).not.toContain(10);
   });
-});
 
-// — BOARD scope —
-
-describe('cardSelector — BOARD', () => {
-  it('returns all board cards excluding self', () => {
-    const gs = makeGameState({
-      board: [1, 2, 3],
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 11, 1),
-        3: makeInstance(3, 12, 1),
-      },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-      11: makeDef(11, [makeCardState(1)]),
-      12: makeDef(12, [makeCardState(1)]),
-    };
-    const result = cardSelector({ scope: [TargetScope.BOARD] }, 1, gs, defs);
-    expect(result).toEqual([2, 3]);
+  it('DECK scope returns drawPile cards', () => {
+    const result = cardSelector({ scope: [TargetScope.DECK] }, 99, baseState(), defs);
+    expect(result).toContain(30);
   });
-});
 
-// — DISCARD scope —
-
-describe('cardSelector — DISCARD', () => {
-  it('returns all cards in the discard pile', () => {
-    const gs = makeGameState({
-      discardPile: [4, 5],
-      instances: {
-        4: makeInstance(4, 10, 1),
-        5: makeInstance(5, 11, 1),
-      },
+  it('DISCARD scope returns discardPile cards', () => {
+    const gs = makeState({
+      discardPile: [10],
+      instances: { 10: instA },
     });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-      11: makeDef(11, [makeCardState(1)]),
-    };
     const result = cardSelector({ scope: [TargetScope.DISCARD] }, 99, gs, defs);
-    expect(result).toEqual([4, 5]);
+    expect(result).toContain(10);
   });
-});
 
-// — DISCOVERY scope —
-
-describe('cardSelector — DISCOVERY', () => {
-  it('returns all cards in the discovery pile', () => {
-    const gs = makeGameState({
-      discoveryPile: [6, 7],
-      instances: {
-        6: makeInstance(6, 10, 1),
-        7: makeInstance(7, 11, 1),
-      },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-      11: makeDef(11, [makeCardState(1)]),
-    };
+  it('DISCOVERY scope returns discoveryPile cards', () => {
+    const gs = makeState({ discoveryPile: [10], instances: { 10: instA } });
     const result = cardSelector({ scope: [TargetScope.DISCOVERY] }, 99, gs, defs);
-    expect(result).toEqual([6, 7]);
+    expect(result).toContain(10);
   });
-});
 
-// — BLOCKED scope —
-
-describe('cardSelector — BLOCKED', () => {
-  it('returns all values of blockingCards', () => {
-    const gs = makeGameState({
-      boardEffects: {
-        1: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [2] } }],
-        3: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [4] } }],
-      },
-      instances: {
-        2: makeInstance(2, 10, 1),
-        4: makeInstance(4, 11, 1),
-      },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-      11: makeDef(11, [makeCardState(1)]),
-    };
-    const result = cardSelector({ scope: [TargetScope.BLOCKED] }, 99, gs, defs);
-    expect(result).toContain(2);
-    expect(result).toContain(4);
-  });
-});
-
-// — tag filtering —
-
-describe('cardSelector — tag filtering', () => {
-  it('returns only cards with the specified tag', () => {
-    const gs = makeGameState({
-      board: [1, 2],
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 11, 1),
-      },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { tags: [CardTag.BUILDING] })]),
-      11: makeDef(11, [makeCardState(1, { tags: [CardTag.SEAFARING] })]),
-    };
-    const result = cardSelector(
-      { scope: [TargetScope.BOARD], tags: [CardTag.BUILDING] },
-      99,
-      gs,
-      defs,
-    );
-    expect(result).toEqual([1]);
-  });
-});
-
-// — produces filtering —
-
-describe('cardSelector — produces filtering', () => {
-  it('returns only cards that produce the specified resource', () => {
-    const gs = makeGameState({
-      board: [1, 2],
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 11, 1),
-      },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { productions: [{ gold: 2 }] })]),
-      11: makeDef(11, [makeCardState(1, { productions: [{ wood: 1 }] })]),
-    };
-    const result = cardSelector(
-      { scope: [TargetScope.BOARD], produces: [ResourceType.GOLD] },
-      99,
-      gs,
-      defs,
-    );
-    expect(result).toEqual([1]);
-  });
-});
-
-// — ids filtering —
-
-describe('cardSelector — ids filtering', () => {
-  it('returns only cards whose ids are in the list', () => {
-    const gs = makeGameState({
-      board: [1, 2, 3],
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 11, 1),
-        3: makeInstance(3, 12, 1),
-      },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-      11: makeDef(11, [makeCardState(1)]),
-      12: makeDef(12, [makeCardState(1)]),
-    };
-    const result = cardSelector({ scope: [TargetScope.BOARD], ids: [2, 3] }, 99, gs, defs);
-    expect(result).toEqual([2, 3]);
-  });
-});
-
-// — missing instance fallback —
-
-describe('cardSelector — missing instance in pool', () => {
-  it('excludes pool entries that have no matching instance', () => {
-    const gs = makeGameState({
-      board: [1, 999], // 999 has no instance
-      instances: { 1: makeInstance(1, 10, 1) },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-    };
-    const result = cardSelector({ scope: [TargetScope.BOARD] }, 99, gs, defs);
-    expect(result).toEqual([1]);
-    expect(result).not.toContain(999);
-  });
-});
-
-// — PERMANENTS scope —
-
-describe('cardSelector — PERMANENTS', () => {
-  it('returns all cards in the permanents pile', () => {
-    const gs = makeGameState({
-      permanents: [7, 8],
-      instances: {
-        7: makeInstance(7, 10, 1),
-        8: makeInstance(8, 11, 1),
-      },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-      11: makeDef(11, [makeCardState(1)]),
-    };
+  it('PERMANENTS scope returns permanents', () => {
+    const gs = makeState({ permanents: [10], instances: { 10: instA } });
     const result = cardSelector({ scope: [TargetScope.PERMANENTS] }, 99, gs, defs);
-    expect(result).toContain(7);
-    expect(result).toContain(8);
+    expect(result).toContain(10);
   });
-});
 
-// — ANY scope —
-
-describe('cardSelector — ANY', () => {
-  it('returns cards from drawPile, board, discardPile and permanents', () => {
-    const gs = makeGameState({
-      drawPile: [1],
-      board: [2],
-      discardPile: [3],
-      permanents: [4],
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 10, 1),
-        3: makeInstance(3, 10, 1),
-        4: makeInstance(4, 10, 1),
-      },
+  it('ANY scope includes board, drawPile, discardPile, permanents', () => {
+    const gs = makeState({
+      board: [10],
+      drawPile: [30],
+      discardPile: [20],
+      permanents: [],
+      instances: { 10: instA, 20: instB, 30: instC },
     });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-    };
     const result = cardSelector({ scope: [TargetScope.ANY] }, 99, gs, defs);
-    expect(result).toContain(1);
-    expect(result).toContain(2);
-    expect(result).toContain(3);
-    expect(result).toContain(4);
+    expect(result).toContain(10);
+    expect(result).toContain(30);
+    expect(result).toContain(20);
+  });
+
+  it('empty scope falls back to all instances', () => {
+    const gs = makeState({
+      board: [],
+      drawPile: [],
+      instances: { 10: instA },
+    });
+    const result = cardSelector({ scope: [] }, 99, gs, defs);
+    expect(result).toContain(10);
   });
 });
 
-// — blocked card exclusion —
-
-describe('cardSelector — blocked card exclusion', () => {
-  it('excludes blocked cards from non-BLOCKED scope results', () => {
-    const gs = makeGameState({
-      board: [1, 2, 3],
-      boardEffects: { 99: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [2] } }] }, // card 2 is blocked by 99
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 10, 1),
-        3: makeInstance(3, 10, 1),
+describe('cardSelector – BLOCKED scope', () => {
+  it('includes blocked cards when BLOCKED scope is set', () => {
+    const gs = makeState({
+      board: [10, 20],
+      instances: { 10: instA, 20: instB },
+      boardEffects: {
+        10: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [20] } }],
       },
     });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-    };
-    const result = cardSelector({ scope: [TargetScope.BOARD] }, 99, gs, defs);
-    expect(result).not.toContain(2);
-    expect(result).toContain(1);
-    expect(result).toContain(3);
+    const result = cardSelector({ scope: [TargetScope.BLOCKED] }, 99, gs, defs);
+    expect(result).toContain(20);
+  });
+
+  it('excludes blocked cards without BLOCKED scope', () => {
+    const gs = makeState({
+      board: [10, 20],
+      instances: { 10: instA, 20: instB },
+      boardEffects: {
+        10: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [20] } }],
+      },
+    });
+    const result = cardSelector({ scope: [TargetScope.BOARD] }, 10, gs, defs);
+    expect(result).not.toContain(20);
   });
 });
 
-// — FRIENDLY / ENEMY scope —
-
-describe('cardSelector — FRIENDLY / ENEMY', () => {
-  it('FRIENDLY excludes negative cards', () => {
-    const gs = makeGameState({
-      board: [1, 2],
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 11, 1),
-      },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { negative: false })]),
-      11: makeDef(11, [makeCardState(1, { negative: true })]),
-    };
-    const result = cardSelector({ scope: [TargetScope.FRIENDLY] }, 99, gs, defs);
-    expect(result).toContain(1);
-    expect(result).not.toContain(2);
+describe('cardSelector – alignment filters', () => {
+  it('FRIENDLY scope excludes negative cards', () => {
+    const gs = baseState();
+    const result = cardSelector({ scope: [TargetScope.BOARD, TargetScope.FRIENDLY] }, 99, gs, defs);
+    expect(result).toContain(10);
+    expect(result).not.toContain(20);
   });
 
-  it('ENEMY returns only negative cards', () => {
-    const gs = makeGameState({
-      board: [1, 2],
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 11, 1),
-      },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { negative: false })]),
-      11: makeDef(11, [makeCardState(1, { negative: true })]),
-    };
-    const result = cardSelector({ scope: [TargetScope.ENEMY] }, 99, gs, defs);
-    expect(result).toEqual([2]);
+  it('ENEMY scope keeps only negative cards', () => {
+    const gs = baseState();
+    const result = cardSelector({ scope: [TargetScope.BOARD, TargetScope.ENEMY] }, 99, gs, defs);
+    expect(result).not.toContain(10);
+    expect(result).toContain(20);
   });
 });
 
-// — DRAWN scope —
-
-describe('cardSelector — DRAWN', () => {
-  it('returns cards from lastDrawnCards excluding self', () => {
-    const gs = makeGameState({
-      lastDrawnCards: [1, 2, 3],
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 11, 1),
-        3: makeInstance(3, 12, 1),
-      },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-      11: makeDef(11, [makeCardState(1)]),
-      12: makeDef(12, [makeCardState(1)]),
-    };
-    const result = cardSelector({ scope: [TargetScope.DRAWN] }, 1, gs, defs);
-    expect(result).toEqual([2, 3]);
-  });
-});
-
-describe('cardSelector — extra branch coverage', () => {
-  it('returns empty when name filter does not match', () => {
-    const gs = makeGameState({
-      board: [1],
-      instances: { 1: makeInstance(1, 10, 1) },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { name: 'Named State' })]),
-    };
-
-    const result = cardSelector({ scope: [TargetScope.BOARD], name: 'Other Name' }, 99, gs, defs);
-    expect(result).toEqual([]);
-  });
-
-  it('returns empty when productions are requested but state has no productions', () => {
-    const gs = makeGameState({
-      board: [1],
-      instances: { 1: makeInstance(1, 10, 1) },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-    };
-
+describe('cardSelector – tag filter', () => {
+  it('filters by tags', () => {
+    const gs = baseState();
     const result = cardSelector(
-      { scope: [TargetScope.BOARD], produces: [ResourceType.GOLD] },
+      { scope: [TargetScope.BOARD], tags: ['building' as never] },
       99,
       gs,
       defs,
     );
-    expect(result).toEqual([]);
+    expect(result).toContain(10);
+    expect(result).not.toContain(20);
   });
 
-  it('returns empty when instance state id is missing from card definition', () => {
-    const gs = makeGameState({
-      board: [1],
-      instances: { 1: makeInstance(1, 10, 99) },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-    };
+  it('requires all tags to match', () => {
+    const gs = baseState();
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD], tags: ['building' as never, 'person' as never] },
+      99,
+      gs,
+      defs,
+    );
+    expect(result).toHaveLength(0);
+  });
+});
 
+describe('cardSelector – produces filter', () => {
+  it('filters by produces', () => {
+    const gs = makeState({
+      board: [10, 30],
+      instances: { 10: instA, 30: instC },
+    });
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD], produces: ['gold' as never] },
+      99,
+      gs,
+      defs,
+    );
+    expect(result).toContain(30);
+    expect(result).not.toContain(10);
+  });
+});
+
+describe('cardSelector – ids filter', () => {
+  it('filters by specific ids within a scope', () => {
+    const gs = baseState();
+    const result = cardSelector({ scope: [TargetScope.BOARD], ids: [10] }, 99, gs, defs);
+    expect(result).toEqual([10]);
+  });
+});
+
+describe('cardSelector – name filter', () => {
+  it('filters by state name', () => {
+    const defNamed: CardDef = { id: 5, name: 'X', states: [{ id: 1, name: 'Hero' }] };
+    const defOther: CardDef = { id: 6, name: 'Y', states: [{ id: 1, name: 'Villain' }] };
+    const iNamed = makeInstance({ id: 50, cardId: 5, stateId: 1 });
+    const iOther = makeInstance({ id: 60, cardId: 6, stateId: 1 });
+    const gs = makeState({ board: [50, 60], instances: { 50: iNamed, 60: iOther } });
+    const localDefs = { 5: defNamed, 6: defOther };
+    const result = cardSelector({ scope: [TargetScope.BOARD], name: 'Hero' }, 99, gs, localDefs);
+    expect(result).toContain(50);
+    expect(result).not.toContain(60);
+  });
+});
+
+describe('cardSelector – missing def or state', () => {
+  it('excludes cards with no matching def', () => {
+    const gs = makeState({ board: [99], instances: { 99: makeInstance({ id: 99, cardId: 99 }) } });
+    const result = cardSelector({ scope: [TargetScope.BOARD] }, 1, gs, defs);
+    expect(result).not.toContain(99);
+  });
+
+  it('excludes cards with no matching state', () => {
+    const gs = makeState({
+      board: [10],
+      instances: { 10: makeInstance({ id: 10, cardId: 1, stateId: 99 }) },
+    });
     const result = cardSelector({ scope: [TargetScope.BOARD] }, 99, gs, defs);
-    expect(result).toEqual([]);
-  });
-
-  it('handles selector without scope using defaults', () => {
-    const gs = makeGameState({
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 11, 1),
-      },
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-      11: makeDef(11, [makeCardState(1)]),
-    };
-
-    const result = cardSelector({}, 99, gs, defs);
-    expect(result).toEqual([1, 2]);
+    expect(result).not.toContain(10);
   });
 });

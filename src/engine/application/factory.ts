@@ -26,6 +26,5 @@ export function createInstance(
     trackProgress: [],
     cumulated: {},
     usedActionIds: [],
-    chosenName: '',
   };
 }

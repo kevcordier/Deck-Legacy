@@ -1,8 +1,8 @@
-import { makeInstance } from '../tests/engine/application/testHelpers';
+import { makeInstance } from '../tests/engine/application/fixtures';
 import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
-import { ActionType, CardTag, PendingChoiceType, Trigger } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, PendingChoiceType, Trigger } from '@engine/domain/enums';
 import type { CardDef, CardInstance, Sticker } from '@engine/domain/types';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -88,9 +88,9 @@ const villageDef: CardDef = {
 const defs: Record<number, CardDef> = { 1: farmDef, 2: smithDef, 3: villageDef };
 
 const instances: Record<number, CardInstance> = {
-  1: makeInstance(1, 1, 1),
-  2: makeInstance(2, 2, 1),
-  3: makeInstance(3, 3, 1),
+  1: makeInstance({ id: 1, cardId: 1, stateId: 1 }),
+  2: makeInstance({ id: 2, cardId: 2, stateId: 1 }),
+  3: makeInstance({ id: 3, cardId: 3, stateId: 1 }),
 };
 
 const stickerDefs: Record<number, Sticker> = {
@@ -107,7 +107,7 @@ export const ChooseCard: Story = {
     choice: {
       id: 'choice-1',
       type: PendingChoiceType.CHOOSE_CARD,
-      kind: ActionType.DISCARD_CARD,
+      kind: ActionEffectType.DISCARD_CARD,
       sourceInstanceId: 99,
       pickCount: 1,
       choices: [1, 2, 3],
@@ -125,7 +125,7 @@ export const ChooseResource: Story = {
     choice: {
       id: 'choice-2',
       type: PendingChoiceType.CHOOSE_RESOURCE,
-      kind: ActionType.ADD_RESOURCES,
+      kind: ActionEffectType.ADD_RESOURCES,
       sourceInstanceId: 1,
       pickCount: 1,
       choices: [{ gold: 2 }, { wood: 3 }, { stone: 2 }],
@@ -143,7 +143,7 @@ export const ChooseState: Story = {
     choice: {
       id: 'choice-3',
       type: PendingChoiceType.CHOOSE_STATE,
-      kind: ActionType.CHOOSE_STATE,
+      kind: ActionEffectType.CHOOSE_STATE,
       sourceInstanceId: 3,
       pickCount: 1,
       choices: [1, 2],
@@ -161,7 +161,7 @@ export const ChooseSticker: Story = {
     choice: {
       id: '1-boost',
       type: PendingChoiceType.CHOOSE_STICKER,
-      kind: ActionType.BOOST_CARD,
+      kind: ActionEffectType.BOOST_CARD,
       sourceInstanceId: 1,
       pickCount: 1,
       choices: [1, 2],

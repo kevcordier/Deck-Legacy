@@ -1,5 +1,5 @@
-import type { GameState, ResolvedAction } from '@engine/domain/types';
+import type { GameState, ResolvedActionEffect } from '@engine/domain/types';
 
 export interface CardActionStrategy {
-  applyEffect(gameState: GameState, payload: ResolvedAction): GameState;
+  apply(gameState: GameState, payload: ResolvedActionEffect): GameState;
 }

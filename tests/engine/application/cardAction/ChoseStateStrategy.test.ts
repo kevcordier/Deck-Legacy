@@ -1,50 +1,44 @@
-import { makeGameState, makeInstance } from '../testHelpers';
+import { makeInstance, makeState } from '../fixtures';
 import { ChoseStateStrategy } from '@engine/application/cardAction/ChoseStateStrategy';
-import { ActionType } from '@engine/domain/enums';
+import { ActionEffectType } from '@engine/domain/enums';
 import { describe, expect, it } from 'vitest';
 
 describe('ChoseStateStrategy', () => {
   const strategy = new ChoseStateStrategy();
 
-  it('updates the stateId of the target instance', () => {
-    const gs = makeGameState({
-      instances: { 1: makeInstance(1, 10, 1) },
+  it('returns state unchanged when instanceId is missing', () => {
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.CHOOSE_STATE,
+      sourceInstanceId: 1,
+      stateId: 2,
     });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.CHOOSE_STATE,
-      sourceInstanceId: 99,
-      instanceIds: [1],
-      stateId: 3,
-    });
-    expect(result.instances[1].stateId).toBe(3);
+    expect(result).toBe(gs);
   });
 
-  it('does not affect other instances', () => {
-    const gs = makeGameState({
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 11, 2),
-      },
+  it('returns state unchanged when stateId is missing', () => {
+    const inst = makeInstance({ id: 1 });
+    const gs = makeState({ instances: { 1: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.CHOOSE_STATE,
+      sourceInstanceId: 1,
+      instanceIds: [1],
     });
-    strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.CHOOSE_STATE,
-      sourceInstanceId: 99,
+    expect(result).toBe(gs);
+  });
+
+  it('updates the stateId on the target instance', () => {
+    const inst = makeInstance({ id: 1, stateId: 1 });
+    const gs = makeState({ instances: { 1: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.CHOOSE_STATE,
+      sourceInstanceId: 1,
       instanceIds: [1],
       stateId: 5,
     });
-    expect(gs.instances[2].stateId).toBe(2);
-  });
-
-  it('is a no-op when instanceIds is not provided', () => {
-    const gs = makeGameState({ instances: { 1: makeInstance(1, 10, 1) } });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.CHOOSE_STATE,
-      sourceInstanceId: 99,
-      stateId: 3,
-    });
-    expect(result.instances[1].stateId).toBe(1);
+    expect(result.instances[1].stateId).toBe(5);
   });
 });

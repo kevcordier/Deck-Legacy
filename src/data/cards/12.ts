@@ -1,4 +1,10 @@
-import { ActionType, CardTag, PassiveType, ResourceType, TargetScope } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+} from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import { CardPassives } from '@engine/domain/types/effects';
 
@@ -60,14 +66,14 @@ export const eastCliffs: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [90],
               },
             },
             {
               id: 2,
-              type: ActionType.UPGRADE_CARD,
+              type: ActionEffectType.UPGRADE_CARD,
               cards: {
                 scope: [TargetScope.SELF],
               },
@@ -108,7 +114,7 @@ export const eastCliffs: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               valuePerElement: {
                 amount: 1,
                 resource: [ResourceType.WEAPON],

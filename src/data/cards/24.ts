@@ -1,5 +1,5 @@
 import {
-  ActionType,
+  ActionEffectType,
   CardTag,
   PassiveType,
   ResourceType,
@@ -27,7 +27,7 @@ export const scientist: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_BOARD_EFFECT,
+              type: ActionEffectType.ADD_BOARD_EFFECT,
               cards: {
                 scope: [TargetScope.SELF],
               },
@@ -79,7 +79,7 @@ export const scientist: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [95],
               },
@@ -122,7 +122,7 @@ export const scientist: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [96],
               },

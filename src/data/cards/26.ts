@@ -1,4 +1,10 @@
-import { ActionType, CardTag, PassiveType, ResourceType, TargetScope } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+} from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const inventor: CardDef = {
@@ -31,7 +37,7 @@ export const inventor: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_CUMULATED,
+                type: ActionEffectType.ADD_CUMULATED,
                 cards: { scope: [TargetScope.SELF] },
                 accumulated: { accumulation: 1 },
               },
@@ -42,7 +48,7 @@ export const inventor: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_CUMULATED,
+                type: ActionEffectType.ADD_CUMULATED,
                 cards: { scope: [TargetScope.SELF] },
                 accumulated: { accumulation: 1 },
               },
@@ -53,7 +59,7 @@ export const inventor: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_CUMULATED,
+                type: ActionEffectType.ADD_CUMULATED,
                 cards: { scope: [TargetScope.SELF] },
                 accumulated: { accumulation: 1 },
               },
@@ -92,25 +98,25 @@ export const inventor: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.UPGRADE_CARD,
+              type: ActionEffectType.UPGRADE_CARD,
               cards: { scope: [TargetScope.SELF] },
               states: [1],
             },
             {
               id: 2,
-              type: ActionType.TRACK_ADVANCE,
+              type: ActionEffectType.TRACK_ADVANCE,
               cards: {
                 scope: [TargetScope.SELF],
               },
             },
             {
               id: 3,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: { ids: [97, 98, 99] },
             },
             {
               id: 4,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               valuePerElement: {
                 amount: 1,
                 resource: [

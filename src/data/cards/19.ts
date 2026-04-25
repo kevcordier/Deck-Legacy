@@ -1,4 +1,4 @@
-import { ActionType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const exportation: CardDef = {
@@ -18,7 +18,7 @@ export const exportation: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_CUMULATED,
+              type: ActionEffectType.ADD_CUMULATED,
               cards: {
                 scope: [TargetScope.SELF],
               },
@@ -47,7 +47,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_STICKER,
+                type: ActionEffectType.ADD_STICKER,
                 stickerIds: [1, 2, 3],
                 cards: {
                   tags: [CardTag.LAND],
@@ -63,7 +63,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_STICKER,
+                type: ActionEffectType.ADD_STICKER,
                 stickerIds: [7],
                 cards: {
                   tags: [CardTag.PERSON],
@@ -79,7 +79,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.DISCOVER_CARD,
+                type: ActionEffectType.DISCOVER_CARD,
                 cards: {
                   ids: [86],
                 },
@@ -94,7 +94,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_STICKER,
+                type: ActionEffectType.ADD_STICKER,
                 stickerIds: [4, 5, 6],
                 cards: {
                   tags: [CardTag.BUILDING],
@@ -110,7 +110,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_STICKER,
+                type: ActionEffectType.ADD_STICKER,
                 stickerIds: [2, 3, 4],
                 cards: {
                   scope: [TargetScope.FRIENDLY],
@@ -126,11 +126,8 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_STICKER,
+                type: ActionEffectType.ADD_STICKER,
                 stickerIds: [10],
-                cards: {
-                  scope: [TargetScope.ANY],
-                },
               },
             ],
           },
@@ -142,7 +139,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -150,7 +147,7 @@ export const exportation: CardDef = {
               },
               {
                 id: 2,
-                type: ActionType.UPGRADE_CARD,
+                type: ActionEffectType.UPGRADE_CARD,
                 states: [2],
                 cards: {
                   scope: [TargetScope.SELF],
@@ -174,7 +171,7 @@ export const exportation: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_CUMULATED,
+              type: ActionEffectType.ADD_CUMULATED,
               cards: {
                 scope: [TargetScope.SELF],
               },
@@ -203,7 +200,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_STICKER,
+                type: ActionEffectType.ADD_STICKER,
                 stickerIds: [8],
                 cards: {
                   tags: [CardTag.LAND],
@@ -211,7 +208,7 @@ export const exportation: CardDef = {
               },
               {
                 id: 1,
-                type: ActionType.ADD_STICKER,
+                type: ActionEffectType.ADD_STICKER,
                 stickerIds: [8],
                 cards: {
                   tags: [CardTag.LAND],
@@ -227,7 +224,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_STICKER,
+                type: ActionEffectType.ADD_STICKER,
                 stickerIds: [10],
                 cards: {
                   tags: [CardTag.PERSON],
@@ -243,7 +240,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.DISCOVER_CARD,
+                type: ActionEffectType.DISCOVER_CARD,
                 cards: {
                   ids: [107],
                 },
@@ -258,7 +255,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_STICKER,
+                type: ActionEffectType.ADD_STICKER,
                 stickerIds: [10],
                 cards: {
                   tags: [CardTag.BUILDING],
@@ -274,7 +271,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.TRACK_ADVANCE,
+                type: ActionEffectType.TRACK_ADVANCE,
                 cards: {
                   scope: [TargetScope.PERMANENTS],
                 },
@@ -289,7 +286,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.TRACK_ADVANCE,
+                type: ActionEffectType.TRACK_ADVANCE,
                 cards: {
                   scope: [TargetScope.PERMANENTS],
                 },
@@ -304,7 +301,7 @@ export const exportation: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.DISCOVER_CARD,
+                type: ActionEffectType.DISCOVER_CARD,
                 cards: {
                   ids: [117],
                 },

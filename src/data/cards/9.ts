@@ -1,4 +1,10 @@
-import { ActionType, CardTag, ResourceType, TargetScope, Trigger } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  ResourceType,
+  TargetScope,
+  Trigger,
+} from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const bandit: CardDef = {
@@ -21,7 +27,7 @@ export const bandit: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.BLOCK_CARD,
+              type: ActionEffectType.BLOCK_CARD,
               cards: {
                 scope: [TargetScope.BOARD],
                 produces: [ResourceType.GOLD],
@@ -42,7 +48,7 @@ export const bandit: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               resources: {
                 choice: [
                   {
@@ -68,7 +74,7 @@ export const bandit: CardDef = {
             },
             {
               id: 2,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               resources: {
                 choice: [
                   {
@@ -108,7 +114,7 @@ export const bandit: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               resources: {
                 cards: {
                   scope: [TargetScope.BOARD],

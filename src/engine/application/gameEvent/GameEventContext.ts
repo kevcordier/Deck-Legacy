@@ -1,4 +1,5 @@
 import { AdvanceStrategy } from './AdvanceStrategy';
+import { CardActionEventStrategy } from './CardActionEventStrategy';
 import { CardProducedStrategy } from './CardProducedStrategy';
 import type { GameEventStrategy } from './GameEventStrategy';
 import { GameStartedStrategy } from './GameStartedStrategy';
@@ -7,7 +8,6 @@ import { SkipTriggerStrategy } from './SkipTriggerStrategy';
 import { TurnEndedStrategy } from './TurnEndedStrategy';
 import { TurnStartedStrategy } from './TurnStartedStrategy';
 import { UpgradeCardEventStrategy } from './UpgradeCardEventStrategy';
-import { UseCardEffectStrategy } from './UseCardEffectStrategy';
 import { GameEventType } from '@engine/domain/enums';
 import type { CardDef, GameEvent, GameState } from '@engine/domain/types';
 
@@ -22,7 +22,7 @@ export class GameEventContext {
       [GameEventType.CARD_PRODUCED]: new CardProducedStrategy(),
       [GameEventType.ADVANCE]: new AdvanceStrategy(),
       [GameEventType.UPGRADE_CARD]: new UpgradeCardEventStrategy(),
-      [GameEventType.USE_CARD_EFFECT]: new UseCardEffectStrategy(),
+      [GameEventType.CARD_ACTION]: new CardActionEventStrategy(),
       [GameEventType.SKIP_TRIGGER]: new SkipTriggerStrategy(),
       [GameEventType.TURN_ENDED]: new TurnEndedStrategy(),
     };

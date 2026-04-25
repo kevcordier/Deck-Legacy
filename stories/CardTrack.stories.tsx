@@ -1,6 +1,7 @@
-import { makeInstance } from '../tests/engine/application/testHelpers';
+import { makeInstance } from '../tests/engine/application/fixtures';
 import { CardTrack } from '@components/CardTrack/CardTrack';
-import { ActionType } from '@engine/domain/enums';
+import { GameProvider } from '@contexts/GameProvider';
+import { ActionEffectType } from '@engine/domain/enums';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof CardTrack> = {
@@ -9,6 +10,13 @@ const meta: Meta<typeof CardTrack> = {
   parameters: {
     layout: 'centered',
   },
+  decorators: [
+    Story => (
+      <GameProvider>
+        <Story />
+      </GameProvider>
+    ),
+  ],
 };
 
 export default meta;
@@ -28,7 +36,7 @@ const gloryTrack = {
       id: 5,
       cost: { resources: [{ weapon: 5 }] },
       onClick: {
-        actions: [{ id: 1, type: ActionType.UPGRADE_CARD, cards: {}, states: [2] }],
+        actions: [{ id: 1, type: ActionEffectType.UPGRADE_CARD, cards: {}, states: [2] }],
       },
     },
   ],
@@ -42,7 +50,7 @@ const freeTrack = {
       id: 1,
       cost: { resources: [{ gold: 1 }] },
       onClick: {
-        actions: [{ id: 1, type: ActionType.ADD_RESOURCES, resources: { wood: 2 } }],
+        actions: [{ id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 2 } }],
       },
     },
     {
@@ -54,14 +62,14 @@ const freeTrack = {
       id: 3,
       cost: { resources: [{ gold: 3 }] },
       onClick: {
-        actions: [{ id: 1, type: ActionType.DISCOVER_CARD, cards: { ids: [42] } }],
+        actions: [{ id: 1, type: ActionEffectType.DISCOVER_CARD, cards: { ids: [42] } }],
       },
     },
     {
       id: 4,
       cost: { resources: [{ gold: 2 }] },
       onClick: {
-        actions: [{ id: 1, type: ActionType.UPGRADE_CARD, cards: {}, states: [2] }],
+        actions: [{ id: 1, type: ActionEffectType.UPGRADE_CARD, cards: {}, states: [2] }],
       },
     },
   ],
@@ -81,7 +89,7 @@ const emptyStep = {
 export const InOrderNoProgress: Story = {
   name: 'inOrder — no progress',
   args: {
-    instance: makeInstance(1, 1, 1),
+    instance: makeInstance(),
     track: gloryTrack,
     validatedSteps: [],
   },
@@ -90,7 +98,7 @@ export const InOrderNoProgress: Story = {
 export const InOrderPartialProgress: Story = {
   name: 'inOrder — 2 steps done',
   args: {
-    instance: makeInstance(1, 1, 1),
+    instance: makeInstance(),
     track: gloryTrack,
     validatedSteps: [1, 2],
   },
@@ -99,7 +107,7 @@ export const InOrderPartialProgress: Story = {
 export const InOrderComplete: Story = {
   name: 'inOrder — all steps done',
   args: {
-    instance: makeInstance(1, 1, 1),
+    instance: makeInstance(),
     track: gloryTrack,
     validatedSteps: [1, 2, 3, 4, 5],
   },
@@ -108,7 +116,7 @@ export const InOrderComplete: Story = {
 export const InOrderCannotAfford: Story = {
   name: 'inOrder — cannot afford next step',
   args: {
-    instance: makeInstance(1, 1, 1),
+    instance: makeInstance(),
     track: gloryTrack,
     validatedSteps: [1],
   },
@@ -117,7 +125,7 @@ export const InOrderCannotAfford: Story = {
 export const FreeStepsMixedContent: Story = {
   name: 'free steps — mixed content (resource/glory/discover/upgrade)',
   args: {
-    instance: makeInstance(1, 1, 1),
+    instance: makeInstance(),
     track: freeTrack,
     validatedSteps: [1],
   },
@@ -126,7 +134,7 @@ export const FreeStepsMixedContent: Story = {
 export const FreeStepsNotOnBoard: Story = {
   name: 'free steps — card not on board (canActivate=false)',
   args: {
-    instance: makeInstance(1, 1, 1),
+    instance: makeInstance(),
     track: freeTrack,
     validatedSteps: [],
   },
@@ -135,7 +143,7 @@ export const FreeStepsNotOnBoard: Story = {
 export const EmptySteps: Story = {
   name: 'empty step content (no cost, no onClick)',
   args: {
-    instance: makeInstance(1, 1, 1),
+    instance: makeInstance(),
     track: emptyStep,
     validatedSteps: [],
   },

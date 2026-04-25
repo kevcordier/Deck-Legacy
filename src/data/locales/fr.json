@@ -37,7 +37,8 @@
   },
   "sections": {
     "permanents": "Permanentes",
-    "tableau": "Tableau"
+    "tableau": "Tableau",
+    "events": "Événements"
   },
   "cardCount": "{{count}} carte",
   "cardCount_other": "{{count}} cartes",
@@ -70,28 +71,32 @@
   },
   "pendingChoice": {
     "chooseCard": {
-      "DISCARD_CARD": "Choisissez {{count}} carte à défausser",
+      "DISCARD_CARD": "Choisissez une carte à défausser",
       "DISCARD_CARD_other": "Choisissez {{count}} cartes à défausser",
-      "DISCOVER_CARD": "Choisissez {{count}} carte à découvrir",
+      "DISCOVER_CARD": "Choisissez une carte à découvrir",
       "DISCOVER_CARD_other": "Choisissez {{count}} cartes à découvrir",
-      "DESTROY_CARD": "Choisissez {{count}} carte à détruire",
+      "DESTROY_CARD": "Choisissez une carte à détruire",
       "DESTROY_CARD_other": "Choisissez {{count}} cartes à détruire",
-      "COST": "Choisissez {{count}} carte comme coût",
+      "COST": "Choisissez une carte comme coût",
       "COST_other": "Choisissez {{count}} cartes comme coût",
-      "BLOCK_CARD": "Choisissez {{count}} carte à bloquer",
+      "BLOCK_CARD": "Choisissez une carte à bloquer",
       "BLOCK_CARD_other": "Choisissez {{count}} cartes à bloquer",
-      "ADD_RESOURCES": "Copiez les ressources de {{count}} carte",
+      "ADD_RESOURCES": "Copiez les ressources d'une carte",
       "ADD_RESOURCES_other": "Copiez les ressources de {{count}} cartes",
-      "ADD_STICKER": "Choisissez {{count}} carte pour ajouter un autocollant",
+      "ADD_STICKER": "Choisissez une carte pour ajouter un autocollant",
       "ADD_STICKER_other": "Choisissez {{count}} cartes pour ajouter un autocollant",
-      "BOOST_CARD": "Choisissez {{count}} carte à améliorer",
-      "BOOST_CARD_other": "Choisissez {{count}} cartes à améliorer"
+      "BOOST_CARD": "Choisissez une carte à améliorer",
+      "BOOST_CARD_other": "Choisissez {{count}} cartes à améliorer",
+      "ADD_BOARD_EFFECT": "Choisissez une carte pour ajouter un effet",
+      "ADD_BOARD_EFFECT_other": "Choisissez {{count}} cartes pour ajouter un effet"
     },
     "chooseStep": "Choisir une étape",
     "chooseState": "Choisir un état",
     "chooseResource": "Choisir une ressource",
     "chooseSticker": "Choisir un autocollant",
-    "confirm": "Confirmer ({{selected}}/{{total}})"
+    "choices": "Choisissez {{total}}",
+    "choices-between": "Choisissez entre {{min}} et {{max}}",
+    "confirm": "Confirmer ({{selected}})"
   },
   "triggerPile": {
     "title": "Effets en attente",
@@ -138,5 +143,19 @@
     "resetConfirm": "Êtes-vous sûr ?",
     "resetYes": "Oui, recommencer",
     "resetNo": "Annuler"
+  },
+  "eventLog": {
+    "title": "Journal d'événements",
+    "gameStarted": "Partie démarrée",
+    "roundStarted": "Manche {{round}} démarrée",
+    "turnStarted": "Tour {{turn}} — {{count}} carte piochée",
+    "turnStarted_other": "Tour {{turn}} — {{count}} cartes piochées",
+    "turnEnded": "Fin de tour",
+    "cardProduced": "{{card}} a produit",
+    "advance": "Avance — {{count}} carte",
+    "advance_other": "Avance — {{count}} cartes",
+    "upgradeCard": "{{card}} améliorée",
+    "cardAction": "Action de {{card}}",
+    "skipTrigger": "Déclencheur ignoré"
   }
 }

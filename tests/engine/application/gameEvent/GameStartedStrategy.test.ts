@@ -1,60 +1,45 @@
-import { makeGameState, makeInstance } from '../testHelpers';
+import { makeInstance, makeState } from '../fixtures';
 import { GameStartedStrategy } from '@engine/application/gameEvent/GameStartedStrategy';
 import { GameEventType } from '@engine/domain/enums';
+import type { GameStartedEvent } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
-
-const makeEvent = (
-  overrides: Partial<{
-    cardInstances: ReturnType<typeof makeInstance>[];
-    initialDeck: number[];
-    stickerStock: Record<string, number>;
-    discoveryPile: number[];
-  }> = {},
-) => ({
-  id: 'evt-1',
-  type: GameEventType.GAME_STARTED,
-  timestamp: 0,
-  cardInstances: [],
-  initialDeck: [],
-  stickerStock: {},
-  discoveryPile: [],
-  ...overrides,
-});
 
 describe('GameStartedStrategy', () => {
   const strategy = new GameStartedStrategy();
 
-  it('populates instances from cardInstances', () => {
-    const instances = [makeInstance(1, 10, 1), makeInstance(2, 11, 1)];
-    const result = strategy.apply(makeGameState(), makeEvent({ cardInstances: instances }));
-    expect(result.instances[1]).toEqual(instances[0]);
-    expect(result.instances[2]).toEqual(instances[1]);
-  });
-
-  it('sets drawPile from initialDeck', () => {
-    const result = strategy.apply(makeGameState(), makeEvent({ initialDeck: [1, 2, 3] }));
-    expect(result.drawPile).toEqual([1, 2, 3]);
-  });
-
-  it('sets stickerStock from the event', () => {
-    const result = strategy.apply(makeGameState(), makeEvent({ stickerStock: { 5: 3, 7: 1 } }));
-    expect(result.stickerStock).toEqual({ 5: 3, 7: 1 });
-  });
-
-  it('sets discoveryPile from the event', () => {
-    const result = strategy.apply(makeGameState(), makeEvent({ discoveryPile: [10, 20] }));
-    expect(result.discoveryPile).toEqual([10, 20]);
-  });
-
-  it('sets round and turn to 0', () => {
-    const result = strategy.apply(makeGameState({ round: 5, turn: 3 }), makeEvent());
-    expect(result.round).toBe(0);
-    expect(result.turn).toBe(0);
-  });
-
-  it('sets phase to PREGAME', () => {
-    const result = strategy.apply(makeGameState(), makeEvent());
+  it('populates instances, drawPile, stickerStock, discoveryPile', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const result = strategy.apply(makeState(), {
+      id: 'e1',
+      type: GameEventType.GAME_STARTED,
+      timestamp: 0,
+      cardInstances: [inst],
+      initialDeck: [1],
+      stickerStock: { 1: 3 },
+      discoveryPile: [2],
+    } as GameStartedEvent);
+    expect(result.instances[1]).toMatchObject({ id: 1 });
+    expect(result.drawPile).toEqual([1]);
+    expect(result.stickerStock).toEqual({ 1: 3 });
+    expect(result.discoveryPile).toEqual([2]);
     expect(result.phase).toBe(Phase.PREGAME);
+  });
+
+  it('normalizes card instance fields (stickers, trackProgress, etc.)', () => {
+    const bare = { id: 5, cardId: 1, stateId: 1 } as never;
+    const result = strategy.apply(makeState(), {
+      id: 'e1',
+      type: GameEventType.GAME_STARTED,
+      timestamp: 0,
+      cardInstances: [bare],
+      initialDeck: [],
+      stickerStock: {},
+      discoveryPile: [],
+    } as GameStartedEvent);
+    expect(result.instances[5].stickers).toEqual({});
+    expect(result.instances[5].trackProgress).toEqual([]);
+    expect(result.instances[5].cumulated).toEqual({});
+    expect(result.instances[5].usedActionIds).toEqual([]);
   });
 });

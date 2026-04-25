@@ -8,7 +8,7 @@ import { useGame } from '@hooks/useGame';
 import { useTranslation } from 'react-i18next';
 
 export function MainBoard() {
-  const { state, startTurn, defs } = useGame();
+  const { state, startTurn } = useGame();
   const { t } = useTranslation();
   return (
     <main className="scrollbar @container/main flex flex-1 flex-col gap-6 p-4">
@@ -54,7 +54,7 @@ export function MainBoard() {
           title={t('sections.tableau')}
           subtitle={`${t('cardCount', { count: state.board.length })}`}
         >
-          <CardRow cardIds={state.board} gameState={state} defs={defs} />
+          <CardRow cardIds={state.board} />
         </Section>
       )}
 
@@ -63,7 +63,7 @@ export function MainBoard() {
           title={t('sections.permanents')}
           subtitle={t('cardCount', { count: state.permanents.length })}
         >
-          <CardRow cardIds={state.permanents} gameState={state} defs={defs} />
+          <CardRow cardIds={state.permanents} />
         </Section>
       )}
     </main>

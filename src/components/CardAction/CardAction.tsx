@@ -7,11 +7,12 @@ import {
   TriggerIcon,
 } from '@components/ui/Icon/icon';
 import {
+  canAffordCardCost,
   canAffordResources,
   getActiveState,
   getFirstAvailableTrackStep,
 } from '@engine/application/cardHelpers';
-import { ActionType, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, TargetScope } from '@engine/domain/enums';
 import type { CardAction, CardInstance } from '@engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import type { ReactNode } from 'react';
@@ -44,15 +45,17 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
   const { state, defs, resolveAction } = useGame();
   const cs = getActiveState(instance, defs);
   const hasTrackAdvance =
-    action.actionEffects.some(e => e.type === ActionType.TRACK_ADVANCE) && cs?.track;
+    action.actionEffects.some(e => e.type === ActionEffectType.TRACK_ADVANCE) && cs?.track;
   const firstTrackStep = hasTrackAdvance
     ? getFirstAvailableTrackStep(action.actionEffects, instance.id, state, defs)
     : undefined;
+  const cardCostAffordable = canAffordCardCost(action.cost, instance.id, state, defs);
   const affordable = hasTrackAdvance
     ? firstTrackStep &&
       canAffordResources(state.resources, firstTrackStep?.cost) &&
-      canAffordResources(state.resources, action.cost)
-    : !action.cost || canAffordResources(state.resources, action.cost);
+      canAffordResources(state.resources, action.cost) &&
+      cardCostAffordable
+    : (!action.cost || canAffordResources(state.resources, action.cost)) && cardCostAffordable;
   const hasDestroyItselfCost = action.cost?.destroy?.scope?.includes(TargetScope.SELF) ?? false;
   const haveTrigger = !!action.trigger;
   if (haveTrigger) {

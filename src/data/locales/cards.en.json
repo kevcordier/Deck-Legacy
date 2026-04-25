@@ -81,8 +81,11 @@
     "27_2": "Sir _____",
     "28_1": "Stop",
     "29_1": "Strength in Numbers",
+    "29_2": "Military Dominance",
     "30_1": "Expanding Borders",
+    "30_2": "Maximizer",
     "31_1": "Loyalty",
+    "31_2": "Trader",
     "32_1": "Jester",
     "33_1": "Field Worker",
     "34_1": "Mason",
@@ -235,6 +238,7 @@
     "20_1_a0": "While this is in play, destroy the next land you play. When you do, ⬆.",
     "20_3_a0": "Mark 1 track. When you mark a *, add sticker 2 as production here.",
     "21_4_a0": "Reset to add any resource sticker as production on any stage of this card without stickers.",
+    "22_1_a0": "Select 2 cards from the next 4 cards to discover. Destroy the other 2 cards.",
     "23_1_a0": "Discover School (118).",
     "23_2_a0": "Gain {{gold}} per person in play.",
     "23_3_a0": "Discard 1 person to discover Stranger (92).",
@@ -252,6 +256,12 @@
     "27_1_a0": "Spend {{gold}} {{gold}} to mark 1-2 step.",
     "27_2_a0": "Spend {{iron}} {{iron}} {{iron}} to add sticker 5 here (On use only).",
     "27_2_a1": "Spend {{iron}} {{iron}} {{iron}} {{iron}} to add sticker 5 here (On use only).",
+    "29_1_p0": "* Worth 2{{glory}} per person.",
+    "29_2_p0": "* Worth 2{{glory}} per production of {{weapon}}.",
+    "30_1_p0": "* You want 75 or more cards in your kingdom (not counting permanent cards). This is worth -2{{glory}} for each card missing from 75.",
+    "30_2_p0": "* Worth -1{{glory}} per card with exactly 0 (excluding permanent cards).",
+    "31_1_p0": "* Worth 25{{glory}} if there is no enemy in your kingdom.",
+    "31_2_p0": "* Worth 25{{glory}} if your production of {{goods}} is 10 or more.",
     "68_1_a0": "End of Turn: Discard to make up to 1 other card stay in play.",
     "68_2_a0": "End of Turn: Discard to make up to 2 other cards stay in play.",
     "68_3_a0": "End of Turn: Discard to make up to 3 other cards stay in play.",
@@ -279,17 +289,18 @@
   "texts": {
     "15": "## Stop!\nNow that you have got the hang of the game, you may reset to start again if you like to give it your best shot. If you continue, you will discover 4 cards, cards 24-27. Look at them now and THEN decide if you want to restart or continue.\n\nCards 25, 26, and 27 are **permanent** cards, meaning they are never shuffled into your deck and cannot be discarded. They are always visible and active, but are not counted as \"in play\".\n\nThe Army and Treasury are track cards. They let you spend your turn ({{time}}) and resources ({{weapon}}/{{gold}}) to gain fame. Export is a tally card. It doesn't end your turn ({{passif}}) and lets you spend trade goods ({{goods}}) to gain stickers, new cards, and other cool effects.\n\nYou will not be able to complete all tracks before the game ends. Try to get as far as possible!",
     "16": "## Fertile Soil\n\nThis land seems to grow anything you put into the ground.\n\nAdd sticker 1 ({{gold}}) as production to a land.\n\n## Efficiency\n\nYou're getting the hang of this!\n\nChoose 1 **building** and **boost** its production (add a resource sticker to it to make it produce 1 more of a resource it already produces. Resource stickers are numbered 1-6 on the sticker sheet).\n\n(Reminder: When discovering a parchment card like this, follow all its instructions, then destroy this.)",
-    "22": "## Stop!\n\nWith your kingdom growing and flourishing, many are coming here to pursue their dreams.\n\nThis round, instead of discovering the next 2 cards, look at the 4 next cards of the box (cards 31-34).\n\nChoose 2 of them to discover and destroy the other 2."
+    "22": "## Stop!\n\nWith your kingdom growing and flourishing, many are coming here to pursue their dreams.\n\nThis round, instead of discovering the next 2 cards, look at the 4 next cards of the box (cards 31-34).\n\nChoose 2 of them to discover and destroy the other 2.",
+    "28": "## STOP!\n\nIt's time to set up some goals for your kingdom, something to strive for.\nDiscover 5 cards this round, instead of 2 (cards 38-42). The first 3 are goal cards.\nFor each card, you need to choose one of its sides now, it cannot be changed later."
   },
   "tags": {
-    "Land": "Land",
-    "Building": "Building",
-    "Person": "Person",
-    "Event": "Event",
-    "Enemy": "Enemy",
-    "Seafaring": "Seafaring",
-    "Goal": "Goal",
-    "Knight": "Knight",
-    "Elder": "Elder"
+    "land": "Land",
+    "building": "Building",
+    "person": "Person",
+    "event": "Event",
+    "enemy": "Enemy",
+    "seafaring": "Seafaring",
+    "goal": "Goal",
+    "knight": "Knight",
+    "elder": "Elder"
   }
 }

@@ -1,4 +1,10 @@
-import { ActionType, CardTag, PassiveType, ResourceType, TargetScope } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+} from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import { CardPassives } from '@engine/domain/types/effects';
 
@@ -84,7 +90,7 @@ export const lake: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [75],
               },
@@ -108,7 +114,7 @@ export const lake: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCARD_CARD,
+              type: ActionEffectType.DISCARD_CARD,
               cards: {
                 scope: [TargetScope.TOP_OF_DECK],
               },

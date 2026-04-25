@@ -84,7 +84,7 @@ export function tCardPassiveDescription(t: TFunction, cardId = 0, stateId = 0, i
 }
 
 export function tCardTag(t: TFunction, tag: string): string {
-  return t(`tags.${tag}`, { ns: 'cards', defaultValue: tag });
+  return t(`tags.${tag}`, { ns: 'cards' });
 }
 
 export function tCardParchmentText(t: TFunction, cardId = 0): string {

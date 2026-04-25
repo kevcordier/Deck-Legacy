@@ -1,4 +1,4 @@
-import { ActionType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const entrepreneur: CardDef = {
@@ -23,7 +23,7 @@ export const entrepreneur: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [118],
               },
@@ -63,7 +63,7 @@ export const entrepreneur: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               valuePerElement: {
                 amount: 1,
                 resource: [ResourceType.GOLD],
@@ -114,7 +114,7 @@ export const entrepreneur: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [92],
               },
@@ -155,7 +155,7 @@ export const entrepreneur: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [87],
               },

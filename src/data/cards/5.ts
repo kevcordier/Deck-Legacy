@@ -1,4 +1,4 @@
-import { ActionType, CardTag, ResourceType } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, ResourceType } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const trader: CardDef = {
@@ -24,7 +24,7 @@ export const trader: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               resources: {
                 [ResourceType.WOOD]: 1,
               },
@@ -65,7 +65,7 @@ export const trader: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               resources: {
                 choice: [
                   {
@@ -113,7 +113,7 @@ export const trader: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               resources: {
                 choice: [
                   {

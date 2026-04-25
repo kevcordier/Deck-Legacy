@@ -1,91 +1,72 @@
-import { makeDef, makeGameState, makeInstance } from '../testHelpers';
+import { makeInstance, makeState } from '../fixtures';
 import { TurnStartedStrategy } from '@engine/application/gameEvent/TurnStartedStrategy';
-import { ActionType, GameEventType } from '@engine/domain/enums';
-import type { CardAction, CardDef } from '@engine/domain/types';
+import { GameEventType } from '@engine/domain/enums';
+import type { CardDef, TurnStartedEvent } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
-const makeCardAction = (): CardAction => ({
-  id: 'action-1',
-  actionEffects: [{ id: 1, type: ActionType.ADD_RESOURCES }],
-});
-
-const makeEvent = (
-  overrides: Partial<{
-    turn: number;
-    turnCards: number[];
-    onPlayEvents: { effectDef: CardAction; sourceInstanceId: number }[];
-  }> = {},
-) => ({
-  id: 'evt-1',
-  type: GameEventType.TURN_STARTED,
-  timestamp: 0,
-  turn: 1,
-  turnCards: [],
-  onPlayEvents: [],
-  ...overrides,
-});
+const defs: Record<number, CardDef> = {
+  1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+};
 
 describe('TurnStartedStrategy', () => {
-  const makeDefs = (...ids: number[]): Record<number, CardDef> =>
-    Object.fromEntries(ids.map(id => [id, makeDef(id)]));
+  const strategy = new TurnStartedStrategy(defs);
+
+  it('moves turnCards from drawPile to board', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ drawPile: [1, 2], instances: { 1: inst } });
+    const result = strategy.apply(gs, {
+      id: 'e1',
+      type: GameEventType.TURN_STARTED,
+      timestamp: 0,
+      turn: 1,
+      turnCards: [1],
+      onPlayEvents: [],
+    } as TurnStartedEvent);
+    expect(result.board).toContain(1);
+    expect(result.drawPile).not.toContain(1);
+  });
 
   it('sets phase to PLAYING', () => {
-    const strategy = new TurnStartedStrategy({});
-    const result = strategy.apply(makeGameState(), makeEvent());
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'e1',
+      type: GameEventType.TURN_STARTED,
+      timestamp: 0,
+      turn: 1,
+      turnCards: [],
+      onPlayEvents: [],
+    } as TurnStartedEvent);
     expect(result.phase).toBe(Phase.PLAYING);
   });
 
-  it('draws turnCards onto the board', () => {
-    const defs = makeDefs(10, 11);
-    const gs = makeGameState({
-      instances: { 1: makeInstance(1, 10, 1), 2: makeInstance(2, 11, 1) },
-      drawPile: [1, 2],
-    });
-    const strategy = new TurnStartedStrategy(defs);
-    const result = strategy.apply(gs, makeEvent({ turnCards: [1, 2] }));
-    expect(result.board).toContain(1);
-    expect(result.board).toContain(2);
-  });
-
-  it('removes drawn cards from drawPile', () => {
-    const defs = makeDefs(10, 11, 12);
-    const gs = makeGameState({
-      instances: {
-        1: makeInstance(1, 10, 1),
-        2: makeInstance(2, 11, 1),
-        3: makeInstance(3, 12, 1),
-      },
-      drawPile: [1, 2, 3],
-    });
-    const strategy = new TurnStartedStrategy(defs);
-    const result = strategy.apply(gs, makeEvent({ turnCards: [1, 2] }));
-    expect(result.drawPile).not.toContain(1);
-    expect(result.drawPile).not.toContain(2);
-    expect(result.drawPile).toContain(3);
-  });
-
   it('populates triggerPile from onPlayEvents', () => {
-    const strategy = new TurnStartedStrategy({});
-    const effectDef = makeCardAction();
-    const result = strategy.apply(
-      makeGameState(),
-      makeEvent({ onPlayEvents: [{ effectDef, sourceInstanceId: 7 }] }),
-    );
+    const gs = makeState();
+    const fakeAction = { id: 'a1', actionEffects: [] };
+    const result = strategy.apply(gs, {
+      id: 'e1',
+      type: GameEventType.TURN_STARTED,
+      timestamp: 0,
+      turn: 1,
+      turnCards: [],
+      onPlayEvents: [{ effectDef: fakeAction, sourceInstanceId: 5 }],
+    } as TurnStartedEvent);
     const entries = Object.values(result.triggerPile);
     expect(entries).toHaveLength(1);
-    expect(entries[0].effectDef).toEqual(effectDef);
-    expect(entries[0].sourceInstanceId).toBe(7);
+    expect(entries[0].sourceInstanceId).toBe(5);
   });
 
-  it('resets resources via endTurn', () => {
-    const defs = makeDefs(10);
-    const gs = makeGameState({
-      instances: { 1: makeInstance(1, 10, 1) },
-      resources: { gold: 5, wood: 2 },
-    });
-    const strategy = new TurnStartedStrategy(defs);
-    const result = strategy.apply(gs, makeEvent());
-    expect(result.resources).toEqual({});
+  it('discards non-permanent board cards from previous turn', () => {
+    const inst = makeInstance({ id: 10, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [10], instances: { 10: inst } });
+    const result = strategy.apply(gs, {
+      id: 'e1',
+      type: GameEventType.TURN_STARTED,
+      timestamp: 0,
+      turn: 2,
+      turnCards: [],
+      onPlayEvents: [],
+    } as TurnStartedEvent);
+    expect(result.discardPile).toContain(10);
   });
 });

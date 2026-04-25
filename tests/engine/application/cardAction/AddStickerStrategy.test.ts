@@ -1,73 +1,71 @@
-import { makeGameState, makeInstance } from '../testHelpers';
+import { makeInstance, makeState } from '../fixtures';
 import { AddStickerStrategy } from '@engine/application/cardAction/AddStickerStrategy';
-import { ActionType } from '@engine/domain/enums';
+import { ActionEffectType } from '@engine/domain/enums';
 import { describe, expect, it } from 'vitest';
 
 describe('AddStickerStrategy', () => {
   const strategy = new AddStickerStrategy();
 
-  it('adds a sticker to the target card for its current state', () => {
-    const gs = makeGameState({
-      instances: { 1: makeInstance(1, 10, 2) },
-      stickerStock: { 101: 3 },
+  it('returns state unchanged when targetId is missing', () => {
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_STICKER,
+      sourceInstanceId: 1,
+      stickerId: 3,
     });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_STICKER,
-      sourceInstanceId: 99,
-      stickerId: 101,
-      instanceIds: [1],
-    });
-    expect(result.instances[1].stickers[2]).toContain(101);
+    expect(result).toBe(gs);
   });
 
-  it('decrements the sticker stock', () => {
-    const gs = makeGameState({
-      instances: { 1: makeInstance(1, 10, 1) },
-      stickerStock: { 101: 5 },
+  it('returns state unchanged when stickerId is missing', () => {
+    const inst = makeInstance({ id: 2 });
+    const gs = makeState({ instances: { 2: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_STICKER,
+      sourceInstanceId: 1,
+      instanceIds: [2],
     });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_STICKER,
-      sourceInstanceId: 99,
-      stickerId: 101,
-      instanceIds: [1],
-    });
-    expect(result.stickerStock[101]).toBe(4);
+    expect(result).toBe(gs);
   });
 
-  it('appends to existing stickers on the card state', () => {
-    const gs = makeGameState({
-      instances: {
-        1: {
-          ...makeInstance(1, 10, 1, {
-            stickers: { 1: [100] },
-          }),
-        },
-      },
-      stickerStock: { 101: 2 },
+  it('adds sticker to target instance and decrements stock', () => {
+    const inst = makeInstance({ id: 2, stateId: 1 });
+    const gs = makeState({ instances: { 2: inst }, stickerStock: { 5: 3 } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_STICKER,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      stickerId: 5,
     });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_STICKER,
-      sourceInstanceId: 99,
-      stickerId: 101,
-      instanceIds: [1],
-    });
-    expect(result.instances[1].stickers[1]).toEqual([100, 101]);
+    expect(result.instances[2].stickers[1]).toContain(5);
+    expect(result.stickerStock[5]).toBe(2);
   });
 
-  it('is a no-op when instanceIds is not provided', () => {
-    const gs = makeGameState({
-      instances: { 1: makeInstance(1, 10, 1) },
-      stickerStock: { 101: 3 },
+  it('initializes sticker array for state if not present', () => {
+    const inst = makeInstance({ id: 2, stateId: 1, stickers: {} });
+    const gs = makeState({ instances: { 2: inst }, stickerStock: { 5: 1 } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_STICKER,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      stickerId: 5,
     });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_STICKER,
-      sourceInstanceId: 99,
-      stickerId: 101,
+    expect(result.instances[2].stickers[1]).toEqual([5]);
+  });
+
+  it('appends sticker to existing sticker list', () => {
+    const inst = makeInstance({ id: 2, stateId: 1, stickers: { 1: [4] } });
+    const gs = makeState({ instances: { 2: inst }, stickerStock: { 5: 2 } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_STICKER,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      stickerId: 5,
     });
-    expect(result.stickerStock[101]).toBe(3);
+    expect(result.instances[2].stickers[1]).toEqual([4, 5]);
   });
 });

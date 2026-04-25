@@ -1,8 +1,8 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
-import type { GameState, ResolvedAction } from '@engine/domain/types';
+import type { GameState, ResolvedActionEffect } from '@engine/domain/types';
 
 export class ChoseStateStrategy implements CardActionStrategy {
-  applyEffect(gameState: GameState, payload: ResolvedAction): GameState {
+  apply(gameState: GameState, payload: ResolvedActionEffect): GameState {
     const instanceId = payload.instanceIds?.[0];
     if (instanceId === undefined || payload.stateId === undefined) return gameState;
     const gs = JSON.parse(JSON.stringify(gameState)) as GameState;

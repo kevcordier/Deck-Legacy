@@ -1,4 +1,4 @@
-import { ActionType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const headquarters: CardDef = {
@@ -43,7 +43,7 @@ export const headquarters: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.PLAY_CARD,
+              type: ActionEffectType.PLAY_CARD,
               cards: {
                 tags: [CardTag.LAND],
                 scope: [TargetScope.DISCARD],
@@ -84,7 +84,7 @@ export const headquarters: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.PLAY_CARD,
+              type: ActionEffectType.PLAY_CARD,
               cards: {
                 tags: [CardTag.LAND, CardTag.BUILDING],
                 scope: [TargetScope.DISCARD],
@@ -126,7 +126,7 @@ export const headquarters: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.PLAY_CARD,
+              type: ActionEffectType.PLAY_CARD,
               cards: {
                 scope: [TargetScope.DISCARD],
               },

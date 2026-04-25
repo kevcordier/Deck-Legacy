@@ -1,5 +1,5 @@
 import { GameCard } from '../src/components/GameCard/GameCard';
-import { makeInstance } from '../tests/engine/application/testHelpers';
+import { makeInstance } from '../tests/engine/application/fixtures';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { CardPassives } from '@engine/domain/types/effects';
@@ -55,7 +55,10 @@ const meta: Meta<GameCardContainerProps> = {
     const defs = loadCardDefs();
 
     const validCardId = defs[cardId] ? cardId : 1;
-    const instance = makeInstance(cardId, validCardId, 1, {
+    const instance = makeInstance({
+      id: cardId,
+      cardId: validCardId,
+      stateId: 1,
       stickers,
       trackProgress,
       cumulated,

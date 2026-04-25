@@ -9,6 +9,9 @@ import type { CardDef, GameState, Resources, Sticker } from '@engine/domain/type
 export const discardCards = (_gameState: GameState, cardIds: number[]): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
   cardIds.forEach(cardId => {
+    if (gameState.destroyedPile.includes(cardId)) {
+      return;
+    }
     gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== cardId);
     gameState.board = [...new Set(gameState.board.filter(c => c !== cardId))];
     gameState.drawPile = [...new Set(gameState.drawPile.filter(c => c !== cardId))];
@@ -21,6 +24,7 @@ export const discardCards = (_gameState: GameState, cardIds: number[]): GameStat
 
 export const drawCards = (_gameState: GameState, turnCards: number[]): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
+  turnCards = turnCards.filter(id => !gameState.destroyedPile.includes(id));
   gameState.drawPile = [...new Set(gameState.drawPile.filter(id => !turnCards.includes(id)))];
   gameState.board = [...new Set([...gameState.board, ...turnCards])];
 

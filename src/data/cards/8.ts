@@ -1,4 +1,4 @@
-import { ActionType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const fieldWorker: CardDef = {
@@ -18,7 +18,7 @@ export const fieldWorker: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               resources: {
                 cards: {
                   scope: [TargetScope.BOARD],
@@ -50,7 +50,7 @@ export const fieldWorker: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               resources: {
                 choice: [
                   {

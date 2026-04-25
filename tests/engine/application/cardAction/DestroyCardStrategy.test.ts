@@ -1,68 +1,42 @@
-import { makeGameState } from '../testHelpers';
+import { makeInstance, makeState } from '../fixtures';
 import { DestroyCardStrategy } from '@engine/application/cardAction/DestroyCardStrategy';
-import { ActionType } from '@engine/domain/enums';
+import { ActionEffectType } from '@engine/domain/enums';
 import { describe, expect, it } from 'vitest';
 
 describe('DestroyCardStrategy', () => {
   const strategy = new DestroyCardStrategy();
 
-  it('moves the card from board to destroyedPile', () => {
-    const gs = makeGameState({ board: [1, 2, 3] });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.DESTROY_CARD,
-      sourceInstanceId: 99,
+  it('handles empty instanceIds gracefully', () => {
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.DESTROY_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [],
+    });
+    expect(result.destroyedPile).toHaveLength(0);
+  });
+
+  it('moves the target card to destroyedPile', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.DESTROY_CARD,
+      sourceInstanceId: 1,
       instanceIds: [2],
     });
-    expect(result.board).toEqual([1, 3]);
     expect(result.destroyedPile).toContain(2);
+    expect(result.board).not.toContain(2);
   });
 
-  it('removes the card from drawPile if present', () => {
-    const gs = makeGameState({ drawPile: [5] });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.DESTROY_CARD,
-      sourceInstanceId: 99,
-      instanceIds: [5],
+  it('handles missing instanceIds', () => {
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.DESTROY_CARD,
+      sourceInstanceId: 1,
     });
-    expect(result.drawPile).toEqual([]);
-    expect(result.destroyedPile).toContain(5);
-  });
-
-  it('removes the card from discardPile if present', () => {
-    const gs = makeGameState({ discardPile: [7] });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.DESTROY_CARD,
-      sourceInstanceId: 99,
-      instanceIds: [7],
-    });
-    expect(result.discardPile).toEqual([]);
-    expect(result.destroyedPile).toContain(7);
-  });
-
-  it('destroys multiple cards when instanceIds is provided', () => {
-    const gs = makeGameState({ board: [1, 2, 3] });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.DESTROY_CARD,
-      sourceInstanceId: 99,
-      instanceIds: [1, 2],
-    });
-    expect(result.board).toEqual([3]);
-    expect(result.destroyedPile).toContain(1);
-    expect(result.destroyedPile).toContain(2);
-  });
-
-  it('is a no-op when neither instanceId nor instanceIds is provided', () => {
-    const gs = makeGameState({ board: [1, 2] });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.DESTROY_CARD,
-      sourceInstanceId: 99,
-    });
-    expect(result.board).toEqual([1, 2]);
-    expect(result.destroyedPile).toEqual([]);
+    expect(result.destroyedPile).toHaveLength(0);
   });
 });

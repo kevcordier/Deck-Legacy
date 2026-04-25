@@ -37,7 +37,8 @@
   },
   "sections": {
     "permanents": "Permanents",
-    "tableau": "Tableau"
+    "tableau": "Tableau",
+    "events": "Events"
   },
   "cardCount": "{{count}} card",
   "cardCount_other": "{{count}} cards",
@@ -70,28 +71,32 @@
   },
   "pendingChoice": {
     "chooseCard": {
-      "DISCARD_CARD": "Choose {{count}} card to discard",
+      "DISCARD_CARD": "Choose a card to discard",
       "DISCARD_CARD_other": "Choose {{count}} cards to discard",
-      "DISCOVER_CARD": "Choose {{count}} card to discover",
+      "DISCOVER_CARD": "Choose a card to discover",
       "DISCOVER_CARD_other": "Choose {{count}} cards to discover",
-      "DESTROY_CARD": "Choose {{count}} card to destroy",
+      "DESTROY_CARD": "Choose a card to destroy",
       "DESTROY_CARD_other": "Choose {{count}} cards to destroy",
-      "COST": "Choose {{count}} card to pay the cost",
+      "COST": "Choose a card to pay the cost",
       "COST_other": "Choose {{count}} cards to pay the cost",
-      "BLOCK_CARD": "Choose {{count}} card to block",
+      "BLOCK_CARD": "Choose a card to block",
       "BLOCK_CARD_other": "Choose {{count}} cards to block",
-      "ADD_RESOURCES": "Copy the resources from {{count}} card",
+      "ADD_RESOURCES": "Copy the resources from a card",
       "ADD_RESOURCES_other": "Copy the resources from {{count}} cards",
-      "ADD_STICKER": "Choose {{count}} card to add the sticker on it",
+      "ADD_STICKER": "Choose a card to add the sticker on it",
       "ADD_STICKER_other": "Choose {{count}} cards to add the sticker on them",
-      "BOOST_CARD": "Choose {{count}} card to boost",
-      "BOOST_CARD_other": "Choose {{count}} cards to boost"
+      "BOOST_CARD": "Choose a card to boost",
+      "BOOST_CARD_other": "Choose {{count}} cards to boost",
+      "ADD_BOARD_EFFECT": "Choose a card to add the effect",
+      "ADD_BOARD_EFFECT_other": "Choose {{count}} cards to add the effect"
     },
     "chooseStep": "Choose a track step",
     "chooseState": "Choose a state",
     "chooseResource": "Choose a resource",
     "chooseSticker": "Choose a sticker",
-    "confirm": "Confirm ({{selected}}/{{total}})"
+    "choices": "Choose {{total}}",
+    "choices-between": "Choose between {{min}} and {{max}}",
+    "confirm": "Confirm ({{selected}})"
   },
   "triggerPile": {
     "title": "Pending effects",
@@ -138,5 +143,19 @@
     "resetConfirm": "Are you sure?",
     "resetYes": "Yes, start over",
     "resetNo": "Cancel"
+  },
+  "eventLog": {
+    "title": "Event log",
+    "gameStarted": "Game started",
+    "roundStarted": "Round {{round}} started",
+    "turnStarted": "Turn {{turn}} — {{count}} card drawn",
+    "turnStarted_other": "Turn {{turn}} — {{count}} cards drawn",
+    "turnEnded": "Turn ended",
+    "cardProduced": "{{card}} produced",
+    "advance": "Advance — {{count}} card",
+    "advance_other": "Advance — {{count}} cards",
+    "upgradeCard": "{{card}} upgraded",
+    "cardAction": "{{card}} action",
+    "skipTrigger": "Trigger skipped"
   }
 }

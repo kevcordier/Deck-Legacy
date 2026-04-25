@@ -1,4 +1,4 @@
-import { ActionType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const mercenay: CardDef = {
@@ -24,7 +24,7 @@ export const mercenay: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.TRACK_ADVANCE,
+              type: ActionEffectType.TRACK_ADVANCE,
               cards: {
                 scope: [TargetScope.SELF],
               },
@@ -55,7 +55,7 @@ export const mercenay: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_RESOURCES,
+                type: ActionEffectType.ADD_RESOURCES,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -70,7 +70,7 @@ export const mercenay: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_RESOURCES,
+                type: ActionEffectType.ADD_RESOURCES,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -85,7 +85,7 @@ export const mercenay: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_RESOURCES,
+                type: ActionEffectType.ADD_RESOURCES,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -100,7 +100,7 @@ export const mercenay: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_RESOURCES,
+                type: ActionEffectType.ADD_RESOURCES,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -115,7 +115,7 @@ export const mercenay: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_RESOURCES,
+                type: ActionEffectType.ADD_RESOURCES,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -130,7 +130,7 @@ export const mercenay: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_RESOURCES,
+                type: ActionEffectType.ADD_RESOURCES,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -145,7 +145,7 @@ export const mercenay: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_RESOURCES,
+                type: ActionEffectType.ADD_RESOURCES,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -160,7 +160,7 @@ export const mercenay: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.ADD_RESOURCES,
+                type: ActionEffectType.ADD_RESOURCES,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -201,7 +201,7 @@ export const mercenay: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_STICKER,
+              type: ActionEffectType.ADD_STICKER,
               stickerIds: [5],
               cards: {
                 scope: [TargetScope.SELF],
@@ -223,7 +223,7 @@ export const mercenay: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_STICKER,
+              type: ActionEffectType.ADD_STICKER,
               stickerIds: [5],
               cards: {
                 scope: [TargetScope.SELF],

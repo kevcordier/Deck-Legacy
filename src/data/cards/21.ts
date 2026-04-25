@@ -1,4 +1,4 @@
-import { ActionType, CardTag, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const opportunist: CardDef = {
@@ -72,7 +72,7 @@ export const opportunist: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_STICKER,
+              type: ActionEffectType.ADD_STICKER,
               cards: {
                 scope: [TargetScope.SELF],
               },
@@ -81,7 +81,7 @@ export const opportunist: CardDef = {
             },
             {
               id: 2,
-              type: ActionType.CHOOSE_STATE,
+              type: ActionEffectType.CHOOSE_STATE,
               cards: {
                 scope: [TargetScope.SELF],
               },

@@ -1,10 +1,12 @@
 import { GameContext } from '@contexts/GameContext';
 import { computeScore } from '@engine/application/gameStateHelper';
+import type { PendingChoiceType } from '@engine/domain/enums';
 import type {
   CardDef,
+  GameEvent,
   GameState,
   PendingChoice,
-  ResolvedAction,
+  ResolvedActionEffect,
   ResolvedCost,
   Sticker,
   TriggerEntry,
@@ -20,7 +22,6 @@ export type GameHook = {
   score: number;
   pendingChoices: PendingChoice[] | null;
   triggerPile: Record<string, TriggerEntry> | null;
-  loadGame: () => void;
   deleteSave: () => void;
   startGame: () => void;
   startRound: () => void;
@@ -29,9 +30,10 @@ export type GameHook = {
   resolveAction: (instanceId: number, actionId: string) => void;
   resolveUpgrade: (instanceId: number, chosenUpgradeTo?: number) => void;
   setCardName: (instanceId: number, chosenName: string) => void;
+  getCardName: (instanceId: number) => string | undefined;
   progress: () => void;
   endTurnVoluntary: () => void;
-  resolvePlayerChoice: (choice: ResolvedAction) => void;
+  resolvePlayerChoice: (choice: ResolvedActionEffect, choiceType: PendingChoiceType) => void;
   resolvePayCost: (resolved: ResolvedCost) => void;
   skipTrigger: (uuid: string) => void;
   skipChoice: (uuid: string) => void;
@@ -39,6 +41,7 @@ export type GameHook = {
   dismissParchmentText: () => void;
   canRewind: () => boolean;
   rewindEvent: () => void;
+  getEvents: () => GameEvent[];
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -50,7 +53,6 @@ export function useGame(): GameHook {
     stickerDefs,
     pendingChoices,
     triggerPile,
-    loadGame,
     deleteSave,
     startGame,
     startRound,
@@ -59,6 +61,7 @@ export function useGame(): GameHook {
     resolveAction,
     resolveUpgrade,
     setCardName,
+    getCardName,
     progress,
     endTurnVoluntary,
     resolvePlayerChoice,
@@ -69,6 +72,7 @@ export function useGame(): GameHook {
     dismissParchmentText,
     canRewind,
     rewindEvent,
+    getEvents,
   } = use(GameContext);
 
   // ── Score ─────────────────────────────────────────────────────────────────
@@ -87,7 +91,6 @@ export function useGame(): GameHook {
     score,
     pendingChoices,
     triggerPile,
-    loadGame,
     deleteSave,
     startGame,
     startRound,
@@ -96,6 +99,7 @@ export function useGame(): GameHook {
     resolveAction,
     resolveUpgrade,
     setCardName,
+    getCardName,
     progress,
     endTurnVoluntary,
     resolvePlayerChoice,
@@ -106,5 +110,6 @@ export function useGame(): GameHook {
     dismissParchmentText,
     canRewind,
     rewindEvent,
+    getEvents,
   };
 }

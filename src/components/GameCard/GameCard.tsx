@@ -19,7 +19,7 @@ import type { CardInstance } from '@engine/domain/types';
 import { tCardActionLabel, tCardName, tCardPassiveLabel, tCardTag } from '@helpers/cardI18n';
 import { getResMeta } from '@helpers/renderHelpers';
 import { useGame } from '@hooks/useGame';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface GameCardProps {
@@ -38,7 +38,8 @@ export function GameCard({
   className = '',
 }: GameCardProps) {
   const { t } = useTranslation();
-  const { state, defs, stickerDefs, resolveProduction, resolveUpgrade, setCardName } = useGame();
+  const { state, defs, stickerDefs, resolveProduction, resolveUpgrade, setCardName, getCardName } =
+    useGame();
   const currentResources = state.resources;
   const isBlocked = isOnBoard && cardIsBlocked(instance.id, state);
   const cs = getActiveState(instance, defs);
@@ -60,6 +61,7 @@ export function GameCard({
   const [namePrefix, nameSuffix] = canChooseName ? rawCardName.split('_____') : ['', ''];
   const glory = getEffectiveGlory(cs, state, defs, instance, stickerDefs);
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
+  const [name, setName] = useState(() => getCardName(instance.id));
 
   const cardClass = [
     'min-w-32 max-w-100 aspect-2/3 rounded-md @3xs:rounded-xl',
@@ -91,9 +93,10 @@ export function GameCard({
                   {namePrefix}
                   <input
                     type="text"
-                    value={instance.chosenName ?? ''}
-                    onChange={event => setCardName(instance.id, event.currentTarget.value)}
-                    className={`min-w-8 flex-1 border-0 bg-transparent cursor-text p-0 text-inherit outline-none ${instance.chosenName ? '' : 'border-b border-base-ink'}`}
+                    value={name ?? ''}
+                    onChange={event => setName(event.currentTarget.value)}
+                    onBlur={() => setCardName(instance.id, name ?? '')}
+                    className={`min-w-8 flex-1 border-0 bg-transparent cursor-text p-0 text-inherit outline-none ${name ? '' : 'border-b border-base-ink'}`}
                     aria-label={t('card.name')}
                   />
                   {nameSuffix}

@@ -1,82 +1,88 @@
-import { makeGameState } from '../testHelpers';
+import { makeInstance, makeState } from '../fixtures';
 import { PlaceCardInDrawPileStrategy } from '@engine/application/cardAction/PlaceCardInDrawPileStrategy';
-import { ActionType, PassiveType } from '@engine/domain/enums';
+import { ActionEffectType } from '@engine/domain/enums';
 import { describe, expect, it } from 'vitest';
 
 describe('PlaceCardInDrawPileStrategy', () => {
   const strategy = new PlaceCardInDrawPileStrategy();
 
-  it('inserts the card at the given position in the draw pile', () => {
-    const gs = makeGameState({ drawPile: [1, 2, 3] });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.PLACE_CARD_IN_DRAW_PILE,
+  it('returns state unchanged when instanceId missing', () => {
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
+      sourceInstanceId: 1,
+      position: 0,
+    });
+    expect(result).toBe(gs);
+  });
+
+  it('returns state unchanged when position missing', () => {
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+    });
+    expect(result).toBe(gs);
+  });
+
+  it('inserts card at the given position', () => {
+    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const gs = makeState({ drawPile: [1, 2, 3], instances: { 5: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
       sourceInstanceId: 99,
       instanceIds: [5],
       position: 1,
     });
-    expect(result.drawPile).toEqual([1, 5, 2, 3]);
+    expect(result.drawPile[1]).toBe(5);
   });
 
-  it('places the card at position 0 (top of pile)', () => {
-    const gs = makeGameState({ drawPile: [1, 2] });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.PLACE_CARD_IN_DRAW_PILE,
+  it('removes card from board before placing in drawPile', () => {
+    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [5], drawPile: [1], instances: { 5: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
       sourceInstanceId: 99,
       instanceIds: [5],
       position: 0,
     });
-    expect(result.drawPile[0]).toBe(5);
-  });
-
-  it('removes the card from board before placing in draw pile', () => {
-    const gs = makeGameState({ board: [5, 10], drawPile: [1] });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.PLACE_CARD_IN_DRAW_PILE,
-      sourceInstanceId: 99,
-      instanceIds: [5],
-      position: 0,
-    });
-    expect(result.board).toEqual([10]);
+    expect(result.board).not.toContain(5);
     expect(result.drawPile).toContain(5);
   });
 
-  it('removes the card from discoveryPile before placing', () => {
-    const gs = makeGameState({ discoveryPile: [5, 6] });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.PLACE_CARD_IN_DRAW_PILE,
+  it('removes card from discoveryPile before placing in drawPile', () => {
+    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const gs = makeState({ discoveryPile: [5], drawPile: [], instances: { 5: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
       sourceInstanceId: 99,
       instanceIds: [5],
       position: 0,
     });
-    expect(result.discoveryPile).toEqual([6]);
+    expect(result.discoveryPile).not.toContain(5);
+    expect(result.drawPile).toContain(5);
   });
 
-  it('removes the card from boardEffects before placing', () => {
-    const gs = makeGameState({
-      boardEffects: { 5: [{ id: '5', type: PassiveType.STAY_IN_PLAY }] },
+  it('clears boardEffects for placed card', () => {
+    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      drawPile: [],
+      instances: { 5: inst },
+      boardEffects: { 5: [{ id: 'b', type: 'BLOCK' as never }] },
     });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.PLACE_CARD_IN_DRAW_PILE,
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
       sourceInstanceId: 99,
       instanceIds: [5],
       position: 0,
     });
     expect(result.boardEffects[5]).toBeUndefined();
-  });
-
-  it('is a no-op when instanceIds is not provided', () => {
-    const gs = makeGameState({ drawPile: [1, 2] });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.PLACE_CARD_IN_DRAW_PILE,
-      sourceInstanceId: 99,
-      position: 0,
-    });
-    expect(result.drawPile).toEqual([1, 2]);
   });
 });

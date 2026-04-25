@@ -1,10 +1,10 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
-import type { CardDef, GameState, ResolvedAction } from '@engine/domain/types';
+import type { CardDef, GameState, ResolvedActionEffect } from '@engine/domain/types';
 
 export class TrackAdvanceStrategy implements CardActionStrategy {
   constructor(private readonly cardDefs: Record<number, CardDef>) {}
 
-  applyEffect(gameState: GameState, payload: ResolvedAction): GameState {
+  apply(gameState: GameState, payload: ResolvedActionEffect): GameState {
     const instanceId = payload.instanceIds?.[0];
     if (instanceId === undefined || payload.stepId === undefined) return gameState;
     const gs = JSON.parse(JSON.stringify(gameState)) as GameState;

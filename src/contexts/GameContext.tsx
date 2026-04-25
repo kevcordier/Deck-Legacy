@@ -1,13 +1,12 @@
 import type { GameAggregate } from '@engine/application/aggregates/GameAggregate';
+import type { PendingChoiceType } from '@engine/domain/enums';
 import type {
-  CardAction,
   CardDef,
+  GameEvent,
   GameState,
   PendingChoice,
-  ResolvedAction,
+  ResolvedActionEffect,
   ResolvedCost,
-  Resources,
-  StepDef,
   TriggerEntry,
 } from '@engine/domain/types';
 import type { loadCardDefs, loadStickerDefs } from '@engine/infrastructure/loaders';
@@ -20,27 +19,6 @@ type GameContextType = {
   aggRef: React.RefObject<GameAggregate>;
   pendingChoices: PendingChoice[] | null;
   triggerPile: Record<string, TriggerEntry> | null;
-  currentProductionRef: React.RefObject<{
-    instanceId: number;
-    resources: Resources;
-  } | null>;
-  currentActionRef: React.RefObject<{
-    instanceId: number;
-    action: CardAction;
-    resolvedCost: ResolvedCost | null;
-    resolvedAction: ResolvedAction[];
-    triggerId: string;
-    nextEffectIndex?: number;
-    trackStep?: StepDef;
-    trackTargetId?: number;
-  } | null>;
-  triggerAction: (
-    instanceId: number,
-    effect: CardAction,
-    resolvedCost: ResolvedCost,
-    triggerId: string,
-  ) => void;
-  loadGame: () => void;
   deleteSave: () => void;
   startGame: () => void;
   startRound: () => void;
@@ -49,9 +27,10 @@ type GameContextType = {
   resolveAction: (instanceId: number, actionId: string) => void;
   resolveUpgrade: (instanceId: number, chosenUpgradeTo?: number) => void;
   setCardName: (instanceId: number, chosenName: string) => void;
+  getCardName: (instanceId: number) => string | undefined;
   progress: () => void;
   endTurnVoluntary: () => void;
-  resolvePlayerChoice: (choice: ResolvedAction) => void;
+  resolvePlayerChoice: (choice: ResolvedActionEffect, choiceType: PendingChoiceType) => void;
   resolvePayCost: (resolved: ResolvedCost) => void;
   skipTrigger: (uuid: string) => void;
   skipChoice: (uuid: string) => void;
@@ -59,6 +38,7 @@ type GameContextType = {
   dismissParchmentText: () => void;
   canRewind: () => boolean;
   rewindEvent: () => void;
+  getEvents: () => GameEvent[];
 };
 
 export const GameContext = createContext<GameContextType>({} as GameContextType);

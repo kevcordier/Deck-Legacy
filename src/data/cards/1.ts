@@ -1,4 +1,10 @@
-import { ActionType, CardTag, PassiveType, ResourceType, TargetScope } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+} from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import { CardPassives } from '@engine/domain/types/effects';
 
@@ -47,7 +53,7 @@ export const wildGrass: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               resources: {
                 [ResourceType.GOLD]: 2,
               },

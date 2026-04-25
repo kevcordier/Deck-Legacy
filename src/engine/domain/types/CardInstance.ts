@@ -10,6 +10,4 @@ export type CardInstance = {
   cumulated: Record<string, number>;
   /** Card action IDs already consumed by one-time actions */
   usedActionIds: string[];
-  /** Custom name chosen by the player for chooseName card states */
-  chosenName?: string;
 };

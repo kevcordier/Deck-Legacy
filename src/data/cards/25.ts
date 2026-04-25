@@ -1,4 +1,4 @@
-import { ActionType, CardTag, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const engineer: CardDef = {
@@ -23,7 +23,7 @@ export const engineer: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [100],
               },
@@ -41,7 +41,7 @@ export const engineer: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [101],
               },
@@ -59,7 +59,7 @@ export const engineer: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [102],
               },
@@ -85,7 +85,8 @@ export const engineer: CardDef = {
       id: 2,
       name: 'Trebuchet',
       tags: [CardTag.BUILDING],
-      illustration: 'https://www.the-trench.org/wp-content/uploads/2022/04/Trebuchet-horse-2.png',
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f2db8879-ac24-4c7d-9d09-eb2927f806fa/anim=false,width=450,optimized=true/00007-2893402591.jpeg',
       productions: [
         {
           weapon: 1,
@@ -102,7 +103,7 @@ export const engineer: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DESTROY_CARD,
+              type: ActionEffectType.DESTROY_CARD,
               cards: {
                 scope: [
                   TargetScope.ENEMY,
@@ -114,7 +115,7 @@ export const engineer: CardDef = {
             },
             {
               id: 2,
-              type: ActionType.TRACK_ADVANCE,
+              type: ActionEffectType.TRACK_ADVANCE,
               cards: {
                 ids: [25],
               },

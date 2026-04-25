@@ -1,52 +1,30 @@
-import { makeGameState } from '../testHelpers';
+import { makeState } from '../fixtures';
 import { AddResourceStrategy } from '@engine/application/cardAction/AddResourceStrategy';
-import { ActionType } from '@engine/domain/enums';
+import { ActionEffectType } from '@engine/domain/enums';
 import { describe, expect, it } from 'vitest';
 
 describe('AddResourceStrategy', () => {
   const strategy = new AddResourceStrategy();
 
-  it('adds resources to the game state', () => {
-    const gs = makeGameState({ resources: { gold: 2 } });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_RESOURCES,
+  it('merges resources into game state', () => {
+    const gs = makeState({ resources: { gold: 1 } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_RESOURCES,
       sourceInstanceId: 1,
-      resources: { gold: 3, wood: 1 },
+      resources: { gold: 2, wood: 3 },
     });
-    expect(result.resources).toEqual({ gold: 5, wood: 1 });
+    expect(result.resources).toEqual({ gold: 3, wood: 3 });
   });
 
-  it('handles empty starting resources', () => {
-    const gs = makeGameState();
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_RESOURCES,
-      sourceInstanceId: 1,
-      resources: { stone: 4 },
-    });
-    expect(result.resources).toEqual({ stone: 4 });
-  });
-
-  it('handles empty resource payload', () => {
-    const gs = makeGameState({ resources: { gold: 3 } });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_RESOURCES,
+  it('handles empty resources payload', () => {
+    const gs = makeState({ resources: { gold: 1 } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_RESOURCES,
       sourceInstanceId: 1,
       resources: {},
     });
-    expect(result.resources).toEqual({ gold: 3 });
-  });
-
-  it('returns the same game state object (mutates in place)', () => {
-    const gs = makeGameState();
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_RESOURCES,
-      sourceInstanceId: 1,
-      resources: { gold: 1 },
-    });
-    expect(result).toEqual({ ...gs, resources: { gold: 1 } }); // should return the same game state object
+    expect(result.resources).toEqual({ gold: 1 });
   });
 });

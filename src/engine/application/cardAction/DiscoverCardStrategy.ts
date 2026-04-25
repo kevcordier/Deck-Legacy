@@ -2,12 +2,12 @@ import type { CardActionStrategy } from '@engine/application/cardAction/CardActi
 import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { discardCards } from '@engine/application/gameStateHelper';
 import { Trigger } from '@engine/domain/enums';
-import type { CardDef, GameState, ResolvedAction } from '@engine/domain/types';
+import type { CardDef, GameState, ResolvedActionEffect } from '@engine/domain/types';
 
 export class DiscoverCardStrategy implements CardActionStrategy {
   constructor(private readonly cardDefs: Record<number, CardDef>) {}
 
-  applyEffect(gameState: GameState, payload: ResolvedAction): GameState {
+  apply(gameState: GameState, payload: ResolvedActionEffect): GameState {
     const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
     const ids = payload.instanceIds ?? [];
     const triggerEffects = getInstancesTriggerEffects(
@@ -26,10 +26,12 @@ export class DiscoverCardStrategy implements CardActionStrategy {
 
       if (!cardDef.parchmentCard) {
         cloned.lastAddedIds.push(instanceId);
+      } else {
+        return { ...cloned, discoveryPile: cloned.discoveryPile.filter(id => id !== instanceId) };
       }
       if (cardDef.permanent) {
         cloned.permanents.push(instanceId);
-        return { ...cloned, permanents: cloned.permanents };
+        return { ...cloned, discoveryPile: cloned.discoveryPile.filter(id => id !== instanceId) };
       }
       return { ...cloned, ...discardCards(cloned, [instanceId]) };
     }, gs);

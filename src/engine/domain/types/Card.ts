@@ -1,5 +1,5 @@
 import type {
-  ActionType,
+  ActionEffectType,
   CardTag,
   PassiveType,
   ResourceType,
@@ -66,12 +66,13 @@ export type ValuePerElement = {
   resource?: ResourceType[];
   glory?: number;
   cards?: CardeSelector;
+  productionTotal?: ResourceType;
   accumulation?: string;
 };
 
 export type ActionEffect = {
   id: number;
-  type: ActionType;
+  type: ActionEffectType;
   cards?: CardeSelector;
   resources?: ResourceSelector;
   accumulated?: Record<string, number>;
@@ -108,13 +109,16 @@ export type Passive = {
 };
 
 export type CardeSelector = {
-  number?: number;
   ids?: number[];
   tags?: CardTag[];
   scope?: TargetScope[];
   name?: string;
   label?: string;
   produces?: ResourceType[];
+};
+
+export type CountedCardSelector = CardeSelector & {
+  number?: number;
 };
 
 export type ResourceSelector = {
@@ -137,9 +141,9 @@ export type ResourceSelector = {
   cards?: CardeSelector;
 };
 
-export type ResolvedAction = {
+export type ResolvedActionEffect = {
   id: string;
-  type: ActionType;
+  type: ActionEffectType;
   sourceInstanceId: number;
   instanceIds?: number[];
   effect?: Passive;
@@ -148,5 +152,7 @@ export type ResolvedAction = {
   stateId?: number;
   position?: number;
   stepId?: number;
+  stepIds?: number[];
   accumulated?: Record<string, number>;
+  newActionEffects?: ActionEffect[];
 };

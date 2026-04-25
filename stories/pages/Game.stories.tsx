@@ -1,4 +1,4 @@
-import { makeInstance } from '../../tests/engine/application/testHelpers';
+import { makeInstance } from '../../tests/engine/application/fixtures';
 import { GameProvider } from '@contexts/GameProvider';
 import { GameUIProvider } from '@contexts/GameUIProvider';
 import deckData from '@data/deck.json';
@@ -223,9 +223,9 @@ const CATHEDRAL_STATE: GameState = {
   instances: {
     ...INSTANCES_BASE,
     // Instance 17 (Hill card) upgraded to Cathedral state
-    17: makeInstance(17, 11, 4),
+    17: makeInstance({ id: 17, cardId: 11, stateId: 4 }),
     // Instance 12 (River card) upgraded to Explorers state (PERSON)
-    12: makeInstance(12, 7, 4),
+    12: makeInstance({ id: 12, cardId: 7, stateId: 4 }),
   },
   // board: Cathedral + Trader (PERSON) + Explorers (PERSON) + Field Worker (PERSON)
   board: [17, 10, 12, 13],
@@ -279,7 +279,7 @@ export const CardDestroyed: Story = {
       ...PLAYING_STATE,
       instances: {
         ...INSTANCES_BASE,
-        6: makeInstance(6, 2, 4),
+        6: makeInstance({ id: 6, cardId: 2, stateId: 4 }),
       },
       drawPile: [1, 2, 3],
       board: [4, 7, 6],

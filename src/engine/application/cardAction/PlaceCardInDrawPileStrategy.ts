@@ -1,8 +1,8 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
-import type { GameState, ResolvedAction } from '@engine/domain/types';
+import type { GameState, ResolvedActionEffect } from '@engine/domain/types';
 
 export class PlaceCardInDrawPileStrategy implements CardActionStrategy {
-  applyEffect(gameState: GameState, payload: ResolvedAction): GameState {
+  apply(gameState: GameState, payload: ResolvedActionEffect): GameState {
     const instanceId = payload.instanceIds?.[0];
     if (instanceId === undefined || payload.position === undefined) return gameState;
     gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== instanceId);

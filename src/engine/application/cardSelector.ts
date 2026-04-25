@@ -102,6 +102,7 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
   if (!matchesAlignmentAndName(state, ctx.isFriendly, ctx.isEnemy, name)) return false;
   if (!matchesTags(state, tags)) return false;
   if (!matchesProductions(state, produces)) return false;
+  if (ctx.selector.ids && !ctx.selector.ids.includes(inst.id)) return false;
 
   return true;
 }
@@ -110,16 +111,16 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
  * Filters cards matching the selector's constraints (scope, tags, produces, ids).
  */
 export function cardSelector(
-  selector: CardeSelector,
+  { scope = [TargetScope.ANY], ...selector }: CardeSelector,
   instanceId: number,
   gameState: GameState,
   defs?: Record<number, CardDef>,
 ): number[] {
-  const { scope, ids } = selector;
+  const { ids } = selector;
 
-  if (ids) return ids;
-  if (scope?.length === 1 && scope?.includes(TargetScope.SELF)) return [instanceId];
-  if (scope?.includes(TargetScope.TOP_OF_DECK)) {
+  if (ids && scope.length === 1 && scope.includes(TargetScope.ANY)) return ids;
+  if (scope.length === 1 && scope.includes(TargetScope.SELF)) return [instanceId];
+  if (scope.includes(TargetScope.TOP_OF_DECK)) {
     return [gameState.drawPile[0]].filter(Boolean);
   }
 
@@ -127,10 +128,10 @@ export function cardSelector(
     getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK),
   ).flat();
 
-  const locationScopes = scope?.filter(s => LOCATION_SCOPES.has(s)) ?? [];
-  const hasBlocked = scope?.includes(TargetScope.BLOCKED) ?? false;
-  const isFriendly = scope?.includes(TargetScope.FRIENDLY) ?? false;
-  const isEnemy = scope?.includes(TargetScope.ENEMY) ?? false;
+  const locationScopes = scope.filter(s => LOCATION_SCOPES.has(s));
+  const hasBlocked = scope.includes(TargetScope.BLOCKED);
+  const isFriendly = scope.includes(TargetScope.FRIENDLY);
+  const isEnemy = scope.includes(TargetScope.ENEMY);
 
   const pool = buildCardPool(locationScopes, gameState, blockedInstanceIds);
 

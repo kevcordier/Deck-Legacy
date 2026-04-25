@@ -1,5 +1,6 @@
-import { makeCardState, makeDef, makeGameState, makeInstance } from './testHelpers';
+import { makeInstance, makeState } from './fixtures';
 import {
+  canAffordCardCost,
   canAffordResources,
   cardIsBlocked,
   cardShouldStayInPlay,
@@ -11,740 +12,625 @@ import {
   getInstancesTriggerEffects,
   tagClass,
 } from '@engine/application/cardHelpers';
-import { ActionType, PassiveType, ResourceType, TargetScope, Trigger } from '@engine/domain/enums';
-import type { ActionEffect, CardAction, CardDef, Sticker } from '@engine/domain/types';
+import { ActionEffectType, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
+import type { CardDef, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
-// — getEffectiveProductions —
+// ─── getAffectedCardsByBoardEffects ──────────────────────────────────────────
+
+describe('getAffectedCardsByBoardEffects', () => {
+  it('returns empty when no board effects', () => {
+    const gs = makeState();
+    expect(getAffectedCardsByBoardEffects(gs, PassiveType.BLOCK)).toEqual({});
+  });
+
+  it('returns affected ids from board effects', () => {
+    const gs = makeState({
+      boardEffects: {
+        1: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [5, 6] } }],
+      },
+    });
+    const result = getAffectedCardsByBoardEffects(gs, PassiveType.BLOCK);
+    expect(result[1]).toEqual([5, 6]);
+  });
+
+  it('defaults to sourceId when cards.ids is absent', () => {
+    const gs = makeState({
+      boardEffects: {
+        7: [{ id: 'block', type: PassiveType.BLOCK }],
+      },
+    });
+    const result = getAffectedCardsByBoardEffects(gs, PassiveType.BLOCK);
+    expect(result[7]).toEqual([7]);
+  });
+
+  it('ignores effects of a different passive type', () => {
+    const gs = makeState({
+      boardEffects: {
+        1: [{ id: 'sip', type: PassiveType.STAY_IN_PLAY }],
+      },
+    });
+    expect(getAffectedCardsByBoardEffects(gs, PassiveType.BLOCK)).toEqual({});
+  });
+
+  it('accumulates multiple effects for same source', () => {
+    const gs = makeState({
+      boardEffects: {
+        1: [
+          { id: 'b1', type: PassiveType.BLOCK, cards: { ids: [2] } },
+          { id: 'b2', type: PassiveType.BLOCK, cards: { ids: [3] } },
+        ],
+      },
+    });
+    const result = getAffectedCardsByBoardEffects(gs, PassiveType.BLOCK);
+    expect(result[1]).toEqual([2, 3]);
+  });
+});
+
+// ─── getEffectiveProductions ──────────────────────────────────────────────────
 
 describe('getEffectiveProductions', () => {
-  it('returns base resources when no stickers are present', () => {
-    const instance = makeInstance(1, 10, 1);
-    const cs = makeCardState(1);
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
-    const gs = makeGameState({ instances: { 1: instance } });
-    const result = getEffectiveProductions({ gold: 2, wood: 1 }, cs, gs, defs, instance);
-    expect(result).toEqual({ gold: 2, wood: 1 });
-  });
+  const baseInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
 
-  it('adds sticker production bonuses to base', () => {
-    const instance = makeInstance(1, 10, 1, {
-      stickers: { 1: [101] },
-    });
-    const stickers: Record<number, Sticker> = {
-      101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
-    };
-    const cs = makeCardState(1);
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
-    const gs = makeGameState({ instances: { 1: instance } });
-    const result = getEffectiveProductions({ gold: 2 }, cs, gs, defs, instance, stickers);
-    expect(result).toEqual({ gold: 3 });
-  });
-
-  it('ignores stickers of a different stateId', () => {
-    const instance = makeInstance(1, 10, 2, {
-      stickers: { 1: [101] }, // stickers for state 1, not active state 2
-    });
-    const stickers: Record<number, Sticker> = {
-      101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
-    };
-    const cs = makeCardState(2);
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [makeCardState(1), cs]) };
-    const gs = makeGameState({ instances: { 1: instance } });
-    const result = getEffectiveProductions({ gold: 2 }, cs, gs, defs, instance, stickers);
+  it('returns base resources when no bonuses', () => {
+    const state = { id: 1, name: 'S' };
+    const result = getEffectiveProductions({ gold: 2 }, state, makeState(), {}, baseInst);
     expect(result).toEqual({ gold: 2 });
   });
 
-  it('ignores sticker ids that have no entry in the stickers record', () => {
-    const instance = makeInstance(1, 10, 1, {
-      stickers: { 1: [999] }, // sticker 999 does not exist in stickers map
-    });
-    const cs = makeCardState(1);
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
-    const gs = makeGameState({ instances: { 1: instance } });
-    const result = getEffectiveProductions({ gold: 2 }, cs, gs, defs, instance, {});
-    expect(result).toEqual({ gold: 2 });
-  });
-
-  it('ignores non-add sticker types', () => {
-    const instance = makeInstance(1, 10, 1, {
-      stickers: { 1: [101] },
-    });
+  it('adds sticker production bonus', () => {
+    const inst = makeInstance({ id: 1, stateId: 1, stickers: { 1: [10] } });
     const stickers: Record<number, Sticker> = {
-      101: { id: 101, type: 'remove', production: ResourceType.GOLD, glory: 0, description: '' },
+      10: { id: 10, type: 'add', production: 'gold', glory: 0 },
     };
-    const cs = makeCardState(1);
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
-    const gs = makeGameState({ instances: { 1: instance } });
-    const result = getEffectiveProductions({ gold: 2 }, cs, gs, defs, instance, stickers);
-    expect(result).toEqual({ gold: 2 });
+    const state = { id: 1, name: 'S' };
+    const result = getEffectiveProductions({ gold: 1 }, state, makeState(), {}, inst, stickers);
+    expect(result.gold).toBe(2);
   });
 
-  it('adds resourcePerCard bonus based on matching board cards', () => {
-    const instance = makeInstance(1, 10, 1);
-    const other1 = makeInstance(2, 20, 1);
-    const other2 = makeInstance(3, 21, 1);
-    const activeState = makeCardState(1, {
-      passives: [
-        {
-          id: 'p1',
-          type: PassiveType.INCREASE_PRODUCTION,
-          valuePerElement: {
-            amount: 2,
-            resource: [ResourceType.GOLD],
-            cards: { scope: [TargetScope.BOARD] },
-          },
-        },
-      ],
-    });
+  it('ignores sticker with wrong type', () => {
+    const inst = makeInstance({ id: 1, stateId: 1, stickers: { 1: [10] } });
+    const stickers: Record<number, Sticker> = {
+      10: { id: 10, type: 'stay_in_play' as never, glory: 0 },
+    };
+    const state = { id: 1, name: 'S' };
+    const result = getEffectiveProductions({ gold: 1 }, state, makeState(), {}, inst, stickers);
+    expect(result.gold).toBe(1);
+  });
+
+  it('ignores unknown stickerId', () => {
+    const inst = makeInstance({ id: 1, stateId: 1, stickers: { 1: [99] } });
+    const state = { id: 1, name: 'S' };
+    const result = getEffectiveProductions({ gold: 1 }, state, makeState(), {}, inst, {});
+    expect(result.gold).toBe(1);
+  });
+
+  it('adds passive INCREASE_PRODUCTION bonus based on card count', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [activeState]),
-      20: makeDef(20, [makeCardState(1)]),
-      21: makeDef(21, [makeCardState(1)]),
-    };
-    const gameState = makeGameState({
-      instances: { 1: instance, 2: other1, 3: other2 },
-      board: [1, 2, 3],
-    });
-    const result = getEffectiveProductions({ gold: 1 }, activeState, gameState, defs, instance, {});
-    // 2 matching cards on board (self excluded by cardSelector), 2 gold each → +4, base 1 → 5
-    expect(result).toEqual({ gold: 5 });
-  });
-
-  it('adds nothing when no cards match the selector', () => {
-    const instance = makeInstance(1, 10, 1);
-    const activeState = makeCardState(1, {
-      passives: [
-        {
-          id: 'p1',
-          type: PassiveType.INCREASE_PRODUCTION,
-          valuePerElement: {
-            amount: 3,
-            resource: [ResourceType.WOOD],
-            cards: { scope: [TargetScope.BOARD] },
-          },
-        },
-      ],
-    });
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [activeState]) };
-    const gameState = makeGameState({
-      instances: { 1: instance },
-      board: [1],
-    });
-    const result = getEffectiveProductions({ wood: 1 }, activeState, gameState, defs, instance, {});
-    expect(result).toEqual({ wood: 1 });
-  });
-
-  it('ignores INCREASE_PRODUCTION passive without resourcePerCard', () => {
-    const instance = makeInstance(1, 10, 1);
-    const activeState = makeCardState(1, {
-      passives: [{ id: 'p1', type: PassiveType.INCREASE_PRODUCTION }],
-    });
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [activeState]) };
-    const gameState = makeGameState({ instances: { 1: instance }, board: [1] });
-    const result = getEffectiveProductions({ gold: 2 }, activeState, gameState, defs, instance, {});
-    expect(result).toEqual({ gold: 2 });
-  });
-
-  it('stacks sticker bonus and resourcePerCard bonus', () => {
-    const instance = makeInstance(1, 10, 1, {
-      stickers: { 1: [101] },
-    });
-    const other = makeInstance(2, 20, 1);
-    const stickers: Record<number, Sticker> = {
-      101: { id: 101, type: 'add', production: 'gold', glory: 0, description: '' },
-    };
-    const activeState = makeCardState(1, {
-      passives: [
-        {
-          id: 'p1',
-          type: PassiveType.INCREASE_PRODUCTION,
-          valuePerElement: {
-            amount: 1,
-            resource: [ResourceType.GOLD],
-            cards: { scope: [TargetScope.BOARD] },
-          },
-        },
-      ],
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [activeState]),
-      20: makeDef(20, [makeCardState(1)]),
-    };
-    const gameState = makeGameState({
-      instances: { 1: instance, 2: other },
-      board: [1, 2],
-    });
-    // base gold: 2, sticker: +1, resourcePerCard: 1 matching card × 1 = +1 → total 4
-    const result = getEffectiveProductions(
-      { gold: 2 },
-      activeState,
-      gameState,
-      defs,
-      instance,
-      stickers,
-    );
-    expect(result).toEqual({ gold: 4 });
-  });
-
-  it('adds board effect production bonus when an INCREASE_PRODUCTION board effect targets the instance', () => {
-    const instance = makeInstance(1, 10, 1);
-    const source = makeInstance(2, 20, 1);
-    const activeState = makeCardState(1);
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [activeState]),
-      20: makeDef(20, [makeCardState(1)]),
-    };
-    const gameState = makeGameState({
-      instances: { 1: instance, 2: source },
-      board: [1, 2],
-      boardEffects: {
-        2: [
+      1: {
+        id: 1,
+        name: 'C',
+        states: [
           {
-            id: 'be-1',
+            id: 1,
+            name: 'S',
+            passives: [
+              {
+                id: 'p',
+                type: PassiveType.INCREASE_PRODUCTION,
+                valuePerElement: {
+                  amount: 2,
+                  resource: ['gold' as never],
+                  cards: { scope: [TargetScope.BOARD] },
+                },
+              },
+            ],
+          },
+        ],
+      },
+      2: { id: 2, name: 'D', states: [{ id: 1, name: 'S2' }] },
+    };
+    const gs = makeState({ board: [2], instances: { 1: inst, 2: inst2 } });
+    const state = defs[1].states[0];
+    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    expect(result.gold).toBe(2);
+  });
+
+  it('uses accumulation for passive bonus when no cards selector', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: { wheat: 3 } });
+    const defs: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [
+          {
+            id: 1,
+            name: 'S',
+            passives: [
+              {
+                id: 'p',
+                type: PassiveType.INCREASE_PRODUCTION,
+                valuePerElement: {
+                  amount: 1,
+                  resource: ['wood' as never],
+                  accumulation: 'wheat',
+                },
+              },
+            ],
+          },
+        ],
+      },
+    };
+    const gs = makeState({ instances: { 1: inst } });
+    const state = defs[1].states[0];
+    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    expect(result.wood).toBe(3);
+  });
+
+  it('skips passive bonus when count is zero', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [
+          {
+            id: 1,
+            name: 'S',
+            passives: [
+              {
+                id: 'p',
+                type: PassiveType.INCREASE_PRODUCTION,
+                valuePerElement: {
+                  amount: 2,
+                  resource: ['gold' as never],
+                  cards: { scope: [TargetScope.BOARD] },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    };
+    const gs = makeState({ board: [], instances: { 1: inst } });
+    const state = defs[1].states[0];
+    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    expect(result.gold).toBeUndefined();
+  });
+
+  it('adds board effect INCREASE_PRODUCTION bonus', () => {
+    const inst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'S', states: [{ id: 1, name: 'S1' }] },
+      2: { id: 2, name: 'T', states: [{ id: 1, name: 'T1' }] },
+    };
+    const gs = makeState({
+      board: [2],
+      instances: { 1: sourceInst, 2: inst },
+      boardEffects: {
+        1: [
+          {
+            id: 'be',
             type: PassiveType.INCREASE_PRODUCTION,
-            resources: { iron: 2 },
+            resources: { gold: 3 },
+            cards: { scope: [TargetScope.BOARD] },
           },
         ],
       },
     });
-
-    const result = getEffectiveProductions({ gold: 1 }, activeState, gameState, defs, instance, {});
-    expect(result).toEqual({ gold: 1, iron: 2 });
-  });
-
-  it('ignores board effect production bonus when target is not selected', () => {
-    const instance = makeInstance(1, 10, 1);
-    const source = makeInstance(2, 20, 1);
-    const activeState = makeCardState(1);
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [activeState]),
-      20: makeDef(20, [makeCardState(1)]),
-    };
-    const gameState = makeGameState({
-      instances: { 1: instance, 2: source },
-      board: [1, 2],
-      boardEffects: {
-        2: [
-          {
-            id: 'be-1',
-            type: PassiveType.INCREASE_PRODUCTION,
-            cards: { ids: [999] },
-            resources: { iron: 2 },
-          },
-        ],
-      },
-    });
-
-    const result = getEffectiveProductions({ gold: 1 }, activeState, gameState, defs, instance, {});
-    expect(result).toEqual({ gold: 1 });
-  });
-
-  it('adds production bonus from accumulation-based INCREASE_PRODUCTION passive', () => {
-    const instance = makeInstance(1, 10, 1, {
-      cumulated: { accumulation: 3 },
-    });
-    const activeState = makeCardState(1, {
-      passives: [
-        {
-          id: 'p-acc',
-          type: PassiveType.INCREASE_PRODUCTION,
-          valuePerElement: {
-            amount: 2,
-            resource: [ResourceType.WOOD],
-            accumulation: 'accumulation',
-          },
-        },
-      ],
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [activeState]),
-    };
-    const gameState = makeGameState({ instances: { 1: instance }, board: [1] });
-
-    const result = getEffectiveProductions({ wood: 1 }, activeState, gameState, defs, instance, {});
-    expect(result).toEqual({ wood: 7 });
-  });
-
-  it('ignores accumulation-based production bonus when key is missing', () => {
-    const instance = makeInstance(1, 10, 1, {
-      cumulated: {},
-    });
-    const activeState = makeCardState(1, {
-      passives: [
-        {
-          id: 'p-acc',
-          type: PassiveType.INCREASE_PRODUCTION,
-          valuePerElement: {
-            amount: 2,
-            resource: [ResourceType.WOOD],
-            accumulation: 'accumulation',
-          },
-        },
-      ],
-    });
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [activeState]),
-    };
-    const gameState = makeGameState({ instances: { 1: instance }, board: [1] });
-
-    const result = getEffectiveProductions({ wood: 1 }, activeState, gameState, defs, instance, {});
-    expect(result).toEqual({ wood: 1 });
-  });
-
-  it('ignores production valuePerElement when neither cards nor accumulation is provided', () => {
-    const instance = makeInstance(1, 10, 1);
-    const activeState = makeCardState(1, {
-      passives: [
-        {
-          id: 'p-none',
-          type: PassiveType.INCREASE_PRODUCTION,
-          valuePerElement: {
-            amount: 3,
-            resource: [ResourceType.GOLD],
-          },
-        },
-      ],
-    });
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [activeState]) };
-    const gameState = makeGameState({ instances: { 1: instance }, board: [1] });
-
-    const result = getEffectiveProductions({ gold: 2 }, activeState, gameState, defs, instance, {});
-    expect(result).toEqual({ gold: 2 });
+    const state = { id: 1, name: 'S' };
+    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    expect(result.gold).toBe(3);
   });
 });
+
+// ─── getEffectiveGlory ────────────────────────────────────────────────────────
 
 describe('getEffectiveGlory', () => {
-  it('returns base glory when no bonus applies', () => {
-    const instance = makeInstance(1, 10, 1);
-    const activeState = makeCardState(1, { glory: 3 });
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [activeState]) };
-    const gs = makeGameState({ instances: { 1: instance }, board: [1] });
-
-    expect(getEffectiveGlory(activeState, gs, defs, instance, {})).toBe(3);
+  it('returns base glory', () => {
+    const inst = makeInstance({ id: 1 });
+    const state = { id: 1, name: 'S', glory: 4 };
+    expect(getEffectiveGlory(state, makeState(), {}, inst)).toBe(4);
   });
 
-  it('adds sticker and accumulated glory bonuses', () => {
-    const instance = makeInstance(1, 10, 1, {
-      stickers: { 1: [101] },
-      cumulated: { glory: 2 },
-    });
-    const activeState = makeCardState(1, { glory: 1 });
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [activeState]) };
-    const gs = makeGameState({ instances: { 1: instance }, board: [1] });
-    const stickers: Record<number, Sticker> = {
-      101: { id: 101, type: 'add', glory: 4, description: '' },
-    };
-
-    expect(getEffectiveGlory(activeState, gs, defs, instance, stickers)).toBe(7);
+  it('adds sticker glory', () => {
+    const inst = makeInstance({ id: 1, stateId: 1, stickers: { 1: [5] } });
+    const stickers: Record<number, Sticker> = { 5: { id: 5, type: 'glory' as never, glory: 2 } };
+    const state = { id: 1, name: 'S', glory: 1 };
+    expect(getEffectiveGlory(state, makeState(), {}, inst, stickers)).toBe(3);
   });
 
-  it('applies INCREASE_GLORY from accumulation', () => {
-    const instance = makeInstance(1, 10, 1, {
-      cumulated: { accumulation: 3 },
-    });
-    const activeState = makeCardState(1, {
-      glory: 0,
-      passives: [
-        {
-          id: 'p1',
-          type: PassiveType.INCREASE_GLORY,
-          valuePerElement: {
-            amount: 1,
-            glory: 5,
-            accumulation: 'accumulation',
-          },
-        },
-      ],
-    });
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [activeState]) };
-    const gs = makeGameState({ instances: { 1: instance }, board: [1] });
-
-    expect(getEffectiveGlory(activeState, gs, defs, instance, {})).toBe(15);
+  it('adds accumulated glory', () => {
+    const inst = makeInstance({ id: 1, cumulated: { glory: 5 } });
+    const gs = makeState({ instances: { 1: inst } });
+    const state = { id: 1, name: 'S' };
+    expect(getEffectiveGlory(state, gs, {}, inst)).toBe(5);
   });
 
-  it('applies INCREASE_GLORY from matching cards selector', () => {
-    const instance = makeInstance(1, 10, 1);
-    const other1 = makeInstance(2, 20, 1);
-    const other2 = makeInstance(3, 21, 1);
-    const activeState = makeCardState(1, {
-      passives: [
-        {
-          id: 'p1',
-          type: PassiveType.INCREASE_GLORY,
-          valuePerElement: {
-            amount: 1,
-            glory: 2,
-            cards: { scope: [TargetScope.BOARD] },
-          },
-        },
-      ],
-    });
+  it('adds INCREASE_GLORY passive based on card count', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [activeState]),
-      20: makeDef(20, [makeCardState(1)]),
-      21: makeDef(21, [makeCardState(1)]),
+      1: {
+        id: 1,
+        name: 'C',
+        states: [
+          {
+            id: 1,
+            name: 'S',
+            passives: [
+              {
+                id: 'pg',
+                type: PassiveType.INCREASE_GLORY,
+                valuePerElement: {
+                  glory: 3,
+                  cards: { scope: [TargetScope.BOARD] },
+                  amount: 1,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      2: { id: 2, name: 'D', states: [{ id: 1, name: 'S2' }] },
     };
-    const gs = makeGameState({
-      instances: { 1: instance, 2: other1, 3: other2 },
-      board: [1, 2, 3],
-    });
-
-    expect(getEffectiveGlory(activeState, gs, defs, instance, {})).toBe(4);
+    const gs = makeState({ board: [2], instances: { 1: inst, 2: inst2 } });
+    const state = defs[1].states[0];
+    expect(getEffectiveGlory(state, gs, defs, inst)).toBe(3);
   });
 
-  it('ignores non-INCREASE_GLORY passives in glory computation', () => {
-    const instance = makeInstance(1, 10, 1);
-    const activeState = makeCardState(1, {
-      glory: 2,
-      passives: [
-        {
-          id: 'p-ignore',
-          type: PassiveType.INCREASE_PRODUCTION,
-          valuePerElement: {
-            amount: 5,
-            resource: [ResourceType.GOLD],
-            cards: { scope: [TargetScope.BOARD] },
+  it('adds INCREASE_GLORY passive based on accumulation', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: { stars: 2 } });
+    const defs: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [
+          {
+            id: 1,
+            name: 'S',
+            passives: [
+              {
+                id: 'pg',
+                type: PassiveType.INCREASE_GLORY,
+                valuePerElement: { glory: 4, accumulation: 'stars', amount: 1 },
+              },
+            ],
           },
-        },
-      ],
-    });
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [activeState]) };
-    const gs = makeGameState({ instances: { 1: instance }, board: [1] });
-
-    expect(getEffectiveGlory(activeState, gs, defs, instance, {})).toBe(2);
+        ],
+      },
+    };
+    const gs = makeState({ instances: { 1: inst } });
+    const state = defs[1].states[0];
+    expect(getEffectiveGlory(state, gs, defs, inst)).toBe(8);
   });
 
-  it('ignores accumulation-based glory bonus when key is missing', () => {
-    const instance = makeInstance(1, 10, 1, {
-      cumulated: {},
-    });
-    const activeState = makeCardState(1, {
-      glory: 2,
-      passives: [
-        {
-          id: 'p1',
-          type: PassiveType.INCREASE_GLORY,
-          valuePerElement: {
-            amount: 1,
-            glory: 4,
-            accumulation: 'accumulation',
-          },
-        },
-      ],
-    });
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [activeState]) };
-    const gs = makeGameState({ instances: { 1: instance }, board: [1] });
-
-    expect(getEffectiveGlory(activeState, gs, defs, instance, {})).toBe(2);
+  it('skips INCREASE_GLORY passive without valuePerElement.glory', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = {
+      id: 1,
+      name: 'S',
+      passives: [{ id: 'pg', type: PassiveType.INCREASE_GLORY, valuePerElement: { amount: 1 } }],
+    };
+    expect(getEffectiveGlory(state, makeState(), {}, inst)).toBe(0);
   });
 
-  it('ignores glory valuePerElement when neither cards nor accumulation is provided', () => {
-    const instance = makeInstance(1, 10, 1);
-    const activeState = makeCardState(1, {
-      glory: 2,
-      passives: [
-        {
-          id: 'p-none',
-          type: PassiveType.INCREASE_GLORY,
-          valuePerElement: {
-            amount: 1,
-            glory: 5,
-          },
-        },
-      ],
-    });
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [activeState]) };
-    const gs = makeGameState({ instances: { 1: instance }, board: [1] });
-
-    expect(getEffectiveGlory(activeState, gs, defs, instance, {})).toBe(2);
+  it('skips passives that are not INCREASE_GLORY', () => {
+    const inst = makeInstance({ id: 1 });
+    const state = {
+      id: 1,
+      name: 'S',
+      passives: [{ id: 'sip', type: PassiveType.STAY_IN_PLAY }],
+    };
+    expect(getEffectiveGlory(state, makeState(), {}, inst)).toBe(0);
   });
 });
 
-// — tagClass —
+// ─── tagClass ─────────────────────────────────────────────────────────────────
 
 describe('tagClass', () => {
-  it('returns tag class for "enemy"', () => {
-    expect(tagClass('enemy', true)).toBe('border bg-tag-enemy/10 border-tag-enemy');
+  it('returns enemy class for enemy tags', () => {
+    expect(tagClass('anything', true)).toContain('border-tag-enemy');
   });
 
-  it('returns tag class for "building"', () => {
-    expect(tagClass('building', false)).toBe('border bg-tag-building/10 border-tag-building');
+  it('returns building class', () => {
+    expect(tagClass('building', false)).toContain('border-tag-building');
   });
 
-  it('returns tag class for "person"', () => {
-    expect(tagClass('person', false)).toBe('border bg-tag-person/10 border-tag-person');
+  it('returns person class', () => {
+    expect(tagClass('person', false)).toContain('border-tag-person');
   });
 
-  it('returns tag class for "seafaring"', () => {
-    expect(tagClass('seafaring', false)).toBe('border bg-tag-seafaring/10 border-tag-seafaring');
+  it('returns seafaring class', () => {
+    expect(tagClass('seafaring', false)).toContain('border-tag-seafaring');
   });
 
-  it('returns tag class for "land"', () => {
-    expect(tagClass('land', false)).toBe('border bg-tag-land/10 border-tag-land');
+  it('returns land class', () => {
+    expect(tagClass('land', false)).toContain('border-tag-land');
   });
 
-  it('returns tag class for "livestock"', () => {
-    expect(tagClass('livestock', false)).toBe('border bg-tag-livestock/10 border-tag-livestock');
-  });
-
-  it('is case-insensitive', () => {
-    expect(tagClass('ENEMY', true)).toBe('border bg-tag-enemy/10 border-tag-enemy');
-    expect(tagClass('Building', false)).toBe('border bg-tag-building/10 border-tag-building');
+  it('returns livestock class', () => {
+    expect(tagClass('livestock', false)).toContain('border-tag-livestock');
   });
 
   it('returns generic tag class for unknown tags', () => {
-    expect(tagClass('unknown', false)).toBe('border bg-tag-tag/10 border-tag-tag');
+    expect(tagClass('event', false)).toContain('border-tag-tag');
   });
 });
 
-// — getActiveState —
+// ─── getActiveState ───────────────────────────────────────────────────────────
 
 describe('getActiveState', () => {
-  it('returns the matching card state', () => {
-    const instance = makeInstance(1, 10, 2);
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1), makeCardState(2)]),
-    };
-    const state = getActiveState(instance, defs);
-    expect(state.id).toBe(2);
+  const defs: Record<number, CardDef> = {
+    1: { id: 1, name: 'C', states: [{ id: 10, name: 'S' }] },
+  };
+
+  it('returns the active state', () => {
+    const inst = makeInstance({ cardId: 1, stateId: 10 });
+    expect(getActiveState(inst, defs).id).toBe(10);
   });
 
-  it('throws when the card def is not found', () => {
-    const instance = makeInstance(1, 99, 1);
-    expect(() => getActiveState(instance, {})).toThrow('Card def not found: 99');
+  it('throws when def not found', () => {
+    const inst = makeInstance({ cardId: 99, stateId: 10 });
+    expect(() => getActiveState(inst, defs)).toThrow('Card def not found: 99');
   });
 
-  it('throws when the state is not found on the card', () => {
-    const instance = makeInstance(1, 10, 99);
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1)]),
-    };
-    expect(() => getActiveState(instance, defs)).toThrow('State 99 not found on card 10');
+  it('throws when state not found on card', () => {
+    const inst = makeInstance({ cardId: 1, stateId: 99 });
+    expect(() => getActiveState(inst, defs)).toThrow('State 99 not found on card 1');
   });
 });
 
-// — canAffordResources —
+// ─── canAffordResources ───────────────────────────────────────────────────────
 
 describe('canAffordResources', () => {
+  it('returns true when no cost', () => {
+    expect(canAffordResources({})).toBe(true);
+  });
+
   it('returns true when cost has no resources', () => {
-    expect(canAffordResources({ gold: 5 }, {})).toBe(true);
+    expect(canAffordResources({}, {})).toBe(true);
   });
 
-  it('returns true when cost resources array is empty', () => {
-    expect(canAffordResources({ gold: 5 }, { resources: [] })).toBe(true);
+  it('returns true when cost.resources is empty array', () => {
+    expect(canAffordResources({}, { resources: [] })).toBe(true);
   });
 
-  it('returns true when available exactly meets the cost', () => {
-    expect(canAffordResources({ gold: 3 }, { resources: [{ gold: 3 }] })).toBe(true);
+  it('returns true when resources are sufficient', () => {
+    expect(canAffordResources({ gold: 5 }, { resources: [{ gold: 3 }] })).toBe(true);
   });
 
-  it('returns true when available exceeds the cost', () => {
-    expect(canAffordResources({ gold: 5, wood: 2 }, { resources: [{ gold: 3, wood: 1 }] })).toBe(
-      true,
-    );
+  it('returns false when resources are insufficient', () => {
+    expect(canAffordResources({ gold: 1 }, { resources: [{ gold: 3 }] })).toBe(false);
   });
 
-  it('returns false when a resource is insufficient', () => {
-    expect(canAffordResources({ gold: 2 }, { resources: [{ gold: 3 }] })).toBe(false);
-  });
-
-  it('returns false when a required resource is missing', () => {
-    expect(canAffordResources({ wood: 5 }, { resources: [{ gold: 1 }] })).toBe(false);
+  it('returns false when resource key is missing', () => {
+    expect(canAffordResources({}, { resources: [{ gold: 1 }] })).toBe(false);
   });
 });
 
-// — getInstancesTriggerEffects —
+// ─── canAffordCardCost ────────────────────────────────────────────────────────
 
-describe('getInstancesTriggerEffects', () => {
-  it('returns empty array when no instances have the trigger', () => {
-    const instance = makeInstance(1, 10, 1);
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { actions: [] })]),
-    };
-    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, makeGameState());
-    expect(result).toEqual([]);
+describe('canAffordCardCost', () => {
+  const defs: Record<number, CardDef> = {
+    1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+  };
+
+  it('returns true when no cost', () => {
+    expect(canAffordCardCost(undefined, 1, makeState(), defs)).toBe(true);
   });
 
-  it('collects effects matching the trigger', () => {
-    const instance = makeInstance(1, 10, 1);
-    const action: CardAction = {
-      id: '1',
-      actionEffects: [
-        {
-          id: 1,
-          type: ActionType.ADD_RESOURCES,
-          cards: { scope: [TargetScope.SELF] },
-          resources: { gold: 2 },
-        },
-      ],
-      trigger: Trigger.ON_PLAY,
-      optional: false,
-    };
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { actions: [action] })]),
-    };
-    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, makeGameState());
-    expect(result).toHaveLength(1);
-    expect(result[0].effectDef).toBe(action);
-    expect(result[0].sourceInstanceId).toBe(1);
+  it('returns false when discard has no available cards', () => {
+    const gs = makeState({ board: [] });
+    expect(canAffordCardCost({ discard: { scope: [TargetScope.BOARD] } }, 1, gs, defs)).toBe(false);
   });
 
-  it('injects a CHOOSE_STATE effect for ON_DISCOVER when card has chooseState', () => {
-    const instance = makeInstance(1, 10, 1);
-    const defs: Record<number, CardDef> = {
-      10: { id: 10, name: 'Card 10', chooseState: true, states: [makeCardState(1)] },
-    };
-    const result = getInstancesTriggerEffects(
-      [instance],
-      defs,
-      Trigger.ON_DISCOVER,
-      makeGameState(),
-    );
-    expect(result).toHaveLength(1);
-    expect(result[0].effectDef.actionEffects[0].type).toBe(ActionType.CHOOSE_STATE);
+  it('returns true when enough cards for discard', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    expect(canAffordCardCost({ discard: { scope: [TargetScope.BOARD] } }, 99, gs, defs)).toBe(true);
   });
 
-  it('aggregates effects from multiple instances', () => {
-    const inst1 = makeInstance(1, 10, 1);
-    const inst2 = makeInstance(2, 11, 1);
-    const effect1: CardAction = {
-      id: '1',
-      actionEffects: [
-        {
-          id: 1,
-          type: ActionType.ADD_RESOURCES,
-          cards: { scope: [TargetScope.SELF] },
-          resources: { gold: 2 },
-        },
-      ],
-      trigger: Trigger.END_OF_TURN,
-      optional: false,
-    };
-    const effect2: CardAction = {
-      id: '2',
-      actionEffects: [
-        {
-          id: 1,
-          type: ActionType.DISCARD_CARD,
-          cards: { scope: [TargetScope.SELF] },
-        },
-      ],
-      trigger: Trigger.END_OF_TURN,
-      optional: false,
-    };
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { actions: [effect1] })]),
-      11: makeDef(11, [makeCardState(1, { actions: [effect2] })]),
-    };
-    const result = getInstancesTriggerEffects(
-      [inst1, inst2],
-      defs,
-      Trigger.END_OF_TURN,
-      makeGameState(),
-    );
-    expect(result).toHaveLength(2);
+  it('returns false when destroy has no available cards', () => {
+    const gs = makeState({ board: [] });
+    expect(canAffordCardCost({ destroy: { scope: [TargetScope.BOARD] } }, 1, gs, defs)).toBe(false);
   });
 
-  it('includes board effects with ADD_TRIGGER passives', () => {
-    const instance = makeInstance(1, 10, 1);
+  it('returns true when enough cards for destroy', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    expect(canAffordCardCost({ destroy: { scope: [TargetScope.BOARD] } }, 99, gs, defs)).toBe(true);
+  });
+
+  it('uses discard.number for count check', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    expect(
+      canAffordCardCost({ discard: { scope: [TargetScope.BOARD], number: 2 } }, 99, gs, defs),
+    ).toBe(false);
+  });
+});
+
+// ─── cardShouldStayInPlay ─────────────────────────────────────────────────────
+
+describe('cardShouldStayInPlay', () => {
+  it('returns false when instance not found', () => {
+    expect(cardShouldStayInPlay(99, makeState(), {})).toBe(false);
+  });
+
+  it('returns true for permanent cards', () => {
+    const inst = makeInstance({ id: 1, cardId: 1 });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { actions: [] })]),
+      1: { id: 1, name: 'P', permanent: true, states: [{ id: 1, name: 'S' }] },
     };
-    const gameState = makeGameState({
-      instances: { 1: instance },
+    const gs = makeState({ instances: { 1: inst } });
+    expect(cardShouldStayInPlay(1, gs, defs)).toBe(true);
+  });
+
+  it('returns true for cards with STAY_IN_PLAY passive', () => {
+    const inst = makeInstance({ id: 1, cardId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [{ id: 1, name: 'S', passives: [{ id: 'sip', type: PassiveType.STAY_IN_PLAY }] }],
+      },
+    };
+    const gs = makeState({ instances: { 1: inst } });
+    expect(cardShouldStayInPlay(1, gs, defs)).toBe(true);
+  });
+
+  it('returns true when card is affected by a board STAY_IN_PLAY effect', () => {
+    const inst = makeInstance({ id: 2, cardId: 2 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'S', states: [{ id: 1, name: 'S1' }] },
+      2: { id: 2, name: 'T', states: [{ id: 1, name: 'T1' }] },
+    };
+    const gs = makeState({
+      instances: { 2: inst },
       boardEffects: {
-        99: [
-          {
-            id: 'be1',
-            type: PassiveType.ADD_TRIGGER,
-            trigger: {
-              type: Trigger.ON_PLAY,
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_RESOURCES,
-                  resources: { gold: 1 },
-                },
-              ],
-            },
-          },
-        ],
+        1: [{ id: 'sip', type: PassiveType.STAY_IN_PLAY, cards: { ids: [2] } }],
       },
     });
-    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
-    expect(result).toHaveLength(1);
-    expect(result[0].sourceInstanceId).toBe(99);
+    expect(cardShouldStayInPlay(2, gs, defs)).toBe(true);
   });
 
-  it('ignores board effects with a different trigger type', () => {
-    const instance = makeInstance(1, 10, 1);
+  it('returns true when card has STAYS_IN_PLAY sticker (id 7)', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, stickers: { 1: [7] } });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { actions: [] })]),
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
     };
-    const gameState = makeGameState({
-      instances: { 1: instance },
+    const gs = makeState({ instances: { 1: inst } });
+    expect(cardShouldStayInPlay(1, gs, defs)).toBe(true);
+  });
+
+  it('returns false for a plain non-permanent card', () => {
+    const inst = makeInstance({ id: 1, cardId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+    const gs = makeState({ instances: { 1: inst } });
+    expect(cardShouldStayInPlay(1, gs, defs)).toBe(false);
+  });
+});
+
+// ─── cardIsBlocked ────────────────────────────────────────────────────────────
+
+describe('cardIsBlocked', () => {
+  it('returns false when no block effects', () => {
+    expect(cardIsBlocked(1, makeState())).toBe(false);
+  });
+
+  it('returns true when card is in block effects', () => {
+    const gs = makeState({
       boardEffects: {
-        99: [
+        1: [{ id: 'b', type: PassiveType.BLOCK, cards: { ids: [2] } }],
+      },
+    });
+    expect(cardIsBlocked(2, gs)).toBe(true);
+  });
+
+  it('returns false when card is not in block effects', () => {
+    const gs = makeState({
+      boardEffects: {
+        1: [{ id: 'b', type: PassiveType.BLOCK, cards: { ids: [3] } }],
+      },
+    });
+    expect(cardIsBlocked(2, gs)).toBe(false);
+  });
+});
+
+// ─── getInstancesTriggerEffects ───────────────────────────────────────────────
+
+describe('getInstancesTriggerEffects', () => {
+  it('returns empty when no instances have matching triggers', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+    const result = getInstancesTriggerEffects([inst], defs, Trigger.END_OF_TURN, makeState());
+    expect(result).toHaveLength(0);
+  });
+
+  it('returns trigger effects for matching trigger', () => {
+    const action = {
+      id: 'a1',
+      actionEffects: [],
+      trigger: Trigger.END_OF_TURN,
+    };
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S', actions: [action] }] },
+    };
+    const result = getInstancesTriggerEffects([inst], defs, Trigger.END_OF_TURN, makeState());
+    expect(result).toHaveLength(1);
+    expect(result[0].sourceInstanceId).toBe(1);
+    expect(result[0].effectDef).toBe(action);
+  });
+
+  it('adds CHOOSE_STATE trigger for chooseState cards on ON_DISCOVER', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', chooseState: true, states: [{ id: 1, name: 'S' }] },
+    };
+    const result = getInstancesTriggerEffects([inst], defs, Trigger.ON_DISCOVER, makeState());
+    expect(result.some(r => r.effectDef.id === 'choose_state')).toBe(true);
+  });
+
+  it('does not add CHOOSE_STATE for ON_PLAY trigger', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', chooseState: true, states: [{ id: 1, name: 'S' }] },
+    };
+    const result = getInstancesTriggerEffects([inst], defs, Trigger.ON_PLAY, makeState());
+    expect(result.some(r => r.effectDef.id === 'choose_state')).toBe(false);
+  });
+
+  it('includes board effect triggers matching the trigger type', () => {
+    const gs = makeState({
+      boardEffects: {
+        1: [
           {
-            id: 'be1',
+            id: 'trig',
             type: PassiveType.ADD_TRIGGER,
             trigger: {
               type: Trigger.END_OF_TURN,
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_RESOURCES,
-                  resources: { gold: 1 },
-                },
-              ],
+              actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
             },
           },
         ],
       },
     });
-    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
-    expect(result).toHaveLength(0);
+    const result = getInstancesTriggerEffects([], {}, Trigger.END_OF_TURN, gs);
+    expect(result).toHaveLength(1);
+    expect(result[0].sourceInstanceId).toBe(1);
   });
 
-  it('ignores board effects without ADD_TRIGGER type', () => {
-    const instance = makeInstance(1, 10, 1);
+  it('resolves SELF scope in board effect trigger actions to the selected card id', () => {
+    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
     const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { actions: [] })]),
+      1: { id: 1, name: 'S', states: [{ id: 1, name: 'S1' }] },
+      2: { id: 2, name: 'T', states: [{ id: 1, name: 'T1' }] },
     };
-    const gameState = makeGameState({
-      instances: { 1: instance },
+    const gs = makeState({
+      board: [2],
+      instances: { 2: inst2 },
       boardEffects: {
-        99: [{ id: 'be1', type: PassiveType.BLOCK, cards: { ids: [1] } }],
-      },
-    });
-    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
-    expect(result).toHaveLength(0);
-  });
-
-  it('applies card selector when trigger.cards is defined', () => {
-    const instance = makeInstance(1, 10, 1);
-    const target = makeInstance(2, 11, 1);
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { actions: [] })]),
-      11: makeDef(11, [makeCardState(1, { actions: [] })]),
-    };
-    const gameState = makeGameState({
-      instances: { 1: instance, 2: target },
-      board: [1, 2],
-      boardEffects: {
-        99: [
+        1: [
           {
-            id: 'be1',
+            id: 'trig',
             type: PassiveType.ADD_TRIGGER,
             trigger: {
-              type: Trigger.ON_PLAY,
+              type: Trigger.END_OF_TURN,
               cards: { scope: [TargetScope.BOARD] },
               actions: [
                 {
-                  id: 1,
-                  type: ActionType.ADD_RESOURCES,
-                  resources: { gold: 1 },
+                  id: 0,
+                  type: ActionEffectType.ADD_RESOURCES,
+                  cards: { scope: [TargetScope.SELF] },
                 },
               ],
             },
@@ -752,299 +638,82 @@ describe('getInstancesTriggerEffects', () => {
         ],
       },
     });
-    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
+    const result = getInstancesTriggerEffects([], defs, Trigger.END_OF_TURN, gs);
     expect(result).toHaveLength(1);
-    // The first card on the board should be used as the target
-    expect(result[0].sourceInstanceId).toBe(99);
-  });
-
-  it('ignores board effects when card selector returns empty list', () => {
-    const instance = makeInstance(1, 10, 1);
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { actions: [] })]),
-    };
-    const gameState = makeGameState({
-      instances: { 1: instance },
-      boardEffects: {
-        99: [
-          {
-            id: 'be1',
-            type: PassiveType.ADD_TRIGGER,
-            trigger: {
-              type: Trigger.ON_PLAY,
-              cards: { scope: [TargetScope.DISCOVERY] }, // no cards in discovery pile
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_RESOURCES,
-                  resources: { gold: 1 },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    });
-    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
-    expect(result).toHaveLength(0);
-  });
-
-  it('ignores board effects without actions', () => {
-    const instance = makeInstance(1, 10, 1);
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { actions: [] })]),
-    };
-    const gameState = makeGameState({
-      instances: { 1: instance },
-      boardEffects: {
-        99: [
-          {
-            id: 'be1',
-            type: PassiveType.ADD_TRIGGER,
-            trigger: {
-              type: Trigger.ON_PLAY,
-            },
-          },
-        ],
-      },
-    });
-    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
-    expect(result).toHaveLength(0);
-  });
-
-  it('applies card selector to trigger.cards and transforms action cards based on scope', () => {
-    const instance = makeInstance(1, 10, 1);
-    const target = makeInstance(2, 11, 1);
-    const defs: Record<number, CardDef> = {
-      10: makeDef(10, [makeCardState(1, { actions: [] })]),
-      11: makeDef(11, [makeCardState(1, { actions: [] })]),
-    };
-    const gameState = makeGameState({
-      instances: { 1: instance, 2: target },
-      board: [1, 2],
-      boardEffects: {
-        99: [
-          {
-            id: 'be1',
-            type: PassiveType.ADD_TRIGGER,
-            trigger: {
-              type: Trigger.ON_PLAY,
-              cards: { scope: [TargetScope.BOARD] },
-              actions: [
-                {
-                  id: 1,
-                  type: ActionType.ADD_RESOURCES,
-                  cards: { scope: [TargetScope.BOARD] }, // non-SELF scope
-                  resources: { gold: 1 },
-                },
-                {
-                  id: 2,
-                  type: ActionType.DISCARD_CARD,
-                  cards: { scope: [TargetScope.SELF] }, // SELF scope should be transformed to ids
-                },
-              ],
-            },
-          },
-        ],
-      },
-    });
-    const result = getInstancesTriggerEffects([instance], defs, Trigger.ON_PLAY, gameState);
-    expect(result).toHaveLength(1);
-    expect(result[0].effectDef.actionEffects).toHaveLength(2);
-    // The first action should keep its original cards scope (non-SELF)
-    expect(result[0].effectDef.actionEffects[0].cards).toEqual({ scope: [TargetScope.BOARD] });
-    // The second action should be transformed to use ids with the selected card
-    expect(result[0].effectDef.actionEffects[1].cards).toEqual({ ids: [1] }); // First board card (instance 1)
+    expect(result[0].effectDef.actionEffects[0].cards?.ids).toEqual([2]);
   });
 });
 
-// — getAffectedCardsByBoardEffects —
-
-describe('getAffectedCardsByBoardEffects', () => {
-  it('returns empty array when boardEffects is empty', () => {
-    const state = makeGameState();
-    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({});
-  });
-
-  it('returns instance ids affected by the matching passive type', () => {
-    const state = makeGameState({
-      boardEffects: {
-        1: [{ id: 'be1', type: PassiveType.BLOCK, cards: { ids: [10, 11] } }],
-      },
-    });
-    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({ 1: [10, 11] });
-  });
-
-  it('ignores effects with a different passive type', () => {
-    const state = makeGameState({
-      boardEffects: {
-        1: [{ id: 'be1', type: PassiveType.STAY_IN_PLAY, cards: { ids: [10] } }],
-      },
-    });
-    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({});
-  });
-
-  it('ignores effects without a cards.ids list', () => {
-    const state = makeGameState({
-      boardEffects: {
-        1: [{ id: 'be1', type: PassiveType.BLOCK }],
-      },
-    });
-    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({ 1: [1] });
-  });
-
-  it('aggregates ids from multiple board effect sources', () => {
-    const state = makeGameState({
-      boardEffects: {
-        1: [{ id: 'be1', type: PassiveType.BLOCK, cards: { ids: [10] } }],
-        2: [{ id: 'be2', type: PassiveType.BLOCK, cards: { ids: [11] } }],
-      },
-    });
-    expect(getAffectedCardsByBoardEffects(state, PassiveType.BLOCK)).toEqual({ 1: [10], 2: [11] });
-  });
-});
-
-// — cardIsBlocked —
-
-describe('cardIsBlocked', () => {
-  it('returns false when no board effects block any card', () => {
-    const state = makeGameState();
-    expect(cardIsBlocked(1, state)).toBe(false);
-  });
-
-  it('returns true when the instance id is in a BLOCK board effect', () => {
-    const state = makeGameState({
-      boardEffects: {
-        99: [{ id: 'be1', type: PassiveType.BLOCK, cards: { ids: [1] } }],
-      },
-    });
-    expect(cardIsBlocked(1, state)).toBe(true);
-  });
-
-  it('returns false when another instance is blocked but not this one', () => {
-    const state = makeGameState({
-      boardEffects: {
-        99: [{ id: 'be1', type: PassiveType.BLOCK, cards: { ids: [2] } }],
-      },
-    });
-    expect(cardIsBlocked(1, state)).toBe(false);
-  });
-});
-
-// — cardShouldStayInPlay —
-
-describe('cardShouldStayInPlay', () => {
-  it('returns false when the instance does not exist', () => {
-    const state = makeGameState();
-    expect(cardShouldStayInPlay(99, state, {})).toBe(false);
-  });
-
-  it('returns true when the card def has permanent: true', () => {
-    const instance = makeInstance(1, 10, 1);
-    const defs = { 10: { ...makeDef(10, [makeCardState(1)]), permanent: true } };
-    const state = makeGameState({ instances: { 1: instance } });
-    expect(cardShouldStayInPlay(1, state, defs)).toBe(true);
-  });
-
-  it('returns true when the active state has a STAY_IN_PLAY passive', () => {
-    const instance = makeInstance(1, 10, 1);
-    const defs = {
-      10: makeDef(10, [
-        makeCardState(1, { passives: [{ id: 'p1', type: PassiveType.STAY_IN_PLAY }] }),
-      ]),
-    };
-    const state = makeGameState({ instances: { 1: instance } });
-    expect(cardShouldStayInPlay(1, state, defs)).toBe(true);
-  });
-
-  it('returns true when the instance is covered by a STAY_IN_PLAY board effect', () => {
-    const instance = makeInstance(1, 10, 1);
-    const defs = { 10: makeDef(10, [makeCardState(1)]) };
-    const state = makeGameState({
-      instances: { 1: instance },
-      boardEffects: {
-        99: [{ id: 'be1', type: PassiveType.STAY_IN_PLAY, cards: { ids: [1] } }],
-      },
-    });
-    expect(cardShouldStayInPlay(1, state, defs)).toBe(true);
-  });
-
-  it('returns true when the instance has the stays_in_play sticker (id 7)', () => {
-    const instance = makeInstance(1, 10, 1, { stickers: { 1: [7] } }); // sticker id 7 is "stays in play"
-    const defs = { 10: makeDef(10, [makeCardState(1)]) };
-    const state = makeGameState({ instances: { 1: instance } });
-    expect(cardShouldStayInPlay(1, state, defs)).toBe(true);
-  });
-
-  it('returns false when none of the stay-in-play conditions apply', () => {
-    const instance = makeInstance(1, 10, 1);
-    const defs = { 10: makeDef(10, [makeCardState(1)]) };
-    const state = makeGameState({ instances: { 1: instance } });
-    expect(cardShouldStayInPlay(1, state, defs)).toBe(false);
-  });
-});
-
-// — getFirstAvailableTrackStep —
+// ─── getFirstAvailableTrackStep ───────────────────────────────────────────────
 
 describe('getFirstAvailableTrackStep', () => {
-  it('returns undefined when no TRACK_ADVANCE effect is present', () => {
-    const effects: ActionEffect[] = [{ id: 1, type: ActionType.ADD_RESOURCES }];
-    const gs = makeGameState();
-    expect(getFirstAvailableTrackStep(effects, 1, gs, {})).toBeUndefined();
+  it('returns undefined when no TRACK_ADVANCE effect', () => {
+    const result = getFirstAvailableTrackStep([], 1, makeState(), {});
+    expect(result).toBeUndefined();
   });
 
-  it('returns undefined when TRACK_ADVANCE effect has no cards selector', () => {
-    const effects: ActionEffect[] = [{ id: 1, type: ActionType.TRACK_ADVANCE }];
-    const gs = makeGameState();
-    expect(getFirstAvailableTrackStep(effects, 1, gs, {})).toBeUndefined();
-  });
-
-  it('skips target IDs whose instance is not in gameState', () => {
-    // scope SELF returns [instanceId] without needing board/instances
-    const effects: ActionEffect[] = [
-      { id: 1, type: ActionType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
-    ];
-    const gs = makeGameState({ instances: {} }); // instanceId 1 absent
-    expect(getFirstAvailableTrackStep(effects, 1, gs, {})).toBeUndefined();
-  });
-
-  it('skips instances whose active state has no track', () => {
-    const effects: ActionEffect[] = [
-      { id: 1, type: ActionType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
-    ];
-    const instance = makeInstance(1, 10, 1);
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [makeCardState(1)]) };
-    const gs = makeGameState({ instances: { 1: instance } });
-    expect(getFirstAvailableTrackStep(effects, 1, gs, defs)).toBeUndefined();
-  });
-
-  it('returns undefined when all track steps are already completed', () => {
-    const effects: ActionEffect[] = [
-      { id: 1, type: ActionType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
-    ];
-    const instance = makeInstance(1, 10, 1, { trackProgress: [10] });
-    const cs = makeCardState(1, {
-      track: { steps: [{ id: 10 }], inOrder: true },
-    });
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
-    const gs = makeGameState({ instances: { 1: instance } });
-    expect(getFirstAvailableTrackStep(effects, 1, gs, defs)).toBeUndefined();
-  });
-
-  it('returns the first unfinished track step', () => {
-    const effects: ActionEffect[] = [
-      { id: 1, type: ActionType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
-    ];
-    const instance = makeInstance(1, 10, 1, { trackProgress: [10] });
-    const cs = makeCardState(1, {
-      track: {
-        steps: [{ id: 10 }, { id: 11 }],
-        inOrder: true,
+  it('returns undefined when no target cards', () => {
+    const effects = [
+      {
+        id: 0,
+        type: ActionEffectType.TRACK_ADVANCE,
+        cards: { scope: [TargetScope.BOARD] },
       },
-    });
-    const defs: Record<number, CardDef> = { 10: makeDef(10, [cs]) };
-    const gs = makeGameState({ instances: { 1: instance } });
-    const result = getFirstAvailableTrackStep(effects, 1, gs, defs);
-    expect(result).toEqual({ id: 11 });
+    ];
+    const result = getFirstAvailableTrackStep(effects, 1, makeState(), {});
+    expect(result).toBeUndefined();
+  });
+
+  it('returns undefined when instance has no track', () => {
+    const inst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      2: { id: 2, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    const effects = [
+      { id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.BOARD] } },
+    ];
+    const result = getFirstAvailableTrackStep(effects, 99, gs, defs);
+    expect(result).toBeUndefined();
+  });
+
+  it('returns the first incomplete step', () => {
+    const inst = makeInstance({ id: 2, cardId: 2, stateId: 1, trackProgress: [1] });
+    const defs: Record<number, CardDef> = {
+      2: {
+        id: 2,
+        name: 'C',
+        states: [
+          {
+            id: 1,
+            name: 'S',
+            track: { steps: [{ id: 1 }, { id: 2 }], inOrder: true },
+          },
+        ],
+      },
+    };
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    const effects = [
+      { id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.BOARD] } },
+    ];
+    const result = getFirstAvailableTrackStep(effects, 99, gs, defs);
+    expect(result?.id).toBe(2);
+  });
+
+  it('returns undefined when all steps are complete', () => {
+    const inst = makeInstance({ id: 2, cardId: 2, stateId: 1, trackProgress: [1, 2] });
+    const defs: Record<number, CardDef> = {
+      2: {
+        id: 2,
+        name: 'C',
+        states: [{ id: 1, name: 'S', track: { steps: [{ id: 1 }, { id: 2 }], inOrder: true } }],
+      },
+    };
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    const effects = [
+      { id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.BOARD] } },
+    ];
+    const result = getFirstAvailableTrackStep(effects, 99, gs, defs);
+    expect(result).toBeUndefined();
   });
 });

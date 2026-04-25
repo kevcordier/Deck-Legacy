@@ -1,8 +1,8 @@
-import { makeInstance } from '../tests/engine/application/testHelpers';
+import { makeInstance } from '../tests/engine/application/fixtures';
 import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
-import { ActionType, CardTag } from '@engine/domain/enums';
+import { ActionEffectType, CardTag } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -45,7 +45,7 @@ const villageDef: CardDef = {
   ],
 };
 
-const villageInstance = makeInstance(1, 3, 1);
+const villageInstance = makeInstance({ id: 1, cardId: 3, stateId: 1 });
 
 // --- Card with 3 states ---
 
@@ -67,7 +67,9 @@ const armyDef: CardDef = {
       actions: [
         {
           id: 'attack',
-          actionEffects: [{ id: 1, type: ActionType.DESTROY_CARD, cards: { scope: undefined } }],
+          actionEffects: [
+            { id: 1, type: ActionEffectType.DESTROY_CARD, cards: { scope: undefined } },
+          ],
         },
       ],
     },
@@ -81,7 +83,7 @@ const armyDef: CardDef = {
   ],
 };
 
-const armyInstance = makeInstance(6, 6, 2);
+const armyInstance = makeInstance({ id: 6, cardId: 6, stateId: 2 });
 
 // --- Single-state card (button should not render) ---
 
@@ -98,7 +100,7 @@ const farmDef: CardDef = {
   ],
 };
 
-const farmInstance = makeInstance(1, 1, 1);
+const farmInstance = makeInstance({ id: 1, cardId: 1, stateId: 1 });
 
 export const TwoStates: Story = {
   name: 'Card with 2 states',

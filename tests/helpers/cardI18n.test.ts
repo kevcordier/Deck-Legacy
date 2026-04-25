@@ -154,12 +154,12 @@ describe('tCardTag', () => {
 
   it('returns the raw tag string as fallback', () => {
     const t = makeT();
-    expect(tCardTag(t, 'unknown_tag')).toBe('unknown_tag');
+    expect(tCardTag(t, 'unknown_tag')).toBe('tags.unknown_tag');
   });
 
   it('passes ns: cards to t', () => {
     const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
     tCardTag(t, 'land');
-    expect(t).toHaveBeenCalledWith('tags.land', { ns: 'cards', defaultValue: 'land' });
+    expect(t).toHaveBeenCalledWith('tags.land', { ns: 'cards' });
   });
 });

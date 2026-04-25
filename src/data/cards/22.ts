@@ -1,4 +1,4 @@
-import { ActionType, TargetScope, Trigger } from '@engine/domain/enums';
+import { ActionEffectType, TargetScope, Trigger } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const stop3: CardDef = {
@@ -17,9 +17,8 @@ export const stop3: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
-                number: 2,
                 scope: [TargetScope.DISCOVERY],
                 ids: [31, 32, 33, 34],
               },
@@ -27,9 +26,8 @@ export const stop3: CardDef = {
             },
             {
               id: 2,
-              type: ActionType.DESTROY_CARD,
+              type: ActionEffectType.DESTROY_CARD,
               cards: {
-                number: 2,
                 scope: [TargetScope.DISCOVERY],
                 ids: [31, 32, 33, 34],
               },

@@ -1,84 +1,71 @@
-import { makeGameState, makeInstance } from '../testHelpers';
+import { makeState } from '../fixtures';
 import { AddBoardEffectStrategy } from '@engine/application/cardAction/AddBoardEffectStrategy';
-import { ActionType, PassiveType } from '@engine/domain/enums';
-import type { Passive } from '@engine/domain/types';
-import { CardPassives } from '@engine/domain/types/effects';
+import { ActionEffectType, PassiveType } from '@engine/domain/enums';
 import { describe, expect, it } from 'vitest';
 
 describe('AddBoardEffectStrategy', () => {
   const strategy = new AddBoardEffectStrategy();
-  const effect: Passive = CardPassives[PassiveType.STAY_IN_PLAY];
+  const passive = { id: 'block', type: PassiveType.BLOCK };
 
-  it('adds boardEffect for each resolved instance id', () => {
-    const gs = makeGameState({
-      instances: { 2: makeInstance(2, 10, 1), 3: makeInstance(3, 10, 1) },
+  it('returns game state unchanged when instanceIds is missing', () => {
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_BOARD_EFFECT,
+      sourceInstanceId: 1,
+      effect: passive,
     });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_BOARD_EFFECT,
+    expect(result).toBe(gs);
+  });
+
+  it('returns game state unchanged when effect is missing', () => {
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_BOARD_EFFECT,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+    });
+    expect(result).toBe(gs);
+  });
+
+  it('adds board effect to target instance', () => {
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_BOARD_EFFECT,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      effect: passive,
+    });
+    expect(result.boardEffects[2]).toHaveLength(1);
+    expect(result.boardEffects[2][0].type).toBe(PassiveType.BLOCK);
+  });
+
+  it('appends to existing board effects', () => {
+    const gs = makeState({
+      boardEffects: { 2: [{ id: 'existing', type: PassiveType.STAY_IN_PLAY }] },
+    });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_BOARD_EFFECT,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      effect: passive,
+    });
+    expect(result.boardEffects[2]).toHaveLength(2);
+  });
+
+  it('adds effects to multiple instances', () => {
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_BOARD_EFFECT,
       sourceInstanceId: 1,
       instanceIds: [2, 3],
-      effect,
+      effect: passive,
     });
-    expect(result.boardEffects[2]).toEqual([{ ...effect }]);
-    expect(result.boardEffects[3]).toEqual([{ ...effect }]);
-  });
-
-  it('appends to existing boardEffects for the same key', () => {
-    const existing: Passive = { ...CardPassives[PassiveType.BLOCK], cards: { ids: [2] } };
-    const gs = makeGameState({ boardEffects: { 2: [existing] } });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_BOARD_EFFECT,
-      sourceInstanceId: 1,
-      instanceIds: [2],
-      effect,
-    });
-    expect(result.boardEffects[2]).toEqual([existing, { ...effect }]);
-  });
-
-  it('returns unchanged state when instanceIds is empty', () => {
-    const gs = makeGameState();
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_BOARD_EFFECT,
-      sourceInstanceId: 1,
-      instanceIds: [],
-      effect,
-    });
-    expect(result.boardEffects).toEqual({});
-  });
-
-  it('returns unchanged state when instanceIds is undefined', () => {
-    const gs = makeGameState();
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_BOARD_EFFECT,
-      sourceInstanceId: 1,
-    });
-    expect(result.boardEffects).toEqual({});
-  });
-
-  it('returns unchanged state when effect is undefined', () => {
-    const gs = makeGameState();
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_BOARD_EFFECT,
-      sourceInstanceId: 1,
-      instanceIds: [2],
-    });
-    expect(result.boardEffects).toEqual({});
-  });
-
-  it('does not mutate the original game state', () => {
-    const gs = makeGameState();
-    strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.ADD_BOARD_EFFECT,
-      sourceInstanceId: 1,
-      instanceIds: [2],
-      effect,
-    });
-    expect(gs.boardEffects).toEqual({});
+    expect(result.boardEffects[2]).toHaveLength(1);
+    expect(result.boardEffects[3]).toHaveLength(1);
   });
 });

@@ -1,14 +1,14 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import { mergeResources } from '@engine/application/gameStateHelper';
-import type { ActionType } from '@engine/domain/enums';
+import type { ActionEffectType } from '@engine/domain/enums';
 import type { GameState, Resources } from '@engine/domain/types';
 
 export class AddResourceStrategy implements CardActionStrategy {
-  applyEffect(
+  apply(
     gameState: GameState,
     payload: {
       id: string;
-      type: ActionType;
+      type: ActionEffectType;
       sourceInstanceId: number;
       resources: Resources;
     },

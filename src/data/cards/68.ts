@@ -1,5 +1,5 @@
 import {
-  ActionType,
+  ActionEffectType,
   CardTag,
   PassiveType,
   ResourceType,
@@ -33,7 +33,7 @@ export const shrine: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_BOARD_EFFECT,
+              type: ActionEffectType.ADD_BOARD_EFFECT,
               cards: {
                 scope: [TargetScope.BOARD],
               },
@@ -82,10 +82,9 @@ export const shrine: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_BOARD_EFFECT,
+              type: ActionEffectType.ADD_BOARD_EFFECT,
               cards: {
                 scope: [TargetScope.BOARD],
-                number: 2,
               },
               effect: {
                 ...CardPassives[PassiveType.STAY_IN_PLAY],
@@ -133,10 +132,9 @@ export const shrine: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_BOARD_EFFECT,
+              type: ActionEffectType.ADD_BOARD_EFFECT,
               cards: {
                 scope: [TargetScope.BOARD],
-                number: 3,
               },
               effect: {
                 ...CardPassives[PassiveType.STAY_IN_PLAY],
@@ -184,10 +182,9 @@ export const shrine: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_BOARD_EFFECT,
+              type: ActionEffectType.ADD_BOARD_EFFECT,
               cards: {
                 scope: [TargetScope.BOARD],
-                number: 4,
               },
               effect: {
                 ...CardPassives[PassiveType.STAY_IN_PLAY],

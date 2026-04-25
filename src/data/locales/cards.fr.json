@@ -79,7 +79,9 @@
     "27_2": "Sir _____",
     "28_1": "Stop",
     "29_1": "Force du nombre",
+    "29_2": "Domination militaire",
     "30_1": "Frontières en expansion",
+    "30_2": "Optimisation",
     "31_1": "Loyauté",
     "32_1": "Bouffon",
     "33_1": "Ouvrier agricole",
@@ -233,6 +235,7 @@
     "20_1_a0": "Tant que cette carte est en jeu, détruisez le prochain terrain que vous jouez. Lorsque vous le faites, ⬆.",
     "20_3_a0": "Marquez 1 case. Quand vous marquez une *, ajoutez l'autocollant 2 comme production ici.",
     "21_4_a0": "Réinitialisez pour ajouter n'importe quel autocollant de ressource comme production sur n'importe quelle étape de cette carte sans autocollant.",
+    "22_1_a0": "Sélectionnez 2 cartes parmi les 4 prochaines cartes à découvrir. Détruisez les 2 autres cartes.",
     "23_1_a0": "Découvrez École (118).",
     "23_2_a0": "Gagnez {{gold}} par personne en jeu.",
     "23_3_a0": "Défaussez 1 personne pour découvrir Étranger (92).",
@@ -250,6 +253,10 @@
     "27_1_a0": "Dépensez {{gold}} {{gold}} pour marquer 1-2 étape.",
     "27_2_a0": "Dépensez {{iron}} {{iron}} {{iron}} pour ajouter l'autocollant 5 ici (Utilisation unique).",
     "27_2_a1": "Dépensez {{iron}} {{iron}} {{iron}} {{iron}} pour ajouter l'autocollant 5 ici (Utilisation unique).",
+    "29_1_p0": "* Vaut 2{{glory}} par personne.",
+    "29_2_p0": "* Vaut 2{{glory}} par production de {{weapon}}.",
+    "30_1_p0": "* Vous voulez 75 cartes ou plus dans votre royaume (hors cartes permanentes). Cela vaut -2{{glory}} pour chaque carte manquante par rapport à 75.",
+    "30_2_p0": "* Vaut -1{{glory}} par carte avec exactement 0 (hors cartes permanentes).",
     "68_1_a0": "Fin de tour : Défaussez pour faire rester jusqu'à 1 autre carte en jeu.",
     "68_2_a0": "Fin de tour : Défaussez pour faire rester jusqu'à 2 autres cartes en jeu.",
     "68_3_a0": "Fin de tour : Défaussez pour faire rester jusqu'à 3 autres cartes en jeu.",
@@ -275,19 +282,20 @@
     "11_4_p0": "Cette carte a +1 or de production pour chaque personne en jeu."
   },
   "texts": {
-    "15": "## Stop !\nMaintenant que vous avez pris le coup de main, vous pouvez réinitialiser la partie pour tenter votre meilleur score. Si vous continuez, vous allez découvrir 4 cartes, les cartes 24-27. Regardez-les maintenant et PUIS décidez si vous voulez recommencer ou continuer.\n\nLes cartes 25, 26 et 27 sont des cartes **permanentes**, ce qui signifie qu'elles ne sont jamais mélangées dans votre deck et ne peuvent pas être défaussées. Elles sont toujours visibles et actives, mais ne comptent pas comme « en jeu ».\n\nL'Armée et le Trésor sont des cartes de progression. Elles vous permettent de dépenser votre tour ({{time}}) et des ressources ({{weapon}}/{{gold}}) pour gagner de la gloire. L'Exportation est une carte de décompte. Elle ne met pas fin à votre tour ({{passif}}) et vous permet de dépenser des marchandises ({{goods}}) pour obtenir des autocollants, de nouvelles cartes et d'autres effets intéressants.\n\nVous ne pourrez pas terminer toutes les pistes avant la fin de la partie. Essayez d'aller le plus loin possible !",
+    "15": "## STOP !\nMaintenant que vous avez pris le coup de main, vous pouvez réinitialiser la partie pour tenter votre meilleur score. Si vous continuez, vous allez découvrir 4 cartes, les cartes 24-27. Regardez-les maintenant et PUIS décidez si vous voulez recommencer ou continuer.\n\nLes cartes 25, 26 et 27 sont des cartes **permanentes**, ce qui signifie qu'elles ne sont jamais mélangées dans votre deck et ne peuvent pas être défaussées. Elles sont toujours visibles et actives, mais ne comptent pas comme « en jeu ».\n\nL'Armée et le Trésor sont des cartes de progression. Elles vous permettent de dépenser votre tour ({{time}}) et des ressources ({{weapon}}/{{gold}}) pour gagner de la gloire. L'Exportation est une carte de décompte. Elle ne met pas fin à votre tour ({{passif}}) et vous permet de dépenser des marchandises ({{goods}}) pour obtenir des autocollants, de nouvelles cartes et d'autres effets intéressants.\n\nVous ne pourrez pas terminer toutes les pistes avant la fin de la partie. Essayez d'aller le plus loin possible !",
     "16": "## Terre fertile\n\nCette terre semble pouvoir faire pousser tout ce qu'on y met.\n\nAjoutez l'autocollant 1 ({{gold}}) comme production à un terrain.\n\n## Efficacité\n\nVous prenez le coup de main !\n\nChoisissez 1 **bâtiment** et **boostez** sa production (ajoutez un autocollant de ressource pour qu'il produise 1 ressource supplémentaire d'un type qu'il produit déjà. Les autocollants de ressources sont numérotés de 1 à 6 sur la feuille d'autocollants).\n\n(Rappel : lors de la découverte d'une carte parchemin, suivez toutes ses instructions puis détruisez-la.)",
-    "22": "## Stop !\n\nVotre royaume grandissant et prospérant, beaucoup viennent ici pour réaliser leurs rêves.\n\nCe tour, au lieu de découvrir les 2 prochaines cartes, regardez les 4 prochaines cartes de la boîte (cartes 31-34).\n\nChoisissez-en 2 à découvrir et détruisez les 2 autres."
+    "22": "## STOP !\n\nVotre royaume grandissant et prospérant, beaucoup viennent ici pour réaliser leurs rêves.\n\nCe tour, au lieu de découvrir les 2 prochaines cartes, regardez les 4 prochaines cartes de la boîte (cartes 31-34).\n\nChoisissez-en 2 à découvrir et détruisez les 2 autres.",
+    "28": "## STOP!\n\nIl est temps de fixer les grande orientations de votre royaume, des objectifs à atteindre qui vous demanderont de travailler dur.\n\nLors de cette manche, découvrez 5 cartes au lieu de 2 (les cartes n°38 à 42). Les 3 premières sont des cartes d'objectif.\n\nPour chaque carte, vous devez choisir un de ses côtés maintenant, vous ne pouvez plus la changer."
   },
   "tags": {
-    "Land": "Terrain",
-    "Building": "Bâtiment",
-    "Person": "Personne",
-    "Enemy": "Ennemi",
-    "Event": "Événement",
-    "Seafaring": "Maritime",
-    "Goal": "Objectif",
-    "Knight": "Chevalier",
-    "Elder": "Ancien"
+    "land": "Terrain",
+    "building": "Bâtiment",
+    "person": "Personne",
+    "enemy": "Ennemi",
+    "event": "Événement",
+    "seafaring": "Maritime",
+    "goal": "Objectif",
+    "knight": "Chevalier",
+    "elder": "Ancien"
   }
 }

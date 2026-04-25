@@ -1,6 +1,7 @@
 import { cardSelector } from '@engine/application/cardSelector';
+import { countValuePerElement } from '@engine/application/effectResolver';
 import { mergeResources } from '@engine/application/gameStateHelper';
-import { ActionType, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
+import { ActionEffectType, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
 import type {
   ActionEffect,
   CardAction,
@@ -35,7 +36,7 @@ export function getAffectedCardsByBoardEffects(
   return affectedInstanceIds;
 }
 
-function getBoardEffectsBonus(
+function calculeBoardEffectsBonus(
   instance: CardInstance,
   gameState: GameState,
   defs: Record<number, CardDef>,
@@ -61,6 +62,31 @@ function getBoardEffectsBonus(
   return bonus;
 }
 
+function calculePassiveProductionBonus(
+  activeState: CardState,
+  instance: CardInstance,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+): Resources {
+  let passiveBonus: Resources = {};
+  for (const passive of activeState.passives ?? []) {
+    if (passive.type === PassiveType.INCREASE_PRODUCTION && passive.valuePerElement?.resource) {
+      const { amount, resource, cards: sel, accumulation } = passive.valuePerElement;
+      let count = 0;
+      if (sel) {
+        count = cardSelector(sel, instance.id, gameState, defs).length;
+      } else if (accumulation) {
+        count = instance.cumulated?.[accumulation] ?? 0;
+      }
+
+      if (count > 0) {
+        passiveBonus = mergeResources(passiveBonus, { [resource[0]]: amount * count });
+      }
+    }
+  }
+  return passiveBonus;
+}
+
 export function getEffectiveProductions(
   base: Resources,
   activeState: CardState,
@@ -68,6 +94,13 @@ export function getEffectiveProductions(
   defs: Record<number, CardDef>,
   instance: CardInstance,
   stickers: Record<number, Sticker> = {},
+  {
+    includeBoardEffects,
+    includePassives,
+  }: { includeBoardEffects?: boolean; includePassives?: boolean } = {
+    includeBoardEffects: true,
+    includePassives: true,
+  },
 ): Resources {
   const stickerBonus = (instance.stickers[instance.stateId] ?? []).reduce<Resources>(
     (acc, stickerId) => {
@@ -85,24 +118,13 @@ export function getEffectiveProductions(
     {},
   );
 
-  let passiveBonus: Resources = {};
-  for (const passive of activeState.passives ?? []) {
-    if (passive.type === PassiveType.INCREASE_PRODUCTION && passive.valuePerElement?.resource) {
-      const { amount, resource, cards: sel, accumulation } = passive.valuePerElement;
-      let count = 0;
-      if (sel) {
-        count = cardSelector(sel, instance.id, gameState, defs).length;
-      } else if (accumulation) {
-        count = gameState.instances[instance.id].cumulated?.[accumulation] ?? 0;
-      }
+  const passiveBonus = includePassives
+    ? calculePassiveProductionBonus(activeState, instance, gameState, defs)
+    : {};
 
-      if (count > 0) {
-        passiveBonus = mergeResources(passiveBonus, { [resource[0]]: amount * count });
-      }
-    }
-  }
-
-  const boardEffectsBonus = getBoardEffectsBonus(instance, gameState, defs);
+  const boardEffectsBonus = includeBoardEffects
+    ? calculeBoardEffectsBonus(instance, gameState, defs)
+    : {};
 
   return mergeResources(
     mergeResources(base, stickerBonus),
@@ -122,20 +144,21 @@ export function getEffectiveGlory(
     (acc, stickerId) => acc + (stickers[stickerId]?.glory ?? 0),
     0,
   );
-  const accumulatedGlory = instance.cumulated['glory'] ?? 0;
+  const accumulatedGlory = instance.cumulated?.['glory'] ?? 0;
 
   const passiveGlory = (activeState.passives ?? []).reduce((acc, passive) => {
     if (passive.type !== PassiveType.INCREASE_GLORY || !passive.valuePerElement?.glory) {
       return acc;
     }
 
-    const { glory, cards: sel, accumulation } = passive.valuePerElement;
-    let count = 0;
-    if (sel) {
-      count = cardSelector(sel, instance.id, gameState, defs).length;
-    } else if (accumulation) {
-      count = gameState.instances[instance.id].cumulated?.[accumulation] ?? 0;
-    }
+    const { glory } = passive.valuePerElement;
+    const count = countValuePerElement(
+      passive.valuePerElement,
+      gameState,
+      instance.id,
+      defs,
+      stickers,
+    );
 
     return acc + glory * count;
   }, 0);
@@ -174,6 +197,24 @@ export function canAffordResources(available: Resources, cost?: Cost): boolean {
   return Object.entries(cost.resources[0]).every(
     ([k, v]) => (available[k as keyof Resources] ?? 0) >= v,
   );
+}
+
+/** Vérifie si les cartes requises pour un coût discard/destroy existent dans la sélection. */
+export function canAffordCardCost(
+  cost: Cost | undefined,
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+): boolean {
+  if (cost?.discard) {
+    const available = cardSelector(cost.discard, instanceId, gameState, defs);
+    if (available.length < (cost.discard.number ?? 1)) return false;
+  }
+  if (cost?.destroy) {
+    const available = cardSelector(cost.destroy, instanceId, gameState, defs);
+    if (available.length < (cost.destroy.number ?? 1)) return false;
+  }
+  return true;
 }
 
 function getBoardEffectTriggersAction(
@@ -225,7 +266,7 @@ export function getInstancesTriggerEffects(
         actionEffects: [
           {
             id: 0,
-            type: ActionType.CHOOSE_STATE,
+            type: ActionEffectType.CHOOSE_STATE,
             cards: { scope: [TargetScope.SELF] },
             states: [1, 2],
           },
@@ -279,7 +320,7 @@ export function getFirstAvailableTrackStep(
   gameState: GameState,
   defs: Record<number, CardDef>,
 ): StepDef | undefined {
-  const trackEffect = actionEffects.find(e => e.type === ActionType.TRACK_ADVANCE);
+  const trackEffect = actionEffects.find(e => e.type === ActionEffectType.TRACK_ADVANCE);
   if (!trackEffect?.cards) return undefined;
 
   const targetIds = cardSelector(trackEffect.cards, instanceId, gameState, defs);

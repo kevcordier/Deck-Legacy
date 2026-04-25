@@ -1,4 +1,4 @@
-import { ActionType, ResourceType, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const army: CardDef = {
@@ -18,7 +18,7 @@ export const army: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.TRACK_ADVANCE,
+              type: ActionEffectType.TRACK_ADVANCE,
               cards: {
                 scope: [TargetScope.SELF],
               },
@@ -41,7 +41,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 1 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -61,7 +61,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 4 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -81,7 +81,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 7 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -101,7 +101,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 10 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -121,7 +121,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 14 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -141,7 +141,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 19 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -161,7 +161,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 25 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -181,7 +181,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 32 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -201,7 +201,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 40 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -221,14 +221,14 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.DISCOVER_CARD,
+                type: ActionEffectType.DISCOVER_CARD,
                 cards: {
                   ids: [135],
                 },
               },
               {
                 id: 2,
-                type: ActionType.UPGRADE_CARD,
+                type: ActionEffectType.UPGRADE_CARD,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -252,7 +252,7 @@ export const army: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.TRACK_ADVANCE,
+              type: ActionEffectType.TRACK_ADVANCE,
               cards: {
                 scope: [TargetScope.SELF],
               },
@@ -275,7 +275,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 10 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -295,7 +295,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 20 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -315,7 +315,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 30 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -335,7 +335,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 40 },
                 cards: {
                   scope: [TargetScope.SELF],
@@ -355,7 +355,7 @@ export const army: CardDef = {
             effects: [
               {
                 id: 1,
-                type: ActionType.SET_CUMULATED,
+                type: ActionEffectType.SET_CUMULATED,
                 accumulated: { glory: 50 },
                 cards: {
                   scope: [TargetScope.SELF],

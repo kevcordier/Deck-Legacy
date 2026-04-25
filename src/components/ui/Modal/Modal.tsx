@@ -25,9 +25,18 @@ export function Modal({ title, subtitle, children, onClose, className = '' }: Mo
       if (!onClose) e.preventDefault();
     };
 
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (onClose) onClose();
+        else e.preventDefault();
+      }
+    };
+
+    globalThis.addEventListener('keydown', handleKey);
     dialog.addEventListener('close', handleClose);
     dialog.addEventListener('cancel', handleCancel);
     return () => {
+      globalThis.removeEventListener('keydown', handleKey);
       dialog.removeEventListener('close', handleClose);
       dialog.removeEventListener('cancel', handleCancel);
     };

@@ -12,6 +12,7 @@
 import type { GameEvent } from '@engine/domain/types';
 
 const SAVE_KEY = 'deck_legacy_save';
+const NAMES_KEY = 'deck_legacy_names';
 
 export type SaveData = {
   events: GameEvent[];
@@ -50,5 +51,25 @@ export function deleteSave(): void {
     localStorage.removeItem(SAVE_KEY);
   } catch {
     // ignore
+  }
+}
+
+export function setCardName(instanceId: number, chosenName: string): void {
+  try {
+    const names = JSON.parse(localStorage.getItem(NAMES_KEY) || '{}') as Record<number, string>;
+    names[instanceId] = chosenName;
+    localStorage.setItem(NAMES_KEY, JSON.stringify(names));
+  } catch (e) {
+    console.warn('Unable to save name', e);
+  }
+}
+
+export function getCardName(instanceId: number): string | undefined {
+  try {
+    const names = JSON.parse(localStorage.getItem(NAMES_KEY) || '{}') as Record<number, string>;
+    return names[instanceId];
+  } catch (e) {
+    console.warn('Unable to load name', e);
+    return undefined;
   }
 }

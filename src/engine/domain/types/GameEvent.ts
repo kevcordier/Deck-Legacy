@@ -1,11 +1,5 @@
 import type { GameEventType } from '@engine/domain/enums';
-import type {
-  CardInstance,
-  GameState,
-  ResolvedCost,
-  Resources,
-  TriggerEntry,
-} from '@engine/domain/types';
+import type { CardInstance, GameState, Resources, TriggerEntry } from '@engine/domain/types';
 
 export interface GameEvent {
   id: string;
@@ -55,15 +49,11 @@ export interface UpgradeCardEvent extends GameEvent {
   cost: Resources;
 }
 
-export interface UseCardEffectEvent extends GameEvent {
-  type: GameEventType.USE_CARD_EFFECT;
-  actionId: string;
+export interface CardActionEvent extends GameEvent {
+  type: GameEventType.CARD_ACTION;
   gameStateChanges: Partial<GameState>;
-  resolvedCost: ResolvedCost;
-  triggerId: string;
   sourceInstanceId: number;
-  isDiscarded?: boolean;
-  isDestroyed?: boolean;
+  actionId: string;
 }
 
 export interface SkipTriggerEvent extends GameEvent {

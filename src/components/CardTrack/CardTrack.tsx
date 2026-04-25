@@ -1,5 +1,5 @@
 import { Glory } from '@components/ui/Glory/Glory';
-import { ActionType } from '@engine/domain/enums';
+import { ActionEffectType } from '@engine/domain/enums';
 import type { ActionEffect, CardInstance, TrackDef } from '@engine/domain/types';
 import { tCardTrackAction } from '@helpers/cardI18n';
 import { getResMeta } from '@helpers/renderHelpers';
@@ -64,11 +64,14 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
         };
 
         const getActionContent = (action: ActionEffect): JSX.Element | null => {
-          if (action.type === ActionType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
+          if (
+            action.type === ActionEffectType.DISCOVER_CARD &&
+            action.cards?.ids?.[0] !== undefined
+          ) {
             return <span key={action.id}>#{action.cards.ids[0]}</span>;
           }
 
-          if (action.type === ActionType.UPGRADE_CARD) {
+          if (action.type === ActionEffectType.UPGRADE_CARD) {
             return <span key={action.id}>⬆</span>;
           }
 

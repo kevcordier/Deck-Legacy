@@ -1,10 +1,7 @@
-import type {
-  CardAction,
-  CardInstance,
-  Passive,
-  Resources,
-  StickerStock,
-} from '@engine/domain/types';
+import type { CardAction, Passive } from './Card';
+import type { CardInstance } from './CardInstance';
+import type { Resources } from './Resource';
+import type { StickerStock } from './Sticker';
 import type { Phase } from '@engine/domain/types/Phase';
 
 export type TriggerEntry = {

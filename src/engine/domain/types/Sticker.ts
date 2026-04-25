@@ -2,7 +2,7 @@ export type Sticker = {
   id: number;
   icon?: string;
   label?: string;
-  description: string;
+  description?: string;
   type: 'add' | 'remove';
   production?: string;
   glory?: number;

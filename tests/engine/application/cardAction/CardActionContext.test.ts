@@ -1,60 +1,88 @@
-import { makeGameState } from '../testHelpers';
+import { makeInstance, makeState } from '../fixtures';
 import { CardActionContext } from '@engine/application/cardAction/CardActionContext';
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
-import { ActionType } from '@engine/domain/enums';
-import type { ResolvedAction } from '@engine/domain/types';
-import { describe, expect, it, vi } from 'vitest';
+import { ActionEffectType } from '@engine/domain/enums';
+import type { GameState, ResolvedActionEffect } from '@engine/domain/types';
+import { describe, expect, it } from 'vitest';
 
-const makeResolvedAction = (overrides: Partial<ResolvedAction> = {}): ResolvedAction => ({
-  id: '1-1',
-  type: ActionType.ADD_RESOURCES,
-  sourceInstanceId: 1,
-  ...overrides,
+const makeDefs = () => ({
+  1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
 });
 
 describe('CardActionContext', () => {
-  it('throws when no strategy is set', () => {
-    const context = new CardActionContext();
-    const gs = makeGameState();
-    expect(() => context.applyEffect(gs, makeResolvedAction())).toThrow(
-      'CardActionStrategy not set in CardActionContext',
-    );
+  it('dispatches ADD_RESOURCES to AddResourceStrategy', () => {
+    const ctx = new CardActionContext(makeDefs());
+    const gs = makeState({ resources: { gold: 0 } });
+    const result = ctx.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_RESOURCES,
+      sourceInstanceId: 1,
+      resources: { gold: 5 },
+    });
+    expect(result.resources.gold).toBe(5);
   });
 
-  it('delegates applyEffect to the set strategy', () => {
-    const context = new CardActionContext();
-    const gs = makeGameState();
-    const modifiedGs = makeGameState({ resources: { gold: 5 } });
+  it('throws when no strategy registered and no currentStrategy', () => {
+    const ctx = new CardActionContext();
+    expect(() =>
+      ctx.apply(makeState(), {
+        id: 'x',
+        type: ActionEffectType.ADD_RESOURCES,
+        sourceInstanceId: 1,
+      }),
+    ).toThrow('CardActionStrategy not set in CardActionContext');
+  });
+
+  it('uses setStrategy when provided', () => {
+    const ctx = new CardActionContext(makeDefs());
+    const newGs = makeState({ resources: { wood: 99 } });
     const mockStrategy: CardActionStrategy = {
-      applyEffect: vi.fn().mockReturnValue(modifiedGs),
+      apply: (_gs: GameState, _payload: ResolvedActionEffect) => newGs,
     };
-
-    context.setStrategy(mockStrategy);
-    const result = context.applyEffect(gs, makeResolvedAction());
-
-    expect(mockStrategy.applyEffect).toHaveBeenCalledWith(gs, makeResolvedAction());
-    expect(result).toBe(modifiedGs);
+    ctx.setStrategy(mockStrategy);
+    const result = ctx.apply(makeState(), {
+      id: 'x',
+      type: ActionEffectType.DISCARD_CARD,
+      sourceInstanceId: 1,
+    });
+    expect(result.resources.wood).toBe(99);
   });
 
-  it('uses the last set strategy when setStrategy is called multiple times', () => {
-    const context = new CardActionContext();
-    const gs = makeGameState();
-    const firstGs = makeGameState({ resources: { gold: 1 } });
-    const secondGs = makeGameState({ resources: { gold: 2 } });
+  it('dispatches DISCARD_CARD', () => {
+    const ctx = new CardActionContext(makeDefs());
+    const gs = makeState({ board: [1] });
+    const result = ctx.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.DISCARD_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [1],
+    });
+    expect(result.discardPile).toContain(1);
+  });
 
-    const firstStrategy: CardActionStrategy = {
-      applyEffect: vi.fn().mockReturnValue(firstGs),
-    };
-    const secondStrategy: CardActionStrategy = {
-      applyEffect: vi.fn().mockReturnValue(secondGs),
-    };
+  it('dispatches DESTROY_CARD', () => {
+    const ctx = new CardActionContext(makeDefs());
+    const gs = makeState({ board: [1] });
+    const result = ctx.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.DESTROY_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [1],
+    });
+    expect(result.destroyedPile).toContain(1);
+  });
 
-    context.setStrategy(firstStrategy);
-    context.setStrategy(secondStrategy);
-    const result = context.applyEffect(gs, makeResolvedAction());
-
-    expect(firstStrategy.applyEffect).not.toHaveBeenCalled();
-    expect(secondStrategy.applyEffect).toHaveBeenCalled();
-    expect(result).toBe(secondGs);
+  it('dispatches CHOOSE_STATE', () => {
+    const ctx = new CardActionContext(makeDefs());
+    const inst = makeInstance({ id: 1, stateId: 1 });
+    const gs = makeState({ instances: { 1: inst } });
+    const result = ctx.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.CHOOSE_STATE,
+      sourceInstanceId: 1,
+      instanceIds: [1],
+      stateId: 2,
+    });
+    expect(result.instances[1].stateId).toBe(2);
   });
 });

@@ -1,4 +1,4 @@
-import { ActionType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const river: CardDef = {
@@ -97,14 +97,14 @@ export const river: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [71, 72, 73, 74],
               },
             },
             {
               id: 2,
-              type: ActionType.UPGRADE_CARD,
+              type: ActionEffectType.UPGRADE_CARD,
               cards: {
                 scope: [TargetScope.SELF],
               },

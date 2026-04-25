@@ -1,94 +1,88 @@
-import { makeGameState, makeInstance } from '../testHelpers';
+import { makeState } from '../fixtures';
 import { RoundStartedStrategy } from '@engine/application/gameEvent/RoundStartedStrategy';
-import { ActionType, GameEventType } from '@engine/domain/enums';
-import type { CardAction } from '@engine/domain/types';
+import { GameEventType } from '@engine/domain/enums';
+import type { RoundStartedEvent } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
-
-const makeCardAction = (): CardAction => ({
-  id: 'action-1',
-  actionEffects: [{ id: 1, type: ActionType.ADD_RESOURCES }],
-});
-
-const makeEvent = (
-  overrides: Partial<{
-    round: number;
-    newCards: number[];
-    newDrawPile: number[];
-    onDiscoverEvents: { effectDef: CardAction; sourceInstanceId: number }[];
-  }> = {},
-) => ({
-  id: 'evt-1',
-  type: GameEventType.ROUND_STARTED,
-  timestamp: 0,
-  round: 1,
-  newCards: [],
-  newDrawPile: [],
-  onDiscoverEvents: [],
-  ...overrides,
-});
 
 describe('RoundStartedStrategy', () => {
   const strategy = new RoundStartedStrategy();
 
-  it('sets round from the event', () => {
-    const result = strategy.apply(makeGameState(), makeEvent({ round: 3 }));
-    expect(result.round).toBe(3);
-  });
-
-  it('resets turn to 0', () => {
-    const result = strategy.apply(makeGameState({ turn: 4 }), makeEvent());
-    expect(result.turn).toBe(0);
-  });
-
-  it('sets phase to START_ROUND', () => {
-    const result = strategy.apply(makeGameState(), makeEvent());
+  it('sets round, clears board/discard, applies new draw pile', () => {
+    const gs = makeState({ board: [1], discardPile: [2], discoveryPile: [3, 4] });
+    const result = strategy.apply(gs, {
+      id: 'e1',
+      type: GameEventType.ROUND_STARTED,
+      timestamp: 0,
+      round: 2,
+      newCards: [3],
+      newDrawPile: [1, 2, 3],
+      onDiscoverEvents: [],
+    } as RoundStartedEvent);
+    expect(result.round).toBe(2);
+    expect(result.board).toEqual([]);
+    expect(result.discardPile).toEqual([]);
+    expect(result.drawPile).toEqual([1, 2, 3]);
     expect(result.phase).toBe(Phase.START_ROUND);
   });
 
   it('removes newCards from discoveryPile', () => {
-    const gs = makeGameState({ discoveryPile: [1, 2, 3, 4] });
-    const result = strategy.apply(gs, makeEvent({ newCards: [2, 4] }));
-    expect(result.discoveryPile).toEqual([1, 3]);
-  });
-
-  it('sets lastAddedIds to newCards', () => {
-    const result = strategy.apply(makeGameState(), makeEvent({ newCards: [5, 6] }));
-    expect(result.lastAddedIds).toEqual([5, 6]);
-  });
-
-  it('sets drawPile from newDrawPile', () => {
-    const result = strategy.apply(makeGameState(), makeEvent({ newDrawPile: [7, 8, 9] }));
-    expect(result.drawPile).toEqual([7, 8, 9]);
-  });
-
-  it('resets board, discardPile and boardEffects', () => {
-    const gs = makeGameState({
-      board: [1],
-      discardPile: [2],
-      boardEffects: { 3: [] },
-      instances: { 1: makeInstance(1, 10, 1), 2: makeInstance(2, 10, 1) },
-    });
-    const result = strategy.apply(gs, makeEvent());
-    expect(result.board).toEqual([]);
-    expect(result.discardPile).toEqual([]);
-    expect(result.boardEffects).toEqual({});
+    const gs = makeState({ discoveryPile: [10, 11, 12] });
+    const result = strategy.apply(gs, {
+      id: 'e1',
+      type: GameEventType.ROUND_STARTED,
+      timestamp: 0,
+      round: 1,
+      newCards: [10, 11],
+      newDrawPile: [],
+      onDiscoverEvents: [],
+    } as RoundStartedEvent);
+    expect(result.discoveryPile).toEqual([12]);
+    expect(result.lastAddedIds).toEqual([10, 11]);
   });
 
   it('populates triggerPile from onDiscoverEvents', () => {
-    const effectDef = makeCardAction();
-    const result = strategy.apply(
-      makeGameState(),
-      makeEvent({ onDiscoverEvents: [{ effectDef, sourceInstanceId: 42 }] }),
-    );
+    const gs = makeState();
+    const fakeAction = { id: 'a1', actionEffects: [] };
+    const result = strategy.apply(gs, {
+      id: 'e1',
+      type: GameEventType.ROUND_STARTED,
+      timestamp: 0,
+      round: 1,
+      newCards: [],
+      newDrawPile: [],
+      onDiscoverEvents: [{ effectDef: fakeAction, sourceInstanceId: 5 }],
+    } as RoundStartedEvent);
     const entries = Object.values(result.triggerPile);
     expect(entries).toHaveLength(1);
-    expect(entries[0].effectDef).toEqual(effectDef);
-    expect(entries[0].sourceInstanceId).toBe(42);
+    expect(entries[0].sourceInstanceId).toBe(5);
   });
 
-  it('creates empty triggerPile when no onDiscoverEvents', () => {
-    const result = strategy.apply(makeGameState(), makeEvent({ onDiscoverEvents: [] }));
-    expect(result.triggerPile).toEqual({});
+  it('clears boardEffects', () => {
+    const gs = makeState({ boardEffects: { 1: [{ id: 'b', type: 'BLOCK' as never }] } });
+    const result = strategy.apply(gs, {
+      id: 'e1',
+      type: GameEventType.ROUND_STARTED,
+      timestamp: 0,
+      round: 1,
+      newCards: [],
+      newDrawPile: [],
+      onDiscoverEvents: [],
+    } as RoundStartedEvent);
+    expect(result.boardEffects).toEqual({});
+  });
+
+  it('resets turn to 0', () => {
+    const gs = makeState({ turn: 5 });
+    const result = strategy.apply(gs, {
+      id: 'e1',
+      type: GameEventType.ROUND_STARTED,
+      timestamp: 0,
+      round: 2,
+      newCards: [],
+      newDrawPile: [],
+      onDiscoverEvents: [],
+    } as RoundStartedEvent);
+    expect(result.turn).toBe(0);
   });
 });

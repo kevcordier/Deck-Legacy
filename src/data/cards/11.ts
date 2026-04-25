@@ -1,4 +1,10 @@
-import { ActionType, CardTag, PassiveType, ResourceType, TargetScope } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+} from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const hill: CardDef = {
@@ -56,7 +62,7 @@ export const hill: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [103],
               },
@@ -103,7 +109,7 @@ export const hill: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.DISCOVER_CARD,
+              type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [104],
               },

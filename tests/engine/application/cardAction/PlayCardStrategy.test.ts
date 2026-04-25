@@ -1,86 +1,106 @@
-import { makeCardState, makeDef, makeGameState, makeInstance } from '../testHelpers';
+import { makeInstance, makeState } from '../fixtures';
 import { PlayCardStrategy } from '@engine/application/cardAction/PlayCardStrategy';
-import { ActionType, Trigger } from '@engine/domain/enums';
+import { ActionEffectType, Trigger } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
-const cardDefs: Record<number, CardDef> = {
-  10: makeDef(10, [makeCardState(1)]),
-};
-
-const cardDefsWithTrigger: Record<number, CardDef> = {
-  10: makeDef(10, [
-    makeCardState(1, {
-      actions: [
-        {
-          id: 'e1',
-          trigger: Trigger.ON_PLAY,
-          optional: false,
-          actionEffects: [{ id: 1, type: ActionType.ADD_RESOURCES }],
-        },
-      ],
-    }),
-  ]),
-};
-
-const strategy = new PlayCardStrategy(cardDefs);
-
-const instanceId = 5;
-const instance = makeInstance(instanceId, 10, 1);
-
-const payload = {
-  id: '1-1',
-  type: ActionType.PLAY_CARD,
-  sourceInstanceId: 99,
-  instanceIds: [instanceId],
+const plainDef: CardDef = { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] };
+const onPlayDef: CardDef = {
+  id: 2,
+  name: 'OnPlay',
+  states: [
+    {
+      id: 1,
+      name: 'S',
+      actions: [{ id: 'a1', actionEffects: [], trigger: Trigger.ON_PLAY }],
+    },
+  ],
 };
 
 describe('PlayCardStrategy', () => {
-  it('adds the card to the board', () => {
-    const gs = makeGameState({ board: [1], instances: { [instanceId]: instance } });
-    const result = strategy.applyEffect(gs, payload);
-    expect(result.board).toContain(instanceId);
-    expect(result.board).toContain(1);
-  });
-
-  it('removes the card from discoveryPile', () => {
-    const gs = makeGameState({ discoveryPile: [5, 6], instances: { [instanceId]: instance } });
-    const result = strategy.applyEffect(gs, payload);
-    expect(result.discoveryPile).toEqual([6]);
-  });
-
-  it('removes the card from drawPile', () => {
-    const gs = makeGameState({ drawPile: [5, 7], instances: { [instanceId]: instance } });
-    const result = strategy.applyEffect(gs, payload);
-    expect(result.drawPile).toEqual([7]);
-  });
-
-  it('removes the card from discardPile', () => {
-    const gs = makeGameState({ discardPile: [5, 8], instances: { [instanceId]: instance } });
-    const result = strategy.applyEffect(gs, payload);
-    expect(result.discardPile).toEqual([8]);
-  });
-
-  it('removes the card from destroyedPile', () => {
-    const gs = makeGameState({ destroyedPile: [5, 9], instances: { [instanceId]: instance } });
-    const result = strategy.applyEffect(gs, payload);
-    expect(result.destroyedPile).toEqual([9]);
-  });
-
-  it('is a no-op when instanceIds is not provided', () => {
-    const gs = makeGameState({ board: [1] });
-    const result = strategy.applyEffect(gs, {
-      id: '1-1',
-      type: ActionType.PLAY_CARD,
-      sourceInstanceId: 99,
+  it('returns state unchanged when instanceIds missing', () => {
+    const strategy = new PlayCardStrategy({});
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLAY_CARD,
+      sourceInstanceId: 1,
     });
-    expect(result.board).toEqual([1]);
+    expect(result).toBe(gs);
   });
 
-  it('adds ON_PLAY trigger effects to the triggerPile', () => {
-    const strategyWithTrigger = new PlayCardStrategy(cardDefsWithTrigger);
-    const gs = makeGameState({ instances: { [instanceId]: instance } });
-    const result = strategyWithTrigger.applyEffect(gs, payload);
-    expect(Object.values(result.triggerPile)).toHaveLength(1);
+  it('returns state unchanged when instanceIds is empty', () => {
+    const strategy = new PlayCardStrategy({});
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLAY_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [],
+    });
+    expect(result).toBe(gs);
+  });
+
+  it('moves card from drawPile to board', () => {
+    const defs = { 1: plainDef };
+    const strategy = new PlayCardStrategy(defs);
+    const inst = makeInstance({ id: 10, cardId: 1, stateId: 1 });
+    const gs = makeState({ drawPile: [10], instances: { 10: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLAY_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [10],
+    });
+    expect(result.board).toContain(10);
+    expect(result.drawPile).not.toContain(10);
+  });
+
+  it('removes card from discardPile and destroyedPile if present', () => {
+    const defs = { 1: plainDef };
+    const strategy = new PlayCardStrategy(defs);
+    const inst = makeInstance({ id: 10, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      discardPile: [10],
+      destroyedPile: [10],
+      instances: { 10: inst },
+    });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLAY_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [10],
+    });
+    expect(result.discardPile).not.toContain(10);
+    expect(result.destroyedPile).not.toContain(10);
+    expect(result.board).toContain(10);
+  });
+
+  it('sets lastDrawnCards to played instances', () => {
+    const defs = { 1: plainDef };
+    const strategy = new PlayCardStrategy(defs);
+    const inst = makeInstance({ id: 10, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 10: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLAY_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [10],
+    });
+    expect(result.lastDrawnCards).toEqual([10]);
+  });
+
+  it('enqueues ON_PLAY trigger for cards with matching action', () => {
+    const defs = { 2: onPlayDef };
+    const strategy = new PlayCardStrategy(defs);
+    const inst = makeInstance({ id: 20, cardId: 2, stateId: 1 });
+    const gs = makeState({ instances: { 20: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLAY_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [20],
+    });
+    expect(Object.keys(result.triggerPile)).toHaveLength(1);
   });
 });

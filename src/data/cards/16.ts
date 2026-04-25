@@ -1,4 +1,4 @@
-import { ActionType, CardTag, Trigger } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, Trigger } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const stop2: CardDef = {
@@ -16,7 +16,7 @@ export const stop2: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_STICKER,
+              type: ActionEffectType.ADD_STICKER,
               stickerIds: [1],
               cards: {
                 tags: [CardTag.LAND],
@@ -24,7 +24,7 @@ export const stop2: CardDef = {
             },
             {
               id: 2,
-              type: ActionType.BOOST_CARD,
+              type: ActionEffectType.BOOST_CARD,
               cards: {
                 tags: [CardTag.BUILDING],
               },

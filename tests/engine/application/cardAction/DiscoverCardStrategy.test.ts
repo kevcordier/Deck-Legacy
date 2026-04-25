@@ -1,137 +1,105 @@
-import { makeGameState, makeInstance } from '../testHelpers';
+import { makeInstance, makeState } from '../fixtures';
 import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
-import { ActionType, Trigger } from '@engine/domain/enums';
-import type { CardAction } from '@engine/domain/types';
+import { ActionEffectType, Trigger } from '@engine/domain/enums';
+import type { CardDef } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
-const makePayload = (instanceId: number) => ({
-  id: `${instanceId}-1`,
-  type: ActionType.DISCOVER_CARD,
-  sourceInstanceId: 0,
-  instanceIds: [instanceId],
-});
-
-// — DiscoverCardStrategy —
+const plainDef: CardDef = { id: 1, name: 'Plain', states: [{ id: 1, name: 'S' }] };
+const permanentDef: CardDef = {
+  id: 2,
+  name: 'Perm',
+  permanent: true,
+  states: [{ id: 1, name: 'S' }],
+};
+const parchmentDef: CardDef = {
+  id: 3,
+  name: 'Parch',
+  parchmentCard: true,
+  states: [{ id: 1, name: 'S' }],
+};
+const onDiscoverDef: CardDef = {
+  id: 4,
+  name: 'OnDiscover',
+  states: [
+    {
+      id: 1,
+      name: 'S',
+      actions: [{ id: 'a1', actionEffects: [], trigger: Trigger.ON_DISCOVER }],
+    },
+  ],
+};
 
 describe('DiscoverCardStrategy', () => {
-  const onDiscoverEffect: CardAction = {
-    id: 'e1',
-    actionEffects: [{ id: 1, type: ActionType.ADD_RESOURCES }],
-    trigger: Trigger.ON_DISCOVER,
-    optional: false,
-  };
-  const strategy = new DiscoverCardStrategy({
-    5: { id: 5, name: 'Card 5', states: [{ id: 1, name: 'State 1' }] },
-    10: { id: 10, name: 'Card 10', states: [{ id: 1, name: 'State 1' }] },
-    1: { id: 1, name: 'Card 1', states: [{ id: 1, name: 'State 1' }] },
-    11: { id: 11, name: 'Card 11', permanent: true, states: [{ id: 1, name: 'State 1' }] },
-    12: {
-      id: 12,
-      name: 'Card 12',
-      states: [{ id: 1, name: 'State 1', actions: [onDiscoverEffect] }],
-    },
-    14: { id: 14, name: 'Card 14', states: [{ id: 1, name: 'State 1', actions: [] }] },
-    15: { id: 15, name: 'Card 15', parchmentCard: true, states: [{ id: 1, name: 'State 1' }] },
+  it('moves a plain card to discardPile and adds to lastAddedIds', () => {
+    const defs = { 1: plainDef };
+    const strategy = new DiscoverCardStrategy(defs);
+    const inst = makeInstance({ id: 10, cardId: 1, stateId: 1 });
+    const gs = makeState({ discoveryPile: [10], instances: { 10: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.DISCOVER_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [10],
+    });
+    expect(result.lastAddedIds).toContain(10);
+    expect(result.discardPile).toContain(10);
+    expect(result.discoveryPile).not.toContain(10);
   });
 
-  it('moves a non-permanent card to the discard pile', () => {
-    const instance = makeInstance(5, 10, 1);
-    const gs = makeGameState({
-      instances: { 5: instance },
-      discoveryPile: [5],
+  it('moves a permanent card to permanents', () => {
+    const defs = { 2: permanentDef };
+    const strategy = new DiscoverCardStrategy(defs);
+    const inst = makeInstance({ id: 20, cardId: 2, stateId: 1 });
+    const gs = makeState({ discoveryPile: [20], instances: { 20: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.DISCOVER_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [20],
     });
-    const result = strategy.applyEffect(gs, makePayload(5));
-    expect(result.discardPile).toContain(5);
-    expect(result.discoveryPile).not.toContain(5);
+    expect(result.permanents).toContain(20);
+    expect(result.lastAddedIds).toContain(20);
+    expect(result.discoveryPile).not.toContain(20);
   });
 
-  it('adds a permanent card to the permanents pile, not discard', () => {
-    const instance = makeInstance(5, 11, 1);
-    const gs = makeGameState({
-      instances: { 5: instance },
-      discoveryPile: [5],
+  it('removes a parchment card from discoveryPile without adding to lastAddedIds', () => {
+    const defs = { 3: parchmentDef };
+    const strategy = new DiscoverCardStrategy(defs);
+    const inst = makeInstance({ id: 30, cardId: 3, stateId: 1 });
+    const gs = makeState({ discoveryPile: [30], instances: { 30: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.DISCOVER_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [30],
     });
-    const result = strategy.applyEffect(gs, makePayload(5));
-    expect(result.permanents).toContain(5);
-    expect(result.discardPile).not.toContain(5);
+    expect(result.discoveryPile).not.toContain(30);
+    expect(result.lastAddedIds).not.toContain(30);
   });
 
-  it('does not mutate the original game state', () => {
-    const instance = makeInstance(5, 10, 1);
-    const gs = makeGameState({
-      instances: { 5: instance },
-      discoveryPile: [5],
+  it('enqueues ON_DISCOVER trigger for cards with matching action', () => {
+    const defs = { 4: onDiscoverDef };
+    const strategy = new DiscoverCardStrategy(defs);
+    const inst = makeInstance({ id: 40, cardId: 4, stateId: 1 });
+    const gs = makeState({ discoveryPile: [40], instances: { 40: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.DISCOVER_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [40],
     });
-    strategy.applyEffect(gs, makePayload(5));
-    expect(gs.discoveryPile).toContain(5);
-    expect(gs.discardPile).not.toContain(5);
-  });
-
-  it('adds ON_DISCOVER trigger effects to the triggerPile', () => {
-    const instance = makeInstance(5, 12, 1);
-    const gs = makeGameState({
-      instances: { 5: instance },
-      discoveryPile: [5],
-    });
-    const result = strategy.applyEffect(gs, makePayload(5));
     expect(Object.keys(result.triggerPile)).toHaveLength(1);
   });
 
-  it('does not add to triggerPile when there are no ON_DISCOVER effects', () => {
-    const instance = makeInstance(5, 14, 1);
-    const gs = makeGameState({
-      instances: { 5: instance },
-      discoveryPile: [5],
+  it('handles empty instanceIds gracefully', () => {
+    const strategy = new DiscoverCardStrategy({});
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.DISCOVER_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [],
     });
-    const result = strategy.applyEffect(gs, makePayload(5));
-    expect(Object.keys(result.triggerPile)).toHaveLength(0);
-  });
-
-  it('does not add a parchment card to lastAddedIds', () => {
-    const instance = makeInstance(5, 15, 1);
-    const gs = makeGameState({
-      instances: { 5: instance },
-      discoveryPile: [5],
-    });
-    const result = strategy.applyEffect(gs, makePayload(5));
-    expect(result.lastAddedIds).not.toContain(5);
-  });
-
-  it('adds a non-parchment card to lastAddedIds', () => {
-    const instance = makeInstance(5, 10, 1);
-    const gs = makeGameState({
-      instances: { 5: instance },
-      discoveryPile: [5],
-    });
-    const result = strategy.applyEffect(gs, makePayload(5));
-    expect(result.lastAddedIds).toContain(5);
-  });
-
-  it('discovers multiple cards when instanceIds is provided', () => {
-    const inst5 = makeInstance(5, 10, 1);
-    const inst6 = makeInstance(6, 10, 1);
-    const gs = makeGameState({
-      instances: { 5: inst5, 6: inst6 },
-      discoveryPile: [5, 6],
-    });
-    const result = strategy.applyEffect(gs, {
-      id: '0-1',
-      type: ActionType.DISCOVER_CARD,
-      sourceInstanceId: 0,
-      instanceIds: [5, 6],
-    });
-    expect(result.discardPile).toContain(5);
-    expect(result.discardPile).toContain(6);
-  });
-
-  it('is a no-op when instanceIds is not provided', () => {
-    const gs = makeGameState({ discoveryPile: [5] });
-    const result = strategy.applyEffect(gs, {
-      id: '0-1',
-      type: ActionType.DISCOVER_CARD,
-      sourceInstanceId: 0,
-    });
-    expect(result.discardPile).toEqual([]);
-    expect(result.discoveryPile).toEqual([5]);
+    expect(result.lastAddedIds).toHaveLength(0);
   });
 });

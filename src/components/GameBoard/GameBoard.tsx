@@ -1,5 +1,6 @@
 import { CardListModal } from '@components/CardListModal/CardListModal';
 import { DeckViewer } from '@components/DeckViewer/DeckViewer';
+import { EventPanel } from '@components/EventPanel/EventPanel';
 import { GameCard } from '@components/GameCard/GameCard';
 import { MainBoard } from '@components/MainBoard/MainBoard';
 import { ParchmentModal } from '@components/ParchmentModal/ParchmentModal';
@@ -97,6 +98,8 @@ export function GameBoard() {
           />
         </div>
       </div>
+
+      <EventPanel />
 
       {/* Mobile action bar */}
       <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t px-2 py-2 lg:hidden">

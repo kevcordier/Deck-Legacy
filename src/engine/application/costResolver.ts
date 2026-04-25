@@ -1,5 +1,5 @@
 import { cardSelector } from '@engine/application/cardSelector';
-import { ActionType, PendingChoiceType } from '@engine/domain/enums';
+import { ActionEffectType, PendingChoiceType } from '@engine/domain/enums';
 import type { CardDef, Cost, GameState, PendingChoice, ResolvedCost } from '@engine/domain/types';
 
 export function resolveCost(
@@ -22,7 +22,7 @@ export function resolveCost(
     } else {
       pendingChoices.push({
         id: `${instanceId}-cost`,
-        kind: ActionType.COST,
+        kind: ActionEffectType.COST,
         type: PendingChoiceType.CHOOSE_RESOURCE,
         sourceInstanceId: instanceId,
         choices: cost.resources,
@@ -43,7 +43,7 @@ export function resolveCost(
     } else {
       pendingChoices.push({
         id: `${instanceId}-discard`,
-        kind: ActionType.COST,
+        kind: ActionEffectType.COST,
         type: PendingChoiceType.CHOOSE_CARD,
         sourceInstanceId: instanceId,
         choices: candidates,
@@ -64,7 +64,7 @@ export function resolveCost(
     } else {
       pendingChoices.push({
         id: `${instanceId}-destroy`,
-        kind: ActionType.COST,
+        kind: ActionEffectType.COST,
         type: PendingChoiceType.CHOOSE_CARD,
         sourceInstanceId: instanceId,
         choices: candidates,

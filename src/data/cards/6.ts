@@ -1,4 +1,4 @@
-import { ActionType, CardTag, PassiveType, ResourceType } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, PassiveType, ResourceType } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import { CardPassives } from '@engine/domain/types/effects';
 
@@ -25,7 +25,7 @@ export const jungle: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               resources: {
                 [ResourceType.WOOD]: 1,
               },
@@ -65,7 +65,7 @@ export const jungle: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionType.ADD_RESOURCES,
+              type: ActionEffectType.ADD_RESOURCES,
               resources: {
                 [ResourceType.WOOD]: 2,
               },
