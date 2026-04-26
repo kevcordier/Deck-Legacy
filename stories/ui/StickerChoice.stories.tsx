@@ -19,8 +19,8 @@ type Story = StoryObj<typeof StickerChoice>;
 export const TwoOptions: Story = {
   args: {
     options: [
-      { id: 1, label: 'Gold', type: 'add', description: '+1 gold', production: 'gold' },
-      { id: 2, label: 'Wood', type: 'add', description: '+1 wood', production: 'wood' },
+      { id: 1, label: '+1 Gold', production: 'gold' },
+      { id: 2, label: '+1 Wood', production: 'wood' },
     ],
   },
 };
@@ -35,8 +35,8 @@ export const Disabled: Story = {
   args: {
     disabled: true,
     options: [
-      { id: 1, label: 'Gold', type: 'add', description: '+1 gold', production: 'gold' },
-      { id: 2, label: 'Wood', type: 'add', description: '+1 wood', production: 'wood' },
+      { id: 1, label: '+1 Gold', production: 'gold' },
+      { id: 2, label: '+1 Wood', production: 'wood' },
     ],
   },
 };

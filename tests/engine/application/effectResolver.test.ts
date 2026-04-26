@@ -1,4 +1,4 @@
-import { makeInstance, makeState } from './fixtures';
+import { makeInstance, makeState, makeStickerDefs } from './fixtures';
 import { countValuePerElement, resolveActionEffect } from '@engine/application/effectResolver';
 import { ActionEffectType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, Sticker } from '@engine/domain/types';
@@ -6,8 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 const simpleDef: CardDef = { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] };
 const defs: Record<number, CardDef> = { 1: simpleDef };
-const stickerDef: Sticker = { id: 3, type: 'add', production: 'gold' };
-const stickerDefs: Record<number, Sticker> = { 1: stickerDef };
+const stickerDefs: Record<number, Sticker> = makeStickerDefs();
 
 // ─── CHOOSE_EFFECT ────────────────────────────────────────────────────────────
 

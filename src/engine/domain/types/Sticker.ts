@@ -3,7 +3,6 @@ export type Sticker = {
   icon?: string;
   label?: string;
   description?: string;
-  type: 'add' | 'remove';
   production?: string;
   glory?: number;
   tags?: string[];

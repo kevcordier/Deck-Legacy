@@ -29,9 +29,16 @@ export function ResourceChoice({
             className="not-hover:not-disabled:bg-card transition-transform hover:scale-[1.02] rounded-full! p-2! flex gap-1 backdrop-blur-sm"
           >
             {entries.map(([key, val]) =>
-              Array.from({ length: val }, (_, j) => (
-                <ResourcePill key={`${key}-${j}`} resource={key} size={size} />
-              )),
+              val > 2 ? (
+                <div key={key} className="flex items-start">
+                  <ResourcePill key={`${key}-${i.toString()}`} resource={key} size={size} />
+                  <span>x{val}</span>
+                </div>
+              ) : (
+                Array.from({ length: val }, (_, j) => (
+                  <ResourcePill key={`${key}-${j}`} resource={key} size={size} />
+                ))
+              ),
             )}
           </Button>
         );

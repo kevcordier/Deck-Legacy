@@ -1,9 +1,11 @@
-import { CardTag } from '@engine/domain/enums';
+import { CardTag, PassiveType, ResourceType } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const loyalty: CardDef = {
   id: 31,
   name: 'Loyalty',
+  chooseState: true,
+  permanent: true,
   states: [
     {
       id: 1,
@@ -11,7 +13,12 @@ export const loyalty: CardDef = {
       tags: [CardTag.GOAL],
       glory: 0,
       passives: [
-        // *Worth 25 if there is no enemy in your kingdom.
+        {
+          id: '31_1_glory',
+          type: PassiveType.INCREASE_GLORY,
+          glory: 25,
+          condition: { type: 'cardCount', cards: { tags: [CardTag.ENEMY] }, max: 0 },
+        },
       ],
     },
     {
@@ -20,7 +27,12 @@ export const loyalty: CardDef = {
       tags: [CardTag.GOAL],
       glory: 0,
       passives: [
-        // *Worth 25 if your production of is 10 or more.
+        {
+          id: '31_2_glory',
+          type: PassiveType.INCREASE_GLORY,
+          glory: 25,
+          condition: { type: 'production', resourceType: ResourceType.GOODS, min: 10 },
+        },
       ],
     },
   ],

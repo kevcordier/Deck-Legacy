@@ -1,4 +1,4 @@
-import { getActiveState, getEffectiveProductions } from '@engine/application/cardHelpers';
+import { getActiveState, getTotalResourceProduction } from '@engine/application/cardHelpers';
 import { cardSelector } from '@engine/application/cardSelector';
 import {
   ActionEffectType,
@@ -50,9 +50,9 @@ function resolveTrackAdvanceEffect(
   ctx: ResolveContext,
   cards: CardeSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const { actionId, actionType, instanceId, isMandatory, gameState, defs } = ctx;
+  const { actionId, actionType, instanceId, isMandatory, gameState, defs, stickerDefs } = ctx;
 
-  const targetIds = cardSelector(cards, instanceId, gameState, defs);
+  const targetIds = cardSelector(cards, instanceId, gameState, defs, stickerDefs);
   if (targetIds.length === 0) return [resolverAction, pendingChoices];
 
   const targetId = targetIds[0];
@@ -98,42 +98,20 @@ export function countValuePerElement(
   defs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
 ): number {
-  let number = 0;
+  let count = 0;
   if (valuePerElement.cards) {
-    number = cardSelector(valuePerElement.cards, instanceId, gameState, defs).length;
+    count = cardSelector(valuePerElement.cards, instanceId, gameState, defs, stickerDefs).length;
   } else if (valuePerElement.accumulation) {
-    number = gameState.instances[instanceId].cumulated?.[valuePerElement.accumulation] ?? 0;
+    count = gameState.instances[instanceId].cumulated?.[valuePerElement.accumulation] ?? 0;
   } else if (valuePerElement.productionTotal) {
     const prodKey = valuePerElement.productionTotal;
-    number = cardSelector(
-      { scope: [TargetScope.ANY], produces: [prodKey] },
-      instanceId,
-      gameState,
-      defs,
-    ).reduce((total, id) => {
-      const state = getActiveState(gameState.instances[id], defs);
-      const prodKeyCount = (state.productions as Resources[])
-        .map(p => {
-          return (
-            getEffectiveProductions(
-              p,
-              state,
-              gameState,
-              defs,
-              gameState.instances[id],
-              stickerDefs,
-              {
-                includeBoardEffects: false,
-                includePassives: false,
-              },
-            )[prodKey] ?? 0
-          );
-        })
-        .reduce((a, b) => Math.max(a, b), -Infinity);
-      return total + prodKeyCount;
-    }, 0);
+    count = getTotalResourceProduction(instanceId, prodKey, gameState, defs, stickerDefs);
   }
-  return number;
+
+  if (valuePerElement.deficitTarget !== undefined) {
+    return Math.max(0, valuePerElement.deficitTarget - count);
+  }
+  return count;
 }
 
 function resolveChooseActionEffect(
@@ -199,13 +177,13 @@ function resolveCardTarget(
   ctx: ResolveContext,
   cards: CardeSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const { actionId, actionType, instanceId, isMandatory, gameState, defs } = ctx;
+  const { actionId, actionType, instanceId, isMandatory, gameState, defs, stickerDefs } = ctx;
 
   if (cards.ids?.length === 1) {
     resolverAction.instanceIds = [cards.ids[0]];
     return [resolverAction, pendingChoices];
   }
-  const choices = cardSelector(cards, instanceId, gameState, defs);
+  const choices = cardSelector(cards, instanceId, gameState, defs, stickerDefs);
   if (choices.length === 0) {
     resolverAction.instanceIds = undefined;
     return [resolverAction, pendingChoices];
@@ -244,7 +222,7 @@ function resolveResourceTarget(
   ctx: ResolveContext,
   resources: ResourceSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const { actionId, actionType, instanceId, isMandatory, gameState, defs } = ctx;
+  const { actionId, actionType, instanceId, isMandatory, gameState, defs, stickerDefs } = ctx;
 
   if (resources.choice && resources.choice.length > 1) {
     pendingChoices.push({
@@ -259,7 +237,7 @@ function resolveResourceTarget(
     return [resolverAction, pendingChoices];
   }
   if (resources.cards) {
-    const choices = cardSelector(resources.cards, instanceId, gameState, defs);
+    const choices = cardSelector(resources.cards, instanceId, gameState, defs, stickerDefs);
     if (choices.length === 0) {
       resolverAction.resources = {};
     } else if (choices.length === 1) {

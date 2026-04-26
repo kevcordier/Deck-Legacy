@@ -136,6 +136,7 @@ export class GameAggregate {
         ...getInstancesTriggerEffects(
           [cardInstance],
           this.cardDefs,
+          this.stickerDefs,
           Trigger.ON_DISCOVER,
           this.gameState,
         ),
@@ -151,6 +152,7 @@ export class GameAggregate {
           ...getInstancesTriggerEffects(
             [cardInstance],
             this.cardDefs,
+            this.stickerDefs,
             Trigger.ON_DISCOVER,
             this.gameState,
           ),
@@ -189,6 +191,7 @@ export class GameAggregate {
     const onPlayEvents = getInstancesTriggerEffects(
       turnCards.map(cardId => this.gameState.instances[cardId]),
       this.cardDefs,
+      this.stickerDefs,
       Trigger.ON_PLAY,
       this.gameState,
     );
@@ -211,6 +214,7 @@ export class GameAggregate {
     const onTurnEndedEvents = getInstancesTriggerEffects(
       this.gameState.board.map(cardId => this.gameState.instances[cardId]),
       this.cardDefs,
+      this.stickerDefs,
       Trigger.END_OF_TURN,
       this.gameState,
     );
@@ -253,6 +257,7 @@ export class GameAggregate {
     const onPlayEvents = getInstancesTriggerEffects(
       turnCards.map(cardId => this.gameState.instances[cardId]),
       this.cardDefs,
+      this.stickerDefs,
       Trigger.ON_PLAY,
       this.gameState,
     );

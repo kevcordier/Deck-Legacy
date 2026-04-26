@@ -8,6 +8,13 @@ import type {
 } from '@engine/domain/enums';
 import type { Cost, Resources } from '@engine/domain/types';
 
+export type Condition =
+  | { type: 'cardCount'; cards: CardeSelector; min?: number; max?: number }
+  | { type: 'production'; resourceType: ResourceType; min?: number; max?: number }
+  | { type: 'and'; conditions: Condition[] }
+  | { type: 'or'; conditions: Condition[] }
+  | { type: 'not'; condition: Condition };
+
 export type CardDef = {
   id: number;
   name: string;
@@ -68,6 +75,7 @@ export type ValuePerElement = {
   cards?: CardeSelector;
   productionTotal?: ResourceType;
   accumulation?: string;
+  deficitTarget?: number; // count = max(0, deficitTarget - actual_count)
 };
 
 export type ActionEffect = {
@@ -104,9 +112,16 @@ export type Passive = {
     weapon?: number;
     goods?: number;
   };
+  glory?: number;
   states?: number[];
   stickerIds?: number[];
   valuePerElement?: ValuePerElement;
+  condition?: Condition;
+};
+
+export type Having = {
+  minGlory?: number;
+  maxGlory?: number;
 };
 
 export type CardeSelector = {
@@ -116,6 +131,7 @@ export type CardeSelector = {
   name?: string;
   label?: string;
   produces?: ResourceType[];
+  having?: Having;
 };
 
 export type CountedCardSelector = CardeSelector & {

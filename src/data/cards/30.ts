@@ -1,9 +1,11 @@
-import { CardTag } from '@engine/domain/enums';
+import { CardTag, PassiveType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const expandingBorders: CardDef = {
   id: 30,
   name: 'Expanding Borders',
+  chooseState: true,
+  permanent: true,
   states: [
     {
       id: 1,
@@ -11,7 +13,16 @@ export const expandingBorders: CardDef = {
       tags: [CardTag.GOAL],
       glory: 0,
       passives: [
-        // *You want 75 or more cards in your kingdom (not counting permanent cards). This is worth -2 for each card missing from 75.
+        {
+          id: '30_1_glory',
+          type: PassiveType.INCREASE_GLORY,
+          valuePerElement: {
+            amount: 1,
+            glory: -2,
+            cards: { scope: [TargetScope.BOARD, TargetScope.DECK, TargetScope.DISCARD] },
+            deficitTarget: 75,
+          },
+        },
       ],
     },
     {
@@ -20,7 +31,18 @@ export const expandingBorders: CardDef = {
       tags: [CardTag.GOAL],
       glory: 0,
       passives: [
-        // *Worth -1 per card with exactly 0 (excluding permanent cards).
+        {
+          id: '30_2_glory',
+          type: PassiveType.INCREASE_GLORY,
+          valuePerElement: {
+            amount: 1,
+            glory: -1,
+            cards: {
+              scope: [TargetScope.BOARD, TargetScope.DECK, TargetScope.DISCARD],
+              having: { minGlory: 0, maxGlory: 0 },
+            },
+          },
+        },
       ],
     },
   ],

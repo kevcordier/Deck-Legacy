@@ -417,6 +417,25 @@ export function GameProvider({
           ),
         );
       },
+      addSticker: (instanceId: number, stickerId: number) => {
+        sync(
+          aggRef.current.cardAction(
+            {
+              id: 'cheat_add_sticker',
+              passive: true,
+              actionEffects: [
+                {
+                  id: 9999,
+                  type: ActionEffectType.ADD_STICKER,
+                  cards: { ids: [instanceId] },
+                  stickerIds: [stickerId],
+                },
+              ],
+            },
+            1,
+          ),
+        );
+      },
     };
     return () => {
       delete (globalThis as unknown as Record<string, unknown>).__cheat;

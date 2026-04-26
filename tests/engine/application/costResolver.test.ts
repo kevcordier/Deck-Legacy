@@ -1,22 +1,30 @@
-import { makeInstance, makeState } from './fixtures';
+import { makeInstance, makeState, makeStickerDefs } from './fixtures';
 import { resolveCost } from '@engine/application/costResolver';
 import { TargetScope } from '@engine/domain/enums';
-import type { CardDef } from '@engine/domain/types';
+import type { CardDef, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
 const defs: Record<number, CardDef> = {
   1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
 };
 
+const stickerDefs: Record<number, Sticker> = makeStickerDefs();
+
 describe('resolveCost – resources', () => {
   it('returns empty resolved cost for empty cost', () => {
-    const [resolved, pending] = resolveCost({}, 1, makeState(), defs);
+    const [resolved, pending] = resolveCost({}, 1, makeState(), defs, stickerDefs);
     expect(resolved).toEqual({ resources: {}, discardedCardIds: [], destroyedCardIds: [] });
     expect(pending).toHaveLength(0);
   });
 
   it('resolves single resource cost directly', () => {
-    const [resolved, pending] = resolveCost({ resources: [{ gold: 2 }] }, 1, makeState(), defs);
+    const [resolved, pending] = resolveCost(
+      { resources: [{ gold: 2 }] },
+      1,
+      makeState(),
+      defs,
+      stickerDefs,
+    );
     expect(resolved.resources).toEqual({ gold: 2 });
     expect(pending).toHaveLength(0);
   });
@@ -27,6 +35,7 @@ describe('resolveCost – resources', () => {
       5,
       makeState(),
       defs,
+      stickerDefs,
     );
     expect(resolved.resources).toEqual({});
     expect(pending).toHaveLength(1);
@@ -40,6 +49,7 @@ describe('resolveCost – resources', () => {
       5,
       makeState(),
       defs,
+      stickerDefs,
       true,
     );
     expect(pending[0].isMandatory).toBe(true);
@@ -54,6 +64,7 @@ describe('resolveCost – discard', () => {
       1,
       gs,
       defs,
+      stickerDefs,
     );
     expect(resolved.discardedCardIds).toEqual([]);
     expect(pending).toHaveLength(0);
@@ -67,6 +78,7 @@ describe('resolveCost – discard', () => {
       99,
       gs,
       defs,
+      stickerDefs,
     );
     expect(resolved.discardedCardIds).toEqual([2]);
     expect(pending).toHaveLength(0);
@@ -81,6 +93,7 @@ describe('resolveCost – discard', () => {
       99,
       gs,
       defs,
+      stickerDefs,
     );
     expect(pending).toHaveLength(1);
     expect(pending[0].type).toBe('choose_card');
@@ -97,6 +110,7 @@ describe('resolveCost – discard', () => {
       99,
       gs,
       defs,
+      stickerDefs,
     );
     expect(pending[0].pickCount).toBe(2);
   });
@@ -105,7 +119,13 @@ describe('resolveCost – discard', () => {
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2, 3], instances: { 2: inst2, 3: inst3 } });
-    const [, pending] = resolveCost({ discard: { scope: [TargetScope.BOARD] } }, 99, gs, defs);
+    const [, pending] = resolveCost(
+      { discard: { scope: [TargetScope.BOARD] } },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
     expect(pending[0].pickCount).toBe(1);
   });
 
@@ -117,6 +137,7 @@ describe('resolveCost – discard', () => {
       99,
       gs,
       defs,
+      stickerDefs,
     );
     expect(resolved.destroyedCardIds).toEqual([2]);
     expect(pending).toHaveLength(0);
@@ -131,6 +152,7 @@ describe('resolveCost – discard', () => {
       99,
       gs,
       defs,
+      stickerDefs,
     );
     expect(pending).toHaveLength(1);
     expect(pending[0].type).toBe('choose_card');
@@ -139,7 +161,13 @@ describe('resolveCost – discard', () => {
   it('only considers board cards for destroy candidates', () => {
     const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({ drawPile: [2], instances: { 2: inst } });
-    const [resolved] = resolveCost({ destroy: { scope: [TargetScope.BOARD] } }, 99, gs, defs);
+    const [resolved] = resolveCost(
+      { destroy: { scope: [TargetScope.BOARD] } },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
     expect(resolved.destroyedCardIds).toEqual([]);
   });
 
@@ -151,6 +179,7 @@ describe('resolveCost – discard', () => {
       99,
       gs,
       defs,
+      stickerDefs,
     );
     expect(resolved.destroyedCardIds).toEqual([2]);
     expect(pending).toHaveLength(0);
@@ -165,6 +194,7 @@ describe('resolveCost – discard', () => {
       99,
       gs,
       defs,
+      stickerDefs,
     );
     expect(pending).toHaveLength(1);
     expect(pending[0].pickCount).toBe(1);

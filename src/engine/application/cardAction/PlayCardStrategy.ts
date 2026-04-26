@@ -1,10 +1,13 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { Trigger } from '@engine/domain/enums';
-import type { CardDef, GameState, ResolvedActionEffect } from '@engine/domain/types';
+import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '@engine/domain/types';
 
 export class PlayCardStrategy implements CardActionStrategy {
-  constructor(private readonly cardDefs: Record<number, CardDef>) {}
+  constructor(
+    private readonly cardDefs: Record<number, CardDef>,
+    private readonly stickerDefs: Record<number, Sticker>,
+  ) {}
 
   apply(gameState: GameState, payload: ResolvedActionEffect): GameState {
     const instanceIds = payload.instanceIds;
@@ -14,6 +17,7 @@ export class PlayCardStrategy implements CardActionStrategy {
     const triggerEffects = getInstancesTriggerEffects(
       instanceIds.map(cardId => gs.instances[cardId]),
       this.cardDefs,
+      this.stickerDefs,
       Trigger.ON_PLAY,
       gs,
     );

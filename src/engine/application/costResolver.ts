@@ -1,12 +1,20 @@
 import { cardSelector } from '@engine/application/cardSelector';
 import { ActionEffectType, PendingChoiceType } from '@engine/domain/enums';
-import type { CardDef, Cost, GameState, PendingChoice, ResolvedCost } from '@engine/domain/types';
+import type {
+  CardDef,
+  Cost,
+  GameState,
+  PendingChoice,
+  ResolvedCost,
+  Sticker,
+} from '@engine/domain/types';
 
 export function resolveCost(
   cost: Cost,
   instanceId: number,
   gameState: GameState,
   defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
   isMandatory = false,
 ): [ResolvedCost, PendingChoice[]] {
   const pendingChoices: PendingChoice[] = [];
@@ -33,8 +41,8 @@ export function resolveCost(
   }
 
   if (cost.discard) {
-    const candidates = cardSelector(cost.discard, instanceId, gameState, defs).filter(id =>
-      gameState.board.includes(id),
+    const candidates = cardSelector(cost.discard, instanceId, gameState, defs, stickerDefs).filter(
+      id => gameState.board.includes(id),
     );
     if (candidates.length === 0) {
       resolvedCost.discardedCardIds = [];
@@ -54,8 +62,8 @@ export function resolveCost(
   }
 
   if (cost.destroy) {
-    const candidates = cardSelector(cost.destroy, instanceId, gameState, defs).filter(id =>
-      gameState.board.includes(id),
+    const candidates = cardSelector(cost.destroy, instanceId, gameState, defs, stickerDefs).filter(
+      id => gameState.board.includes(id),
     );
     if (candidates.length === 0) {
       resolvedCost.destroyedCardIds = [];

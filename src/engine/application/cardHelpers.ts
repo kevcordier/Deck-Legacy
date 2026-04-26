@@ -1,13 +1,20 @@
 import { cardSelector } from '@engine/application/cardSelector';
 import { countValuePerElement } from '@engine/application/effectResolver';
 import { mergeResources } from '@engine/application/gameStateHelper';
-import { ActionEffectType, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  PassiveType,
+  type ResourceType,
+  TargetScope,
+  Trigger,
+} from '@engine/domain/enums';
 import type {
   ActionEffect,
   CardAction,
   CardDef,
   CardInstance,
   CardState,
+  Condition,
   Cost,
   GameState,
   Resources,
@@ -15,6 +22,74 @@ import type {
   Sticker,
   TriggerEntry,
 } from '@engine/domain/types';
+
+export function getTotalResourceProduction(
+  instanceId: number,
+  resourceType: ResourceType,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): number {
+  return cardSelector(
+    { scope: [TargetScope.ANY], produces: [resourceType] },
+    instanceId,
+    gameState,
+    defs,
+    stickerDefs,
+  ).reduce((total, id) => {
+    const state = getActiveState(gameState.instances[id], defs);
+    const prodKeyCount = ((state.productions as Resources[]) || [{}])
+      .map(p => {
+        return (
+          getEffectiveProductions(p, state, gameState, defs, gameState.instances[id], stickerDefs, {
+            includeBoardEffects: false,
+            includePassives: false,
+          })[resourceType] ?? 0
+        );
+      })
+      .reduce((a, b) => Math.max(a, b), -Infinity);
+    return total + prodKeyCount;
+  }, 0);
+}
+
+export function evaluateCondition(
+  condition: Condition,
+  gameState: GameState,
+  instanceId: number,
+  defs: Record<number, CardDef>,
+  stickers: Record<number, Sticker>,
+): boolean {
+  switch (condition.type) {
+    case 'cardCount': {
+      const count = cardSelector(condition.cards, instanceId, gameState, defs, stickers).length;
+      if (condition.min !== undefined && count < condition.min) return false;
+      if (condition.max !== undefined && count > condition.max) return false;
+      return true;
+    }
+    case 'production': {
+      const total = getTotalResourceProduction(
+        instanceId,
+        condition.resourceType,
+        gameState,
+        defs,
+        stickers,
+      );
+      if (condition.min !== undefined && total < condition.min) return false;
+      if (condition.max !== undefined && total > condition.max) return false;
+      return true;
+    }
+    case 'and':
+      return condition.conditions.every(c =>
+        evaluateCondition(c, gameState, instanceId, defs, stickers),
+      );
+    case 'or':
+      return condition.conditions.some(c =>
+        evaluateCondition(c, gameState, instanceId, defs, stickers),
+      );
+    case 'not':
+      return !evaluateCondition(condition.condition, gameState, instanceId, defs, stickers);
+  }
+}
 
 export function getAffectedCardsByBoardEffects(
   gameState: GameState,
@@ -40,6 +115,7 @@ function calculeBoardEffectsBonus(
   instance: CardInstance,
   gameState: GameState,
   defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
 ): Resources {
   let bonus: Resources = {};
   for (const [instanceSource, passives] of Object.entries(gameState.boardEffects)) {
@@ -52,6 +128,7 @@ function calculeBoardEffectsBonus(
           Number(instanceSource),
           gameState,
           defs,
+          stickerDefs,
         ).includes(instance.id) &&
         passive.resources
       ) {
@@ -67,6 +144,7 @@ function calculePassiveProductionBonus(
   instance: CardInstance,
   gameState: GameState,
   defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
 ): Resources {
   let passiveBonus: Resources = {};
   for (const passive of activeState.passives ?? []) {
@@ -74,7 +152,7 @@ function calculePassiveProductionBonus(
       const { amount, resource, cards: sel, accumulation } = passive.valuePerElement;
       let count = 0;
       if (sel) {
-        count = cardSelector(sel, instance.id, gameState, defs).length;
+        count = cardSelector(sel, instance.id, gameState, defs, stickerDefs).length;
       } else if (accumulation) {
         count = instance.cumulated?.[accumulation] ?? 0;
       }
@@ -93,7 +171,7 @@ export function getEffectiveProductions(
   gameState: GameState,
   defs: Record<number, CardDef>,
   instance: CardInstance,
-  stickers: Record<number, Sticker>,
+  stickerDefs: Record<number, Sticker>,
   {
     includeBoardEffects = true,
     includePassives = true,
@@ -101,9 +179,9 @@ export function getEffectiveProductions(
 ): Resources {
   const stickerBonus = (instance.stickers[instance.stateId] ?? []).reduce<Resources>(
     (acc, stickerId) => {
-      const sticker = stickers[stickerId];
+      const sticker = stickerDefs[stickerId];
       if (!sticker) return acc;
-      if (sticker.type === 'add' && sticker.production) {
+      if (sticker.production) {
         return {
           ...acc,
           [sticker.production as keyof Resources]:
@@ -116,11 +194,11 @@ export function getEffectiveProductions(
   );
 
   const passiveBonus = includePassives
-    ? calculePassiveProductionBonus(activeState, instance, gameState, defs)
+    ? calculePassiveProductionBonus(activeState, instance, gameState, defs, stickerDefs)
     : {};
 
   const boardEffectsBonus = includeBoardEffects
-    ? calculeBoardEffectsBonus(instance, gameState, defs)
+    ? calculeBoardEffectsBonus(instance, gameState, defs, stickerDefs)
     : {};
 
   return mergeResources(
@@ -144,9 +222,18 @@ export function getEffectiveGlory(
   const accumulatedGlory = instance.cumulated?.['glory'] ?? 0;
 
   const passiveGlory = (activeState.passives ?? []).reduce((acc, passive) => {
-    if (passive.type !== PassiveType.INCREASE_GLORY || !passive.valuePerElement?.glory) {
+    if (passive.type !== PassiveType.INCREASE_GLORY) return acc;
+
+    if (
+      passive.condition &&
+      !evaluateCondition(passive.condition, gameState, instance.id, defs, stickers)
+    ) {
       return acc;
     }
+
+    if (passive.glory) return acc + passive.glory;
+
+    if (!passive.valuePerElement?.glory) return acc;
 
     const { glory } = passive.valuePerElement;
     const count = countValuePerElement(
@@ -202,13 +289,14 @@ export function canAffordCardCost(
   instanceId: number,
   gameState: GameState,
   defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
 ): boolean {
   if (cost?.discard) {
-    const available = cardSelector(cost.discard, instanceId, gameState, defs);
+    const available = cardSelector(cost.discard, instanceId, gameState, defs, stickerDefs);
     if (available.length < (cost.discard.number ?? 1)) return false;
   }
   if (cost?.destroy) {
-    const available = cardSelector(cost.destroy, instanceId, gameState, defs);
+    const available = cardSelector(cost.destroy, instanceId, gameState, defs, stickerDefs);
     if (available.length < (cost.destroy.number ?? 1)) return false;
   }
   return true;
@@ -217,6 +305,7 @@ export function canAffordCardCost(
 function getBoardEffectTriggersAction(
   gameState: GameState,
   defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
   trigger: Trigger,
 ): TriggerEntry[] {
   return Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) => {
@@ -226,7 +315,13 @@ function getBoardEffectTriggersAction(
       .filter(be => be.type === PassiveType.ADD_TRIGGER && be.trigger?.type === trigger)
       .forEach(be => {
         if (be.trigger?.cards) {
-          const selectedCards = cardSelector(be.trigger.cards, instanceId, gameState, defs);
+          const selectedCards = cardSelector(
+            be.trigger.cards,
+            instanceId,
+            gameState,
+            defs,
+            stickerDefs,
+          );
 
           if (selectedCards.length === 0) return;
 
@@ -250,6 +345,7 @@ function getBoardEffectTriggersAction(
 export function getInstancesTriggerEffects(
   instances: CardInstance[],
   defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
   effect: Trigger,
   gameState: GameState,
 ): TriggerEntry[] {
@@ -276,7 +372,7 @@ export function getInstancesTriggerEffects(
     return [...acc, ...effects.map(effectDef => ({ effectDef, sourceInstanceId: instance.id }))];
   }, [] as TriggerEntry[]);
 
-  effects.push(...getBoardEffectTriggersAction(gameState, defs, effect));
+  effects.push(...getBoardEffectTriggersAction(gameState, defs, stickerDefs, effect));
 
   return effects;
 }
@@ -316,11 +412,12 @@ export function getFirstAvailableTrackStep(
   instanceId: number,
   gameState: GameState,
   defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
 ): StepDef | undefined {
   const trackEffect = actionEffects.find(e => e.type === ActionEffectType.TRACK_ADVANCE);
   if (!trackEffect?.cards) return undefined;
 
-  const targetIds = cardSelector(trackEffect.cards, instanceId, gameState, defs);
+  const targetIds = cardSelector(trackEffect.cards, instanceId, gameState, defs, stickerDefs);
 
   for (const targetId of targetIds) {
     const instance = gameState.instances[targetId];

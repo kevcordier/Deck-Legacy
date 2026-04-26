@@ -1,4 +1,4 @@
-import { makeInstance, makeState } from '../fixtures';
+import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { PlayCardStrategy } from '@engine/application/cardAction/PlayCardStrategy';
 import { ActionEffectType, Trigger } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
@@ -19,7 +19,7 @@ const onPlayDef: CardDef = {
 
 describe('PlayCardStrategy', () => {
   it('returns state unchanged when instanceIds missing', () => {
-    const strategy = new PlayCardStrategy({});
+    const strategy = new PlayCardStrategy({}, makeStickerDefs());
     const gs = makeState();
     const result = strategy.apply(gs, {
       id: 'x',
@@ -30,7 +30,7 @@ describe('PlayCardStrategy', () => {
   });
 
   it('returns state unchanged when instanceIds is empty', () => {
-    const strategy = new PlayCardStrategy({});
+    const strategy = new PlayCardStrategy({}, makeStickerDefs());
     const gs = makeState();
     const result = strategy.apply(gs, {
       id: 'x',
@@ -43,7 +43,7 @@ describe('PlayCardStrategy', () => {
 
   it('moves card from drawPile to board', () => {
     const defs = { 1: plainDef };
-    const strategy = new PlayCardStrategy(defs);
+    const strategy = new PlayCardStrategy(defs, makeStickerDefs());
     const inst = makeInstance({ id: 10, cardId: 1, stateId: 1 });
     const gs = makeState({ drawPile: [10], instances: { 10: inst } });
     const result = strategy.apply(gs, {
@@ -58,7 +58,7 @@ describe('PlayCardStrategy', () => {
 
   it('removes card from discardPile and destroyedPile if present', () => {
     const defs = { 1: plainDef };
-    const strategy = new PlayCardStrategy(defs);
+    const strategy = new PlayCardStrategy(defs, makeStickerDefs());
     const inst = makeInstance({ id: 10, cardId: 1, stateId: 1 });
     const gs = makeState({
       discardPile: [10],
@@ -78,7 +78,7 @@ describe('PlayCardStrategy', () => {
 
   it('sets lastDrawnCards to played instances', () => {
     const defs = { 1: plainDef };
-    const strategy = new PlayCardStrategy(defs);
+    const strategy = new PlayCardStrategy(defs, makeStickerDefs());
     const inst = makeInstance({ id: 10, cardId: 1, stateId: 1 });
     const gs = makeState({ instances: { 10: inst } });
     const result = strategy.apply(gs, {
@@ -92,7 +92,7 @@ describe('PlayCardStrategy', () => {
 
   it('enqueues ON_PLAY trigger for cards with matching action', () => {
     const defs = { 2: onPlayDef };
-    const strategy = new PlayCardStrategy(defs);
+    const strategy = new PlayCardStrategy(defs, makeStickerDefs());
     const inst = makeInstance({ id: 20, cardId: 2, stateId: 1 });
     const gs = makeState({ instances: { 20: inst } });
     const result = strategy.apply(gs, {
@@ -106,7 +106,7 @@ describe('PlayCardStrategy', () => {
 
   it('removes card from discoveryPile when played', () => {
     const defs = { 1: plainDef };
-    const strategy = new PlayCardStrategy(defs);
+    const strategy = new PlayCardStrategy(defs, makeStickerDefs());
     const inst = makeInstance({ id: 10, cardId: 1, stateId: 1 });
     const gs = makeState({ discoveryPile: [10], instances: { 10: inst } });
     const result = strategy.apply(gs, {

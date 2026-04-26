@@ -2,7 +2,7 @@ import { GameCard } from '@components/GameCard/GameCard';
 import { PassifIcon } from '@components/ui/Icon/icon';
 import { cardSelector } from '@engine/application/cardSelector';
 import { PassiveType } from '@engine/domain/enums';
-import type { CardDef, GameState, Passive } from '@engine/domain/types';
+import type { CardDef, GameState, Passive, Sticker } from '@engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import { useTranslation } from 'react-i18next';
 
@@ -16,13 +16,16 @@ function effectsOnCard(
   gameState: GameState,
   instanceId: number,
   defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
 ): EffectEntry[] {
   return Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) =>
     passives
       .filter(
         be =>
           be.cards &&
-          cardSelector(be.cards, Number(sourceId), gameState, defs)?.includes(instanceId),
+          cardSelector(be.cards, Number(sourceId), gameState, defs, stickerDefs)?.includes(
+            instanceId,
+          ),
       )
       .map(passive => ({ sourceId: Number(sourceId), passive })),
   );
@@ -30,7 +33,7 @@ function effectsOnCard(
 
 export function CardRow({ cardIds }: CardRowProps) {
   const { t } = useTranslation();
-  const { state: gameState, defs } = useGame();
+  const { state: gameState, defs, stickerDefs } = useGame();
 
   const blockedByMap: Record<number, number> = {};
   Object.entries(gameState.boardEffects).forEach(([sourceId, passives]) => {
@@ -68,7 +71,7 @@ export function CardRow({ cardIds }: CardRowProps) {
           const isBlocked = blockedIds.has(id);
           const blockerId = blockedByMap[id] ?? null;
           const blockerInst = blockerId ? gameState.instances[blockerId] : null;
-          const effects = effectsOnCard(gameState, id, defs).filter(({ passive }) =>
+          const effects = effectsOnCard(gameState, id, defs, stickerDefs).filter(({ passive }) =>
             [PassiveType.STAY_IN_PLAY, PassiveType.BLOCK].includes(passive.type),
           );
 

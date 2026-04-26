@@ -94,9 +94,9 @@ const instances: Record<number, CardInstance> = {
 };
 
 const stickerDefs: Record<number, Sticker> = {
-  1: { id: 1, label: 'Gold', type: 'add', description: '+1 gold', production: 'gold' },
-  2: { id: 2, label: 'Wood', type: 'add', description: '+1 wood', production: 'wood' },
-  3: { id: 3, label: 'Stone', type: 'add', description: '+1 stone', production: 'stone' },
+  1: { id: 1, label: '+1 Gold', production: 'gold' },
+  2: { id: 2, label: '+1 Wood', production: 'wood' },
+  3: { id: 3, label: '+1 Stone', production: 'stone' },
 };
 
 // --- Stories ---

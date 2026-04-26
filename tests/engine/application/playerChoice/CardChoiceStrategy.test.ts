@@ -26,16 +26,12 @@ const noProdDef: CardDef = { id: 3, name: 'N', states: [{ id: 1, name: 'S' }] };
 const goldSticker: Sticker = {
   id: 10,
   description: 'Gold boost',
-  type: 'add',
   production: 'gold',
-  glory: 0,
 };
 const woodSticker: Sticker = {
   id: 11,
   description: 'Wood boost',
-  type: 'add',
   production: 'wood',
-  glory: 0,
 };
 
 const pending = (id = 'p1') => ({

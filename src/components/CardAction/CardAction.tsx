@@ -42,14 +42,14 @@ function getTriggerIcon(action: CardAction): ReactNode {
 }
 
 export function CardAction({ instance, disabled, action, actionLabel }: CardActionProps) {
-  const { state, defs, resolveAction } = useGame();
+  const { state, defs, stickerDefs, resolveAction } = useGame();
   const cs = getActiveState(instance, defs);
   const hasTrackAdvance =
     action.actionEffects.some(e => e.type === ActionEffectType.TRACK_ADVANCE) && cs?.track;
   const firstTrackStep = hasTrackAdvance
-    ? getFirstAvailableTrackStep(action.actionEffects, instance.id, state, defs)
+    ? getFirstAvailableTrackStep(action.actionEffects, instance.id, state, defs, stickerDefs)
     : undefined;
-  const cardCostAffordable = canAffordCardCost(action.cost, instance.id, state, defs);
+  const cardCostAffordable = canAffordCardCost(action.cost, instance.id, state, defs, stickerDefs);
   const affordable = hasTrackAdvance
     ? firstTrackStep &&
       canAffordResources(state.resources, firstTrackStep?.cost) &&

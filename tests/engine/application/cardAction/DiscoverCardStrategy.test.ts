@@ -1,4 +1,4 @@
-import { makeInstance, makeState } from '../fixtures';
+import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
 import { ActionEffectType, Trigger } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
@@ -32,7 +32,7 @@ const onDiscoverDef: CardDef = {
 describe('DiscoverCardStrategy', () => {
   it('moves a plain card to discardPile and adds to lastAddedIds', () => {
     const defs = { 1: plainDef };
-    const strategy = new DiscoverCardStrategy(defs);
+    const strategy = new DiscoverCardStrategy(defs, makeStickerDefs());
     const inst = makeInstance({ id: 10, cardId: 1, stateId: 1 });
     const gs = makeState({ discoveryPile: [10], instances: { 10: inst } });
     const result = strategy.apply(gs, {
@@ -48,7 +48,7 @@ describe('DiscoverCardStrategy', () => {
 
   it('moves a permanent card to permanents', () => {
     const defs = { 2: permanentDef };
-    const strategy = new DiscoverCardStrategy(defs);
+    const strategy = new DiscoverCardStrategy(defs, makeStickerDefs());
     const inst = makeInstance({ id: 20, cardId: 2, stateId: 1 });
     const gs = makeState({ discoveryPile: [20], instances: { 20: inst } });
     const result = strategy.apply(gs, {
@@ -64,7 +64,7 @@ describe('DiscoverCardStrategy', () => {
 
   it('removes a parchment card from discoveryPile without adding to lastAddedIds', () => {
     const defs = { 3: parchmentDef };
-    const strategy = new DiscoverCardStrategy(defs);
+    const strategy = new DiscoverCardStrategy(defs, makeStickerDefs());
     const inst = makeInstance({ id: 30, cardId: 3, stateId: 1 });
     const gs = makeState({ discoveryPile: [30], instances: { 30: inst } });
     const result = strategy.apply(gs, {
@@ -79,7 +79,7 @@ describe('DiscoverCardStrategy', () => {
 
   it('enqueues ON_DISCOVER trigger for cards with matching action', () => {
     const defs = { 4: onDiscoverDef };
-    const strategy = new DiscoverCardStrategy(defs);
+    const strategy = new DiscoverCardStrategy(defs, makeStickerDefs());
     const inst = makeInstance({ id: 40, cardId: 4, stateId: 1 });
     const gs = makeState({ discoveryPile: [40], instances: { 40: inst } });
     const result = strategy.apply(gs, {
@@ -92,7 +92,7 @@ describe('DiscoverCardStrategy', () => {
   });
 
   it('handles empty instanceIds gracefully', () => {
-    const strategy = new DiscoverCardStrategy({});
+    const strategy = new DiscoverCardStrategy({}, makeStickerDefs());
     const gs = makeState();
     const result = strategy.apply(gs, {
       id: 'x',
@@ -104,7 +104,7 @@ describe('DiscoverCardStrategy', () => {
   });
 
   it('handles missing instanceIds gracefully', () => {
-    const strategy = new DiscoverCardStrategy({});
+    const strategy = new DiscoverCardStrategy({}, makeStickerDefs());
     const gs = makeState();
     const result = strategy.apply(gs, {
       id: 'x',

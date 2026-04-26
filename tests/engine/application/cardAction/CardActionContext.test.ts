@@ -1,17 +1,13 @@
-import { makeInstance, makeState } from '../fixtures';
+import { makeDefs, makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { CardActionContext } from '@engine/application/cardAction/CardActionContext';
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import { ActionEffectType } from '@engine/domain/enums';
 import type { GameState, ResolvedActionEffect } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
-const makeDefs = () => ({
-  1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
-});
-
 describe('CardActionContext', () => {
   it('dispatches ADD_RESOURCES to AddResourceStrategy', () => {
-    const ctx = new CardActionContext(makeDefs());
+    const ctx = new CardActionContext(makeDefs(), makeStickerDefs());
     const gs = makeState({ resources: { gold: 0 } });
     const result = ctx.apply(gs, {
       id: 'x',
@@ -22,19 +18,8 @@ describe('CardActionContext', () => {
     expect(result.resources.gold).toBe(5);
   });
 
-  it('throws when no strategy registered and no currentStrategy', () => {
-    const ctx = new CardActionContext();
-    expect(() =>
-      ctx.apply(makeState(), {
-        id: 'x',
-        type: ActionEffectType.ADD_RESOURCES,
-        sourceInstanceId: 1,
-      }),
-    ).toThrow('CardActionStrategy not set in CardActionContext');
-  });
-
   it('uses setStrategy when provided', () => {
-    const ctx = new CardActionContext(makeDefs());
+    const ctx = new CardActionContext(makeDefs(), makeStickerDefs());
     const newGs = makeState({ resources: { wood: 99 } });
     const mockStrategy: CardActionStrategy = {
       apply: (_gs: GameState, _payload: ResolvedActionEffect) => newGs,
@@ -49,7 +34,7 @@ describe('CardActionContext', () => {
   });
 
   it('dispatches DISCARD_CARD', () => {
-    const ctx = new CardActionContext(makeDefs());
+    const ctx = new CardActionContext(makeDefs(), makeStickerDefs());
     const gs = makeState({ board: [1] });
     const result = ctx.apply(gs, {
       id: 'x',
@@ -61,7 +46,7 @@ describe('CardActionContext', () => {
   });
 
   it('dispatches DESTROY_CARD', () => {
-    const ctx = new CardActionContext(makeDefs());
+    const ctx = new CardActionContext(makeDefs(), makeStickerDefs());
     const gs = makeState({ board: [1] });
     const result = ctx.apply(gs, {
       id: 'x',
@@ -73,7 +58,7 @@ describe('CardActionContext', () => {
   });
 
   it('dispatches CHOOSE_STATE', () => {
-    const ctx = new CardActionContext(makeDefs());
+    const ctx = new CardActionContext(makeDefs(), makeStickerDefs());
     const inst = makeInstance({ id: 1, stateId: 1 });
     const gs = makeState({ instances: { 1: inst } });
     const result = ctx.apply(gs, {

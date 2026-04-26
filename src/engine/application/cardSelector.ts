@@ -1,6 +1,18 @@
-import { getAffectedCardsByBoardEffects } from '@engine/application/cardHelpers';
+import {
+  getActiveState,
+  getAffectedCardsByBoardEffects,
+  getEffectiveGlory,
+  getEffectiveProductions,
+} from '@engine/application/cardHelpers';
 import { type CardTag, PassiveType, TargetScope } from '@engine/domain/enums';
-import type { CardDef, CardState, CardeSelector, GameState } from '@engine/domain/types';
+import type {
+  CardDef,
+  CardState,
+  CardeSelector,
+  GameState,
+  Having,
+  Sticker,
+} from '@engine/domain/types';
 
 const LOCATION_SCOPES = new Set([
   TargetScope.DECK,
@@ -69,10 +81,49 @@ function matchesTags(state: CardState, tags: CardTag[] | undefined): boolean {
   return !!(state.tags && tags.every(tag => state.tags?.includes(tag)));
 }
 
-function matchesProductions(state: CardState, produces: string[] | undefined): boolean {
+function matchesProductions(
+  id: number,
+  state: CardState,
+  produces: string[] | undefined,
+  ctx: CardCriteriaContext,
+): boolean {
+  const { gameState, defs, stickerDefs } = ctx;
   if (!produces || produces.length === 0) return true;
   if (!state.productions || state.productions.length === 0) return false;
-  return produces.some(r => state.productions?.some(prod => Object.keys(prod).includes(r)));
+  return produces.some(r =>
+    state.productions?.some(prod =>
+      Object.keys(
+        getEffectiveProductions(
+          prod,
+          state,
+          gameState,
+          defs,
+          gameState.instances[id],
+          stickerDefs,
+          {
+            includeBoardEffects: false,
+            includePassives: false,
+          },
+        ),
+      ).includes(r),
+    ),
+  );
+}
+
+function matchHaving(id: number, ctx: CardCriteriaContext): boolean {
+  const { gameState, defs, stickerDefs, selector } = ctx;
+  if (!selector.having) return true;
+  const having = selector.having as Having;
+  const baseGlory = getEffectiveGlory(
+    getActiveState(gameState.instances[id], defs),
+    gameState,
+    defs,
+    gameState.instances[id],
+    stickerDefs,
+  );
+  if (having.minGlory !== undefined && baseGlory < having.minGlory) return false;
+  if (having.maxGlory !== undefined && baseGlory > having.maxGlory) return false;
+  return true;
 }
 
 interface CardCriteriaContext {
@@ -80,7 +131,8 @@ interface CardCriteriaContext {
   scope: TargetScope[] | undefined;
   blockedInstanceIds: number[];
   gameState: GameState;
-  defs: Record<number, CardDef> | undefined;
+  defs: Record<number, CardDef>;
+  stickerDefs: Record<number, Sticker>;
   selector: CardeSelector;
   isFriendly: boolean;
   isEnemy: boolean;
@@ -101,7 +153,7 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
 
   if (!matchesAlignmentAndName(state, ctx.isFriendly, ctx.isEnemy, name)) return false;
   if (!matchesTags(state, tags)) return false;
-  if (!matchesProductions(state, produces)) return false;
+  if (!matchesProductions(id, state, produces, ctx)) return false;
   if (ctx.selector.ids && !ctx.selector.ids.includes(inst.id)) return false;
 
   return true;
@@ -114,7 +166,8 @@ export function cardSelector(
   { scope = [TargetScope.ANY], ...selector }: CardeSelector,
   instanceId: number,
   gameState: GameState,
-  defs?: Record<number, CardDef>,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
 ): number[] {
   const { ids } = selector;
 
@@ -135,17 +188,17 @@ export function cardSelector(
 
   const pool = buildCardPool(locationScopes, gameState, blockedInstanceIds);
 
-  return pool.filter(id =>
-    matchesCardCriteria(id, {
-      instanceId,
-      scope,
-      blockedInstanceIds,
-      gameState,
-      defs,
-      selector,
-      isFriendly,
-      isEnemy,
-      hasBlocked,
-    }),
-  );
+  const ctx: CardCriteriaContext = {
+    instanceId,
+    scope,
+    blockedInstanceIds,
+    gameState,
+    defs,
+    stickerDefs,
+    selector,
+    isFriendly,
+    isEnemy,
+    hasBlocked,
+  };
+  return pool.filter(id => matchesCardCriteria(id, ctx)).filter(id => matchHaving(id, ctx));
 }

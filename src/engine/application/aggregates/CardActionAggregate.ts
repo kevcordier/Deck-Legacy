@@ -62,7 +62,7 @@ export class CardActionAggregate {
     this.gameState = JSON.parse(JSON.stringify(initGameState)) as GameState;
     this.action = JSON.parse(JSON.stringify(_action)) as CardAction;
     this.pendingChoices = [];
-    this.cardActionContext = new CardActionContext(cardDefs);
+    this.cardActionContext = new CardActionContext(cardDefs, stickerDefs);
     this.playerChoiceStrategies = {
       [PendingChoiceType.CHOOSE_CARD]: new CardChoiceStrategy(cardDefs, stickerDefs),
       [PendingChoiceType.CHOOSE_RESOURCE]: new ResourceChoiceStrategy(),
@@ -88,7 +88,15 @@ export class CardActionAggregate {
       return;
     }
 
-    if (!canAffordCardCost(this.action.cost, this.instance.id, this.gameState, this.cardDefs)) {
+    if (
+      !canAffordCardCost(
+        this.action.cost,
+        this.instance.id,
+        this.gameState,
+        this.cardDefs,
+        this.stickerDefs,
+      )
+    ) {
       return;
     }
 
@@ -99,6 +107,7 @@ export class CardActionAggregate {
       this.instance.id,
       this.gameState,
       this.cardDefs,
+      this.stickerDefs,
     );
     this.resolvedCost = resolvedCost;
 

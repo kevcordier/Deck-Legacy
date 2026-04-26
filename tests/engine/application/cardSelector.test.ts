@@ -1,7 +1,7 @@
-import { makeInstance, makeState } from './fixtures';
+import { makeInstance, makeState, makeStickerDefs } from './fixtures';
 import { cardSelector } from '@engine/application/cardSelector';
 import { PassiveType, TargetScope } from '@engine/domain/enums';
-import type { CardDef } from '@engine/domain/types';
+import type { CardDef, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
 const defA: CardDef = {
@@ -26,6 +26,8 @@ const instC = makeInstance({ id: 30, cardId: 3, stateId: 1 });
 
 const defs: Record<number, CardDef> = { 1: defA, 2: defB, 3: defC };
 
+const stickerDefs: Record<number, Sticker> = makeStickerDefs();
+
 function baseState() {
   return makeState({
     board: [10, 20],
@@ -38,23 +40,35 @@ function baseState() {
 describe('cardSelector – shortcuts', () => {
   it('returns ids directly when scope is ANY and ids provided', () => {
     const gs = baseState();
-    const result = cardSelector({ ids: [10, 20], scope: [TargetScope.ANY] }, 99, gs, defs);
+    const result = cardSelector(
+      { ids: [10, 20], scope: [TargetScope.ANY] },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
     expect(result).toEqual([10, 20]);
   });
 
   it('returns instanceId for SELF scope', () => {
-    const result = cardSelector({ scope: [TargetScope.SELF] }, 10, baseState(), defs);
+    const result = cardSelector({ scope: [TargetScope.SELF] }, 10, baseState(), defs, stickerDefs);
     expect(result).toEqual([10]);
   });
 
   it('returns top of deck for TOP_OF_DECK scope', () => {
     const gs = makeState({ drawPile: [30, 10], instances: { 10: instA, 30: instC } });
-    const result = cardSelector({ scope: [TargetScope.TOP_OF_DECK] }, 99, gs, defs);
+    const result = cardSelector({ scope: [TargetScope.TOP_OF_DECK] }, 99, gs, defs, stickerDefs);
     expect(result).toEqual([30]);
   });
 
   it('returns empty for TOP_OF_DECK when drawPile is empty', () => {
-    const result = cardSelector({ scope: [TargetScope.TOP_OF_DECK] }, 99, makeState(), defs);
+    const result = cardSelector(
+      { scope: [TargetScope.TOP_OF_DECK] },
+      99,
+      makeState(),
+      defs,
+      stickerDefs,
+    );
     expect(result).toEqual([]);
   });
 });
@@ -62,13 +76,13 @@ describe('cardSelector – shortcuts', () => {
 describe('cardSelector – location scopes', () => {
   it('BOARD scope returns board cards (excluding self)', () => {
     const gs = baseState();
-    const result = cardSelector({ scope: [TargetScope.BOARD] }, 10, gs, defs);
+    const result = cardSelector({ scope: [TargetScope.BOARD] }, 10, gs, defs, stickerDefs);
     expect(result).toContain(20);
     expect(result).not.toContain(10);
   });
 
   it('DECK scope returns drawPile cards', () => {
-    const result = cardSelector({ scope: [TargetScope.DECK] }, 99, baseState(), defs);
+    const result = cardSelector({ scope: [TargetScope.DECK] }, 99, baseState(), defs, stickerDefs);
     expect(result).toContain(30);
   });
 
@@ -77,19 +91,19 @@ describe('cardSelector – location scopes', () => {
       discardPile: [10],
       instances: { 10: instA },
     });
-    const result = cardSelector({ scope: [TargetScope.DISCARD] }, 99, gs, defs);
+    const result = cardSelector({ scope: [TargetScope.DISCARD] }, 99, gs, defs, stickerDefs);
     expect(result).toContain(10);
   });
 
   it('DISCOVERY scope returns discoveryPile cards', () => {
     const gs = makeState({ discoveryPile: [10], instances: { 10: instA } });
-    const result = cardSelector({ scope: [TargetScope.DISCOVERY] }, 99, gs, defs);
+    const result = cardSelector({ scope: [TargetScope.DISCOVERY] }, 99, gs, defs, stickerDefs);
     expect(result).toContain(10);
   });
 
   it('PERMANENTS scope returns permanents', () => {
     const gs = makeState({ permanents: [10], instances: { 10: instA } });
-    const result = cardSelector({ scope: [TargetScope.PERMANENTS] }, 99, gs, defs);
+    const result = cardSelector({ scope: [TargetScope.PERMANENTS] }, 99, gs, defs, stickerDefs);
     expect(result).toContain(10);
   });
 
@@ -101,7 +115,7 @@ describe('cardSelector – location scopes', () => {
       permanents: [],
       instances: { 10: instA, 20: instB, 30: instC },
     });
-    const result = cardSelector({ scope: [TargetScope.ANY] }, 99, gs, defs);
+    const result = cardSelector({ scope: [TargetScope.ANY] }, 99, gs, defs, stickerDefs);
     expect(result).toContain(10);
     expect(result).toContain(30);
     expect(result).toContain(20);
@@ -113,7 +127,7 @@ describe('cardSelector – location scopes', () => {
       drawPile: [],
       instances: { 10: instA },
     });
-    const result = cardSelector({ scope: [] }, 99, gs, defs);
+    const result = cardSelector({ scope: [] }, 99, gs, defs, stickerDefs);
     expect(result).toContain(10);
   });
 });
@@ -127,7 +141,7 @@ describe('cardSelector – BLOCKED scope', () => {
         10: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [20] } }],
       },
     });
-    const result = cardSelector({ scope: [TargetScope.BLOCKED] }, 99, gs, defs);
+    const result = cardSelector({ scope: [TargetScope.BLOCKED] }, 99, gs, defs, stickerDefs);
     expect(result).toContain(20);
   });
 
@@ -139,7 +153,7 @@ describe('cardSelector – BLOCKED scope', () => {
         10: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [20] } }],
       },
     });
-    const result = cardSelector({ scope: [TargetScope.BOARD] }, 10, gs, defs);
+    const result = cardSelector({ scope: [TargetScope.BOARD] }, 10, gs, defs, stickerDefs);
     expect(result).not.toContain(20);
   });
 });
@@ -147,14 +161,26 @@ describe('cardSelector – BLOCKED scope', () => {
 describe('cardSelector – alignment filters', () => {
   it('FRIENDLY scope excludes negative cards', () => {
     const gs = baseState();
-    const result = cardSelector({ scope: [TargetScope.BOARD, TargetScope.FRIENDLY] }, 99, gs, defs);
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD, TargetScope.FRIENDLY] },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
     expect(result).toContain(10);
     expect(result).not.toContain(20);
   });
 
   it('ENEMY scope keeps only negative cards', () => {
     const gs = baseState();
-    const result = cardSelector({ scope: [TargetScope.BOARD, TargetScope.ENEMY] }, 99, gs, defs);
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD, TargetScope.ENEMY] },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
     expect(result).not.toContain(10);
     expect(result).toContain(20);
   });
@@ -168,6 +194,7 @@ describe('cardSelector – tag filter', () => {
       99,
       gs,
       defs,
+      stickerDefs,
     );
     expect(result).toContain(10);
     expect(result).not.toContain(20);
@@ -180,6 +207,7 @@ describe('cardSelector – tag filter', () => {
       99,
       gs,
       defs,
+      stickerDefs,
     );
     expect(result).toHaveLength(0);
   });
@@ -196,6 +224,7 @@ describe('cardSelector – produces filter', () => {
       99,
       gs,
       defs,
+      stickerDefs,
     );
     expect(result).toContain(30);
     expect(result).not.toContain(10);
@@ -205,7 +234,13 @@ describe('cardSelector – produces filter', () => {
 describe('cardSelector – ids filter', () => {
   it('filters by specific ids within a scope', () => {
     const gs = baseState();
-    const result = cardSelector({ scope: [TargetScope.BOARD], ids: [10] }, 99, gs, defs);
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD], ids: [10] },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
     expect(result).toEqual([10]);
   });
 });
@@ -218,7 +253,13 @@ describe('cardSelector – name filter', () => {
     const iOther = makeInstance({ id: 60, cardId: 6, stateId: 1 });
     const gs = makeState({ board: [50, 60], instances: { 50: iNamed, 60: iOther } });
     const localDefs = { 5: defNamed, 6: defOther };
-    const result = cardSelector({ scope: [TargetScope.BOARD], name: 'Hero' }, 99, gs, localDefs);
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD], name: 'Hero' },
+      99,
+      gs,
+      localDefs,
+      stickerDefs,
+    );
     expect(result).toContain(50);
     expect(result).not.toContain(60);
   });
@@ -227,7 +268,7 @@ describe('cardSelector – name filter', () => {
 describe('cardSelector – missing def or state', () => {
   it('excludes cards with no matching def', () => {
     const gs = makeState({ board: [99], instances: { 99: makeInstance({ id: 99, cardId: 99 }) } });
-    const result = cardSelector({ scope: [TargetScope.BOARD] }, 1, gs, defs);
+    const result = cardSelector({ scope: [TargetScope.BOARD] }, 1, gs, defs, stickerDefs);
     expect(result).not.toContain(99);
   });
 
@@ -236,13 +277,13 @@ describe('cardSelector – missing def or state', () => {
       board: [10],
       instances: { 10: makeInstance({ id: 10, cardId: 1, stateId: 99 }) },
     });
-    const result = cardSelector({ scope: [TargetScope.BOARD] }, 99, gs, defs);
+    const result = cardSelector({ scope: [TargetScope.BOARD] }, 99, gs, defs, stickerDefs);
     expect(result).not.toContain(10);
   });
 
   it('excludes board cards with no matching instance', () => {
     const gs = makeState({ board: [99] }); // 99 in board but no instance
-    const result = cardSelector({ scope: [TargetScope.BOARD] }, 1, gs, defs);
+    const result = cardSelector({ scope: [TargetScope.BOARD] }, 1, gs, defs, stickerDefs);
     expect(result).not.toContain(99);
   });
 });
@@ -251,7 +292,7 @@ describe('cardSelector – DRAWN scope', () => {
   it('DRAWN scope returns lastDrawnCards', () => {
     const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
     const gs = makeState({ lastDrawnCards: [5], instances: { 5: inst } });
-    const result = cardSelector({ scope: [TargetScope.DRAWN] }, 99, gs, defs);
+    const result = cardSelector({ scope: [TargetScope.DRAWN] }, 99, gs, defs, stickerDefs);
     expect(result).toContain(5);
   });
 });

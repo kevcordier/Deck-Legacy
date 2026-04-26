@@ -1,4 +1,4 @@
-import type { CardDef, CardInstance, GameState } from '@engine/domain/types';
+import type { CardDef, CardInstance, GameState, Sticker } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 
 export const EMPTY_STATE: GameState = {
@@ -43,5 +43,16 @@ export function makeDef(overrides?: Partial<CardDef>): CardDef {
     name: 'Test Card',
     states: [{ id: 1, name: 'State 1' }],
     ...overrides,
+  };
+}
+
+export function makeDefs(overrides?: Partial<CardDef>): Record<number, CardDef> {
+  const def = makeDef(overrides);
+  return { [def.id]: def };
+}
+
+export function makeStickerDefs(id: number = 1): Record<number, Sticker> {
+  return {
+    [id]: { id, production: 'gold' },
   };
 }

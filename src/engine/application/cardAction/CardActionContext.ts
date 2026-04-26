@@ -14,32 +14,30 @@ import { SetCumulatedStrategy } from '@engine/application/cardAction/SetCumulate
 import { TrackAdvanceStrategy } from '@engine/application/cardAction/TrackAdvanceStrategy';
 import { UpgradeCardStrategy } from '@engine/application/cardAction/UpgradeCardStrategy';
 import { ActionEffectType } from '@engine/domain/enums';
-import type { CardDef, GameState, ResolvedActionEffect } from '@engine/domain/types';
+import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '@engine/domain/types';
 
 export class CardActionContext {
   private readonly strategies: Partial<Record<ActionEffectType, CardActionStrategy>>;
   private currentStrategy: CardActionStrategy | null = null;
 
-  constructor(cardDefs?: Record<number, CardDef>) {
-    this.strategies = cardDefs
-      ? {
-          [ActionEffectType.ADD_RESOURCES]: new AddResourceStrategy(),
-          [ActionEffectType.DISCARD_CARD]: new DiscardCardStrategy(),
-          [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs),
-          [ActionEffectType.DESTROY_CARD]: new DestroyCardStrategy(),
-          [ActionEffectType.UPGRADE_CARD]: new UpgradeCardStrategy(),
-          [ActionEffectType.PLACE_CARD_IN_DRAW_PILE]: new PlaceCardInDrawPileStrategy(),
-          [ActionEffectType.BLOCK_CARD]: new BlockCardStrategy(),
-          [ActionEffectType.ADD_BOARD_EFFECT]: new AddBoardEffectStrategy(),
-          [ActionEffectType.PLAY_CARD]: new PlayCardStrategy(cardDefs),
-          [ActionEffectType.BOOST_CARD]: new AddStickerStrategy(),
-          [ActionEffectType.ADD_STICKER]: new AddStickerStrategy(),
-          [ActionEffectType.CHOOSE_STATE]: new ChoseStateStrategy(),
-          [ActionEffectType.TRACK_ADVANCE]: new TrackAdvanceStrategy(cardDefs),
-          [ActionEffectType.SET_CUMULATED]: new SetCumulatedStrategy(),
-          [ActionEffectType.ADD_CUMULATED]: new AddCumulatedStrategy(),
-        }
-      : {};
+  constructor(cardDefs: Record<number, CardDef>, stickerDefs: Record<number, Sticker>) {
+    this.strategies = {
+      [ActionEffectType.ADD_RESOURCES]: new AddResourceStrategy(),
+      [ActionEffectType.DISCARD_CARD]: new DiscardCardStrategy(),
+      [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs, stickerDefs),
+      [ActionEffectType.DESTROY_CARD]: new DestroyCardStrategy(),
+      [ActionEffectType.UPGRADE_CARD]: new UpgradeCardStrategy(),
+      [ActionEffectType.PLACE_CARD_IN_DRAW_PILE]: new PlaceCardInDrawPileStrategy(),
+      [ActionEffectType.BLOCK_CARD]: new BlockCardStrategy(),
+      [ActionEffectType.ADD_BOARD_EFFECT]: new AddBoardEffectStrategy(),
+      [ActionEffectType.PLAY_CARD]: new PlayCardStrategy(cardDefs, stickerDefs),
+      [ActionEffectType.BOOST_CARD]: new AddStickerStrategy(),
+      [ActionEffectType.ADD_STICKER]: new AddStickerStrategy(),
+      [ActionEffectType.CHOOSE_STATE]: new ChoseStateStrategy(),
+      [ActionEffectType.TRACK_ADVANCE]: new TrackAdvanceStrategy(cardDefs),
+      [ActionEffectType.SET_CUMULATED]: new SetCumulatedStrategy(),
+      [ActionEffectType.ADD_CUMULATED]: new AddCumulatedStrategy(),
+    };
   }
 
   setStrategy(strategy: CardActionStrategy): void {

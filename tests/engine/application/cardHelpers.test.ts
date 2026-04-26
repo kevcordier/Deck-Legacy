@@ -1,4 +1,4 @@
-import { makeInstance, makeState } from './fixtures';
+import { makeInstance, makeState, makeStickerDefs } from './fixtures';
 import {
   canAffordCardCost,
   canAffordResources,
@@ -87,9 +87,7 @@ describe('getEffectiveProductions', () => {
 
   it('adds sticker production bonus', () => {
     const inst = makeInstance({ id: 1, stateId: 1, stickers: { 1: [10] } });
-    const stickers: Record<number, Sticker> = {
-      10: { id: 10, type: 'add', production: 'gold', glory: 0 },
-    };
+    const stickers: Record<number, Sticker> = makeStickerDefs(10);
     const state = { id: 1, name: 'S' };
     const result = getEffectiveProductions({ gold: 1 }, state, makeState(), {}, inst, stickers);
     expect(result.gold).toBe(2);
@@ -97,9 +95,9 @@ describe('getEffectiveProductions', () => {
 
   it('ignores sticker with wrong type', () => {
     const inst = makeInstance({ id: 1, stateId: 1, stickers: { 1: [10] } });
-    const stickers: Record<number, Sticker> = {
-      10: { id: 10, type: 'stay_in_play' as never, glory: 0 },
-    };
+    const stickers: Record<number, Sticker> = makeStickerDefs(10);
+    stickers[10].effectId = 'stay_in_play';
+    stickers[10].production = undefined;
     const state = { id: 1, name: 'S' };
     const result = getEffectiveProductions({ gold: 1 }, state, makeState(), {}, inst, stickers);
     expect(result.gold).toBe(1);
@@ -529,36 +527,74 @@ describe('canAffordCardCost', () => {
   };
 
   it('returns true when no cost', () => {
-    expect(canAffordCardCost(undefined, 1, makeState(), defs)).toBe(true);
+    expect(canAffordCardCost(undefined, 1, makeState(), defs, makeStickerDefs())).toBe(true);
   });
 
   it('returns false when discard has no available cards', () => {
     const gs = makeState({ board: [] });
-    expect(canAffordCardCost({ discard: { scope: [TargetScope.BOARD] } }, 1, gs, defs)).toBe(false);
+    expect(
+      canAffordCardCost(
+        { discard: { scope: [TargetScope.BOARD] } },
+        1,
+        gs,
+        defs,
+        makeStickerDefs(),
+      ),
+    ).toBe(false);
   });
 
   it('returns true when enough cards for discard', () => {
     const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2], instances: { 2: inst } });
-    expect(canAffordCardCost({ discard: { scope: [TargetScope.BOARD] } }, 99, gs, defs)).toBe(true);
+    expect(
+      canAffordCardCost(
+        { discard: { scope: [TargetScope.BOARD] } },
+        99,
+        gs,
+        defs,
+        makeStickerDefs(),
+      ),
+    ).toBe(true);
   });
 
   it('returns false when destroy has no available cards', () => {
     const gs = makeState({ board: [] });
-    expect(canAffordCardCost({ destroy: { scope: [TargetScope.BOARD] } }, 1, gs, defs)).toBe(false);
+    expect(
+      canAffordCardCost(
+        { destroy: { scope: [TargetScope.BOARD] } },
+        1,
+        gs,
+        defs,
+        makeStickerDefs(),
+      ),
+    ).toBe(false);
   });
 
   it('returns true when enough cards for destroy', () => {
     const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2], instances: { 2: inst } });
-    expect(canAffordCardCost({ destroy: { scope: [TargetScope.BOARD] } }, 99, gs, defs)).toBe(true);
+    expect(
+      canAffordCardCost(
+        { destroy: { scope: [TargetScope.BOARD] } },
+        99,
+        gs,
+        defs,
+        makeStickerDefs(),
+      ),
+    ).toBe(true);
   });
 
   it('uses discard.number for count check', () => {
     const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2], instances: { 2: inst } });
     expect(
-      canAffordCardCost({ discard: { scope: [TargetScope.BOARD], number: 2 } }, 99, gs, defs),
+      canAffordCardCost(
+        { discard: { scope: [TargetScope.BOARD], number: 2 } },
+        99,
+        gs,
+        defs,
+        makeStickerDefs(),
+      ),
     ).toBe(false);
   });
 });
@@ -660,7 +696,13 @@ describe('getInstancesTriggerEffects', () => {
     const defs: Record<number, CardDef> = {
       1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
     };
-    const result = getInstancesTriggerEffects([inst], defs, Trigger.END_OF_TURN, makeState());
+    const result = getInstancesTriggerEffects(
+      [inst],
+      defs,
+      makeStickerDefs(),
+      Trigger.END_OF_TURN,
+      makeState(),
+    );
     expect(result).toHaveLength(0);
   });
 
@@ -674,7 +716,13 @@ describe('getInstancesTriggerEffects', () => {
     const defs: Record<number, CardDef> = {
       1: { id: 1, name: 'C', states: [{ id: 1, name: 'S', actions: [action] }] },
     };
-    const result = getInstancesTriggerEffects([inst], defs, Trigger.END_OF_TURN, makeState());
+    const result = getInstancesTriggerEffects(
+      [inst],
+      defs,
+      makeStickerDefs(),
+      Trigger.END_OF_TURN,
+      makeState(),
+    );
     expect(result).toHaveLength(1);
     expect(result[0].sourceInstanceId).toBe(1);
     expect(result[0].effectDef).toBe(action);
@@ -685,7 +733,13 @@ describe('getInstancesTriggerEffects', () => {
     const defs: Record<number, CardDef> = {
       1: { id: 1, name: 'C', chooseState: true, states: [{ id: 1, name: 'S' }] },
     };
-    const result = getInstancesTriggerEffects([inst], defs, Trigger.ON_DISCOVER, makeState());
+    const result = getInstancesTriggerEffects(
+      [inst],
+      defs,
+      makeStickerDefs(),
+      Trigger.ON_DISCOVER,
+      makeState(),
+    );
     expect(result.some(r => r.effectDef.id === 'choose_state')).toBe(true);
   });
 
@@ -694,7 +748,13 @@ describe('getInstancesTriggerEffects', () => {
     const defs: Record<number, CardDef> = {
       1: { id: 1, name: 'C', chooseState: true, states: [{ id: 1, name: 'S' }] },
     };
-    const result = getInstancesTriggerEffects([inst], defs, Trigger.ON_PLAY, makeState());
+    const result = getInstancesTriggerEffects(
+      [inst],
+      defs,
+      makeStickerDefs(),
+      Trigger.ON_PLAY,
+      makeState(),
+    );
     expect(result.some(r => r.effectDef.id === 'choose_state')).toBe(false);
   });
 
@@ -713,7 +773,7 @@ describe('getInstancesTriggerEffects', () => {
         ],
       },
     });
-    const result = getInstancesTriggerEffects([], {}, Trigger.END_OF_TURN, gs);
+    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
     expect(result).toHaveLength(1);
     expect(result[0].sourceInstanceId).toBe(1);
   });
@@ -747,7 +807,7 @@ describe('getInstancesTriggerEffects', () => {
         ],
       },
     });
-    const result = getInstancesTriggerEffects([], defs, Trigger.END_OF_TURN, gs);
+    const result = getInstancesTriggerEffects([], defs, makeStickerDefs(), Trigger.END_OF_TURN, gs);
     expect(result).toHaveLength(1);
     expect(result[0].effectDef.actionEffects[0].cards?.ids).toEqual([2]);
   });
@@ -768,7 +828,7 @@ describe('getInstancesTriggerEffects', () => {
         ],
       },
     });
-    const result = getInstancesTriggerEffects([], {}, Trigger.END_OF_TURN, gs);
+    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
     expect(result).toHaveLength(0);
   });
 
@@ -784,7 +844,7 @@ describe('getInstancesTriggerEffects', () => {
         ],
       },
     });
-    const result = getInstancesTriggerEffects([], {}, Trigger.END_OF_TURN, gs);
+    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
     expect(result).toHaveLength(0);
   });
 });
