@@ -65,7 +65,7 @@ export const opportunist: CardDef = {
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/abcf9ccc-0cca-4cb7-84d1-2e5a0807a0d5/anim=false,width=450,optimized=true/9Z4R6XWBR9XGPJ1QTZAZJKJFA0.jpeg',
       tags: [CardTag.PERSON],
-      glory: 4,
+      glory: { amount: 4 },
       actions: [
         {
           id: '21-4-a0',

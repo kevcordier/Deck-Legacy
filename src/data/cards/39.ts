@@ -1,12 +1,12 @@
 import type { CardDef } from '@engine/domain/types';
 
-export const royalArchitect: CardDef = {
+export const envoy: CardDef = {
   id: 39,
-  name: 'Royal Architect',
+  name: 'Envoy',
   states: [
     {
       id: 1,
-      name: 'Royal Architect',
+      name: 'Envoy',
     },
   ],
 };

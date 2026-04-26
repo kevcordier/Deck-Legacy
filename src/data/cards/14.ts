@@ -58,7 +58,7 @@ export const lake: CardDef = {
           [ResourceType.GOLD]: 1,
         },
       ],
-      glory: 1,
+      glory: { amount: 1 },
       upgrade: [
         {
           cost: {
@@ -83,7 +83,7 @@ export const lake: CardDef = {
           [ResourceType.GOLD]: 2,
         },
       ],
-      glory: 1,
+      glory: { amount: 1 },
       actions: [
         {
           id: '14-3-1',
@@ -105,12 +105,12 @@ export const lake: CardDef = {
       tags: [CardTag.BUILDING],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/2da2ea79-bc04-4308-9304-7a1769782459/anim=false,width=450,optimized=true/5119A792AB2904953333213333F165E49A0B1D63A8D053A97C3B8008EBCE2A84.jpeg',
-      glory: 5,
+      glory: { amount: 5 },
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
         {
           id: '14-4-1',
-          passive: true,
+          unlimited: true,
           actionEffects: [
             {
               id: 1,

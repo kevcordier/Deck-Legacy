@@ -1,12 +1,12 @@
 import type { CardDef } from '@engine/domain/types';
 
-export const prosperity: CardDef = {
+export const borderingLands: CardDef = {
   id: 118,
-  name: 'Prosperity',
+  name: 'Bordering Lands',
   states: [
     {
       id: 1,
-      name: 'Prosperity',
+      name: 'Bordering Lands',
     },
   ],
 };

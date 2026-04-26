@@ -1,11 +1,11 @@
-import { makeInstance, makeState } from '../fixtures';
+import { makeDefs, makeInstance, makeState } from '../fixtures';
 import { AdvanceStrategy } from '@engine/application/gameEvent/AdvanceStrategy';
 import { GameEventType } from '@engine/domain/enums';
 import type { AdvanceEvent } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
 describe('AdvanceStrategy', () => {
-  const strategy = new AdvanceStrategy();
+  const strategy = new AdvanceStrategy(makeDefs());
 
   it('draws turnCards from drawPile to board', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });

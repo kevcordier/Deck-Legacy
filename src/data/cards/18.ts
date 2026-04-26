@@ -9,6 +9,13 @@ export const treasury: CardDef = {
     {
       id: 1,
       name: 'Treasury',
+      glory: {
+        amount: 0,
+        valuePerElement: {
+          amount: 1,
+          accumulation: true,
+        },
+      },
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/12e629f3-73f2-4edb-91ce-bfb83fa2c2d2/anim=false,width=450,optimized=true/3EDE5F2CA834FA6C31BA7A57752727C762B454184E7180BF089258EA6C299E19.jpeg',
       actions: [
@@ -31,6 +38,7 @@ export const treasury: CardDef = {
         steps: [
           {
             id: 1,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -42,7 +50,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 1 },
+                accumulated: 1,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -51,6 +59,7 @@ export const treasury: CardDef = {
           },
           {
             id: 2,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -62,7 +71,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 2 },
+                accumulated: 2,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -71,6 +80,7 @@ export const treasury: CardDef = {
           },
           {
             id: 3,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -82,7 +92,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 3 },
+                accumulated: 3,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -91,6 +101,7 @@ export const treasury: CardDef = {
           },
           {
             id: 4,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -102,7 +113,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 5 },
+                accumulated: 5,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -111,6 +122,7 @@ export const treasury: CardDef = {
           },
           {
             id: 5,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -122,7 +134,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 7 },
+                accumulated: 7,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -131,6 +143,7 @@ export const treasury: CardDef = {
           },
           {
             id: 6,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -142,7 +155,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 10 },
+                accumulated: 10,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -151,6 +164,7 @@ export const treasury: CardDef = {
           },
           {
             id: 7,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -162,7 +176,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 14 },
+                accumulated: 14,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -171,6 +185,7 @@ export const treasury: CardDef = {
           },
           {
             id: 8,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -182,7 +197,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 19 },
+                accumulated: 19,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -191,6 +206,7 @@ export const treasury: CardDef = {
           },
           {
             id: 9,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -202,7 +218,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 25 },
+                accumulated: 25,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -211,6 +227,7 @@ export const treasury: CardDef = {
           },
           {
             id: 10,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -222,7 +239,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 32 },
+                accumulated: 32,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -231,6 +248,7 @@ export const treasury: CardDef = {
           },
           {
             id: 11,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -242,7 +260,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 40 },
+                accumulated: 40,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -251,6 +269,7 @@ export const treasury: CardDef = {
           },
           {
             id: 12,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -275,7 +294,13 @@ export const treasury: CardDef = {
     {
       id: 2,
       name: 'Extended Treasury',
-      glory: 50,
+      glory: {
+        amount: 50,
+        valuePerElement: {
+          amount: 1,
+          accumulation: true,
+        },
+      },
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/12e629f3-73f2-4edb-91ce-bfb83fa2c2d2/anim=false,width=450,optimized=true/3EDE5F2CA834FA6C31BA7A57752727C762B454184E7180BF089258EA6C299E19.jpeg',
       actions: [
@@ -298,6 +323,7 @@ export const treasury: CardDef = {
         steps: [
           {
             id: 13,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -309,7 +335,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 10 },
+                accumulated: 10,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -318,6 +344,7 @@ export const treasury: CardDef = {
           },
           {
             id: 14,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -329,7 +356,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 20 },
+                accumulated: 20,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -338,6 +365,7 @@ export const treasury: CardDef = {
           },
           {
             id: 15,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -349,7 +377,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 30 },
+                accumulated: 30,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -358,6 +386,7 @@ export const treasury: CardDef = {
           },
           {
             id: 16,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -369,7 +398,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 40 },
+                accumulated: 40,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -378,6 +407,7 @@ export const treasury: CardDef = {
           },
           {
             id: 17,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -389,7 +419,7 @@ export const treasury: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 50 },
+                accumulated: 50,
                 cards: {
                   scope: [TargetScope.SELF],
                 },

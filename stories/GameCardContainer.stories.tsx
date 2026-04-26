@@ -10,7 +10,7 @@ type GameCardContainerProps = {
   cardId: number;
   stickers: Record<number, number[]>;
   trackProgress: number[];
-  cumulated: Record<string, number>;
+  cumulated: number;
   wood: number;
   gold: number;
   stone: number;
@@ -41,7 +41,7 @@ const meta: Meta<GameCardContainerProps> = {
     cardId,
     stickers = {},
     trackProgress = [],
-    cumulated = {},
+    cumulated = 0,
     isOnBoard,
     isBlocked,
     wood,
@@ -117,7 +117,7 @@ export const GameCardPreview: Story = {
     cardId: 1,
     stickers: {},
     trackProgress: [],
-    cumulated: {},
+    cumulated: 0,
     wood: 2,
     gold: 2,
     stone: 2,

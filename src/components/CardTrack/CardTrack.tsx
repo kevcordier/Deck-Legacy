@@ -3,6 +3,7 @@ import { ActionEffectType } from '@engine/domain/enums';
 import type { ActionEffect, CardInstance, StepDef, TrackDef } from '@engine/domain/types';
 import { tCardTrackAction } from '@helpers/cardI18n';
 import { getResMeta } from '@helpers/renderHelpers';
+import type { TFunction } from 'i18next';
 import React, { type JSX } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -13,34 +14,32 @@ interface CardTrackProps {
 }
 
 export function CardTrackContent({
+  t,
   instance,
   track,
   step,
 }: {
+  t: TFunction;
   instance: CardInstance;
   track: TrackDef;
   step: StepDef;
 }): React.ReactNode[] {
-  const { t } = useTranslation();
   const contents: React.ReactNode[] = [];
   const actions = step.effects ?? [];
 
-  const getResourceContent = (resKey: string, actionId: number): JSX.Element | null => {
+  const getResourceContent = (resKey: string, amount: number, actionId: number): JSX.Element[] => {
     const meta = getResMeta(resKey);
-    return meta.icon ? (
-      <meta.icon className={`${meta.cls} size-3`} alt={resKey} key={actionId} />
-    ) : null;
-  };
-
-  const getAccumulatedContent = (action: ActionEffect): JSX.Element | null => {
-    const [resKey] = Object.entries(action.accumulated ?? {}).find(([k]) => k !== 'choice') ?? [];
-    if (resKey === 'glory') {
-      return <Glory glory={action.accumulated?.glory ?? 0} size="sm" key={action.id} />;
-    }
-    if (resKey) {
-      return getResourceContent(resKey, action.id);
-    }
-    return null;
+    return Array.from({ length: amount })
+      .map((_, i) =>
+        meta.icon ? (
+          <meta.icon
+            className={`${meta.cls} size-3`}
+            alt={resKey}
+            key={`${actionId}-${i.toString()}`}
+          />
+        ) : null,
+      )
+      .filter(Boolean) as JSX.Element[];
   };
 
   const getActionContent = (action: ActionEffect): JSX.Element | null => {
@@ -53,15 +52,25 @@ export function CardTrackContent({
     }
 
     if (action.resources) {
-      const [resKey] = Object.entries(action.resources).find(([k]) => k !== 'choice') ?? [];
-      if (resKey) {
-        return getResourceContent(resKey, action.id);
-      }
+      const resKeys =
+        Object.entries(action.resources).filter(([k]) => !['choice', 'cards'].includes(k)) ?? [];
+      return (
+        <div key={action.id}>
+          {resKeys.map(([k, v]) => getResourceContent(k, Number(v), action.id))}
+        </div>
+      );
+    }
+
+    if (action.accumulated && step.icon === 'glory') {
+      return <Glory key={action.id} glory={action.accumulated} size="xs" />;
     }
 
     if (action.accumulated) {
-      const content = getAccumulatedContent(action);
-      if (content) return content;
+      return (
+        <span className="font-display font-bold text-xs" key={action.id}>
+          {action.accumulated}
+        </span>
+      );
     }
 
     return (
@@ -87,33 +96,32 @@ export function CardTrackContent({
 }
 
 export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
+  const { t } = useTranslation();
   return (
     <div
-      className={`flex ${track.vertical ? 'flex-col justify-start' : 'flex-row'} flex-wrap gap-1`}
+      className={`flex ${track.vertical ? 'flex-col' : 'flex-row'} justify-center flex-wrap gap-0.5`}
     >
       {track.steps.map(step => {
         const isValidated = validatedSteps.includes(step.id);
 
         // Determine step button content
-        const contents = CardTrackContent({ instance, track, step });
-        const cost: React.ReactNode[] = [];
+        const contents = CardTrackContent({ t, instance, track, step });
+        let cost: React.ReactNode[] = [];
 
         if (step.cost?.resources) {
           const costEntry = step.cost?.resources?.[0];
-          cost.push(
-            Object.entries(costEntry).map(([k, v]) => {
-              const meta = getResMeta(k);
-              return (
-                <React.Fragment key={k}>
-                  {v}
-                  {meta.icon && <meta.icon className={`${meta.cls} size-4`} alt={k} />}
-                </React.Fragment>
-              );
-            }),
-          );
+          cost = Object.entries(costEntry).map(([k, v]) => {
+            const meta = getResMeta(k);
+            return (
+              <React.Fragment key={k}>
+                {v}
+                {meta.icon && <meta.icon className={`${meta.cls} size-4`} alt={k} />}
+              </React.Fragment>
+            );
+          });
         }
         if (step.cost?.accumulated) {
-          cost.push(Object.values(step.cost.accumulated).reduce((acc, value) => acc + value, 0));
+          cost.push(step.cost.accumulated.toString());
         }
 
         return (
@@ -128,7 +136,7 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
             )}
             <div
               className={[
-                `${track.vertical ? 'size-7' : 'size-10'} text-base flex flex-col items-center justify-center border-2 leading-none font-bold rounded-md text-base-ink bg-card border-base-ink`,
+                `${track.vertical ? 'size-7' : 'size-10'} shrink-0 text-base flex flex-col items-center justify-center border-2 leading-none font-bold rounded-md text-base-ink bg-card border-base-ink`,
                 isValidated ? 'border-success bg-success/20! text-success' : '',
               ].join(' ')}
               title={isValidated ? '✓' : undefined}

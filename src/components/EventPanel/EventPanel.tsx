@@ -38,12 +38,12 @@ function EventRow({ event, state, defs }: EventRowProps) {
   });
 
   let label: React.ReactNode;
-  let color = 'text-base-ink';
+  let color = 'text-ink';
 
   if (event.type === GameEventType.ROUND_STARTED) {
     return (
       <div className="flex items-baseline gap-2 px-4 py-0.5 text-xs odd:bg-surface/40">
-        <span className="text-base-ink/40 w-16 shrink-0 font-mono">{time}</span>
+        <span className="text-ink/40 w-16 shrink-0 font-mono">{time}</span>
         <Title level={4} className="shrink-0">
           {t('eventLog.roundStarted', { round: (event as RoundStartedEvent).round })}
         </Title>
@@ -56,7 +56,7 @@ function EventRow({ event, state, defs }: EventRowProps) {
     const e = event as TurnStartedEvent;
     return (
       <div className="flex items-baseline gap-2 px-4 py-0.5 text-xs odd:bg-surface/40">
-        <span className="text-base-ink/40 w-16 shrink-0 font-mono">{time}</span>
+        <span className="text-ink/40 w-16 shrink-0 font-mono">{time}</span>
         <span className="shrink-0 text-shadow-md font-medium">
           {t('eventLog.turnStarted', { turn: e.turn, count: e.turnCards.length })}
         </span>
@@ -72,7 +72,7 @@ function EventRow({ event, state, defs }: EventRowProps) {
       break;
     case GameEventType.TURN_ENDED:
       label = t('eventLog.turnEnded');
-      color = 'text-base-ink/60';
+      color = 'text-ink/60';
       break;
     case GameEventType.CARD_PRODUCED: {
       const e = event as CardProducedEvent;
@@ -97,7 +97,11 @@ function EventRow({ event, state, defs }: EventRowProps) {
     }
     case GameEventType.SKIP_TRIGGER:
       label = t('eventLog.skipTrigger');
-      color = 'text-base-ink/60';
+      color = 'text-ink/60';
+      break;
+    case GameEventType.CHOOSE_STATE:
+      label = t('eventLog.chooseState');
+      color = 'text-ink/60';
       break;
     default:
       label = event.type;
@@ -105,7 +109,7 @@ function EventRow({ event, state, defs }: EventRowProps) {
 
   return (
     <div className="flex items-baseline gap-2 px-4 py-0.5 text-xs odd:bg-surface/40">
-      <span className="text-base-ink/40 w-16 shrink-0 font-mono">{time}</span>
+      <span className="text-ink/40 w-16 shrink-0 font-mono">{time}</span>
       <span className={color}>{label}</span>
     </div>
   );
@@ -125,9 +129,9 @@ export function EventPanel() {
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="text-base-ink/70 hover:bg-surface flex w-full items-center gap-2 px-4 py-1.5 text-xs font-medium transition-colors"
+        className="text-ink/70 hover:bg-surface flex w-full items-center gap-2 px-4 py-1.5 text-xs font-medium transition-colors"
       >
-        <span className="bg-surface text-base-ink/60 rounded-full px-2 py-0.5 font-mono tabular-nums">
+        <span className="bg-surface text-ink/60 rounded-full px-2 py-0.5 font-mono tabular-nums">
           {events.length}
         </span>
         {t('eventLog.title')}

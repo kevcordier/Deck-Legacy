@@ -88,7 +88,7 @@ export const forest: CardDef = {
       tags: [CardTag.BUILDING],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/289541b5-4f30-4dba-936f-68502266080f/width=450,quality=90/00079-3523319267.jpeg',
-      glory: 2,
+      glory: { amount: 2 },
       productions: [
         {
           [ResourceType.WOOD]: 2,
@@ -101,7 +101,7 @@ export const forest: CardDef = {
       tags: [CardTag.BUILDING],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a4fa3901-a970-4c5b-8e43-002c66fded99/width=450,quality=90/00084.jpeg',
-      glory: 2,
+      glory: { amount: 2 },
       actions: [
         {
           id: '3-4-1',

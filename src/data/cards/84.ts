@@ -1,12 +1,12 @@
 import type { CardDef } from '@engine/domain/types';
 
-export const sawMill: CardDef = {
+export const publicPunishment: CardDef = {
   id: 84,
-  name: 'Saw Mill',
+  name: 'Public Punishment',
   states: [
     {
       id: 1,
-      name: 'Saw Mill',
+      name: 'Public Punishment',
     },
   ],
 };

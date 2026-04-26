@@ -28,6 +28,7 @@ export type StepDef = {
   id: number;
   cost?: Cost;
   effects?: ActionEffect[];
+  icon?: string;
 };
 
 export type TrackDef = {
@@ -37,6 +38,12 @@ export type TrackDef = {
   inverse?: boolean;
 };
 
+export type GloryDef = {
+  amount: number;
+  valuePerElement?: ValuePerElement;
+  condition?: Condition;
+};
+
 export type CardState = {
   id: number;
   name: string;
@@ -44,7 +51,7 @@ export type CardState = {
   tags?: CardTag[];
   negative?: boolean;
   productions?: Resources[];
-  glory?: number;
+  glory?: GloryDef;
   actions?: CardAction[];
   passives?: Passive[];
   upgrade?: UpgradeDef[];
@@ -60,7 +67,7 @@ export type UpgradeDef = {
 export type CardAction = {
   id: string;
   actionEffects: ActionEffect[];
-  passive?: boolean;
+  unlimited?: boolean;
   cost?: Cost;
   endsTurn?: boolean;
   trigger?: Trigger;
@@ -71,10 +78,9 @@ export type CardAction = {
 export type ValuePerElement = {
   amount: number;
   resource?: ResourceType[];
-  glory?: number;
   cards?: CardeSelector;
   productionTotal?: ResourceType;
-  accumulation?: string;
+  accumulation?: boolean;
   deficitTarget?: number; // count = max(0, deficitTarget - actual_count)
 };
 
@@ -83,7 +89,7 @@ export type ActionEffect = {
   type: ActionEffectType;
   cards?: CardeSelector;
   resources?: ResourceSelector;
-  accumulated?: Record<string, number>;
+  accumulated?: number;
   states?: number[];
   stickerIds?: number[];
   valuePerElement?: ValuePerElement;
@@ -169,6 +175,6 @@ export type ResolvedActionEffect = {
   stateId?: number;
   position?: number;
   stepIds?: number[];
-  accumulated?: Record<string, number>;
+  accumulated?: number;
   newActionEffects?: ActionEffect[];
 };

@@ -1,12 +1,12 @@
 import type { CardDef } from '@engine/domain/types';
 
-export const compass: CardDef = {
+export const spinningWheel: CardDef = {
   id: 82,
-  name: 'Compass',
+  name: 'Spinning Wheel',
   states: [
     {
       id: 1,
-      name: 'Compass',
+      name: 'Spinning Wheel',
     },
   ],
 };

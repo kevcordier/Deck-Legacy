@@ -15,8 +15,15 @@ import {
   getEffectiveProductions,
   tagClass,
 } from '@engine/application/cardHelpers';
+import { PassiveType } from '@engine/domain/enums';
 import type { CardInstance } from '@engine/domain/types';
-import { tCardActionLabel, tCardName, tCardPassiveLabel, tCardTag } from '@helpers/cardI18n';
+import {
+  tCardActionLabel,
+  tCardGloryLabel,
+  tCardName,
+  tCardPassiveLabel,
+  tCardTag,
+} from '@helpers/cardI18n';
 import { getResMeta } from '@helpers/renderHelpers';
 import { useGame } from '@hooks/useGame';
 import React, { useState } from 'react';
@@ -157,10 +164,15 @@ export function GameCard({
         </div>
 
         <div className={`relative z-10 flex flex-col items-center gap-1 p-1 @3xs:p-3`}>
+          {(cs.glory?.condition || cs.glory?.valuePerElement) && (
+            <span className={cardActionsClass}>
+              <PassifIcon className="size-3 @3xs:size-6" /> {tCardGloryLabel(t, def.id, cs.id)}
+            </span>
+          )}
           {(cs.passives ?? []).map((passive, i) => (
             <span key={passive.id} className={cardActionsClass}>
               <PassifIcon className="size-3 @3xs:size-6" />{' '}
-              {passive.type === 'STAY_IN_PLAY'
+              {passive.type === PassiveType.STAY_IN_PLAY
                 ? t('card.stayInPlay')
                 : tCardPassiveLabel(t, def.id, cs.id, i, instance.cumulated)}
             </span>

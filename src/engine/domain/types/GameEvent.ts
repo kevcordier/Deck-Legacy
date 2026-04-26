@@ -15,12 +15,16 @@ export interface GameStartedEvent extends GameEvent {
   discoveryPile: number[];
 }
 
+export interface RoundEndedEvent extends GameEvent {
+  type: GameEventType.ROUND_ENDED;
+  newCards: number[];
+  onDiscoverEvents: TriggerEntry[];
+}
+
 export interface RoundStartedEvent extends GameEvent {
   type: GameEventType.ROUND_STARTED;
   round: number;
-  newCards: number[];
   newDrawPile: number[];
-  onDiscoverEvents: TriggerEntry[];
 }
 
 export interface TurnStartedEvent extends GameEvent {
@@ -47,6 +51,12 @@ export interface UpgradeCardEvent extends GameEvent {
   cardInstanceId: number;
   stateId: number;
   cost: Resources;
+}
+
+export interface ChooseStateEvent extends GameEvent {
+  type: GameEventType.CHOOSE_STATE;
+  cardInstanceId: number;
+  stateId: number;
 }
 
 export interface CardActionEvent extends GameEvent {

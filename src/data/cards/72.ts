@@ -1,12 +1,12 @@
 import type { CardDef } from '@engine/domain/types';
 
-export const aPerfectTower: CardDef = {
+export const quest: CardDef = {
   id: 72,
-  name: 'A Perfect Tower',
+  name: 'Quest',
   states: [
     {
       id: 1,
-      name: 'A Perfect Tower',
+      name: 'Quest',
     },
   ],
 };

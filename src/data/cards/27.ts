@@ -185,7 +185,7 @@ export const mercenay: CardDef = {
           [ResourceType.WEAPON]: 1,
         },
       ],
-      glory: 3,
+      glory: { amount: 3 },
       actions: [
         {
           id: '27-2-1',

@@ -102,7 +102,7 @@ export function countValuePerElement(
   if (valuePerElement.cards) {
     count = cardSelector(valuePerElement.cards, instanceId, gameState, defs, stickerDefs).length;
   } else if (valuePerElement.accumulation) {
-    count = gameState.instances[instanceId].cumulated?.[valuePerElement.accumulation] ?? 0;
+    count = gameState.instances[instanceId].cumulated ?? 0;
   } else if (valuePerElement.productionTotal) {
     const prodKey = valuePerElement.productionTotal;
     count = getTotalResourceProduction(instanceId, prodKey, gameState, defs, stickerDefs);

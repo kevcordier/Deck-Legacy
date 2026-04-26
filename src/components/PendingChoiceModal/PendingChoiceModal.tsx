@@ -39,17 +39,17 @@ function getChoiceActionLabel(
   if (!effects || !def || !state) return undefined;
   const effectIdx = effects.findIndex(e => e.actionEffects.some(a => a.id === actionId));
   if (effectIdx === -1) return undefined;
-  return tCardActionLabel(t, def.id, state.id, effectIdx, { ...inst.cumulated }) || undefined;
+  return tCardActionLabel(t, def.id, state.id, effectIdx, inst.cumulated) || undefined;
 }
 
-function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
+function makePreviewInstance(instanceId: number, def: CardDef, state: CardState): CardInstance {
   return {
-    id: 0,
+    id: instanceId,
     cardId: def.id,
     stateId: state.id,
     stickers: {},
     trackProgress: [],
-    cumulated: {},
+    cumulated: 0,
     usedActionIds: [],
   };
 }
@@ -167,7 +167,7 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
                   onClick={() => handleCardClick(id)}
                   className="absolute inset-0 z-12 cursor-pointer!"
                 ></button>
-                <GameCard instance={makePreviewInstance(def, state)} hideStatePreview />
+                <GameCard instance={makePreviewInstance(id, def, state)} hideStatePreview />
               </div>
             );
           })}
@@ -225,7 +225,9 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
                 onClick={() => handleStepClick(step.id)}
                 className={`flex min-w-16 flex-col items-center gap-1 rounded-md border-2 border-base-ink bg-card p-3 hover:bg-base-ink/10 ${isSelected ? ' ring-primary rounded-xl ring-2' : ''}`}
               >
-                {track && <CardTrackContent instance={targetInst} track={track} step={step} />}
+                {track && (
+                  <CardTrackContent t={t} instance={targetInst} track={track} step={step} />
+                )}
               </button>
             );
           })}
@@ -262,7 +264,10 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
                   }
                   className="absolute inset-0 z-12 cursor-pointer!"
                 ></button>
-                <GameCard instance={makePreviewInstance(cardDef, state)} hideStatePreview />
+                <GameCard
+                  instance={makePreviewInstance(choice.sourceInstanceId, cardDef, state)}
+                  hideStatePreview
+                />
               </div>
             );
           })}
@@ -424,9 +429,7 @@ export function PendingChoiceModal({
           const state = def?.states.find(s => s.id === inst?.stateId) ?? def?.states[0];
           const actionIdx = state?.actions?.findIndex(e => e.id === trigger.effectDef.id) ?? -1;
           const cardName = tCardName(t, def?.id, state?.id);
-          const actionLabel = tCardActionLabel(t, def?.id, state?.id, actionIdx, {
-            ...inst.cumulated,
-          });
+          const actionLabel = tCardActionLabel(t, def?.id, state?.id, actionIdx, inst.cumulated);
           return (
             <div
               key={triggerId}

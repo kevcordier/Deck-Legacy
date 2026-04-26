@@ -240,8 +240,8 @@ describe('computeScore', () => {
     const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
     const defs: Record<number, CardDef> = {
-      1: { id: 1, name: 'C1', states: [{ id: 1, name: 'S', glory: 3 }] },
-      2: { id: 2, name: 'C2', states: [{ id: 1, name: 'S', glory: 2 }] },
+      1: { id: 1, name: 'C1', states: [{ id: 1, name: 'S', glory: { amount: 3 } }] },
+      2: { id: 2, name: 'C2', states: [{ id: 1, name: 'S', glory: { amount: 2 } }] },
     };
     const gs = makeState({
       drawPile: [1],

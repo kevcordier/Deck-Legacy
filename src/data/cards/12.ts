@@ -59,7 +59,7 @@ export const eastCliffs: CardDef = {
           [ResourceType.IRON]: 1,
         },
       ],
-      glory: 1,
+      glory: { amount: 1 },
       actions: [
         {
           id: '12-2-1',
@@ -107,7 +107,7 @@ export const eastCliffs: CardDef = {
           [ResourceType.IRON]: 1,
         },
       ],
-      glory: 4,
+      glory: { amount: 4 },
       actions: [
         {
           id: '12-3-1',
@@ -139,7 +139,7 @@ export const eastCliffs: CardDef = {
           [ResourceType.WEAPON]: 1,
         },
       ],
-      glory: 3,
+      glory: { amount: 3 },
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
     },
   ],

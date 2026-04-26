@@ -40,7 +40,7 @@ const villageDef: CardDef = {
       name: 'Cité',
       tags: [CardTag.BUILDING],
       productions: [{ gold: 3 }],
-      glory: 2,
+      glory: { amount: 2 },
     },
   ],
 };
@@ -78,7 +78,7 @@ const armyDef: CardDef = {
       name: 'Armée aguerrie',
       tags: [CardTag.PERSON],
       productions: [{ weapon: 3 }],
-      glory: 5,
+      glory: { amount: 5 },
     },
   ],
 };

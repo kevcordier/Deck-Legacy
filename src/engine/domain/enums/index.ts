@@ -19,6 +19,7 @@ export enum Trigger {
 export enum GameEventType {
   GAME_STARTED = 'GAME_STARTED',
   ROUND_STARTED = 'ROUND_STARTED',
+  ROUND_ENDED = 'ROUND_ENDED',
   TURN_STARTED = 'TURN_STARTED',
   TURN_ENDED = 'TURN_ENDED',
   CARD_PRODUCED = 'CARD_PRODUCED',
@@ -26,6 +27,7 @@ export enum GameEventType {
   UPGRADE_CARD = 'UPGRADE_CARD',
   CARD_ACTION = 'CARD_ACTION',
   SKIP_TRIGGER = 'SKIP_TRIGGER',
+  CHOOSE_STATE = 'CHOOSE_STATE',
 }
 
 export enum ActionEffectType {

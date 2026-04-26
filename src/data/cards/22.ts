@@ -12,7 +12,7 @@ export const stop3: CardDef = {
       actions: [
         {
           id: '22-1-1',
-          passive: true,
+          unlimited: true,
           trigger: Trigger.ON_DISCOVER,
           actionEffects: [
             {

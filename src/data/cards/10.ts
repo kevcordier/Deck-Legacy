@@ -16,7 +16,7 @@ export const bandit2: CardDef = {
       name: 'Bandit',
       tags: [CardTag.ENEMY],
       negative: true,
-      glory: -2,
+      glory: { amount: -2 },
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/2f2966e7-17b9-418c-b5ec-842f368f390d/width=450,quality=90/bandit%204%20epic.jpeg',
       actions: [

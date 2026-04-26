@@ -1,12 +1,12 @@
 import type { CardDef } from '@engine/domain/types';
 
-export const handsomeRival: CardDef = {
+export const raid: CardDef = {
   id: 116,
-  name: 'Handsome Rival',
+  name: 'Raid',
   states: [
     {
       id: 1,
-      name: 'Handsome Rival',
+      name: 'Raid',
     },
   ],
 };

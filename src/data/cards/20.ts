@@ -12,47 +12,34 @@ export const volcanicEruption: CardDef = {
       tags: [CardTag.EVENT],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c0a9fb7a-78c2-452f-a2f4-947f4c527cd8/anim=false,width=450,optimized=true/38CERAJFMBW55EYDDDX8W2T1M0.jpeg',
-      actions: [
+      passives: [
         {
-          id: '20-1-0',
-          trigger: Trigger.ON_PLAY,
-          actionEffects: [
-            {
-              id: 1,
-              type: ActionEffectType.ADD_BOARD_EFFECT,
-              cards: {
-                scope: [TargetScope.SELF],
-              },
-              effect: {
-                id: '1',
-                type: PassiveType.ADD_TRIGGER,
-                trigger: {
-                  type: Trigger.ON_PLAY,
-                  cards: {
-                    scope: [TargetScope.DRAWN],
-                    tags: [CardTag.LAND],
-                  },
-                  actions: [
-                    {
-                      id: 1,
-                      type: ActionEffectType.DESTROY_CARD,
-                      cards: {
-                        scope: [TargetScope.SELF],
-                      },
-                    },
-                    {
-                      id: 2,
-                      type: ActionEffectType.UPGRADE_CARD,
-                      cards: {
-                        ids: [28],
-                      },
-                      states: [2],
-                    },
-                  ],
+          id: '1',
+          type: PassiveType.ADD_TRIGGER,
+          trigger: {
+            type: Trigger.ON_PLAY,
+            cards: {
+              scope: [TargetScope.DRAWN],
+              tags: [CardTag.LAND],
+            },
+            actions: [
+              {
+                id: 1,
+                type: ActionEffectType.DESTROY_CARD,
+                cards: {
+                  scope: [TargetScope.SELF],
                 },
               },
-            },
-          ],
+              {
+                id: 2,
+                type: ActionEffectType.UPGRADE_CARD,
+                cards: {
+                  ids: [28],
+                },
+                states: [2],
+              },
+            ],
+          },
         },
       ],
     },
@@ -62,7 +49,7 @@ export const volcanicEruption: CardDef = {
       tags: [CardTag.LAND],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/19b5f023-3004-486a-abc8-15d6ac466082/anim=false,width=450,optimized=true/TR74NQJ6BGPS2X7T51C9Q6FNJ0.jpeg',
-      glory: -2,
+      glory: { amount: -2 },
       upgrade: [
         {
           cost: { resources: [{ gold: 2 }] },

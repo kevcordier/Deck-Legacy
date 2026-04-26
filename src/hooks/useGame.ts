@@ -26,6 +26,7 @@ export type GameHook = {
   startGame: () => void;
   startRound: () => void;
   startTurn: () => void;
+  chooseState: (instanceId: number, stateId: number) => void;
   resolveProduction: (instanceId: number, chosenResource: number) => void;
   resolveAction: (instanceId: number, actionId: string) => void;
   resolveUpgrade: (instanceId: number, chosenUpgradeTo?: number) => void;
@@ -57,6 +58,7 @@ export function useGame(): GameHook {
     startGame,
     startRound,
     startTurn,
+    chooseState,
     resolveProduction,
     resolveAction,
     resolveUpgrade,
@@ -95,6 +97,7 @@ export function useGame(): GameHook {
     startGame,
     startRound,
     startTurn,
+    chooseState,
     resolveProduction,
     resolveAction,
     resolveUpgrade,

@@ -14,7 +14,7 @@ export const exportation: CardDef = {
       actions: [
         {
           id: '19-1-1',
-          passive: true,
+          unlimited: true,
           actionEffects: [
             {
               id: 1,
@@ -22,7 +22,7 @@ export const exportation: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              accumulated: { goods: 1 },
+              accumulated: 1,
             },
           ],
           cost: {
@@ -42,7 +42,7 @@ export const exportation: CardDef = {
           {
             id: 1,
             cost: {
-              accumulated: { goods: 10 },
+              accumulated: 10,
             },
             effects: [
               {
@@ -58,7 +58,7 @@ export const exportation: CardDef = {
           {
             id: 2,
             cost: {
-              accumulated: { goods: 20 },
+              accumulated: 20,
             },
             effects: [
               {
@@ -74,7 +74,7 @@ export const exportation: CardDef = {
           {
             id: 3,
             cost: {
-              accumulated: { goods: 30 },
+              accumulated: 30,
             },
             effects: [
               {
@@ -89,7 +89,7 @@ export const exportation: CardDef = {
           {
             id: 4,
             cost: {
-              accumulated: { goods: 40 },
+              accumulated: 40,
             },
             effects: [
               {
@@ -105,7 +105,7 @@ export const exportation: CardDef = {
           {
             id: 5,
             cost: {
-              accumulated: { goods: 55 },
+              accumulated: 55,
             },
             effects: [
               {
@@ -121,7 +121,7 @@ export const exportation: CardDef = {
           {
             id: 6,
             cost: {
-              accumulated: { goods: 75 },
+              accumulated: 75,
             },
             effects: [
               {
@@ -134,7 +134,7 @@ export const exportation: CardDef = {
           {
             id: 7,
             cost: {
-              accumulated: { goods: 100 },
+              accumulated: 100,
             },
             effects: [
               {
@@ -143,7 +143,7 @@ export const exportation: CardDef = {
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                accumulated: { goods: 0 },
+                accumulated: 0,
               },
               {
                 id: 2,
@@ -161,13 +161,13 @@ export const exportation: CardDef = {
     {
       id: 2,
       name: 'Mass Export',
-      glory: 25,
+      glory: { amount: 25 },
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8a521c20-ba71-47b8-aafd-93539594bc26/anim=false,width=450,optimized=true/Upscale_00002_.jpeg',
       actions: [
         {
           id: '19-2-1',
-          passive: true,
+          unlimited: true,
           actionEffects: [
             {
               id: 1,
@@ -175,7 +175,7 @@ export const exportation: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              accumulated: { goods: 1 },
+              accumulated: 1,
             },
           ],
           cost: {
@@ -195,7 +195,7 @@ export const exportation: CardDef = {
           {
             id: 8,
             cost: {
-              accumulated: { goods: 25 },
+              accumulated: 25,
             },
             effects: [
               {
@@ -219,7 +219,7 @@ export const exportation: CardDef = {
           {
             id: 9,
             cost: {
-              accumulated: { goods: 50 },
+              accumulated: 50,
             },
             effects: [
               {
@@ -235,7 +235,7 @@ export const exportation: CardDef = {
           {
             id: 10,
             cost: {
-              accumulated: { goods: 75 },
+              accumulated: 75,
             },
             effects: [
               {
@@ -250,7 +250,7 @@ export const exportation: CardDef = {
           {
             id: 11,
             cost: {
-              accumulated: { goods: 100 },
+              accumulated: 100,
             },
             effects: [
               {
@@ -266,7 +266,7 @@ export const exportation: CardDef = {
           {
             id: 12,
             cost: {
-              accumulated: { goods: 150 },
+              accumulated: 150,
             },
             effects: [
               {
@@ -281,7 +281,7 @@ export const exportation: CardDef = {
           {
             id: 13,
             cost: {
-              accumulated: { goods: 200 },
+              accumulated: 200,
             },
             effects: [
               {
@@ -296,7 +296,7 @@ export const exportation: CardDef = {
           {
             id: 14,
             cost: {
-              accumulated: { goods: 250 },
+              accumulated: 250,
             },
             effects: [
               {

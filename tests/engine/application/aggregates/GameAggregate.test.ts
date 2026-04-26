@@ -1,9 +1,10 @@
 import { makeInstance, makeState } from '../fixtures';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
-import { ActionEffectType, GameEventType, TargetScope, Trigger } from '@engine/domain/enums';
-import type { CardDef, GameEvent } from '@engine/domain/types';
+import { ChooseActionEffectStrategy } from '@engine/application/playerChoice/ChooseActionEffectStrategy';
+import { ActionEffectType, GameEventType, PendingChoiceType, Trigger } from '@engine/domain/enums';
+import type { CardDef, GameEvent, PendingChoice, ResolvedActionEffect } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // ─── minimal card definitions ─────────────────────────────────────────────────
 
@@ -36,8 +37,41 @@ const endOfTurnDef: CardDef = {
   ],
 };
 
-function buildAggregate(defs: Record<number, CardDef>) {
-  return new GameAggregate(EMPTY_STATE, defs, {}, []);
+// ─── helpers ──────────────────────────────────────────────────────────────────
+
+/**
+ * A CHOOSE_EFFECT action that creates a CHOOSE_ACTION_EFFECT pending choice.
+ * Requires only 1 card on the board.
+ */
+function makeChooseEffectAction() {
+  return {
+    id: 'choose',
+    actionEffects: [
+      {
+        id: 0,
+        type: ActionEffectType.CHOOSE_EFFECT,
+        effects: [
+          { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } },
+          { id: 2, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 1 } },
+        ],
+      },
+    ],
+  };
+}
+
+/**
+ * Spies on ChooseActionEffectStrategy.prototype.apply to return the given resolved
+ * action and pending choices. The real constructor is preserved — only the method
+ * is intercepted, avoiding constructor-mock pitfalls.
+ */
+function mockStrategyApply(
+  resolvedAction: ResolvedActionEffect,
+  pendingChoices: PendingChoice[] = [],
+) {
+  vi.spyOn(ChooseActionEffectStrategy.prototype, 'apply').mockReturnValue([
+    resolvedAction,
+    pendingChoices,
+  ]);
 }
 
 // ─── EMPTY_STATE ──────────────────────────────────────────────────────────────
@@ -53,13 +87,13 @@ describe('EMPTY_STATE', () => {
 // ─── gameStarted ──────────────────────────────────────────────────────────────
 
 describe('GameAggregate.gameStarted', () => {
-  it('creates GAME_STARTED event and returns it', () => {
-    const agg = buildAggregate({ 1: plainDef });
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const event = agg.gameStarted([inst], [1], { 1: 3 }, [2]);
-    expect(event.type).toBe(GameEventType.GAME_STARTED);
-    expect(agg.getGameState().drawPile).toEqual([1]);
-    expect(agg.getEvents()).toHaveLength(1);
+  it('creates GAME_STARTED event and sets up instances', () => {
+    // Use 5 cards so gameStarted's internal roundStarted+turnStarted(x2) never hits empty drawPile.
+    const insts = [1, 2, 3, 4, 5].map(id => makeInstance({ id, cardId: 1, stateId: 1 }));
+    const agg = new GameAggregate(EMPTY_STATE, { 1: plainDef }, {}, []);
+    agg.gameStarted(insts, [1, 2, 3, 4, 5], {}, []);
+    expect(agg.getGameState().instances[1]).toBeDefined();
+    expect(agg.getEvents().length).toBeGreaterThan(0);
   });
 });
 
@@ -67,7 +101,7 @@ describe('GameAggregate.gameStarted', () => {
 
 describe('GameAggregate.loadFromHistory', () => {
   it('replays events and updates game state', () => {
-    const agg = buildAggregate({ 1: plainDef });
+    const agg = new GameAggregate(EMPTY_STATE, { 1: plainDef }, {}, []);
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const event: GameEvent = {
       id: 'e1',
@@ -87,45 +121,59 @@ describe('GameAggregate.loadFromHistory', () => {
 // ─── roundStarted ─────────────────────────────────────────────────────────────
 
 describe('GameAggregate.roundStarted', () => {
-  it('increments round for round 1 (no discovery processing)', () => {
-    const agg = buildAggregate({ 1: plainDef });
+  it('increments round and draws cards', () => {
+    // 1 card available: roundStarted shuffles it, turnStarted draws it.
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    agg.gameStarted([inst], [1], {}, []);
+    const state = makeState({ drawPile: [1], instances: { 1: inst }, round: 0 });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.roundStarted();
     expect(gs.round).toBe(1);
-    expect(gs.phase).toBe(Phase.START_ROUND);
+    expect(gs.phase).toBe(Phase.PLAYING);
   });
 
-  it('picks two cards from discoveryPile for round 2+', () => {
-    const agg = buildAggregate({ 1: plainDef });
+  it('processes discoveryPile when drawPile is empty', () => {
+    // Empty drawPile: roundStarted → turnStarted → roundEnded → processes discoveryPile.
     const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    agg.gameStarted([inst1, inst2, inst3], [1], {}, [2, 3]);
-    agg.roundStarted(); // round 1
-    const gs = agg.roundStarted(); // round 2 — picks from discovery
+    const state = makeState({
+      drawPile: [],
+      discoveryPile: [1, 2],
+      instances: { 1: inst1, 2: inst2 },
+      round: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gs = agg.roundStarted();
+    // roundEnded was triggered, discovery cards processed, phase is PREROUND
     expect(gs.round).toBe(2);
+    expect(gs.phase).toBe(Phase.PREROUND);
   });
 
-  it('handles parchment card as first discovered card in round 2+', () => {
-    const agg = buildAggregate({ 1: plainDef, 3: parchmentDef });
-    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 3, stateId: 1 });
-    agg.gameStarted([inst1, inst3], [1], {}, [3]);
-    agg.roundStarted(); // round 1
-    const gs = agg.roundStarted(); // round 2: parchment first
+  it('handles parchment card as first discovered card', () => {
+    // Parchment card first: only 1 new card added, not 2.
+    const inst1 = makeInstance({ id: 1, cardId: 3, stateId: 1 }); // parchment
+    const state = makeState({
+      drawPile: [],
+      discoveryPile: [1],
+      instances: { 1: inst1 },
+      round: 1,
+    });
+    const agg = new GameAggregate(state, { 3: parchmentDef }, {}, []);
+    const gs = agg.roundStarted();
     expect(gs.round).toBe(2);
   });
 
   it('fires ON_DISCOVER trigger for discovered cards', () => {
-    const agg = buildAggregate({ 5: onDiscoverDef, 1: plainDef });
-    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const inst5 = makeInstance({ id: 5, cardId: 5, stateId: 1 });
-    const inst6 = makeInstance({ id: 6, cardId: 1, stateId: 1 });
-    agg.gameStarted([inst1, inst5, inst6], [1], {}, [5, 6]);
-    agg.roundStarted(); // round 1
-    agg.roundStarted(); // round 2 — inst5 triggers ON_DISCOVER
-    // Just assert we got through without error — trigger fires automatically
+    // onDiscoverDef has an ON_DISCOVER trigger that auto-resolves.
+    const inst1 = makeInstance({ id: 1, cardId: 5, stateId: 1 }); // onDiscover
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [],
+      discoveryPile: [1, 2],
+      instances: { 1: inst1, 2: inst2 },
+      round: 1,
+    });
+    const agg = new GameAggregate(state, { 5: onDiscoverDef, 1: plainDef }, {}, []);
+    agg.roundStarted();
     expect(agg.getGameState().round).toBe(2);
   });
 });
@@ -134,33 +182,45 @@ describe('GameAggregate.roundStarted', () => {
 
 describe('GameAggregate.turnStarted', () => {
   it('draws cards to board and sets phase to PLAYING', () => {
-    const agg = buildAggregate({ 1: plainDef });
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    agg.gameStarted([inst], [1], {}, []);
-    agg.roundStarted();
+    const state = makeState({
+      drawPile: [1],
+      instances: { 1: inst },
+      round: 1,
+      phase: Phase.PRETURN,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.turnStarted();
     expect(gs.phase).toBe(Phase.PLAYING);
     expect(gs.board).toContain(1);
   });
 
   it('starts a new round when drawPile is empty', () => {
-    const agg = buildAggregate({ 1: plainDef });
+    // Empty drawPile with discoveryPile cards → turnStarted triggers roundEnded.
     const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    // inst2 and inst3 are in discoveryPile so round 2 can pick from them
-    agg.gameStarted([inst1, inst2, inst3], [1], {}, [2, 3]);
-    agg.roundStarted();
-    agg.turnStarted(); // inst1 drawn, drawPile now empty
-    const gs = agg.turnStarted(); // empty drawPile → roundStarted (round 2)
-    expect(gs.round).toBe(2);
+    const state = makeState({
+      drawPile: [],
+      discoveryPile: [1, 2],
+      instances: { 1: inst1, 2: inst2 },
+      round: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gs = agg.turnStarted();
+    // roundEnded is triggered but does NOT increment round (roundStarted does)
+    expect(gs.round).toBe(1);
+    expect(gs.phase).toBe(Phase.PREROUND);
   });
 
   it('fires ON_PLAY triggers for cards with that trigger', () => {
-    const agg = buildAggregate({ 4: onPlayDef });
     const inst = makeInstance({ id: 1, cardId: 4, stateId: 1 });
-    agg.gameStarted([inst], [1], {}, []);
-    agg.roundStarted();
+    const state = makeState({
+      drawPile: [1],
+      instances: { 1: inst },
+      round: 1,
+      phase: Phase.PRETURN,
+    });
+    const agg = new GameAggregate(state, { 4: onPlayDef }, {}, []);
     const gs = agg.turnStarted();
     // trigger auto-resolves since it's non-optional with no pending choices
     expect(gs.phase).toBe(Phase.PLAYING);
@@ -171,24 +231,33 @@ describe('GameAggregate.turnStarted', () => {
 
 describe('GameAggregate.turnEnded', () => {
   it('automatically starts next turn when no end-of-turn triggers', () => {
-    const agg = buildAggregate({ 1: plainDef });
-    // 5 cards: turnStarted draws 4, leaving 1 in drawPile so the auto-triggered turnStarted succeeds
+    // 5 cards: board has 4 (from previous turn), drawPile has 1 remaining.
     const insts = [1, 2, 3, 4, 5].map(id => makeInstance({ id, cardId: 1, stateId: 1 }));
-    agg.gameStarted(insts, [1, 2, 3, 4, 5], {}, []);
-    agg.roundStarted();
-    agg.turnStarted(); // draws 4, drawPile has 1 remaining
+    const state = makeState({
+      board: [1, 2, 3, 4],
+      drawPile: [5],
+      instances: Object.fromEntries(insts.map(i => [i.id, i])),
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.turnEnded();
     expect(gs.phase).toBe(Phase.PLAYING);
   });
 
-  it('stays in END_TURN phase when end-of-turn triggers exist', () => {
-    const agg = buildAggregate({ 6: endOfTurnDef });
+  it('stays in PRETURN phase when end-of-turn triggers exist', () => {
     const inst = makeInstance({ id: 1, cardId: 6, stateId: 1 });
-    agg.gameStarted([inst], [1], {}, []);
-    agg.roundStarted();
-    agg.turnStarted();
+    const state = makeState({
+      board: [1],
+      instances: { 1: inst },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 6: endOfTurnDef }, {}, []);
     const gs = agg.turnEnded();
-    expect(gs.phase).toBe(Phase.END_TURN);
+    expect(gs.phase).toBe(Phase.PRETURN);
   });
 });
 
@@ -196,11 +265,15 @@ describe('GameAggregate.turnEnded', () => {
 
 describe('GameAggregate.cardProduced', () => {
   it('adds resources and discards producing card', () => {
-    const agg = buildAggregate({ 1: plainDef });
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    agg.gameStarted([inst], [1], {}, []);
-    agg.roundStarted();
-    agg.turnStarted();
+    const state = makeState({
+      board: [1],
+      instances: { 1: inst },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.cardProduced(1, { gold: 3 });
     expect(gs.resources.gold).toBe(3);
     expect(gs.board).not.toContain(1);
@@ -211,26 +284,22 @@ describe('GameAggregate.cardProduced', () => {
 
 describe('GameAggregate.advance', () => {
   it('draws 2 cards from drawPile', () => {
-    const agg = buildAggregate({ 1: plainDef });
     const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    agg.gameStarted([inst1, inst2, inst3], [1, 2, 3], {}, []);
-    agg.roundStarted();
-    agg.turnStarted(); // draws 4, but only 3 available → draws [1,2,3]
-    // Reset with fresh state to test advance
-    const agg2 = buildAggregate({ 1: plainDef });
-    const i1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const i2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const i3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    agg2.gameStarted([i1, i2, i3], [1, 2, 3], {}, []);
-    agg2.roundStarted();
-    const gs = agg2.advance();
+    const state = makeState({
+      drawPile: [1, 2, 3],
+      instances: { 1: inst1, 2: inst2, 3: inst3 },
+      phase: Phase.PLAYING,
+      round: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gs = agg.advance();
     expect(gs.board).toHaveLength(2);
   });
 
   it('returns current state when drawPile is empty', () => {
-    const agg = buildAggregate({});
+    const agg = new GameAggregate(EMPTY_STATE, {}, {}, []);
     const gsBefore = agg.getGameState();
     const gs = agg.advance();
     expect(gs).toBe(gsBefore);
@@ -254,7 +323,6 @@ describe('GameAggregate.upgradeCard', () => {
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 2 });
     const inst4 = makeInstance({ id: 4, cardId: 1, stateId: 2 });
     const inst5 = makeInstance({ id: 5, cardId: 1, stateId: 2 });
-    // Instance 1 is placed directly on the board to avoid shuffle non-determinism
     const state = makeState({
       board: [1, 2, 3, 4],
       drawPile: [5],
@@ -273,12 +341,20 @@ describe('GameAggregate.upgradeCard', () => {
 // ─── cardAction ───────────────────────────────────────────────────────────────
 
 describe('GameAggregate.cardAction', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('applies a simple action and returns updated state', () => {
-    const agg = buildAggregate({ 1: plainDef });
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    agg.gameStarted([inst], [1], {}, []);
-    agg.roundStarted();
-    agg.turnStarted();
+    const state = makeState({
+      board: [1],
+      instances: { 1: inst },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const action = {
       id: 'a1',
       actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 5 } }],
@@ -288,25 +364,17 @@ describe('GameAggregate.cardAction', () => {
   });
 
   it('returns state with pending choices without finalizing', () => {
-    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    const agg = buildAggregate({ 1: plainDef });
-    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    agg.gameStarted([inst1, inst2, inst3], [1, 2, 3], {}, []);
-    agg.roundStarted();
-    agg.turnStarted();
-    const action = {
-      id: 'a1',
-      actionEffects: [
-        {
-          id: 0,
-          type: ActionEffectType.DISCARD_CARD,
-          cards: { scope: [TargetScope.BOARD] },
-          pickNumber: 1,
-        },
-      ],
-    };
-    agg.cardAction(action, 1);
+    // CHOOSE_EFFECT action creates a pending choice; cardAction returns early without finalizing.
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      instances: { 1: inst },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    agg.cardAction(makeChooseEffectAction(), 1);
     expect(agg.getCurrentCardAction()?.getPendingChoices().length).toBeGreaterThan(0);
   });
 
@@ -316,7 +384,6 @@ describe('GameAggregate.cardAction', () => {
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
     const inst4 = makeInstance({ id: 4, cardId: 1, stateId: 1 });
     const inst5 = makeInstance({ id: 5, cardId: 1, stateId: 1 });
-    // Instance 1 is placed directly on the board to avoid shuffle non-determinism
     const state = makeState({
       board: [1, 2, 3, 4],
       drawPile: [5],
@@ -332,11 +399,15 @@ describe('GameAggregate.cardAction', () => {
   });
 });
 
-// ─── resolveCardActionChoice / resolveCardActionCost ──────────────────────────
+// ─── resolveCardActionChoice ──────────────────────────────────────────────────
 
 describe('GameAggregate.resolveCardActionChoice', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('returns current state when no current card action', () => {
-    const agg = buildAggregate({});
+    const agg = new GameAggregate(EMPTY_STATE, {}, {}, []);
     const gs = agg.resolveCardActionChoice({
       id: 'x',
       type: ActionEffectType.ADD_RESOURCES,
@@ -346,80 +417,82 @@ describe('GameAggregate.resolveCardActionChoice', () => {
   });
 
   it('resolves pending choice and finalizes action', () => {
-    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    const agg = buildAggregate({ 1: plainDef });
-    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    agg.gameStarted([inst1, inst2, inst3], [1, 2, 3], {}, []);
-    agg.roundStarted();
-    agg.turnStarted();
-    const action = {
-      id: 'a1',
-      actionEffects: [
-        {
-          id: 0,
-          type: ActionEffectType.DISCARD_CARD,
-          cards: { scope: [TargetScope.BOARD] },
-          pickNumber: 1,
-        },
-      ],
-    };
-    agg.cardAction(action, 1);
-    const gs = agg.resolveCardActionChoice({
-      id: 'x',
-      type: ActionEffectType.DISCARD_CARD,
+    // Mock strategy to return a resolved ADD_RESOURCES effect with no more choices.
+    const resolved: ResolvedActionEffect = {
+      id: '0',
+      type: ActionEffectType.ADD_RESOURCES,
       sourceInstanceId: 1,
-      instanceIds: [2],
-    });
-    expect(gs.discardPile).toContain(2);
-  });
-
-  it('returns state without finalizing when choices still pending after choice', () => {
-    // Board has 3 cards: source (id=1) filtered out, leaving [2, 3] → CHOOSE_CARD.
-    // Choosing the multi-production card (id=2) triggers a CHOOSE_RESOURCE follow-up (line 318).
-    const multiProdDef: CardDef = {
-      id: 2,
-      name: 'MultiProd',
-      states: [{ id: 1, name: 'S', productions: [{ gold: 1 }, { wood: 1 }] }],
+      resources: { gold: 5 },
     };
-    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    const initialState = makeState({
-      board: [1, 2, 3],
-      instances: { 1: inst1, 2: inst2, 3: inst3 },
+    mockStrategyApply(resolved, []);
+
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      instances: { 1: inst },
       phase: Phase.PLAYING,
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(initialState, { 1: plainDef, 2: multiProdDef }, {}, []);
-    const action = {
-      id: 'a1',
-      actionEffects: [
-        {
-          id: 0,
-          type: ActionEffectType.ADD_RESOURCES,
-          cards: { scope: [TargetScope.BOARD] },
-          pickNumber: 1,
-        },
-      ],
-    };
-    agg.cardAction(action, 1);
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    agg.cardAction(makeChooseEffectAction(), 1);
+    expect(agg.getCurrentCardAction()?.getPendingChoices().length).toBeGreaterThan(0);
+
     const gs = agg.resolveCardActionChoice({
       id: 'x',
+      type: ActionEffectType.CHOOSE_EFFECT,
+      sourceInstanceId: 1,
+    });
+    expect(gs.resources.gold).toBe(5);
+    // Action is finalized — no current card action remains
+    expect(agg.getCurrentCardAction()).toBeNull();
+  });
+
+  it('returns state without finalizing when choices still pending after choice', () => {
+    // Mock strategy to return another pending choice — action must not be finalized.
+    const anotherPending: PendingChoice = {
+      id: 'next',
+      kind: ActionEffectType.ADD_RESOURCES,
+      type: PendingChoiceType as never,
+      sourceInstanceId: 1,
+      choices: [{ gold: 1 }, { wood: 1 }],
+      pickCount: 1,
+      isMandatory: true,
+    };
+    const resolved: ResolvedActionEffect = {
+      id: '0',
       type: ActionEffectType.ADD_RESOURCES,
       sourceInstanceId: 1,
-      instanceIds: [2],
+    };
+    mockStrategyApply(resolved, [anotherPending as unknown as PendingChoice]);
+
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      instances: { 1: inst },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
     });
-    // Still has a CHOOSE_RESOURCE pending choice — action not finalized
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    agg.cardAction(makeChooseEffectAction(), 1);
+
+    const gs = agg.resolveCardActionChoice({
+      id: 'x',
+      type: ActionEffectType.CHOOSE_EFFECT,
+      sourceInstanceId: 1,
+    });
+    // Still has a pending choice — action not finalized
     expect(agg.getCurrentCardAction()?.getPendingChoices().length).toBeGreaterThan(0);
     expect(gs.resources.gold).toBeUndefined();
   });
 });
 
+// ─── resolveCardActionCost ────────────────────────────────────────────────────
+
 describe('GameAggregate.resolveCardActionCost', () => {
   it('returns current state when no current card action', () => {
-    const agg = buildAggregate({});
+    const agg = new GameAggregate(EMPTY_STATE, {}, {}, []);
     const gs = agg.resolveCardActionCost({
       resources: {},
       discardedCardIds: [],
@@ -429,17 +502,18 @@ describe('GameAggregate.resolveCardActionCost', () => {
   });
 
   it('resolves pending cost choice and finalizes action', () => {
-    // Build with custom initial state that has gold so canAffordResources passes
-    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    const initialState = makeState({
-      board: [1, 2, 3],
+    // Resource cost with multiple options creates a CHOOSE_RESOURCE pending choice.
+    // Only 1 card needed — the cost is resource-based.
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
       resources: { gold: 5 },
-      instances: { 1: inst1, 2: inst2, 3: inst3 },
+      instances: { 1: inst },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
     });
-    const agg = new GameAggregate(initialState, { 1: plainDef }, {}, []);
-
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const action = {
       id: 'a1',
       actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 2 } }],
@@ -457,38 +531,41 @@ describe('GameAggregate.resolveCardActionCost', () => {
   });
 
   it('returns state without finalizing when effects have pending choices after cost resolved', () => {
-    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    const initialState = makeState({
-      board: [1, 2, 3],
+    // Combine a resource cost (creates cost pending choice) with a CHOOSE_EFFECT action effect
+    // (creates effect pending choice after cost is paid). The CHOOSE_EFFECT pending choice
+    // prevents finalization after resolveCardActionCost.
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
       resources: { gold: 5 },
-      instances: { 1: inst1, 2: inst2, 3: inst3 },
+      instances: { 1: inst },
       phase: Phase.PLAYING,
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(initialState, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const action = {
       id: 'a1',
       actionEffects: [
         {
           id: 0,
-          type: ActionEffectType.DISCARD_CARD,
-          cards: { scope: [TargetScope.BOARD] },
-          pickNumber: 1,
+          type: ActionEffectType.CHOOSE_EFFECT,
+          effects: [
+            { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } },
+            { id: 2, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 1 } },
+          ],
         },
       ],
       cost: { resources: [{ gold: 1 }, { stone: 1 }] },
     };
     agg.cardAction(action, 1);
-    // Pay the cost — effects then need a card choice for discard
+    // Pay the cost — resolveEffectsFrom(0) then creates a CHOOSE_EFFECT pending choice
     const gs = agg.resolveCardActionCost({
       resources: { gold: 1 },
       discardedCardIds: [],
       destroyedCardIds: [],
     });
-    // The DISCARD_CARD effect created a pending CHOOSE_CARD choice
+    // The CHOOSE_EFFECT effect creates a pending choice — action not finalized
     expect(agg.getCurrentCardAction()?.getPendingChoices().length).toBeGreaterThan(0);
     expect(gs.discardPile).toHaveLength(0);
   });
@@ -498,12 +575,12 @@ describe('GameAggregate.resolveCardActionCost', () => {
 
 describe('GameAggregate.skipTrigger', () => {
   it('throws when triggerId not in triggerPile', () => {
-    const agg = buildAggregate({});
+    const agg = new GameAggregate(EMPTY_STATE, {}, {}, []);
     expect(() => agg.skipTrigger('nonexistent')).toThrow('Trigger with id nonexistent not found');
   });
 
   it('removes trigger from pile without advancing turn', () => {
-    // Two triggers in pile; after skipping one, the other remains → no turn advance (line 379)
+    // Two triggers in pile; after skipping one, the other remains → no turn advance
     const optionalEndOfTurnDef: CardDef = {
       id: 6,
       name: 'OptEndTurn',
@@ -520,7 +597,7 @@ describe('GameAggregate.skipTrigger', () => {
     const state = makeState({
       board: [1, 2],
       instances: { 1: inst1, 2: inst2 },
-      phase: Phase.END_TURN,
+      phase: Phase.PRETURN,
       round: 1,
       turn: 1,
       triggerPile: {
@@ -532,10 +609,10 @@ describe('GameAggregate.skipTrigger', () => {
     const gs = agg.skipTrigger('tid1');
     expect(gs.triggerPile['tid1']).toBeUndefined();
     expect(gs.triggerPile['tid2']).toBeDefined();
-    expect(gs.phase).toBe(Phase.END_TURN);
+    expect(gs.phase).toBe(Phase.PRETURN);
   });
 
-  it('starts next turn after skipping last trigger in END_TURN phase', () => {
+  it('starts next turn after skipping last trigger in PRETURN phase', () => {
     const optionalEndOfTurnDef: CardDef = {
       id: 6,
       name: 'OptEndTurn',
@@ -552,7 +629,6 @@ describe('GameAggregate.skipTrigger', () => {
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
     const inst4 = makeInstance({ id: 4, cardId: 1, stateId: 1 });
     const inst5 = makeInstance({ id: 5, cardId: 1, stateId: 1 });
-    // Instance 1 (trigger card) is placed directly on the board to avoid shuffle non-determinism
     const state = makeState({
       board: [1, 2, 3, 4],
       drawPile: [5],

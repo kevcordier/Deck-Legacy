@@ -1,12 +1,12 @@
 import type { CardDef } from '@engine/domain/types';
 
-export const finishingTouch: CardDef = {
+export const stop6: CardDef = {
   id: 58,
-  name: 'Finishing Touch',
+  name: 'Stop',
   states: [
     {
       id: 1,
-      name: 'Finishing Touch',
+      name: 'Stop',
     },
   ],
 };

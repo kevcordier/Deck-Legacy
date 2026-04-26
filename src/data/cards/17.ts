@@ -9,6 +9,13 @@ export const army: CardDef = {
     {
       id: 1,
       name: 'Army',
+      glory: {
+        amount: 0,
+        valuePerElement: {
+          amount: 1,
+          accumulation: true,
+        },
+      },
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c482b4a9-396c-4bdd-a45d-3a8866cec739/original=true,quality=90/2025-07-18-235304_Flux%20CopaxTimeless_xplus4_0.jpeg',
       actions: [
@@ -31,6 +38,7 @@ export const army: CardDef = {
         steps: [
           {
             id: 1,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -42,7 +50,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 1 },
+                accumulated: 1,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -51,6 +59,7 @@ export const army: CardDef = {
           },
           {
             id: 2,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -62,7 +71,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 4 },
+                accumulated: 4,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -71,6 +80,7 @@ export const army: CardDef = {
           },
           {
             id: 3,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -82,7 +92,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 7 },
+                accumulated: 7,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -91,6 +101,7 @@ export const army: CardDef = {
           },
           {
             id: 4,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -102,7 +113,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 10 },
+                accumulated: 10,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -111,6 +122,7 @@ export const army: CardDef = {
           },
           {
             id: 5,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -122,7 +134,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 14 },
+                accumulated: 14,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -131,6 +143,7 @@ export const army: CardDef = {
           },
           {
             id: 6,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -142,7 +155,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 19 },
+                accumulated: 19,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -151,6 +164,7 @@ export const army: CardDef = {
           },
           {
             id: 7,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -162,7 +176,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 25 },
+                accumulated: 25,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -171,6 +185,7 @@ export const army: CardDef = {
           },
           {
             id: 8,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -182,7 +197,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 32 },
+                accumulated: 32,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -191,6 +206,7 @@ export const army: CardDef = {
           },
           {
             id: 9,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -202,7 +218,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 40 },
+                accumulated: 40,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -211,6 +227,7 @@ export const army: CardDef = {
           },
           {
             id: 10,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -242,7 +259,13 @@ export const army: CardDef = {
     {
       id: 2,
       name: 'Grand Army',
-      glory: 50,
+      glory: {
+        amount: 50,
+        valuePerElement: {
+          amount: 1,
+          accumulation: true,
+        },
+      },
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c482b4a9-396c-4bdd-a45d-3a8866cec739/original=true,quality=90/2025-07-18-235304_Flux%20CopaxTimeless_xplus4_0.jpeg',
       actions: [
@@ -265,6 +288,7 @@ export const army: CardDef = {
         steps: [
           {
             id: 11,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -276,7 +300,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 10 },
+                accumulated: 10,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -285,6 +309,7 @@ export const army: CardDef = {
           },
           {
             id: 12,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -296,7 +321,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 20 },
+                accumulated: 20,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -305,6 +330,7 @@ export const army: CardDef = {
           },
           {
             id: 13,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -316,7 +342,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 30 },
+                accumulated: 30,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -325,6 +351,7 @@ export const army: CardDef = {
           },
           {
             id: 14,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -336,7 +363,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 40 },
+                accumulated: 40,
                 cards: {
                   scope: [TargetScope.SELF],
                 },
@@ -345,6 +372,7 @@ export const army: CardDef = {
           },
           {
             id: 15,
+            icon: 'glory',
             cost: {
               resources: [
                 {
@@ -356,7 +384,7 @@ export const army: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.SET_CUMULATED,
-                accumulated: { glory: 50 },
+                accumulated: 50,
                 cards: {
                   scope: [TargetScope.SELF],
                 },

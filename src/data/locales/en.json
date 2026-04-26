@@ -29,7 +29,8 @@
   "roundpreview": {
     "title": "Round {{round}}",
     "subtitle": "Here are the new cards discovered for this round.",
-    "start": "▶ Start round"
+    "start": "▶ Start round",
+    "switchState": "Change side"
   },
   "endturn": {
     "title": "Turn {{turn}}",
@@ -156,6 +157,7 @@
     "advance_other": "Advance — {{count}} cards",
     "upgradeCard": "{{card}} upgraded",
     "cardAction": "{{card}} action",
-    "skipTrigger": "Trigger skipped"
+    "skipTrigger": "Trigger skipped",
+    "chooseState": "State chosen"
   }
 }

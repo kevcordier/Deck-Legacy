@@ -59,7 +59,7 @@ export function CardRow({ cardIds }: CardRowProps) {
   return (
     <div
       className={
-        'grid grid-cols-1 gap-2 @xs/main:gap-3 @2xs/main:grid-cols-2 @3xl/main:grid-cols-3 @4xl/main:grid-cols-4 @6xl/main:grid-cols-5'
+        'grid grid-cols-1 gap-2 @xs/main:gap-3 @2xs/main:grid-cols-2 @3xl/main:grid-cols-3 @4xl/main:grid-cols-4 @7xl/main:grid-cols-5'
       }
     >
       {cardIds

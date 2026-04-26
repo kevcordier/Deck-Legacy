@@ -121,7 +121,7 @@ export const jungle: CardDef = {
       tags: [CardTag.BUILDING],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8ac9e087-8d36-49b6-8f02-9d422c10faa1/width=450,quality=90/00004-4001576903.jpeg',
-      glory: 4,
+      glory: { amount: 4 },
       productions: [
         {
           [ResourceType.GOLD]: 1,

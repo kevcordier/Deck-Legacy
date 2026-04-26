@@ -1,12 +1,12 @@
 import type { CardDef } from '@engine/domain/types';
 
-export const northPlains: CardDef = {
+export const townBorder: CardDef = {
   id: 113,
-  name: 'North Plains',
+  name: 'Town Border',
   states: [
     {
       id: 1,
-      name: 'North Plains',
+      name: 'Town Border',
     },
   ],
 };

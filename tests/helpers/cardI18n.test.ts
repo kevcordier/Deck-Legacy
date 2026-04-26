@@ -53,7 +53,6 @@ describe('tCardActionLabel', () => {
     const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
     tCardActionLabel(t, 1, 2, 3);
     expect(t).toHaveBeenCalledWith('labels.1_2_a3', {
-      accumulated: 0,
       ...ICON_PASSTHROUGH,
       ns: 'cards',
     });
@@ -78,7 +77,6 @@ describe('tCardPassiveLabel', () => {
     tCardPassiveLabel(t, 1, 2, 0);
     expect(t).toHaveBeenCalledWith('labels.1_2_p0', {
       ...ICON_PASSTHROUGH,
-      accumulated: 0,
       ns: 'cards',
     });
   });

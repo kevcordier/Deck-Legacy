@@ -6,10 +6,7 @@ export class SetCumulatedStrategy implements CardActionStrategy {
     const instanceId = payload.instanceIds?.[0];
     if (instanceId === undefined || !payload.accumulated) return gameState;
     const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
-    gs.instances[instanceId].cumulated = {
-      ...gs.instances[instanceId].cumulated,
-      ...payload.accumulated,
-    };
+    gs.instances[instanceId].cumulated = payload.accumulated;
     return { ...gs };
   }
 }

@@ -5,14 +5,7 @@ import {
   getEffectiveProductions,
 } from '@engine/application/cardHelpers';
 import { type CardTag, PassiveType, TargetScope } from '@engine/domain/enums';
-import type {
-  CardDef,
-  CardState,
-  CardeSelector,
-  GameState,
-  Having,
-  Sticker,
-} from '@engine/domain/types';
+import type { CardDef, CardState, CardeSelector, GameState, Sticker } from '@engine/domain/types';
 
 const LOCATION_SCOPES = new Set([
   TargetScope.DECK,
@@ -113,7 +106,6 @@ function matchesProductions(
 function matchHaving(id: number, ctx: CardCriteriaContext): boolean {
   const { gameState, defs, stickerDefs, selector } = ctx;
   if (!selector.having) return true;
-  const having = selector.having as Having;
   const baseGlory = getEffectiveGlory(
     getActiveState(gameState.instances[id], defs),
     gameState,
@@ -121,8 +113,8 @@ function matchHaving(id: number, ctx: CardCriteriaContext): boolean {
     gameState.instances[id],
     stickerDefs,
   );
-  if (having.minGlory !== undefined && baseGlory < having.minGlory) return false;
-  if (having.maxGlory !== undefined && baseGlory > having.maxGlory) return false;
+  if (selector.having.minGlory !== undefined && baseGlory < selector.having.minGlory) return false;
+  if (selector.having.maxGlory !== undefined && baseGlory > selector.having.maxGlory) return false;
   return true;
 }
 

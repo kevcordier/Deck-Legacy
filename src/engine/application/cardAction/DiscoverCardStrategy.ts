@@ -37,7 +37,7 @@ export class DiscoverCardStrategy implements CardActionStrategy {
         cloned.permanents.push(instanceId);
         return { ...cloned, discoveryPile: cloned.discoveryPile.filter(id => id !== instanceId) };
       }
-      return { ...cloned, ...discardCards(cloned, [instanceId]) };
+      return discardCards(cloned, [instanceId]);
     }, gs);
   }
 }

@@ -106,7 +106,7 @@ export const distantMountain: CardDef = {
       tags: [CardTag.LAND],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/b4c3bd3b-0202-4f39-8c35-e329d17eb41d/width=450,quality=90/2026-02-05-125447_flux_0.jpeg',
-      glory: 3,
+      glory: { amount: 3 },
       actions: [
         {
           id: '2-4-1',

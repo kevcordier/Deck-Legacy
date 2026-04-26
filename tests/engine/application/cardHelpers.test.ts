@@ -145,7 +145,7 @@ describe('getEffectiveProductions', () => {
   });
 
   it('uses accumulation for passive bonus when no cards selector', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: { wheat: 3 } });
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: 3 });
     const defs: Record<number, CardDef> = {
       1: {
         id: 1,
@@ -161,7 +161,7 @@ describe('getEffectiveProductions', () => {
                 valuePerElement: {
                   amount: 1,
                   resource: ['wood' as never],
-                  accumulation: 'wheat',
+                  accumulation: true,
                 },
               },
             ],
@@ -355,7 +355,7 @@ describe('getEffectiveProductions', () => {
                 valuePerElement: {
                   amount: 1,
                   resource: ['wood' as never],
-                  accumulation: 'wheat',
+                  accumulation: true,
                 },
               },
             ],
@@ -369,88 +369,10 @@ describe('getEffectiveProductions', () => {
     const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
     expect(result.wood).toBeUndefined();
   });
-  it('adds INCREASE_GLORY passive based on card count', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      1: {
-        id: 1,
-        name: 'C',
-        states: [
-          {
-            id: 1,
-            name: 'S',
-            passives: [
-              {
-                id: 'pg',
-                type: PassiveType.INCREASE_GLORY,
-                valuePerElement: {
-                  glory: 3,
-                  cards: { scope: [TargetScope.BOARD] },
-                  amount: 1,
-                },
-              },
-            ],
-          },
-        ],
-      },
-      2: { id: 2, name: 'D', states: [{ id: 1, name: 'S2' }] },
-    };
-    const gs = makeState({ board: [2], instances: { 1: inst, 2: inst2 } });
-    const state = defs[1].states[0];
-    expect(getEffectiveGlory(state, gs, defs, inst)).toBe(3);
-  });
-
-  it('adds INCREASE_GLORY passive based on accumulation', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: { stars: 2 } });
-    const defs: Record<number, CardDef> = {
-      1: {
-        id: 1,
-        name: 'C',
-        states: [
-          {
-            id: 1,
-            name: 'S',
-            passives: [
-              {
-                id: 'pg',
-                type: PassiveType.INCREASE_GLORY,
-                valuePerElement: { glory: 4, accumulation: 'stars', amount: 1 },
-              },
-            ],
-          },
-        ],
-      },
-    };
-    const gs = makeState({ instances: { 1: inst } });
-    const state = defs[1].states[0];
-    expect(getEffectiveGlory(state, gs, defs, inst)).toBe(8);
-  });
-
-  it('skips INCREASE_GLORY passive without valuePerElement.glory', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const state = {
-      id: 1,
-      name: 'S',
-      passives: [{ id: 'pg', type: PassiveType.INCREASE_GLORY, valuePerElement: { amount: 1 } }],
-    };
-    expect(getEffectiveGlory(state, makeState(), {}, inst)).toBe(0);
-  });
-
-  it('skips passives that are not INCREASE_GLORY', () => {
-    const inst = makeInstance({ id: 1 });
-    const state = {
-      id: 1,
-      name: 'S',
-      passives: [{ id: 'sip', type: PassiveType.STAY_IN_PLAY }],
-    };
-    const stickerDefs: Record<number, Sticker> = {};
-    expect(getEffectiveGlory(state, makeState(), {}, inst, stickerDefs)).toBe(0);
-  });
 
   it('treats missing sticker as 0 glory', () => {
     const inst = makeInstance({ id: 1, stateId: 1, stickers: { 1: [999] } });
-    const state = { id: 1, name: 'S', glory: 3 };
+    const state = { id: 1, name: 'S', glory: { amount: 3 } };
     const stickerDefs: Record<number, Sticker> = {};
     expect(getEffectiveGlory(state, makeState(), {}, inst, stickerDefs)).toBe(3);
   });
@@ -726,36 +648,6 @@ describe('getInstancesTriggerEffects', () => {
     expect(result).toHaveLength(1);
     expect(result[0].sourceInstanceId).toBe(1);
     expect(result[0].effectDef).toBe(action);
-  });
-
-  it('adds CHOOSE_STATE trigger for chooseState cards on ON_DISCOVER', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      1: { id: 1, name: 'C', chooseState: true, states: [{ id: 1, name: 'S' }] },
-    };
-    const result = getInstancesTriggerEffects(
-      [inst],
-      defs,
-      makeStickerDefs(),
-      Trigger.ON_DISCOVER,
-      makeState(),
-    );
-    expect(result.some(r => r.effectDef.id === 'choose_state')).toBe(true);
-  });
-
-  it('does not add CHOOSE_STATE for ON_PLAY trigger', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      1: { id: 1, name: 'C', chooseState: true, states: [{ id: 1, name: 'S' }] },
-    };
-    const result = getInstancesTriggerEffects(
-      [inst],
-      defs,
-      makeStickerDefs(),
-      Trigger.ON_PLAY,
-      makeState(),
-    );
-    expect(result.some(r => r.effectDef.id === 'choose_state')).toBe(false);
   });
 
   it('includes board effect triggers matching the trigger type', () => {

@@ -1,19 +1,52 @@
-import { CardTag, ResourceType } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+  Trigger,
+} from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
+import { CardPassives } from '@engine/domain/types/effects';
 
-export const mine: CardDef = {
+export const shrine: CardDef = {
   id: 69,
-  name: 'Mine',
+  name: 'Shrine',
   states: [
     {
       id: 1,
-      name: 'Mine',
-      tags: [CardTag.BUILDING],
-      glory: 4,
-      productions: [
+      name: 'Shrine',
+      tags: [CardTag.LAND],
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f59490b7-0f35-40f7-b90c-31c3fbe0cd14/anim=false,width=450,optimized=true/2023-12-03%20-%2015.10.49.jpeg',
+      glory: { amount: 3 },
+      actions: [
         {
-          [ResourceType.STONE]: 1,
-          [ResourceType.IRON]: 1,
+          id: '21-1-1',
+          trigger: Trigger.END_OF_TURN,
+          optional: true,
+          cost: {
+            discard: {
+              scope: [TargetScope.SELF],
+            },
+          },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.ADD_BOARD_EFFECT,
+              cards: {
+                scope: [TargetScope.BOARD],
+              },
+              effect: {
+                ...CardPassives[PassiveType.STAY_IN_PLAY],
+                cards: {
+                  scope: [TargetScope.SELF],
+                },
+              },
+              pickMin: 0,
+              pickMax: 1,
+            },
+          ],
         },
       ],
       upgrade: [
@@ -21,7 +54,7 @@ export const mine: CardDef = {
           cost: {
             resources: [
               {
-                [ResourceType.WOOD]: 3,
+                [ResourceType.GOLD]: 3,
               },
             ],
           },
@@ -31,13 +64,38 @@ export const mine: CardDef = {
     },
     {
       id: 2,
-      name: 'Deep Mine',
+      name: 'Sanctuary',
       tags: [CardTag.BUILDING],
-      glory: 6,
-      productions: [
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/67985b0d-b178-4ead-a388-25f46add1d9f/anim=false,width=450,optimized=true/8CABABBFA51496A7D1A13B09F48FE371C7B7B561D90AB0B7AE1CDC25AF4168AC.jpeg',
+      glory: { amount: 5 },
+      actions: [
         {
-          [ResourceType.STONE]: 1,
-          [ResourceType.IRON]: 2,
+          id: '21-2-1',
+          trigger: Trigger.END_OF_TURN,
+          optional: true,
+          cost: {
+            discard: {
+              scope: [TargetScope.SELF],
+            },
+          },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.ADD_BOARD_EFFECT,
+              cards: {
+                scope: [TargetScope.BOARD],
+              },
+              effect: {
+                ...CardPassives[PassiveType.STAY_IN_PLAY],
+                cards: {
+                  scope: [TargetScope.SELF],
+                },
+              },
+              pickMin: 0,
+              pickMax: 2,
+            },
+          ],
         },
       ],
       upgrade: [
@@ -45,8 +103,8 @@ export const mine: CardDef = {
           cost: {
             resources: [
               {
-                [ResourceType.GOLD]: 2,
-                [ResourceType.WOOD]: 3,
+                [ResourceType.GOLD]: 3,
+                [ResourceType.STONE]: 2,
               },
             ],
           },
@@ -56,14 +114,38 @@ export const mine: CardDef = {
     },
     {
       id: 3,
-      name: 'Ruby Mine',
+      name: 'Oratory',
       tags: [CardTag.BUILDING],
-      glory: 9,
-      productions: [
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1a6733df-1254-44b5-b304-b49f9813c9e4/anim=false,width=450,optimized=true/00177-1658054072.jpeg',
+      glory: { amount: 9 },
+      actions: [
         {
-          [ResourceType.STONE]: 1,
-          [ResourceType.IRON]: 2,
-          [ResourceType.GOODS]: 1,
+          id: '21-3-1',
+          trigger: Trigger.END_OF_TURN,
+          optional: true,
+          cost: {
+            discard: {
+              scope: [TargetScope.SELF],
+            },
+          },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.ADD_BOARD_EFFECT,
+              cards: {
+                scope: [TargetScope.BOARD],
+              },
+              effect: {
+                ...CardPassives[PassiveType.STAY_IN_PLAY],
+                cards: {
+                  scope: [TargetScope.SELF],
+                },
+              },
+              pickMin: 0,
+              pickMax: 3,
+            },
+          ],
         },
       ],
       upgrade: [
@@ -73,7 +155,6 @@ export const mine: CardDef = {
               {
                 [ResourceType.GOLD]: 2,
                 [ResourceType.WOOD]: 2,
-                [ResourceType.STONE]: 2,
               },
             ],
           },
@@ -83,14 +164,38 @@ export const mine: CardDef = {
     },
     {
       id: 4,
-      name: 'Diamond Mine',
-      glory: 13,
+      name: 'Temple',
       tags: [CardTag.BUILDING],
-      productions: [
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e17ee73b-9b0e-4f2b-aa1e-7e78c4cfa1c9/anim=false,width=450,optimized=true/00087-2899013593.jpeg',
+      glory: { amount: 15 },
+      actions: [
         {
-          [ResourceType.STONE]: 1,
-          [ResourceType.IRON]: 2,
-          [ResourceType.GOODS]: 2,
+          id: '21-4-1',
+          trigger: Trigger.END_OF_TURN,
+          optional: true,
+          cost: {
+            discard: {
+              scope: [TargetScope.SELF],
+            },
+          },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.ADD_BOARD_EFFECT,
+              cards: {
+                scope: [TargetScope.BOARD],
+              },
+              effect: {
+                ...CardPassives[PassiveType.STAY_IN_PLAY],
+                cards: {
+                  scope: [TargetScope.SELF],
+                },
+              },
+              pickMin: 0,
+              pickMax: 4,
+            },
+          ],
         },
       ],
     },

@@ -1,4 +1,5 @@
 import type { GameEventStrategy } from './GameEventStrategy';
+import { getActiveState } from '@engine/application/cardHelpers';
 import { drawCards, endTurn } from '@engine/application/gameStateHelper';
 import type {
   CardDef,
@@ -21,6 +22,18 @@ export class TurnStartedStrategy implements GameEventStrategy {
       },
       {} as Record<string, TriggerEntry>,
     );
+
+    e.turnCards.forEach(instanceId => {
+      const passives = getActiveState(gameState.instances[instanceId], this.cardDefs)?.passives;
+      if (!passives) return;
+      passives.forEach(passive => {
+        gameState.boardEffects[instanceId] = [
+          ...(gameState.boardEffects[instanceId] ?? []),
+          passive,
+        ];
+      });
+    });
+
     const afterDraw = drawCards(
       endTurn({ ...gameState, lastAddedIds: [], turn: e.turn }, this.cardDefs),
       e.turnCards,

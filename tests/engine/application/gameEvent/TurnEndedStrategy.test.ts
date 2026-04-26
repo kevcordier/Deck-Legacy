@@ -16,7 +16,7 @@ describe('TurnEndedStrategy', () => {
       timestamp: 0,
       onTurnEndedEvents: [],
     } as TurnEndedEvent);
-    expect(result.phase).toBe(Phase.END_TURN);
+    expect(result.phase).toBe(Phase.PRETURN);
   });
 
   it('populates triggerPile from onTurnEndedEvents', () => {

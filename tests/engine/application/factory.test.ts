@@ -15,7 +15,7 @@ describe('createInstance', () => {
       stateId: 10,
       stickers: {},
       trackProgress: [],
-      cumulated: {},
+      cumulated: 0,
       usedActionIds: [],
     });
   });

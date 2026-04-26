@@ -25,12 +25,12 @@ export function tCardActionLabel(
   cardId = 0,
   stateId = 0,
   idx: string | number = '0',
-  accumulated?: Record<string, number>,
+  accumulated?: number,
 ): React.ReactNode {
   return renderTextWithIcons(
     t(`labels.${cardId}_${stateId}_a${idx}`, {
       ns: 'cards',
-      accumulated: Object.values(accumulated || {}).reduce((acc, value) => acc + value, 0),
+      accumulated,
       ...ICON_PASSTHROUGH,
     }),
   );
@@ -41,13 +41,22 @@ export function tCardPassiveLabel(
   cardId = 0,
   stateId = 0,
   idx: string | number = '0',
-  accumulated?: Record<string, number>,
+  accumulated?: number,
 ): React.ReactNode {
   return renderTextWithIcons(
     t(`labels.${cardId}_${stateId}_p${idx}`, {
       ns: 'cards',
       ...ICON_PASSTHROUGH,
-      accumulated: Object.values(accumulated || {}).reduce((acc, value) => acc + value, 0),
+      accumulated,
+    }),
+  );
+}
+
+export function tCardGloryLabel(t: TFunction, cardId = 0, stateId = 0): React.ReactNode {
+  return renderTextWithIcons(
+    t(`labels.${cardId}_${stateId}_g0`, {
+      ns: 'cards',
+      ...ICON_PASSTHROUGH,
     }),
   );
 }

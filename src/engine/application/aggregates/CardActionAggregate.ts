@@ -158,7 +158,12 @@ export class CardActionAggregate {
       this.gameState.instances[this.instance.id].usedActionIds.push(this.action.id);
     }
 
-    if (!this.triggerId && !this.action.passive && !this.def.permanent && !this.def.parchmentCard) {
+    if (
+      !this.triggerId &&
+      !this.action.unlimited &&
+      !this.def.permanent &&
+      !this.def.parchmentCard
+    ) {
       this.gameState = discardCards(this.gameState, [this.instance.id]);
     }
 

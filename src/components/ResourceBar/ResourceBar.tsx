@@ -52,8 +52,8 @@ export function ResourceBar() {
           <Divider orientation="vertical" />
           <div className="flex items-center gap-1">
             <div className="relative">
-              <GloryIcon color={IconColors.gold} className="size-7" />
-              <span className="font-display text-primary absolute top-0 left-0 flex size-7 items-center justify-center text-xs font-bold">
+              <GloryIcon color={IconColors.gold} className="size-9" />
+              <span className="font-display text-primary absolute top-0 left-0 flex size-9 items-center justify-center text-xs font-bold">
                 {score}
               </span>
             </div>

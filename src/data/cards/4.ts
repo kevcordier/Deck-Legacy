@@ -36,7 +36,7 @@ export const headquarters: CardDef = {
       tags: [CardTag.BUILDING],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e33f38e6-50a1-45b8-832a-7d1c07d405cb/width=450,quality=90/5M4AR3T0ACAWE2Q7TEEK1ZFK80.jpeg',
-      glory: 3,
+      glory: { amount: 3 },
       actions: [
         {
           id: '4-2-1',
@@ -77,7 +77,7 @@ export const headquarters: CardDef = {
       tags: [CardTag.BUILDING],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/83d38c62-35ff-41e5-917c-df91b3b7c4e0/width=450,quality=90/9BBA545BFEBB64D6E822FBC2DBDBB43070FFC4E76475DAB0A070380A9A229A41.jpeg',
-      glory: 7,
+      glory: { amount: 7 },
       actions: [
         {
           id: '4-3-1',
@@ -119,7 +119,7 @@ export const headquarters: CardDef = {
       tags: [CardTag.BUILDING],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/39e939dc-f7c2-449c-bbd5-2d3e33d5dc5e/width=450,quality=90/00049-2184064133.jpeg',
-      glory: 12,
+      glory: { amount: 12 },
       actions: [
         {
           id: '4-4-1',

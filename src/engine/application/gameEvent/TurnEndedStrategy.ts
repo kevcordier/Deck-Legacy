@@ -12,6 +12,6 @@ export class TurnEndedStrategy implements GameEventStrategy {
       },
       {} as Record<string, TriggerEntry>,
     );
-    return { ...gameState, triggerPile, phase: Phase.END_TURN };
+    return { ...gameState, triggerPile, phase: Phase.PRETURN };
   }
 }

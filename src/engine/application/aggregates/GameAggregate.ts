@@ -10,12 +10,14 @@ import type {
   CardDef,
   CardInstance,
   CardProducedEvent,
+  ChooseStateEvent,
   GameEvent,
   GameStartedEvent,
   GameState,
   ResolvedActionEffect,
   ResolvedCost,
   Resources,
+  RoundEndedEvent,
   RoundStartedEvent,
   SkipTriggerEvent,
   Sticker,
@@ -98,7 +100,7 @@ export class GameAggregate {
     initialDeck: number[],
     stickerStock: Record<string, number>,
     discoveryPile: number[],
-  ): GameStartedEvent {
+  ): GameState {
     const event: GameStartedEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.GAME_STARTED,
@@ -110,7 +112,9 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
-    return event;
+    this.roundStarted();
+    this.turnStarted();
+    return this.gameState;
   }
 
   private shuffle<T>(arr: T[]): T[] {
@@ -123,14 +127,28 @@ export class GameAggregate {
     return a;
   }
 
-  public roundStarted(): GameState {
-    const round = this.gameState.round + 1;
+  public roundEnded(): GameState {
     const newCards: number[] = [];
     const onDiscoverEvents: TriggerEntry[] = [];
-    if (round > 1) {
-      const firstDiscoveredCard = this.gameState.discoveryPile.slice(0, 1)[0];
-      const cardInstance = this.gameState.instances[firstDiscoveredCard];
-      const cardDef = this.cardDefs[cardInstance.cardId];
+    const firstDiscoveredCard = this.gameState.discoveryPile.slice(0, 1)[0];
+    const cardInstance = this.gameState.instances[firstDiscoveredCard];
+    const cardDef = this.cardDefs[cardInstance.cardId];
+
+    onDiscoverEvents.push(
+      ...getInstancesTriggerEffects(
+        [cardInstance],
+        this.cardDefs,
+        this.stickerDefs,
+        Trigger.ON_DISCOVER,
+        this.gameState,
+      ),
+    );
+
+    if (!cardDef.parchmentCard) {
+      newCards.push(firstDiscoveredCard);
+      const secondDiscoveredCard = this.gameState.discoveryPile.slice(1, 2)[0];
+      newCards.push(secondDiscoveredCard);
+      const cardInstance = this.gameState.instances[secondDiscoveredCard];
 
       onDiscoverEvents.push(
         ...getInstancesTriggerEffects(
@@ -141,48 +159,46 @@ export class GameAggregate {
           this.gameState,
         ),
       );
-
-      if (!cardDef.parchmentCard) {
-        newCards.push(firstDiscoveredCard);
-        const secondDiscoveredCard = this.gameState.discoveryPile.slice(1, 2)[0];
-        newCards.push(secondDiscoveredCard);
-        const cardInstance = this.gameState.instances[secondDiscoveredCard];
-
-        onDiscoverEvents.push(
-          ...getInstancesTriggerEffects(
-            [cardInstance],
-            this.cardDefs,
-            this.stickerDefs,
-            Trigger.ON_DISCOVER,
-            this.gameState,
-          ),
-        );
-      }
     }
 
-    const event: RoundStartedEvent = {
+    const event: RoundEndedEvent = {
       id: crypto.randomUUID(),
-      type: GameEventType.ROUND_STARTED,
+      type: GameEventType.ROUND_ENDED,
       timestamp: Date.now(),
-      round,
       newCards,
-      newDrawPile: this.shuffle([
-        ...this.gameState.drawPile,
-        ...this.gameState.discardPile,
-        ...this.gameState.board,
-        ...newCards,
-      ]),
       onDiscoverEvents,
     };
+
     this.apply(event);
     this.events.push(event);
     this.autoTrigger();
     return this.gameState;
   }
 
+  public roundStarted(): GameState {
+    const round = this.gameState.round + 1;
+
+    const event: RoundStartedEvent = {
+      id: crypto.randomUUID(),
+      type: GameEventType.ROUND_STARTED,
+      timestamp: Date.now(),
+      round,
+      newDrawPile: this.shuffle([
+        ...this.gameState.drawPile,
+        ...this.gameState.discardPile,
+        ...this.gameState.board,
+      ]),
+    };
+    this.apply(event);
+    this.events.push(event);
+    this.autoTrigger();
+    this.turnStarted();
+    return this.gameState;
+  }
+
   public turnStarted(): GameState {
     if (this.gameState.drawPile.length === 0) {
-      return this.roundStarted();
+      return this.roundEnded();
     }
 
     const turn = this.gameState.turn + 1;
@@ -291,6 +307,30 @@ export class GameAggregate {
     return this.gameState;
   }
 
+  public chooseState(cardInstanceId: number, stateId: number): GameState {
+    const event: ChooseStateEvent = {
+      id: crypto.randomUUID(),
+      type: GameEventType.CHOOSE_STATE,
+      timestamp: Date.now(),
+      cardInstanceId,
+      stateId,
+    };
+    this.apply(event);
+
+    const oldEvent = this.events.findIndex(
+      e =>
+        e.type === GameEventType.CHOOSE_STATE &&
+        (e as ChooseStateEvent).cardInstanceId === cardInstanceId,
+    );
+    if (oldEvent >= 0) {
+      this.events[oldEvent] = event;
+    } else {
+      this.events.push(event);
+    }
+
+    return this.gameState;
+  }
+
   public cardAction(action: CardAction, instanceId: number, triggerId?: string): GameState {
     this.currentCardAction = new CardActionAggregate(
       this.cardDefs,
@@ -376,7 +416,7 @@ export class GameAggregate {
     this.apply(event);
     this.events.push(event);
     if (
-      this.gameState.phase === Phase.END_TURN &&
+      this.gameState.phase === Phase.PRETURN &&
       Object.keys(this.gameState.triggerPile).length === 0
     ) {
       return this.turnStarted();

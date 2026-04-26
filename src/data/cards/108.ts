@@ -1,12 +1,12 @@
 import type { CardDef } from '@engine/domain/types';
 
-export const pineForest: CardDef = {
+export const largeTemple: CardDef = {
   id: 108,
-  name: 'Pine Forest',
+  name: 'Large Temple',
   states: [
     {
       id: 1,
-      name: 'Pine Forest',
+      name: 'Large Temple',
     },
   ],
 };

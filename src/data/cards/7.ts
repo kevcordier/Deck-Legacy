@@ -40,7 +40,7 @@ export const river: CardDef = {
           [ResourceType.GOLD]: 1,
         },
       ],
-      glory: 2,
+      glory: { amount: 2 },
       upgrade: [
         {
           cost: {
@@ -65,7 +65,7 @@ export const river: CardDef = {
           [ResourceType.GOLD]: 1,
         },
       ],
-      glory: 4,
+      glory: { amount: 4 },
       upgrade: [
         {
           cost: {
@@ -90,7 +90,7 @@ export const river: CardDef = {
           [ResourceType.GOLD]: 1,
         },
       ],
-      glory: 4,
+      glory: { amount: 4 },
       actions: [
         {
           id: '7-4-1',

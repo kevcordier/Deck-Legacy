@@ -52,7 +52,7 @@ describe('GameEventContext', () => {
       onDiscoverEvents: [],
     } as RoundStartedEvent);
     expect(result.round).toBe(1);
-    expect(result.phase).toBe(Phase.START_ROUND);
+    expect(result.phase).toBe(Phase.PRETURN);
   });
 
   it('dispatches TURN_STARTED', () => {
@@ -145,6 +145,6 @@ describe('GameEventContext', () => {
       timestamp: 0,
       onTurnEndedEvents: [],
     } as TurnEndedEvent);
-    expect(result.phase).toBe(Phase.END_TURN);
+    expect(result.phase).toBe(Phase.PRETURN);
   });
 });

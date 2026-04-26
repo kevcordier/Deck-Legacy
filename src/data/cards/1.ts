@@ -109,7 +109,7 @@ export const wildGrass: CardDef = {
       tags: [CardTag.BUILDING],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/69f4028b-f52a-4243-afcc-55a038210221/width=450,quality=90/00040-1126433715.jpeg',
-      glory: 3,
+      glory: { amount: 3 },
       productions: [
         {
           [ResourceType.GOLD]: 2,

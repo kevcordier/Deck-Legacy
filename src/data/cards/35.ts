@@ -58,46 +58,20 @@ export const thunderstorm: CardDef = {
       tags: [CardTag.EVENT],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/71abe2bf-814f-4e24-9928-460126c484cb/anim=false,width=450,optimized=true/00377-1961154424.jpeg',
+      passives: [
+        {
+          ...CardPassives[PassiveType.INCREASE_PRODUCTION],
+          cards: {
+            scope: [TargetScope.BOARD],
+            tags: [CardTag.LAND],
+          },
+          resources: {
+            gold: 2,
+          },
+        },
+        CardPassives[PassiveType.CANT_ADVANCE],
+      ],
       actions: [
-        {
-          id: '35-2-1',
-          passive: true,
-          trigger: Trigger.ON_PLAY,
-          actionEffects: [
-            {
-              id: 1,
-              type: ActionEffectType.ADD_BOARD_EFFECT,
-              cards: {
-                scope: [TargetScope.SELF],
-              },
-              effect: {
-                ...CardPassives[PassiveType.INCREASE_PRODUCTION],
-                cards: {
-                  scope: [TargetScope.BOARD],
-                  tags: [CardTag.LAND],
-                },
-                resources: {
-                  gold: 2,
-                },
-              },
-            },
-          ],
-        },
-        {
-          id: '35-2-2',
-          passive: true,
-          trigger: Trigger.ON_PLAY,
-          actionEffects: [
-            {
-              id: 1,
-              type: ActionEffectType.ADD_BOARD_EFFECT,
-              cards: {
-                scope: [TargetScope.SELF],
-              },
-              effect: CardPassives[PassiveType.CANT_ADVANCE],
-            },
-          ],
-        },
         {
           id: '35-2-3',
           trigger: Trigger.END_OF_TURN,

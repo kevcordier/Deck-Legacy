@@ -1,7 +1,7 @@
 export enum Phase {
   PREGAME = 'pregame',
-  START_ROUND = 'startRound',
+  PREROUND = 'preRound',
   PLAYING = 'playing',
-  END_TURN = 'endTurn',
+  PRETURN = 'preTurn',
   GAME_OVER = 'gameOver',
 }

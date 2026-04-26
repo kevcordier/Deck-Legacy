@@ -80,7 +80,7 @@ const villageDef: CardDef = {
       name: 'Cité',
       tags: [CardTag.BUILDING],
       productions: [{ gold: 3 }],
-      glory: 2,
+      glory: { amount: 2 },
     },
   ],
 };

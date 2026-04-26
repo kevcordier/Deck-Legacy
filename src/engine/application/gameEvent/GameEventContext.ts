@@ -8,6 +8,8 @@ import { SkipTriggerStrategy } from './SkipTriggerStrategy';
 import { TurnEndedStrategy } from './TurnEndedStrategy';
 import { TurnStartedStrategy } from './TurnStartedStrategy';
 import { UpgradeCardEventStrategy } from './UpgradeCardEventStrategy';
+import { ChooseStateEventStrategy } from '@engine/application/gameEvent/ChooseStateEventStrategy';
+import { RoundEndedStrategy } from '@engine/application/gameEvent/RoundEndedStrategy';
 import { GameEventType } from '@engine/domain/enums';
 import type { CardDef, GameEvent, GameState } from '@engine/domain/types';
 
@@ -18,13 +20,15 @@ export class GameEventContext {
     this.strategies = {
       [GameEventType.GAME_STARTED]: new GameStartedStrategy(),
       [GameEventType.ROUND_STARTED]: new RoundStartedStrategy(),
+      [GameEventType.ROUND_ENDED]: new RoundEndedStrategy(),
       [GameEventType.TURN_STARTED]: new TurnStartedStrategy(cardDefs),
       [GameEventType.CARD_PRODUCED]: new CardProducedStrategy(),
-      [GameEventType.ADVANCE]: new AdvanceStrategy(),
+      [GameEventType.ADVANCE]: new AdvanceStrategy(cardDefs),
       [GameEventType.UPGRADE_CARD]: new UpgradeCardEventStrategy(),
       [GameEventType.CARD_ACTION]: new CardActionEventStrategy(),
       [GameEventType.SKIP_TRIGGER]: new SkipTriggerStrategy(),
       [GameEventType.TURN_ENDED]: new TurnEndedStrategy(),
+      [GameEventType.CHOOSE_STATE]: new ChooseStateEventStrategy(),
     };
   }
 

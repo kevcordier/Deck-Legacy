@@ -1,6 +1,6 @@
 import type { CardDef } from '@engine/domain/types';
 
-export const horse2: CardDef = {
+export const horse: CardDef = {
   id: 97,
   name: 'Horse',
   states: [

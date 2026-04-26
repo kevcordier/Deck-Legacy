@@ -456,12 +456,12 @@ describe('resolveActionEffect – valuePerElement', () => {
   });
 
   it('resolves resource from accumulation', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: { stars: 3 } });
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: 3 });
     const gs = makeState({ instances: { 1: inst } });
     const effect = {
       id: 1,
       type: ActionEffectType.ADD_RESOURCES,
-      valuePerElement: { amount: 1, resource: ['wood' as never], accumulation: 'stars' },
+      valuePerElement: { amount: 1, resource: ['wood' as never], accumulation: true },
     };
     const [resolved] = resolveActionEffect(effect, 1, gs, defs, stickerDefs);
     expect(resolved.resources).toEqual({ wood: 3 });
@@ -543,7 +543,7 @@ describe('resolveActionEffect – valuePerElement', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ instances: { 1: inst } });
     const result = countValuePerElement(
-      { amount: 1, accumulation: 'stars' },
+      { amount: 1, accumulation: true },
       gs,
       1,
       defs,
@@ -565,9 +565,9 @@ describe('resolveActionEffect – accumulated', () => {
     const effect = {
       id: 1,
       type: ActionEffectType.ADD_CUMULATED,
-      accumulated: { glory: 1 },
+      accumulated: 1,
     };
     const [resolved] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
-    expect(resolved.accumulated).toEqual({ glory: 1 });
+    expect(resolved.accumulated).toEqual(1);
   });
 });

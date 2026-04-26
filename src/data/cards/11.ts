@@ -48,7 +48,7 @@ export const hill: CardDef = {
           [ResourceType.GOLD]: 1,
         },
       ],
-      glory: 1,
+      glory: { amount: 1 },
       actions: [
         {
           id: '11-2-1',
@@ -95,7 +95,7 @@ export const hill: CardDef = {
           [ResourceType.GOLD]: 1,
         },
       ],
-      glory: 3,
+      glory: { amount: 3 },
       actions: [
         {
           id: '11-3-1',
@@ -143,7 +143,7 @@ export const hill: CardDef = {
           [ResourceType.GOLD]: 1,
         },
       ],
-      glory: 7,
+      glory: { amount: 7 },
       passives: [
         {
           id: 'increase_production',

@@ -12,7 +12,7 @@ describe('AddCumulatedStrategy', () => {
       id: 'x',
       type: ActionEffectType.ADD_CUMULATED,
       sourceInstanceId: 1,
-      accumulated: { glory: 1 },
+      accumulated: 1,
     });
     expect(result).toBe(gs);
   });
@@ -30,28 +30,28 @@ describe('AddCumulatedStrategy', () => {
   });
 
   it('adds to existing cumulated value', () => {
-    const inst = makeInstance({ id: 1, cumulated: { glory: 2 } });
+    const inst = makeInstance({ id: 1, cumulated: 2 });
     const gs = makeState({ instances: { 1: inst } });
     const result = strategy.apply(gs, {
       id: 'x',
       type: ActionEffectType.ADD_CUMULATED,
       sourceInstanceId: 1,
       instanceIds: [1],
-      accumulated: { glory: 3 },
+      accumulated: 3,
     });
-    expect(result.instances[1].cumulated.glory).toBe(5);
+    expect(result.instances[1].cumulated).toBe(5);
   });
 
   it('initializes key from zero when not present', () => {
-    const inst = makeInstance({ id: 1, cumulated: {} });
+    const inst = makeInstance({ id: 1, cumulated: 0 });
     const gs = makeState({ instances: { 1: inst } });
     const result = strategy.apply(gs, {
       id: 'x',
       type: ActionEffectType.ADD_CUMULATED,
       sourceInstanceId: 1,
       instanceIds: [1],
-      accumulated: { stars: 4 },
+      accumulated: 4,
     });
-    expect(result.instances[1].cumulated.stars).toBe(4);
+    expect(result.instances[1].cumulated).toBe(4);
   });
 });

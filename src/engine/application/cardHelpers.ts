@@ -6,7 +6,7 @@ import {
   PassiveType,
   type ResourceType,
   TargetScope,
-  Trigger,
+  type Trigger,
 } from '@engine/domain/enums';
 import type {
   ActionEffect,
@@ -154,7 +154,7 @@ function calculePassiveProductionBonus(
       if (sel) {
         count = cardSelector(sel, instance.id, gameState, defs, stickerDefs).length;
       } else if (accumulation) {
-        count = instance.cumulated?.[accumulation] ?? 0;
+        count = instance.cumulated ?? 0;
       }
 
       if (count > 0) {
@@ -212,42 +212,36 @@ export function getEffectiveGlory(
   gameState: GameState,
   defs: Record<number, CardDef>,
   instance: CardInstance,
-  stickers: Record<number, Sticker> = {},
+  stickerDefs: Record<number, Sticker> = {},
 ): number {
-  const baseGlory = activeState.glory ?? 0;
+  if (!activeState.glory) return 0;
+  if (
+    activeState.glory.condition &&
+    !evaluateCondition(activeState.glory.condition, gameState, instance.id, defs, stickerDefs)
+  ) {
+    return 0;
+  }
+
+  const baseGlory = activeState.glory.amount ?? 0;
   const stickerGlory = (instance.stickers[instance.stateId] ?? []).reduce(
-    (acc, stickerId) => acc + (stickers[stickerId]?.glory ?? 0),
+    (acc, stickerId) => acc + (stickerDefs[stickerId]?.glory ?? 0),
     0,
   );
-  const accumulatedGlory = instance.cumulated?.['glory'] ?? 0;
 
-  const passiveGlory = (activeState.passives ?? []).reduce((acc, passive) => {
-    if (passive.type !== PassiveType.INCREASE_GLORY) return acc;
+  let passiveGlory = 0;
 
-    if (
-      passive.condition &&
-      !evaluateCondition(passive.condition, gameState, instance.id, defs, stickers)
-    ) {
-      return acc;
-    }
-
-    if (passive.glory) return acc + passive.glory;
-
-    if (!passive.valuePerElement?.glory) return acc;
-
-    const { glory } = passive.valuePerElement;
+  if (activeState.glory.valuePerElement) {
     const count = countValuePerElement(
-      passive.valuePerElement,
+      activeState.glory.valuePerElement,
       gameState,
       instance.id,
       defs,
-      stickers,
+      stickerDefs,
     );
+    passiveGlory = (activeState.glory.valuePerElement.amount ?? 0) * count;
+  }
 
-    return acc + glory * count;
-  }, 0);
-
-  return baseGlory + stickerGlory + accumulatedGlory + passiveGlory;
+  return baseGlory + stickerGlory + passiveGlory;
 }
 
 export function tagClass(tag: string, isEnemy: boolean): string {
@@ -351,23 +345,7 @@ export function getInstancesTriggerEffects(
 ): TriggerEntry[] {
   const effects = instances.reduce<TriggerEntry[]>((acc, instance) => {
     const state = getActiveState(instance, defs);
-    const cardDef = defs[instance.cardId];
     const effects = state.actions?.filter(ce => ce.trigger === effect) ?? [];
-    if (effect === Trigger.ON_DISCOVER && cardDef.chooseState) {
-      effects.push({
-        id: 'choose_state',
-        actionEffects: [
-          {
-            id: 0,
-            type: ActionEffectType.CHOOSE_STATE,
-            cards: { scope: [TargetScope.SELF] },
-            states: [1, 2],
-          },
-        ],
-        trigger: Trigger.ON_DISCOVER,
-        optional: false,
-      });
-    }
 
     return [...acc, ...effects.map(effectDef => ({ effectDef, sourceInstanceId: instance.id }))];
   }, [] as TriggerEntry[]);

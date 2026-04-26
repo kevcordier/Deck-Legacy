@@ -72,7 +72,7 @@ const PREROUND_STATE: GameState = {
   resources: { gold: 8, wood: 4, stone: 2 },
   round: 2,
   turn: 0,
-  phase: Phase.START_ROUND,
+  phase: Phase.PREROUND,
 };
 
 // Abundant resources for testing expensive actions

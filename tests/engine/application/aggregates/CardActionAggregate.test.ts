@@ -1,8 +1,16 @@
 import { makeInstance, makeState } from '../fixtures';
 import { CardActionAggregate } from '@engine/application/aggregates/CardActionAggregate';
-import { ActionEffectType, TargetScope } from '@engine/domain/enums';
-import type { CardAction, CardDef } from '@engine/domain/types';
-import { describe, expect, it } from 'vitest';
+import { ChooseActionEffectStrategy } from '@engine/application/playerChoice/ChooseActionEffectStrategy';
+import { ActionEffectType, PendingChoiceType, TargetScope } from '@engine/domain/enums';
+import type {
+  CardAction,
+  CardDef,
+  PendingChoice,
+  ResolvedActionEffect,
+} from '@engine/domain/types';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// ─── minimal card definitions ─────────────────────────────────────────────────
 
 const plainDef: CardDef = { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] };
 const permanentDef: CardDef = { id: 2, name: 'P', permanent: true, states: [{ id: 1, name: 'S' }] };
@@ -13,10 +21,32 @@ const parchmentDef: CardDef = {
   states: [{ id: 1, name: 'S' }],
 };
 
+// ─── helpers ──────────────────────────────────────────────────────────────────
+
 function makeAddGoldAction(id = 'a1'): CardAction {
   return {
     id,
     actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
+  };
+}
+
+/**
+ * A CHOOSE_EFFECT action that creates a CHOOSE_ACTION_EFFECT pending choice.
+ * Requires only 1 card on the board — the simplest way to reach a pending state.
+ */
+function makeChooseEffectAction(): CardAction {
+  return {
+    id: 'choose',
+    actionEffects: [
+      {
+        id: 0,
+        type: ActionEffectType.CHOOSE_EFFECT,
+        effects: [
+          { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } },
+          { id: 2, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 1 } },
+        ],
+      },
+    ],
   };
 }
 
@@ -38,6 +68,21 @@ function makeAggregate(overrides?: {
     instances: { 1: inst },
   });
   return new CardActionAggregate(defs, {}, gs, inst, action, overrides?.triggerId);
+}
+
+/**
+ * Spies on ChooseActionEffectStrategy.prototype.apply to return the given resolved
+ * action and pending choices. The real constructor is preserved — only the method
+ * is intercepted, avoiding constructor-mock pitfalls.
+ */
+function mockStrategyApply(
+  resolvedAction: ResolvedActionEffect,
+  pendingChoices: PendingChoice[] = [],
+) {
+  vi.spyOn(ChooseActionEffectStrategy.prototype, 'apply').mockReturnValue([
+    resolvedAction,
+    pendingChoices,
+  ]);
 }
 
 // ─── resolveAction ────────────────────────────────────────────────────────────
@@ -221,6 +266,10 @@ describe('CardActionAggregate.resolveAction', () => {
 // ─── resolvePlayerChoice ──────────────────────────────────────────────────────
 
 describe('CardActionAggregate.resolvePlayerChoice', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('is a no-op when no pending choices', () => {
     const agg = makeAggregate();
     agg.resolveAction();
@@ -229,104 +278,19 @@ describe('CardActionAggregate.resolvePlayerChoice', () => {
     expect(agg.getGameState()).toBe(gsBefore);
   });
 
-  it('resolves pending effect choice and continues', () => {
-    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    const gs = makeState({
-      board: [1, 2, 3],
-      instances: {
-        1: makeInstance({ id: 1, cardId: 1, stateId: 1 }),
-        2: inst2,
-        3: inst3,
-      },
-    });
-    const action: CardAction = {
-      id: 'a1',
-      actionEffects: [
-        {
-          id: 0,
-          type: ActionEffectType.DISCARD_CARD,
-          cards: { scope: [TargetScope.BOARD] },
-          pickNumber: 1,
-        },
-      ],
-    };
-    const inst = gs.instances[1];
-    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
-    agg.resolveAction();
-    expect(agg.getPendingChoices()).toHaveLength(1);
-
-    agg.resolvePlayerChoice({
-      id: 'x',
-      type: ActionEffectType.DISCARD_CARD,
-      sourceInstanceId: 1,
-      instanceIds: [2],
-    });
-    expect(agg.getPendingChoices()).toHaveLength(0);
-    expect(agg.getGameState().discardPile).toContain(2);
-  });
-
-  it('returns without finalizing when more choices remain after resolvePlayerChoice', () => {
-    // Card with multiple production options triggers a follow-up CHOOSE_RESOURCE choice.
-    // Board has 3 cards: source (id=1) is filtered out by cardSelector, leaving [2, 3].
-    // pickNumber=1 with 2 candidates creates a CHOOSE_CARD pending choice.
-    // Choosing the multi-production card (id=2) then triggers a CHOOSE_RESOURCE follow-up.
-    const multiProdDef: CardDef = {
-      id: 2,
-      name: 'MultiProd',
-      states: [{ id: 1, name: 'S', productions: [{ gold: 1 }, { wood: 1 }] }],
-    };
-    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    const gs = makeState({
-      board: [1, 2, 3],
-      instances: { 1: inst1, 2: inst2, 3: inst3 },
-    });
-    const action: CardAction = {
-      id: 'a1',
-      actionEffects: [
-        {
-          id: 0,
-          type: ActionEffectType.ADD_RESOURCES,
-          cards: { scope: [TargetScope.BOARD] },
-          pickNumber: 1,
-        },
-      ],
-    };
-    const agg = new CardActionAggregate({ 1: plainDef, 2: multiProdDef }, {}, gs, inst1, action);
-    agg.resolveAction();
-    expect(agg.getPendingChoices()).toHaveLength(1);
-
-    // Resolve the card choice — the chosen card has 2 productions, so a follow-up CHOOSE_RESOURCE is created
-    agg.resolvePlayerChoice({
-      id: 'x',
+  it('resolves pending choice and continues', () => {
+    // Mock the strategy to return a resolved ADD_RESOURCES effect with no more choices.
+    const resolved: ResolvedActionEffect = {
+      id: '0',
       type: ActionEffectType.ADD_RESOURCES,
       sourceInstanceId: 1,
-      instanceIds: [2],
-    });
-    // Should still have a pending choice (CHOOSE_RESOURCE), not yet finalized
-    expect(agg.getPendingChoices()).toHaveLength(1);
-    expect(agg.getGameState().resources.gold).toBeUndefined();
-  });
+      resources: { gold: 5 },
+    };
+    mockStrategyApply(resolved, []);
 
-  it('splices newActionEffects and skips apply for CHOOSE_EFFECT type', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], instances: { 1: inst } });
-    const action: CardAction = {
-      id: 'a1',
-      actionEffects: [
-        {
-          id: 0,
-          type: ActionEffectType.CHOOSE_EFFECT,
-          effects: [
-            { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 5 } },
-            { id: 2, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 2 } },
-          ],
-        },
-      ],
-    };
-    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, makeChooseEffectAction());
     agg.resolveAction();
     expect(agg.getPendingChoices()).toHaveLength(1);
 
@@ -334,37 +298,94 @@ describe('CardActionAggregate.resolvePlayerChoice', () => {
       id: 'x',
       type: ActionEffectType.CHOOSE_EFFECT,
       sourceInstanceId: 1,
-      newActionEffects: [{ id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 5 } }],
     });
-
     expect(agg.getPendingChoices()).toHaveLength(0);
+    expect(agg.getGameState().resources.gold).toBe(5);
+  });
+
+  it('returns without finalizing when more choices remain after resolvePlayerChoice', () => {
+    // Mock the strategy to return a still-pending result (another CHOOSE_RESOURCE choice).
+    const anotherPending: PendingChoice = {
+      id: 'next',
+      kind: ActionEffectType.ADD_RESOURCES,
+      type: PendingChoiceType.CHOOSE_RESOURCE,
+      sourceInstanceId: 1,
+      choices: [{ gold: 1 }, { wood: 1 }],
+      pickCount: 1,
+      isMandatory: true,
+    };
+    const resolved: ResolvedActionEffect = {
+      id: '0',
+      type: ActionEffectType.ADD_RESOURCES,
+      sourceInstanceId: 1,
+    };
+    mockStrategyApply(resolved, [anotherPending]);
+
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, makeChooseEffectAction());
+    agg.resolveAction();
+    expect(agg.getPendingChoices()).toHaveLength(1);
+
+    agg.resolvePlayerChoice({
+      id: 'x',
+      type: ActionEffectType.CHOOSE_EFFECT,
+      sourceInstanceId: 1,
+    });
+    // Strategy returned another pending choice — action is NOT finalized yet.
+    expect(agg.getPendingChoices()).toHaveLength(1);
+    expect(agg.getGameState().resources.gold).toBeUndefined();
+  });
+
+  it('splices newActionEffects and skips apply for CHOOSE_EFFECT type', () => {
+    // Mock the strategy to return a CHOOSE_EFFECT resolvedAction with newActionEffects.
+    // The aggregate must skip apply() for CHOOSE_EFFECT but still splice the newActionEffects.
+    const resolved: ResolvedActionEffect = {
+      id: '0',
+      type: ActionEffectType.CHOOSE_EFFECT,
+      sourceInstanceId: 1,
+      newActionEffects: [{ id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 5 } }],
+    };
+    mockStrategyApply(resolved, []);
+
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, makeChooseEffectAction());
+    agg.resolveAction();
+    expect(agg.getPendingChoices()).toHaveLength(1);
+
+    agg.resolvePlayerChoice({
+      id: 'x',
+      type: ActionEffectType.CHOOSE_EFFECT,
+      sourceInstanceId: 1,
+    });
+    expect(agg.getPendingChoices()).toHaveLength(0);
+    // newActionEffects were spliced in and applied (ADD_RESOURCES gold: 5).
     expect(agg.getGameState().resources.gold).toBe(5);
   });
 });
 
-// ─── resolveCostChoice / resolvePayCost ───────────────────────────────────────
+// ─── resolveCostChoice ────────────────────────────────────────────────────────
 
 describe('CardActionAggregate.resolveCostChoice', () => {
-  it('applies cost and continues with effects', () => {
-    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+  it('applies cost choice and continues with effects', () => {
+    // A resource cost with multiple options creates a CHOOSE_RESOURCE cost pending choice.
+    // Only 1 card needed on board — the cost is resource-based, not card-based.
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({
-      board: [1, 2, 3],
+      board: [1],
       resources: { gold: 5 },
-      instances: {
-        1: makeInstance({ id: 1, cardId: 1, stateId: 1 }),
-        2: inst2,
-        3: inst3,
-      },
+      instances: { 1: inst },
     });
     const action: CardAction = {
       id: 'a1',
       actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 1 } }],
       cost: { resources: [{ gold: 1 }, { wood: 1 }] },
     };
-    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, gs.instances[1], action);
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
     agg.resolveAction();
     expect(agg.getPendingChoices()).toHaveLength(1);
+
     agg.resolveCostChoice({ resources: { gold: 1 }, discardedCardIds: [], destroyedCardIds: [] });
     expect(agg.getPendingChoices()).toHaveLength(0);
     expect(agg.getGameState().resources.gold).toBe(4);

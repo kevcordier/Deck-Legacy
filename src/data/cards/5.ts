@@ -51,7 +51,7 @@ export const trader: CardDef = {
       tags: [CardTag.BUILDING],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/90745e0d-7ca2-417d-9453-579e41b10885/anim=false,width=450,optimized=true/00006-3168783046.jpeg',
-      glory: 1,
+      glory: { amount: 1 },
       actions: [
         {
           id: '5-2-1',
@@ -99,7 +99,7 @@ export const trader: CardDef = {
       tags: [CardTag.BUILDING],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7cc8814f-ba25-47ea-8066-9457ef651d28/anim=false,width=450,optimized=true/85KPN5KPHVH1N8RAJ9F8KPNTJ0.jpeg',
-      glory: 3,
+      glory: { amount: 3 },
       actions: [
         {
           id: '5-3-1',
@@ -150,7 +150,7 @@ export const trader: CardDef = {
       tags: [CardTag.EVENT],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e6224f49-a89d-4180-8ac3-2264855ced51/width=450,quality=90/00013-2617315028.jpeg',
-      glory: 4,
+      glory: { amount: 4 },
       productions: [
         {
           [ResourceType.GOLD]: 1,

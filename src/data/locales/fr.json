@@ -29,7 +29,8 @@
   "roundpreview": {
     "title": "Manche {{round}}",
     "subtitle": "Voici les nouvelles cartes découvertes pour cette manche.",
-    "start": "▶ Commencer la manche"
+    "start": "▶ Commencer la manche",
+    "switchState": "Changer de côté"
   },
   "endturn": {
     "title": "Tour {{turn}}",
@@ -156,6 +157,7 @@
     "advance_other": "Avance — {{count}} cartes",
     "upgradeCard": "{{card}} améliorée",
     "cardAction": "Action de {{card}}",
-    "skipTrigger": "Déclencheur ignoré"
+    "skipTrigger": "Déclencheur ignoré",
+    "chooseState": "État choisi"
   }
 }

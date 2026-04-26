@@ -140,15 +140,13 @@ export function GameProvider({
 
     const agg = makeAggregate(gameState, defs, stickerDefs);
     aggRef.current = agg;
-    aggRef.current.gameStarted(
+    const newState = aggRef.current.gameStarted(
       allInstances,
       initialDeck,
       loadInitialStickerStock() as Record<string, number>,
       discoveryPile,
     );
 
-    aggRef.current.roundStarted();
-    const newState = aggRef.current.turnStarted();
     sync(newState);
   };
 
@@ -169,6 +167,15 @@ export function GameProvider({
   };
 
   // ── Card actions ──────────────────────────────────────────────────────────
+
+  const chooseState = (instanceId: number, stateId: number) => {
+    const gs = aggRef.current.getGameState();
+    const inst = gs.instances[instanceId];
+    if (!inst || cardIsBlocked(instanceId, gs)) return;
+
+    const newState = aggRef.current.chooseState(instanceId, stateId);
+    sync(newState);
+  };
 
   const triggerProduction = (instanceId: number, resourcesGained: Record<string, number>) => {
     sync(aggRef.current.cardProduced(instanceId, resourcesGained));
@@ -326,7 +333,7 @@ export function GameProvider({
           aggRef.current.cardAction(
             {
               id: 'cheat_draw',
-              passive: true,
+              unlimited: true,
               actionEffects: [
                 {
                   id: 9999,
@@ -345,7 +352,7 @@ export function GameProvider({
           aggRef.current.cardAction(
             {
               id: 'cheat_discard',
-              passive: true,
+              unlimited: true,
               actionEffects: [
                 {
                   id: 9999,
@@ -364,7 +371,7 @@ export function GameProvider({
           aggRef.current.cardAction(
             {
               id: 'cheat_destroy',
-              passive: true,
+              unlimited: true,
               actionEffects: [
                 {
                   id: 9999,
@@ -383,7 +390,7 @@ export function GameProvider({
           aggRef.current.cardAction(
             {
               id: 'cheat_discover',
-              passive: true,
+              unlimited: true,
               actionEffects: [
                 {
                   id: 9999,
@@ -398,31 +405,14 @@ export function GameProvider({
         );
       },
       upgradeCard: (instanceId: number, stateId: number) => {
-        sync(
-          aggRef.current.cardAction(
-            {
-              id: 'cheat_set_state',
-              passive: true,
-              actionEffects: [
-                {
-                  id: 9999,
-                  type: ActionEffectType.UPGRADE_CARD,
-                  cards: { ids: [instanceId] },
-                  pickNumber: 1,
-                  states: [stateId],
-                },
-              ],
-            },
-            1,
-          ),
-        );
+        sync(aggRef.current.chooseState(instanceId, stateId));
       },
       addSticker: (instanceId: number, stickerId: number) => {
         sync(
           aggRef.current.cardAction(
             {
               id: 'cheat_add_sticker',
-              passive: true,
+              unlimited: true,
               actionEffects: [
                 {
                   id: 9999,
@@ -455,6 +445,7 @@ export function GameProvider({
         startGame,
         startRound,
         startTurn,
+        chooseState,
         resolveProduction,
         resolveAction,
         resolveUpgrade,

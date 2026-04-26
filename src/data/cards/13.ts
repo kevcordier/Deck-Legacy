@@ -31,7 +31,7 @@ export const swamp: CardDef = {
       tags: [CardTag.LAND],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e93ceb2d-4c04-4289-b349-ba2c4d6b7a2d/anim=false,width=450,optimized=true/00006-901614128-before-highres-fix.jpeg',
-      glory: 1,
+      glory: { amount: 1 },
       upgrade: [
         {
           cost: {
@@ -52,7 +52,7 @@ export const swamp: CardDef = {
       tags: [CardTag.LAND],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/febbccd3-c1bb-4e50-8bb4-45b20c747fd2/anim=false,width=450,optimized=true/00028-1054968466.jpeg',
-      glory: 3,
+      glory: { amount: 3 },
       productions: [
         {
           [ResourceType.GOLD]: 1,
@@ -78,7 +78,7 @@ export const swamp: CardDef = {
       tags: [CardTag.LAND],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/b59819ee-e525-427c-af1f-3eb2cca90b37/anim=false,width=450,optimized=true/00156-573721298.jpeg',
-      glory: 4,
+      glory: { amount: 4 },
       productions: [
         {
           [ResourceType.GOODS]: 2,

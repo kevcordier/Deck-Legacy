@@ -52,7 +52,7 @@ export const fieldWorker2: CardDef = {
       tags: [CardTag.BUILDING],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/96ee65fa-2771-4215-9a7c-5c7cacfac93d/original=true,quality=90/00013-3241185053.jpeg',
-      glory: 1,
+      glory: { amount: 1 },
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
         {
