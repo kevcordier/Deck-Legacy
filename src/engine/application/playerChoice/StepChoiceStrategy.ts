@@ -3,7 +3,7 @@ import type { PlayerChoiceStrategy } from '@engine/application/playerChoice/Play
 import type { CardDef, GameState, PendingChoice, ResolvedActionEffect } from '@engine/domain/types';
 
 export class StepChoiceStrategy implements PlayerChoiceStrategy {
-  constructor(private cardDefs: Record<number, CardDef>) {}
+  constructor(private readonly cardDefs: Record<number, CardDef>) {}
 
   apply(
     choice: ResolvedActionEffect,

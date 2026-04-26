@@ -13,8 +13,8 @@ import type {
 
 export class CardChoiceStrategy implements PlayerChoiceStrategy {
   constructor(
-    private defs: Record<number, CardDef>,
-    private stickerDefs: Record<number, Sticker>,
+    private readonly defs: Record<number, CardDef>,
+    private readonly stickerDefs: Record<number, Sticker>,
   ) {}
 
   private addResourceFromCardChoice(

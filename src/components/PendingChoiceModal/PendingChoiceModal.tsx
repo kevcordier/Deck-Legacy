@@ -39,9 +39,7 @@ function getChoiceActionLabel(
   if (!effects || !def || !state) return undefined;
   const effectIdx = effects.findIndex(e => e.actionEffects.some(a => a.id === actionId));
   if (effectIdx === -1) return undefined;
-  return (
-    tCardActionLabel(t, def.id, state.id, effectIdx, { ...(inst.cumulated ?? {}) }) || undefined
-  );
+  return tCardActionLabel(t, def.id, state.id, effectIdx, { ...inst.cumulated }) || undefined;
 }
 
 function makePreviewInstance(def: CardDef, state: CardState): CardInstance {
@@ -427,7 +425,7 @@ export function PendingChoiceModal({
           const actionIdx = state?.actions?.findIndex(e => e.id === trigger.effectDef.id) ?? -1;
           const cardName = tCardName(t, def?.id, state?.id);
           const actionLabel = tCardActionLabel(t, def?.id, state?.id, actionIdx, {
-            ...(inst.cumulated ?? {}),
+            ...inst.cumulated,
           });
           return (
             <div

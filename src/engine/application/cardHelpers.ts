@@ -93,14 +93,11 @@ export function getEffectiveProductions(
   gameState: GameState,
   defs: Record<number, CardDef>,
   instance: CardInstance,
-  stickers: Record<number, Sticker> = {},
+  stickers: Record<number, Sticker>,
   {
-    includeBoardEffects,
-    includePassives,
-  }: { includeBoardEffects?: boolean; includePassives?: boolean } = {
-    includeBoardEffects: true,
-    includePassives: true,
-  },
+    includeBoardEffects = true,
+    includePassives = true,
+  }: { includeBoardEffects?: boolean; includePassives?: boolean } = {},
 ): Resources {
   const stickerBonus = (instance.stickers[instance.stateId] ?? []).reduce<Resources>(
     (acc, stickerId) => {

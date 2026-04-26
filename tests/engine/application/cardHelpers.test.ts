@@ -73,7 +73,15 @@ describe('getEffectiveProductions', () => {
 
   it('returns base resources when no bonuses', () => {
     const state = { id: 1, name: 'S' };
-    const result = getEffectiveProductions({ gold: 2 }, state, makeState(), {}, baseInst);
+    const stickerDefs: Record<number, Sticker> = {};
+    const result = getEffectiveProductions(
+      { gold: 2 },
+      state,
+      makeState(),
+      {},
+      baseInst,
+      stickerDefs,
+    );
     expect(result).toEqual({ gold: 2 });
   });
 
@@ -133,7 +141,8 @@ describe('getEffectiveProductions', () => {
     };
     const gs = makeState({ board: [2], instances: { 1: inst, 2: inst2 } });
     const state = defs[1].states[0];
-    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    const stickerDefs: Record<number, Sticker> = {};
+    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
     expect(result.gold).toBe(2);
   });
 
@@ -164,7 +173,8 @@ describe('getEffectiveProductions', () => {
     };
     const gs = makeState({ instances: { 1: inst } });
     const state = defs[1].states[0];
-    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    const stickerDefs: Record<number, Sticker> = {};
+    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
     expect(result.wood).toBe(3);
   });
 
@@ -195,7 +205,8 @@ describe('getEffectiveProductions', () => {
     };
     const gs = makeState({ board: [], instances: { 1: inst } });
     const state = defs[1].states[0];
-    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    const stickerDefs: Record<number, Sticker> = {};
+    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
     expect(result.gold).toBeUndefined();
   });
 
@@ -221,7 +232,8 @@ describe('getEffectiveProductions', () => {
       },
     });
     const state = { id: 1, name: 'S' };
-    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    const stickerDefs: Record<number, Sticker> = {};
+    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
     expect(result.gold).toBe(3);
   });
 
@@ -240,7 +252,8 @@ describe('getEffectiveProductions', () => {
       },
     });
     const state = { id: 1, name: 'S' };
-    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    const stickerDefs: Record<number, Sticker> = {};
+    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
     expect(result.gold).toBe(2);
   });
 
@@ -266,7 +279,8 @@ describe('getEffectiveProductions', () => {
       },
     });
     const state = { id: 1, name: 'S' };
-    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    const stickerDefs: Record<number, Sticker> = {};
+    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
     expect(result.gold).toBeUndefined();
   });
 
@@ -293,7 +307,8 @@ describe('getEffectiveProductions', () => {
     };
     const gs = makeState({ instances: { 1: inst } });
     const state = defs[1].states[0];
-    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    const stickerDefs: Record<number, Sticker> = {};
+    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
     expect(result.gold).toBeUndefined();
   });
 
@@ -320,7 +335,8 @@ describe('getEffectiveProductions', () => {
     };
     const gs = makeState({ instances: { 1: inst } });
     const state = defs[1].states[0];
-    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    const stickerDefs: Record<number, Sticker> = {};
+    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
     expect(result.gold).toBeUndefined();
   });
 
@@ -351,7 +367,8 @@ describe('getEffectiveProductions', () => {
     };
     const gs = makeState({ instances: { 1: inst } });
     const state = defs[1].states[0];
-    const result = getEffectiveProductions({}, state, gs, defs, inst);
+    const stickerDefs: Record<number, Sticker> = {};
+    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
     expect(result.wood).toBeUndefined();
   });
   it('adds INCREASE_GLORY passive based on card count', () => {
@@ -429,13 +446,15 @@ describe('getEffectiveProductions', () => {
       name: 'S',
       passives: [{ id: 'sip', type: PassiveType.STAY_IN_PLAY }],
     };
-    expect(getEffectiveGlory(state, makeState(), {}, inst)).toBe(0);
+    const stickerDefs: Record<number, Sticker> = {};
+    expect(getEffectiveGlory(state, makeState(), {}, inst, stickerDefs)).toBe(0);
   });
 
   it('treats missing sticker as 0 glory', () => {
     const inst = makeInstance({ id: 1, stateId: 1, stickers: { 1: [999] } });
     const state = { id: 1, name: 'S', glory: 3 };
-    expect(getEffectiveGlory(state, makeState(), {}, inst, {})).toBe(3);
+    const stickerDefs: Record<number, Sticker> = {};
+    expect(getEffectiveGlory(state, makeState(), {}, inst, stickerDefs)).toBe(3);
   });
 
   it('returns land class', () => {

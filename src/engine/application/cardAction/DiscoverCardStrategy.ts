@@ -24,10 +24,10 @@ export class DiscoverCardStrategy implements CardActionStrategy {
     return ids.reduce((cloned, instanceId) => {
       const cardDef = this.cardDefs[gs.instances[instanceId].cardId];
 
-      if (!cardDef.parchmentCard) {
-        cloned.lastAddedIds.push(instanceId);
-      } else {
+      if (cardDef.parchmentCard) {
         return { ...cloned, discoveryPile: cloned.discoveryPile.filter(id => id !== instanceId) };
+      } else {
+        cloned.lastAddedIds.push(instanceId);
       }
       if (cardDef.permanent) {
         cloned.permanents.push(instanceId);
