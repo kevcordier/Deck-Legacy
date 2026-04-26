@@ -102,4 +102,16 @@ describe('DiscoverCardStrategy', () => {
     });
     expect(result.lastAddedIds).toHaveLength(0);
   });
+
+  it('handles missing instanceIds gracefully', () => {
+    const strategy = new DiscoverCardStrategy({});
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.DISCOVER_CARD,
+      sourceInstanceId: 99,
+      // no instanceIds → falls back to []
+    });
+    expect(result.lastAddedIds).toHaveLength(0);
+  });
 });

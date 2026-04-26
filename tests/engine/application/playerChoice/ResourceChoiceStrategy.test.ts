@@ -52,8 +52,7 @@ describe('ResourceChoiceStrategy', () => {
     expect(merged.resources).toEqual({ stone: 1 });
   });
 
-  it('sets resources to undefined when both are absent', () => {
-    const choice = { ...baseResolved };
+  it('uses resolvedAction resources when choice has none', () => {
     const pending = [
       {
         id: 'p1',
@@ -65,8 +64,13 @@ describe('ResourceChoiceStrategy', () => {
         isMandatory: true,
       },
     ];
-    const [merged] = strategy.apply(choice, baseResolved, makeState(), pending);
-    expect(merged.resources).toBeUndefined();
+    const [merged] = strategy.apply(
+      baseResolved,
+      { ...baseResolved, resources: { wood: 1 } },
+      makeState(),
+      pending,
+    );
+    expect(merged.resources).toEqual({ wood: 1 });
   });
 
   it('removes first pending choice', () => {

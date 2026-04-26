@@ -83,6 +83,7 @@ export type ActionEffect = {
   pickNumber?: number;
   pickMin?: number;
   pickMax?: number;
+  effects?: ActionEffect[];
 };
 
 export type Passive = {
@@ -151,7 +152,6 @@ export type ResolvedActionEffect = {
   stickerId?: number;
   stateId?: number;
   position?: number;
-  stepId?: number;
   stepIds?: number[];
   accumulated?: Record<string, number>;
   newActionEffects?: ActionEffect[];

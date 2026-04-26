@@ -1,4 +1,5 @@
 import type { ActionEffectType, PendingChoiceType } from '@engine/domain/enums';
+import type { ActionEffect } from '@engine/domain/types/Card';
 import type { Resources } from '@engine/domain/types/Resource';
 
 export type PendingChoice = {
@@ -7,7 +8,7 @@ export type PendingChoice = {
   type: PendingChoiceType;
   sourceInstanceId: number;
   targetInstanceId?: number;
-  choices: (number | string | Resources)[];
+  choices: (number | string | Resources | ActionEffect)[];
   pickCount: number;
   pickMin?: number;
   pickMax?: number;

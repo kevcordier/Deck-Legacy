@@ -1,3 +1,4 @@
+import { CardTrackContent } from '@components/CardTrack/CardTrack';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
 import { TriggerIcon } from '@components/ui/Icon/icon';
@@ -6,6 +7,7 @@ import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { StickerChoice } from '@components/ui/StickerChoice/StickerChoice';
 import { ActionEffectType, PendingChoiceType } from '@engine/domain/enums';
 import type {
+  ActionEffect,
   CardDef,
   CardInstance,
   CardState,
@@ -18,9 +20,8 @@ import type {
   TriggerEntry,
 } from '@engine/domain/types';
 import { tCardActionLabel, tCardName } from '@helpers/cardI18n';
-import { getResMeta } from '@helpers/renderHelpers';
 import type { TFunction } from 'i18next';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 function getChoiceActionLabel(
@@ -79,6 +80,7 @@ type ChoiceSection = {
   title: string;
   subtitle: React.ReactNode;
   content: React.ReactNode;
+  handleMultiConfirm?: () => void;
 };
 
 type ChoiceSectionContext = {
@@ -91,6 +93,8 @@ type ChoiceSectionContext = {
   selectedIds: number[];
   onToggleId: (id: number) => void;
   isMultiSelect: boolean;
+  minSelect: number;
+  maxSelect: number;
 };
 
 function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): ChoiceSection {
@@ -104,10 +108,10 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
     selectedIds,
     onToggleId,
     isMultiSelect,
+    minSelect,
+    maxSelect,
   } = ctx;
   if (choice.type === PendingChoiceType.CHOOSE_CARD) {
-    const maxSelect = choice.pickMax ?? choice.pickCount;
-
     const handleCardClick = (instanceId: number) => {
       if (isMultiSelect) {
         onToggleId(instanceId);
@@ -130,6 +134,23 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
     return {
       title: t(`pendingChoice.chooseCard.${choice.kind}`, { count: maxSelect }),
       subtitle: getChoiceActionLabel(choice, instances, defs, t),
+      handleMultiConfirm: () => {
+        if (!choice) return;
+        if (selectedIds.length < minSelect || selectedIds.length > maxSelect) return;
+        if (choice.kind === 'COST') {
+          resolvePayCost({ resources: {}, discardedCardIds: selectedIds, destroyedCardIds: [] });
+        } else {
+          resolvePlayerChoice(
+            {
+              id: choice.id,
+              type: choice.kind,
+              sourceInstanceId: choice.sourceInstanceId,
+              instanceIds: selectedIds,
+            },
+            choice.type,
+          );
+        }
+      },
       content: (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {choice.choices.map(id => {
@@ -158,6 +179,21 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
   }
 
   if (choice.type === PendingChoiceType.CHOOSE_STEP && choice.targetInstanceId) {
+    const handleStepClick = (stepId: number) => {
+      if (isMultiSelect) {
+        onToggleId(stepId);
+        return;
+      }
+      resolvePlayerChoice(
+        {
+          id: choice.id,
+          type: ActionEffectType.TRACK_ADVANCE,
+          sourceInstanceId: choice.sourceInstanceId,
+          stepIds: [stepId],
+        },
+        choice.type,
+      );
+    };
     const targetInst = instances[choice.targetInstanceId];
     const targetDef = targetInst ? defs[targetInst.cardId] : undefined;
     const targetState = targetDef?.states.find(s => s.id === targetInst?.stateId);
@@ -168,40 +204,30 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
     return {
       title: t('pendingChoice.chooseStep'),
       subtitle: getChoiceActionLabel(choice, instances, defs, t),
+      handleMultiConfirm: () => {
+        if (!choice) return;
+        if (selectedIds.length < minSelect || selectedIds.length > maxSelect) return;
+        resolvePlayerChoice(
+          {
+            id: choice.id,
+            type: choice.kind,
+            sourceInstanceId: choice.sourceInstanceId,
+            stepIds: selectedIds,
+          },
+          choice.type,
+        );
+      },
       content: (
         <div className="flex flex-wrap gap-3">
           {steps.map(step => {
-            const costEntry = step.cost?.resources?.[0];
+            const isSelected = isMultiSelect && selectedIds.includes(step.id);
             return (
               <button
                 key={step.id}
-                onClick={() =>
-                  resolvePlayerChoice(
-                    {
-                      id: choice.id,
-                      type: ActionEffectType.TRACK_ADVANCE,
-                      sourceInstanceId: choice.sourceInstanceId,
-                      stepId: step.id,
-                    },
-                    choice.type,
-                  )
-                }
-                className="flex min-w-16 flex-col items-center gap-1 rounded-md border-2 border-base-ink bg-card p-3 hover:bg-base-ink/10"
+                onClick={() => handleStepClick(step.id)}
+                className={`flex min-w-16 flex-col items-center gap-1 rounded-md border-2 border-base-ink bg-card p-3 hover:bg-base-ink/10 ${isSelected ? ' ring-primary rounded-xl ring-2' : ''}`}
               >
-                {costEntry && (
-                  <div className="flex items-center gap-0.5 text-sm text-base-ink">
-                    {Object.entries(costEntry).map(([k, v]) => {
-                      const meta = getResMeta(k);
-                      return (
-                        <Fragment key={k}>
-                          {v}
-                          {meta.icon && <meta.icon className={`${meta.cls} size-4`} alt={k} />}
-                        </Fragment>
-                      );
-                    })}
-                  </div>
-                )}
-                <span className="font-display text-xs text-base-ink">#{step.id}</span>
+                {track && <CardTrackContent instance={targetInst} track={track} step={step} />}
               </button>
             );
           })}
@@ -279,6 +305,55 @@ function getChoiceSection(choice: PendingChoice, ctx: ChoiceSectionContext): Cho
     };
   }
 
+  if (choice.type === PendingChoiceType.CHOOSE_ACTION_EFFECT) {
+    const handleActionEffectSelect = (i: number) => {
+      const actionEffect = choice.choices[i] as ActionEffect;
+      resolvePlayerChoice(
+        {
+          id: choice.id,
+          type: choice.kind,
+          sourceInstanceId: choice.sourceInstanceId,
+          newActionEffects: [actionEffect],
+        },
+        choice.type,
+      );
+    };
+    return {
+      title: t(`pendingChoice.chooseActionEffect`),
+      subtitle: getChoiceActionLabel(choice, instances, defs, t),
+      content: (
+        <div className="flex flex-col gap-4">
+          {choice.choices.map((actionEffect, index) => (
+            <div
+              key={`${(actionEffect as ActionEffect).id}-${index.toString()}`}
+              className="bg-card flex items-center justify-between gap-5 rounded border p-4"
+            >
+              <div className="flex-1">
+                <div className="font-display text-base-primary mb-1 text-sm font-semibold">
+                  {tCardActionLabel(
+                    t,
+                    defs[instances[choice.sourceInstanceId].cardId].id,
+                    instances[choice.sourceInstanceId].stateId,
+                    `${(actionEffect as ActionEffect).id}-${index.toString()}`,
+                  )}
+                </div>
+              </div>
+              <div className="flex items-end gap-2">
+                <Button
+                  size="sm"
+                  color="base-primary"
+                  onClick={() => handleActionEffectSelect(index)}
+                >
+                  {t('triggerPile.resolve')}
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ),
+    };
+  }
+
   const handleStickerSelect = (stickerId: number) => {
     resolvePlayerChoice(
       {
@@ -334,27 +409,10 @@ export function PendingChoiceModal({
 
   const isMultiSelect = minSelect !== maxSelect || minSelect > 1;
 
-  const handleMultiConfirm = () => {
-    if (!choice) return;
-    if (selectedIds.length < minSelect || selectedIds.length > maxSelect) return;
-    if (choice.kind === 'COST') {
-      resolvePayCost({ resources: {}, discardedCardIds: selectedIds, destroyedCardIds: [] });
-    } else {
-      resolvePlayerChoice(
-        {
-          id: choice.id,
-          type: choice.kind,
-          sourceInstanceId: choice.sourceInstanceId,
-          instanceIds: selectedIds,
-        },
-        choice.type,
-      );
-    }
-  };
-
   let content;
   let title = '';
   let subtitle;
+  let handleMultiConfirm;
 
   // ── trigger_pile ───────────────────────────────────────────────────────
   if (triggerPile && Object.keys(triggerPile).length > 0) {
@@ -418,7 +476,7 @@ export function PendingChoiceModal({
 
   // ── pending choice ─────────────────────────────────────────────────────
   if (choice) {
-    ({ title, subtitle, content } = getChoiceSection(choice, {
+    ({ title, subtitle, content, handleMultiConfirm } = getChoiceSection(choice, {
       instances,
       defs,
       stickerDefs,
@@ -428,6 +486,8 @@ export function PendingChoiceModal({
       selectedIds,
       onToggleId,
       isMultiSelect,
+      minSelect,
+      maxSelect,
     }));
   }
 

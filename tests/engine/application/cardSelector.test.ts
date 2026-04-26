@@ -239,4 +239,19 @@ describe('cardSelector – missing def or state', () => {
     const result = cardSelector({ scope: [TargetScope.BOARD] }, 99, gs, defs);
     expect(result).not.toContain(10);
   });
+
+  it('excludes board cards with no matching instance', () => {
+    const gs = makeState({ board: [99] }); // 99 in board but no instance
+    const result = cardSelector({ scope: [TargetScope.BOARD] }, 1, gs, defs);
+    expect(result).not.toContain(99);
+  });
+});
+
+describe('cardSelector – DRAWN scope', () => {
+  it('DRAWN scope returns lastDrawnCards', () => {
+    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const gs = makeState({ lastDrawnCards: [5], instances: { 5: inst } });
+    const result = cardSelector({ scope: [TargetScope.DRAWN] }, 99, gs, defs);
+    expect(result).toContain(5);
+  });
 });

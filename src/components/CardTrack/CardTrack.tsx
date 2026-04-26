@@ -1,6 +1,6 @@
 import { Glory } from '@components/ui/Glory/Glory';
 import { ActionEffectType } from '@engine/domain/enums';
-import type { ActionEffect, CardInstance, TrackDef } from '@engine/domain/types';
+import type { ActionEffect, CardInstance, StepDef, TrackDef } from '@engine/domain/types';
 import { tCardTrackAction } from '@helpers/cardI18n';
 import { getResMeta } from '@helpers/renderHelpers';
 import React, { type JSX } from 'react';
@@ -12,8 +12,81 @@ interface CardTrackProps {
   readonly validatedSteps: number[];
 }
 
-export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
+export function CardTrackContent({
+  instance,
+  track,
+  step,
+}: {
+  instance: CardInstance;
+  track: TrackDef;
+  step: StepDef;
+}): React.ReactNode[] {
   const { t } = useTranslation();
+  const contents: React.ReactNode[] = [];
+  const actions = step.effects ?? [];
+
+  const getResourceContent = (resKey: string, actionId: number): JSX.Element | null => {
+    const meta = getResMeta(resKey);
+    return meta.icon ? (
+      <meta.icon className={`${meta.cls} size-3`} alt={resKey} key={actionId} />
+    ) : null;
+  };
+
+  const getAccumulatedContent = (action: ActionEffect): JSX.Element | null => {
+    const [resKey] = Object.entries(action.accumulated ?? {}).find(([k]) => k !== 'choice') ?? [];
+    if (resKey === 'glory') {
+      return <Glory glory={action.accumulated?.glory ?? 0} size="sm" key={action.id} />;
+    }
+    if (resKey) {
+      return getResourceContent(resKey, action.id);
+    }
+    return null;
+  };
+
+  const getActionContent = (action: ActionEffect): JSX.Element | null => {
+    if (action.type === ActionEffectType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
+      return <span key={action.id}>#{action.cards.ids[0]}</span>;
+    }
+
+    if (action.type === ActionEffectType.UPGRADE_CARD) {
+      return <span key={action.id}>⬆</span>;
+    }
+
+    if (action.resources) {
+      const [resKey] = Object.entries(action.resources).find(([k]) => k !== 'choice') ?? [];
+      if (resKey) {
+        return getResourceContent(resKey, action.id);
+      }
+    }
+
+    if (action.accumulated) {
+      const content = getAccumulatedContent(action);
+      if (content) return content;
+    }
+
+    return (
+      <span className="font-display font-bold text-3xl" key={action.id}>
+        *
+      </span>
+    );
+  };
+
+  if (track.inverse) {
+    contents.push(
+      <span key={step.id} className="font-display font-bold text-xs">
+        {tCardTrackAction(t, instance.cardId, instance.stateId, step.id)}
+      </span>,
+    );
+  } else {
+    actions.forEach(action => {
+      contents.push(getActionContent(action));
+    });
+  }
+
+  return contents;
+}
+
+export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
   return (
     <div
       className={`flex ${track.vertical ? 'flex-col justify-start' : 'flex-row'} flex-wrap gap-1`}
@@ -22,8 +95,7 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
         const isValidated = validatedSteps.includes(step.id);
 
         // Determine step button content
-        const actions = step.effects ?? [];
-        const contents: React.ReactNode[] = [];
+        const contents = CardTrackContent({ instance, track, step });
         const cost: React.ReactNode[] = [];
 
         if (step.cost?.resources) {
@@ -42,68 +114,6 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
         }
         if (step.cost?.accumulated) {
           cost.push(Object.values(step.cost.accumulated).reduce((acc, value) => acc + value, 0));
-        }
-
-        const getResourceContent = (resKey: string, actionId: number): JSX.Element | null => {
-          const meta = getResMeta(resKey);
-          return meta.icon ? (
-            <meta.icon className={`${meta.cls} size-3`} alt={resKey} key={actionId} />
-          ) : null;
-        };
-
-        const getAccumulatedContent = (action: ActionEffect): JSX.Element | null => {
-          const [resKey] =
-            Object.entries(action.accumulated ?? {}).find(([k]) => k !== 'choice') ?? [];
-          if (resKey === 'glory') {
-            return <Glory glory={action.accumulated?.glory ?? 0} size="sm" key={action.id} />;
-          }
-          if (resKey) {
-            return getResourceContent(resKey, action.id);
-          }
-          return null;
-        };
-
-        const getActionContent = (action: ActionEffect): JSX.Element | null => {
-          if (
-            action.type === ActionEffectType.DISCOVER_CARD &&
-            action.cards?.ids?.[0] !== undefined
-          ) {
-            return <span key={action.id}>#{action.cards.ids[0]}</span>;
-          }
-
-          if (action.type === ActionEffectType.UPGRADE_CARD) {
-            return <span key={action.id}>⬆</span>;
-          }
-
-          if (action.resources) {
-            const [resKey] = Object.entries(action.resources).find(([k]) => k !== 'choice') ?? [];
-            if (resKey) {
-              return getResourceContent(resKey, action.id);
-            }
-          }
-
-          if (action.accumulated) {
-            const content = getAccumulatedContent(action);
-            if (content) return content;
-          }
-
-          return (
-            <span className="font-display font-bold text-3xl" key={action.id}>
-              *
-            </span>
-          );
-        };
-
-        if (track.inverse) {
-          contents.push(
-            <span key={step.id} className="font-display font-bold text-xs">
-              {tCardTrackAction(t, instance.cardId, instance.stateId, step.id)}
-            </span>,
-          );
-        } else {
-          actions.forEach(action => {
-            contents.push(getActionContent(action));
-          });
         }
 
         return (

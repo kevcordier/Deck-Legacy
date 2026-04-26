@@ -68,9 +68,9 @@ function resolveTrackAdvanceEffect(
 
   if (track.inOrder) {
     const sortedSteps = [...availableSteps].sort((a, b) => a.id - b.id);
-    resolverAction.stepId = sortedSteps[0].id;
+    resolverAction.stepIds = [sortedSteps[0].id];
     resolverAction.newActionEffects =
-      track.steps.find(s => s.id === resolverAction.stepId)?.effects ?? [];
+      track.steps.find(s => s.id === resolverAction.stepIds?.[0])?.effects ?? [];
     return [resolverAction, pendingChoices];
   } else {
     const { pickMin, pickMax } = getPickBounds(ctx);
@@ -112,29 +112,48 @@ export function countValuePerElement(
       defs,
     ).reduce((total, id) => {
       const state = getActiveState(gameState.instances[id], defs);
-      const prodKeyCount =
-        state.productions
-          ?.map(p => {
-            return (
-              getEffectiveProductions(
-                p,
-                state,
-                gameState,
-                defs,
-                gameState.instances[id],
-                stickerDefs,
-                {
-                  includeBoardEffects: false,
-                  includePassives: false,
-                },
-              )[prodKey] ?? 0
-            );
-          })
-          .reduce((a, b) => Math.max(a, b), -Infinity) ?? 0;
+      const prodKeyCount = (state.productions as Resources[])
+        .map(p => {
+          return (
+            getEffectiveProductions(
+              p,
+              state,
+              gameState,
+              defs,
+              gameState.instances[id],
+              stickerDefs,
+              {
+                includeBoardEffects: false,
+                includePassives: false,
+              },
+            )[prodKey] ?? 0
+          );
+        })
+        .reduce((a, b) => Math.max(a, b), -Infinity);
       return total + prodKeyCount;
     }, 0);
   }
   return number;
+}
+
+function resolveChooseActionEffect(
+  resolverAction: ResolvedActionEffect,
+  pendingChoices: PendingChoice[],
+  ctx: ResolveContext,
+  effects: ActionEffect[],
+): [ResolvedActionEffect, PendingChoice[]] {
+  const { instanceId, actionId, actionType } = ctx;
+  const choiceId = `${instanceId}-${actionId}`;
+  pendingChoices.push({
+    id: choiceId,
+    kind: actionType,
+    type: PendingChoiceType.CHOOSE_ACTION_EFFECT,
+    sourceInstanceId: instanceId,
+    choices: effects,
+    pickCount: 1,
+    isMandatory: true,
+  });
+  return [resolverAction, pendingChoices];
 }
 
 function resolveValuePerElement(
@@ -244,9 +263,8 @@ function resolveResourceTarget(
     if (choices.length === 0) {
       resolverAction.resources = {};
     } else if (choices.length === 1) {
-      const instance = gameState.instances[choices[0]];
-      const state = instance && defs ? getActiveState(instance, defs) : undefined;
-      resolverAction.resources = state?.productions?.[0] ?? {};
+      const state = getActiveState(gameState.instances[choices[0]], defs);
+      resolverAction.resources = state.productions?.[0] ?? {};
     } else {
       pendingChoices.push({
         id: `${instanceId}-${actionId}`,
@@ -320,6 +338,19 @@ function extractResources(raw: NonNullable<ActionEffect['resources']>): Resource
   return rest as Resources;
 }
 
+// For BOOST_CARD, all produced resources are injected as potential criteria before resolving targets.
+// For DISCOVER_CARD, the scope is forced to the discovery pile.
+function getEnrichedCardSelector(action: ActionEffect): CardeSelector | undefined {
+  if (!action.cards) return undefined;
+  if (action.type === ActionEffectType.BOOST_CARD) {
+    return { ...action.cards, produces: Object.values(ResourceType) };
+  }
+  if (action.type === ActionEffectType.DISCOVER_CARD) {
+    return { ...action.cards, scope: [TargetScope.DISCOVERY] };
+  }
+  return action.cards;
+}
+
 export function resolveActionEffect(
   action: ActionEffect,
   instanceId: number,
@@ -348,6 +379,10 @@ export function resolveActionEffect(
     stickerDefs,
   };
 
+  if (action.type === ActionEffectType.CHOOSE_EFFECT && action.effects) {
+    resolveChooseActionEffect(resolverAction, pendingChoices, ctx, action.effects);
+  }
+
   if (action.valuePerElement) {
     [resolverAction, pendingChoices] = resolveValuePerElement(
       resolverAction,
@@ -357,19 +392,13 @@ export function resolveActionEffect(
     );
   }
 
-  if (action.cards) {
-    // For BOOST_CARD, we want to consider all produced resources as potential criteria for the card selection, so we inject them into the selector before resolving targets.
-    if (action.type === ActionEffectType.BOOST_CARD) {
-      action.cards = { ...action.cards, produces: Object.values(ResourceType) };
-    }
-    if (action.type === ActionEffectType.DISCOVER_CARD) {
-      action.cards = { ...action.cards, scope: [TargetScope.DISCOVERY] };
-    }
+  const cards = getEnrichedCardSelector(action);
+  if (cards) {
     [resolverAction, pendingChoices] = resolveCardTarget(
       resolverAction,
       pendingChoices,
       ctx,
-      action.cards,
+      cards,
     );
   }
 
@@ -400,16 +429,12 @@ export function resolveActionEffect(
     );
   }
 
-  if (action.accumulated) {
-    resolverAction.accumulated = action.accumulated;
-  }
-
+  if (action.accumulated) resolverAction.accumulated = action.accumulated;
   if (action.type === ActionEffectType.ADD_BOARD_EFFECT && action.effect) {
     resolverAction.effect = action.effect;
   }
-
-  if (action.type === ActionEffectType.TRACK_ADVANCE && action.cards) {
-    return resolveTrackAdvanceEffect(resolverAction, pendingChoices, ctx, action.cards);
+  if (action.type === ActionEffectType.TRACK_ADVANCE && cards) {
+    return resolveTrackAdvanceEffect(resolverAction, pendingChoices, ctx, cards);
   }
 
   return [resolverAction, pendingChoices];

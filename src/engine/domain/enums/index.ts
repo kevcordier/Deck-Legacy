@@ -45,6 +45,7 @@ export enum ActionEffectType {
   SET_CUMULATED = 'SET_CUMULATED',
   TRACK_ADVANCE = 'TRACK_ADVANCE',
   ADD_BOARD_EFFECT = 'ADD_BOARD_EFFECT',
+  CHOOSE_EFFECT = 'CHOOSE_EFFECT',
 }
 
 export enum PassiveType {
@@ -85,4 +86,5 @@ export enum PendingChoiceType {
   CHOOSE_STATE = 'choose_state',
   CHOOSE_STICKER = 'choose_sticker',
   CHOOSE_STEP = 'choose_step',
+  CHOOSE_ACTION_EFFECT = 'choose_action_effect',
 }

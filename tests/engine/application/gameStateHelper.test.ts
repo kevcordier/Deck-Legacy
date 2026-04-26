@@ -172,6 +172,12 @@ describe('spendResources', () => {
     const result = spendResources(gs, { gold: 5 });
     expect(result.resources.gold).toBeUndefined();
   });
+
+  it('treats missing resource key as 0 when spending', () => {
+    const gs = makeState({ resources: {} });
+    const result = spendResources(gs, { gold: 3 });
+    expect(result.resources.gold).toBeUndefined();
+  });
 });
 
 // ─── endTurn ──────────────────────────────────────────────────────────────────

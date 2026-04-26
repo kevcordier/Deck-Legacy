@@ -103,4 +103,19 @@ describe('PlayCardStrategy', () => {
     });
     expect(Object.keys(result.triggerPile)).toHaveLength(1);
   });
+
+  it('removes card from discoveryPile when played', () => {
+    const defs = { 1: plainDef };
+    const strategy = new PlayCardStrategy(defs);
+    const inst = makeInstance({ id: 10, cardId: 1, stateId: 1 });
+    const gs = makeState({ discoveryPile: [10], instances: { 10: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLAY_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [10],
+    });
+    expect(result.discoveryPile).not.toContain(10);
+    expect(result.board).toContain(10);
+  });
 });

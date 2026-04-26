@@ -309,6 +309,37 @@ describe('CardActionAggregate.resolvePlayerChoice', () => {
     expect(agg.getPendingChoices()).toHaveLength(1);
     expect(agg.getGameState().resources.gold).toBeUndefined();
   });
+
+  it('splices newActionEffects and skips apply for CHOOSE_EFFECT type', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    const action: CardAction = {
+      id: 'a1',
+      actionEffects: [
+        {
+          id: 0,
+          type: ActionEffectType.CHOOSE_EFFECT,
+          effects: [
+            { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 5 } },
+            { id: 2, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 2 } },
+          ],
+        },
+      ],
+    };
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
+    agg.resolveAction();
+    expect(agg.getPendingChoices()).toHaveLength(1);
+
+    agg.resolvePlayerChoice({
+      id: 'x',
+      type: ActionEffectType.CHOOSE_EFFECT,
+      sourceInstanceId: 1,
+      newActionEffects: [{ id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 5 } }],
+    });
+
+    expect(agg.getPendingChoices()).toHaveLength(0);
+    expect(agg.getGameState().resources.gold).toBe(5);
+  });
 });
 
 // ─── resolveCostChoice / resolvePayCost ───────────────────────────────────────

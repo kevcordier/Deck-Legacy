@@ -42,7 +42,7 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
       return [
         {
           ...resolvedAction,
-          resources: mergeResources(resolvedAction.resources ?? {}, productions?.[0] ?? {}),
+          resources: mergeResources(resolvedAction.resources ?? {}, productions[0]),
         },
         pendingChoices.slice(1),
       ];

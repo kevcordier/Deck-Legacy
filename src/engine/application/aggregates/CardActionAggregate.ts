@@ -13,12 +13,13 @@ import {
   spendResources,
 } from '@engine/application/gameStateHelper';
 import { CardChoiceStrategy } from '@engine/application/playerChoice/CardChoiceStrategy';
+import { ChooseActionEffectStrategy } from '@engine/application/playerChoice/ChooseActionEffectStrategy';
 import type { PlayerChoiceStrategy } from '@engine/application/playerChoice/PlayerChoiceStrategy';
 import { ResourceChoiceStrategy } from '@engine/application/playerChoice/ResourceChoiceStrategy';
 import { StateChoiceStrategy } from '@engine/application/playerChoice/StateChoiceStrategy';
 import { StepChoiceStrategy } from '@engine/application/playerChoice/StepChoiceStrategy';
 import { StickerChoiceStrategy } from '@engine/application/playerChoice/StickerChoiceStrategy';
-import { PendingChoiceType } from '@engine/domain/enums';
+import { ActionEffectType, PendingChoiceType } from '@engine/domain/enums';
 import type {
   ActionEffect,
   CardAction,
@@ -67,7 +68,8 @@ export class CardActionAggregate {
       [PendingChoiceType.CHOOSE_RESOURCE]: new ResourceChoiceStrategy(),
       [PendingChoiceType.CHOOSE_STATE]: new StateChoiceStrategy(),
       [PendingChoiceType.CHOOSE_STICKER]: new StickerChoiceStrategy(),
-      [PendingChoiceType.CHOOSE_STEP]: new StepChoiceStrategy(),
+      [PendingChoiceType.CHOOSE_STEP]: new StepChoiceStrategy(cardDefs),
+      [PendingChoiceType.CHOOSE_ACTION_EFFECT]: new ChooseActionEffectStrategy(),
     };
     this.effects = this.action.actionEffects;
   }
@@ -135,6 +137,7 @@ export class CardActionAggregate {
       if (resolvedAction.newActionEffects) {
         this.effects.splice(index + 1, 0, ...resolvedAction.newActionEffects);
       }
+
       this.apply(resolvedAction);
       index++;
     }
@@ -182,11 +185,21 @@ export class CardActionAggregate {
     this.pendingResolvedAction = mergedResolvedAction;
     this.pendingChoices = nextPendingChoices;
 
+    if (this.pendingResolvedAction.newActionEffects) {
+      this.effects.splice(
+        this.pendingEffectIndex + 1,
+        0,
+        ...this.pendingResolvedAction.newActionEffects,
+      );
+    }
+
     if (this.pendingChoices.length > 0) {
       return;
     }
 
-    this.apply(mergedResolvedAction);
+    if (mergedResolvedAction.type !== ActionEffectType.CHOOSE_EFFECT) {
+      this.apply(mergedResolvedAction);
+    }
     this.pendingChoices = [];
     this.pendingResolvedAction = null;
     this.resolveEffectsFrom(this.pendingEffectIndex + 1);

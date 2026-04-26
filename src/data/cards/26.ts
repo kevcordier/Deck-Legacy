@@ -111,24 +111,30 @@ export const inventor: CardDef = {
             },
             {
               id: 3,
-              type: ActionEffectType.DISCOVER_CARD,
-              cards: { ids: [97, 98, 99] },
-            },
-            {
-              id: 4,
-              type: ActionEffectType.ADD_RESOURCES,
-              valuePerElement: {
-                amount: 1,
-                resource: [
-                  ResourceType.GOLD,
-                  ResourceType.WOOD,
-                  ResourceType.STONE,
-                  ResourceType.IRON,
-                  ResourceType.WEAPON,
-                  ResourceType.GOODS,
-                ],
-                accumulation: 'accumulation',
-              },
+              type: ActionEffectType.CHOOSE_EFFECT,
+              effects: [
+                {
+                  id: 4,
+                  type: ActionEffectType.DISCOVER_CARD,
+                  cards: { ids: [97, 98, 99] },
+                },
+                {
+                  id: 4,
+                  type: ActionEffectType.ADD_RESOURCES,
+                  valuePerElement: {
+                    amount: 1,
+                    resource: [
+                      ResourceType.GOLD,
+                      ResourceType.WOOD,
+                      ResourceType.STONE,
+                      ResourceType.IRON,
+                      ResourceType.WEAPON,
+                      ResourceType.GOODS,
+                    ],
+                    accumulation: 'accumulation',
+                  },
+                },
+              ],
             },
           ],
         },

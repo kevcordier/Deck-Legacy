@@ -98,6 +98,28 @@ describe('CardChoiceStrategy – ADD_RESOURCES', () => {
     expect(merged.resources).toBeUndefined();
     expect(remaining).toHaveLength(0);
   });
+
+  it('merges with existing resources on resolvedAction', () => {
+    const defs = { 1: goldDef };
+    const strategy = new CardChoiceStrategy(defs, {});
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 1: inst } });
+    const choice = {
+      id: 'r1',
+      type: ActionEffectType.ADD_RESOURCES,
+      sourceInstanceId: 99,
+      instanceIds: [1],
+    };
+    const resolved = {
+      id: 'r1',
+      type: ActionEffectType.ADD_RESOURCES,
+      sourceInstanceId: 99,
+      resources: { wood: 1 }, // already has resources
+    };
+    const [merged] = strategy.apply(choice, resolved, gs, [pending()]);
+    expect(merged.resources?.wood).toBe(1);
+    expect(merged.resources?.gold).toBe(2);
+  });
 });
 
 describe('CardChoiceStrategy – BOOST_CARD', () => {
@@ -159,6 +181,23 @@ describe('CardChoiceStrategy – BOOST_CARD', () => {
     const strategy = new CardChoiceStrategy(defs, stickerDefs);
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ instances: { 1: inst }, stickerStock: { 10: 0 } });
+    const choice = {
+      id: 'r1',
+      type: ActionEffectType.BOOST_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [1],
+    };
+    const resolved = { id: 'r1', type: ActionEffectType.BOOST_CARD, sourceInstanceId: 99 };
+    const [merged] = strategy.apply(choice, resolved, gs, [pending()]);
+    expect(merged.stickerId).toBeUndefined();
+  });
+
+  it('treats sticker not in stickerStock as 0 stock', () => {
+    const defs = { 1: goldDef };
+    const stickerDefs = { 10: goldSticker };
+    const strategy = new CardChoiceStrategy(defs, stickerDefs);
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 1: inst }, stickerStock: {} }); // no entry for sticker 10
     const choice = {
       id: 'r1',
       type: ActionEffectType.BOOST_CARD,

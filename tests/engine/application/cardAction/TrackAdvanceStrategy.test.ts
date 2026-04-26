@@ -25,7 +25,7 @@ describe('TrackAdvanceStrategy', () => {
       id: 'x',
       type: ActionEffectType.TRACK_ADVANCE,
       sourceInstanceId: 1,
-      stepId: 10,
+      stepIds: [10],
     });
     expect(result).toBe(gs);
   });
@@ -52,7 +52,7 @@ describe('TrackAdvanceStrategy', () => {
       type: ActionEffectType.TRACK_ADVANCE,
       sourceInstanceId: 1,
       instanceIds: [2],
-      stepId: 10,
+      stepIds: [10],
     });
     expect(result.instances[2].trackProgress).toHaveLength(0);
   });
@@ -66,7 +66,7 @@ describe('TrackAdvanceStrategy', () => {
       type: ActionEffectType.TRACK_ADVANCE,
       sourceInstanceId: 1,
       instanceIds: [1],
-      stepId: 99,
+      stepIds: [99],
     });
     expect(result.instances[1].trackProgress).toHaveLength(0);
   });
@@ -80,8 +80,8 @@ describe('TrackAdvanceStrategy', () => {
       type: ActionEffectType.TRACK_ADVANCE,
       sourceInstanceId: 1,
       instanceIds: [1],
-      stepId: 10,
+      stepIds: [10],
     });
-    expect(result.instances[1].trackProgress).toContain(10);
+    expect(result.instances[1].trackProgress).toEqual([10]);
   });
 });

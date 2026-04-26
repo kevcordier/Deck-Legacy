@@ -1,5 +1,5 @@
 import { makeInstance, makeState } from './fixtures';
-import { resolveActionEffect } from '@engine/application/effectResolver';
+import { countValuePerElement, resolveActionEffect } from '@engine/application/effectResolver';
 import { ActionEffectType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
@@ -8,6 +8,25 @@ const simpleDef: CardDef = { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] };
 const defs: Record<number, CardDef> = { 1: simpleDef };
 const stickerDef: Sticker = { id: 3, type: 'add', production: 'gold' };
 const stickerDefs: Record<number, Sticker> = { 1: stickerDef };
+
+// ─── CHOOSE_EFFECT ────────────────────────────────────────────────────────────
+
+describe('resolveActionEffect – CHOOSE_EFFECT', () => {
+  it('creates a choose_action_effect pending choice with the provided sub-effects', () => {
+    const subEffect = { id: 2, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } };
+    const effect = {
+      id: 1,
+      type: ActionEffectType.CHOOSE_EFFECT,
+      effects: [subEffect],
+    };
+    const [, pending] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe('choose_action_effect');
+    expect(pending[0].choices).toEqual([subEffect]);
+    expect(pending[0].pickCount).toBe(1);
+    expect(pending[0].isMandatory).toBe(true);
+  });
+});
 
 // ─── ADD_RESOURCES ────────────────────────────────────────────────────────────
 
@@ -74,6 +93,18 @@ describe('resolveActionEffect – ADD_RESOURCES', () => {
       resources: { cards: { scope: [TargetScope.BOARD] } },
     };
     const [resolved] = resolveActionEffect(effect, 99, makeState(), defs, stickerDefs);
+    expect(resolved.resources).toEqual({});
+  });
+
+  it('sets empty resources when single selected card has no productions', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    const effect = {
+      id: 1,
+      type: ActionEffectType.ADD_RESOURCES,
+      resources: { cards: { scope: [TargetScope.BOARD] } },
+    };
+    const [resolved] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
     expect(resolved.resources).toEqual({});
   });
 });
@@ -327,7 +358,7 @@ describe('resolveActionEffect – TRACK_ADVANCE', () => {
       cards: { scope: [TargetScope.BOARD] },
     };
     const [resolved, pending] = resolveActionEffect(effect, 99, gs, { 2: defTrack }, stickerDefs);
-    expect(resolved.stepId).toBe(2);
+    expect(resolved.stepIds).toEqual([2]);
     expect(resolved.instanceIds).toEqual([2]);
     expect(pending).toHaveLength(0);
   });
@@ -383,7 +414,25 @@ describe('resolveActionEffect – TRACK_ADVANCE', () => {
       cards: { scope: [TargetScope.BOARD] },
     };
     const [resolved] = resolveActionEffect(effect, 99, gs, { 2: defTrack }, stickerDefs);
-    expect(resolved.stepId).toBeUndefined();
+    expect(resolved.stepIds).toBeUndefined();
+  });
+
+  it('sets newActionEffects to [] and picks first step when multiple available in inOrder track without effects', () => {
+    const inst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const defTrack: CardDef = {
+      id: 2,
+      name: 'T',
+      states: [{ id: 1, name: 'S', track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }] } }],
+    };
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    const effect = {
+      id: 1,
+      type: ActionEffectType.TRACK_ADVANCE,
+      cards: { scope: [TargetScope.BOARD] },
+    };
+    const [resolved] = resolveActionEffect(effect, 99, gs, { 2: defTrack }, stickerDefs);
+    expect(resolved.stepIds).toEqual([1]);
+    expect(resolved.newActionEffects).toEqual([]);
   });
 });
 
@@ -471,6 +520,42 @@ describe('resolveActionEffect – valuePerElement', () => {
     };
     const [resolved] = resolveActionEffect(effect, 99, gs, { 2: woodProducerDef }, stickerDefs);
     expect(resolved.resources).toEqual({ gold: 3 });
+  });
+
+  it('returns 0 for productionTotal when a production does not include the key', () => {
+    const mixedProducerDef: CardDef = {
+      id: 2,
+      name: 'MixedProducer',
+      states: [{ id: 1, name: 'S', productions: [{ wood: 2 }, { gold: 1 }] }],
+    };
+    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst2 } });
+    const result = countValuePerElement(
+      { amount: 1, productionTotal: 'wood' as never },
+      gs,
+      99,
+      { 2: mixedProducerDef },
+      stickerDefs,
+    );
+    expect(result).toBe(2);
+  });
+
+  it('returns 0 for accumulation when instance has no cumulated map', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 1: inst } });
+    const result = countValuePerElement(
+      { amount: 1, accumulation: 'stars' },
+      gs,
+      1,
+      defs,
+      stickerDefs,
+    );
+    expect(result).toBe(0);
+  });
+
+  it('returns 0 when valuePerElement has no cards, accumulation, or productionTotal', () => {
+    const result = countValuePerElement({ amount: 1 }, makeState(), 1, defs, stickerDefs);
+    expect(result).toBe(0);
   });
 });
 

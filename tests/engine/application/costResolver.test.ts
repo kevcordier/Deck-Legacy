@@ -87,25 +87,26 @@ describe('resolveCost – discard', () => {
     expect(pending[0].pickCount).toBe(1);
   });
 
-  it('uses default number of 1 for discard', () => {
-    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const gs = makeState({ board: [2], instances: { 2: inst } });
-    const [resolved] = resolveCost({ discard: { scope: [TargetScope.BOARD] } }, 99, gs, defs);
-    expect(resolved.discardedCardIds).toEqual([2]);
-  });
-});
-
-describe('resolveCost – destroy', () => {
-  it('resolves empty destroyedCardIds when no candidates on board', () => {
-    const gs = makeState({ board: [] });
-    const [resolved, pending] = resolveCost(
-      { destroy: { scope: [TargetScope.BOARD] } },
-      1,
+  it('uses explicit number for pickCount in pending choice', () => {
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const inst4 = makeInstance({ id: 4, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [2, 3, 4], instances: { 2: inst2, 3: inst3, 4: inst4 } });
+    const [, pending] = resolveCost(
+      { discard: { scope: [TargetScope.BOARD], number: 2 } },
+      99,
       gs,
       defs,
     );
-    expect(resolved.destroyedCardIds).toEqual([]);
-    expect(pending).toHaveLength(0);
+    expect(pending[0].pickCount).toBe(2);
+  });
+
+  it('defaults pickCount to 1 when discard number is not specified', () => {
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [2, 3], instances: { 2: inst2, 3: inst3 } });
+    const [, pending] = resolveCost({ discard: { scope: [TargetScope.BOARD] } }, 99, gs, defs);
+    expect(pending[0].pickCount).toBe(1);
   });
 
   it('resolves destroy directly when candidates equal number needed', () => {
@@ -140,5 +141,32 @@ describe('resolveCost – destroy', () => {
     const gs = makeState({ drawPile: [2], instances: { 2: inst } });
     const [resolved] = resolveCost({ destroy: { scope: [TargetScope.BOARD] } }, 99, gs, defs);
     expect(resolved.destroyedCardIds).toEqual([]);
+  });
+
+  it('auto-resolves destroy with one candidate and no explicit number', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    const [resolved, pending] = resolveCost(
+      { destroy: { scope: [TargetScope.BOARD] } }, // no number, defaults to 1
+      99,
+      gs,
+      defs,
+    );
+    expect(resolved.destroyedCardIds).toEqual([2]);
+    expect(pending).toHaveLength(0);
+  });
+
+  it('creates pending choice with default pickCount when no number specified', () => {
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [2, 3], instances: { 2: inst2, 3: inst3 } });
+    const [, pending] = resolveCost(
+      { destroy: { scope: [TargetScope.BOARD] } }, // no number, defaults to 1
+      99,
+      gs,
+      defs,
+    );
+    expect(pending).toHaveLength(1);
+    expect(pending[0].pickCount).toBe(1);
   });
 });
