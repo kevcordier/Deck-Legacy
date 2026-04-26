@@ -12,6 +12,8 @@ export const jester: CardDef = {
       name: 'Jester',
       tags: [CardTag.PERSON],
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c5efb41f-0d2c-4c9b-adc6-b8d6d4cc73ae/anim=false,width=450,optimized=true/Refined_00002_.jpeg',
       actions: [
         {
           id: '32-1-1',
@@ -143,6 +145,8 @@ export const jester: CardDef = {
       id: 2,
       name: 'Merchant',
       tags: [CardTag.PERSON],
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e4086710-3bfc-420e-8d1b-9d1dc3ac71f3/anim=false,width=450,optimized=true/Latent_Adetailer_00031_.jpeg',
       actions: [
         {
           id: '32-2-2',

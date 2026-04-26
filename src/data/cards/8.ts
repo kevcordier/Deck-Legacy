@@ -11,7 +11,7 @@ export const fieldWorker: CardDef = {
       name: 'Field Worker',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a6fb5b03-1fa4-4cda-9387-a7c69c29d745/anim=false,width=450,optimized=true/00333-2099362640.jpeg',
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/afa4cf05-2f0a-4ac7-bc90-bd9d3f2f5832/anim=false,width=450,optimized=true/ComfyUI_00998_.jpeg',
       actions: [
         {
           id: '8-1-1',
@@ -43,7 +43,7 @@ export const fieldWorker: CardDef = {
       name: 'Servant',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/9f3f38ed-1c0a-413d-8a60-862efc680b99/anim=false,width=450,optimized=true/servant%20male%201%20photoMovieX.jpeg',
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/51c14cdb-50fa-4ff9-af29-0d9569c83938/anim=false,width=450,optimized=true/SP0A60XVCMVD8K4JMK6WTJYQJ0.jpeg',
       actions: [
         {
           id: '8-2-1',

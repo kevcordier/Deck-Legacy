@@ -107,7 +107,7 @@ export const bandit: CardDef = {
       name: 'Worker',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/649b5682-509e-4cbd-bdb7-7ca61511aa7c/anim=false,width=450,optimized=true/RBB7BJW5YGRBW6WY6P5MTZM1N0.jpeg',
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/9fd493b2-f7de-4e69-af63-7ae96f940751/anim=false,width=450,optimized=true/00052-1215512062.jpeg',
       actions: [
         {
           id: '9-2-1',

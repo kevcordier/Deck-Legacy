@@ -11,6 +11,8 @@ export const loyalty: CardDef = {
       id: 1,
       name: 'Loyalty',
       tags: [CardTag.GOAL],
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a6911400-1a99-4454-9c30-d449c13b0260/anim=false,width=450,optimized=true/00160-1296651632.jpeg',
       glory: 0,
       passives: [
         {
@@ -26,6 +28,8 @@ export const loyalty: CardDef = {
       name: 'Trader',
       tags: [CardTag.GOAL],
       glory: 0,
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/b7419552-cbe0-48e9-98da-79992a77b26a/anim=false,width=450,optimized=true/00001-2999530579.jpeg',
       passives: [
         {
           id: '31_2_glory',

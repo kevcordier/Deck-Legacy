@@ -83,7 +83,7 @@ export const river: CardDef = {
       id: 4,
       name: 'Explorers',
       illustration:
-        'https://assets.lummi.ai/assets/QmRN7MxixVDs23HevqGV7pmr9GMAZCcB67NhXpNRcBArp6?auto=format&w=1500',
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/9ef40777-f81c-4067-bba6-529dd3dc2919/anim=false,width=450,optimized=true/2025-09-20T21.32.45_1.jpeg',
       tags: [CardTag.PERSON],
       productions: [
         {

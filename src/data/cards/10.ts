@@ -107,10 +107,10 @@ export const bandit2: CardDef = {
       name: 'Field Worker',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a6fb5b03-1fa4-4cda-9387-a7c69c29d745/anim=false,width=450,optimized=true/00333-2099362640.jpeg',
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/afa4cf05-2f0a-4ac7-bc90-bd9d3f2f5832/anim=false,width=450,optimized=true/ComfyUI_00998_.jpeg',
       actions: [
         {
-          id: '10-2-1',
+          id: '8-1-1',
           actionEffects: [
             {
               id: 1,
@@ -119,6 +119,14 @@ export const bandit2: CardDef = {
                 cards: {
                   scope: [TargetScope.BOARD],
                   tags: [CardTag.LAND],
+                  produces: [
+                    ResourceType.GOLD,
+                    ResourceType.WOOD,
+                    ResourceType.STONE,
+                    ResourceType.IRON,
+                    ResourceType.WEAPON,
+                    ResourceType.GOODS,
+                  ],
                 },
               },
             },

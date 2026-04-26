@@ -30,7 +30,7 @@ import { strengthInNumbers } from './29';
 import { expandingBorders } from './30';
 import { loyalty } from './31';
 import { jester } from './32';
-import { filedWorker } from './33';
+import { fieldWorker2 } from './33';
 import { mason } from './34';
 import { thunderstorm } from './35';
 import { camp } from './36';
@@ -153,7 +153,7 @@ export const cardsData: CardDef[] = [
   expandingBorders,
   loyalty,
   jester,
-  filedWorker,
+  fieldWorker2,
   mason,
   thunderstorm,
   camp,

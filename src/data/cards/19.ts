@@ -10,7 +10,7 @@ export const exportation: CardDef = {
       id: 1,
       name: 'Export',
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/79ac89da-591d-45ef-b60d-23263d511b35/anim=false,width=450,optimized=true/00009-3241185049.jpeg',
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8a521c20-ba71-47b8-aafd-93539594bc26/anim=false,width=450,optimized=true/Upscale_00002_.jpeg',
       actions: [
         {
           id: '19-1-1',
@@ -163,7 +163,7 @@ export const exportation: CardDef = {
       name: 'Mass Export',
       glory: 25,
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/79ac89da-591d-45ef-b60d-23263d511b35/anim=false,width=450,optimized=true/00009-3241185049.jpeg',
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8a521c20-ba71-47b8-aafd-93539594bc26/anim=false,width=450,optimized=true/Upscale_00002_.jpeg',
       actions: [
         {
           id: '19-2-1',

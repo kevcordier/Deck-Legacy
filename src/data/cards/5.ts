@@ -98,7 +98,7 @@ export const trader: CardDef = {
       name: 'Market',
       tags: [CardTag.BUILDING],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/72551fc7-1c5d-4693-b553-0f08265c85b2/width=450,quality=90/7AJB24JBKRCX20WQGBAC85VPQ0.jpeg',
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7cc8814f-ba25-47ea-8066-9457ef651d28/anim=false,width=450,optimized=true/85KPN5KPHVH1N8RAJ9F8KPNTJ0.jpeg',
       glory: 3,
       actions: [
         {

@@ -54,6 +54,7 @@ export enum PassiveType {
   INCREASE_GLORY = 'INCREASE_GLORY',
   INCREASE_PRODUCTION = 'INCREASE_PRODUCTION',
   ADD_TRIGGER = 'ADD_TRIGGER',
+  CANT_ADVANCE = 'CANT_ADVANCE',
 }
 
 export enum ResourceType {
