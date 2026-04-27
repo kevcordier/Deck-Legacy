@@ -15,7 +15,8 @@ import {
   getEffectiveProductions,
   tagClass,
 } from '@engine/application/cardHelpers';
-import { PassiveType } from '@engine/domain/enums';
+import { canUseOptions } from '@engine/application/gameStateHelper';
+import { Options, PassiveType } from '@engine/domain/enums';
 import type { CardInstance } from '@engine/domain/types';
 import {
   tCardActionLabel,
@@ -202,6 +203,7 @@ export function GameCard({
           {!isBlocked &&
             upgrades.map(upg => {
               const affordable = canAffordResources(currentResources, upg.cost);
+              const optionDisabled = !canUseOptions(state, Options.UPGRADE);
               const targetState = def?.states.find(s => s.id === upg.upgradeTo);
               return (
                 <Button
@@ -209,7 +211,7 @@ export function GameCard({
                   color="base-ink"
                   key={upg.upgradeTo}
                   onClick={() => resolveUpgrade(instance.id, upg.upgradeTo)}
-                  disabled={!affordable || !canActivate}
+                  disabled={!affordable || !canActivate || optionDisabled}
                   className={cardActionsClass}
                 >
                   ⬆{' '}

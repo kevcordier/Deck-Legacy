@@ -1,4 +1,11 @@
-import { ActionEffectType, CardTag, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  Options,
+  PassiveType,
+  TargetScope,
+  Trigger,
+} from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import { CardPassives } from '@engine/domain/types/effects';
 
@@ -69,7 +76,7 @@ export const thunderstorm: CardDef = {
             gold: 2,
           },
         },
-        CardPassives[PassiveType.CANT_ADVANCE],
+        { ...CardPassives[PassiveType.DESACTIVATE_OPTION], options: [Options.ADVANCE] },
       ],
       actions: [
         {

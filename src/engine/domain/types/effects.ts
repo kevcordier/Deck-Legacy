@@ -17,8 +17,9 @@ export const CardPassives: Record<string, Passive> = {
     id: 'increase_production',
     type: PassiveType.INCREASE_PRODUCTION,
   },
-  [PassiveType.CANT_ADVANCE]: {
-    id: 'cant_advance',
-    type: PassiveType.CANT_ADVANCE,
+  [PassiveType.DESACTIVATE_OPTION]: {
+    id: 'desactivate_option',
+    type: PassiveType.DESACTIVATE_OPTION,
+    options: [],
   },
 };

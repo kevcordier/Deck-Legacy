@@ -123,6 +123,7 @@ export type Passive = {
   stickerIds?: number[];
   valuePerElement?: ValuePerElement;
   condition?: Condition;
+  options?: unknown[];
 };
 
 export type Having = {

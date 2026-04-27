@@ -404,7 +404,7 @@ export function GameProvider({
           ),
         );
       },
-      upgradeCard: (instanceId: number, stateId: number) => {
+      chooseState: (instanceId: number, stateId: number) => {
         sync(aggRef.current.chooseState(instanceId, stateId));
       },
       addSticker: (instanceId: number, stickerId: number) => {

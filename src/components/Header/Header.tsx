@@ -1,6 +1,7 @@
 import { Button } from '@components/ui/Button/Button';
 import { Title } from '@components/ui/Title/Title';
-import { PassiveType } from '@engine/domain/enums';
+import { canUseOptions } from '@engine/application/gameStateHelper';
+import { Options } from '@engine/domain/enums';
 import { Phase } from '@engine/domain/types/Phase';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
@@ -18,9 +19,7 @@ export function Header() {
     (!!pendingChoices && pendingChoices.length > 0) ||
     (!!triggerPile && Object.keys(triggerPile).length > 0);
 
-  const cantAdvance = Object.values(state.boardEffects).some(effect =>
-    effect.some(p => p.type === PassiveType.CANT_ADVANCE),
-  );
+  const cantAdvance = !canUseOptions(state, Options.ADVANCE);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {

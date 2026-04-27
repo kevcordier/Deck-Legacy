@@ -1,7 +1,6 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { getActiveState } from '@engine/application/cardHelpers';
 import { drawCards } from '@engine/application/gameStateHelper';
-import { PassiveType } from '@engine/domain/enums';
 import type {
   AdvanceEvent,
   CardDef,
@@ -15,14 +14,6 @@ export class AdvanceStrategy implements GameEventStrategy {
 
   apply(gameState: GameState, event: GameEvent): GameState {
     const e = event as AdvanceEvent;
-    if (
-      Object.values(gameState.boardEffects).some(effect =>
-        effect.some(p => p.type === PassiveType.CANT_ADVANCE),
-      )
-    ) {
-      return gameState;
-    }
-
     e.turnCards.forEach(instanceId => {
       const passives = getActiveState(gameState.instances[instanceId], this.cardDefs)?.passives;
       if (!passives) return;

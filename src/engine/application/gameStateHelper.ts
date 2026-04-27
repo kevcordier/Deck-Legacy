@@ -3,7 +3,7 @@ import {
   getActiveState,
   getEffectiveGlory,
 } from '@engine/application/cardHelpers';
-import type { ResourceType } from '@engine/domain/enums';
+import { type Options, PassiveType, type ResourceType } from '@engine/domain/enums';
 import type { CardDef, GameState, Resources, Sticker } from '@engine/domain/types';
 
 export const discardCards = (_gameState: GameState, cardIds: number[]): GameState => {
@@ -100,4 +100,10 @@ export function computeGameStateDiff(before: GameState, after: GameState): Parti
       .filter(key => JSON.stringify(before[key]) !== JSON.stringify(after[key]))
       .map(key => [key, after[key]]),
   ) as Partial<GameState>;
+}
+
+export function canUseOptions(gameState: GameState, options: Options): boolean {
+  return !Object.values(gameState.boardEffects).some(effect =>
+    effect.some(p => p.type === PassiveType.DESACTIVATE_OPTION && p.options?.includes(options)),
+  );
 }

@@ -1,7 +1,13 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
-import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
+import { getActiveState, getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { Trigger } from '@engine/domain/enums';
-import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '@engine/domain/types';
+import type {
+  CardDef,
+  GameState,
+  Passive,
+  ResolvedActionEffect,
+  Sticker,
+} from '@engine/domain/types';
 
 export class PlayCardStrategy implements CardActionStrategy {
   constructor(
@@ -26,7 +32,14 @@ export class PlayCardStrategy implements CardActionStrategy {
         gs.triggerPile[crypto.randomUUID()] = effect;
       });
     }
+
     instanceIds.forEach(instanceId => {
+      const passives: Passive[] =
+        getActiveState(gs.instances[instanceId], this.cardDefs).passives ?? [];
+      passives.forEach(passive => {
+        gs.boardEffects[instanceId] = [...(gs.boardEffects[instanceId] ?? []), passive];
+      });
+
       gs.discoveryPile = gs.discoveryPile.filter(c => c !== instanceId);
       gs.drawPile = gs.drawPile.filter(c => c !== instanceId);
       gs.destroyedPile = gs.destroyedPile.filter(c => c !== instanceId);

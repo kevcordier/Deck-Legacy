@@ -1,8 +1,8 @@
 import { CardActionAggregate } from '@engine/application/aggregates/CardActionAggregate';
 import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { GameEventContext } from '@engine/application/gameEvent/GameEventContext';
-import { computeGameStateDiff } from '@engine/application/gameStateHelper';
-import { GameEventType, type PendingChoiceType, Trigger } from '@engine/domain/enums';
+import { canUseOptions, computeGameStateDiff } from '@engine/application/gameStateHelper';
+import { GameEventType, Options, type PendingChoiceType, Trigger } from '@engine/domain/enums';
 import type {
   AdvanceEvent,
   CardAction,
@@ -264,7 +264,7 @@ export class GameAggregate {
   }
 
   public advance(): GameState {
-    if (this.gameState.drawPile.length === 0) {
+    if (this.gameState.drawPile.length === 0 || !canUseOptions(this.gameState, Options.ADVANCE)) {
       return this.gameState;
     }
 
@@ -292,6 +292,10 @@ export class GameAggregate {
   }
 
   public upgradeCard(cardInstanceId: number, stateId: number, cost: Resources): GameState {
+    if (!canUseOptions(this.gameState, Options.UPGRADE)) {
+      return this.gameState;
+    }
+
     const event: UpgradeCardEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.UPGRADE_CARD,
@@ -332,6 +336,12 @@ export class GameAggregate {
   }
 
   public cardAction(action: CardAction, instanceId: number, triggerId?: string): GameState {
+    if (
+      !canUseOptions(this.gameState, action.endsTurn ? Options.END_TURN_ACTION : Options.ACTION)
+    ) {
+      return this.gameState;
+    }
+
     this.currentCardAction = new CardActionAggregate(
       this.cardDefs,
       this.stickerDefs,

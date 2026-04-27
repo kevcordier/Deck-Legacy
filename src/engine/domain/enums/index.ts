@@ -56,7 +56,14 @@ export enum PassiveType {
   INCREASE_GLORY = 'INCREASE_GLORY',
   INCREASE_PRODUCTION = 'INCREASE_PRODUCTION',
   ADD_TRIGGER = 'ADD_TRIGGER',
-  CANT_ADVANCE = 'CANT_ADVANCE',
+  DESACTIVATE_OPTION = 'DESACTIVATE_OPTION',
+}
+
+export enum Options {
+  ADVANCE = 'advance',
+  UPGRADE = 'upgrade',
+  ACTION = 'action',
+  END_TURN_ACTION = 'end_turn_action',
 }
 
 export enum ResourceType {

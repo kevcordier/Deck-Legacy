@@ -12,7 +12,8 @@ import {
   getActiveState,
   getFirstAvailableTrackStep,
 } from '@engine/application/cardHelpers';
-import { ActionEffectType, TargetScope } from '@engine/domain/enums';
+import { canUseOptions } from '@engine/application/gameStateHelper';
+import { ActionEffectType, Options, TargetScope } from '@engine/domain/enums';
 import type { CardAction, CardInstance } from '@engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import type { ReactNode } from 'react';
@@ -50,6 +51,10 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
     ? getFirstAvailableTrackStep(action.actionEffects, instance.id, state, defs, stickerDefs)
     : undefined;
   const cardCostAffordable = canAffordCardCost(action.cost, instance.id, state, defs, stickerDefs);
+  const optionDisabled = !canUseOptions(
+    state,
+    action.endsTurn ? Options.END_TURN_ACTION : Options.ACTION,
+  );
   const affordable = hasTrackAdvance
     ? firstTrackStep &&
       canAffordResources(state.resources, firstTrackStep?.cost) &&
@@ -70,7 +75,7 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
   return (
     <Button
       onClick={() => resolveAction(instance.id, action.id)}
-      disabled={!affordable || disabled || haveTrigger}
+      disabled={!affordable || disabled || haveTrigger || optionDisabled}
       variant="text"
       color="base-ink"
       className={`font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md`}
