@@ -14,6 +14,8 @@ export const ICON_PASSTHROUGH = {
   glory: '{{glory}}',
   time: '{{time}}',
   passif: '{{passif}}',
+  destroy: '{{destroy}}',
+  trigger: '{{trigger}}',
 };
 
 export function tCardName(t: TFunction, cardId = 0, stateId = 0): React.ReactNode {

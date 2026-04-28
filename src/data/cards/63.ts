@@ -9,6 +9,7 @@ export const pirate: CardDef = {
       id: 1,
       name: 'Pirate',
       tags: [CardTag.ENEMY],
+      negative: true,
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/b1291a30-cba7-4e4e-c3d3-e6868be5f700/anim=false,width=450,optimized=true/04608-1785735444-Best_A-Zovya_RPG_Artist_Tools_V2.jpeg',
     },

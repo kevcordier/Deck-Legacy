@@ -12,14 +12,12 @@ export const stop3: CardDef = {
       actions: [
         {
           id: '22-1-1',
-          unlimited: true,
           trigger: Trigger.ON_DISCOVER,
           actionEffects: [
             {
               id: 1,
               type: ActionEffectType.DISCOVER_CARD,
               cards: {
-                scope: [TargetScope.DISCOVERY],
                 ids: [31, 32, 33, 34],
               },
               pickNumber: 2,

@@ -1,5 +1,6 @@
 import {
   CrownIcon,
+  DestroyIcon,
   GloryIcon,
   GoldIcon,
   GoodsIcon,
@@ -8,13 +9,14 @@ import {
   PassifIcon,
   StoneIcon,
   TimeIcon,
+  TriggerIcon,
   WeaponIcon,
   WoodIcon,
 } from '@components/ui/Icon/icon';
 import React from 'react';
 
 // Detects tokens like {{gold}}, {{wood}}, etc. in translated texts
-const ICON_TOKEN = /\{\{(gold|wood|stone|iron|weapon|goods|glory|time|passif)\}\}/g;
+const ICON_TOKEN = /\{\{(gold|wood|stone|iron|weapon|goods|glory|time|passif|destroy|trigger)\}\}/g;
 
 const RESOURCE_META: Record<
   string,
@@ -33,6 +35,8 @@ const RESOURCE_META: Record<
   glory: { icon: GloryIcon, cls: 'color:gold', label: 'resources.glory' },
   time: { icon: TimeIcon, cls: 'color:base-ink', label: 'resources.time' },
   passif: { icon: PassifIcon, cls: 'color:base-ink', label: 'resources.passif' },
+  destroy: { icon: DestroyIcon, cls: 'color:tag-enemy', label: 'resources.destroy' },
+  trigger: { icon: TriggerIcon, cls: 'color:yellow', label: 'resources.trigger' },
 };
 
 export function getResMeta(key: string) {

@@ -18,35 +18,7 @@ export const stop4: CardDef = {
               id: 1,
               type: ActionEffectType.DISCOVER_CARD,
               cards: {
-                ids: [38],
-              },
-            },
-            {
-              id: 2,
-              type: ActionEffectType.DISCOVER_CARD,
-              cards: {
-                ids: [39],
-              },
-            },
-            {
-              id: 3,
-              type: ActionEffectType.DISCOVER_CARD,
-              cards: {
-                ids: [40],
-              },
-            },
-            {
-              id: 4,
-              type: ActionEffectType.DISCOVER_CARD,
-              cards: {
-                ids: [41],
-              },
-            },
-            {
-              id: 5,
-              type: ActionEffectType.DISCOVER_CARD,
-              cards: {
-                ids: [42],
+                ids: [38, 39, 40, 41, 42],
               },
             },
           ],

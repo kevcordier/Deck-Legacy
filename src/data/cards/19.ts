@@ -1,4 +1,10 @@
-import { ActionEffectType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  ResourceType,
+  TargetScope,
+  Trigger,
+} from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const exportation: CardDef = {
@@ -32,6 +38,20 @@ export const exportation: CardDef = {
               },
             ],
           },
+        },
+        {
+          id: '19-1-2',
+          trigger: Trigger.END_OF_ROUND,
+          optional: true,
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.TRACK_ADVANCE,
+              cards: {
+                scope: [TargetScope.SELF],
+              },
+            },
+          ],
         },
       ],
       track: {
@@ -185,6 +205,20 @@ export const exportation: CardDef = {
               },
             ],
           },
+        },
+        {
+          id: '19-2-2',
+          trigger: Trigger.END_OF_ROUND,
+          optional: true,
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.TRACK_ADVANCE,
+              cards: {
+                scope: [TargetScope.SELF],
+              },
+            },
+          ],
         },
       ],
       track: {

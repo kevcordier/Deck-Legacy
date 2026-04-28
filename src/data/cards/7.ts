@@ -58,7 +58,7 @@ export const river: CardDef = {
       id: 3,
       name: 'Stone Bridge',
       illustration:
-        'https://assets.lummi.ai/assets/QmPYBqiJxrZNah6ePyGB78vngDTtkUwzgSv1yoEAGNa1a5?auto=format&w=1500',
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/599762ab-02f4-4e53-8ce3-289871b82beb/anim=false,width=450,optimized=true/00004-3622657758.jpeg',
       tags: [CardTag.LAND],
       productions: [
         {
