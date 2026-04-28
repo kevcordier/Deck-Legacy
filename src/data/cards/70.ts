@@ -9,6 +9,8 @@ export const mine: CardDef = {
       id: 1,
       name: 'Mine',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/999f4252-a776-4516-b28b-ae1bacc5aa76/anim=false,width=450,optimized=true/00017-3322662124.jpeg',
       glory: { amount: 4 },
       productions: [
         {
@@ -33,6 +35,8 @@ export const mine: CardDef = {
       id: 2,
       name: 'Deep Mine',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e46376a2-c341-42ce-839a-447f5df3da44/anim=false,width=450,optimized=true/W5B5360KVNA1E1FN8655QV9R90.jpeg',
       glory: { amount: 6 },
       productions: [
         {
@@ -59,6 +63,8 @@ export const mine: CardDef = {
       name: 'Ruby Mine',
       tags: [CardTag.BUILDING],
       glory: { amount: 9 },
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/f91e7435-4100-4203-8225-260d3185b941/450x%3Cauto%3E_so',
       productions: [
         {
           [ResourceType.STONE]: 1,
@@ -86,6 +92,8 @@ export const mine: CardDef = {
       name: 'Diamond Mine',
       glory: { amount: 13 },
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/5fb183b7-9592-4193-a1cc-0e9e3431f06e/anim=false,width=450,optimized=true/00061-2947438525.jpeg',
       productions: [
         {
           [ResourceType.STONE]: 1,

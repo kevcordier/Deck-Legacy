@@ -25,7 +25,7 @@ export const camp: CardDef = {
       name: 'Training Grounds',
       tags: [CardTag.LAND],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/aca3608d-e5fd-40d2-b99e-8e217fab46bd/anim=false,width=450,optimized=true/531Z44ZJXR0881NZPWZA4C8CK0.jpeg',
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/4d3011bb-0810-4e03-aac2-cc98a55a95a6/anim=false,width=450,optimized=true/ComfyUI_00601_.jpeg',
       glory: {
         amount: 1,
       },

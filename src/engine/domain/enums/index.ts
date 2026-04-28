@@ -9,6 +9,8 @@ export enum CardTag {
   KNIGHT = 'knight',
   ELDER = 'elder',
   WALL = 'wall',
+  STATE = 'state',
+  SHIP = 'ship',
 }
 
 export enum Trigger {
@@ -59,6 +61,8 @@ export enum PassiveType {
   INCREASE_PRODUCTION = 'INCREASE_PRODUCTION',
   ADD_TRIGGER = 'ADD_TRIGGER',
   DESACTIVATE_OPTION = 'DESACTIVATE_OPTION',
+  DOUBLE_COUNT = 'DOUBLE_COUNT',
+  INCREASE_ADD_RESOURCES = 'INCREASE_ADD_RESOURCES',
 }
 
 export enum Options {

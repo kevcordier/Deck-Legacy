@@ -131,7 +131,7 @@ export const eastCliffs: CardDef = {
     {
       id: 4,
       name: 'Wall',
-      tags: [CardTag.BUILDING],
+      tags: [CardTag.BUILDING, CardTag.WALL],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7aec4cb2-aa6e-4a92-8e4b-b447573d9cdf/anim=false,width=450,optimized=true/2570720676-1.jpeg',
       productions: [
