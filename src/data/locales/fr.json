@@ -120,7 +120,9 @@
     "remainingCards": "Autres cartes"
   },
   "cardList": {
-    "noCards": "Aucune carte"
+    "noCards": "Aucune carte",
+    "searchPlaceholder": "Rechercher par nom",
+    "allTags": "Tous les tags"
   },
   "cardAdded": {
     "title": "Nouvelle carte découverte",

@@ -1,9 +1,11 @@
-import { CardListModal } from '@components/CardListModal/CardListModal';
+import { type CardListFilter, CardListModal } from '@components/CardListModal/CardListModal';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
 import { Title } from '@components/ui/Title/Title';
 import { getActiveState } from '@engine/application/cardHelpers';
+import type { CardTag } from '@engine/domain/enums';
 import type { CardInstance } from '@engine/domain/types';
+import { tCardName } from '@helpers/cardI18n';
 import { useGame } from '@hooks/useGame';
 import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +33,21 @@ export function DeckViewer({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [cardFilter, setCardFilter] = useState<CardListFilter>({
+    search: '',
+    tag: '',
+  });
+
+  const cardFilterFn = (inst: CardInstance) => {
+    const cs = getActiveState(inst, defs);
+    return (
+      tCardName(t, inst.cardId, cs.id)
+        ?.toString()
+        .toLowerCase()
+        .includes(cardFilter.search.toLowerCase()) &&
+      (cardFilter.tag === '' || cs.tags?.includes(cardFilter.tag as CardTag))
+    );
+  };
 
   return (
     <section
@@ -97,10 +114,15 @@ export function DeckViewer({
         <CardListModal
           title={t('deckViewer.title')}
           subtitle={t('deckViewer.modalSubtitle', { count: deck.length })}
-          onClose={() => setModalOpen(false)}
+          onClose={() => {
+            setModalOpen(false);
+            setCardFilter({ search: '', tag: '' });
+          }}
           emptyText={t('deckViewer.emptyDeck')}
+          cardFilter={cardFilter}
+          onFilterChange={setCardFilter}
         >
-          {deck.map(inst => (
+          {deck.filter(cardFilterFn).map(inst => (
             <div key={inst.id} className="@container">
               <GameCard instance={inst} className="w-full" />
             </div>

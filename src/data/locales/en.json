@@ -120,7 +120,9 @@
     "remainingCards": "Other cards"
   },
   "cardList": {
-    "noCards": "No cards"
+    "noCards": "No cards",
+    "searchPlaceholder": "Search by name",
+    "allTags": "All tags"
   },
   "cardAdded": {
     "title": "New card discovered",
