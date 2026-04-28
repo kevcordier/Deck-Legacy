@@ -1,4 +1,4 @@
-import { makeInstance, makeState } from '../fixtures';
+import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { GameEventContext } from '@engine/application/gameEvent/GameEventContext';
 import { GameEventType } from '@engine/domain/enums';
 import type {
@@ -19,14 +19,14 @@ const defs = { 1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] } };
 
 describe('GameEventContext', () => {
   it('throws for unknown event types', () => {
-    const ctx = new GameEventContext(defs);
+    const ctx = new GameEventContext(defs, makeStickerDefs());
     expect(() =>
       ctx.apply(makeState(), { id: 'x', type: 'UNKNOWN_EVENT', timestamp: 0 } as never),
     ).toThrow('Unknown event type: UNKNOWN_EVENT');
   });
 
   it('dispatches GAME_STARTED', () => {
-    const ctx = new GameEventContext(defs);
+    const ctx = new GameEventContext(defs, makeStickerDefs());
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const result = ctx.apply(makeState(), {
       id: 'e1',
@@ -41,7 +41,7 @@ describe('GameEventContext', () => {
   });
 
   it('dispatches ROUND_STARTED', () => {
-    const ctx = new GameEventContext(defs);
+    const ctx = new GameEventContext(defs, makeStickerDefs());
     const result = ctx.apply(makeState(), {
       id: 'e1',
       type: GameEventType.ROUND_STARTED,
@@ -56,7 +56,7 @@ describe('GameEventContext', () => {
   });
 
   it('dispatches TURN_STARTED', () => {
-    const ctx = new GameEventContext(defs);
+    const ctx = new GameEventContext(defs, makeStickerDefs());
     const result = ctx.apply(makeState(), {
       id: 'e1',
       type: GameEventType.TURN_STARTED,
@@ -69,7 +69,7 @@ describe('GameEventContext', () => {
   });
 
   it('dispatches CARD_PRODUCED', () => {
-    const ctx = new GameEventContext(defs);
+    const ctx = new GameEventContext(defs, makeStickerDefs());
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], instances: { 1: inst } });
     const result = ctx.apply(gs, {
@@ -83,7 +83,7 @@ describe('GameEventContext', () => {
   });
 
   it('dispatches ADVANCE', () => {
-    const ctx = new GameEventContext(defs);
+    const ctx = new GameEventContext(defs, makeStickerDefs());
     const result = ctx.apply(makeState(), {
       id: 'e1',
       type: GameEventType.ADVANCE,
@@ -95,7 +95,7 @@ describe('GameEventContext', () => {
   });
 
   it('dispatches UPGRADE_CARD', () => {
-    const ctx = new GameEventContext(defs);
+    const ctx = new GameEventContext(defs, makeStickerDefs());
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], instances: { 1: inst } });
     const result = ctx.apply(gs, {
@@ -110,7 +110,7 @@ describe('GameEventContext', () => {
   });
 
   it('dispatches CARD_ACTION', () => {
-    const ctx = new GameEventContext(defs);
+    const ctx = new GameEventContext(defs, makeStickerDefs());
     const gs = makeState({ resources: { gold: 1 } });
     const result = ctx.apply(gs, {
       id: 'e1',
@@ -124,7 +124,7 @@ describe('GameEventContext', () => {
   });
 
   it('dispatches SKIP_TRIGGER', () => {
-    const ctx = new GameEventContext(defs);
+    const ctx = new GameEventContext(defs, makeStickerDefs());
     const gs = makeState({
       triggerPile: { tid: { effectDef: { id: 'x', actionEffects: [] }, sourceInstanceId: 1 } },
     });
@@ -138,13 +138,13 @@ describe('GameEventContext', () => {
   });
 
   it('dispatches TURN_ENDED', () => {
-    const ctx = new GameEventContext(defs);
+    const ctx = new GameEventContext(defs, makeStickerDefs());
     const result = ctx.apply(makeState(), {
       id: 'e1',
       type: GameEventType.TURN_ENDED,
       timestamp: 0,
       onTurnEndedEvents: [],
     } as TurnEndedEvent);
-    expect(result.phase).toBe(Phase.PRETURN);
+    expect(result.phase).toBe(Phase.POSTTURN);
   });
 });

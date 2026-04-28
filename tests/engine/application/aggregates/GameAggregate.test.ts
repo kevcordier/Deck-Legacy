@@ -257,7 +257,7 @@ describe('GameAggregate.turnEnded', () => {
     });
     const agg = new GameAggregate(state, { 6: endOfTurnDef }, {}, []);
     const gs = agg.turnEnded();
-    expect(gs.phase).toBe(Phase.PRETURN);
+    expect(gs.phase).toBe(Phase.POSTTURN);
   });
 });
 
@@ -641,6 +641,6 @@ describe('GameAggregate.skipTrigger', () => {
     agg.turnEnded();
     const triggerId = Object.keys(agg.getGameState().triggerPile)[0];
     const gs = agg.skipTrigger(triggerId);
-    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.phase).toBe(Phase.POSTTURN);
   });
 });

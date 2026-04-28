@@ -41,7 +41,7 @@ describe('DiscoverCardStrategy', () => {
       sourceInstanceId: 99,
       instanceIds: [10],
     });
-    expect(result.lastAddedIds).toContain(10);
+    expect(result.lastAddedCards).toContain(10);
     expect(result.discardPile).toContain(10);
     expect(result.discoveryPile).not.toContain(10);
   });
@@ -58,7 +58,7 @@ describe('DiscoverCardStrategy', () => {
       instanceIds: [20],
     });
     expect(result.permanents).toContain(20);
-    expect(result.lastAddedIds).toContain(20);
+    expect(result.lastAddedCards).toContain(20);
     expect(result.discoveryPile).not.toContain(20);
   });
 
@@ -74,7 +74,7 @@ describe('DiscoverCardStrategy', () => {
       instanceIds: [30],
     });
     expect(result.discoveryPile).not.toContain(30);
-    expect(result.lastAddedIds).not.toContain(30);
+    expect(result.lastAddedCards).not.toContain(30);
   });
 
   it('enqueues ON_DISCOVER trigger for cards with matching action', () => {
@@ -100,7 +100,7 @@ describe('DiscoverCardStrategy', () => {
       sourceInstanceId: 99,
       instanceIds: [],
     });
-    expect(result.lastAddedIds).toHaveLength(0);
+    expect(result.lastAddedCards).toHaveLength(0);
   });
 
   it('handles missing instanceIds gracefully', () => {
@@ -112,6 +112,6 @@ describe('DiscoverCardStrategy', () => {
       sourceInstanceId: 99,
       // no instanceIds → falls back to []
     });
-    expect(result.lastAddedIds).toHaveLength(0);
+    expect(result.lastAddedCards).toHaveLength(0);
   });
 });

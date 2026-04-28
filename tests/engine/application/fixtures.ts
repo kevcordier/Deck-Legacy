@@ -13,7 +13,7 @@ export const EMPTY_STATE: GameState = {
   discoveryPile: [],
   boardEffects: {},
   triggerPile: {},
-  lastAddedIds: [],
+  lastAddedCards: [],
   lastDrawnCards: [],
   round: 0,
   turn: 0,

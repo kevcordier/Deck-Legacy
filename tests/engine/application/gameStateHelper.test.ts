@@ -1,4 +1,4 @@
-import { makeInstance, makeState } from './fixtures';
+import { makeDefs, makeInstance, makeState, makeStickerDefs } from './fixtures';
 import {
   computeGameStateDiff,
   computeScore,
@@ -94,7 +94,7 @@ describe('drawCards', () => {
   it('moves cards from drawPile to board', () => {
     const inst = makeInstance({ id: 1 });
     const gs = makeState({ drawPile: [1, 2], instances: { 1: inst } });
-    const result = drawCards(gs, [1]);
+    const result = drawCards(gs, [1], makeDefs(), makeStickerDefs());
     expect(result.drawPile).not.toContain(1);
     expect(result.board).toContain(1);
   });
@@ -106,7 +106,7 @@ describe('drawCards', () => {
       destroyedPile: [9],
       instances: { 9: inst },
     });
-    const result = drawCards(gs, [9]);
+    const result = drawCards(gs, [9], makeDefs(), makeStickerDefs());
     expect(result.board).not.toContain(9);
   });
 });
