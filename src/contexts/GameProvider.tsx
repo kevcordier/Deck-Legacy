@@ -8,6 +8,7 @@ import {
   getEffectiveProductions,
 } from '@engine/application/cardHelpers';
 import { createInstance } from '@engine/application/factory';
+import { computeScore } from '@engine/application/gameStateHelper';
 import { ActionEffectType, type PendingChoiceType } from '@engine/domain/enums';
 import type {
   CardAction,
@@ -58,6 +59,7 @@ export function GameProvider({
   const [pendingChoices, setPendingChoices] = useState<PendingChoice[] | null>(() => {
     return agg.getCurrentCardAction()?.getPendingChoices() ?? null;
   });
+  const [displayNewCards, setDisplayNewCards] = useState<boolean>(false);
 
   const getParchementDefFromTriggerPile = (
     state: GameState,
@@ -103,6 +105,10 @@ export function GameProvider({
   };
 
   const sync = (newState: GameState) => {
+    if (newState.lastAddedCards.some(id => !gameState.lastAddedCards.includes(id))) {
+      setDisplayNewCards(true);
+    }
+
     setGameState(newState);
     saveGame(aggRef.current.getEvents());
 
@@ -307,6 +313,13 @@ export function GameProvider({
     sync(agg.getGameState());
   };
 
+  // ── Score ─────────────────────────────────────────────────────────────────
+
+  const score = useMemo(
+    () => computeScore(gameState, defs, stickerDefs),
+    [gameState, defs, stickerDefs],
+  );
+
   // ── Dev cheat ─────────────────────────────────────────────────────────
 
   useEffect(() => {
@@ -461,6 +474,9 @@ export function GameProvider({
         dismissParchmentText,
         canRewind,
         rewindEvent,
+        score,
+        displayNewCards,
+        setDisplayNewCards,
         getEvents: () => aggRef.current.getEvents(),
       }}
     >

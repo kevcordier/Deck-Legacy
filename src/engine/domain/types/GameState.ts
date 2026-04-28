@@ -21,7 +21,7 @@ export type GameState = {
   stickerStock: StickerStock;
   boardEffects: Record<number, Passive[]>;
   triggerPile: Record<string, TriggerEntry>;
-  lastAddedIds: number[];
+  lastAddedCards: number[];
   lastDrawnCards: number[];
   round: number;
   turn: number;

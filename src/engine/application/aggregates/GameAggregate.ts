@@ -1,8 +1,7 @@
 import { CardActionAggregate } from '@engine/application/aggregates/CardActionAggregate';
-import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { GameEventContext } from '@engine/application/gameEvent/GameEventContext';
 import { canUseOptions, computeGameStateDiff } from '@engine/application/gameStateHelper';
-import { GameEventType, Options, type PendingChoiceType, Trigger } from '@engine/domain/enums';
+import { GameEventType, Options, type PendingChoiceType } from '@engine/domain/enums';
 import type {
   AdvanceEvent,
   CardAction,
@@ -21,7 +20,6 @@ import type {
   RoundStartedEvent,
   SkipTriggerEvent,
   Sticker,
-  TriggerEntry,
   TurnEndedEvent,
   TurnStartedEvent,
   UpgradeCardEvent,
@@ -40,7 +38,7 @@ export const EMPTY_STATE: GameState = {
   discoveryPile: [],
   boardEffects: {},
   triggerPile: {},
-  lastAddedIds: [],
+  lastAddedCards: [],
   lastDrawnCards: [],
   round: 0,
   turn: 0,
@@ -61,7 +59,7 @@ export class GameAggregate {
   ) {
     this.events = eventHistory;
     this.gameState = initialState;
-    this.gameEventContext = new GameEventContext(cardDefs);
+    this.gameEventContext = new GameEventContext(cardDefs, stickerDefs);
   }
 
   private apply(event: GameEvent) {
@@ -113,7 +111,6 @@ export class GameAggregate {
     this.apply(event);
     this.events.push(event);
     this.roundStarted();
-    this.turnStarted();
     return this.gameState;
   }
 
@@ -128,45 +125,11 @@ export class GameAggregate {
   }
 
   public roundEnded(): GameState {
-    const newCards: number[] = [];
-    const onDiscoverEvents: TriggerEntry[] = [];
-    const firstDiscoveredCard = this.gameState.discoveryPile.slice(0, 1)[0];
-    const cardInstance = this.gameState.instances[firstDiscoveredCard];
-    const cardDef = this.cardDefs[cardInstance.cardId];
-
-    onDiscoverEvents.push(
-      ...getInstancesTriggerEffects(
-        [cardInstance],
-        this.cardDefs,
-        this.stickerDefs,
-        Trigger.ON_DISCOVER,
-        this.gameState,
-      ),
-    );
-
-    if (!cardDef.parchmentCard) {
-      newCards.push(firstDiscoveredCard);
-      const secondDiscoveredCard = this.gameState.discoveryPile.slice(1, 2)[0];
-      newCards.push(secondDiscoveredCard);
-      const cardInstance = this.gameState.instances[secondDiscoveredCard];
-
-      onDiscoverEvents.push(
-        ...getInstancesTriggerEffects(
-          [cardInstance],
-          this.cardDefs,
-          this.stickerDefs,
-          Trigger.ON_DISCOVER,
-          this.gameState,
-        ),
-      );
-    }
-
     const event: RoundEndedEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.ROUND_ENDED,
       timestamp: Date.now(),
-      newCards,
-      onDiscoverEvents,
+      round: this.gameState.round,
     };
 
     this.apply(event);
@@ -203,14 +166,6 @@ export class GameAggregate {
 
     const turn = this.gameState.turn + 1;
     const turnCards: number[] = this.gameState.drawPile.slice(0, 4);
-    this.gameState.lastDrawnCards = turnCards; // Should be set by the PlayCardStrategy, but setting it here to make sure it's available for triggers on turn start
-    const onPlayEvents = getInstancesTriggerEffects(
-      turnCards.map(cardId => this.gameState.instances[cardId]),
-      this.cardDefs,
-      this.stickerDefs,
-      Trigger.ON_PLAY,
-      this.gameState,
-    );
 
     const event: TurnStartedEvent = {
       id: crypto.randomUUID(),
@@ -218,7 +173,6 @@ export class GameAggregate {
       timestamp: Date.now(),
       turn,
       turnCards,
-      onPlayEvents,
     };
     this.apply(event);
     this.events.push(event);
@@ -227,26 +181,21 @@ export class GameAggregate {
   }
 
   public turnEnded(): GameState {
-    const onTurnEndedEvents = getInstancesTriggerEffects(
-      this.gameState.board.map(cardId => this.gameState.instances[cardId]),
-      this.cardDefs,
-      this.stickerDefs,
-      Trigger.END_OF_TURN,
-      this.gameState,
-    );
-
     const event: TurnEndedEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.TURN_ENDED,
       timestamp: Date.now(),
-      onTurnEndedEvents,
     };
     this.apply(event);
     this.events.push(event);
 
-    if (onTurnEndedEvents.length === 0) {
+    if (Object.keys(this.gameState.triggerPile).length === 0) {
+      if (this.gameState.drawPile.length === 0) {
+        return this.roundEnded();
+      }
       return this.turnStarted();
     }
+
     return this.gameState;
   }
 
@@ -269,21 +218,12 @@ export class GameAggregate {
     }
 
     const turnCards: number[] = this.gameState.drawPile.slice(0, 2);
-    this.gameState.lastDrawnCards = turnCards; // Should be set by the PlayCardStrategy, but setting it here to make sure it's available for triggers on advance
-    const onPlayEvents = getInstancesTriggerEffects(
-      turnCards.map(cardId => this.gameState.instances[cardId]),
-      this.cardDefs,
-      this.stickerDefs,
-      Trigger.ON_PLAY,
-      this.gameState,
-    );
 
     const event: AdvanceEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.ADVANCE,
       timestamp: Date.now(),
       turnCards,
-      onPlayEvents,
     };
     this.apply(event);
     this.events.push(event);
@@ -406,8 +346,12 @@ export class GameAggregate {
     this.apply(event);
     this.events.push(event);
     this.autoTrigger();
-    if (isEndTurn) {
+    if (isEndTurn || this.gameState.phase === Phase.PRETURN) {
       return this.turnEnded();
+    }
+
+    if (this.gameState.phase === Phase.PREROUND) {
+      return this.roundEnded();
     }
 
     return this.gameState;

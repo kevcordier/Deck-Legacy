@@ -1,5 +1,5 @@
 import type { GameEventType } from '@engine/domain/enums';
-import type { CardInstance, GameState, Resources, TriggerEntry } from '@engine/domain/types';
+import type { CardInstance, GameState, Resources } from '@engine/domain/types';
 
 export interface GameEvent {
   id: string;
@@ -17,8 +17,7 @@ export interface GameStartedEvent extends GameEvent {
 
 export interface RoundEndedEvent extends GameEvent {
   type: GameEventType.ROUND_ENDED;
-  newCards: number[];
-  onDiscoverEvents: TriggerEntry[];
+  round: number;
 }
 
 export interface RoundStartedEvent extends GameEvent {
@@ -31,7 +30,6 @@ export interface TurnStartedEvent extends GameEvent {
   type: GameEventType.TURN_STARTED;
   turn: number;
   turnCards: number[];
-  onPlayEvents: TriggerEntry[];
 }
 
 export interface CardProducedEvent extends GameEvent {
@@ -43,7 +41,6 @@ export interface CardProducedEvent extends GameEvent {
 export interface AdvanceEvent extends GameEvent {
   type: GameEventType.ADVANCE;
   turnCards: number[];
-  onPlayEvents: TriggerEntry[];
 }
 
 export interface UpgradeCardEvent extends GameEvent {
@@ -73,5 +70,4 @@ export interface SkipTriggerEvent extends GameEvent {
 
 export interface TurnEndedEvent extends GameEvent {
   type: GameEventType.TURN_ENDED;
-  onTurnEndedEvents: TriggerEntry[];
 }

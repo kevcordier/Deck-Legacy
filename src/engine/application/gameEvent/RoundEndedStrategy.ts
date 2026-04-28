@@ -1,22 +1,30 @@
 import type { GameEventStrategy } from './GameEventStrategy';
-import type { GameEvent, GameState, RoundEndedEvent, TriggerEntry } from '@engine/domain/types';
+import { discoverCards } from '@engine/application/gameStateHelper';
+import type { CardDef, GameState, Sticker } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 
 export class RoundEndedStrategy implements GameEventStrategy {
-  apply(gameState: GameState, event: GameEvent): GameState {
-    const e = event as RoundEndedEvent;
-    const triggerPile = e.onDiscoverEvents.reduce(
-      (acc, { effectDef, sourceInstanceId }) => {
-        acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
-        return acc;
-      },
-      {} as Record<string, TriggerEntry>,
-    );
+  constructor(
+    private cardDefs: Record<number, CardDef>,
+    private stickerDefs: Record<number, Sticker>,
+  ) {}
+
+  apply(gameState: GameState): GameState {
+    const lastAddedCards: number[] = [];
+    const discoveredCard = gameState.discoveryPile.slice(0, 2);
+
+    for (const cardId of discoveredCard) {
+      if (cardId) lastAddedCards.push(cardId);
+      const cardInstance = gameState.instances[cardId];
+      const cardDef = this.cardDefs[cardInstance.cardId];
+
+      if (cardDef.parchmentCard) break;
+    }
+
+    gameState = discoverCards(gameState, lastAddedCards, this.cardDefs, this.stickerDefs);
+
     return {
       ...gameState,
-      discoveryPile: gameState.discoveryPile.filter(id => !e.newCards.includes(id)),
-      lastAddedIds: e.newCards,
-      triggerPile,
       boardEffects: {},
       discardPile: [...gameState.board, ...gameState.discardPile],
       board: [],

@@ -89,7 +89,9 @@
       "BOOST_CARD": "Choisissez une carte à améliorer",
       "BOOST_CARD_other": "Choisissez {{count}} cartes à améliorer",
       "ADD_BOARD_EFFECT": "Choisissez une carte pour ajouter un effet",
-      "ADD_BOARD_EFFECT_other": "Choisissez {{count}} cartes pour ajouter un effet"
+      "ADD_BOARD_EFFECT_other": "Choisissez {{count}} cartes pour ajouter un effet",
+      "PLAY_CARD": "Choisissez une carte à jouer",
+      "PLAY_CARD_other": "Choisissez {{count}} cartes à jouer"
     },
     "chooseStep": "Choisir une étape",
     "chooseState": "Choisir un état",
@@ -119,6 +121,10 @@
   },
   "cardList": {
     "noCards": "Aucune carte"
+  },
+  "cardAdded": {
+    "title": "Nouvelle carte découverte",
+    "title_other": "Nouvelles cartes découvertes"
   },
   "gameOver": {
     "title": "Partie terminée",
@@ -158,6 +164,7 @@
     "upgradeCard": "{{card}} améliorée",
     "cardAction": "Action de {{card}}",
     "skipTrigger": "Déclencheur ignoré",
-    "chooseState": "État choisi"
+    "chooseState": "État choisi",
+    "roundEnded": "Manche {{round}} terminée"
   }
 }

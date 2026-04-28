@@ -1,4 +1,8 @@
-import { getActiveState, getTotalResourceProduction } from '@engine/application/cardHelpers';
+import {
+  canAffordResources,
+  getActiveState,
+  getTotalResourceProduction,
+} from '@engine/application/cardHelpers';
 import { cardSelector } from '@engine/application/cardSelector';
 import {
   ActionEffectType,
@@ -74,13 +78,21 @@ function resolveTrackAdvanceEffect(
     return [resolverAction, pendingChoices];
   } else {
     const { pickMin, pickMax } = getPickBounds(ctx);
+    const choices = availableSteps
+      .filter(
+        s =>
+          !targetInst.trackProgress.includes(s.id) &&
+          canAffordResources(gameState.resources, s.cost) &&
+          (!s.cost?.accumulated || gameState.instances[instanceId].cumulated >= s.cost.accumulated),
+      )
+      .map(s => s.id);
     pendingChoices.push({
       id: `${instanceId}-${actionId}`,
       kind: actionType,
       type: PendingChoiceType.CHOOSE_STEP,
       sourceInstanceId: instanceId,
       targetInstanceId: targetId,
-      choices: availableSteps.map(s => s.id),
+      choices,
       pickCount: getPickCount(ctx),
       pickMin,
       pickMax,

@@ -14,6 +14,7 @@ export class RoundStartedStrategy implements GameEventStrategy {
       boardEffects: {},
       discardPile: [],
       board: [],
+      lastAddedCards: [],
       phase: Phase.PRETURN,
     };
   }

@@ -12,7 +12,7 @@ import type {
 import type { loadCardDefs, loadStickerDefs } from '@engine/infrastructure/loaders';
 import { createContext } from 'react';
 
-type GameContextType = {
+export type GameContextType = {
   gameState: GameState;
   defs: ReturnType<typeof loadCardDefs>;
   stickerDefs: ReturnType<typeof loadStickerDefs>;
@@ -39,6 +39,9 @@ type GameContextType = {
   dismissParchmentText: () => void;
   canRewind: () => boolean;
   rewindEvent: () => void;
+  score: number;
+  displayNewCards: boolean;
+  setDisplayNewCards: (value: boolean) => void;
   getEvents: () => GameEvent[];
 };
 

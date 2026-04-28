@@ -12,11 +12,11 @@ import { useGameUI } from '@hooks/useGameInterface';
 import { useTranslation } from 'react-i18next';
 
 export function Game() {
-  const { state, deleteSave, startGame, score } = useGame();
+  const { gameState, deleteSave, startGame, score } = useGame();
   const { t } = useTranslation();
   const { setOptionsOpen, setRulesOpen, optionsOpen, rulesOpen } = useGameUI();
 
-  const isGamePlaying = state.phase !== Phase.PREGAME && state.phase !== Phase.GAME_OVER;
+  const isGamePlaying = gameState.phase !== Phase.PREGAME && gameState.phase !== Phase.GAME_OVER;
 
   return (
     <div className="z-1 flex h-screen flex-col">
@@ -26,7 +26,7 @@ export function Game() {
 
       {isGamePlaying && <GameBoard />}
 
-      {state.phase === Phase.PREGAME && (
+      {gameState.phase === Phase.PREGAME && (
         <EmptyState
           title={t('game.title')}
           subtitle={t('game.subtitle')}
@@ -42,8 +42,8 @@ export function Game() {
         </EmptyState>
       )}
 
-      {state.phase === Phase.GAME_OVER && (
-        <GameOverScreen score={score} round={state.round} onStartNewGame={startGame} />
+      {gameState.phase === Phase.GAME_OVER && (
+        <GameOverScreen score={score} round={gameState.round} onStartNewGame={startGame} />
       )}
 
       {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}

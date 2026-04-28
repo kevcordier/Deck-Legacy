@@ -2,8 +2,9 @@ import {
   cardShouldStayInPlay,
   getActiveState,
   getEffectiveGlory,
+  getInstancesTriggerEffects,
 } from '@engine/application/cardHelpers';
-import { type Options, PassiveType, type ResourceType } from '@engine/domain/enums';
+import { type Options, PassiveType, type ResourceType, Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState, Resources, Sticker } from '@engine/domain/types';
 
 export const discardCards = (_gameState: GameState, cardIds: number[]): GameState => {
@@ -22,11 +23,73 @@ export const discardCards = (_gameState: GameState, cardIds: number[]): GameStat
   return gameState;
 };
 
-export const drawCards = (_gameState: GameState, turnCards: number[]): GameState => {
+export const drawCards = (
+  _gameState: GameState,
+  turnCards: number[],
+  cardDefs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
+
+  gameState.lastDrawnCards = turnCards;
+  getInstancesTriggerEffects(
+    turnCards.map(cardId => gameState.instances[cardId]),
+    cardDefs,
+    stickerDefs,
+    Trigger.ON_PLAY,
+    gameState,
+  ).forEach(({ effectDef, sourceInstanceId }) => {
+    gameState.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+  });
+  turnCards.forEach(instanceId => {
+    const passives = getActiveState(gameState.instances[instanceId], cardDefs)?.passives;
+    if (!passives) return;
+    passives.forEach(passive => {
+      gameState.boardEffects[instanceId] = [...(gameState.boardEffects[instanceId] ?? []), passive];
+    });
+  });
+
   turnCards = turnCards.filter(id => !gameState.destroyedPile.includes(id));
   gameState.drawPile = [...new Set(gameState.drawPile.filter(id => !turnCards.includes(id)))];
   gameState.board = [...new Set([...gameState.board, ...turnCards])];
+
+  return gameState;
+};
+
+export const discoverCards = (
+  _gameState: GameState,
+  cardIds: number[],
+  cardDefs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): GameState => {
+  const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
+  gameState.discoveryPile = [
+    ...new Set(gameState.discoveryPile.filter(id => !cardIds.includes(id))),
+  ];
+  getInstancesTriggerEffects(
+    cardIds.map(cardId => gameState.instances[cardId]),
+    cardDefs,
+    stickerDefs,
+    Trigger.ON_DISCOVER,
+    gameState,
+  ).forEach(effectDef => {
+    gameState.triggerPile[crypto.randomUUID()] = effectDef;
+  });
+
+  gameState.lastAddedCards = [];
+  cardIds.forEach(instanceId => {
+    const cardDef = cardDefs[gameState.instances[instanceId].cardId];
+
+    if (!cardDef.parchmentCard) {
+      gameState.lastAddedCards.push(instanceId);
+
+      if (cardDef.permanent) {
+        gameState.permanents.push(instanceId);
+      } else {
+        gameState.discardPile = [...new Set([...gameState.discardPile, instanceId])];
+      }
+    }
+  });
 
   return gameState;
 };

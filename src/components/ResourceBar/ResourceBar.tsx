@@ -8,9 +8,9 @@ import { useTranslation } from 'react-i18next';
 
 export function ResourceBar() {
   const { t } = useTranslation();
-  const { state, score } = useGame();
+  const { gameState, score } = useGame();
 
-  const { resources, round, turn, drawPile, discardPile } = state;
+  const { resources, round, turn, drawPile, discardPile } = gameState;
   const entries = Object.entries(resources).filter(([, v]) => v > 0);
 
   return (

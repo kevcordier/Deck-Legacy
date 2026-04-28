@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 export function GameBoard() {
   const { t } = useTranslation();
   const {
-    state,
+    gameState,
     defs,
     stickerDefs,
     progress,
@@ -32,7 +32,7 @@ export function GameBoard() {
     skipTrigger,
     skipChoice,
   } = useGame();
-  const { drawPile, discardPile, destroyedPile, instances } = state;
+  const { drawPile, discardPile, destroyedPile, instances } = gameState;
 
   const [openSheet, setOpenSheet] = useState<'draw' | 'discard' | 'destroyed' | null>(null);
   const [destroyedModalOpen, setDestroyedModalOpen] = useState(false);
@@ -172,7 +172,7 @@ export function GameBoard() {
           choice={pendingChoices?.[0]}
           triggerPile={triggerPile}
           defs={defs}
-          instances={state.instances}
+          instances={instances}
           stickerDefs={stickerDefs}
           resolvePlayerChoice={resolvePlayerChoice}
           resolvePayCost={resolvePayCost}

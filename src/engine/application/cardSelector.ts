@@ -168,6 +168,9 @@ export function cardSelector(
   if (scope.includes(TargetScope.TOP_OF_DECK)) {
     return [gameState.drawPile[0]].filter(Boolean);
   }
+  if (scope.includes(TargetScope.TOP_OF_DISCOVERY)) {
+    return [gameState.discoveryPile[0]].filter(Boolean);
+  }
 
   const blockedInstanceIds = Object.values(
     getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK),

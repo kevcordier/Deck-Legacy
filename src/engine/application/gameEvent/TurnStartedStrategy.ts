@@ -1,43 +1,29 @@
 import type { GameEventStrategy } from './GameEventStrategy';
-import { getActiveState } from '@engine/application/cardHelpers';
 import { drawCards, endTurn } from '@engine/application/gameStateHelper';
 import type {
   CardDef,
   GameEvent,
   GameState,
-  TriggerEntry,
+  Sticker,
   TurnStartedEvent,
 } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 
 export class TurnStartedStrategy implements GameEventStrategy {
-  constructor(private readonly cardDefs: Record<number, CardDef>) {}
+  constructor(
+    private readonly cardDefs: Record<number, CardDef>,
+    private readonly stickerDefs: Record<number, Sticker>,
+  ) {}
 
   apply(gameState: GameState, event: GameEvent): GameState {
     const e = event as TurnStartedEvent;
-    const triggerPile = e.onPlayEvents.reduce(
-      (acc, { effectDef, sourceInstanceId }) => {
-        acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
-        return acc;
-      },
-      {} as Record<string, TriggerEntry>,
-    );
-
-    e.turnCards.forEach(instanceId => {
-      const passives = getActiveState(gameState.instances[instanceId], this.cardDefs)?.passives;
-      if (!passives) return;
-      passives.forEach(passive => {
-        gameState.boardEffects[instanceId] = [
-          ...(gameState.boardEffects[instanceId] ?? []),
-          passive,
-        ];
-      });
-    });
 
     const afterDraw = drawCards(
-      endTurn({ ...gameState, lastAddedIds: [], turn: e.turn }, this.cardDefs),
+      endTurn({ ...gameState, turn: e.turn }, this.cardDefs),
       e.turnCards,
+      this.cardDefs,
+      this.stickerDefs,
     );
-    return { ...gameState, ...afterDraw, triggerPile, phase: Phase.PLAYING };
+    return { ...gameState, ...afterDraw, resources: {}, phase: Phase.PLAYING };
   }
 }

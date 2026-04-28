@@ -46,18 +46,25 @@ export function GameCard({
   className = '',
 }: GameCardProps) {
   const { t } = useTranslation();
-  const { state, defs, stickerDefs, resolveProduction, resolveUpgrade, setCardName, getCardName } =
-    useGame();
-  const currentResources = state.resources;
-  const isBlocked = isOnBoard && cardIsBlocked(instance.id, state);
+  const {
+    gameState,
+    defs,
+    stickerDefs,
+    resolveProduction,
+    resolveUpgrade,
+    setCardName,
+    getCardName,
+  } = useGame();
+  const currentResources = gameState.resources;
+  const isBlocked = isOnBoard && cardIsBlocked(instance.id, gameState);
   const cs = getActiveState(instance, defs);
   const def = defs[instance.cardId];
   const isEnemy = cs.negative === true;
   const isPermanent = def?.permanent;
   const isParchment = def?.parchmentCard ?? false;
   const productions = cs.productions?.map(base =>
-    getEffectiveProductions(base, cs, state, defs, instance, stickerDefs),
-  ) || [getEffectiveProductions({}, cs, state, defs, instance, stickerDefs)];
+    getEffectiveProductions(base, cs, gameState, defs, instance, stickerDefs),
+  ) || [getEffectiveProductions({}, cs, gameState, defs, instance, stickerDefs)];
   const hasProductions = productions?.some(prod => Object.keys(prod).length > 0) ?? false;
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
@@ -67,7 +74,7 @@ export function GameCard({
   const rawCardName = t(`names.${instance.cardId}_${cs.id}`, { ns: 'cards' });
   const canChooseName = cs.chooseName === true && rawCardName.includes('_____');
   const [namePrefix, nameSuffix] = canChooseName ? rawCardName.split('_____') : ['', ''];
-  const glory = getEffectiveGlory(cs, state, defs, instance, stickerDefs);
+  const glory = getEffectiveGlory(cs, gameState, defs, instance, stickerDefs);
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
   const [name, setName] = useState(() => getCardName(instance.id));
 
@@ -203,7 +210,7 @@ export function GameCard({
           {!isBlocked &&
             upgrades.map(upg => {
               const affordable = canAffordResources(currentResources, upg.cost);
-              const optionDisabled = !canUseOptions(state, Options.UPGRADE);
+              const optionDisabled = !canUseOptions(gameState, Options.UPGRADE);
               const targetState = def?.states.find(s => s.id === upg.upgradeTo);
               return (
                 <Button

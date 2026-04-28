@@ -33,7 +33,7 @@ function effectsOnCard(
 
 export function CardRow({ cardIds }: CardRowProps) {
   const { t } = useTranslation();
-  const { state: gameState, defs, stickerDefs } = useGame();
+  const { gameState, defs, stickerDefs } = useGame();
 
   const blockedByMap: Record<number, number> = {};
   Object.entries(gameState.boardEffects).forEach(([sourceId, passives]) => {

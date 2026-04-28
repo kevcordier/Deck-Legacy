@@ -89,7 +89,9 @@
       "BOOST_CARD": "Choose a card to boost",
       "BOOST_CARD_other": "Choose {{count}} cards to boost",
       "ADD_BOARD_EFFECT": "Choose a card to add the effect",
-      "ADD_BOARD_EFFECT_other": "Choose {{count}} cards to add the effect"
+      "ADD_BOARD_EFFECT_other": "Choose {{count}} cards to add the effect",
+      "PLAY_CARD": "Choose a card to play",
+      "PLAY_CARD_other": "Choose {{count}} cards to play"
     },
     "chooseStep": "Choose a track step",
     "chooseState": "Choose a state",
@@ -119,6 +121,10 @@
   },
   "cardList": {
     "noCards": "No cards"
+  },
+  "cardAdded": {
+    "title": "New card discovered",
+    "title_other": "New cards discovered"
   },
   "gameOver": {
     "title": "Game Over",
@@ -158,6 +164,7 @@
     "upgradeCard": "{{card}} upgraded",
     "cardAction": "{{card}} action",
     "skipTrigger": "Trigger skipped",
-    "chooseState": "State chosen"
+    "chooseState": "State chosen",
+    "roundEnded": "Round {{round}} ended"
   }
 }

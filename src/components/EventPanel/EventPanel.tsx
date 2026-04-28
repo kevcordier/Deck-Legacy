@@ -7,6 +7,7 @@ import type {
   CardActionEvent,
   CardProducedEvent,
   GameEvent,
+  RoundEndedEvent,
   RoundStartedEvent,
   TurnStartedEvent,
   UpgradeCardEvent,
@@ -18,15 +19,15 @@ import { useTranslation } from 'react-i18next';
 
 type EventRowProps = {
   readonly event: GameEvent;
-  readonly state: ReturnType<typeof useGame>['state'];
+  readonly gameState: ReturnType<typeof useGame>['gameState'];
   readonly defs: ReturnType<typeof useGame>['defs'];
 };
 
-function EventRow({ event, state, defs }: EventRowProps) {
+function EventRow({ event, gameState, defs }: EventRowProps) {
   const { t } = useTranslation();
 
   const cardName = (instanceId: number): React.ReactNode => {
-    const inst = state.instances[instanceId];
+    const inst = gameState.instances[instanceId];
     const cs = getActiveState(inst, defs);
     return tCardName(t, inst.cardId, cs.id);
   };
@@ -103,6 +104,10 @@ function EventRow({ event, state, defs }: EventRowProps) {
       label = t('eventLog.chooseState');
       color = 'text-ink/60';
       break;
+    case GameEventType.ROUND_ENDED:
+      label = t('eventLog.roundEnded', { round: (event as RoundEndedEvent).round });
+      color = 'text-ink/60';
+      break;
     default:
       label = event.type;
   }
@@ -117,7 +122,7 @@ function EventRow({ event, state, defs }: EventRowProps) {
 
 export function EventPanel() {
   const { t } = useTranslation();
-  const { state, defs, getEvents } = useGame();
+  const { gameState, defs, getEvents } = useGame();
   const [open, setOpen] = useState(false);
 
   const events = getEvents();
@@ -140,8 +145,8 @@ export function EventPanel() {
 
       {open && (
         <div className="scrollbar flex max-h-48 flex-col-reverse overflow-y-auto">
-          {[...events].map(e => (
-            <EventRow key={e.id} event={e} state={state} defs={defs} />
+          {[...events].reverse().map(e => (
+            <EventRow key={e.id} event={e} gameState={gameState} defs={defs} />
           ))}
         </div>
       )}

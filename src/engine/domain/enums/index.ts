@@ -8,12 +8,14 @@ export enum CardTag {
   GOAL = 'goal',
   KNIGHT = 'knight',
   ELDER = 'elder',
+  WALL = 'wall',
 }
 
 export enum Trigger {
   END_OF_TURN = 'end_of_turn',
   ON_DISCOVER = 'on_discover',
   ON_PLAY = 'on_play',
+  END_OF_ROUND = 'end_of_round',
 }
 
 export enum GameEventType {
@@ -87,6 +89,7 @@ export enum TargetScope {
   ENEMY = 'enemy',
   SELF = 'self',
   TOP_OF_DECK = 'top_of_deck',
+  TOP_OF_DISCOVERY = 'top_of_discovery',
   DRAWN = 'drawn',
 }
 

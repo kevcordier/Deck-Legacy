@@ -10,16 +10,23 @@ import { useTranslation } from 'react-i18next';
 
 export function Header() {
   const { t } = useTranslation();
-  const { progress, endTurnVoluntary, rewindEvent, canRewind, pendingChoices, triggerPile, state } =
-    useGame();
+  const {
+    progress,
+    endTurnVoluntary,
+    rewindEvent,
+    canRewind,
+    pendingChoices,
+    triggerPile,
+    gameState,
+  } = useGame();
   const { setOptionsOpen, setRulesOpen } = useGameUI();
-  const deckEmpty = state.drawPile.length === 0;
+  const deckEmpty = gameState.drawPile.length === 0;
 
   const haveChoiceToDo =
     (!!pendingChoices && pendingChoices.length > 0) ||
     (!!triggerPile && Object.keys(triggerPile).length > 0);
 
-  const cantAdvance = !canUseOptions(state, Options.ADVANCE);
+  const cantAdvance = !canUseOptions(gameState, Options.ADVANCE);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -68,7 +75,7 @@ export function Header() {
               ↩
             </Button>
           )}
-          {state.phase === Phase.PLAYING && (
+          {gameState.phase === Phase.PLAYING && (
             <>
               <Button
                 onClick={progress}
@@ -78,7 +85,7 @@ export function Header() {
               >
                 <span className="hidden lg:inline">›› </span>
                 {t('header.progress')}
-                {deckEmpty ? '' : ` (${Math.min(2, state.drawPile.length)})`}
+                {deckEmpty ? '' : ` (${Math.min(2, gameState.drawPile.length)})`}
               </Button>
               <Button
                 onClick={endTurnVoluntary}
