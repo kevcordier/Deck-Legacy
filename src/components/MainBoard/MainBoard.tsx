@@ -109,14 +109,15 @@ export function MainBoard() {
         />
       )}
 
-      {gameState.phase === Phase.PLAYING && gameState.permanents.length > 0 && (
-        <Section
-          title={t('sections.permanents')}
-          subtitle={t('cardCount', { count: gameState.permanents.length })}
-        >
-          <CardRow cardIds={gameState.permanents} />
-        </Section>
-      )}
+      {[Phase.PLAYING, Phase.POSTTURN].includes(gameState.phase) &&
+        gameState.permanents.length > 0 && (
+          <Section
+            title={t('sections.permanents')}
+            subtitle={t('cardCount', { count: gameState.permanents.length })}
+          >
+            <CardRow cardIds={gameState.permanents} />
+          </Section>
+        )}
 
       {gameState.phase === Phase.PLAYING &&
         Object.keys(gameState.triggerPile).length === 0 &&

@@ -349,7 +349,7 @@ export function GameProvider({
               unlimited: true,
               actionEffects: [
                 {
-                  id: 9999,
+                  id: 1,
                   type: ActionEffectType.PLAY_CARD,
                   cards: { ids: instanceIds },
                   pickNumber: instanceIds.length,
@@ -368,7 +368,7 @@ export function GameProvider({
               unlimited: true,
               actionEffects: [
                 {
-                  id: 9999,
+                  id: 1,
                   type: ActionEffectType.DISCARD_CARD,
                   cards: { ids: instanceIds },
                   pickNumber: instanceIds.length,
@@ -387,7 +387,7 @@ export function GameProvider({
               unlimited: true,
               actionEffects: [
                 {
-                  id: 9999,
+                  id: 1,
                   type: ActionEffectType.DESTROY_CARD,
                   cards: { ids: instanceIds },
                   pickNumber: instanceIds.length,
@@ -406,7 +406,7 @@ export function GameProvider({
               unlimited: true,
               actionEffects: [
                 {
-                  id: 9999,
+                  id: 1,
                   type: ActionEffectType.DISCOVER_CARD,
                   cards: { ids: instanceIds },
                   pickNumber: instanceIds.length,
@@ -428,7 +428,7 @@ export function GameProvider({
               unlimited: true,
               actionEffects: [
                 {
-                  id: 9999,
+                  id: 1,
                   type: ActionEffectType.ADD_STICKER,
                   cards: { ids: [instanceId] },
                   stickerIds: [stickerId],

@@ -38,8 +38,8 @@ describe('AddBoardEffectStrategy', () => {
       instanceIds: [2],
       effect: passive,
     });
-    expect(result.boardEffects[2]).toHaveLength(1);
-    expect(result.boardEffects[2][0].type).toBe(PassiveType.BLOCK);
+    expect(result.boardEffects[1]).toHaveLength(1);
+    expect(result.boardEffects[1][0].type).toBe(PassiveType.BLOCK);
   });
 
   it('appends to existing board effects', () => {
@@ -49,8 +49,8 @@ describe('AddBoardEffectStrategy', () => {
     const result = strategy.apply(gs, {
       id: 'x',
       type: ActionEffectType.ADD_BOARD_EFFECT,
-      sourceInstanceId: 1,
-      instanceIds: [2],
+      sourceInstanceId: 2,
+      instanceIds: [3],
       effect: passive,
     });
     expect(result.boardEffects[2]).toHaveLength(2);
@@ -65,7 +65,7 @@ describe('AddBoardEffectStrategy', () => {
       instanceIds: [2, 3],
       effect: passive,
     });
-    expect(result.boardEffects[2]).toHaveLength(1);
-    expect(result.boardEffects[3]).toHaveLength(1);
+    expect(result.boardEffects[1]).toHaveLength(1);
+    expect(result.boardEffects[1][0].cards?.ids).toEqual([2, 3]);
   });
 });

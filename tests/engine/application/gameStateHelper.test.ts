@@ -228,6 +228,20 @@ describe('endTurn', () => {
     const result = endTurn(gs, defs);
     expect(result.board).toContain(4);
   });
+
+  it('removes boardEffects for discarded cards', () => {
+    const inst = makeInstance({ id: 5, cardId: 5, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      5: { id: 5, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+    const gs = makeState({
+      board: [5],
+      instances: { 5: inst },
+      boardEffects: { 5: [{ id: 'z', type: PassiveType.BLOCK }] },
+    });
+    const result = endTurn(gs, defs);
+    expect(result.boardEffects[5]).toBeUndefined();
+  });
 });
 
 // ─── computeScore ─────────────────────────────────────────────────────────────

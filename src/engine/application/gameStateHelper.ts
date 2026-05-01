@@ -5,7 +5,7 @@ import {
   getInstancesTriggerEffects,
 } from '@engine/application/cardHelpers';
 import { type Options, PassiveType, type ResourceType, Trigger } from '@engine/domain/enums';
-import type { CardDef, GameState, Resources, Sticker } from '@engine/domain/types';
+import type { CardDef, GameState, Passive, Resources, Sticker } from '@engine/domain/types';
 
 export const discardCards = (_gameState: GameState, cardIds: number[]): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
@@ -115,6 +115,14 @@ export const endTurn = (_gameState: GameState, cardDefs: Record<number, CardDef>
   const cardsToDiscard = gameState.board.filter(
     id => !cardShouldStayInPlay(id, gameState, cardDefs),
   );
+
+  const newBoardEffects: Record<number, Passive[]> = {};
+  Object.keys(gameState.boardEffects).forEach((key: string) => {
+    if (gameState.boardEffects[Number(key)] && gameState.board.includes(Number(key)))
+      newBoardEffects[Number(key)] = gameState.boardEffects[Number(key)];
+  });
+
+  gameState.boardEffects = newBoardEffects;
   return { ...gameState, ...discardCards(gameState, cardsToDiscard) };
 };
 

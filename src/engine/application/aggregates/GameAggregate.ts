@@ -193,7 +193,6 @@ export class GameAggregate {
       if (this.gameState.drawPile.length === 0) {
         return this.roundEnded();
       }
-      return this.turnStarted();
     }
 
     return this.gameState;
@@ -246,8 +245,6 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
-
-    this.turnEnded();
     return this.gameState;
   }
 
@@ -339,16 +336,12 @@ export class GameAggregate {
       gameStateChanges: computeGameStateDiff(this.gameState, newGameState),
       sourceInstanceId: currentCardAction.getSourceInstanceId(),
       actionId: currentCardAction.getActionId(),
+      endsTurn: currentCardAction.isEndTurn(),
     };
-
-    const isEndTurn = currentCardAction.isEndTurn();
 
     this.apply(event);
     this.events.push(event);
     this.autoTrigger();
-    if (isEndTurn) {
-      return this.turnEnded();
-    }
 
     return this.gameState;
   }

@@ -230,22 +230,6 @@ describe('GameAggregate.turnStarted', () => {
 // ─── turnEnded ────────────────────────────────────────────────────────────────
 
 describe('GameAggregate.turnEnded', () => {
-  it('automatically starts next turn when no end-of-turn triggers', () => {
-    // 5 cards: board has 4 (from previous turn), drawPile has 1 remaining.
-    const insts = [1, 2, 3, 4, 5].map(id => makeInstance({ id, cardId: 1, stateId: 1 }));
-    const state = makeState({
-      board: [1, 2, 3, 4],
-      drawPile: [5],
-      instances: Object.fromEntries(insts.map(i => [i.id, i])),
-      phase: Phase.PLAYING,
-      round: 1,
-      turn: 1,
-    });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
-    const gs = agg.turnEnded();
-    expect(gs.phase).toBe(Phase.PLAYING);
-  });
-
   it('stays in PRETURN phase when end-of-turn triggers exist', () => {
     const inst = makeInstance({ id: 1, cardId: 6, stateId: 1 });
     const state = makeState({
@@ -395,7 +379,7 @@ describe('GameAggregate.cardAction', () => {
     const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const action = { id: 'et', actionEffects: [], endsTurn: true };
     const gs = agg.cardAction(action, 1);
-    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.phase).toBe(Phase.POSTTURN);
   });
 });
 

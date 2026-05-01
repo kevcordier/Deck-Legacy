@@ -1,11 +1,11 @@
-import { makeState } from '../fixtures';
+import { makeDefs, makeState, makeStickerDefs } from '../fixtures';
 import { CardActionEventStrategy } from '@engine/application/gameEvent/CardActionEventStrategy';
 import { GameEventType } from '@engine/domain/enums';
 import type { CardActionEvent } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
 describe('CardActionEventStrategy', () => {
-  const strategy = new CardActionEventStrategy();
+  const strategy = new CardActionEventStrategy(makeDefs(), makeStickerDefs());
 
   it('merges gameStateChanges into game state', () => {
     const gs = makeState({ resources: { gold: 1 } });

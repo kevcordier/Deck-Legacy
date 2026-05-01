@@ -15,6 +15,7 @@ import {
 import { canUseOptions } from '@engine/application/gameStateHelper';
 import { ActionEffectType, Options, TargetScope } from '@engine/domain/enums';
 import type { CardAction, CardInstance } from '@engine/domain/types';
+import { Phase } from '@engine/domain/types/Phase';
 import { useGame } from '@hooks/useGame';
 import type { ReactNode } from 'react';
 
@@ -61,6 +62,7 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
     gameState,
     action.endsTurn ? Options.END_TURN_ACTION : Options.ACTION,
   );
+  const isActionInPlay = action.unlimited || gameState.phase === Phase.PLAYING;
   const affordable = hasTrackAdvance
     ? firstTrackStep &&
       canAffordResources(gameState.resources, firstTrackStep?.cost) &&
@@ -81,7 +83,7 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
   return (
     <Button
       onClick={() => resolveAction(instance.id, action.id)}
-      disabled={!affordable || disabled || haveTrigger || optionDisabled}
+      disabled={!affordable || disabled || haveTrigger || optionDisabled || !isActionInPlay}
       variant="text"
       color="base-ink"
       className={`font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md`}

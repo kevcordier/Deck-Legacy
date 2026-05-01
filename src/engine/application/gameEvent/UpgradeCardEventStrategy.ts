@@ -1,10 +1,20 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { getActiveState } from '@engine/application/cardHelpers';
+import { TurnEndedStrategy } from '@engine/application/gameEvent/TurnEndedStrategy';
 import { discardCards, spendResources } from '@engine/application/gameStateHelper';
-import type { CardDef, GameEvent, GameState, UpgradeCardEvent } from '@engine/domain/types';
+import type {
+  CardDef,
+  GameEvent,
+  GameState,
+  Sticker,
+  UpgradeCardEvent,
+} from '@engine/domain/types';
 
 export class UpgradeCardEventStrategy implements GameEventStrategy {
-  constructor(private cardDefs: Record<number, CardDef>) {}
+  constructor(
+    private cardDefs: Record<number, CardDef>,
+    private stickerDefs: Record<number, Sticker>,
+  ) {}
 
   apply(gameState: GameState, event: GameEvent): GameState {
     const e = event as UpgradeCardEvent;
@@ -21,9 +31,11 @@ export class UpgradeCardEventStrategy implements GameEventStrategy {
       };
     }
 
-    return {
+    const newState = {
       ...upgradedState,
       ...discardCards(upgradedState, [e.cardInstanceId]),
     };
+
+    return new TurnEndedStrategy(this.cardDefs, this.stickerDefs).apply(newState);
   }
 }

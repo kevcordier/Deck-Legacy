@@ -24,6 +24,11 @@ export class TurnStartedStrategy implements GameEventStrategy {
       this.cardDefs,
       this.stickerDefs,
     );
-    return { ...gameState, ...afterDraw, resources: {}, phase: Phase.PLAYING };
+    return {
+      ...gameState,
+      ...afterDraw,
+      resources: {},
+      phase: Phase.PLAYING,
+    };
   }
 }

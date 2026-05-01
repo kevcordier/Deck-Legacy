@@ -73,12 +73,7 @@ export const fieldWorker2: CardDef = {
               cards: {
                 scope: [TargetScope.BOARD],
               },
-              effect: {
-                ...CardPassives[PassiveType.STAY_IN_PLAY],
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
+              effect: CardPassives[PassiveType.STAY_IN_PLAY],
               pickMin: 0,
               pickMax: 1,
             },

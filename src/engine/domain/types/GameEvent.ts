@@ -61,6 +61,7 @@ export interface CardActionEvent extends GameEvent {
   gameStateChanges: Partial<GameState>;
   sourceInstanceId: number;
   actionId: string;
+  endsTurn: boolean;
 }
 
 export interface SkipTriggerEvent extends GameEvent {
