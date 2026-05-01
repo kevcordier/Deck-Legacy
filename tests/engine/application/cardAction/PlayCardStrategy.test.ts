@@ -118,4 +118,30 @@ describe('PlayCardStrategy', () => {
     expect(result.discoveryPile).not.toContain(10);
     expect(result.board).toContain(10);
   });
+
+  it('adds passives to boardEffects when played card has passives', () => {
+    const defWithPassive: CardDef = {
+      id: 3,
+      name: 'WithPassive',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          passives: [{ id: 'sip', type: 'STAY_IN_PLAY' as never }],
+        },
+      ],
+    };
+    const defs = { 3: defWithPassive };
+    const strategy = new PlayCardStrategy(defs, makeStickerDefs());
+    const inst = makeInstance({ id: 30, cardId: 3, stateId: 1 });
+    const gs = makeState({ instances: { 30: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLAY_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [30],
+    });
+    expect(result.boardEffects[30]).toHaveLength(1);
+    expect(result.boardEffects[30][0].id).toBe('sip');
+  });
 });

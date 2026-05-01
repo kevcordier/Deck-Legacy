@@ -3,6 +3,7 @@ import {
   canAffordCardCost,
   canAffordResources,
   cardIsBlocked,
+  getActiveState,
 } from '@engine/application/cardHelpers';
 import { resolveCost } from '@engine/application/costResolver';
 import { resolveActionEffect } from '@engine/application/effectResolver';
@@ -161,7 +162,7 @@ export class CardActionAggregate {
     if (
       !this.triggerId &&
       !this.action.unlimited &&
-      !this.def.permanent &&
+      !getActiveState(this.instance, this.cardDefs)?.permanent &&
       !this.def.parchmentCard
     ) {
       this.gameState = discardCards(this.gameState, [this.instance.id]);

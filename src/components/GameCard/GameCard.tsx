@@ -60,7 +60,7 @@ export function GameCard({
   const cs = getActiveState(instance, defs);
   const def = defs[instance.cardId];
   const isEnemy = cs.negative === true;
-  const isPermanent = def?.permanent;
+  const isPermanent = cs?.permanent;
   const isParchment = def?.parchmentCard ?? false;
   const productions = cs.productions?.map(base =>
     getEffectiveProductions(base, cs, gameState, defs, instance, stickerDefs),
@@ -207,11 +207,28 @@ export function GameCard({
               );
             })}
 
+          {!isBlocked && cs.track && (
+            <CardTrack
+              instance={instance}
+              track={cs.track}
+              validatedSteps={instance.trackProgress}
+            />
+          )}
+
           {!isBlocked &&
             upgrades.map(upg => {
               const affordable = canAffordResources(currentResources, upg.cost);
               const optionDisabled = !canUseOptions(gameState, Options.UPGRADE);
               const targetState = def?.states.find(s => s.id === upg.upgradeTo);
+              const discardLabel = upg.cost.discard
+                ?.map(d => {
+                  return t('card.cost.discard', {
+                    count: d.number,
+                    type: d.name || d.tags?.[0] || t('card.cost.cards'),
+                  });
+                })
+                .join(', ');
+
               return (
                 <Button
                   variant="text"
@@ -225,11 +242,11 @@ export function GameCard({
                   {targetState
                     ? tCardName(t, def.id, targetState.id)
                     : t('card.state', { id: upg.upgradeTo })}
-                  {upg.cost.resources?.[0] && (
+                  {(upg.cost.resources?.[0] || discardLabel) && (
                     <span>
                       {' '}
                       (
-                      {Object.entries(upg.cost.resources[0]).map(([k, v], ci) => {
+                      {Object.entries(upg.cost.resources?.[0] || {}).map(([k, v], ci) => {
                         const meta = getResMeta(k);
                         return (
                           <React.Fragment key={k}>
@@ -240,24 +257,14 @@ export function GameCard({
                             )}
                           </React.Fragment>
                         );
-                      })}
-                      )
+                      })}{' '}
+                      {discardLabel})
                     </span>
                   )}
                 </Button>
               );
             })}
         </div>
-
-        {!isBlocked && cs.track && (
-          <div className="z-10 flex flex-col items-center justify-center gap-1 p-1 @3xs:p-2">
-            <CardTrack
-              instance={instance}
-              track={cs.track}
-              validatedSteps={instance.trackProgress}
-            />
-          </div>
-        )}
       </div>
     </div>
   );

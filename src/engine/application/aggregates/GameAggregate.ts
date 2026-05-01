@@ -346,12 +346,8 @@ export class GameAggregate {
     this.apply(event);
     this.events.push(event);
     this.autoTrigger();
-    if (isEndTurn || this.gameState.phase === Phase.PRETURN) {
+    if (isEndTurn) {
       return this.turnEnded();
-    }
-
-    if (this.gameState.phase === Phase.PREROUND) {
-      return this.roundEnded();
     }
 
     return this.gameState;

@@ -1,4 +1,5 @@
 import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
+import * as cardHelpers from '@engine/application/cardHelpers';
 import { GameEventContext } from '@engine/application/gameEvent/GameEventContext';
 import { GameEventType } from '@engine/domain/enums';
 import type {
@@ -13,7 +14,7 @@ import type {
   UpgradeCardEvent,
 } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 const defs = { 1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] } };
 
@@ -98,6 +99,7 @@ describe('GameEventContext', () => {
     const ctx = new GameEventContext(defs, makeStickerDefs());
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], instances: { 1: inst } });
+    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S', permanent: false });
     const result = ctx.apply(gs, {
       id: 'e1',
       type: GameEventType.UPGRADE_CARD,

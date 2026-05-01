@@ -14,7 +14,7 @@ export class RoundEndedStrategy implements GameEventStrategy {
     const discoveredCard = gameState.discoveryPile.slice(0, 2);
 
     for (const cardId of discoveredCard) {
-      if (cardId) lastAddedCards.push(cardId);
+      lastAddedCards.push(cardId);
       const cardInstance = gameState.instances[cardId];
       const cardDef = this.cardDefs[cardInstance.cardId];
 

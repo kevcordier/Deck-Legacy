@@ -288,6 +288,89 @@ describe('cardSelector – missing def or state', () => {
   });
 });
 
+describe('cardSelector – TOP_OF_DISCOVERY scope', () => {
+  it('returns first card in discoveryPile', () => {
+    const gs = makeState({ discoveryPile: [10, 20], instances: { 10: instA, 20: instB } });
+    const result = cardSelector(
+      { scope: [TargetScope.TOP_OF_DISCOVERY] },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
+    expect(result).toEqual([10]);
+  });
+
+  it('returns empty when discoveryPile is empty', () => {
+    const result = cardSelector(
+      { scope: [TargetScope.TOP_OF_DISCOVERY] },
+      99,
+      makeState(),
+      defs,
+      stickerDefs,
+    );
+    expect(result).toEqual([]);
+  });
+});
+
+describe('cardSelector – having filter', () => {
+  const defWithGlory: CardDef = {
+    id: 7,
+    name: 'G',
+    states: [{ id: 1, name: 'S', glory: { amount: 3 } }],
+  };
+  const instG = makeInstance({ id: 70, cardId: 7, stateId: 1 });
+  const localDefs = { 7: defWithGlory };
+
+  it('includes card when glory meets minGlory', () => {
+    const gs = makeState({ board: [70], instances: { 70: instG } });
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD], having: { minGlory: 3 } },
+      99,
+      gs,
+      localDefs,
+      stickerDefs,
+    );
+    expect(result).toContain(70);
+  });
+
+  it('excludes card when glory is below minGlory', () => {
+    const gs = makeState({ board: [70], instances: { 70: instG } });
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD], having: { minGlory: 5 } },
+      99,
+      gs,
+      localDefs,
+      stickerDefs,
+    );
+    expect(result).not.toContain(70);
+  });
+
+  it('includes card when glory meets maxGlory', () => {
+    const gs = makeState({ board: [70], instances: { 70: instG } });
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD], having: { maxGlory: 5 } },
+      99,
+      gs,
+      localDefs,
+      stickerDefs,
+    );
+    expect(result).toContain(70);
+  });
+
+  it('excludes card when glory exceeds maxGlory', () => {
+    const gs = makeState({ board: [70], instances: { 70: instG } });
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD], having: { maxGlory: 2 } },
+      99,
+      gs,
+      localDefs,
+      stickerDefs,
+    );
+    expect(result).not.toContain(70);
+  });
+});
+
 describe('cardSelector – DRAWN scope', () => {
   it('DRAWN scope returns lastDrawnCards', () => {
     const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });

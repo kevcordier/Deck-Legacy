@@ -571,3 +571,42 @@ describe('resolveActionEffect – accumulated', () => {
     expect(resolved.accumulated).toEqual(1);
   });
 });
+
+// ─── countValuePerElement – deficitTarget ────────────────────────────────────
+
+describe('countValuePerElement – deficitTarget', () => {
+  it('returns deficitTarget minus count when count is less than deficitTarget', () => {
+    const result = countValuePerElement(
+      { amount: 1, deficitTarget: 5 },
+      makeState(),
+      1,
+      defs,
+      stickerDefs,
+    );
+    expect(result).toBe(5);
+  });
+
+  it('returns 0 when count equals deficitTarget', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: 3 });
+    const result = countValuePerElement(
+      { amount: 1, accumulation: true, deficitTarget: 3 },
+      makeState({ instances: { 1: inst } }),
+      1,
+      defs,
+      stickerDefs,
+    );
+    expect(result).toBe(0);
+  });
+
+  it('returns 0 when count exceeds deficitTarget', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: 10 });
+    const result = countValuePerElement(
+      { amount: 1, accumulation: true, deficitTarget: 3 },
+      makeState({ instances: { 1: inst } }),
+      1,
+      defs,
+      stickerDefs,
+    );
+    expect(result).toBe(0);
+  });
+});

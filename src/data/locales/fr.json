@@ -64,7 +64,11 @@
     "stayInPlay": "Reste en jeu",
     "increaseGlory": "Bonus de gloire",
     "increaseProduction": "Production améliorée",
-    "state": "État {{id}}"
+    "state": "État {{id}}",
+    "cost": {
+      "discard": "Défaussez {{count}} {{type}}",
+      "cards": "cartes"
+    }
   },
   "cardPreview": {
     "viewAllStates": "Voir tous les états",

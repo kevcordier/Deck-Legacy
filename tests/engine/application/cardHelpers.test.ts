@@ -4,14 +4,22 @@ import {
   canAffordResources,
   cardIsBlocked,
   cardShouldStayInPlay,
+  evaluateCondition,
   getActiveState,
   getAffectedCardsByBoardEffects,
   getEffectiveGlory,
   getEffectiveProductions,
+  getFirstAvailableTrackStep,
   getInstancesTriggerEffects,
   tagClass,
 } from '@engine/application/cardHelpers';
-import { ActionEffectType, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+  Trigger,
+} from '@engine/domain/enums';
 import type { CardDef, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -456,7 +464,7 @@ describe('canAffordCardCost', () => {
     const gs = makeState({ board: [] });
     expect(
       canAffordCardCost(
-        { discard: { scope: [TargetScope.BOARD] } },
+        { discard: [{ scope: [TargetScope.BOARD] }] },
         1,
         gs,
         defs,
@@ -470,7 +478,7 @@ describe('canAffordCardCost', () => {
     const gs = makeState({ board: [2], instances: { 2: inst } });
     expect(
       canAffordCardCost(
-        { discard: { scope: [TargetScope.BOARD] } },
+        { discard: [{ scope: [TargetScope.BOARD] }] },
         99,
         gs,
         defs,
@@ -511,7 +519,7 @@ describe('canAffordCardCost', () => {
     const gs = makeState({ board: [2], instances: { 2: inst } });
     expect(
       canAffordCardCost(
-        { discard: { scope: [TargetScope.BOARD], number: 2 } },
+        { discard: [{ scope: [TargetScope.BOARD], number: 2 }] },
         99,
         gs,
         defs,
@@ -531,7 +539,7 @@ describe('cardShouldStayInPlay', () => {
   it('returns true for permanent cards', () => {
     const inst = makeInstance({ id: 1, cardId: 1 });
     const defs: Record<number, CardDef> = {
-      1: { id: 1, name: 'P', permanent: true, states: [{ id: 1, name: 'S' }] },
+      1: { id: 1, name: 'P', states: [{ id: 1, name: 'S', permanent: true }] },
     };
     const gs = makeState({ instances: { 1: inst } });
     expect(cardShouldStayInPlay(1, gs, defs)).toBe(true);
@@ -738,5 +746,397 @@ describe('getInstancesTriggerEffects', () => {
     });
     const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
     expect(result).toHaveLength(0);
+  });
+
+  it('returns empty when board trigger cards selector matches nothing for the right trigger type', () => {
+    const gs = makeState({
+      boardEffects: {
+        1: [
+          {
+            id: 'trig',
+            type: PassiveType.ADD_TRIGGER,
+            trigger: {
+              type: Trigger.END_OF_TURN,
+              cards: { scope: [TargetScope.BOARD], ids: [99] }, // no card with id 99 on board
+              actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
+            },
+          },
+        ],
+      },
+    });
+    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
+    expect(result).toHaveLength(0);
+  });
+});
+
+// ─── evaluateCondition ────────────────────────────────────────────────────────
+
+describe('evaluateCondition', () => {
+  const defs: Record<number, CardDef> = {
+    1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+  };
+
+  it('cardCount returns true when count meets min', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    expect(
+      evaluateCondition(
+        { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, min: 1 },
+        gs,
+        99,
+        defs,
+        {},
+      ),
+    ).toBe(true);
+  });
+
+  it('cardCount returns false when count is below min', () => {
+    const gs = makeState({ board: [] });
+    expect(
+      evaluateCondition(
+        { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, min: 1 },
+        gs,
+        99,
+        defs,
+        {},
+      ),
+    ).toBe(false);
+  });
+
+  it('cardCount returns false when count exceeds max', () => {
+    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1, 2], instances: { 1: inst1, 2: inst2 } });
+    expect(
+      evaluateCondition(
+        { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, max: 1 },
+        gs,
+        99,
+        defs,
+        {},
+      ),
+    ).toBe(false);
+  });
+
+  it('production returns true when total meets min', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const prodDefs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S', productions: [{ gold: 2 }] }] },
+    };
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    expect(
+      evaluateCondition(
+        { type: 'production', resourceType: ResourceType.GOLD, min: 1 },
+        gs,
+        99,
+        prodDefs,
+        {},
+      ),
+    ).toBe(true);
+  });
+
+  it('production returns false when total is below min', () => {
+    const gs = makeState({ board: [] });
+    expect(
+      evaluateCondition(
+        { type: 'production', resourceType: ResourceType.GOLD, min: 1 },
+        gs,
+        99,
+        defs,
+        {},
+      ),
+    ).toBe(false);
+  });
+
+  it('production returns false when total exceeds max', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const prodDefs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S', productions: [{ gold: 3 }] }] },
+    };
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    expect(
+      evaluateCondition(
+        { type: 'production', resourceType: ResourceType.GOLD, max: 2 },
+        gs,
+        99,
+        prodDefs,
+        {},
+      ),
+    ).toBe(false);
+  });
+
+  it('and returns true when all conditions pass', () => {
+    const gs = makeState({ board: [] });
+    expect(
+      evaluateCondition(
+        {
+          type: 'and',
+          conditions: [
+            { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, max: 5 },
+            { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, max: 10 },
+          ],
+        },
+        gs,
+        99,
+        defs,
+        {},
+      ),
+    ).toBe(true);
+  });
+
+  it('and returns false when one condition fails', () => {
+    const gs = makeState({ board: [] });
+    expect(
+      evaluateCondition(
+        {
+          type: 'and',
+          conditions: [
+            { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, min: 1 },
+            { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, max: 10 },
+          ],
+        },
+        gs,
+        99,
+        defs,
+        {},
+      ),
+    ).toBe(false);
+  });
+
+  it('or returns true when at least one condition passes', () => {
+    const gs = makeState({ board: [] });
+    expect(
+      evaluateCondition(
+        {
+          type: 'or',
+          conditions: [
+            { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, min: 1 },
+            { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, max: 10 },
+          ],
+        },
+        gs,
+        99,
+        defs,
+        {},
+      ),
+    ).toBe(true);
+  });
+
+  it('or returns false when all conditions fail', () => {
+    const gs = makeState({ board: [] });
+    expect(
+      evaluateCondition(
+        {
+          type: 'or',
+          conditions: [
+            { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, min: 1 },
+            { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, min: 2 },
+          ],
+        },
+        gs,
+        99,
+        defs,
+        {},
+      ),
+    ).toBe(false);
+  });
+
+  it('not returns true when inner condition fails', () => {
+    const gs = makeState({ board: [] });
+    expect(
+      evaluateCondition(
+        {
+          type: 'not',
+          condition: { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, min: 1 },
+        },
+        gs,
+        99,
+        defs,
+        {},
+      ),
+    ).toBe(true);
+  });
+
+  it('not returns false when inner condition passes', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    expect(
+      evaluateCondition(
+        {
+          type: 'not',
+          condition: { type: 'cardCount', cards: { scope: [TargetScope.BOARD] }, min: 1 },
+        },
+        gs,
+        99,
+        defs,
+        {},
+      ),
+    ).toBe(false);
+  });
+});
+
+// ─── getEffectiveGlory branches ───────────────────────────────────────────────
+
+describe('getEffectiveGlory', () => {
+  it('returns 0 when state has no glory', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = { id: 1, name: 'S' }; // no glory
+    expect(getEffectiveGlory(state, makeState(), {}, inst)).toBe(0);
+  });
+
+  it('returns 0 when glory condition evaluates to false', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+    const gs = makeState({ board: [], instances: { 1: inst } });
+    const state = {
+      id: 1,
+      name: 'S',
+      glory: {
+        amount: 5,
+        condition: { type: 'cardCount' as const, cards: { scope: [TargetScope.BOARD] }, min: 1 },
+      },
+    };
+    expect(getEffectiveGlory(state, gs, defs, inst)).toBe(0);
+  });
+
+  it('adds valuePerElement glory bonus', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+    const gs = makeState({ board: [2], instances: { 1: inst, 2: inst2 } });
+    const state = {
+      id: 1,
+      name: 'S',
+      glory: {
+        amount: 0,
+        valuePerElement: {
+          amount: 2,
+          cards: { scope: [TargetScope.BOARD] },
+        },
+      },
+    };
+    expect(getEffectiveGlory(state, gs, defs, inst)).toBe(2);
+  });
+});
+
+// ─── tagClass branches ────────────────────────────────────────────────────────
+
+describe('tagClass additional branches', () => {
+  it('returns enemy class when isEnemy is true', () => {
+    expect(tagClass('land', true)).toContain('border-tag-enemy');
+  });
+
+  it('returns building class', () => {
+    expect(tagClass('building', false)).toContain('border-tag-building');
+  });
+
+  it('returns person class', () => {
+    expect(tagClass('person', false)).toContain('border-tag-person');
+  });
+
+  it('returns seafaring class', () => {
+    expect(tagClass('seafaring', false)).toContain('border-tag-seafaring');
+  });
+});
+
+// ─── getFirstAvailableTrackStep ───────────────────────────────────────────────
+
+describe('getFirstAvailableTrackStep', () => {
+  const baseInst = makeInstance({ id: 1, cardId: 1, stateId: 1, trackProgress: [] });
+  const defs: Record<number, CardDef> = {
+    1: {
+      id: 1,
+      name: 'C',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          track: {
+            inOrder: true,
+            steps: [{ id: 10 }, { id: 11 }],
+          },
+        },
+      ],
+    },
+  };
+
+  it('returns undefined when no TRACK_ADVANCE effect', () => {
+    const gs = makeState({ instances: { 1: baseInst } });
+    const result = getFirstAvailableTrackStep(
+      [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
+      1,
+      gs,
+      defs,
+      {},
+    );
+    expect(result).toBeUndefined();
+  });
+
+  it('returns undefined when TRACK_ADVANCE has no cards selector', () => {
+    const gs = makeState({ instances: { 1: baseInst } });
+    const result = getFirstAvailableTrackStep(
+      [{ id: 0, type: ActionEffectType.TRACK_ADVANCE }],
+      1,
+      gs,
+      defs,
+      {},
+    );
+    expect(result).toBeUndefined();
+  });
+
+  it('returns undefined when target instance not found', () => {
+    const gs = makeState({ instances: {} });
+    const result = getFirstAvailableTrackStep(
+      [{ id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { ids: [99] } }],
+      1,
+      gs,
+      defs,
+      {},
+    );
+    expect(result).toBeUndefined();
+  });
+
+  it('returns undefined when target card has no track', () => {
+    const noTrackDefs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] }, // no track
+    };
+    const gs = makeState({ instances: { 1: baseInst } });
+    const result = getFirstAvailableTrackStep(
+      [{ id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { ids: [1] } }],
+      1,
+      gs,
+      noTrackDefs,
+      {},
+    );
+    expect(result).toBeUndefined();
+  });
+
+  it('returns first available step when steps exist', () => {
+    const gs = makeState({ instances: { 1: baseInst } });
+    const result = getFirstAvailableTrackStep(
+      [{ id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { ids: [1] } }],
+      1,
+      gs,
+      defs,
+      {},
+    );
+    expect(result?.id).toBe(10);
+  });
+
+  it('returns undefined when all steps completed', () => {
+    const completedInst = makeInstance({ id: 1, cardId: 1, stateId: 1, trackProgress: [10, 11] });
+    const gs = makeState({ instances: { 1: completedInst } });
+    const result = getFirstAvailableTrackStep(
+      [{ id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { ids: [1] } }],
+      1,
+      gs,
+      defs,
+      {},
+    );
+    expect(result).toBeUndefined();
   });
 });

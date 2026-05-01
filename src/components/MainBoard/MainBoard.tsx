@@ -51,8 +51,15 @@ function NewCardSelection({
 }
 
 export function MainBoard() {
-  const { gameState, startTurn, startRound, chooseState, displayNewCards, setDisplayNewCards } =
-    useGame();
+  const {
+    gameState,
+    startTurn,
+    endTurnVoluntary,
+    startRound,
+    chooseState,
+    displayNewCards,
+    setDisplayNewCards,
+  } = useGame();
   const { t } = useTranslation();
   return (
     <main className="scrollbar @container/main flex flex-1 flex-col gap-6 p-4">
@@ -90,6 +97,16 @@ export function MainBoard() {
         >
           <CardRow cardIds={gameState.board} />
         </Section>
+      )}
+      {gameState.phase === Phase.PLAYING && gameState.board.length === 0 && (
+        <EmptyState
+          title={t('endturn.title', { turn: gameState.turn + 1 })}
+          action={
+            <Button onClick={endTurnVoluntary} color="primary" size="md">
+              {t('endturn.start')}
+            </Button>
+          }
+        />
       )}
 
       {gameState.phase === Phase.PLAYING && gameState.permanents.length > 0 && (

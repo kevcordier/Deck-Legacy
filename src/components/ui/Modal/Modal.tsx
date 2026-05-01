@@ -45,7 +45,7 @@ export function Modal({ title, subtitle, children, onClose, className = '' }: Mo
   return (
     <dialog
       ref={dialogRef}
-      className={`bg-background border-border m-auto text-ink flex h-screen w-screen flex-col items-start justify-start gap-6 rounded-none border-0 p-4 outline-none backdrop:bg-black/60 backdrop:backdrop-blur-md lg:h-auto lg:max-h-[80vh] lg:w-auto lg:min-w-md lg:max-w-[70vw] lg:rounded-2xl lg:border lg:p-6 ${className}`}
+      className={`bg-background border-border m-auto text-ink flex max-h-[90vh] w-[calc(100vw-1rem)] flex-col items-start justify-start gap-6 rounded-2xl border p-4 outline-none backdrop:bg-black/60 backdrop:backdrop-blur-md lg:max-h-[80vh] lg:w-fit lg:max-w-[80vw] lg:p-6 ${className}`}
     >
       <div className="flex w-full items-start justify-between">
         {title || subtitle ? (
@@ -60,7 +60,7 @@ export function Modal({ title, subtitle, children, onClose, className = '' }: Mo
           </Button>
         )}
       </div>
-      <div className="scrollbar flex min-h-0 w-full flex-1 flex-col justify-start gap-6 overflow-y-auto p-1">
+      <div className="scrollbar flex min-h-0 w-full flex-col justify-start gap-6 overflow-y-auto p-1">
         {children}
       </div>
     </dialog>

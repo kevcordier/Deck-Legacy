@@ -1,6 +1,6 @@
-import { CardListModal } from '@components/CardListModal/CardListModal';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
+import { Modal } from '@components/ui/Modal/Modal';
 import type { CardDef, CardInstance } from '@engine/domain/types';
 import { tCardName } from '@helpers/cardI18n';
 import { useState } from 'react';
@@ -65,27 +65,29 @@ function CardStatesModal({ instance, def, onClose }: CardStatesModalProps) {
   const { t } = useTranslation();
 
   return (
-    <CardListModal
+    <Modal
       title={tCardName(t, def.id, 1)}
       subtitle={t('cardPreview.statesMeta', { count: def.states.length, id: instance.id })}
       onClose={onClose}
     >
-      {def.states.map(s => {
-        const isCurrent = s.id === instance.stateId;
-        const fakeInstance: CardInstance = {
-          ...instance,
-          stateId: s.id,
-          trackProgress: isCurrent ? instance.trackProgress : [],
-        };
-        return (
-          <GameCard
-            key={s.id}
-            instance={fakeInstance}
-            className={`${isCurrent ? 'ring-primary ring-3' : ''}`}
-            hideStatePreview
-          />
-        );
-      })}
-    </CardListModal>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {def.states.map(s => {
+          const isCurrent = s.id === instance.stateId;
+          const fakeInstance: CardInstance = {
+            ...instance,
+            stateId: s.id,
+            trackProgress: isCurrent ? instance.trackProgress : [],
+          };
+          return (
+            <GameCard
+              key={s.id}
+              instance={fakeInstance}
+              className={`${isCurrent ? 'ring-primary ring-3' : ''}`}
+              hideStatePreview
+            />
+          );
+        })}
+      </div>
+    </Modal>
   );
 }

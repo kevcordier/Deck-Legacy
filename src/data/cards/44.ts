@@ -36,10 +36,12 @@ export const witch: CardDef = {
         {
           id: '44-1-2',
           cost: {
-            discard: {
-              tags: [CardTag.PERSON],
-              number: 3,
-            },
+            discard: [
+              {
+                tags: [CardTag.PERSON],
+                number: 3,
+              },
+            ],
           },
           actionEffects: [
             {

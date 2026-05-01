@@ -45,7 +45,7 @@ export const darkKnight: CardDef = {
     },
     {
       id: 2,
-      name: 'Inspired Boy',
+      name: 'Impressed Boy',
       tags: [CardTag.PERSON],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d1b64167-814b-4b1f-a566-ab7bf6dbbece/anim=false,width=450,optimized=true/ComfyUI_00709_.jpeg',

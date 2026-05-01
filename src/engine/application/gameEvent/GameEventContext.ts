@@ -24,7 +24,7 @@ export class GameEventContext {
       [GameEventType.TURN_STARTED]: new TurnStartedStrategy(cardDefs, stickerDefs),
       [GameEventType.CARD_PRODUCED]: new CardProducedStrategy(),
       [GameEventType.ADVANCE]: new AdvanceStrategy(cardDefs, stickerDefs),
-      [GameEventType.UPGRADE_CARD]: new UpgradeCardEventStrategy(),
+      [GameEventType.UPGRADE_CARD]: new UpgradeCardEventStrategy(cardDefs),
       [GameEventType.CARD_ACTION]: new CardActionEventStrategy(),
       [GameEventType.SKIP_TRIGGER]: new SkipTriggerStrategy(),
       [GameEventType.TURN_ENDED]: new TurnEndedStrategy(cardDefs, stickerDefs),

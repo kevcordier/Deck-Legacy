@@ -5,11 +5,11 @@ export const loyalty: CardDef = {
   id: 31,
   name: 'Loyalty',
   chooseState: true,
-  permanent: true,
   states: [
     {
       id: 1,
       name: 'Loyalty',
+      permanent: true,
       tags: [CardTag.GOAL],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a6911400-1a99-4454-9c30-d449c13b0260/anim=false,width=450,optimized=true/00160-1296651632.jpeg',
@@ -21,6 +21,7 @@ export const loyalty: CardDef = {
     {
       id: 2,
       name: 'Trader',
+      permanent: true,
       tags: [CardTag.GOAL],
       glory: {
         amount: 25,

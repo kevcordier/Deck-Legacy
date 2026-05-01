@@ -13,7 +13,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // ─── minimal card definitions ─────────────────────────────────────────────────
 
 const plainDef: CardDef = { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] };
-const permanentDef: CardDef = { id: 2, name: 'P', permanent: true, states: [{ id: 1, name: 'S' }] };
+const permanentDef: CardDef = { id: 2, name: 'P', states: [{ id: 1, name: 'S', permanent: true }] };
 const parchmentDef: CardDef = {
   id: 3,
   name: 'Q',
@@ -136,7 +136,7 @@ describe('CardActionAggregate.resolveAction', () => {
     const action: CardAction = {
       id: 'a1',
       actionEffects: [],
-      cost: { discard: { scope: [TargetScope.BOARD], number: 1 } },
+      cost: { discard: [{ scope: [TargetScope.BOARD], number: 1 }] },
     };
     const inst = gs.instances[1];
     const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);

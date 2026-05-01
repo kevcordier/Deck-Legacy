@@ -5,10 +5,10 @@ export const strengthInNumbers: CardDef = {
   id: 29,
   name: 'Strength in Numbers',
   chooseState: true,
-  permanent: true,
   states: [
     {
       id: 1,
+      permanent: true,
       name: 'Strength in Numbers',
       tags: [CardTag.GOAL],
       illustration:
@@ -25,6 +25,7 @@ export const strengthInNumbers: CardDef = {
       id: 2,
       name: 'Military Dominance',
       tags: [CardTag.GOAL],
+      permanent: true,
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/4ae44403-0397-4338-9df7-2c582cca25b0/anim=false,width=450,optimized=true/Zim+BigLove_2025-11-30%2017-55-23-0131.jpeg',
       glory: {

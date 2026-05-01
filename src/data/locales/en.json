@@ -64,7 +64,11 @@
     "stayInPlay": "Stays in play",
     "increaseGlory": "Glory bonus",
     "increaseProduction": "Production boost",
-    "state": "State {{id}}"
+    "state": "State {{id}}",
+    "cost": {
+      "discard": "Discard {{count}} {{type}}",
+      "cards": "cards"
+    }
   },
   "cardPreview": {
     "viewAllStates": "View all states",

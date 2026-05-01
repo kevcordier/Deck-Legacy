@@ -83,7 +83,7 @@ export const discoverCards = (
     if (!cardDef.parchmentCard) {
       gameState.lastAddedCards.push(instanceId);
 
-      if (cardDef.permanent) {
+      if (getActiveState(gameState.instances[instanceId], cardDefs)?.permanent) {
         gameState.permanents.push(instanceId);
       } else {
         gameState.discardPile = [...new Set([...gameState.discardPile, instanceId])];

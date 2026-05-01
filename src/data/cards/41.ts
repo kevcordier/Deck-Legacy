@@ -131,9 +131,11 @@ export const traveler: CardDef = {
         {
           id: '41-4-2',
           cost: {
-            discard: {
-              tags: [CardTag.LAND],
-            },
+            discard: [
+              {
+                tags: [CardTag.LAND],
+              },
+            ],
           },
           actionEffects: [
             {

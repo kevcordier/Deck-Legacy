@@ -285,10 +285,20 @@ export function canAffordCardCost(
   defs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
 ): boolean {
-  if (cost?.discard) {
-    const available = cardSelector(cost.discard, instanceId, gameState, defs, stickerDefs);
-    if (available.length < (cost.discard.number ?? 1)) return false;
+  if (
+    cost?.discard?.length &&
+    cost.discard.some(discardCost => {
+      const candidates = cardSelector(discardCost, instanceId, gameState, defs, stickerDefs).filter(
+        id => gameState.board.includes(id),
+      );
+      return candidates.length < (discardCost.number ?? 1);
+    })
+  ) {
+    return false;
   }
+  //   const available = cardSelector(cost.discard, instanceId, gameState, defs, stickerDefs);
+  //   if (available.length < (cost.discard.number ?? 1)) return false;
+  // }
   if (cost?.destroy) {
     const available = cardSelector(cost.destroy, instanceId, gameState, defs, stickerDefs);
     if (available.length < (cost.destroy.number ?? 1)) return false;
@@ -366,7 +376,7 @@ export function cardShouldStayInPlay(
   const instance = gameState.instances[instanceId];
   if (!instance) return false;
   const def = cardDefs[instance.cardId];
-  if (def?.permanent) return true;
+  if (getActiveState(instance, cardDefs)?.permanent) return true;
   const state = def?.states.find(s => s.id === instance.stateId);
   if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
   if (

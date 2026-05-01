@@ -8,6 +8,7 @@ import { ChoseStateStrategy } from '@engine/application/cardAction/ChoseStateStr
 import { DestroyCardStrategy } from '@engine/application/cardAction/DestroyCardStrategy';
 import { DiscardCardStrategy } from '@engine/application/cardAction/DiscardCardStrategy';
 import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
+import { EndGameStrategy } from '@engine/application/cardAction/EndGameStrategy';
 import { PlaceCardInDrawPileStrategy } from '@engine/application/cardAction/PlaceCardInDrawPileStrategy';
 import { PlayCardStrategy } from '@engine/application/cardAction/PlayCardStrategy';
 import { SetCumulatedStrategy } from '@engine/application/cardAction/SetCumulatedStrategy';
@@ -26,7 +27,7 @@ export class CardActionContext {
       [ActionEffectType.DISCARD_CARD]: new DiscardCardStrategy(),
       [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.DESTROY_CARD]: new DestroyCardStrategy(),
-      [ActionEffectType.UPGRADE_CARD]: new UpgradeCardStrategy(),
+      [ActionEffectType.UPGRADE_CARD]: new UpgradeCardStrategy(cardDefs),
       [ActionEffectType.PLACE_CARD_IN_DRAW_PILE]: new PlaceCardInDrawPileStrategy(),
       [ActionEffectType.BLOCK_CARD]: new BlockCardStrategy(),
       [ActionEffectType.ADD_BOARD_EFFECT]: new AddBoardEffectStrategy(),
@@ -37,6 +38,7 @@ export class CardActionContext {
       [ActionEffectType.TRACK_ADVANCE]: new TrackAdvanceStrategy(cardDefs),
       [ActionEffectType.SET_CUMULATED]: new SetCumulatedStrategy(),
       [ActionEffectType.ADD_CUMULATED]: new AddCumulatedStrategy(),
+      [ActionEffectType.END_GAME]: new EndGameStrategy(),
     };
   }
 

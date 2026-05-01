@@ -8,8 +8,7 @@ const plainDef: CardDef = { id: 1, name: 'Plain', states: [{ id: 1, name: 'S' }]
 const permanentDef: CardDef = {
   id: 2,
   name: 'Perm',
-  permanent: true,
-  states: [{ id: 1, name: 'S' }],
+  states: [{ id: 1, name: 'S', permanent: true }],
 };
 const parchmentDef: CardDef = {
   id: 3,

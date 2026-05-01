@@ -1,10 +1,11 @@
-import { makeInstance, makeState } from '../fixtures';
+import { makeDefs, makeInstance, makeState } from '../fixtures';
 import { UpgradeCardStrategy } from '@engine/application/cardAction/UpgradeCardStrategy';
+import * as cardHelpers from '@engine/application/cardHelpers';
 import { ActionEffectType } from '@engine/domain/enums';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 describe('UpgradeCardStrategy', () => {
-  const strategy = new UpgradeCardStrategy();
+  const strategy = new UpgradeCardStrategy(makeDefs());
 
   it('returns state unchanged when instanceId missing', () => {
     const gs = makeState();
@@ -32,6 +33,7 @@ describe('UpgradeCardStrategy', () => {
   it('updates stateId and discards the card', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], instances: { 1: inst } });
+    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S', permanent: false });
     const result = strategy.apply(gs, {
       id: 'x',
       type: ActionEffectType.UPGRADE_CARD,
@@ -42,5 +44,22 @@ describe('UpgradeCardStrategy', () => {
     expect(result.instances[1].stateId).toBe(2);
     expect(result.discardPile).toContain(1);
     expect(result.board).not.toContain(1);
+  });
+
+  it('moves card to permanents when new state is permanent', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S', permanent: true });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.UPGRADE_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [1],
+      stateId: 2,
+    });
+    expect(result.instances[1].stateId).toBe(2);
+    expect(result.permanents).toContain(1);
+    expect(result.board).not.toContain(1);
+    expect(result.discardPile).not.toContain(1);
   });
 });

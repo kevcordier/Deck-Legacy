@@ -86,10 +86,12 @@ export const shore: CardDef = {
                 wood: 2,
               },
             ],
-            discard: {
-              number: 2,
-              tags: [CardTag.PERSON],
-            },
+            discard: [
+              {
+                number: 2,
+                tags: [CardTag.PERSON],
+              },
+            ],
           },
           upgradeTo: 4,
         },

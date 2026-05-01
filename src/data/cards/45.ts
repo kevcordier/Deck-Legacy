@@ -25,9 +25,11 @@ export const scribe: CardDef = {
           trigger: Trigger.END_OF_TURN,
           optional: true,
           cost: {
-            discard: {
-              scope: [TargetScope.SELF],
-            },
+            discard: [
+              {
+                scope: [TargetScope.SELF],
+              },
+            ],
           },
           actionEffects: [
             {

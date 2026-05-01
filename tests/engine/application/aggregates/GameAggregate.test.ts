@@ -643,4 +643,136 @@ describe('GameAggregate.skipTrigger', () => {
     const gs = agg.skipTrigger(triggerId);
     expect(gs.phase).toBe(Phase.POSTTURN);
   });
+
+  it('starts next turn when last trigger is skipped in PRETURN phase', () => {
+    // Set phase to PRETURN with one optional trigger and cards in drawPile
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [2],
+      instances: { 1: inst, 2: inst2 },
+      phase: Phase.PRETURN,
+      round: 1,
+      turn: 0,
+      triggerPile: {
+        tid1: {
+          effectDef: { id: 'et', actionEffects: [], optional: true },
+          sourceInstanceId: 1,
+        },
+      },
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gs = agg.skipTrigger('tid1');
+    expect(gs.phase).toBe(Phase.PLAYING);
+  });
+});
+
+// ─── turnEnded with empty drawPile ────────────────────────────────────────────
+
+describe('GameAggregate.turnEnded – empty drawPile', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('calls roundEnded when drawPile is empty after turn ended with no triggers', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      drawPile: [],
+      discoveryPile: [2],
+      instances: { 1: inst, 2: inst2 },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gs = agg.turnEnded();
+    expect(gs.round).toBe(1);
+    expect(gs.phase).toBe(Phase.PREROUND);
+  });
+});
+
+// ─── upgradeCard canUseOptions ────────────────────────────────────────────────
+
+describe('GameAggregate.upgradeCard – blocked by option', () => {
+  it('returns current state when UPGRADE option is blocked', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const sourceInst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      instances: { 1: inst, 2: sourceInst },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+      boardEffects: {
+        2: [{ id: 'da', type: 'DESACTIVATE_OPTION' as never, options: ['upgrade'] }],
+      },
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gsBefore = agg.getGameState();
+    const gs = agg.upgradeCard(1, 2, {});
+    expect(gs).toBe(gsBefore);
+  });
+});
+
+// ─── chooseState ──────────────────────────────────────────────────────────────
+
+describe('GameAggregate.chooseState', () => {
+  it('applies CHOOSE_STATE event and returns updated state', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({ instances: { 1: inst } });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gs = agg.chooseState(1, 2);
+    expect(gs.instances[1].stateId).toBe(2);
+  });
+
+  it('updates existing CHOOSE_STATE event when called again for same card', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({ instances: { 1: inst } });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    agg.chooseState(1, 2);
+    const eventsBefore = agg.getEvents().length;
+    agg.chooseState(1, 3);
+    // Should replace existing event, not push a new one
+    expect(agg.getEvents().length).toBe(eventsBefore);
+    expect(agg.getGameState().instances[1].stateId).toBe(3);
+  });
+
+  it('pushes a new event when no existing CHOOSE_STATE event for that card', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({ instances: { 1: inst } });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const eventsBefore = agg.getEvents().length;
+    agg.chooseState(1, 2);
+    expect(agg.getEvents().length).toBe(eventsBefore + 1);
+  });
+});
+
+// ─── cardAction canUseOptions ─────────────────────────────────────────────────
+
+describe('GameAggregate.cardAction – blocked by option', () => {
+  it('returns current state when ACTION option is blocked', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const sourceInst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      instances: { 1: inst, 2: sourceInst },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+      boardEffects: {
+        2: [{ id: 'da', type: 'DESACTIVATE_OPTION' as never, options: ['action'] }],
+      },
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gsBefore = agg.getGameState();
+    const action = {
+      id: 'a1',
+      actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 5 } }],
+    };
+    const gs = agg.cardAction(action, 1);
+    expect(gs).toBe(gsBefore);
+  });
 });

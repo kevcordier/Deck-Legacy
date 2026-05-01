@@ -11,6 +11,8 @@ export enum CardTag {
   WALL = 'wall',
   STATE = 'state',
   SHIP = 'ship',
+  ITEM = 'item',
+  LOOT = 'loot',
 }
 
 export enum Trigger {
@@ -52,6 +54,7 @@ export enum ActionEffectType {
   TRACK_ADVANCE = 'TRACK_ADVANCE',
   ADD_BOARD_EFFECT = 'ADD_BOARD_EFFECT',
   CHOOSE_EFFECT = 'CHOOSE_EFFECT',
+  END_GAME = 'END_GAME',
 }
 
 export enum PassiveType {
@@ -63,6 +66,7 @@ export enum PassiveType {
   DESACTIVATE_OPTION = 'DESACTIVATE_OPTION',
   DOUBLE_COUNT = 'DOUBLE_COUNT',
   INCREASE_ADD_RESOURCES = 'INCREASE_ADD_RESOURCES',
+  INCREASE_UPDATE_COST = 'INCREASE_UPDATE_COST',
 }
 
 export enum Options {

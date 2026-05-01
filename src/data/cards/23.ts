@@ -106,10 +106,12 @@ export const entrepreneur: CardDef = {
         {
           id: '23-3-1',
           cost: {
-            discard: {
-              scope: [TargetScope.BOARD],
-              tags: [CardTag.PERSON],
-            },
+            discard: [
+              {
+                scope: [TargetScope.BOARD],
+                tags: [CardTag.PERSON],
+              },
+            ],
           },
           actionEffects: [
             {

@@ -46,9 +46,11 @@ export const wildGrass: CardDef = {
         {
           id: '1-2-1',
           cost: {
-            discard: {
-              scope: [TargetScope.FRIENDLY],
-            },
+            discard: [
+              {
+                scope: [TargetScope.FRIENDLY],
+              },
+            ],
           },
           actionEffects: [
             {

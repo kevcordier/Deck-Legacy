@@ -40,25 +40,45 @@ export function resolveCost(
     }
   }
 
-  if (cost.discard) {
-    const candidates = cardSelector(cost.discard, instanceId, gameState, defs, stickerDefs).filter(
-      id => gameState.board.includes(id),
-    );
-    if (candidates.length === 0) {
-      resolvedCost.discardedCardIds = [];
-    } else if (candidates.length === (cost.discard.number || 1)) {
-      resolvedCost.discardedCardIds = candidates;
-    } else {
-      pendingChoices.push({
-        id: `${instanceId}-discard`,
-        kind: ActionEffectType.COST,
-        type: PendingChoiceType.CHOOSE_CARD,
-        sourceInstanceId: instanceId,
-        choices: candidates,
-        pickCount: cost.discard.number ?? 1,
-        isMandatory,
-      });
-    }
+  if (cost.discard?.length) {
+    cost.discard.forEach((discardCost, index) => {
+      const candidates = cardSelector(discardCost, instanceId, gameState, defs, stickerDefs).filter(
+        id => gameState.board.includes(id),
+      );
+      if (candidates.length === 0) {
+        resolvedCost.discardedCardIds.push(...[]);
+      } else if (candidates.length === (discardCost.number || 1)) {
+        resolvedCost.discardedCardIds.push(...candidates);
+      } else {
+        pendingChoices.push({
+          id: `${instanceId}-discard-${index}`,
+          kind: ActionEffectType.COST,
+          type: PendingChoiceType.CHOOSE_CARD,
+          sourceInstanceId: instanceId,
+          choices: candidates,
+          pickCount: discardCost.number ?? 1,
+          isMandatory,
+        });
+      }
+    });
+    // const candidates = cardSelector(cost.discard, instanceId, gameState, defs, stickerDefs).filter(
+    //   id => gameState.board.includes(id),
+    // );
+    // if (candidates.length === 0) {
+    //   resolvedCost.discardedCardIds = [];
+    // } else if (candidates.length === (cost.discard.number || 1)) {
+    //   resolvedCost.discardedCardIds = candidates;
+    // } else {
+    //   pendingChoices.push({
+    //     id: `${instanceId}-discard`,
+    //     kind: ActionEffectType.COST,
+    //     type: PendingChoiceType.CHOOSE_CARD,
+    //     sourceInstanceId: instanceId,
+    //     choices: candidates,
+    //     pickCount: cost.discard.number ?? 1,
+    //     isMandatory,
+    //   });
+    // }
   }
 
   if (cost.destroy) {

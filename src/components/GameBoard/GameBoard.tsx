@@ -1,4 +1,3 @@
-import { CardListModal } from '@components/CardListModal/CardListModal';
 import { DeckViewer } from '@components/DeckViewer/DeckViewer';
 import { EventPanel } from '@components/EventPanel/EventPanel';
 import { GameCard } from '@components/GameCard/GameCard';
@@ -184,17 +183,23 @@ export function GameBoard() {
 
       {/* Destroyed cards modal (desktop) */}
       {destroyedModalOpen && (
-        <CardListModal
+        <Modal
           title={t('deckViewer.destroyed')}
           subtitle={t('deckViewer.modalSubtitle', { count: destroyedDeck.length })}
-          onClose={() => setDestroyedModalOpen(false)}
+          onClose={() => {
+            setDestroyedModalOpen(false);
+          }}
         >
-          {destroyedDeck.map(inst => (
-            <div key={inst.id} className="@container">
-              <GameCard instance={inst} className="w-full" />
+          <div className="flex flex-col">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {destroyedDeck.map(inst => (
+                <div key={inst.id}>
+                  <GameCard instance={inst} className="w-full" />
+                </div>
+              ))}
             </div>
-          ))}
-        </CardListModal>
+          </div>
+        </Modal>
       )}
 
       {/* Mobile bottom sheet for deck viewers */}

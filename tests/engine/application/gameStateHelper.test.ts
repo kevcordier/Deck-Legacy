@@ -1,5 +1,6 @@
 import { makeDefs, makeInstance, makeState, makeStickerDefs } from './fixtures';
 import {
+  canUseOptions,
   computeGameStateDiff,
   computeScore,
   destroyCards,
@@ -9,7 +10,7 @@ import {
   mergeResources,
   spendResources,
 } from '@engine/application/gameStateHelper';
-import { PassiveType } from '@engine/domain/enums';
+import { Options, PassiveType } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -207,7 +208,7 @@ describe('endTurn', () => {
   it('keeps permanent cards on board', () => {
     const inst = makeInstance({ id: 3, cardId: 3, stateId: 1 });
     const defs: Record<number, CardDef> = {
-      3: { id: 3, name: 'P', permanent: true, states: [{ id: 1, name: 'S' }] },
+      3: { id: 3, name: 'P', states: [{ id: 1, name: 'S', permanent: true }] },
     };
     const gs = makeState({ board: [3], instances: { 3: inst } });
     const result = endTurn(gs, defs);
@@ -278,5 +279,68 @@ describe('computeGameStateDiff', () => {
     const after = makeState({ board: [1] });
     const diff = computeGameStateDiff(before, after);
     expect(diff).toHaveProperty('board', [1]);
+  });
+});
+
+// ─── drawCards with passives ──────────────────────────────────────────────────
+
+describe('drawCards – card with passives', () => {
+  it('adds passives to boardEffects when drawn card has passives', () => {
+    const passive = { id: 'sip', type: PassiveType.STAY_IN_PLAY };
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S', passives: [passive] }] },
+    };
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ drawPile: [1], instances: { 1: inst } });
+    const result = drawCards(gs, [1], defs, makeStickerDefs());
+    expect(result.boardEffects[1]).toHaveLength(1);
+    expect(result.boardEffects[1][0].id).toBe('sip');
+  });
+});
+
+// ─── canUseOptions ────────────────────────────────────────────────────────────
+
+describe('canUseOptions', () => {
+  it('returns true when no board effects', () => {
+    expect(canUseOptions(makeState(), Options.ACTION)).toBe(true);
+  });
+
+  it('returns true when board effects do not include DESACTIVATE_OPTION', () => {
+    const gs = makeState({
+      boardEffects: {
+        1: [{ id: 'b', type: PassiveType.BLOCK }],
+      },
+    });
+    expect(canUseOptions(gs, Options.ACTION)).toBe(true);
+  });
+
+  it('returns false when DESACTIVATE_OPTION passive blocks the given option', () => {
+    const gs = makeState({
+      boardEffects: {
+        1: [
+          {
+            id: 'da',
+            type: PassiveType.DESACTIVATE_OPTION,
+            options: [Options.ACTION],
+          },
+        ],
+      },
+    });
+    expect(canUseOptions(gs, Options.ACTION)).toBe(false);
+  });
+
+  it('returns true when DESACTIVATE_OPTION blocks a different option', () => {
+    const gs = makeState({
+      boardEffects: {
+        1: [
+          {
+            id: 'da',
+            type: PassiveType.DESACTIVATE_OPTION,
+            options: [Options.ADVANCE],
+          },
+        ],
+      },
+    });
+    expect(canUseOptions(gs, Options.ACTION)).toBe(true);
   });
 });

@@ -70,4 +70,16 @@ describe('CardActionContext', () => {
     });
     expect(result.instances[1].stateId).toBe(2);
   });
+
+  it('throws when no strategy is found for the action type', () => {
+    const ctx = new CardActionContext(makeDefs(), makeStickerDefs());
+    const gs = makeState();
+    expect(() =>
+      ctx.apply(gs, {
+        id: 'x',
+        type: 'UNKNOWN_TYPE' as never,
+        sourceInstanceId: 1,
+      }),
+    ).toThrow('CardActionStrategy not set in CardActionContext');
+  });
 });

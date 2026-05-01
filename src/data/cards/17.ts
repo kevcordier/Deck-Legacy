@@ -4,11 +4,11 @@ import type { CardDef } from '@engine/domain/types';
 export const army: CardDef = {
   id: 17,
   name: 'Army',
-  permanent: true,
   states: [
     {
       id: 1,
       name: 'Army',
+      permanent: true,
       glory: {
         amount: 0,
         valuePerElement: {
@@ -259,6 +259,7 @@ export const army: CardDef = {
     {
       id: 2,
       name: 'Grand Army',
+      permanent: true,
       glory: {
         amount: 50,
         valuePerElement: {
