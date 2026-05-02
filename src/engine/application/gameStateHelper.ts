@@ -180,9 +180,7 @@ export function computeScore(
     const instance = state.instances[id];
     if (!instance) return total;
     const cs = getActiveState(instance, defs);
-    return (
-      total + getEffectiveGlory(cs, state, defs, instance, stickers as Record<number, Sticker>)
-    );
+    return total + getEffectiveGlory(cs, state, defs, instance, stickers);
   }, 0);
 }
 
@@ -199,7 +197,7 @@ export function computeGameStateDiff(before: GameState, after: GameState): Parti
     (Object.keys(after) as (keyof GameState)[])
       .filter(key => JSON.stringify(before[key]) !== JSON.stringify(after[key]))
       .map(key => [key, after[key]]),
-  ) as Partial<GameState>;
+  );
 }
 
 export function canUseOptions(gameState: GameState, options: Options): boolean {

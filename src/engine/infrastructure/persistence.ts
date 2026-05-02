@@ -56,7 +56,7 @@ export function deleteSave(): void {
 
 export function setCardName(instanceId: number, chosenName: string): void {
   try {
-    const names = JSON.parse(localStorage.getItem(NAMES_KEY) || '{}') as Record<number, string>;
+    const names = JSON.parse(localStorage.getItem(NAMES_KEY) ?? '{}') as Record<number, string>;
     names[instanceId] = chosenName;
     localStorage.setItem(NAMES_KEY, JSON.stringify(names));
   } catch (e) {
@@ -66,7 +66,7 @@ export function setCardName(instanceId: number, chosenName: string): void {
 
 export function getCardName(instanceId: number): string | undefined {
   try {
-    const names = JSON.parse(localStorage.getItem(NAMES_KEY) || '{}') as Record<number, string>;
+    const names = JSON.parse(localStorage.getItem(NAMES_KEY) ?? '{}') as Record<number, string>;
     return names[instanceId];
   } catch (e) {
     console.warn('Unable to load name', e);

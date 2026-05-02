@@ -64,7 +64,7 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
     gameState,
     action.endsTurn ? Options.END_TURN_ACTION : Options.ACTION,
   );
-  const isActionInPlay = action.unlimited || gameState.phase === Phase.PLAYING;
+  const isActionInPlay = (action.unlimited ?? false) || gameState.phase === Phase.PLAYING;
   const affordable = hasTrackAdvance
     ? firstTrackStep &&
       canAffordResources(gameState.resources, firstTrackStep?.cost) &&
@@ -86,7 +86,9 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
   return (
     <Button
       onClick={() => resolveAction(instance.id, action.id)}
-      disabled={!affordable || disabled || haveTrigger || optionDisabled || !isActionInPlay}
+      disabled={
+        !affordable || (disabled ?? false) || haveTrigger || optionDisabled || !isActionInPlay
+      }
       variant="text"
       color="base-ink"
       className={`font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md`}

@@ -238,7 +238,7 @@ function resolveResourceTarget(
       kind: actionType,
       type: PendingChoiceType.CHOOSE_RESOURCE,
       sourceInstanceId: instanceId,
-      choices: resources.choice as Resources[],
+      choices: resources.choice,
       pickCount: 1,
       isMandatory,
     });
@@ -321,7 +321,7 @@ function resolveStateTarget(
 /** Strips the `choice` and `cards` sub-fields from Action.resources to get plain Resources. */
 function extractResources(raw: NonNullable<ActionEffect['resources']>): Resources {
   const { choice: _choice, cards: _cards, ...rest } = raw;
-  return rest as Resources;
+  return rest;
 }
 
 // For BOOST_CARD, all produced resources are injected as potential criteria before resolving targets.

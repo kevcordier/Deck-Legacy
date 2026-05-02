@@ -324,7 +324,7 @@ describe('getEffectiveProductions', () => {
               {
                 id: 'p',
                 type: PassiveType.ADJUST_PRODUCTION,
-                valuePerElement: { amount: 2 } as never,
+                valuePerElement: { amount: 2 },
               },
             ],
           },
@@ -906,7 +906,7 @@ describe('getInstancesTriggerEffects', () => {
           {
             id: 'trig',
             type: PassiveType.ADD_TRIGGER,
-            trigger: { type: Trigger.END_OF_TURN } as never,
+            trigger: { type: Trigger.END_OF_TURN },
           },
         ],
       },

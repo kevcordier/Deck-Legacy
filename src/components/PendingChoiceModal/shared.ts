@@ -52,7 +52,7 @@ export function getChoiceActionLabel(
     e.actionEffects.some(a => a.id === actionId && a.type === choice.kind),
   );
   if (effectIdx === -1) return undefined;
-  return tCardActionLabel(t, def.id, state.id, effectIdx, inst.cumulated) || undefined;
+  return tCardActionLabel(t, def.id, state.id, effectIdx, inst.cumulated) ?? undefined;
 }
 
 export function makePreviewInstance(

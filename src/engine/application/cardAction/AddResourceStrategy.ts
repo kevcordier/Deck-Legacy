@@ -30,7 +30,7 @@ export class AddResourceStrategy implements CardActionStrategy {
         );
 
         if (affectedInstanceIds.includes(sourceInstanceId) && passive.resources) {
-          adjustedResources = mergeResources(adjustedResources, passive.resources as Resources);
+          adjustedResources = mergeResources(adjustedResources, passive.resources);
         }
       }
     }

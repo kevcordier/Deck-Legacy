@@ -281,6 +281,17 @@ describe('endTurn', () => {
     expect(result.boardEffects[14]).toHaveLength(1);
     expect(result.boardEffects[14][0].global).toBe(true);
   });
+
+  it('removes non-global boardEffects when source is not on board', () => {
+    const defs: Record<number, CardDef> = {};
+    const gs = makeState({
+      board: [],
+      instances: {},
+      boardEffects: { 99: [{ id: 'local', type: PassiveType.BLOCK }] },
+    });
+    const result = endTurn(gs, defs);
+    expect(result.boardEffects[99]).toBeUndefined();
+  });
 });
 
 // ─── computeScore ─────────────────────────────────────────────────────────────

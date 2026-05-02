@@ -45,7 +45,7 @@ export function resolveCost(
       const candidates = cardSelector(discardCost, instanceId, gameState, defs, stickerDefs).filter(
         id => gameState.board.includes(id),
       );
-      if (candidates.length === (discardCost.number || 1)) {
+      if (candidates.length === (discardCost.number ?? 1)) {
         resolvedCost.discardedCardIds.push(...candidates);
       } else if (candidates.length > 0) {
         pendingChoices.push({
@@ -67,7 +67,7 @@ export function resolveCost(
     );
     if (candidates.length === 0) {
       resolvedCost.destroyedCardIds = [];
-    } else if (candidates.length === (cost.destroy.number || 1)) {
+    } else if (candidates.length === (cost.destroy.number ?? 1)) {
       resolvedCost.destroyedCardIds = candidates;
     } else {
       pendingChoices.push({

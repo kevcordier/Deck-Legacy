@@ -1,7 +1,7 @@
 import { makeInstance, makeState, makeStickerDefs } from './fixtures';
 import { countValuePerElement, resolveActionEffect } from '@engine/application/effectResolver';
 import { ActionEffectType, TargetScope } from '@engine/domain/enums';
-import type { CardDef, Sticker } from '@engine/domain/types';
+import type { CardDef, RemovedResourceScope, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
 const simpleDef: CardDef = { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] };
@@ -314,6 +314,18 @@ describe('resolveActionEffect – ADD_BOARD_EFFECT', () => {
     };
     const [resolved] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
     expect(resolved.effect).toBe(passive);
+  });
+});
+
+describe('resolveActionEffect – REMOVE_RESOURCE_ON_CARD', () => {
+  it('copies resourceScopes to resolved action', () => {
+    const effect = {
+      id: 1,
+      type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+      resourceScopes: ['production'] as RemovedResourceScope[],
+    };
+    const [resolved] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
+    expect(resolved.resourceScopes).toEqual(['production']);
   });
 });
 

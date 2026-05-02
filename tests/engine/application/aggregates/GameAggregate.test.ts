@@ -278,6 +278,22 @@ describe('GameAggregate.turnEnded', () => {
     const gs = agg.turnEnded();
     expect(gs.phase).toBe(Phase.POSTTURN);
   });
+
+  it('calls roundEnded when no triggers and drawPile is empty', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [],
+      board: [1],
+      instances: { 1: inst },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gs = agg.turnEnded();
+    expect(gs.phase).toBe(Phase.PREROUND);
+  });
 });
 
 // ─── cardProduced ─────────────────────────────────────────────────────────────
@@ -509,7 +525,7 @@ describe('GameAggregate.resolveCardActionChoice', () => {
       type: ActionEffectType.ADD_RESOURCES,
       sourceInstanceId: 1,
     };
-    mockStrategyApply(resolved, [anotherPending as unknown as PendingChoice]);
+    mockStrategyApply(resolved, [anotherPending]);
 
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const state = makeState({

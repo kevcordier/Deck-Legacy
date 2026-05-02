@@ -53,7 +53,7 @@ export function GameProvider({
   const stickerDefs = useMemo(() => loadStickerDefs(), []);
 
   const agg = useMemo(
-    () => makeAggregate(initialState || EMPTY_STATE, defs, stickerDefs),
+    () => makeAggregate(initialState ?? EMPTY_STATE, defs, stickerDefs),
     [initialState, defs, stickerDefs],
   );
   const initState = useMemo(() => agg.loadFromHistory(initialEvents), [initialEvents, agg]);
@@ -159,7 +159,7 @@ export function GameProvider({
     const newState = aggRef.current.gameStarted(
       allInstances,
       initialDeck,
-      loadInitialStickerStock() as Record<string, number>,
+      loadInitialStickerStock(),
       discoveryPile,
     );
 
@@ -203,7 +203,7 @@ export function GameProvider({
     if (!inst || cardIsBlocked(instanceId, gs)) return;
 
     const resourcesGained = getEffectiveProductions(
-      defs[inst.cardId].states.find(s => s.id === inst.stateId)?.productions?.[chosenResource] ||
+      defs[inst.cardId].states.find(s => s.id === inst.stateId)?.productions?.[chosenResource] ??
         {},
       getActiveState(inst, defs),
       gs,

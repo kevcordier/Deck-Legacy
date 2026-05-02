@@ -25,13 +25,13 @@ export function ButtonGroup({
         <legend className="text-xs">{label}</legend>
         {options.map((option, index) => (
           <Button
-            key={option.value || JSON.stringify(option.children)}
+            key={option.value ?? JSON.stringify(option.children)}
             {...option}
             color={value === option.value ? 'primary' : 'ink'}
             size={size}
             font={font}
             className={`rounded-none! ${index === 0 ? 'rounded-l-sm!' : ''} ${index === options.length - 1 ? 'rounded-r-sm!' : ''}`}
-            onClick={e => (onChange ? onChange(option.value || '') : option.onClick?.(e))}
+            onClick={e => (onChange ? onChange(option.value ?? '') : option.onClick?.(e))}
           >
             {option.children}
           </Button>

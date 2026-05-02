@@ -26,12 +26,8 @@ export class RemoveResourceOnCardStrategy implements CardActionStrategy {
       if (!target) return;
       const targetStateId = payload.stateId ?? target.stateId;
 
-      if (!target.removedResourcesByState) {
-        target.removedResourcesByState = {};
-      }
-      if (!target.removedResourcesByState[targetStateId]) {
-        target.removedResourcesByState[targetStateId] = {};
-      }
+      target.removedResourcesByState ??= {};
+      target.removedResourcesByState[targetStateId] ??= {};
 
       const byScope = target.removedResourcesByState[targetStateId];
       scopes.forEach(scope => {

@@ -12,7 +12,7 @@ import type { CardDef, Sticker, StickerStock } from '@engine/domain/types';
 /** Loads and indexes all card definitions from `cards.json` (key = `card.id`). */
 export function loadCardDefs(): Record<number, CardDef> {
   const defs: Record<number, CardDef> = {};
-  for (const card of cardsData as unknown as CardDef[]) {
+  for (const card of cardsData) {
     defs[card.id] = card;
   }
   return defs;
@@ -21,7 +21,7 @@ export function loadCardDefs(): Record<number, CardDef> {
 /** Loads and indexes sticker definitions from `sticker.json` (key = `sticker.id`). */
 export function loadStickerDefs(): Record<number, Sticker> {
   const defs: Record<number, Sticker> = {};
-  for (const s of stickerData as unknown as Sticker[]) {
+  for (const s of stickerData) {
     defs[s.id] = s;
   }
   return defs;
@@ -29,5 +29,5 @@ export function loadStickerDefs(): Record<number, Sticker> {
 
 /** Returns the global sticker stock as defined in `sticker.json`. */
 export function loadInitialStickerStock(): StickerStock {
-  return globalStock as StickerStock;
+  return globalStock;
 }

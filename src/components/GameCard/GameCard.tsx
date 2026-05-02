@@ -65,7 +65,7 @@ export function GameCard({
   const isParchment = def?.parchmentCard ?? false;
   const productions = cs.productions?.map(base =>
     getEffectiveProductions(base, cs, gameState, defs, instance, stickerDefs),
-  ) || [getEffectiveProductions({}, cs, gameState, defs, instance, stickerDefs)];
+  ) ?? [getEffectiveProductions({}, cs, gameState, defs, instance, stickerDefs)];
   const hasProductions = productions?.some(prod => Object.keys(prod).length > 0) ?? false;
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
@@ -173,7 +173,7 @@ export function GameCard({
         </div>
 
         <div className={`relative z-10 flex flex-col items-center gap-1 p-1 @3xs:p-3`}>
-          {(cs.glory?.condition || cs.glory?.valuePerElement) && (
+          {(cs.glory?.condition ?? cs.glory?.valuePerElement) && (
             <span className={cardActionsClass}>
               <PassifIcon className="size-3 @3xs:size-6" /> {tCardGloryLabel(t, def.id, cs.id)}
             </span>
@@ -232,7 +232,7 @@ export function GameCard({
                 ?.map(d => {
                   return t('card.cost.discard', {
                     count: d.number,
-                    type: d.name || d.tags?.[0] || t('card.cost.cards'),
+                    type: d.name ?? d.tags?.[0] ?? t('card.cost.cards'),
                   });
                 })
                 .join(', ');
@@ -250,11 +250,11 @@ export function GameCard({
                   {targetState
                     ? tCardName(t, def.id, targetState.id)
                     : t('card.state', { id: upg.upgradeTo })}
-                  {(effectiveUpgradeCost.resources?.[0] || discardLabel) && (
+                  {(effectiveUpgradeCost.resources?.[0] ?? discardLabel) && (
                     <span>
                       {' '}
                       (
-                      {Object.entries(effectiveUpgradeCost.resources?.[0] || {}).map(
+                      {Object.entries(effectiveUpgradeCost.resources?.[0] ?? {}).map(
                         ([k, v], ci) => {
                           const meta = getResMeta(k);
                           return (

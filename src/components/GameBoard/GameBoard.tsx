@@ -164,7 +164,7 @@ export function GameBoard() {
         <ParchmentModal def={parchmentTextPending} onContinue={dismissParchmentText} />
       )}
 
-      {((pendingChoices && pendingChoices.length > 0) ||
+      {((pendingChoices !== null && pendingChoices.length > 0) ||
         (triggerPile && Object.keys(triggerPile).length > 0)) && (
         <PendingChoiceModal
           key={pendingChoices?.[0]?.id}

@@ -38,7 +38,7 @@ function getRemovedResourcesForState(
   stateId: number,
   scope: 'production' | 'actionCost' | 'upgradeCost',
 ): (keyof Resources)[] {
-  return (instance.removedResourcesByState?.[stateId]?.[scope] ?? []) as (keyof Resources)[];
+  return instance.removedResourcesByState?.[stateId]?.[scope] ?? [];
 }
 
 function removeResourceKeys(resources: Resources, keys: (keyof Resources)[]): Resources {

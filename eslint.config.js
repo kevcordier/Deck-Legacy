@@ -51,6 +51,8 @@ export default tseslint.config(
       ],
       '@typescript-eslint/default-param-last': 'error',
       '@typescript-eslint/prefer-optional-chain': 'error',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+      '@typescript-eslint/prefer-nullish-coalescing': 'error',
 
       // Disable sonarjs duplicate of @typescript-eslint/no-unused-vars (which already ignores _-prefixed vars)
       'sonarjs/no-unused-vars': 'off',
