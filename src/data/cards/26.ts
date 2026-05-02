@@ -1,6 +1,18 @@
 import { ActionEffectType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
+const makeStep = (id: number) => ({
+  id,
+  effects: [
+    {
+      id: 1,
+      type: ActionEffectType.ADD_CUMULATED,
+      cards: { scope: [TargetScope.SELF] },
+      accumulated: 1,
+    },
+  ],
+});
+
 export const inventor: CardDef = {
   id: 26,
   name: 'Inventor',
@@ -20,41 +32,7 @@ export const inventor: CardDef = {
       },
       track: {
         inOrder: true,
-        steps: [
-          {
-            id: 1,
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.ADD_CUMULATED,
-                cards: { scope: [TargetScope.SELF] },
-                accumulated: 1,
-              },
-            ],
-          },
-          {
-            id: 2,
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.ADD_CUMULATED,
-                cards: { scope: [TargetScope.SELF] },
-                accumulated: 1,
-              },
-            ],
-          },
-          {
-            id: 3,
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.ADD_CUMULATED,
-                cards: { scope: [TargetScope.SELF] },
-                accumulated: 1,
-              },
-            ],
-          },
-        ],
+        steps: [makeStep(1), makeStep(2), makeStep(3)],
       },
       upgrade: [
         {

@@ -20,6 +20,7 @@ export enum Trigger {
   ON_DISCOVER = 'on_discover',
   ON_PLAY = 'on_play',
   END_OF_ROUND = 'end_of_round',
+  ON_PURGE = 'on_purge',
 }
 
 export enum GameEventType {
@@ -63,6 +64,7 @@ export enum PassiveType {
   STAY_IN_PLAY = 'STAY_IN_PLAY',
   ADJUST_GLORY = 'ADJUST_GLORY',
   ADJUST_PRODUCTION = 'ADJUST_PRODUCTION',
+  ADJUST_ADVANCE_CARDS = 'ADJUST_ADVANCE_CARDS',
   ADD_TRIGGER = 'ADD_TRIGGER',
   DESACTIVATE_OPTION = 'DESACTIVATE_OPTION',
   COUNT_AS_2 = 'COUNT_AS_2',

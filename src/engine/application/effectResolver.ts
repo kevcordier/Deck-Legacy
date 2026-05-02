@@ -324,6 +324,16 @@ function extractResources(raw: NonNullable<ActionEffect['resources']>): Resource
   return rest;
 }
 
+function applyActionMetadata(resolverAction: ResolvedActionEffect, action: ActionEffect): void {
+  if (action.accumulated) resolverAction.accumulated = action.accumulated;
+  if (action.type === ActionEffectType.REMOVE_RESOURCE_ON_CARD && action.resourceScopes) {
+    resolverAction.resourceScopes = action.resourceScopes;
+  }
+  if (action.type === ActionEffectType.ADD_BOARD_EFFECT && action.effect) {
+    resolverAction.effect = action.effect;
+  }
+}
+
 // For BOOST_CARD, all produced resources are injected as potential criteria before resolving targets.
 // For DISCOVER_CARD, the scope is forced to the discovery pile.
 function getEnrichedCardSelector(action: ActionEffect): CardSelector | undefined {
@@ -365,8 +375,30 @@ export function resolveActionEffect(
     stickerDefs,
   };
 
+  if (action.type === ActionEffectType.TRACK_ADVANCE && action.cards) {
+    if (action.valuePerElement) {
+      const derivedPick = Math.floor(
+        countValuePerElement(action.valuePerElement, gameState, instanceId, defs, stickerDefs) *
+          action.valuePerElement.amount,
+      );
+      ctx.pickNumber = derivedPick;
+      ctx.pickMin = derivedPick;
+      ctx.pickMax = derivedPick;
+    }
+    // Populate instanceIds from the card selector before delegating — preserved as fallback when
+    // the target has no track or all steps are complete.
+    const targetIds = cardSelector(action.cards, instanceId, gameState, defs, stickerDefs);
+    if (targetIds.length > 0) resolverAction.instanceIds = [targetIds[0]];
+    return resolveTrackAdvanceEffect(resolverAction, pendingChoices, ctx, action.cards);
+  }
+
   if (action.type === ActionEffectType.CHOOSE_EFFECT && action.effects) {
-    resolveChooseActionEffect(resolverAction, pendingChoices, ctx, action.effects);
+    [resolverAction, pendingChoices] = resolveChooseActionEffect(
+      resolverAction,
+      pendingChoices,
+      ctx,
+      action.effects,
+    );
   }
 
   if (action.valuePerElement) {
@@ -415,16 +447,7 @@ export function resolveActionEffect(
     );
   }
 
-  if (action.accumulated) resolverAction.accumulated = action.accumulated;
-  if (action.type === ActionEffectType.REMOVE_RESOURCE_ON_CARD && action.resourceScopes) {
-    resolverAction.resourceScopes = action.resourceScopes;
-  }
-  if (action.type === ActionEffectType.ADD_BOARD_EFFECT && action.effect) {
-    resolverAction.effect = action.effect;
-  }
-  if (action.type === ActionEffectType.TRACK_ADVANCE && cards) {
-    return resolveTrackAdvanceEffect(resolverAction, pendingChoices, ctx, cards);
-  }
+  applyActionMetadata(resolverAction, action);
 
   return [resolverAction, pendingChoices];
 }

@@ -1,7 +1,13 @@
 import { makeInstance, makeState } from '../fixtures';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import { ChooseActionEffectStrategy } from '@engine/application/playerChoice/ChooseActionEffectStrategy';
-import { ActionEffectType, GameEventType, PendingChoiceType, Trigger } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  GameEventType,
+  PassiveType,
+  PendingChoiceType,
+  Trigger,
+} from '@engine/domain/enums';
 import type { CardDef, GameEvent, PendingChoice, ResolvedActionEffect } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -331,6 +337,28 @@ describe('GameAggregate.advance', () => {
     const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.advance();
     expect(gs.board).toHaveLength(2);
+  });
+
+  it('draws 2 additional cards when a board effect adjusts advance draw count', () => {
+    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const inst4 = makeInstance({ id: 4, cardId: 1, stateId: 1 });
+    const inst5 = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [1, 2, 3, 4, 5],
+      instances: { 1: inst1, 2: inst2, 3: inst3, 4: inst4, 5: inst5 },
+      boardEffects: {
+        99: [{ id: 'bonus-advance', type: PassiveType.ADJUST_ADVANCE_CARDS, amount: 2 }],
+      },
+      phase: Phase.PLAYING,
+      round: 1,
+    });
+
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gs = agg.advance();
+
+    expect(gs.board).toHaveLength(4);
   });
 
   it('returns current state when drawPile is empty', () => {

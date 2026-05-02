@@ -36,6 +36,10 @@
     "title": "Turn {{turn}}",
     "start": "▶ Start turn"
   },
+  "endround": {
+    "title": "Round {{round}}",
+    "end": "▶ End round"
+  },
   "sections": {
     "permanents": "Permanents",
     "tableau": "Tableau",

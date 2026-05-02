@@ -1,7 +1,13 @@
 import { CardActionAggregate } from '@engine/application/aggregates/CardActionAggregate';
 import { GameEventContext } from '@engine/application/gameEvent/GameEventContext';
 import { canUseOptions, computeGameStateDiff } from '@engine/application/gameStateHelper';
-import { GameEventType, Options, type PendingChoiceType, Trigger } from '@engine/domain/enums';
+import {
+  GameEventType,
+  Options,
+  PassiveType,
+  type PendingChoiceType,
+  Trigger,
+} from '@engine/domain/enums';
 import type {
   AdvanceEvent,
   CardAction,
@@ -44,6 +50,16 @@ export const EMPTY_STATE: GameState = {
   turn: 0,
   phase: Phase.PREGAME,
 };
+
+function getAdvanceCardsToDraw(gameState: GameState): number {
+  const baseDrawCount = 2;
+  const bonusDrawCount = Object.values(gameState.boardEffects)
+    .flat()
+    .filter(passive => passive.type === PassiveType.ADJUST_ADVANCE_CARDS)
+    .reduce((total, passive) => total + (passive.amount ?? 0), 0);
+
+  return Math.max(0, baseDrawCount + bonusDrawCount);
+}
 
 export class GameAggregate {
   private events: GameEvent[];
@@ -220,7 +236,10 @@ export class GameAggregate {
       return this.gameState;
     }
 
-    const turnCards: number[] = this.gameState.drawPile.slice(0, 2);
+    const turnCards: number[] = this.gameState.drawPile.slice(
+      0,
+      getAdvanceCardsToDraw(this.gameState),
+    );
 
     const event: AdvanceEvent = {
       id: crypto.randomUUID(),

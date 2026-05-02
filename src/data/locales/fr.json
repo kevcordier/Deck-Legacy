@@ -36,6 +36,10 @@
     "title": "Tour {{turn}}",
     "start": "▶ Commencer le tour"
   },
+  "endround": {
+    "title": "Manche {{round}}",
+    "end": "▶ Terminer la manche"
+  },
   "sections": {
     "permanents": "Permanentes",
     "tableau": "Tableau",

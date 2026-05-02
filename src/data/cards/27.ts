@@ -1,6 +1,22 @@
 import { ActionEffectType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
+const makeStep = (id: number) => ({
+  id,
+  effects: [
+    {
+      id: 1,
+      type: ActionEffectType.ADD_RESOURCES,
+      cards: {
+        scope: [TargetScope.SELF],
+      },
+      resources: {
+        [ResourceType.WEAPON]: 1,
+      },
+    },
+  ],
+});
+
 export const mercenay: CardDef = {
   id: 27,
   name: 'Mercenay',
@@ -50,126 +66,14 @@ export const mercenay: CardDef = {
       track: {
         inOrder: true,
         steps: [
-          {
-            id: 1,
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.ADD_RESOURCES,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-                resources: {
-                  [ResourceType.WEAPON]: 1,
-                },
-              },
-            ],
-          },
-          {
-            id: 2,
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.ADD_RESOURCES,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-                resources: {
-                  [ResourceType.WEAPON]: 1,
-                },
-              },
-            ],
-          },
-          {
-            id: 3,
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.ADD_RESOURCES,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-                resources: {
-                  [ResourceType.WEAPON]: 1,
-                },
-              },
-            ],
-          },
-          {
-            id: 4,
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.ADD_RESOURCES,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-                resources: {
-                  [ResourceType.WEAPON]: 1,
-                },
-              },
-            ],
-          },
-          {
-            id: 5,
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.ADD_RESOURCES,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-                resources: {
-                  [ResourceType.WEAPON]: 1,
-                },
-              },
-            ],
-          },
-          {
-            id: 6,
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.ADD_RESOURCES,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-                resources: {
-                  [ResourceType.WEAPON]: 1,
-                },
-              },
-            ],
-          },
-          {
-            id: 7,
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.ADD_RESOURCES,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-                resources: {
-                  [ResourceType.WEAPON]: 1,
-                },
-              },
-            ],
-          },
-          {
-            id: 8,
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.ADD_RESOURCES,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-                resources: {
-                  [ResourceType.WEAPON]: 1,
-                },
-              },
-            ],
-          },
+          makeStep(1),
+          makeStep(2),
+          makeStep(3),
+          makeStep(4),
+          makeStep(5),
+          makeStep(6),
+          makeStep(7),
+          makeStep(8),
         ],
       },
     },

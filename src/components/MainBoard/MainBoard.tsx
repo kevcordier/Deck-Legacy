@@ -79,12 +79,24 @@ export function MainBoard() {
         </EmptyState>
       )}
 
-      {(gameState.phase === Phase.PRETURN || gameState.phase === Phase.POSTTURN) && (
+      {(gameState.phase === Phase.PRETURN ||
+        (gameState.phase === Phase.POSTTURN && gameState.drawPile.length > 0)) && (
         <EmptyState
           title={t('endturn.title', { turn: gameState.turn + 1 })}
           action={
             <Button onClick={startTurn} color="primary" size="md">
               {t('endturn.start')}
+            </Button>
+          }
+        />
+      )}
+
+      {gameState.phase === Phase.POSTTURN && gameState.drawPile.length === 0 && (
+        <EmptyState
+          title={t('endround.title', { round: gameState.round })}
+          action={
+            <Button onClick={startTurn} color="primary" size="md">
+              {t('endround.end')}
             </Button>
           }
         />

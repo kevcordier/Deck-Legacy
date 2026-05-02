@@ -1,6 +1,13 @@
 import { ActionEffectType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
+const makeStep = (id: number, iron: number, cumulated: number) => ({
+  id,
+  cost: { resources: [{ iron }] },
+  icon: 'glory',
+  effects: [{ id: 1, type: ActionEffectType.SET_CUMULATED, accumulated: cumulated }],
+});
+
 export const jewellery: CardDef = {
   id: 75,
   name: 'Jewellery',
@@ -37,66 +44,16 @@ export const jewellery: CardDef = {
       track: {
         inOrder: true,
         steps: [
-          {
-            id: 1,
-            cost: { resources: [{ iron: 1 }] },
-            icon: 'glory',
-            effects: [{ id: 1, type: ActionEffectType.SET_CUMULATED, accumulated: 1 }],
-          },
-          {
-            id: 2,
-            cost: { resources: [{ iron: 1 }] },
-            icon: 'glory',
-            effects: [{ id: 1, type: ActionEffectType.SET_CUMULATED, accumulated: 2 }],
-          },
-          {
-            id: 3,
-            cost: { resources: [{ iron: 1 }] },
-            icon: 'glory',
-            effects: [{ id: 1, type: ActionEffectType.SET_CUMULATED, accumulated: 3 }],
-          },
-          {
-            id: 4,
-            cost: { resources: [{ iron: 1 }] },
-            icon: 'glory',
-            effects: [{ id: 1, type: ActionEffectType.SET_CUMULATED, accumulated: 5 }],
-          },
-          {
-            id: 5,
-            cost: { resources: [{ iron: 1 }] },
-            icon: 'glory',
-            effects: [{ id: 1, type: ActionEffectType.SET_CUMULATED, accumulated: 7 }],
-          },
-          {
-            id: 6,
-            cost: { resources: [{ iron: 1 }] },
-            icon: 'glory',
-            effects: [{ id: 1, type: ActionEffectType.SET_CUMULATED, accumulated: 10 }],
-          },
-          {
-            id: 7,
-            cost: { resources: [{ iron: 1 }] },
-            icon: 'glory',
-            effects: [{ id: 1, type: ActionEffectType.SET_CUMULATED, accumulated: 14 }],
-          },
-          {
-            id: 8,
-            cost: { resources: [{ iron: 1 }] },
-            icon: 'glory',
-            effects: [{ id: 1, type: ActionEffectType.SET_CUMULATED, accumulated: 20 }],
-          },
-          {
-            id: 9,
-            cost: { resources: [{ iron: 9 }] },
-            icon: 'glory',
-            effects: [{ id: 1, type: ActionEffectType.SET_CUMULATED, accumulated: 28 }],
-          },
-          {
-            id: 10,
-            cost: { resources: [{ iron: 10 }] },
-            icon: 'glory',
-            effects: [{ id: 1, type: ActionEffectType.SET_CUMULATED, accumulated: 40 }],
-          },
+          makeStep(1, 1, 1),
+          makeStep(2, 1, 2),
+          makeStep(3, 1, 3),
+          makeStep(4, 1, 5),
+          makeStep(5, 1, 7),
+          makeStep(6, 1, 10),
+          makeStep(7, 1, 14),
+          makeStep(8, 1, 20),
+          makeStep(9, 9, 28),
+          makeStep(10, 10, 40),
         ],
       },
     },

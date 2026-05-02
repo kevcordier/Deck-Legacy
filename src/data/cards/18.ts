@@ -1,6 +1,28 @@
 import { ActionEffectType, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
+const makeStep = (id: number, gold: number, cumulated: number) => ({
+  id,
+  icon: 'glory',
+  cost: {
+    resources: [
+      {
+        [ResourceType.GOLD]: gold,
+      },
+    ],
+  },
+  effects: [
+    {
+      id: 1,
+      type: ActionEffectType.SET_CUMULATED,
+      accumulated: cumulated,
+      cards: {
+        scope: [TargetScope.SELF],
+      },
+    },
+  ],
+});
+
 export const treasury: CardDef = {
   id: 18,
   name: 'Treasury',
@@ -36,237 +58,17 @@ export const treasury: CardDef = {
       track: {
         inOrder: true,
         steps: [
-          {
-            id: 1,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 1,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 1,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 2,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 2,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 2,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 3,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 3,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 3,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 4,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 4,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 5,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 5,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 5,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 7,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 6,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 6,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 10,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 7,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 7,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 14,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 8,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 8,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 19,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 9,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 9,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 25,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 10,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 10,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 32,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 11,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 11,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 40,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
+          makeStep(1, 1, 1),
+          makeStep(2, 2, 2),
+          makeStep(3, 3, 3),
+          makeStep(4, 4, 5),
+          makeStep(5, 5, 7),
+          makeStep(6, 6, 10),
+          makeStep(7, 7, 14),
+          makeStep(8, 8, 19),
+          makeStep(9, 9, 25),
+          makeStep(10, 10, 32),
+          makeStep(11, 11, 40),
           {
             id: 12,
             icon: 'glory',
@@ -322,111 +124,11 @@ export const treasury: CardDef = {
       track: {
         inOrder: true,
         steps: [
-          {
-            id: 13,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 13,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 10,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 14,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 14,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 20,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 15,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 15,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 30,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 16,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 16,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 40,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
-          {
-            id: 17,
-            icon: 'glory',
-            cost: {
-              resources: [
-                {
-                  [ResourceType.GOLD]: 17,
-                },
-              ],
-            },
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.SET_CUMULATED,
-                accumulated: 50,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-            ],
-          },
+          makeStep(13, 13, 10),
+          makeStep(14, 14, 20),
+          makeStep(15, 15, 30),
+          makeStep(16, 16, 40),
+          makeStep(17, 17, 50),
         ],
       },
     },

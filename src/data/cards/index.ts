@@ -74,7 +74,7 @@ import { aPerfectTower } from './73';
 import { deepPit } from './74';
 import { jewellery } from './75';
 import { buildAnArk } from './76';
-import { person } from './77';
+import { unknown } from './77';
 import { treasureHunt } from './78';
 import { backstabber } from './79';
 import { astronomer } from './80';
@@ -198,7 +198,7 @@ export const cardsData: CardDef[] = [
   deepPit,
   jewellery,
   buildAnArk,
-  person,
+  unknown,
   treasureHunt,
   backstabber,
   astronomer,
