@@ -1,7 +1,7 @@
 import { CardActionAggregate } from '@engine/application/aggregates/CardActionAggregate';
 import { GameEventContext } from '@engine/application/gameEvent/GameEventContext';
 import { canUseOptions, computeGameStateDiff } from '@engine/application/gameStateHelper';
-import { GameEventType, Options, type PendingChoiceType } from '@engine/domain/enums';
+import { GameEventType, Options, type PendingChoiceType, Trigger } from '@engine/domain/enums';
 import type {
   AdvanceEvent,
   CardAction,
@@ -68,22 +68,26 @@ export class GameAggregate {
   }
 
   private autoTrigger(): GameState {
-    const newTriggers = this.gameState.triggerPile;
-
-    const firstTriggerEntry = newTriggers[Object.keys(newTriggers)[0]];
-    const sourceInstance =
-      firstTriggerEntry && this.gameState.instances[firstTriggerEntry.sourceInstanceId];
-
-    if (
-      Object.entries(newTriggers).length === 1 &&
-      firstTriggerEntry.effectDef.optional !== true &&
-      sourceInstance &&
-      this.cardDefs[sourceInstance.cardId]?.parchmentCard !== true
-    ) {
-      const [triggerId, trigger] = Object.entries(this.gameState.triggerPile)[0];
-      this.gameState = this.cardAction(trigger.effectDef, trigger.sourceInstanceId, triggerId);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const [triggerId, trigger] of Object.entries(this.gameState.triggerPile)) {
+        if (trigger.effectDef.trigger === Trigger.ON_PLAY) {
+          continue;
+        }
+        const sourceInstance = this.gameState.instances[trigger.sourceInstanceId];
+        if (
+          trigger.effectDef.trigger === Trigger.ON_DISCOVER &&
+          sourceInstance &&
+          this.cardDefs[sourceInstance.cardId]?.parchmentCard === true
+        ) {
+          continue;
+        }
+        this.gameState = this.cardAction(trigger.effectDef, trigger.sourceInstanceId, triggerId);
+        changed = true;
+        break;
+      }
     }
-
     return this.gameState;
   }
 
@@ -230,7 +234,13 @@ export class GameAggregate {
     return this.gameState;
   }
 
-  public upgradeCard(cardInstanceId: number, stateId: number, cost: Resources): GameState {
+  public upgradeCard(
+    cardInstanceId: number,
+    stateId: number,
+    cost: Resources,
+    discardedCardIds: number[] = [],
+    destroyedCardIds: number[] = [],
+  ): GameState {
     if (!canUseOptions(this.gameState, Options.UPGRADE)) {
       return this.gameState;
     }
@@ -242,6 +252,8 @@ export class GameAggregate {
       cardInstanceId,
       stateId,
       cost,
+      discardedCardIds,
+      destroyedCardIds,
     };
     this.apply(event);
     this.events.push(event);

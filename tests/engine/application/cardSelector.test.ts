@@ -158,6 +158,41 @@ describe('cardSelector – BLOCKED scope', () => {
   });
 });
 
+describe('cardSelector – COUNT_AS_2 passive', () => {
+  it('adds one extra occurrence for cards affected by COUNT_AS_2', () => {
+    const gs = makeState({
+      board: [10, 20],
+      instances: { 10: instA, 20: instB },
+      boardEffects: {
+        10: [{ id: 'count_as_2', type: PassiveType.COUNT_AS_2 }],
+      },
+    });
+
+    const result = cardSelector({ scope: [TargetScope.BOARD] }, 99, gs, defs, stickerDefs);
+    expect(result.filter(id => id === 10)).toHaveLength(2);
+    expect(result.filter(id => id === 20)).toHaveLength(1);
+  });
+
+  it('does not duplicate cards that are not selected by current filters', () => {
+    const gs = makeState({
+      board: [10, 20],
+      instances: { 10: instA, 20: instB },
+      boardEffects: {
+        10: [{ id: 'count_as_2', type: PassiveType.COUNT_AS_2 }],
+      },
+    });
+
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD, TargetScope.ENEMY] },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
+    expect(result).toEqual([20]);
+  });
+});
+
 describe('cardSelector – alignment filters', () => {
   it('FRIENDLY scope excludes negative cards', () => {
     const gs = baseState();

@@ -1,7 +1,7 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { getActiveState } from '@engine/application/cardHelpers';
 import { TurnEndedStrategy } from '@engine/application/gameEvent/TurnEndedStrategy';
-import { discardCards, spendResources } from '@engine/application/gameStateHelper';
+import { destroyCards, discardCards, spendResources } from '@engine/application/gameStateHelper';
 import type {
   CardDef,
   GameEvent,
@@ -18,11 +18,15 @@ export class UpgradeCardEventStrategy implements GameEventStrategy {
 
   apply(gameState: GameState, event: GameEvent): GameState {
     const e = event as UpgradeCardEvent;
+    const paidState = destroyCards(
+      discardCards(gameState, e.discardedCardIds ?? []),
+      e.destroyedCardIds ?? [],
+    );
     const updatedInstances = {
-      ...gameState.instances,
-      [e.cardInstanceId]: { ...gameState.instances[e.cardInstanceId], stateId: e.stateId },
+      ...paidState.instances,
+      [e.cardInstanceId]: { ...paidState.instances[e.cardInstanceId], stateId: e.stateId },
     };
-    const upgradedState = { ...spendResources(gameState, e.cost), instances: updatedInstances };
+    const upgradedState = { ...spendResources(paidState, e.cost), instances: updatedInstances };
     if (getActiveState(upgradedState.instances[e.cardInstanceId], this.cardDefs)?.permanent) {
       return {
         ...upgradedState,

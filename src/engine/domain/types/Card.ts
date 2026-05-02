@@ -84,6 +84,8 @@ export type ValuePerElement = {
   deficitTarget?: number; // count = max(0, deficitTarget - actual_count)
 };
 
+export type RemovedResourceScope = 'production' | 'actionCost' | 'upgradeCost';
+
 export type ActionEffect = {
   id: number;
   type: ActionEffectType;
@@ -93,6 +95,7 @@ export type ActionEffect = {
   states?: number[];
   stickerIds?: number[];
   valuePerElement?: ValuePerElement;
+  resourceScopes?: RemovedResourceScope[];
   effect?: Passive;
   pickNumber?: number;
   pickMin?: number;
@@ -103,6 +106,7 @@ export type ActionEffect = {
 export type Passive = {
   id: string;
   type: PassiveType;
+  global?: boolean;
   cards?: CardSelector;
   trigger?: {
     type: Trigger;
@@ -177,5 +181,6 @@ export type ResolvedActionEffect = {
   position?: number;
   stepIds?: number[];
   accumulated?: number;
+  resourceScopes?: RemovedResourceScope[];
   newActionEffects?: ActionEffect[];
 };

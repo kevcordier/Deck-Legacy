@@ -1,4 +1,4 @@
-import { ActionEffectType, CardTag, PassiveType, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, TargetScope } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const royalVisit: CardDef = {
@@ -19,14 +19,21 @@ export const royalVisit: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionEffectType.ADD_BOARD_EFFECT,
+              type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
               cards: {
                 scope: [TargetScope.BOARD],
               },
-              effect: {
-                id: 'Royal Visit',
-                type: PassiveType.ADJUST_UPDATE_COST,
+              resources: {
+                choice: [
+                  { gold: 1 },
+                  { wood: 1 },
+                  { stone: 1 },
+                  { iron: 1 },
+                  { weapon: 1 },
+                  { goods: 1 },
+                ],
               },
+              resourceScopes: ['upgradeCost'],
             },
           ],
         },

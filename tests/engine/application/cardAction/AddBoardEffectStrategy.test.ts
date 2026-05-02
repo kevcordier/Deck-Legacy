@@ -7,7 +7,7 @@ describe('AddBoardEffectStrategy', () => {
   const strategy = new AddBoardEffectStrategy();
   const passive = { id: 'block', type: PassiveType.BLOCK };
 
-  it('returns game state unchanged when instanceIds is missing', () => {
+  it('adds board effect to sourceInstanceId when instanceIds is missing', () => {
     const gs = makeState();
     const result = strategy.apply(gs, {
       id: 'x',
@@ -15,7 +15,8 @@ describe('AddBoardEffectStrategy', () => {
       sourceInstanceId: 1,
       effect: passive,
     });
-    expect(result).toBe(gs);
+    expect(result.boardEffects[1]).toHaveLength(1);
+    expect(result.boardEffects[1][0].type).toBe(PassiveType.BLOCK);
   });
 
   it('returns game state unchanged when effect is missing', () => {
@@ -67,5 +68,16 @@ describe('AddBoardEffectStrategy', () => {
     });
     expect(result.boardEffects[1]).toHaveLength(1);
     expect(result.boardEffects[1][0].cards?.ids).toEqual([2, 3]);
+  });
+
+  it('marks board effect as global when global flag is set', () => {
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_BOARD_EFFECT,
+      sourceInstanceId: 1,
+      effect: { ...passive, global: true },
+    });
+    expect(result.boardEffects[1][0].global).toBe(true);
   });
 });

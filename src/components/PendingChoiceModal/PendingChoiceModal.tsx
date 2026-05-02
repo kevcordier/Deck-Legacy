@@ -41,6 +41,23 @@ interface PendingChoiceModalProps {
   readonly onSkipChoice: (uuid: string) => void;
 }
 
+function getSelectedCount(choice: PendingChoice | undefined, selectedIds: number[]): number {
+  if (choice?.type !== PendingChoiceType.CHOOSE_CARD) {
+    return selectedIds.length;
+  }
+
+  const countById = new Map<number, number>();
+  choice.choices.forEach(item => {
+    if (typeof item !== 'number') {
+      return;
+    }
+
+    countById.set(item, (countById.get(item) ?? 0) + 1);
+  });
+
+  return selectedIds.reduce((total, id) => total + (countById.get(id) ?? 1), 0);
+}
+
 function getChoiceSection(props: ChoiceSectionProps): ChoiceSection {
   switch (props.choice.type) {
     case PendingChoiceType.CHOOSE_CARD:
@@ -50,10 +67,7 @@ function getChoiceSection(props: ChoiceSectionProps): ChoiceSection {
         }),
         subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t),
         handleMultiConfirm: () => {
-          if (
-            props.selectedIds.length < props.minSelect ||
-            props.selectedIds.length > props.maxSelect
-          ) {
+          if (props.selectedCount < props.minSelect || props.selectedIds.length > props.maxSelect) {
             return;
           }
           if (props.choice.kind === 'COST') {
@@ -81,10 +95,7 @@ function getChoiceSection(props: ChoiceSectionProps): ChoiceSection {
         title: props.t('pendingChoice.chooseStep'),
         subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t),
         handleMultiConfirm: () => {
-          if (
-            props.selectedIds.length < props.minSelect ||
-            props.selectedIds.length > props.maxSelect
-          ) {
+          if (props.selectedCount < props.minSelect || props.selectedIds.length > props.maxSelect) {
             return;
           }
           props.resolvePlayerChoice(
@@ -143,6 +154,7 @@ export function PendingChoiceModal({
 
   const minSelect = choice?.pickMin ?? choice?.pickCount ?? 1;
   const maxSelect = choice?.pickMax ?? choice?.pickCount ?? 1;
+  const selectedCount = getSelectedCount(choice, selectedIds);
 
   const onToggleId = (id: number) => {
     setSelectedIds(prev => {
@@ -186,6 +198,7 @@ export function PendingChoiceModal({
       resolvePlayerChoice,
       resolvePayCost,
       selectedIds,
+      selectedCount,
       onToggleId,
       isMultiSelect,
       minSelect,
@@ -211,11 +224,11 @@ export function PendingChoiceModal({
           </span>
           <Button
             onClick={handleMultiConfirm}
-            disabled={selectedIds.length < minSelect || selectedIds.length > maxSelect}
+            disabled={selectedCount < minSelect || selectedIds.length > maxSelect}
             color="base-primary"
           >
             {t('pendingChoice.confirm', {
-              selected: selectedIds.length,
+              selected: selectedCount,
             })}
           </Button>
         </div>

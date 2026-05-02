@@ -29,6 +29,14 @@ const onDiscoverDef: CardDef = {
     { id: 1, name: 'S', actions: [{ id: 'od', actionEffects: [], trigger: Trigger.ON_DISCOVER }] },
   ],
 };
+const parchmentOnDiscoverDef: CardDef = {
+  id: 7,
+  name: 'ParchOnDiscover',
+  parchmentCard: true,
+  states: [
+    { id: 1, name: 'S', actions: [{ id: 'pod', actionEffects: [], trigger: Trigger.ON_DISCOVER }] },
+  ],
+};
 const endOfTurnDef: CardDef = {
   id: 6,
   name: 'EndTurn',
@@ -212,7 +220,7 @@ describe('GameAggregate.turnStarted', () => {
     expect(gs.phase).toBe(Phase.PREROUND);
   });
 
-  it('fires ON_PLAY triggers for cards with that trigger', () => {
+  it('does not auto-fire ON_PLAY triggers — leaves them in the pile', () => {
     const inst = makeInstance({ id: 1, cardId: 4, stateId: 1 });
     const state = makeState({
       drawPile: [1],
@@ -222,8 +230,35 @@ describe('GameAggregate.turnStarted', () => {
     });
     const agg = new GameAggregate(state, { 4: onPlayDef }, {}, []);
     const gs = agg.turnStarted();
-    // trigger auto-resolves since it's non-optional with no pending choices
+    // ON_PLAY triggers are excluded from autoTrigger — they remain in the pile
     expect(gs.phase).toBe(Phase.PLAYING);
+    expect(Object.keys(gs.triggerPile)).toHaveLength(1);
+  });
+
+  it('does not auto-fire ON_DISCOVER triggers from parchment cards — leaves them in the pile', () => {
+    const inst = makeInstance({ id: 1, cardId: 7, stateId: 1 });
+    const triggerId = 'test-trigger-uuid';
+    const onDiscoverAction = parchmentOnDiscoverDef.states[0].actions?.[0];
+    if (!onDiscoverAction) {
+      throw new Error('Missing ON_DISCOVER action for parchmentOnDiscoverDef');
+    }
+    const state = makeState({
+      drawPile: [1],
+      instances: { 1: inst },
+      round: 1,
+      phase: Phase.PRETURN,
+      triggerPile: {
+        [triggerId]: {
+          effectDef: onDiscoverAction,
+          sourceInstanceId: 1,
+        },
+      },
+    });
+    const agg = new GameAggregate(state, { 7: parchmentOnDiscoverDef }, {}, []);
+    agg.turnStarted();
+    const gs = agg.getGameState();
+    // ON_DISCOVER from parchment cards are excluded from autoTrigger
+    expect(Object.keys(gs.triggerPile)).toHaveLength(1);
   });
 });
 
@@ -319,6 +354,32 @@ describe('GameAggregate.upgradeCard', () => {
     const gs = agg.upgradeCard(1, 2, {});
     expect(gs.instances[1].stateId).toBe(2);
     expect(gs.discardPile).toContain(1);
+  });
+
+  it('applies discarded and destroyed cards as upgrade costs', () => {
+    const defUpgrade: CardDef = {
+      id: 1,
+      name: 'U',
+      states: [
+        { id: 1, name: 'S1' },
+        { id: 2, name: 'S2' },
+      ],
+    };
+    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1, 2, 3],
+      instances: { 1: inst1, 2: inst2, 3: inst3 },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: defUpgrade }, {}, []);
+    const gs = agg.upgradeCard(1, 2, {}, [2], [3]);
+    expect(gs.instances[1].stateId).toBe(2);
+    expect(gs.discardPile).toContain(2);
+    expect(gs.destroyedPile).toContain(3);
   });
 });
 

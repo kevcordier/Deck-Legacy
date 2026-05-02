@@ -26,5 +26,6 @@ export function createInstance(
     trackProgress: [],
     cumulated: 0,
     usedActionIds: [],
+    removedResourcesByState: {},
   };
 }

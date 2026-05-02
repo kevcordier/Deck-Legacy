@@ -16,17 +16,10 @@ export const stop6: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionEffectType.DISCOVER_CARD,
-              cards: {
-                ids: [69, 70],
-              },
-              pickNumber: 2,
-            },
-            {
-              id: 2,
               type: ActionEffectType.ADD_BOARD_EFFECT,
               effect: {
                 id: 'end_game',
+                global: true,
                 type: PassiveType.ADD_TRIGGER,
                 trigger: {
                   type: Trigger.END_OF_ROUND,
@@ -38,6 +31,14 @@ export const stop6: CardDef = {
                   ],
                 },
               },
+            },
+            {
+              id: 2,
+              type: ActionEffectType.DISCOVER_CARD,
+              cards: {
+                ids: [69, 70],
+              },
+              pickNumber: 2,
             },
           ],
         },

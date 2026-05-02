@@ -2,14 +2,17 @@ import { GameContext } from '@contexts/GameContext';
 import deckData from '@data/deck.json';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import {
+  canAffordCardCost,
   canAffordResources,
   cardIsBlocked,
   getActiveState,
   getEffectiveProductions,
+  getEffectiveUpgradeCost,
 } from '@engine/application/cardHelpers';
+import { resolveCost } from '@engine/application/costResolver';
 import { createInstance } from '@engine/application/factory';
-import { computeScore } from '@engine/application/gameStateHelper';
-import { ActionEffectType, type PendingChoiceType } from '@engine/domain/enums';
+import { computeScore, mergeResources } from '@engine/application/gameStateHelper';
+import { ActionEffectType, type PendingChoiceType, Trigger } from '@engine/domain/enums';
 import type {
   CardAction,
   CardDef,
@@ -60,6 +63,11 @@ export function GameProvider({
     return agg.getCurrentCardAction()?.getPendingChoices() ?? null;
   });
   const [displayNewCards, setDisplayNewCards] = useState<boolean>(false);
+  const [pendingUpgrade, setPendingUpgrade] = useState<{
+    instanceId: number;
+    upgradeTo: number;
+    resolvedCost: ResolvedCost;
+  } | null>(null);
 
   const getParchementDefFromTriggerPile = (
     state: GameState,
@@ -68,7 +76,9 @@ export function GameProvider({
     // If any trigger comes from a parchment card, show the text modal first.
     const parchmentTrigger = Object.values(state.triggerPile).find(t => {
       const inst = state.instances[t.sourceInstanceId];
-      return inst && defs[inst.cardId]?.parchmentCard;
+      return (
+        inst && defs[inst.cardId]?.parchmentCard && t.effectDef.trigger === Trigger.ON_DISCOVER
+      );
     });
     if (parchmentTrigger) {
       const inst = state.instances[parchmentTrigger.sourceInstanceId];
@@ -229,10 +239,44 @@ export function GameProvider({
 
     const upgrade = upgrades.find(u => u.upgradeTo === chosenUpgradeTo);
     if (!upgrade) return;
-    if (!canAffordResources(gs.resources, upgrade.cost)) return;
+    const effectiveUpgradeCost = getEffectiveUpgradeCost(
+      upgrade.cost,
+      gs,
+      defs,
+      stickerDefs,
+      instanceId,
+    );
+
+    if (!canAffordResources(gs.resources, effectiveUpgradeCost)) return;
+    if (!canAffordCardCost(effectiveUpgradeCost, instanceId, gs, defs, stickerDefs)) return;
+
+    const [resolvedCost, costPendingChoices] = resolveCost(
+      effectiveUpgradeCost,
+      instanceId,
+      gs,
+      defs,
+      stickerDefs,
+      true,
+    );
+
+    if (costPendingChoices.length > 0) {
+      setPendingUpgrade({
+        instanceId,
+        upgradeTo: upgrade.upgradeTo,
+        resolvedCost,
+      });
+      setPendingChoices(costPendingChoices);
+      return;
+    }
 
     sync(
-      aggRef.current.upgradeCard(instanceId, upgrade.upgradeTo, upgrade.cost.resources?.[0] ?? {}),
+      aggRef.current.upgradeCard(
+        instanceId,
+        upgrade.upgradeTo,
+        resolvedCost.resources,
+        resolvedCost.discardedCardIds,
+        resolvedCost.destroyedCardIds,
+      ),
     );
   };
 
@@ -289,6 +333,50 @@ export function GameProvider({
   // This function is called when the player has made a choice needed to pay an action's cost.
   const resolvePayCost = (resolved: ResolvedCost) => {
     if (!resolved) return;
+
+    if (pendingUpgrade) {
+      const mergedResolvedCost: ResolvedCost = {
+        resources: mergeResources(pendingUpgrade.resolvedCost.resources, resolved.resources),
+        discardedCardIds: [
+          ...pendingUpgrade.resolvedCost.discardedCardIds,
+          ...resolved.discardedCardIds,
+        ],
+        destroyedCardIds: [
+          ...pendingUpgrade.resolvedCost.destroyedCardIds,
+          ...resolved.destroyedCardIds,
+        ],
+      };
+
+      const remainingChoices = (pendingChoices ?? []).slice(1);
+      if (remainingChoices.length > 0) {
+        setPendingUpgrade({ ...pendingUpgrade, resolvedCost: mergedResolvedCost });
+        setPendingChoices(remainingChoices);
+        return;
+      }
+
+      const currentState = aggRef.current.getGameState();
+      if (
+        !canAffordResources(currentState.resources, { resources: [mergedResolvedCost.resources] })
+      ) {
+        setPendingUpgrade(null);
+        setPendingChoices(null);
+        return;
+      }
+
+      const newState = aggRef.current.upgradeCard(
+        pendingUpgrade.instanceId,
+        pendingUpgrade.upgradeTo,
+        mergedResolvedCost.resources,
+        mergedResolvedCost.discardedCardIds,
+        mergedResolvedCost.destroyedCardIds,
+      );
+
+      setPendingUpgrade(null);
+      setPendingChoices(null);
+      sync(newState);
+      return;
+    }
+
     const newState = aggRef.current.resolveCardActionCost(resolved);
     if (syncAggregatePending()) {
       return;

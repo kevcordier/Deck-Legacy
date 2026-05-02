@@ -1,5 +1,7 @@
 import type { GameEventStrategy } from './GameEventStrategy';
-import { discoverCards } from '@engine/application/gameStateHelper';
+import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
+import { discoverCards, pickGlobalBoardEffects } from '@engine/application/gameStateHelper';
+import { Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState, Sticker } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 
@@ -10,6 +12,19 @@ export class RoundEndedStrategy implements GameEventStrategy {
   ) {}
 
   apply(gameState: GameState): GameState {
+    const allRoundInstances = [...gameState.permanents, ...gameState.board].map(
+      id => gameState.instances[id],
+    );
+    getInstancesTriggerEffects(
+      allRoundInstances,
+      this.cardDefs,
+      this.stickerDefs,
+      Trigger.END_OF_ROUND,
+      gameState,
+    ).forEach(({ effectDef, sourceInstanceId }) => {
+      gameState.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+    });
+
     const lastAddedCards: number[] = [];
     const discoveredCard = gameState.discoveryPile.slice(0, 2);
 
@@ -25,7 +40,7 @@ export class RoundEndedStrategy implements GameEventStrategy {
 
     return {
       ...gameState,
-      boardEffects: {},
+      boardEffects: pickGlobalBoardEffects(gameState.boardEffects),
       discardPile: [...gameState.board, ...gameState.discardPile],
       board: [],
       phase: Phase.PREROUND,

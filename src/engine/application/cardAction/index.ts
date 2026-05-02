@@ -9,5 +9,6 @@ export * from '@engine/application/cardAction/DestroyCardStrategy';
 export * from '@engine/application/cardAction/DiscardCardStrategy';
 export * from '@engine/application/cardAction/PlaceCardInDrawPileStrategy';
 export * from '@engine/application/cardAction/PlayCardStrategy';
+export * from '@engine/application/cardAction/RemoveResourceOnCardStrategy';
 export * from '@engine/application/cardAction/SetCumulatedStrategy';
 export * from '@engine/application/cardAction/UpgradeCardStrategy';

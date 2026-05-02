@@ -35,7 +35,7 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-      {choice.choices.map(id => {
+      {choice.choices.map((id, index) => {
         if (typeof id !== 'number') return null;
         const inst = instances[id];
         const def = inst ? defs[inst.cardId] : undefined;
@@ -45,7 +45,7 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
         return (
           <div
             className={`relative transition-transform hover:scale-[1.02]${isSelected ? ' ring-primary rounded-xl ring-2' : ''}`}
-            key={id}
+            key={`${id}-${index.toString()}`}
           >
             <button
               onClick={() => handleCardClick(id)}

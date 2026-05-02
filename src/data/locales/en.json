@@ -63,7 +63,7 @@
     "blocked": "Blocked",
     "stayInPlay": "Stays in play",
     "increaseGlory": "Glory bonus",
-    "increaseProduction": "Production boost",
+    "adjustProduction": "Adjusted production",
     "state": "State {{id}}",
     "cost": {
       "discard": "Discard {{count}} {{type}}",

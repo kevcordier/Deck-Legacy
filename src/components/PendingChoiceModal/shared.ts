@@ -28,6 +28,7 @@ export type ChoiceSectionProps = {
   resolvePlayerChoice: (option: ResolvedActionEffect, choiceType: PendingChoiceType) => void;
   resolvePayCost: (resolved: ResolvedCost) => void;
   selectedIds: number[];
+  selectedCount: number;
   onToggleId: (id: number) => void;
   isMultiSelect: boolean;
   minSelect: number;
@@ -47,7 +48,9 @@ export function getChoiceActionLabel(
   const state = def?.states.find(s => s.id === inst?.stateId);
   const effects = state?.actions;
   if (!effects || !def || !state) return undefined;
-  const effectIdx = effects.findIndex(e => e.actionEffects.some(a => a.id === actionId));
+  const effectIdx = effects.findIndex(e =>
+    e.actionEffects.some(a => a.id === actionId && a.type === choice.kind),
+  );
   if (effectIdx === -1) return undefined;
   return tCardActionLabel(t, def.id, state.id, effectIdx, inst.cumulated) || undefined;
 }

@@ -4,6 +4,7 @@ import {
   canAffordResources,
   cardIsBlocked,
   getActiveState,
+  getEffectiveActionCost,
 } from '@engine/application/cardHelpers';
 import { resolveCost } from '@engine/application/costResolver';
 import { resolveActionEffect } from '@engine/application/effectResolver';
@@ -85,13 +86,16 @@ export class CardActionAggregate {
       if (this.instance.usedActionIds.includes(this.action.id)) return;
     }
 
-    if (!canAffordResources(this.gameState.resources, this.action.cost ?? {})) {
+    const currentInstance = this.gameState.instances[this.instance.id];
+    const effectiveActionCost = getEffectiveActionCost(this.action.cost, currentInstance);
+
+    if (!canAffordResources(this.gameState.resources, effectiveActionCost)) {
       return;
     }
 
     if (
       !canAffordCardCost(
-        this.action.cost,
+        effectiveActionCost,
         this.instance.id,
         this.gameState,
         this.cardDefs,
@@ -104,7 +108,7 @@ export class CardActionAggregate {
     if (cardIsBlocked(this.instance.id, this.gameState)) return;
 
     const [resolvedCost, costPendingChoices] = resolveCost(
-      this.action.cost ?? {},
+      effectiveActionCost,
       this.instance.id,
       this.gameState,
       this.cardDefs,

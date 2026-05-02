@@ -63,7 +63,7 @@
     "blocked": "Bloquée",
     "stayInPlay": "Reste en jeu",
     "increaseGlory": "Bonus de gloire",
-    "increaseProduction": "Production améliorée",
+    "adjustProduction": "Production ajustée",
     "state": "État {{id}}",
     "cost": {
       "discard": "Défaussez {{count}} {{type}}",

@@ -7,6 +7,19 @@ import {
 import { type Options, PassiveType, type ResourceType, Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState, Passive, Resources, Sticker } from '@engine/domain/types';
 
+export const pickGlobalBoardEffects = (
+  boardEffects: Record<number, Passive[]>,
+): Record<number, Passive[]> => {
+  const globalBoardEffects: Record<number, Passive[]> = {};
+  for (const [sourceId, effects] of Object.entries(boardEffects)) {
+    const globalEffects = effects.filter(effect => effect.global === true);
+    if (globalEffects.length > 0) {
+      globalBoardEffects[Number(sourceId)] = globalEffects;
+    }
+  }
+  return globalBoardEffects;
+};
+
 export const discardCards = (_gameState: GameState, cardIds: number[]): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
   cardIds.forEach(cardId => {
@@ -17,8 +30,14 @@ export const discardCards = (_gameState: GameState, cardIds: number[]): GameStat
     gameState.board = [...new Set(gameState.board.filter(c => c !== cardId))];
     gameState.drawPile = [...new Set(gameState.drawPile.filter(c => c !== cardId))];
     gameState.discardPile = [...new Set([...gameState.discardPile, cardId])];
-    const { [cardId]: _discarded, ...restDiscardEffects } = gameState.boardEffects;
-    gameState.boardEffects = restDiscardEffects;
+    const effectsForCard = gameState.boardEffects[cardId] ?? [];
+    const globalEffects = effectsForCard.filter(effect => effect.global === true);
+    if (globalEffects.length > 0) {
+      gameState.boardEffects[cardId] = globalEffects;
+    } else {
+      const { [cardId]: _discarded, ...restDiscardEffects } = gameState.boardEffects;
+      gameState.boardEffects = restDiscardEffects;
+    }
   });
   return gameState;
 };
@@ -102,8 +121,14 @@ export const destroyCards = (_gameState: GameState, cardIds: number[]): GameStat
     gameState.drawPile = [...new Set(gameState.drawPile.filter(c => c !== cardId))];
     gameState.discardPile = [...new Set(gameState.discardPile.filter(c => c !== cardId))];
     gameState.destroyedPile = [...new Set([...gameState.destroyedPile, cardId])];
-    const { [cardId]: _destroyed, ...restDestroyEffects } = gameState.boardEffects;
-    gameState.boardEffects = restDestroyEffects;
+    const effectsForCard = gameState.boardEffects[cardId] ?? [];
+    const globalEffects = effectsForCard.filter(effect => effect.global === true);
+    if (globalEffects.length > 0) {
+      gameState.boardEffects[cardId] = globalEffects;
+    } else {
+      const { [cardId]: _destroyed, ...restDestroyEffects } = gameState.boardEffects;
+      gameState.boardEffects = restDestroyEffects;
+    }
   });
   return gameState;
 };
@@ -118,7 +143,11 @@ export const endTurn = (_gameState: GameState, cardDefs: Record<number, CardDef>
 
   const newBoardEffects: Record<number, Passive[]> = {};
   Object.keys(gameState.boardEffects).forEach((key: string) => {
-    if (gameState.boardEffects[Number(key)] && gameState.board.includes(Number(key)))
+    if (
+      gameState.boardEffects[Number(key)] &&
+      (gameState.board.includes(Number(key)) ||
+        gameState.boardEffects[Number(key)].some(effect => effect.global === true))
+    )
       newBoardEffects[Number(key)] = gameState.boardEffects[Number(key)];
   });
 

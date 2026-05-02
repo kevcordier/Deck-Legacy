@@ -195,5 +195,22 @@ export function cardSelector(
     isEnemy,
     hasBlocked,
   };
-  return pool.filter(id => matchesCardCriteria(id, ctx)).filter(id => matchHaving(id, ctx));
+  const selectedIds = pool
+    .filter(id => matchesCardCriteria(id, ctx))
+    .filter(id => matchHaving(id, ctx));
+
+  const countAs2InstanceIds = new Set(
+    Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.COUNT_AS_2)).flat(),
+  );
+
+  const extraIds: number[] = [];
+  const seen = new Set<number>();
+  selectedIds.forEach(id => {
+    if (!seen.has(id) && countAs2InstanceIds.has(id)) {
+      extraIds.push(id);
+      seen.add(id);
+    }
+  });
+
+  return [...selectedIds, ...extraIds];
 }

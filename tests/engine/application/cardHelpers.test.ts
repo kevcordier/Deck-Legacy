@@ -7,8 +7,10 @@ import {
   evaluateCondition,
   getActiveState,
   getAffectedCardsByBoardEffects,
+  getEffectiveActionCost,
   getEffectiveGlory,
   getEffectiveProductions,
+  getEffectiveUpgradeCost,
   getFirstAvailableTrackStep,
   getInstancesTriggerEffects,
   tagClass,
@@ -91,6 +93,24 @@ describe('getEffectiveProductions', () => {
       stickerDefs,
     );
     expect(result).toEqual({ gold: 2 });
+  });
+
+  it('removes production resources configured on card instance state', () => {
+    const state = { id: 1, name: 'S' };
+    const inst = makeInstance({
+      id: 1,
+      cardId: 1,
+      stateId: 1,
+      removedResourcesByState: {
+        1: {
+          production: [ResourceType.GOLD],
+        },
+      },
+    });
+
+    const result = getEffectiveProductions({ gold: 2, wood: 1 }, state, makeState(), {}, inst, {});
+
+    expect(result).toEqual({ wood: 1 });
   });
 
   it('adds sticker production bonus', () => {
@@ -395,6 +415,153 @@ describe('getEffectiveProductions', () => {
 
   it('returns generic tag class for unknown tags', () => {
     expect(tagClass('event', false)).toContain('border-tag-tag');
+  });
+});
+
+describe('getEffectiveUpgradeCost', () => {
+  it('applies ADJUST_UPDATE_COST on targeted upgrade costs', () => {
+    const source = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const target = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'Aura', states: [{ id: 1, name: 'Aura' }] },
+      2: { id: 2, name: 'Builder', states: [{ id: 1, name: 'Builder' }] },
+    };
+    const gs = makeState({
+      board: [1, 2],
+      instances: { 1: source, 2: target },
+      boardEffects: {
+        1: [
+          {
+            id: 'adjust_upgrade',
+            type: PassiveType.ADJUST_UPDATE_COST,
+            resources: { gold: -1, wood: 1 },
+            cards: { scope: [TargetScope.BOARD], ids: [2] },
+          },
+        ],
+      },
+    });
+
+    const result = getEffectiveUpgradeCost(
+      { resources: [{ gold: 2 }] },
+      gs,
+      defs,
+      makeStickerDefs(),
+      2,
+    );
+
+    expect(result.resources?.[0]).toEqual({ gold: 1, wood: 1 });
+  });
+
+  it('does not apply ADJUST_UPDATE_COST when card is not targeted', () => {
+    const source = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const target = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'Aura', states: [{ id: 1, name: 'Aura' }] },
+      2: { id: 2, name: 'Builder', states: [{ id: 1, name: 'Builder' }] },
+    };
+    const gs = makeState({
+      board: [1, 2],
+      instances: { 1: source, 2: target },
+      boardEffects: {
+        1: [
+          {
+            id: 'adjust_upgrade',
+            type: PassiveType.ADJUST_UPDATE_COST,
+            resources: { gold: -1 },
+            cards: { ids: [99] },
+          },
+        ],
+      },
+    });
+
+    const result = getEffectiveUpgradeCost(
+      { resources: [{ gold: 2 }] },
+      gs,
+      defs,
+      makeStickerDefs(),
+      2,
+    );
+
+    expect(result.resources?.[0]).toEqual({ gold: 2 });
+  });
+
+  it('never returns negative resource costs', () => {
+    const source = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const target = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'Aura', states: [{ id: 1, name: 'Aura' }] },
+      2: { id: 2, name: 'Builder', states: [{ id: 1, name: 'Builder' }] },
+    };
+    const gs = makeState({
+      board: [1, 2],
+      instances: { 1: source, 2: target },
+      boardEffects: {
+        1: [
+          {
+            id: 'adjust_upgrade',
+            type: PassiveType.ADJUST_UPDATE_COST,
+            resources: { gold: -5 },
+            cards: { scope: [TargetScope.BOARD], ids: [2] },
+          },
+        ],
+      },
+    });
+
+    const result = getEffectiveUpgradeCost(
+      { resources: [{ gold: 2 }] },
+      gs,
+      defs,
+      makeStickerDefs(),
+      2,
+    );
+
+    expect(result.resources?.[0]).toEqual({});
+  });
+
+  it('removes upgrade resources configured on card instance state', () => {
+    const target = makeInstance({
+      id: 2,
+      cardId: 2,
+      stateId: 1,
+      removedResourcesByState: {
+        1: {
+          upgradeCost: [ResourceType.GOLD],
+        },
+      },
+    });
+
+    const result = getEffectiveUpgradeCost(
+      { resources: [{ gold: 2, wood: 1 }] },
+      makeState({ instances: { 2: target } }),
+      { 2: { id: 2, name: 'Builder', states: [{ id: 1, name: 'Builder' }] } },
+      makeStickerDefs(),
+      2,
+    );
+
+    expect(result.resources?.[0]).toEqual({ wood: 1 });
+  });
+});
+
+describe('getEffectiveActionCost', () => {
+  it('returns empty cost when base cost is undefined', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    expect(getEffectiveActionCost(undefined, inst)).toEqual({});
+  });
+
+  it('removes action cost resources configured on instance state', () => {
+    const inst = makeInstance({
+      id: 1,
+      cardId: 1,
+      stateId: 1,
+      removedResourcesByState: {
+        1: {
+          actionCost: [ResourceType.WOOD],
+        },
+      },
+    });
+
+    const effective = getEffectiveActionCost({ resources: [{ gold: 1, wood: 2 }] }, inst);
+    expect(effective.resources?.[0]).toEqual({ gold: 1 });
   });
 });
 

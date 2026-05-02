@@ -1,3 +1,11 @@
+import type { ResourceType } from '@engine/domain/enums';
+
+export type RemovedResourcesByScope = {
+  production?: ResourceType[];
+  actionCost?: ResourceType[];
+  upgradeCost?: ResourceType[];
+};
+
 export type CardInstance = {
   id: number;
   cardId: number;
@@ -10,4 +18,6 @@ export type CardInstance = {
   cumulated: number;
   /** Card action IDs already consumed by one-time actions */
   usedActionIds: string[];
+  /** Resource keys removed for each state, split by concern (production/actionCost/upgradeCost). */
+  removedResourcesByState?: Record<number, RemovedResourcesByScope>;
 };

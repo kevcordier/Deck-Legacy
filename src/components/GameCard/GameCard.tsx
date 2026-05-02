@@ -13,6 +13,7 @@ import {
   getActiveState,
   getEffectiveGlory,
   getEffectiveProductions,
+  getEffectiveUpgradeCost,
   tagClass,
 } from '@engine/application/cardHelpers';
 import { canUseOptions } from '@engine/application/gameStateHelper';
@@ -217,10 +218,17 @@ export function GameCard({
 
           {!isBlocked &&
             upgrades.map(upg => {
-              const affordable = canAffordResources(currentResources, upg.cost);
+              const effectiveUpgradeCost = getEffectiveUpgradeCost(
+                upg.cost,
+                gameState,
+                defs,
+                stickerDefs,
+                instance.id,
+              );
+              const affordable = canAffordResources(currentResources, effectiveUpgradeCost);
               const optionDisabled = !canUseOptions(gameState, Options.UPGRADE);
               const targetState = def?.states.find(s => s.id === upg.upgradeTo);
-              const discardLabel = upg.cost.discard
+              const discardLabel = effectiveUpgradeCost.discard
                 ?.map(d => {
                   return t('card.cost.discard', {
                     count: d.number,
@@ -242,22 +250,24 @@ export function GameCard({
                   {targetState
                     ? tCardName(t, def.id, targetState.id)
                     : t('card.state', { id: upg.upgradeTo })}
-                  {(upg.cost.resources?.[0] || discardLabel) && (
+                  {(effectiveUpgradeCost.resources?.[0] || discardLabel) && (
                     <span>
                       {' '}
                       (
-                      {Object.entries(upg.cost.resources?.[0] || {}).map(([k, v], ci) => {
-                        const meta = getResMeta(k);
-                        return (
-                          <React.Fragment key={k}>
-                            {ci > 0 && ', '}
-                            {v}
-                            {meta.icon && (
-                              <meta.icon className={`size-4 align-middle ${meta.cls}`} alt={k} />
-                            )}
-                          </React.Fragment>
-                        );
-                      })}{' '}
+                      {Object.entries(effectiveUpgradeCost.resources?.[0] || {}).map(
+                        ([k, v], ci) => {
+                          const meta = getResMeta(k);
+                          return (
+                            <React.Fragment key={k}>
+                              {ci > 0 && ', '}
+                              {v}
+                              {meta.icon && (
+                                <meta.icon className={`size-4 align-middle ${meta.cls}`} alt={k} />
+                              )}
+                            </React.Fragment>
+                          );
+                        },
+                      )}{' '}
                       {discardLabel})
                     </span>
                   )}

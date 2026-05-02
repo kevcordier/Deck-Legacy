@@ -10,6 +10,7 @@ import {
   canAffordCardCost,
   canAffordResources,
   getActiveState,
+  getEffectiveActionCost,
   getFirstAvailableTrackStep,
 } from '@engine/application/cardHelpers';
 import { canUseOptions } from '@engine/application/gameStateHelper';
@@ -46,13 +47,14 @@ function getTriggerIcon(action: CardAction): ReactNode {
 export function CardAction({ instance, disabled, action, actionLabel }: CardActionProps) {
   const { gameState, defs, stickerDefs, resolveAction } = useGame();
   const cs = getActiveState(instance, defs);
+  const effectiveActionCost = getEffectiveActionCost(action.cost, instance);
   const hasTrackAdvance =
     action.actionEffects.some(e => e.type === ActionEffectType.TRACK_ADVANCE) && cs?.track;
   const firstTrackStep = hasTrackAdvance
     ? getFirstAvailableTrackStep(action.actionEffects, instance.id, gameState, defs, stickerDefs)
     : undefined;
   const cardCostAffordable = canAffordCardCost(
-    action.cost,
+    effectiveActionCost,
     instance.id,
     gameState,
     defs,
@@ -66,10 +68,11 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
   const affordable = hasTrackAdvance
     ? firstTrackStep &&
       canAffordResources(gameState.resources, firstTrackStep?.cost) &&
-      canAffordResources(gameState.resources, action.cost) &&
+      canAffordResources(gameState.resources, effectiveActionCost) &&
       cardCostAffordable
-    : (!action.cost || canAffordResources(gameState.resources, action.cost)) && cardCostAffordable;
-  const hasDestroyItselfCost = action.cost?.destroy?.scope?.includes(TargetScope.SELF) ?? false;
+    : canAffordResources(gameState.resources, effectiveActionCost) && cardCostAffordable;
+  const hasDestroyItselfCost =
+    effectiveActionCost.destroy?.scope?.includes(TargetScope.SELF) ?? false;
   const haveTrigger = !!action.trigger;
   if (haveTrigger) {
     return (

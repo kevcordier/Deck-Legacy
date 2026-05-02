@@ -11,6 +11,7 @@ import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCar
 import { EndGameStrategy } from '@engine/application/cardAction/EndGameStrategy';
 import { PlaceCardInDrawPileStrategy } from '@engine/application/cardAction/PlaceCardInDrawPileStrategy';
 import { PlayCardStrategy } from '@engine/application/cardAction/PlayCardStrategy';
+import { RemoveResourceOnCardStrategy } from '@engine/application/cardAction/RemoveResourceOnCardStrategy';
 import { SetCumulatedStrategy } from '@engine/application/cardAction/SetCumulatedStrategy';
 import { TrackAdvanceStrategy } from '@engine/application/cardAction/TrackAdvanceStrategy';
 import { UpgradeCardStrategy } from '@engine/application/cardAction/UpgradeCardStrategy';
@@ -23,7 +24,8 @@ export class CardActionContext {
 
   constructor(cardDefs: Record<number, CardDef>, stickerDefs: Record<number, Sticker>) {
     this.strategies = {
-      [ActionEffectType.ADD_RESOURCES]: new AddResourceStrategy(),
+      [ActionEffectType.ADD_RESOURCES]: new AddResourceStrategy(cardDefs, stickerDefs),
+      [ActionEffectType.REMOVE_RESOURCE_ON_CARD]: new RemoveResourceOnCardStrategy(),
       [ActionEffectType.DISCARD_CARD]: new DiscardCardStrategy(),
       [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.DESTROY_CARD]: new DestroyCardStrategy(),

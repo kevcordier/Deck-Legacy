@@ -113,8 +113,8 @@ export function countValuePerElement(
   let count = 0;
   if (valuePerElement.cards) {
     count = cardSelector(valuePerElement.cards, instanceId, gameState, defs, stickerDefs).length;
-  } else if (valuePerElement.accumulation) {
-    count = gameState.instances[instanceId].cumulated ?? 0;
+  } else if (valuePerElement.accumulation && gameState.instances[instanceId].cumulated >= 1) {
+    count = gameState.instances[instanceId].cumulated;
   } else if (valuePerElement.productionTotal) {
     const prodKey = valuePerElement.productionTotal;
     count = getTotalResourceProduction(instanceId, prodKey, gameState, defs, stickerDefs);
@@ -416,6 +416,9 @@ export function resolveActionEffect(
   }
 
   if (action.accumulated) resolverAction.accumulated = action.accumulated;
+  if (action.type === ActionEffectType.REMOVE_RESOURCE_ON_CARD && action.resourceScopes) {
+    resolverAction.resourceScopes = action.resourceScopes;
+  }
   if (action.type === ActionEffectType.ADD_BOARD_EFFECT && action.effect) {
     resolverAction.effect = action.effect;
   }

@@ -81,6 +81,18 @@ describe('discardCards', () => {
     expect(result.boardEffects[2]).toBeUndefined();
   });
 
+  it('keeps global boardEffects for discarded card', () => {
+    const inst = makeInstance({ id: 12 });
+    const gs = makeState({
+      board: [12],
+      instances: { 12: inst },
+      boardEffects: { 12: [{ id: 'g', type: PassiveType.BLOCK, global: true }] },
+    });
+    const result = discardCards(gs, [12]);
+    expect(result.boardEffects[12]).toHaveLength(1);
+    expect(result.boardEffects[12][0].global).toBe(true);
+  });
+
   it('does not duplicate in discardPile', () => {
     const inst = makeInstance({ id: 4 });
     const gs = makeState({ discardPile: [4], instances: { 4: inst } });
@@ -149,6 +161,18 @@ describe('destroyCards', () => {
     });
     const result = destroyCards(gs, [11]);
     expect(result.boardEffects[11]).toBeUndefined();
+  });
+
+  it('keeps global boardEffects for destroyed card', () => {
+    const inst = makeInstance({ id: 13 });
+    const gs = makeState({
+      board: [13],
+      instances: { 13: inst },
+      boardEffects: { 13: [{ id: 'g', type: PassiveType.BLOCK, global: true }] },
+    });
+    const result = destroyCards(gs, [13]);
+    expect(result.boardEffects[13]).toHaveLength(1);
+    expect(result.boardEffects[13][0].global).toBe(true);
   });
 });
 
@@ -241,6 +265,21 @@ describe('endTurn', () => {
     });
     const result = endTurn(gs, defs);
     expect(result.boardEffects[5]).toBeUndefined();
+  });
+
+  it('keeps global boardEffects for discarded cards', () => {
+    const inst = makeInstance({ id: 14, cardId: 14, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      14: { id: 14, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+    const gs = makeState({
+      board: [14],
+      instances: { 14: inst },
+      boardEffects: { 14: [{ id: 'g', type: PassiveType.BLOCK, global: true }] },
+    });
+    const result = endTurn(gs, defs);
+    expect(result.boardEffects[14]).toHaveLength(1);
+    expect(result.boardEffects[14][0].global).toBe(true);
   });
 });
 

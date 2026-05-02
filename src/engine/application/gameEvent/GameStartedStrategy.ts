@@ -9,6 +9,7 @@ function normalizeCardInstance(instance: CardInstance): CardInstance {
     trackProgress: instance.trackProgress ?? [],
     cumulated: instance.cumulated ?? {},
     usedActionIds: instance.usedActionIds ?? [],
+    removedResourcesByState: instance.removedResourcesByState ?? {},
   };
 }
 

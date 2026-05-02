@@ -23,6 +23,90 @@ import type {
   TriggerEntry,
 } from '@engine/domain/types';
 
+function sanitizeResources(resources: Resources): Resources {
+  return Object.entries(resources).reduce<Resources>((acc, [key, value]) => {
+    const clampedValue = Math.max(0, Number(value) || 0);
+    if (clampedValue > 0) {
+      acc[key as keyof Resources] = clampedValue;
+    }
+    return acc;
+  }, {});
+}
+
+function getRemovedResourcesForState(
+  instance: CardInstance,
+  stateId: number,
+  scope: 'production' | 'actionCost' | 'upgradeCost',
+): (keyof Resources)[] {
+  return (instance.removedResourcesByState?.[stateId]?.[scope] ?? []) as (keyof Resources)[];
+}
+
+function removeResourceKeys(resources: Resources, keys: (keyof Resources)[]): Resources {
+  if (keys.length === 0) return resources;
+  return Object.entries(resources).reduce<Resources>((acc, [key, value]) => {
+    if (keys.includes(key as keyof Resources)) return acc;
+    acc[key as keyof Resources] = value;
+    return acc;
+  }, {});
+}
+
+function removeResourceKeysFromCost(cost: Cost, keys: (keyof Resources)[]): Cost {
+  if (keys.length === 0 || !cost.resources?.length) return cost;
+  return {
+    ...cost,
+    resources: cost.resources.map(resourceCost => removeResourceKeys(resourceCost, keys)),
+  };
+}
+
+export function getEffectiveUpgradeCost(
+  baseCost: Cost,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+  instanceId: number,
+): Cost {
+  const adjustedCost = JSON.parse(JSON.stringify(baseCost)) as Cost;
+  const sourceInstance = gameState.instances[instanceId];
+
+  for (const [passiveSourceId, passives] of Object.entries(gameState.boardEffects)) {
+    for (const passive of passives.filter(
+      p => p.type === PassiveType.ADJUST_UPDATE_COST && p.resources,
+    )) {
+      const affectedInstanceIds = cardSelector(
+        passive.cards ?? { scope: [TargetScope.BOARD] },
+        Number(passiveSourceId),
+        gameState,
+        defs,
+        stickerDefs,
+      );
+
+      if (!affectedInstanceIds.includes(instanceId) || !passive.resources) {
+        continue;
+      }
+
+      const resourceCosts = adjustedCost.resources?.length ? adjustedCost.resources : [{}];
+      adjustedCost.resources = resourceCosts.map(cost =>
+        sanitizeResources(mergeResources(cost, passive.resources as Resources)),
+      );
+    }
+  }
+
+  if (!sourceInstance) return adjustedCost;
+  const removedKeys = getRemovedResourcesForState(
+    sourceInstance,
+    sourceInstance.stateId,
+    'upgradeCost',
+  );
+
+  return removeResourceKeysFromCost(adjustedCost, removedKeys);
+}
+
+export function getEffectiveActionCost(baseCost: Cost | undefined, instance: CardInstance): Cost {
+  if (!baseCost) return {};
+  const removedKeys = getRemovedResourcesForState(instance, instance.stateId, 'actionCost');
+  return removeResourceKeysFromCost(baseCost, removedKeys);
+}
+
 export function getTotalResourceProduction(
   instanceId: number,
   resourceType: ResourceType,
@@ -201,10 +285,13 @@ export function getEffectiveProductions(
     ? calculeBoardEffectsBonus(instance, gameState, defs, stickerDefs)
     : {};
 
-  return mergeResources(
+  const finalProduction = mergeResources(
     mergeResources(base, stickerBonus),
     mergeResources(passiveBonus, boardEffectsBonus),
   );
+
+  const removedKeys = getRemovedResourcesForState(instance, instance.stateId, 'production');
+  return removeResourceKeys(finalProduction, removedKeys);
 }
 
 export function getEffectiveGlory(

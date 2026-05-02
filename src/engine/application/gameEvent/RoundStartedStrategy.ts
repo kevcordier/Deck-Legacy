@@ -1,4 +1,5 @@
 import type { GameEventStrategy } from './GameEventStrategy';
+import { pickGlobalBoardEffects } from '@engine/application/gameStateHelper';
 import type { GameEvent, GameState, RoundStartedEvent } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 
@@ -11,7 +12,7 @@ export class RoundStartedStrategy implements GameEventStrategy {
       round: e.round,
       turn: 0,
       drawPile: e.newDrawPile,
-      boardEffects: {},
+      boardEffects: pickGlobalBoardEffects(gameState.boardEffects),
       discardPile: [],
       board: [],
       lastAddedCards: [],

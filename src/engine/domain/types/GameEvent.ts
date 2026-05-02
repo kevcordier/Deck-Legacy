@@ -48,6 +48,8 @@ export interface UpgradeCardEvent extends GameEvent {
   cardInstanceId: number;
   stateId: number;
   cost: Resources;
+  discardedCardIds?: number[];
+  destroyedCardIds?: number[];
 }
 
 export interface ChooseStateEvent extends GameEvent {
