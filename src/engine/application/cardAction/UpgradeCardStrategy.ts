@@ -4,7 +4,7 @@ import { discardCards } from '@engine/application/gameStateHelper';
 import type { CardDef, GameState, ResolvedActionEffect } from '@engine/domain/types';
 
 export class UpgradeCardStrategy implements CardActionStrategy {
-  constructor(private cardDefs: Record<number, CardDef>) {}
+  constructor(private readonly cardDefs: Record<number, CardDef>) {}
 
   apply(gameState: GameState, payload: ResolvedActionEffect): GameState {
     const instanceId = payload.instanceIds?.[0];

@@ -296,9 +296,7 @@ export function canAffordCardCost(
   ) {
     return false;
   }
-  //   const available = cardSelector(cost.discard, instanceId, gameState, defs, stickerDefs);
-  //   if (available.length < (cost.discard.number ?? 1)) return false;
-  // }
+
   if (cost?.destroy) {
     const available = cardSelector(cost.destroy, instanceId, gameState, defs, stickerDefs);
     if (available.length < (cost.destroy.number ?? 1)) return false;

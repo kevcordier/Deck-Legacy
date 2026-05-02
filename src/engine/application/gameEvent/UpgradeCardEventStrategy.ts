@@ -12,8 +12,8 @@ import type {
 
 export class UpgradeCardEventStrategy implements GameEventStrategy {
   constructor(
-    private cardDefs: Record<number, CardDef>,
-    private stickerDefs: Record<number, Sticker>,
+    private readonly cardDefs: Record<number, CardDef>,
+    private readonly stickerDefs: Record<number, Sticker>,
   ) {}
 
   apply(gameState: GameState, event: GameEvent): GameState {
