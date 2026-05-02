@@ -217,6 +217,9 @@
     "100_1": "Aric Blackwood",
     "101_1": "Trade Relations",
     "102_1": "Small School",
+    "102_2": "School",
+    "102_3": "Prominent School",
+    "102_4": "Renowned School",
     "103_1": "Investor",
     "104_1": "King Alahar",
     "105_1": "Royal Consort",
@@ -420,7 +423,11 @@
     "75_1_a0": "Spend the below {{iron}} to mark 1 from left to right and gain 5{{goods}}.",
     "75_1_g0": "This card is worth the highest {{glory}} marked",
     "88_1_a0": "Spend {{gold}}{{gold}}{{gold}} to convert (⬆) a bandit.",
-    "88_2_a0": "Mark 1 step. When complete, add sticker 1 as production here."
+    "88_2_a0": "Mark 1 step. When complete, add sticker 1 as production here.",
+    "102_1_a0": "Upgrade 1 Person in play, then ⬆.",
+    "102_2_a0": "Upgrade 1 Person in play, then ⬆.",
+    "102_3_a0": "Add 1 resource sticker to 1 Person in play, then ⬆.",
+    "102_4_a0": "Add 1 resource sticker to 1 Person in play."
   },
   "descriptions": {
     "1_2_a0": "Discard a friendly card to gain 2 gold.",

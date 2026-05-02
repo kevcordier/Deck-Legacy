@@ -2,10 +2,14 @@ import { makeDefs, makeInstance, makeState } from '../fixtures';
 import { UpgradeCardStrategy } from '@engine/application/cardAction/UpgradeCardStrategy';
 import * as cardHelpers from '@engine/application/cardHelpers';
 import { ActionEffectType } from '@engine/domain/enums';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('UpgradeCardStrategy', () => {
   const strategy = new UpgradeCardStrategy(makeDefs());
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   it('returns state unchanged when instanceId missing', () => {
     const gs = makeState();
@@ -18,8 +22,34 @@ describe('UpgradeCardStrategy', () => {
     expect(result).toBe(gs);
   });
 
-  it('returns state unchanged when stateId missing', () => {
-    const inst = makeInstance({ id: 1 });
+  it('uses the first upgrade on the current state when stateId is missing', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    const strategyWithUpgrade = new UpgradeCardStrategy(
+      makeDefs({
+        states: [
+          { id: 1, name: 'State 1', upgrade: [{ cost: {}, upgradeTo: 2 }] },
+          { id: 2, name: 'State 2' },
+        ],
+      }),
+    );
+    vi.spyOn(cardHelpers, 'getActiveState').mockImplementation(instance =>
+      instance.stateId === 1
+        ? { id: 1, name: 'State 1', upgrade: [{ cost: {}, upgradeTo: 2 }] }
+        : { id: 2, name: 'State 2', permanent: false },
+    );
+    const result = strategyWithUpgrade.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.UPGRADE_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [1],
+    });
+    expect(result.instances[1].stateId).toBe(2);
+    expect(result.discardPile).toContain(1);
+  });
+
+  it('returns state unchanged when stateId is missing and no upgrade exists', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ instances: { 1: inst } });
     const result = strategy.apply(gs, {
       id: 'x',

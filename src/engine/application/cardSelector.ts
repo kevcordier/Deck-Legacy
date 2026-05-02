@@ -5,7 +5,7 @@ import {
   getEffectiveProductions,
 } from '@engine/application/cardHelpers';
 import { type CardTag, PassiveType, TargetScope } from '@engine/domain/enums';
-import type { CardDef, CardState, CardeSelector, GameState, Sticker } from '@engine/domain/types';
+import type { CardDef, CardSelector, CardState, GameState, Sticker } from '@engine/domain/types';
 
 const LOCATION_SCOPES = new Set([
   TargetScope.DECK,
@@ -125,7 +125,7 @@ interface CardCriteriaContext {
   gameState: GameState;
   defs: Record<number, CardDef>;
   stickerDefs: Record<number, Sticker>;
-  selector: CardeSelector;
+  selector: CardSelector;
   isFriendly: boolean;
   isEnemy: boolean;
   hasBlocked: boolean;
@@ -155,7 +155,7 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
  * Filters cards matching the selector's constraints (scope, tags, produces, ids).
  */
 export function cardSelector(
-  { scope = [TargetScope.ANY], ...selector }: CardeSelector,
+  { scope = [TargetScope.ANY], ...selector }: CardSelector,
   instanceId: number,
   gameState: GameState,
   defs: Record<number, CardDef>,

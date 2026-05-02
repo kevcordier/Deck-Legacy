@@ -209,6 +209,9 @@
     "100_1": "Aric Boisbrun",
     "101_1": "Relations commerciales",
     "102_1": "Petite école",
+    "102_2": "École",
+    "102_3": "École renommée",
+    "102_4": "École prestigieuse",
     "103_1": "Investisseur",
     "104_1": "Roi Alahar",
     "105_1": "Consort royal",
@@ -410,7 +413,11 @@
     "75_1_a0": "Dépensez le {{iron}} ci-dessous pour marquer 1 de gauche à droite et gagner 5{{goods}}.",
     "75_1_g0": "Cette carte vaut le plus haut {{glory}} marqué",
     "88_1_a0": "Dépensez {{gold}}{{gold}}{{gold}} pour convertir (⬆) un bandit.",
-    "88_2_a0": "Marquez 1 étape. Une fois terminée, ajoutez l'autocollant 1 comme production ici."
+    "88_2_a0": "Marquez 1 étape. Une fois terminée, ajoutez l'autocollant 1 comme production ici.",
+    "102_1_a0": "Améliorez 1 Personne en jeu, puis ⬆.",
+    "102_2_a0": "Améliorez 1 Personne en jeu, puis ⬆.",
+    "102_3_a0": "Ajoutez 1 autocollant de ressource à 1 Personne en jeu, puis ⬆.",
+    "102_4_a0": "Ajoutez 1 autocollant de ressource à 1 Personne en jeu."
   },
   "descriptions": {
     "1_2_a0": "Défaussez une carte alliée pour gagner 2 or.",

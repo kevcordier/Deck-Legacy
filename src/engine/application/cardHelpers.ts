@@ -121,7 +121,7 @@ function calculeBoardEffectsBonus(
   for (const [instanceSource, passives] of Object.entries(gameState.boardEffects)) {
     for (const passive of passives
       .flat()
-      .filter(p => p.type === PassiveType.INCREASE_PRODUCTION && p.resources)) {
+      .filter(p => p.type === PassiveType.ADJUST_PRODUCTION && p.resources)) {
       if (
         cardSelector(
           passive.cards ?? { scope: [TargetScope.BOARD] },
@@ -148,7 +148,7 @@ function calculePassiveProductionBonus(
 ): Resources {
   let passiveBonus: Resources = {};
   for (const passive of activeState.passives ?? []) {
-    if (passive.type === PassiveType.INCREASE_PRODUCTION && passive.valuePerElement?.resource) {
+    if (passive.type === PassiveType.ADJUST_PRODUCTION && passive.valuePerElement?.resource) {
       const { amount, resource, cards: sel, accumulation } = passive.valuePerElement;
       let count = 0;
       if (sel) {

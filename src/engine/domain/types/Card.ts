@@ -9,7 +9,7 @@ import type {
 import type { Cost, Resources } from '@engine/domain/types';
 
 export type Condition =
-  | { type: 'cardCount'; cards: CardeSelector; min?: number; max?: number }
+  | { type: 'cardCount'; cards: CardSelector; min?: number; max?: number }
   | { type: 'production'; resourceType: ResourceType; min?: number; max?: number }
   | { type: 'and'; conditions: Condition[] }
   | { type: 'or'; conditions: Condition[] }
@@ -78,7 +78,7 @@ export type CardAction = {
 export type ValuePerElement = {
   amount: number;
   resource?: ResourceType[];
-  cards?: CardeSelector;
+  cards?: CardSelector;
   productionTotal?: ResourceType;
   accumulation?: boolean;
   deficitTarget?: number; // count = max(0, deficitTarget - actual_count)
@@ -87,7 +87,7 @@ export type ValuePerElement = {
 export type ActionEffect = {
   id: number;
   type: ActionEffectType;
-  cards?: CardeSelector;
+  cards?: CardSelector;
   resources?: ResourceSelector;
   accumulated?: number;
   states?: number[];
@@ -103,10 +103,10 @@ export type ActionEffect = {
 export type Passive = {
   id: string;
   type: PassiveType;
-  cards?: CardeSelector;
+  cards?: CardSelector;
   trigger?: {
     type: Trigger;
-    cards?: CardeSelector;
+    cards?: CardSelector;
     actions?: ActionEffect[];
   };
   resources?: {
@@ -131,7 +131,7 @@ export type Having = {
   maxGlory?: number;
 };
 
-export type CardeSelector = {
+export type CardSelector = {
   ids?: number[];
   tags?: CardTag[];
   scope?: TargetScope[];
@@ -141,7 +141,7 @@ export type CardeSelector = {
   having?: Having;
 };
 
-export type CountedCardSelector = CardeSelector & {
+export type CountedCardSelector = CardSelector & {
   number?: number;
 };
 
@@ -162,7 +162,7 @@ export type ResourceSelector = {
     weapon?: number;
     goods?: number;
   }[];
-  cards?: CardeSelector;
+  cards?: CardSelector;
 };
 
 export type ResolvedActionEffect = {

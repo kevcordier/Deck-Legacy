@@ -13,7 +13,7 @@ import {
 import type {
   ActionEffect,
   CardDef,
-  CardeSelector,
+  CardSelector,
   GameState,
   PendingChoice,
   ResolvedActionEffect,
@@ -52,7 +52,7 @@ function resolveTrackAdvanceEffect(
   resolverAction: ResolvedActionEffect,
   pendingChoices: PendingChoice[],
   ctx: ResolveContext,
-  cards: CardeSelector,
+  cards: CardSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
   const { actionId, actionType, instanceId, isMandatory, gameState, defs, stickerDefs } = ctx;
 
@@ -187,14 +187,10 @@ function resolveCardTarget(
   resolverAction: ResolvedActionEffect,
   pendingChoices: PendingChoice[],
   ctx: ResolveContext,
-  cards: CardeSelector,
+  cards: CardSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
   const { actionId, actionType, instanceId, isMandatory, gameState, defs, stickerDefs } = ctx;
 
-  if (cards.ids?.length === 1) {
-    resolverAction.instanceIds = [cards.ids[0]];
-    return [resolverAction, pendingChoices];
-  }
   const choices = cardSelector(cards, instanceId, gameState, defs, stickerDefs);
   if (choices.length === 0) {
     resolverAction.instanceIds = undefined;
@@ -330,7 +326,7 @@ function extractResources(raw: NonNullable<ActionEffect['resources']>): Resource
 
 // For BOOST_CARD, all produced resources are injected as potential criteria before resolving targets.
 // For DISCOVER_CARD, the scope is forced to the discovery pile.
-function getEnrichedCardSelector(action: ActionEffect): CardeSelector | undefined {
+function getEnrichedCardSelector(action: ActionEffect): CardSelector | undefined {
   if (!action.cards) return undefined;
   if (action.type === ActionEffectType.BOOST_CARD) {
     return { ...action.cards, produces: Object.values(ResourceType) };

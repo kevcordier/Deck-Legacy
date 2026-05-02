@@ -18,14 +18,14 @@ export const pirate: CardDef = {
         CardPassives[PassiveType.STAY_IN_PLAY],
         {
           id: 'decrease_gold',
-          type: PassiveType.INCREASE_PRODUCTION,
+          type: PassiveType.ADJUST_PRODUCTION,
           resources: {
             gold: -1,
           },
         },
         {
           id: 'steal_gold',
-          type: PassiveType.INCREASE_ADD_RESOURCES,
+          type: PassiveType.ADJUST_ADD_RESOURCES,
           resources: {
             gold: -1,
           },

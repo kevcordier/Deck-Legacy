@@ -52,7 +52,7 @@ export function CardRow({ cardIds }: CardRowProps) {
   const effectLabel = (type: PassiveType): string => {
     if (type === PassiveType.BLOCK) return t('card.blocked');
     if (type === PassiveType.STAY_IN_PLAY) return t('card.stayInPlay');
-    if (type === PassiveType.INCREASE_GLORY) return t('card.increaseGlory');
+    if (type === PassiveType.ADJUST_GLORY) return t('card.increaseGlory');
     return t('card.increaseProduction');
   };
 
@@ -71,8 +71,8 @@ export function CardRow({ cardIds }: CardRowProps) {
           const isBlocked = blockedIds.has(id);
           const blockerId = blockedByMap[id] ?? null;
           const blockerInst = blockerId ? gameState.instances[blockerId] : null;
-          const effects = effectsOnCard(gameState, id, defs, stickerDefs).filter(({ passive }) =>
-            [PassiveType.STAY_IN_PLAY, PassiveType.BLOCK].includes(passive.type),
+          const effects = effectsOnCard(gameState, id, defs, stickerDefs).filter(
+            ({ passive }) => ![PassiveType.STAY_IN_PLAY].includes(passive.type),
           );
 
           return (

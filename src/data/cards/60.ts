@@ -25,7 +25,7 @@ export const royalVisit: CardDef = {
               },
               effect: {
                 id: 'Royal Visit',
-                type: PassiveType.INCREASE_UPDATE_COST,
+                type: PassiveType.ADJUST_UPDATE_COST,
               },
             },
           ],

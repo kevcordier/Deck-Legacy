@@ -238,7 +238,7 @@ const CATHEDRAL_STATE: GameState = {
 };
 
 export const CathedralIncreaseProduction: Story = {
-  name: 'Cathedral — increase_production (3 personnes → +3 or)',
+  name: 'Cathedral — ADJUST_production (3 personnes → +3 or)',
   args: {
     saveState: CATHEDRAL_STATE,
   },

@@ -20,7 +20,7 @@ export const scientist: CardDef = {
         'https://img.freepik.com/free-photo/portrait-male-scribe-medieval-times_23-2150931875.jpg?semt=ais_hybrid&w=740&q=80',
       passives: [
         {
-          ...CardPassives[PassiveType.INCREASE_PRODUCTION],
+          ...CardPassives[PassiveType.ADJUST_PRODUCTION],
           resources: {
             [ResourceType.GOLD]: 1,
           },

@@ -67,7 +67,7 @@ export const thunderstorm: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/71abe2bf-814f-4e24-9928-460126c484cb/anim=false,width=450,optimized=true/00377-1961154424.jpeg',
       passives: [
         {
-          ...CardPassives[PassiveType.INCREASE_PRODUCTION],
+          ...CardPassives[PassiveType.ADJUST_PRODUCTION],
           cards: {
             scope: [TargetScope.BOARD],
             tags: [CardTag.LAND],

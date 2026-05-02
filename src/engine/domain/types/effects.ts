@@ -13,9 +13,9 @@ export const CardPassives: Record<string, Passive> = {
     id: 'block',
     type: PassiveType.BLOCK,
   },
-  [PassiveType.INCREASE_PRODUCTION]: {
-    id: 'increase_production',
-    type: PassiveType.INCREASE_PRODUCTION,
+  [PassiveType.ADJUST_PRODUCTION]: {
+    id: 'ADJUST_production',
+    type: PassiveType.ADJUST_PRODUCTION,
   },
   [PassiveType.DESACTIVATE_OPTION]: {
     id: 'desactivate_option',

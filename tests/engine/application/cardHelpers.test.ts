@@ -118,7 +118,7 @@ describe('getEffectiveProductions', () => {
     expect(result.gold).toBe(1);
   });
 
-  it('adds passive INCREASE_PRODUCTION bonus based on card count', () => {
+  it('adds passive ADJUST_PRODUCTION bonus based on card count', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
     const defs: Record<number, CardDef> = {
@@ -132,7 +132,7 @@ describe('getEffectiveProductions', () => {
             passives: [
               {
                 id: 'p',
-                type: PassiveType.INCREASE_PRODUCTION,
+                type: PassiveType.ADJUST_PRODUCTION,
                 valuePerElement: {
                   amount: 2,
                   resource: ['gold' as never],
@@ -165,7 +165,7 @@ describe('getEffectiveProductions', () => {
             passives: [
               {
                 id: 'p',
-                type: PassiveType.INCREASE_PRODUCTION,
+                type: PassiveType.ADJUST_PRODUCTION,
                 valuePerElement: {
                   amount: 1,
                   resource: ['wood' as never],
@@ -197,7 +197,7 @@ describe('getEffectiveProductions', () => {
             passives: [
               {
                 id: 'p',
-                type: PassiveType.INCREASE_PRODUCTION,
+                type: PassiveType.ADJUST_PRODUCTION,
                 valuePerElement: {
                   amount: 2,
                   resource: ['gold' as never],
@@ -216,7 +216,7 @@ describe('getEffectiveProductions', () => {
     expect(result.gold).toBeUndefined();
   });
 
-  it('adds board effect INCREASE_PRODUCTION bonus', () => {
+  it('adds board effect ADJUST_PRODUCTION bonus', () => {
     const inst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
     const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const defs: Record<number, CardDef> = {
@@ -230,7 +230,7 @@ describe('getEffectiveProductions', () => {
         1: [
           {
             id: 'be',
-            type: PassiveType.INCREASE_PRODUCTION,
+            type: PassiveType.ADJUST_PRODUCTION,
             resources: { gold: 3 },
             cards: { scope: [TargetScope.BOARD] },
           },
@@ -254,7 +254,7 @@ describe('getEffectiveProductions', () => {
       board: [2],
       instances: { 1: sourceInst, 2: inst },
       boardEffects: {
-        1: [{ id: 'be', type: PassiveType.INCREASE_PRODUCTION, resources: { gold: 2 } }],
+        1: [{ id: 'be', type: PassiveType.ADJUST_PRODUCTION, resources: { gold: 2 } }],
       },
     });
     const state = { id: 1, name: 'S' };
@@ -277,7 +277,7 @@ describe('getEffectiveProductions', () => {
         1: [
           {
             id: 'be',
-            type: PassiveType.INCREASE_PRODUCTION,
+            type: PassiveType.ADJUST_PRODUCTION,
             resources: { gold: 5 },
             cards: { ids: [99] },
           },
@@ -290,7 +290,7 @@ describe('getEffectiveProductions', () => {
     expect(result.gold).toBeUndefined();
   });
 
-  it('skips passive INCREASE_PRODUCTION without resource in valuePerElement', () => {
+  it('skips passive ADJUST_PRODUCTION without resource in valuePerElement', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const defs: Record<number, CardDef> = {
       1: {
@@ -303,7 +303,7 @@ describe('getEffectiveProductions', () => {
             passives: [
               {
                 id: 'p',
-                type: PassiveType.INCREASE_PRODUCTION,
+                type: PassiveType.ADJUST_PRODUCTION,
                 valuePerElement: { amount: 2 } as never,
               },
             ],
@@ -331,7 +331,7 @@ describe('getEffectiveProductions', () => {
             passives: [
               {
                 id: 'p',
-                type: PassiveType.INCREASE_PRODUCTION,
+                type: PassiveType.ADJUST_PRODUCTION,
                 valuePerElement: { amount: 2, resource: ['gold' as never] },
               },
             ],
@@ -359,7 +359,7 @@ describe('getEffectiveProductions', () => {
             passives: [
               {
                 id: 'p',
-                type: PassiveType.INCREASE_PRODUCTION,
+                type: PassiveType.ADJUST_PRODUCTION,
                 valuePerElement: {
                   amount: 1,
                   resource: ['wood' as never],

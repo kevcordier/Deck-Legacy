@@ -8,9 +8,16 @@ export class UpgradeCardStrategy implements CardActionStrategy {
 
   apply(gameState: GameState, payload: ResolvedActionEffect): GameState {
     const instanceId = payload.instanceIds?.[0];
-    if (instanceId === undefined || payload.stateId === undefined) return gameState;
+    if (instanceId === undefined) return gameState;
+
+    const instance = gameState.instances[instanceId];
+    const currentState = instance ? getActiveState(instance, this.cardDefs) : undefined;
+    const targetStateId = payload.stateId ?? currentState?.upgrade?.[0]?.upgradeTo;
+
+    if (targetStateId === undefined) return gameState;
+
     const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
-    gs.instances[instanceId].stateId = payload.stateId;
+    gs.instances[instanceId].stateId = targetStateId;
     // if new state is permanent add it to permanents pile
     if (getActiveState(gs.instances[instanceId], this.cardDefs)?.permanent) {
       return {
