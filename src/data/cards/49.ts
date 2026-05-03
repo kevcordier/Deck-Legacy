@@ -26,7 +26,6 @@ export const cityFire: CardDef = {
                 tags: [CardTag.BUILDING],
                 scope: [TargetScope.DISCARD],
               },
-              pickNumber: 1,
             },
             {
               id: 2,
@@ -80,6 +79,7 @@ export const cityFire: CardDef = {
         steps: [
           {
             id: 1,
+            icon: '*',
             effects: [
               {
                 id: 1,
@@ -87,7 +87,7 @@ export const cityFire: CardDef = {
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                stickerIds: [2],
+                stickers: { ids: [2] },
               },
             ],
           },
@@ -96,6 +96,7 @@ export const cityFire: CardDef = {
           },
           {
             id: 3,
+            icon: '*',
             effects: [
               {
                 id: 1,
@@ -103,7 +104,7 @@ export const cityFire: CardDef = {
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                stickerIds: [2],
+                stickers: { ids: [2] },
               },
             ],
           },
@@ -112,6 +113,7 @@ export const cityFire: CardDef = {
           },
           {
             id: 5,
+            icon: '*',
             effects: [
               {
                 id: 1,
@@ -119,7 +121,7 @@ export const cityFire: CardDef = {
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                stickerIds: [2],
+                stickers: { ids: [2] },
               },
             ],
           },

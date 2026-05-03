@@ -37,8 +37,8 @@ export const stop6: CardDef = {
               type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [69, 70],
+                pickNumber: 2,
               },
-              pickNumber: 2,
             },
           ],
         },

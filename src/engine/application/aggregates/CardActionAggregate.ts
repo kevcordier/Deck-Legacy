@@ -1,7 +1,7 @@
 import { CardActionContext } from '@engine/application/cardAction';
 import {
-  canAffordCardCost,
-  canAffordResources,
+  canAffordCost,
+  canAffordTrackAdvanceCost,
   cardIsBlocked,
   getActiveState,
   getEffectiveActionCost,
@@ -89,14 +89,17 @@ export class CardActionAggregate {
     const currentInstance = this.gameState.instances[this.instance.id];
     const effectiveActionCost = getEffectiveActionCost(this.action.cost, currentInstance);
 
-    if (!canAffordResources(this.gameState.resources, effectiveActionCost)) {
-      return;
-    }
-
     if (
-      !canAffordCardCost(
+      !canAffordCost(
         effectiveActionCost,
         this.instance.id,
+        this.gameState,
+        this.cardDefs,
+        this.stickerDefs,
+      ) ||
+      !canAffordTrackAdvanceCost(
+        this.action,
+        this.instance,
         this.gameState,
         this.cardDefs,
         this.stickerDefs,

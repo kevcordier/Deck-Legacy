@@ -35,7 +35,7 @@ export const assassin: CardDef = {
                 id: 2,
                 type: ActionEffectType.UPGRADE_CARD,
                 cards: {
-                  ids: [28],
+                  scope: [TargetScope.TRIGGER_SOURCE],
                 },
                 states: [2],
               },

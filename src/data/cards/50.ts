@@ -23,7 +23,7 @@ export const mysteriousCave: CardDef = {
           cost: {
             discard: [
               {
-                number: 1,
+                pickNumber: 1,
                 tags: [CardTag.PERSON],
               },
             ],
@@ -44,7 +44,7 @@ export const mysteriousCave: CardDef = {
           cost: {
             discard: [
               {
-                number: 2,
+                pickNumber: 2,
                 tags: [CardTag.PERSON],
               },
             ],
@@ -66,7 +66,7 @@ export const mysteriousCave: CardDef = {
           cost: {
             discard: [
               {
-                number: 6,
+                pickNumber: 6,
                 scope: [TargetScope.FRIENDLY],
               },
             ],

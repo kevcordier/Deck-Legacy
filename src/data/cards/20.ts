@@ -34,7 +34,7 @@ export const volcanicEruption: CardDef = {
                 id: 2,
                 type: ActionEffectType.UPGRADE_CARD,
                 cards: {
-                  ids: [28],
+                  scope: [TargetScope.TRIGGER_SOURCE],
                 },
                 states: [2],
               },
@@ -83,6 +83,7 @@ export const volcanicEruption: CardDef = {
         steps: [
           {
             id: 1,
+            icon: '*',
             effects: [
               {
                 id: 1,
@@ -90,7 +91,7 @@ export const volcanicEruption: CardDef = {
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                stickerIds: [2],
+                stickers: { ids: [2] },
               },
             ],
           },
@@ -99,6 +100,7 @@ export const volcanicEruption: CardDef = {
           },
           {
             id: 3,
+            icon: '*',
             effects: [
               {
                 id: 1,
@@ -106,7 +108,7 @@ export const volcanicEruption: CardDef = {
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                stickerIds: [2],
+                stickers: { ids: [2] },
               },
             ],
           },
@@ -115,6 +117,7 @@ export const volcanicEruption: CardDef = {
           },
           {
             id: 5,
+            icon: '*',
             effects: [
               {
                 id: 1,
@@ -122,7 +125,7 @@ export const volcanicEruption: CardDef = {
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                stickerIds: [2],
+                stickers: { ids: [2] },
               },
             ],
           },

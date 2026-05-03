@@ -17,7 +17,7 @@ export const stop2: CardDef = {
             {
               id: 1,
               type: ActionEffectType.ADD_STICKER,
-              stickerIds: [1],
+              stickers: { ids: [1] },
               cards: {
                 tags: [CardTag.LAND],
               },

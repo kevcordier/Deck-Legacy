@@ -35,8 +35,8 @@ export const plague: CardDef = {
               cards: {
                 tags: [CardTag.PERSON],
                 scope: [TargetScope.DISCARD],
+                pickNumber: 2,
               },
-              pickNumber: 2,
             },
             {
               id: 2,

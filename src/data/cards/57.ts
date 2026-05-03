@@ -32,8 +32,8 @@ export const sickness: CardDef = {
               type: ActionEffectType.DISCARD_CARD,
               cards: {
                 scope: [TargetScope.TOP_OF_DECK],
+                pickNumber: 2,
               },
-              pickNumber: 2,
             },
           ],
         },

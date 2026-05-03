@@ -18,7 +18,7 @@ export type Condition =
 export type CardDef = {
   id: number;
   name: string;
-  chooseState?: boolean; // the player chooses the state at discovery time
+  chooseState?: number[]; // explicit list of state ids available at discovery time
   states: CardState[];
   parchmentCard?: boolean;
 };
@@ -85,22 +85,27 @@ export type ValuePerElement = {
 };
 
 export type RemovedResourceScope = 'production' | 'actionCost' | 'upgradeCost';
+export type DeckTarget = 'draw' | 'discard';
 
 export type ActionEffect = {
   id: number;
   type: ActionEffectType;
+  deck?: DeckTarget;
   cards?: CardSelector;
   resources?: ResourceSelector;
   accumulated?: number;
   states?: number[];
-  stickerIds?: number[];
+  stickers?: StickerSelector;
   valuePerElement?: ValuePerElement;
   resourceScopes?: RemovedResourceScope[];
   effect?: Passive;
-  pickNumber?: number;
-  pickMin?: number;
-  pickMax?: number;
+  position?: number | 'top' | 'bottom';
   effects?: ActionEffect[];
+  steps?: {
+    pickNumber?: number;
+    pickMin?: number;
+    pickMax?: number;
+  };
 };
 
 export type Passive = {
@@ -144,10 +149,9 @@ export type CardSelector = {
   label?: string;
   produces?: ResourceType[];
   having?: Having;
-};
-
-export type CountedCardSelector = CardSelector & {
-  number?: number;
+  pickNumber?: number;
+  pickMin?: number;
+  pickMax?: number;
 };
 
 export type ResourceSelector = {
@@ -168,18 +172,29 @@ export type ResourceSelector = {
     goods?: number;
   }[];
   cards?: CardSelector;
+  pickNumber?: number;
+  pickMin?: number;
+  pickMax?: number;
+};
+
+export type StickerSelector = {
+  ids?: number[];
+  pickNumber?: number;
+  pickMin?: number;
+  pickMax?: number;
 };
 
 export type ResolvedActionEffect = {
   id: string;
   type: ActionEffectType;
   sourceInstanceId: number;
+  deck?: DeckTarget;
   instanceIds?: number[];
   effect?: Passive;
   resources?: Resources;
-  stickerId?: number;
+  stickerIds?: number[];
   stateId?: number;
-  position?: number;
+  position?: number | 'top' | 'bottom';
   stepIds?: number[];
   accumulated?: number;
   resourceScopes?: RemovedResourceScope[];

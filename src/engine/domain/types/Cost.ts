@@ -1,12 +1,12 @@
-import type { CountedCardSelector, Resources } from '@engine/domain/types';
+import type { CardSelector, Resources } from '@engine/domain/types';
 
 export type Cost = {
   /** Resource costs: `resources[0]` = fixed cost, subsequent indices are reserved for variants. */
   resources?: Resources[];
   /** Cards to discard to pay the cost (resolved one at a time via `discard_for_cost`). */
-  discard?: CountedCardSelector[];
+  discard?: CardSelector[];
   /** Card to destroy on use (e.g. self-destruction cost). */
-  destroy?: CountedCardSelector;
+  destroy?: CardSelector;
   /** Cumulated resources or points to add (positive) or set (negative). */
   accumulated?: number;
 };

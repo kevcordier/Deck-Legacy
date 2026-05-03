@@ -11,13 +11,13 @@ export function ChooseStickerSection(props: Readonly<ChoiceSectionProps>) {
         .map(id => stickerDefs[id])
         .filter(Boolean)}
       size="lg"
-      onSelect={stickerId =>
+      onSelect={stickerIds =>
         resolvePlayerChoice(
           {
             id: choice.id,
             type: choice.kind,
             sourceInstanceId: choice.sourceInstanceId,
-            stickerId,
+            stickerIds,
           },
           choice.type,
         )

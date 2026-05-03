@@ -23,6 +23,7 @@ export type GameState = {
   triggerPile: Record<string, TriggerEntry>;
   lastAddedCards: number[];
   lastDrawnCards: number[];
+  lastDiscardedCards: number[];
   round: number;
   turn: number;
   phase: Phase;

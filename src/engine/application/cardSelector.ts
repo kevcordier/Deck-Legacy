@@ -10,6 +10,7 @@ import type { CardDef, CardSelector, CardState, GameState, Sticker } from '@engi
 const LOCATION_SCOPES = new Set([
   TargetScope.DECK,
   TargetScope.DRAWN,
+  TargetScope.DISCARDED,
   TargetScope.BOARD,
   TargetScope.DISCOVERY,
   TargetScope.DISCARD,
@@ -26,6 +27,7 @@ function addLocationScopeParts(
 ): void {
   if (locationScopes.includes(TargetScope.DECK)) parts.push(...gameState.drawPile);
   if (locationScopes.includes(TargetScope.DRAWN)) parts.push(...gameState.lastDrawnCards);
+  if (locationScopes.includes(TargetScope.DISCARDED)) parts.push(...gameState.lastDiscardedCards);
   if (locationScopes.includes(TargetScope.BOARD)) parts.push(...gameState.board);
   if (locationScopes.includes(TargetScope.DISCOVERY)) parts.push(...gameState.discoveryPile);
   if (locationScopes.includes(TargetScope.DISCARD)) parts.push(...gameState.discardPile);
@@ -165,8 +167,13 @@ export function cardSelector(
 
   if (ids && scope.length === 1 && scope.includes(TargetScope.ANY)) return ids;
   if (scope.length === 1 && scope.includes(TargetScope.SELF)) return [instanceId];
+  if (scope.length === 1 && scope.includes(TargetScope.TRIGGER_SOURCE)) return [instanceId];
   if (scope.includes(TargetScope.TOP_OF_DECK)) {
     return [gameState.drawPile[0]].filter(Boolean);
+  }
+  if (scope.includes(TargetScope.TOP_OF_DISCARD)) {
+    const topDiscard = gameState.discardPile[gameState.discardPile.length - 1];
+    return [topDiscard].filter(Boolean);
   }
   if (scope.includes(TargetScope.TOP_OF_DISCOVERY)) {
     return [gameState.discoveryPile[0]].filter(Boolean);

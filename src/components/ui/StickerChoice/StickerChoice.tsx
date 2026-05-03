@@ -5,7 +5,7 @@ import type { Sticker } from '@engine/domain/types';
 interface StickerChoiceProps {
   readonly options: Sticker[];
   readonly disabled?: boolean;
-  readonly onSelect: (stickerId: number) => void;
+  readonly onSelect: (stickerIds: number[]) => void;
   readonly size?: 'sm' | 'md' | 'lg';
 }
 
@@ -21,7 +21,7 @@ export function StickerChoice({
         return (
           <Button
             key={sticker.id}
-            onClick={() => onSelect(sticker.id)}
+            onClick={() => onSelect([sticker.id])}
             variant="text"
             disabled={disabled}
             className="transition-transform hover:scale-[1.02]"

@@ -4,7 +4,7 @@ import type { CardDef } from '@engine/domain/types';
 export const finishingTouch: CardDef = {
   id: 59,
   name: 'Finishing Touch',
-  chooseState: true,
+  chooseState: [1, 2],
   states: [
     {
       id: 1,
@@ -22,8 +22,7 @@ export const finishingTouch: CardDef = {
             {
               id: 1,
               type: ActionEffectType.ADD_STICKER,
-              stickerIds: [6, 10],
-              pickNumber: 2,
+              stickers: { ids: [6, 10], pickNumber: 2 },
               cards: {
                 scope: [TargetScope.BOARD, TargetScope.FRIENDLY],
               },

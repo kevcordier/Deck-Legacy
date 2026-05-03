@@ -88,7 +88,7 @@ export const smallSchool: CardDef = {
                 scope: [TargetScope.BOARD],
                 tags: [CardTag.PERSON],
               },
-              stickerIds: [1, 2, 3, 4, 5, 6],
+              stickers: { ids: [1, 2, 3, 4, 5, 6] },
             },
             {
               id: 2,
@@ -121,7 +121,7 @@ export const smallSchool: CardDef = {
                 scope: [TargetScope.BOARD],
                 tags: [CardTag.PERSON],
               },
-              stickerIds: [1, 2, 3, 4, 5, 6],
+              stickers: { ids: [1, 2, 3, 4, 5, 6] },
             },
           ],
         },

@@ -15,13 +15,15 @@ export const EMPTY_STATE: GameState = {
   triggerPile: {},
   lastAddedCards: [],
   lastDrawnCards: [],
+  lastDiscardedCards: [],
   round: 0,
   turn: 0,
   phase: Phase.PREGAME,
 };
 
 export function makeState(overrides?: Partial<GameState>): GameState {
-  return { ...EMPTY_STATE, ...overrides };
+  const base = JSON.parse(JSON.stringify(EMPTY_STATE)) as GameState;
+  return { ...base, ...overrides };
 }
 
 export function makeInstance(overrides?: Partial<CardInstance>): CardInstance {

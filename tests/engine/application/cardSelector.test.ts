@@ -1,6 +1,6 @@
 import { makeInstance, makeState, makeStickerDefs } from './fixtures';
 import { cardSelector } from '@engine/application/cardSelector';
-import { PassiveType, TargetScope } from '@engine/domain/enums';
+import { CardTag, PassiveType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -64,6 +64,23 @@ describe('cardSelector – shortcuts', () => {
   it('returns empty for TOP_OF_DECK when drawPile is empty', () => {
     const result = cardSelector(
       { scope: [TargetScope.TOP_OF_DECK] },
+      99,
+      makeState(),
+      defs,
+      stickerDefs,
+    );
+    expect(result).toEqual([]);
+  });
+
+  it('returns top of discard for TOP_OF_DISCARD scope', () => {
+    const gs = makeState({ discardPile: [10, 30], instances: { 10: instA, 30: instC } });
+    const result = cardSelector({ scope: [TargetScope.TOP_OF_DISCARD] }, 99, gs, defs, stickerDefs);
+    expect(result).toEqual([30]);
+  });
+
+  it('returns empty for TOP_OF_DISCARD when discardPile is empty', () => {
+    const result = cardSelector(
+      { scope: [TargetScope.TOP_OF_DISCARD] },
       99,
       makeState(),
       defs,
@@ -412,5 +429,48 @@ describe('cardSelector – DRAWN scope', () => {
     const gs = makeState({ lastDrawnCards: [5], instances: { 5: inst } });
     const result = cardSelector({ scope: [TargetScope.DRAWN] }, 99, gs, defs, stickerDefs);
     expect(result).toContain(5);
+  });
+});
+
+describe('cardSelector – DISCARDED scope', () => {
+  it('DISCARDED scope returns lastDiscardedCards', () => {
+    const inst = makeInstance({ id: 7, cardId: 1, stateId: 1 });
+    const gs = makeState({ lastDiscardedCards: [7], instances: { 7: inst } });
+    const result = cardSelector({ scope: [TargetScope.DISCARDED] }, 99, gs, defs, stickerDefs);
+    expect(result).toContain(7);
+  });
+
+  it('DISCARDED scope filters by tag', () => {
+    const personInst = makeInstance({ id: 8, cardId: 1, stateId: 1 });
+    const buildingInst = makeInstance({ id: 9, cardId: 2, stateId: 1 });
+    const personDef = {
+      1: { id: 1, name: 'P', states: [{ id: 1, name: 'P', tags: [CardTag.PERSON] }] },
+    };
+    const buildingDef = {
+      2: { id: 2, name: 'B', states: [{ id: 1, name: 'B', tags: [CardTag.BUILDING] }] },
+    };
+    const combinedDefs = { ...personDef, ...buildingDef } as Record<number, CardDef>;
+    const gs = makeState({
+      lastDiscardedCards: [8, 9],
+      instances: { 8: personInst, 9: buildingInst },
+    });
+    const result = cardSelector(
+      { scope: [TargetScope.DISCARDED], tags: [CardTag.PERSON] },
+      99,
+      gs,
+      combinedDefs,
+      stickerDefs,
+    );
+    expect(result).toContain(8);
+    expect(result).not.toContain(9);
+  });
+});
+
+describe('cardSelector – TRIGGER_SOURCE scope', () => {
+  it('TRIGGER_SOURCE scope returns the source instance id', () => {
+    const inst = makeInstance({ id: 42, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 42: inst } });
+    const result = cardSelector({ scope: [TargetScope.TRIGGER_SOURCE] }, 42, gs, defs, stickerDefs);
+    expect(result).toEqual([42]);
   });
 });

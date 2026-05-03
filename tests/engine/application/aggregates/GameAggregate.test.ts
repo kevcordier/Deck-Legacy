@@ -276,6 +276,8 @@ describe('GameAggregate.turnEnded', () => {
     const state = makeState({
       board: [1],
       instances: { 1: inst },
+      triggerPile: {},
+      boardEffects: {},
       phase: Phase.PLAYING,
       round: 1,
       turn: 1,
@@ -299,6 +301,39 @@ describe('GameAggregate.turnEnded', () => {
     const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.turnEnded();
     expect(gs.phase).toBe(Phase.PREROUND);
+  });
+
+  it('does not call roundEnded when trigger pile is empty but drawPile is not empty', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [1],
+      instances: { 1: inst },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gs = agg.turnEnded();
+    expect(gs.phase).toBe(Phase.POSTTURN);
+  });
+});
+
+// ─── autoTrigger ──────────────────────────────────────────────────────────────
+
+describe('GameAggregate.autoTrigger (via roundEnded)', () => {
+  it('auto-resolves mandatory ON_DISCOVER trigger and removes it from pile', () => {
+    const inst = makeInstance({ id: 1, cardId: 5, stateId: 1 });
+    const onDiscoverAction = { id: 'od', actionEffects: [], trigger: Trigger.ON_DISCOVER };
+    const triggerId = 'auto-trigger-id';
+    const state = makeState({
+      instances: { 1: inst },
+      round: 1,
+      triggerPile: { [triggerId]: { effectDef: onDiscoverAction, sourceInstanceId: 1 } },
+    });
+    const agg = new GameAggregate(state, { 5: onDiscoverDef }, {}, []);
+    const gs = agg.roundEnded();
+    expect(Object.keys(gs.triggerPile)).toHaveLength(0);
   });
 });
 
@@ -331,6 +366,23 @@ describe('GameAggregate.advance', () => {
     const state = makeState({
       drawPile: [1, 2, 3],
       instances: { 1: inst1, 2: inst2, 3: inst3 },
+      phase: Phase.PLAYING,
+      round: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gs = agg.advance();
+    expect(gs.board).toHaveLength(2);
+  });
+
+  it('treats ADJUST_ADVANCE_CARDS passive with no amount as zero bonus', () => {
+    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [1, 2],
+      instances: { 1: inst1, 2: inst2 },
+      boardEffects: {
+        99: [{ id: 'no-amount', type: PassiveType.ADJUST_ADVANCE_CARDS }],
+      },
       phase: Phase.PLAYING,
       round: 1,
     });

@@ -51,7 +51,13 @@ export function ChooseStepSection(props: Readonly<ChoiceSectionProps>) {
             className={`flex min-w-16 flex-col items-center gap-1 rounded-md border-2 border-base-ink bg-card p-3 hover:bg-base-ink/10 ${isSelected ? ' ring-primary rounded-xl ring-2' : ''}`}
           >
             {track && targetInst && (
-              <CardTrackContent t={t} instance={targetInst} track={track} step={step} />
+              <CardTrackContent
+                t={t}
+                instance={targetInst}
+                track={track}
+                step={step}
+                isValidated={false}
+              />
             )}
           </button>
         );

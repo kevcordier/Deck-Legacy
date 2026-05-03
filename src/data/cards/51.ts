@@ -31,8 +31,8 @@ export const skilledBandit: CardDef = {
               cards: {
                 scope: [TargetScope.BOARD],
                 produces: [ResourceType.GOLD],
+                pickNumber: 3,
               },
-              pickNumber: 3,
             },
           ],
         },

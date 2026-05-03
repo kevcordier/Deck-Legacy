@@ -12,12 +12,12 @@ describe('AddStickerStrategy', () => {
       id: 'x',
       type: ActionEffectType.ADD_STICKER,
       sourceInstanceId: 1,
-      stickerId: 3,
+      stickerIds: [3],
     });
     expect(result).toBe(gs);
   });
 
-  it('returns state unchanged when stickerId is missing', () => {
+  it('returns state unchanged when stickerIds is missing', () => {
     const inst = makeInstance({ id: 2 });
     const gs = makeState({ instances: { 2: inst } });
     const result = strategy.apply(gs, {
@@ -37,7 +37,7 @@ describe('AddStickerStrategy', () => {
       type: ActionEffectType.ADD_STICKER,
       sourceInstanceId: 1,
       instanceIds: [2],
-      stickerId: 5,
+      stickerIds: [5],
     });
     expect(result.instances[2].stickers[1]).toContain(5);
     expect(result.stickerStock[5]).toBe(2);
@@ -51,7 +51,7 @@ describe('AddStickerStrategy', () => {
       type: ActionEffectType.ADD_STICKER,
       sourceInstanceId: 1,
       instanceIds: [2],
-      stickerId: 5,
+      stickerIds: [5],
     });
     expect(result.instances[2].stickers[1]).toEqual([5]);
   });
@@ -64,8 +64,25 @@ describe('AddStickerStrategy', () => {
       type: ActionEffectType.ADD_STICKER,
       sourceInstanceId: 1,
       instanceIds: [2],
-      stickerId: 5,
+      stickerIds: [5],
     });
     expect(result.instances[2].stickers[1]).toEqual([4, 5]);
+  });
+
+  it('adds sticker on payload.stateId when provided', () => {
+    const inst = makeInstance({ id: 2, stateId: 4, stickers: { 1: [], 2: [], 3: [], 4: [] } });
+    const gs = makeState({ instances: { 2: inst }, stickerStock: { 6: 1 } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_STICKER,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      stateId: 2,
+      stickerIds: [6],
+    });
+
+    expect(result.instances[2].stickers[2]).toEqual([6]);
+    expect(result.instances[2].stickers[4]).toEqual([]);
+    expect(result.stickerStock[6]).toBe(0);
   });
 });

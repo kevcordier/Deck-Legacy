@@ -78,7 +78,7 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
           {
             ...resolvedAction,
             instanceIds: choice.instanceIds,
-            stickerId: stickerChoices[0],
+            stickerIds: stickerChoices,
           },
           newPendingChoice,
         ];
@@ -88,7 +88,7 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
         {
           ...resolvedAction,
           instanceIds: choice.instanceIds,
-          stickerId: stickerChoices[0],
+          stickerIds: stickerChoices,
         },
         pendingChoices.slice(1),
       ];

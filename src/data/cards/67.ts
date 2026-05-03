@@ -9,6 +9,8 @@ export const cooperation: CardDef = {
     {
       id: 1,
       name: 'Cooperation',
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e8e410b5-e9da-4c1d-94ab-218bcfa51609/anim=false,width=450,optimized=true/01122-2373283931.jpeg',
       tags: [CardTag.EVENT],
       actions: [
         {
@@ -18,7 +20,7 @@ export const cooperation: CardDef = {
               {
                 scope: [TargetScope.BOARD],
                 tags: [CardTag.PERSON],
-                number: 2,
+                pickNumber: 2,
               },
             ],
           },
@@ -74,6 +76,8 @@ export const cooperation: CardDef = {
     {
       id: 2,
       name: 'Favor',
+      illustration:
+        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f11b843b-eb00-415c-b414-c022f7700821/anim=false,width=450,optimized=true/ComfyUI_01713_.jpeg',
       tags: [CardTag.EVENT],
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [

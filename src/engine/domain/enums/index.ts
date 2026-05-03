@@ -12,6 +12,8 @@ export enum CardTag {
   STATE = 'state',
   SHIP = 'ship',
   ITEM = 'item',
+  INVENTION = 'invention',
+  POTION = 'potion',
   LOOT = 'loot',
 }
 
@@ -21,6 +23,7 @@ export enum Trigger {
   ON_PLAY = 'on_play',
   END_OF_ROUND = 'end_of_round',
   ON_PURGE = 'on_purge',
+  ON_DISCARD = 'on_discard',
 }
 
 export enum GameEventType {
@@ -57,6 +60,7 @@ export enum ActionEffectType {
   ADD_BOARD_EFFECT = 'ADD_BOARD_EFFECT',
   CHOOSE_EFFECT = 'CHOOSE_EFFECT',
   END_GAME = 'END_GAME',
+  SHUFFLE_DECK = 'SHUFFLE_DECK',
 }
 
 export enum PassiveType {
@@ -70,6 +74,7 @@ export enum PassiveType {
   COUNT_AS_2 = 'COUNT_AS_2',
   ADJUST_ADD_RESOURCES = 'ADJUST_ADD_RESOURCES',
   ADJUST_UPDATE_COST = 'ADJUST_UPDATE_COST',
+  RESOURCE_EQUIVALENCE = 'RESOURCE_EQUIVALENCE',
 }
 
 export enum Options {
@@ -93,6 +98,7 @@ export enum TargetScope {
   BOARD = 'board',
   DECK = 'deck',
   DISCARD = 'discard',
+  TOP_OF_DISCARD = 'top_of_discard',
   DISCOVERY = 'discovery',
   PERMANENTS = 'permanents',
   BLOCKED = 'blocked',
@@ -102,6 +108,8 @@ export enum TargetScope {
   TOP_OF_DECK = 'top_of_deck',
   TOP_OF_DISCOVERY = 'top_of_discovery',
   DRAWN = 'drawn',
+  DISCARDED = 'discarded',
+  TRIGGER_SOURCE = 'trigger_source',
 }
 
 export enum PendingChoiceType {

@@ -133,7 +133,7 @@ describe('CardChoiceStrategy – BOOST_CARD', () => {
     };
     const resolved = { id: 'r1', type: ActionEffectType.BOOST_CARD, sourceInstanceId: 99 };
     const [merged, remaining] = strategy.apply(choice, resolved, gs, [pending()]);
-    expect(merged.stickerId).toBe(10);
+    expect(merged.stickerIds).toEqual([10]);
     expect(remaining).toHaveLength(0);
   });
 
@@ -167,7 +167,7 @@ describe('CardChoiceStrategy – BOOST_CARD', () => {
     };
     const resolved = { id: 'r1', type: ActionEffectType.BOOST_CARD, sourceInstanceId: 99 };
     const [merged, remaining] = strategy.apply(choice, resolved, gs, [pending()]);
-    expect(merged.stickerId).toBeUndefined();
+    expect(merged.stickerIds).toBeUndefined();
     expect(remaining).toHaveLength(0);
   });
 
@@ -185,7 +185,7 @@ describe('CardChoiceStrategy – BOOST_CARD', () => {
     };
     const resolved = { id: 'r1', type: ActionEffectType.BOOST_CARD, sourceInstanceId: 99 };
     const [merged] = strategy.apply(choice, resolved, gs, [pending()]);
-    expect(merged.stickerId).toBeUndefined();
+    expect(merged.stickerIds).toEqual([]);
   });
 
   it('treats sticker not in stickerStock as 0 stock', () => {
@@ -202,7 +202,7 @@ describe('CardChoiceStrategy – BOOST_CARD', () => {
     };
     const resolved = { id: 'r1', type: ActionEffectType.BOOST_CARD, sourceInstanceId: 99 };
     const [merged] = strategy.apply(choice, resolved, gs, [pending()]);
-    expect(merged.stickerId).toBeUndefined();
+    expect(merged.stickerIds).toEqual([]);
   });
 });
 

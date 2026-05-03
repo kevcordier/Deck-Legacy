@@ -37,10 +37,10 @@ export const scribe: CardDef = {
               type: ActionEffectType.ADD_BOARD_EFFECT,
               cards: {
                 scope: [TargetScope.BOARD],
+                pickMin: 0,
+                pickMax: 2,
               },
               effect: CardPassives[PassiveType.STAY_IN_PLAY],
-              pickMin: 0,
-              pickMax: 2,
             },
           ],
         },

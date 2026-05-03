@@ -37,7 +37,7 @@ export function TriggerPileSection({
         const actionLabel = tCardActionLabel(t, def?.id, state?.id, actionIdx, inst.cumulated);
 
         return (
-          <div key={triggerId} className="flex flex-col items-start gap-2">
+          <div key={triggerId} className="flex flex-col items-center gap-2">
             <div className="flex min-w-56 flex-1 items-start gap-3">
               <TriggerIcon
                 className="mt-1 size-8 shrink-0"
@@ -45,11 +45,11 @@ export function TriggerPileSection({
               />
               <div className="flex-1">
                 {cardName && (
-                  <div className="font-display text-base-primary mb-1 text-sm font-semibold">
+                  <div className="font-display text-primary mb-1 text-sm font-semibold">
                     #{trigger.sourceInstanceId} {cardName}
                   </div>
                 )}
-                <div className="font-display text-base-ink text-xs">{actionLabel}</div>
+                <div className="font-display text-ink text-xs">{actionLabel}</div>
               </div>
             </div>
             <div className="w-full max-w-56 shrink-0">
@@ -72,7 +72,7 @@ export function TriggerPileSection({
                 <Button
                   size="sm"
                   variant="outlined"
-                  color="base-ink"
+                  color="ink"
                   onClick={() => onSkipTrigger(triggerId)}
                 >
                   {t('triggerPile.skip')}

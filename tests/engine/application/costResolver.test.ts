@@ -74,7 +74,7 @@ describe('resolveCost – discard', () => {
     const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2], instances: { 2: inst } });
     const [resolved, pending] = resolveCost(
-      { discard: [{ scope: [TargetScope.BOARD], number: 1 }] },
+      { discard: [{ scope: [TargetScope.BOARD], pickNumber: 1 }] },
       99,
       gs,
       defs,
@@ -89,7 +89,7 @@ describe('resolveCost – discard', () => {
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2, 3], instances: { 2: inst2, 3: inst3 } });
     const [, pending] = resolveCost(
-      { discard: [{ scope: [TargetScope.BOARD], number: 1 }] },
+      { discard: [{ scope: [TargetScope.BOARD], pickNumber: 1 }] },
       99,
       gs,
       defs,
@@ -106,7 +106,7 @@ describe('resolveCost – discard', () => {
     const inst4 = makeInstance({ id: 4, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2, 3, 4], instances: { 2: inst2, 3: inst3, 4: inst4 } });
     const [, pending] = resolveCost(
-      { discard: [{ scope: [TargetScope.BOARD], number: 2 }] },
+      { discard: [{ scope: [TargetScope.BOARD], pickNumber: 2 }] },
       99,
       gs,
       defs,
@@ -133,7 +133,7 @@ describe('resolveCost – discard', () => {
     const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2], instances: { 2: inst } });
     const [resolved, pending] = resolveCost(
-      { destroy: { scope: [TargetScope.BOARD], number: 1 } },
+      { destroy: { scope: [TargetScope.BOARD], pickNumber: 1 } },
       99,
       gs,
       defs,
@@ -148,7 +148,7 @@ describe('resolveCost – discard', () => {
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2, 3], instances: { 2: inst2, 3: inst3 } });
     const [, pending] = resolveCost(
-      { destroy: { scope: [TargetScope.BOARD], number: 1 } },
+      { destroy: { scope: [TargetScope.BOARD], pickNumber: 1 } },
       99,
       gs,
       defs,

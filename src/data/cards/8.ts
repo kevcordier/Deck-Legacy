@@ -4,7 +4,7 @@ import type { CardDef } from '@engine/domain/types';
 export const fieldWorker: CardDef = {
   id: 8,
   name: 'Field Worker',
-  chooseState: true,
+  chooseState: [1, 2],
   states: [
     {
       id: 1,

@@ -11,4 +11,5 @@ export * from '@engine/application/cardAction/PlaceCardInDrawPileStrategy';
 export * from '@engine/application/cardAction/PlayCardStrategy';
 export * from '@engine/application/cardAction/RemoveResourceOnCardStrategy';
 export * from '@engine/application/cardAction/SetCumulatedStrategy';
+export * from '@engine/application/cardAction/ShuffleDeckStrategy';
 export * from '@engine/application/cardAction/UpgradeCardStrategy';

@@ -39,7 +39,7 @@ export const witch: CardDef = {
             discard: [
               {
                 tags: [CardTag.PERSON],
-                number: 3,
+                pickNumber: 3,
               },
             ],
           },
@@ -117,7 +117,6 @@ export const witch: CardDef = {
           cost: {
             destroy: {
               tags: [CardTag.PERSON],
-              number: 1,
             },
           },
           actionEffects: [

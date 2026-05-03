@@ -356,29 +356,36 @@ export const getActiveState = (
 };
 
 /** Vérifie si les ressources disponibles suffisent pour payer un coût. */
-export function canAffordResources(available: Resources, cost?: Cost): boolean {
-  if (!cost?.resources) return true;
-  if (!cost.resources?.[0]) return true;
-  return Object.entries(cost.resources[0]).every(
-    ([k, v]) => (available[k as keyof Resources] ?? 0) >= v,
+export function canAffordResources(available: Resources, resources: Resources[]): boolean {
+  return (
+    resources.length === 0 ||
+    resources.some(r =>
+      Object.entries(r).every(([k, v]) => (available[k as keyof Resources] ?? 0) >= v),
+    )
   );
 }
 
 /** Vérifie si les cartes requises pour un coût discard/destroy existent dans la sélection. */
-export function canAffordCardCost(
+export function canAffordCost(
   cost: Cost | undefined,
   instanceId: number,
   gameState: GameState,
   defs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
 ): boolean {
+  if (cost?.resources && !canAffordResources(gameState.resources, cost.resources)) return false;
+
+  if (cost?.accumulated && (gameState.instances[instanceId]?.cumulated ?? 0) < cost.accumulated) {
+    return false;
+  }
+
   if (
     cost?.discard?.length &&
     cost.discard.some(discardCost => {
       const candidates = cardSelector(discardCost, instanceId, gameState, defs, stickerDefs).filter(
         id => gameState.board.includes(id),
       );
-      return candidates.length < (discardCost.number ?? 1);
+      return candidates.length < (discardCost.pickNumber ?? 1);
     })
   ) {
     return false;
@@ -386,9 +393,35 @@ export function canAffordCardCost(
 
   if (cost?.destroy) {
     const available = cardSelector(cost.destroy, instanceId, gameState, defs, stickerDefs);
-    if (available.length < (cost.destroy.number ?? 1)) return false;
+    if (available.length < (cost.destroy.pickNumber ?? 1)) return false;
   }
   return true;
+}
+
+export function canAffordTrackAdvanceCost(
+  action: CardAction,
+  instance: CardInstance,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): boolean {
+  const cs = getActiveState(instance, defs);
+  const hasTrackAdvance =
+    action.actionEffects.some(e => e.type === ActionEffectType.TRACK_ADVANCE) && cs?.track;
+
+  if (!hasTrackAdvance) return true;
+  const firstTrackStep = getFirstAvailableTrackStep(
+    action.actionEffects,
+    instance.id,
+    gameState,
+    defs,
+    stickerDefs,
+  );
+
+  return (
+    !!firstTrackStep &&
+    canAffordCost(firstTrackStep?.cost, instance.id, gameState, defs, stickerDefs)
+  );
 }
 
 function getBoardEffectTriggersAction(
@@ -399,13 +432,16 @@ function getBoardEffectTriggersAction(
 ): TriggerEntry[] {
   return Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) => {
     const cardActions: CardAction[] = [];
-    let instanceId = Number(sourceId);
+    const originalSourceId = Number(sourceId);
+    let instanceId = originalSourceId;
     passives
-      .filter(be => be.type === PassiveType.ADD_TRIGGER && be.trigger?.type === trigger)
-      .forEach(be => {
-        if (be.trigger?.cards) {
+      .filter(
+        passive => passive.type === PassiveType.ADD_TRIGGER && passive.trigger?.type === trigger,
+      )
+      .forEach(passive => {
+        if (passive.trigger?.cards) {
           const selectedCards = cardSelector(
-            be.trigger.cards,
+            passive.trigger.cards,
             instanceId,
             gameState,
             defs,
@@ -416,12 +452,17 @@ function getBoardEffectTriggersAction(
 
           instanceId = selectedCards[0];
         }
-        if (be.trigger?.actions) {
+        if (passive.trigger?.actions) {
+          const getCard = (ae: ActionEffect) => {
+            if (ae.cards?.scope?.includes(TargetScope.TRIGGER_SOURCE))
+              return { ids: [originalSourceId] };
+            return ae.cards?.scope?.includes(TargetScope.SELF) ? { ids: [instanceId] } : ae.cards;
+          };
           cardActions.push({
             id: `board_effect_${sourceId}`,
-            actionEffects: be.trigger.actions.map(ae => ({
+            actionEffects: passive.trigger.actions.map(ae => ({
               ...ae,
-              cards: ae.cards?.scope?.includes(TargetScope.SELF) ? { ids: [instanceId] } : ae.cards,
+              cards: getCard(ae),
             })),
           });
         }
@@ -440,7 +481,14 @@ export function getInstancesTriggerEffects(
 ): TriggerEntry[] {
   const effects = instances.reduce<TriggerEntry[]>((acc, instance) => {
     const state = getActiveState(instance, defs);
-    const effects = state.actions?.filter(ce => ce.trigger === effect) ?? [];
+    const effects =
+      state.actions?.filter(ce => {
+        return (
+          ce.trigger === effect &&
+          canAffordCost(ce.cost, instance.id, gameState, defs, stickerDefs) &&
+          canAffordTrackAdvanceCost(ce, instance, gameState, defs, stickerDefs)
+        );
+      }) ?? [];
 
     return [...acc, ...effects.map(effectDef => ({ effectDef, sourceInstanceId: instance.id }))];
   }, [] as TriggerEntry[]);

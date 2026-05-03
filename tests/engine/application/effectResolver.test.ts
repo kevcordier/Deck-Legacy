@@ -204,8 +204,7 @@ describe('resolveActionEffect – pickNumber', () => {
     const effect = {
       id: 1,
       type: ActionEffectType.DISCARD_CARD,
-      cards: { scope: [TargetScope.BOARD] },
-      pickNumber: 3,
+      cards: { scope: [TargetScope.BOARD], pickNumber: 3 },
     };
     const [resolved, pending] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
     expect(resolved.instanceIds).toEqual([2, 3]);
@@ -220,8 +219,7 @@ describe('resolveActionEffect – pickNumber', () => {
     const effect = {
       id: 1,
       type: ActionEffectType.DISCARD_CARD,
-      cards: { scope: [TargetScope.BOARD] },
-      pickNumber: 2,
+      cards: { scope: [TargetScope.BOARD], pickNumber: 2 },
     };
     const [, pending] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
     expect(pending).toHaveLength(1);
@@ -270,14 +268,22 @@ describe('resolveActionEffect – BOOST_CARD', () => {
 
 describe('resolveActionEffect – ADD_STICKER', () => {
   it('auto-resolves single sticker id', () => {
-    const effect = { id: 1, type: ActionEffectType.ADD_STICKER, stickerIds: [3] };
+    const effect = {
+      id: 1,
+      type: ActionEffectType.ADD_STICKER,
+      stickers: { ids: [3], pickNumber: 1 },
+    };
     const [resolved, pending] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
-    expect(resolved.stickerId).toBe(3);
+    expect(resolved.stickerIds).toEqual([3]);
     expect(pending).toHaveLength(0);
   });
 
   it('creates pending choice for multiple sticker ids', () => {
-    const effect = { id: 1, type: ActionEffectType.ADD_STICKER, stickerIds: [3, 5] };
+    const effect = {
+      id: 1,
+      type: ActionEffectType.ADD_STICKER,
+      stickers: { ids: [3, 5], pickNumber: 1 },
+    };
     const [, pending] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
     expect(pending).toHaveLength(1);
     expect(pending[0].type).toBe('choose_sticker');
@@ -326,6 +332,18 @@ describe('resolveActionEffect – REMOVE_RESOURCE_ON_CARD', () => {
     };
     const [resolved] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
     expect(resolved.resourceScopes).toEqual(['production']);
+  });
+});
+
+describe('resolveActionEffect – SHUFFLE_DECK', () => {
+  it('copies deck target to resolved action', () => {
+    const effect = {
+      id: 1,
+      type: ActionEffectType.SHUFFLE_DECK,
+      deck: 'discard' as const,
+    };
+    const [resolved] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
+    expect(resolved.deck).toBe('discard');
   });
 });
 
@@ -444,6 +462,37 @@ describe('resolveActionEffect – TRACK_ADVANCE', () => {
     const [resolved] = resolveActionEffect(effect, 99, gs, { 2: defTrack }, stickerDefs);
     expect(resolved.stepIds).toEqual([1]);
     expect(resolved.newActionEffects).toEqual([]);
+  });
+
+  it('derives pickNumber/pickMin/pickMax from valuePerElement for TRACK_ADVANCE', () => {
+    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 2, stateId: 1 });
+    const defTrack: CardDef = {
+      id: 2,
+      name: 'T',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          track: { inOrder: false, steps: [{ id: 1 }, { id: 2 }, { id: 3 }] },
+        },
+      ],
+    };
+    const gs = makeState({ board: [2, 3], instances: { 2: inst2, 3: inst3 } });
+    const effect = {
+      id: 1,
+      type: ActionEffectType.TRACK_ADVANCE,
+      cards: { scope: [TargetScope.BOARD] },
+      valuePerElement: {
+        amount: 1,
+        cards: { scope: [TargetScope.BOARD] },
+      },
+    };
+    const [, pending] = resolveActionEffect(effect, 99, gs, { 2: defTrack }, stickerDefs);
+    expect(pending).toHaveLength(1);
+    expect(pending[0].pickCount).toBe(2);
+    expect(pending[0].pickMin).toBe(2);
+    expect(pending[0].pickMax).toBe(2);
   });
 });
 
@@ -584,7 +633,22 @@ describe('resolveActionEffect – accumulated', () => {
   });
 });
 
-// ─── countValuePerElement – deficitTarget ────────────────────────────────────
+// ─── position ─────────────────────────────────────────────────────────────────
+
+describe('resolveActionEffect – position', () => {
+  it('passes position through to resolved action', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    const effect = {
+      id: 1,
+      type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
+      cards: { scope: [TargetScope.BOARD] },
+      position: 'top' as const,
+    };
+    const [resolved] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
+    expect(resolved.position).toEqual('top');
+  });
+});
 
 describe('countValuePerElement – deficitTarget', () => {
   it('returns deficitTarget minus count when count is less than deficitTarget', () => {

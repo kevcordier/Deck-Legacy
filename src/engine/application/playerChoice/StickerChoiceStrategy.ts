@@ -10,7 +10,7 @@ export class StickerChoiceStrategy implements PlayerChoiceStrategy {
   ): [ResolvedActionEffect, PendingChoice[]] {
     const mergedResolvedAction: ResolvedActionEffect = {
       ...resolvedAction,
-      stickerId: choice.stickerId,
+      stickerIds: choice.stickerIds,
     };
 
     return [mergedResolvedAction, pendingChoices.slice(1)];

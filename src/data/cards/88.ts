@@ -100,7 +100,7 @@ export const missionary: CardDef = {
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                stickerIds: [1],
+                stickers: { ids: [1] },
               },
             ],
           },

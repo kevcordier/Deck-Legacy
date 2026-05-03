@@ -1,6 +1,6 @@
 import { makeInstance, makeState, makeStickerDefs } from './fixtures';
 import {
-  canAffordCardCost,
+  canAffordCost,
   canAffordResources,
   cardIsBlocked,
   cardShouldStayInPlay,
@@ -592,27 +592,23 @@ describe('getActiveState', () => {
 
 describe('canAffordResources', () => {
   it('returns true when no cost', () => {
-    expect(canAffordResources({})).toBe(true);
-  });
-
-  it('returns true when cost has no resources', () => {
-    expect(canAffordResources({}, {})).toBe(true);
+    expect(canAffordResources({}, [{}])).toBe(true);
   });
 
   it('returns true when cost.resources is empty array', () => {
-    expect(canAffordResources({}, { resources: [] })).toBe(true);
+    expect(canAffordResources({}, [])).toBe(true);
   });
 
   it('returns true when resources are sufficient', () => {
-    expect(canAffordResources({ gold: 5 }, { resources: [{ gold: 3 }] })).toBe(true);
+    expect(canAffordResources({ gold: 5 }, [{ gold: 3 }])).toBe(true);
   });
 
   it('returns false when resources are insufficient', () => {
-    expect(canAffordResources({ gold: 1 }, { resources: [{ gold: 3 }] })).toBe(false);
+    expect(canAffordResources({ gold: 1 }, [{ gold: 3 }])).toBe(false);
   });
 
   it('returns false when resource key is missing', () => {
-    expect(canAffordResources({}, { resources: [{ gold: 1 }] })).toBe(false);
+    expect(canAffordResources({}, [{ gold: 1 }])).toBe(false);
   });
 });
 
@@ -624,19 +620,13 @@ describe('canAffordCardCost', () => {
   };
 
   it('returns true when no cost', () => {
-    expect(canAffordCardCost(undefined, 1, makeState(), defs, makeStickerDefs())).toBe(true);
+    expect(canAffordCost(undefined, 1, makeState(), defs, makeStickerDefs())).toBe(true);
   });
 
   it('returns false when discard has no available cards', () => {
     const gs = makeState({ board: [] });
     expect(
-      canAffordCardCost(
-        { discard: [{ scope: [TargetScope.BOARD] }] },
-        1,
-        gs,
-        defs,
-        makeStickerDefs(),
-      ),
+      canAffordCost({ discard: [{ scope: [TargetScope.BOARD] }] }, 1, gs, defs, makeStickerDefs()),
     ).toBe(false);
   });
 
@@ -644,26 +634,14 @@ describe('canAffordCardCost', () => {
     const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2], instances: { 2: inst } });
     expect(
-      canAffordCardCost(
-        { discard: [{ scope: [TargetScope.BOARD] }] },
-        99,
-        gs,
-        defs,
-        makeStickerDefs(),
-      ),
+      canAffordCost({ discard: [{ scope: [TargetScope.BOARD] }] }, 99, gs, defs, makeStickerDefs()),
     ).toBe(true);
   });
 
   it('returns false when destroy has no available cards', () => {
     const gs = makeState({ board: [] });
     expect(
-      canAffordCardCost(
-        { destroy: { scope: [TargetScope.BOARD] } },
-        1,
-        gs,
-        defs,
-        makeStickerDefs(),
-      ),
+      canAffordCost({ destroy: { scope: [TargetScope.BOARD] } }, 1, gs, defs, makeStickerDefs()),
     ).toBe(false);
   });
 
@@ -671,13 +649,7 @@ describe('canAffordCardCost', () => {
     const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2], instances: { 2: inst } });
     expect(
-      canAffordCardCost(
-        { destroy: { scope: [TargetScope.BOARD] } },
-        99,
-        gs,
-        defs,
-        makeStickerDefs(),
-      ),
+      canAffordCost({ destroy: { scope: [TargetScope.BOARD] } }, 99, gs, defs, makeStickerDefs()),
     ).toBe(true);
   });
 
@@ -685,14 +657,41 @@ describe('canAffordCardCost', () => {
     const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2], instances: { 2: inst } });
     expect(
-      canAffordCardCost(
-        { discard: [{ scope: [TargetScope.BOARD], number: 2 }] },
+      canAffordCost(
+        { discard: [{ scope: [TargetScope.BOARD], pickNumber: 2 }] },
         99,
         gs,
         defs,
         makeStickerDefs(),
       ),
     ).toBe(false);
+  });
+
+  it('returns false when cost.resources cannot be afforded', () => {
+    const gs = makeState({ resources: { gold: 1 } });
+    expect(canAffordCost({ resources: [{ gold: 5 }] }, 1, gs, defs, makeStickerDefs())).toBe(false);
+  });
+
+  it('returns true when cost.resources can be afforded', () => {
+    const gs = makeState({ resources: { gold: 10 } });
+    expect(canAffordCost({ resources: [{ gold: 5 }] }, 1, gs, defs, makeStickerDefs())).toBe(true);
+  });
+
+  it('returns false when accumulated cost is not met', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: 2 });
+    const gs = makeState({ instances: { 1: inst } });
+    expect(canAffordCost({ accumulated: 5 }, 1, gs, defs, makeStickerDefs())).toBe(false);
+  });
+
+  it('returns true when accumulated cost is met', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: 5 });
+    const gs = makeState({ instances: { 1: inst } });
+    expect(canAffordCost({ accumulated: 5 }, 1, gs, defs, makeStickerDefs())).toBe(true);
+  });
+
+  it('returns true when accumulated cost is met with missing instance (cumulated treated as 0)', () => {
+    const gs = makeState({ instances: {} });
+    expect(canAffordCost({ accumulated: 0 }, 99, gs, defs, makeStickerDefs())).toBe(true);
   });
 });
 
@@ -877,6 +876,46 @@ describe('getInstancesTriggerEffects', () => {
     const result = getInstancesTriggerEffects([], defs, makeStickerDefs(), Trigger.END_OF_TURN, gs);
     expect(result).toHaveLength(1);
     expect(result[0].effectDef.actionEffects[0].cards?.ids).toEqual([2]);
+  });
+
+  it('resolves TRIGGER_SOURCE scope in board effect trigger actions to the original source id', () => {
+    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const defs2: Record<number, CardDef> = {
+      1: { id: 1, name: 'S', states: [{ id: 1, name: 'S1' }] },
+      2: { id: 2, name: 'T', states: [{ id: 1, name: 'T1' }] },
+    };
+    const gs = makeState({
+      board: [2],
+      instances: { 2: inst2 },
+      boardEffects: {
+        1: [
+          {
+            id: 'trig',
+            type: PassiveType.ADD_TRIGGER,
+            trigger: {
+              type: Trigger.END_OF_TURN,
+              cards: { scope: [TargetScope.BOARD] },
+              actions: [
+                {
+                  id: 0,
+                  type: ActionEffectType.ADD_RESOURCES,
+                  cards: { scope: [TargetScope.TRIGGER_SOURCE] },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    });
+    const result = getInstancesTriggerEffects(
+      [],
+      defs2,
+      makeStickerDefs(),
+      Trigger.END_OF_TURN,
+      gs,
+    );
+    expect(result).toHaveLength(1);
+    expect(result[0].effectDef.actionEffects[0].cards?.ids).toEqual([1]);
   });
 
   it('skips board effect trigger when no cards match the selector', () => {

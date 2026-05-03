@@ -32,6 +32,8 @@ export const buildAnArk: CardDef = {
     {
       id: 1,
       name: 'Build an Ark',
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/1c386e60-d480-41eb-bdd3-390042789f1c/original',
       permanent: true,
       actions: [
         {
@@ -76,6 +78,8 @@ export const buildAnArk: CardDef = {
       id: 2,
       name: 'The Ark',
       tags: [CardTag.SEAFARING, CardTag.SHIP],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/1c386e60-d480-41eb-bdd3-390042789f1c/original',
       glory: {
         amount: 24,
         valuePerElement: {
@@ -108,11 +112,6 @@ export const buildAnArk: CardDef = {
       track: {
         inOrder: false,
         steps: [
-          makeArkStep(1),
-          makeArkStep(2),
-          makeArkStep(3),
-          makeArkStep(4),
-          makeArkStep(5),
           makeArkStep(6),
           makeArkStep(7),
           makeArkStep(8),
@@ -124,6 +123,11 @@ export const buildAnArk: CardDef = {
           makeArkStep(14),
           makeArkStep(15),
           makeArkStep(16),
+          makeArkStep(17),
+          makeArkStep(18),
+          makeArkStep(19),
+          makeArkStep(20),
+          makeArkStep(21),
         ],
       },
     },

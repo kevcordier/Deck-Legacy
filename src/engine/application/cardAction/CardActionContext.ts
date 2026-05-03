@@ -13,6 +13,7 @@ import { PlaceCardInDrawPileStrategy } from '@engine/application/cardAction/Plac
 import { PlayCardStrategy } from '@engine/application/cardAction/PlayCardStrategy';
 import { RemoveResourceOnCardStrategy } from '@engine/application/cardAction/RemoveResourceOnCardStrategy';
 import { SetCumulatedStrategy } from '@engine/application/cardAction/SetCumulatedStrategy';
+import { ShuffleDeckStrategy } from '@engine/application/cardAction/ShuffleDeckStrategy';
 import { TrackAdvanceStrategy } from '@engine/application/cardAction/TrackAdvanceStrategy';
 import { UpgradeCardStrategy } from '@engine/application/cardAction/UpgradeCardStrategy';
 import { ActionEffectType } from '@engine/domain/enums';
@@ -26,7 +27,7 @@ export class CardActionContext {
     this.strategies = {
       [ActionEffectType.ADD_RESOURCES]: new AddResourceStrategy(cardDefs, stickerDefs),
       [ActionEffectType.REMOVE_RESOURCE_ON_CARD]: new RemoveResourceOnCardStrategy(),
-      [ActionEffectType.DISCARD_CARD]: new DiscardCardStrategy(),
+      [ActionEffectType.DISCARD_CARD]: new DiscardCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.DESTROY_CARD]: new DestroyCardStrategy(),
       [ActionEffectType.UPGRADE_CARD]: new UpgradeCardStrategy(cardDefs),
@@ -41,6 +42,7 @@ export class CardActionContext {
       [ActionEffectType.SET_CUMULATED]: new SetCumulatedStrategy(),
       [ActionEffectType.ADD_CUMULATED]: new AddCumulatedStrategy(),
       [ActionEffectType.END_GAME]: new EndGameStrategy(),
+      [ActionEffectType.SHUFFLE_DECK]: new ShuffleDeckStrategy(),
     };
   }
 

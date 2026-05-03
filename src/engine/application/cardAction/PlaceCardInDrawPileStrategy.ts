@@ -10,7 +10,12 @@ export class PlaceCardInDrawPileStrategy implements CardActionStrategy {
     gameState.drawPile = gameState.drawPile.filter(c => c !== instanceId);
     const { [instanceId]: _placed, ...restEffects } = gameState.boardEffects;
     gameState.boardEffects = restEffects;
-    gameState.drawPile.splice(payload.position, 0, instanceId);
+    let index = payload.position;
+
+    if (index === 'top') index = 0;
+    else if (index === 'bottom') index = gameState.drawPile.length;
+
+    gameState.drawPile.splice(index, 0, instanceId);
     return gameState;
   }
 }

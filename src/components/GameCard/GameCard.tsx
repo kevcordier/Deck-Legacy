@@ -8,7 +8,7 @@ import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { StickerDisplay } from '@components/ui/StickerDisplay/StickerDisplay';
 import { Tag } from '@components/ui/Tag/Tag';
 import {
-  canAffordResources,
+  canAffordCost,
   cardIsBlocked,
   getActiveState,
   getEffectiveGlory,
@@ -56,7 +56,6 @@ export function GameCard({
     setCardName,
     getCardName,
   } = useGame();
-  const currentResources = gameState.resources;
   const isBlocked = isOnBoard && cardIsBlocked(instance.id, gameState);
   const cs = getActiveState(instance, defs);
   const def = defs[instance.cardId];
@@ -225,13 +224,19 @@ export function GameCard({
                 stickerDefs,
                 instance.id,
               );
-              const affordable = canAffordResources(currentResources, effectiveUpgradeCost);
+              const affordable = canAffordCost(
+                effectiveUpgradeCost,
+                instance.id,
+                gameState,
+                defs,
+                stickerDefs,
+              );
               const optionDisabled = !canUseOptions(gameState, Options.UPGRADE);
               const targetState = def?.states.find(s => s.id === upg.upgradeTo);
               const discardLabel = effectiveUpgradeCost.discard
                 ?.map(d => {
                   return t('card.cost.discard', {
-                    count: d.number,
+                    count: d.pickNumber ?? 1,
                     type: d.name ?? d.tags?.[0] ?? t('card.cost.cards'),
                   });
                 })

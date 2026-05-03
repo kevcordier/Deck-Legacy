@@ -31,6 +31,8 @@ export const quest: CardDef = {
     {
       id: 1,
       name: 'Quest',
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/851e5ab9-e847-466b-a6be-d3e79ecd894e/450x%3Cauto%3E_so',
       permanent: true,
       glory: {
         amount: 0,

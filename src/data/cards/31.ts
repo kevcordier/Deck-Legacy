@@ -4,7 +4,7 @@ import type { CardDef } from '@engine/domain/types';
 export const loyalty: CardDef = {
   id: 31,
   name: 'Loyalty',
-  chooseState: true,
+  chooseState: [1, 2],
   states: [
     {
       id: 1,

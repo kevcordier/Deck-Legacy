@@ -72,4 +72,41 @@ describe('RemoveResourceOnCardStrategy', () => {
     });
     expect(result).toBe(gs);
   });
+
+  it('returns original state when payload type is not REMOVE_RESOURCE_ON_CARD', () => {
+    const gs = makeState();
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_RESOURCES,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      resources: { gold: 1 },
+    });
+    expect(result).toBe(gs);
+  });
+
+  it('returns original state when resources payload is empty (all values zero)', () => {
+    const target = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 2: target } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      resources: { gold: 0 },
+    });
+    expect(result).toBe(gs);
+  });
+
+  it('skips instances not found in game state', () => {
+    const gs = makeState({ instances: {} });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [99],
+      resources: { gold: 1 },
+    });
+    expect(result.instances[99]).toBeUndefined();
+  });
 });

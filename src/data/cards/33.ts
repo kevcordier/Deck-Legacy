@@ -12,7 +12,7 @@ import { CardPassives } from '@engine/domain/types/effects';
 export const fieldWorker2: CardDef = {
   id: 33,
   name: 'Field Worker',
-  chooseState: true,
+  chooseState: [1, 2],
   states: [
     {
       id: 1,
@@ -72,10 +72,10 @@ export const fieldWorker2: CardDef = {
               type: ActionEffectType.ADD_BOARD_EFFECT,
               cards: {
                 scope: [TargetScope.BOARD],
+                pickMin: 0,
+                pickMax: 1,
               },
               effect: CardPassives[PassiveType.STAY_IN_PLAY],
-              pickMin: 0,
-              pickMax: 1,
             },
           ],
         },

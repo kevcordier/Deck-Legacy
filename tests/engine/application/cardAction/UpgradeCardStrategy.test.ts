@@ -48,6 +48,18 @@ describe('UpgradeCardStrategy', () => {
     expect(result.discardPile).toContain(1);
   });
 
+  it('returns state unchanged when instanceId exists in payload but instance not in state', () => {
+    const gs = makeState({ instances: {} });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.UPGRADE_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [99],
+      // no stateId → targetStateId will be undefined → early return
+    });
+    expect(result).toBe(gs);
+  });
+
   it('returns state unchanged when stateId is missing and no upgrade exists', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ instances: { 1: inst } });

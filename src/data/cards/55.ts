@@ -24,8 +24,8 @@ export const tornado: CardDef = {
               type: ActionEffectType.DESTROY_CARD,
               cards: {
                 scope: [TargetScope.BOARD, TargetScope.FRIENDLY],
+                pickNumber: 3,
               },
-              pickNumber: 3,
             },
             {
               id: 2,
@@ -59,8 +59,8 @@ export const tornado: CardDef = {
               cards: {
                 scope: [TargetScope.BOARD],
                 tags: [CardTag.BUILDING],
+                pickMin: 5,
               },
-              pickMin: 5,
             },
           ],
         },
@@ -87,15 +87,14 @@ export const tornado: CardDef = {
                     scope: [TargetScope.BOARD, TargetScope.BLOCKED],
                     tags: [CardTag.BUILDING],
                   },
-                  pickNumber: 1,
                 },
                 {
                   id: 6,
                   type: ActionEffectType.DESTROY_CARD,
                   cards: {
                     scope: [TargetScope.BOARD, TargetScope.FRIENDLY],
+                    pickNumber: 2,
                   },
-                  pickNumber: 2,
                 },
               ],
             },

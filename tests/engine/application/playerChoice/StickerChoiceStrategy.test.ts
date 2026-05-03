@@ -22,14 +22,14 @@ describe('StickerChoiceStrategy', () => {
   };
 
   it('copies chosen stickerId into merged resolved action', () => {
-    const choice = { ...baseResolved, stickerId: 5 };
+    const choice = { ...baseResolved, stickerIds: [5] };
     const [merged, remaining] = strategy.apply(choice, baseResolved, makeState(), [pendingChoice]);
-    expect(merged.stickerId).toBe(5);
+    expect(merged.stickerIds).toEqual([5]);
     expect(remaining).toHaveLength(0);
   });
 
   it('removes first pending choice from list', () => {
-    const choice = { ...baseResolved, stickerId: 3 };
+    const choice = { ...baseResolved, stickerIds: [3] };
     const extra = { ...pendingChoice, id: 'p2' };
     const [, remaining] = strategy.apply(choice, baseResolved, makeState(), [pendingChoice, extra]);
     expect(remaining).toHaveLength(1);

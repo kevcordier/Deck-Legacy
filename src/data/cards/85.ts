@@ -1,12 +1,89 @@
+import {
+  ActionEffectType,
+  CardTag,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+} from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
+import { CardPassives } from '@engine/domain/types/effects';
 
 export const sawMill: CardDef = {
   id: 85,
   name: 'Saw Mill',
+  chooseState: [1, 3],
   states: [
     {
       id: 1,
       name: 'Saw Mill',
+      tags: [CardTag.BUILDING],
+      glory: { amount: 3 },
+      productions: [{ [ResourceType.WOOD]: 3 }],
+      upgrade: [
+        {
+          cost: {
+            resources: [{ [ResourceType.WOOD]: 3 }],
+          },
+          upgradeTo: 2,
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Wood Industry',
+      tags: [CardTag.BUILDING],
+      glory: { amount: 3 },
+      productions: [{ [ResourceType.WOOD]: 4 }],
+      actions: [
+        {
+          id: '85-2-1',
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.DISCOVER_CARD,
+              cards: {
+                ids: [91],
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 3,
+      name: 'Wood Export',
+      tags: [CardTag.BUILDING],
+      glory: { amount: 4 },
+      productions: [{ [ResourceType.GOODS]: 2 }],
+      upgrade: [
+        {
+          cost: {
+            resources: [{ [ResourceType.GOLD]: 4 }],
+          },
+          upgradeTo: 4,
+        },
+      ],
+    },
+    {
+      id: 4,
+      name: 'Wood Shipment',
+      tags: [CardTag.SEAFARING, CardTag.SHIP],
+      glory: { amount: 6 },
+      productions: [{ [ResourceType.WOOD]: 2 }, { [ResourceType.GOODS]: 2 }],
+      passives: [
+        CardPassives[PassiveType.STAY_IN_PLAY],
+        {
+          id: '85-4-p1',
+          type: PassiveType.RESOURCE_EQUIVALENCE,
+          resources: {
+            [ResourceType.WOOD]: 1,
+            [ResourceType.GOODS]: 1,
+          },
+          cards: {
+            scope: [TargetScope.SELF],
+          },
+        },
+      ],
     },
   ],
 };

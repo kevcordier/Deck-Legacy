@@ -7,14 +7,12 @@ import {
   TriggerIcon,
 } from '@components/ui/Icon/icon';
 import {
-  canAffordCardCost,
-  canAffordResources,
-  getActiveState,
+  canAffordCost,
+  canAffordTrackAdvanceCost,
   getEffectiveActionCost,
-  getFirstAvailableTrackStep,
 } from '@engine/application/cardHelpers';
 import { canUseOptions } from '@engine/application/gameStateHelper';
-import { ActionEffectType, Options, TargetScope } from '@engine/domain/enums';
+import { Options, TargetScope } from '@engine/domain/enums';
 import type { CardAction, CardInstance } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 import { useGame } from '@hooks/useGame';
@@ -46,31 +44,16 @@ function getTriggerIcon(action: CardAction): ReactNode {
 
 export function CardAction({ instance, disabled, action, actionLabel }: CardActionProps) {
   const { gameState, defs, stickerDefs, resolveAction } = useGame();
-  const cs = getActiveState(instance, defs);
   const effectiveActionCost = getEffectiveActionCost(action.cost, instance);
-  const hasTrackAdvance =
-    action.actionEffects.some(e => e.type === ActionEffectType.TRACK_ADVANCE) && cs?.track;
-  const firstTrackStep = hasTrackAdvance
-    ? getFirstAvailableTrackStep(action.actionEffects, instance.id, gameState, defs, stickerDefs)
-    : undefined;
-  const cardCostAffordable = canAffordCardCost(
-    effectiveActionCost,
-    instance.id,
-    gameState,
-    defs,
-    stickerDefs,
-  );
   const optionDisabled = !canUseOptions(
     gameState,
     action.endsTurn ? Options.END_TURN_ACTION : Options.ACTION,
   );
   const isActionInPlay = (action.unlimited ?? false) || gameState.phase === Phase.PLAYING;
-  const affordable = hasTrackAdvance
-    ? firstTrackStep &&
-      canAffordResources(gameState.resources, firstTrackStep?.cost) &&
-      canAffordResources(gameState.resources, effectiveActionCost) &&
-      cardCostAffordable
-    : canAffordResources(gameState.resources, effectiveActionCost) && cardCostAffordable;
+  const affordable =
+    canAffordCost(effectiveActionCost, instance.id, gameState, defs, stickerDefs) &&
+    canAffordTrackAdvanceCost(action, instance, gameState, defs, stickerDefs);
+
   const hasDestroyItselfCost =
     effectiveActionCost.destroy?.scope?.includes(TargetScope.SELF) ?? false;
   const haveTrigger = !!action.trigger;

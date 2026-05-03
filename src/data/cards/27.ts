@@ -41,11 +41,11 @@ export const mercenay: CardDef = {
             {
               id: 1,
               type: ActionEffectType.TRACK_ADVANCE,
-              cards: {
-                scope: [TargetScope.SELF],
+              cards: { scope: [TargetScope.SELF] },
+              steps: {
+                pickMin: 1,
+                pickMax: 2,
               },
-              pickMin: 1,
-              pickMax: 2,
             },
           ],
         },
@@ -64,7 +64,7 @@ export const mercenay: CardDef = {
         },
       ],
       track: {
-        inOrder: true,
+        inOrder: false,
         steps: [
           makeStep(1),
           makeStep(2),
@@ -106,7 +106,7 @@ export const mercenay: CardDef = {
             {
               id: 1,
               type: ActionEffectType.ADD_STICKER,
-              stickerIds: [5],
+              stickers: { ids: [5] },
               cards: {
                 scope: [TargetScope.SELF],
               },
@@ -128,7 +128,7 @@ export const mercenay: CardDef = {
             {
               id: 1,
               type: ActionEffectType.ADD_STICKER,
-              stickerIds: [5],
+              stickers: { ids: [5] },
               cards: {
                 scope: [TargetScope.SELF],
               },

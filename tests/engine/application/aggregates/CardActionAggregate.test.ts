@@ -136,7 +136,7 @@ describe('CardActionAggregate.resolveAction', () => {
     const action: CardAction = {
       id: 'a1',
       actionEffects: [],
-      cost: { discard: [{ scope: [TargetScope.BOARD], number: 1 }] },
+      cost: { discard: [{ scope: [TargetScope.BOARD], pickNumber: 1 }] },
     };
     const inst = gs.instances[1];
     const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
@@ -162,7 +162,6 @@ describe('CardActionAggregate.resolveAction', () => {
           id: 0,
           type: ActionEffectType.DISCARD_CARD,
           cards: { scope: [TargetScope.BOARD] },
-          pickNumber: 1,
         },
       ],
     };
@@ -217,7 +216,7 @@ describe('CardActionAggregate.resolveAction', () => {
     const action: CardAction = {
       id: 'a1',
       actionEffects: [],
-      cost: { destroy: { scope: [TargetScope.BOARD], number: 2 } },
+      cost: { destroy: { scope: [TargetScope.BOARD], pickNumber: 2 } },
     };
     const gs = makeState({
       board: [1],

@@ -4,13 +4,16 @@ import type { GameState, ResolvedActionEffect } from '@engine/domain/types';
 export class AddStickerStrategy implements CardActionStrategy {
   apply(gameState: GameState, payload: ResolvedActionEffect): GameState {
     const targetId = payload.instanceIds?.[0];
-    if (targetId === undefined || payload.stickerId === undefined) return gameState;
+    if (targetId === undefined || payload.stickerIds === undefined) return gameState;
     const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
-    gs.stickerStock[payload.stickerId]--;
-    if (!gs.instances[targetId].stickers[gs.instances[targetId].stateId]) {
-      gs.instances[targetId].stickers[gs.instances[targetId].stateId] = [];
-    }
-    gs.instances[targetId].stickers[gs.instances[targetId].stateId].push(payload.stickerId);
+    const targetStateId = payload.stateId ?? gs.instances[targetId].stateId;
+    payload.stickerIds.forEach(stickerId => {
+      gs.stickerStock[stickerId]--;
+      if (!gs.instances[targetId].stickers[targetStateId]) {
+        gs.instances[targetId].stickers[targetStateId] = [];
+      }
+      gs.instances[targetId].stickers[targetStateId].push(stickerId);
+    });
 
     return {
       ...gs,

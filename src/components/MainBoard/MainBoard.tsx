@@ -4,6 +4,8 @@ import { Button } from '@components/ui/Button/Button';
 import { EmptyState } from '@components/ui/EmptyState/EmptyState';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Section } from '@components/ui/Section/Section';
+import { getActiveState } from '@engine/application/cardHelpers';
+import { CardTag } from '@engine/domain/enums';
 import { Phase } from '@engine/domain/types/Phase';
 import { useGame } from '@hooks/useGame';
 import { useTranslation } from 'react-i18next';
@@ -23,18 +25,28 @@ function NewCardSelection({
       {cardIds.map((id: number) => {
         const inst = gameState.instances[id];
         if (!inst) return null;
+        const chooseStateIds = defs[inst.cardId].chooseState ?? [];
 
-        if (defs[inst.cardId].chooseState) {
+        if (chooseStateIds.length > 0) {
           return (
             <div key={id} className="min-w-xs basis-1/4 gap-1 flex flex-col">
-              <Button
-                color="danger"
-                size="md"
-                className="mb-2 w-full"
-                onClick={() => chooseState(inst.id, inst.stateId === 1 ? 2 : 1)}
-              >
-                {t('roundpreview.switchState')}
-              </Button>
+              <div className="mb-2 flex w-full flex-wrap gap-2">
+                {chooseStateIds.map(stateId => {
+                  const stateDef = defs[inst.cardId].states.find(s => s.id === stateId);
+                  const isCurrent = inst.stateId === stateId;
+                  return (
+                    <Button
+                      key={`${id}-${stateId}`}
+                      color={isCurrent ? 'base-primary' : 'danger'}
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => chooseState(inst.id, stateId)}
+                    >
+                      {stateDef?.name ?? `${t('roundpreview.switchState')} ${stateId}`}
+                    </Button>
+                  );
+                })}
+              </div>
               <GameCard instance={inst} />
             </div>
           );
@@ -59,8 +71,14 @@ export function MainBoard() {
     chooseState,
     displayNewCards,
     setDisplayNewCards,
+    defs,
   } = useGame();
   const { t } = useTranslation();
+
+  const goals = gameState.permanents.filter(
+    c => getActiveState(gameState.instances[c], defs)?.tags?.includes(CardTag.GOAL) ?? false,
+  );
+  const permanents = gameState.permanents.filter(c => !goals.includes(c));
   return (
     <main className="scrollbar @container/main flex flex-1 flex-col gap-6 p-4">
       {gameState.phase === Phase.PREROUND && (
@@ -123,12 +141,17 @@ export function MainBoard() {
 
       {[Phase.PLAYING, Phase.POSTTURN].includes(gameState.phase) &&
         gameState.permanents.length > 0 && (
-          <Section
-            title={t('sections.permanents')}
-            subtitle={t('cardCount', { count: gameState.permanents.length })}
-          >
-            <CardRow cardIds={gameState.permanents} />
-          </Section>
+          <>
+            <Section
+              title={t('sections.permanents')}
+              subtitle={t('cardCount', { count: permanents.length })}
+            >
+              <CardRow cardIds={permanents} />
+            </Section>
+            <Section title={t('sections.goals')} subtitle={t('cardCount', { count: goals.length })}>
+              <CardRow cardIds={goals} />
+            </Section>
+          </>
         )}
 
       {gameState.phase === Phase.PLAYING &&

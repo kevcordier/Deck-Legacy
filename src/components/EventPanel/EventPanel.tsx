@@ -77,7 +77,9 @@ function EventRow({ event, gameState, defs }: EventRowProps) {
       break;
     case GameEventType.CARD_PRODUCED: {
       const e = event as CardProducedEvent;
-      label = t('eventLog.cardProduced', { card: cardName(e.cardInstanceId) });
+      label = t('eventLog.cardProduced', {
+        card: e.cardInstanceId ? cardName(e.cardInstanceId) : '',
+      });
       break;
     }
     case GameEventType.ADVANCE: {
@@ -87,13 +89,17 @@ function EventRow({ event, gameState, defs }: EventRowProps) {
     }
     case GameEventType.UPGRADE_CARD: {
       const e = event as UpgradeCardEvent;
-      label = t('eventLog.upgradeCard', { card: cardName(e.cardInstanceId) });
+      label = t('eventLog.upgradeCard', {
+        card: e.cardInstanceId ? cardName(e.cardInstanceId) : '',
+      });
       color = 'text-amber-600';
       break;
     }
     case GameEventType.CARD_ACTION: {
       const e = event as CardActionEvent;
-      label = t('eventLog.cardAction', { card: cardName(e.sourceInstanceId) });
+      label = t('eventLog.cardAction', {
+        card: e.sourceInstanceId ? cardName(e.sourceInstanceId) : '',
+      });
       break;
     }
     case GameEventType.SKIP_TRIGGER:

@@ -5,7 +5,7 @@ import { CardPassives } from '@engine/domain/types/effects';
 export const jester: CardDef = {
   id: 32,
   name: 'Jester',
-  chooseState: true,
+  chooseState: [1, 2],
   states: [
     {
       id: 1,
@@ -155,8 +155,10 @@ export const jester: CardDef = {
               id: 1,
               type: ActionEffectType.TRACK_ADVANCE,
               cards: { scope: [TargetScope.SELF] },
-              pickMin: 1,
-              pickMax: 2,
+              steps: {
+                pickMin: 1,
+                pickMax: 2,
+              },
             },
           ],
         },

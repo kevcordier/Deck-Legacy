@@ -4,7 +4,7 @@ import type { CardDef } from '@engine/domain/types';
 export const royalVisit: CardDef = {
   id: 60,
   name: 'Royal Visit',
-  chooseState: true,
+  chooseState: [1, 2],
   states: [
     {
       id: 1,

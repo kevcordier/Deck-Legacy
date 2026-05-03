@@ -43,7 +43,8 @@
   "sections": {
     "permanents": "Permanentes",
     "tableau": "Tableau",
-    "events": "Événements"
+    "events": "Événements",
+    "goals": "Objectifs"
   },
   "cardCount": "{{count}} carte",
   "cardCount_other": "{{count}} cartes",
@@ -68,6 +69,7 @@
     "stayInPlay": "Reste en jeu",
     "increaseGlory": "Bonus de gloire",
     "adjustProduction": "Production ajustée",
+    "resourceEquivalence": "Le bois et les marchandises sont interchangeables",
     "state": "État {{id}}",
     "cost": {
       "discard": "Défaussez {{count}} {{type}}",

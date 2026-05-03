@@ -34,8 +34,8 @@ export const youngPrincess: CardDef = {
                   cards: {
                     scope: [TargetScope.BOARD],
                     tags: [CardTag.PERSON],
+                    pickNumber: 2,
                   },
-                  pickNumber: 2,
                 },
                 {
                   id: 3,
@@ -57,17 +57,17 @@ export const youngPrincess: CardDef = {
               {
                 scope: [TargetScope.BOARD],
                 tags: [CardTag.PERSON],
-                number: 2,
+                pickNumber: 2,
               },
               {
                 scope: [TargetScope.BOARD],
                 tags: [CardTag.LAND],
-                number: 2,
+                pickNumber: 2,
               },
               {
                 scope: [TargetScope.BOARD],
                 tags: [CardTag.BUILDING],
-                number: 2,
+                pickNumber: 2,
               },
             ],
           },
@@ -92,8 +92,8 @@ export const youngPrincess: CardDef = {
               type: ActionEffectType.DISCARD_CARD,
               cards: {
                 scope: [TargetScope.BOARD, TargetScope.FRIENDLY],
+                pickNumber: 2,
               },
-              pickNumber: 2,
             },
           ],
         },
@@ -105,7 +105,7 @@ export const youngPrincess: CardDef = {
               {
                 scope: [TargetScope.BOARD],
                 tags: [CardTag.PERSON],
-                number: 2,
+                pickNumber: 2,
               },
             ],
           },

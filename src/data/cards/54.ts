@@ -21,7 +21,7 @@ export const skilledBandit2: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a5f3bdbc-6c57-4944-b335-53f8012d491a/anim=false,width=450,optimized=true/D1BZVBJAN80F6SD0Z7AGYE7ZZ0.jpeg',
       actions: [
         {
-          id: '51-1-1',
+          id: '54-1-1',
           trigger: Trigger.ON_PLAY,
           optional: false,
           actionEffects: [
@@ -31,13 +31,13 @@ export const skilledBandit2: CardDef = {
               cards: {
                 scope: [TargetScope.BOARD],
                 produces: [ResourceType.GOLD],
+                pickNumber: 3,
               },
-              pickNumber: 3,
             },
           ],
         },
         {
-          id: '51-1-2',
+          id: '54-1-2',
           cost: {
             resources: [
               {

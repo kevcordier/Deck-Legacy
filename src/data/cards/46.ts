@@ -4,7 +4,7 @@ import type { CardDef } from '@engine/domain/types';
 export const lordAethan: CardDef = {
   id: 46,
   name: 'Lord Aethan',
-  chooseState: true,
+  chooseState: [1, 2],
   states: [
     {
       id: 1,
@@ -157,8 +157,8 @@ export const lordAethan: CardDef = {
               type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [133, 134],
+                pickNumber: 2,
               },
-              pickNumber: 2,
             },
           ],
         },

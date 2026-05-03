@@ -71,6 +71,20 @@ describe('CardActionContext', () => {
     expect(result.instances[1].stateId).toBe(2);
   });
 
+  it('dispatches SHUFFLE_DECK on discard pile', () => {
+    const ctx = new CardActionContext(makeDefs(), makeStickerDefs());
+    const gs = makeState({ discardPile: [1, 2, 3] });
+    const result = ctx.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.SHUFFLE_DECK,
+      sourceInstanceId: 1,
+      deck: 'discard',
+    });
+
+    expect(result.discardPile).toHaveLength(3);
+    expect([...result.discardPile].sort((a, b) => a - b)).toEqual([1, 2, 3]);
+  });
+
   it('throws when no strategy is found for the action type', () => {
     const ctx = new CardActionContext(makeDefs(), makeStickerDefs());
     const gs = makeState();

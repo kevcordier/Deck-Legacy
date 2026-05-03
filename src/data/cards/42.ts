@@ -10,7 +10,7 @@ export const magistrate: CardDef = {
       name: 'Magistrate',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d1a11488-ed4c-48ec-a640-7b583278b62a/anim=false,width=450,optimized=true/generator_import_1769989737224_0.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/5cec5072-bff2-4680-83c3-831ac4f5150d/450x%3Cauto%3E_so',
       actions: [
         {
           id: '42-1-1',
@@ -44,7 +44,7 @@ export const magistrate: CardDef = {
       name: 'Magistrate',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/cc6f038b-22ed-4fd4-9f91-7e808a5792ba/anim=false,width=450,optimized=true/generator_import_1769454863019_0.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/98da4eac-3b68-473f-b10e-5a9ebac9a36a/450x%3Cauto%3E_so',
       actions: [
         {
           id: '42-2-1',
@@ -80,7 +80,7 @@ export const magistrate: CardDef = {
       tags: [CardTag.PERSON],
       glory: { amount: 2 },
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a84eb667-7835-49a8-b28c-b1ff273d4dc8/anim=false,width=450,optimized=true/generator_import_1769454863068_1.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/b47eee3b-c2f7-48b5-bd6c-1443f443bcfc/450x%3Cauto%3E_so',
       actions: [
         {
           id: '42-3-1',
@@ -116,7 +116,7 @@ export const magistrate: CardDef = {
       tags: [CardTag.PERSON, CardTag.ELDER],
       glory: { amount: 5 },
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c7149d36-f85c-4e52-9646-0109f3684df5/anim=false,width=450,optimized=true/generator_import_1769454863100_2.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/8d0b0262-520d-4800-a4e4-83eb9d90daf1/450x%3Cauto%3E_so',
       actions: [
         {
           id: '42-4-1',

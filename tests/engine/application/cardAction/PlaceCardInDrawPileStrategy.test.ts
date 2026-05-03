@@ -69,6 +69,32 @@ describe('PlaceCardInDrawPileStrategy', () => {
     expect(result.drawPile).toContain(5);
   });
 
+  it('inserts card at top (index 0) when position is "top"', () => {
+    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const gs = makeState({ drawPile: [1, 2, 3], instances: { 5: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
+      sourceInstanceId: 99,
+      instanceIds: [5],
+      position: 'top',
+    });
+    expect(result.drawPile[0]).toBe(5);
+  });
+
+  it('inserts card at bottom when position is "bottom"', () => {
+    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const gs = makeState({ drawPile: [1, 2, 3], instances: { 5: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
+      sourceInstanceId: 99,
+      instanceIds: [5],
+      position: 'bottom',
+    });
+    expect(result.drawPile[result.drawPile.length - 1]).toBe(5);
+  });
+
   it('clears boardEffects for placed card', () => {
     const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
     const gs = makeState({

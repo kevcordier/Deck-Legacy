@@ -88,7 +88,7 @@ export const shore: CardDef = {
             ],
             discard: [
               {
-                number: 2,
+                pickNumber: 2,
                 tags: [CardTag.PERSON],
               },
             ],

@@ -46,6 +46,7 @@ export const EMPTY_STATE: GameState = {
   triggerPile: {},
   lastAddedCards: [],
   lastDrawnCards: [],
+  lastDiscardedCards: [],
   round: 0,
   turn: 0,
   phase: Phase.PREGAME,
@@ -88,7 +89,7 @@ export class GameAggregate {
     while (changed) {
       changed = false;
       for (const [triggerId, trigger] of Object.entries(this.gameState.triggerPile)) {
-        if (trigger.effectDef.trigger === Trigger.ON_PLAY) {
+        if (trigger.effectDef.trigger !== Trigger.ON_DISCOVER || trigger.effectDef.optional) {
           continue;
         }
         const sourceInstance = this.gameState.instances[trigger.sourceInstanceId];
@@ -318,7 +319,6 @@ export class GameAggregate {
       action,
       triggerId,
     );
-
     this.currentCardAction.resolveAction();
 
     if (this.currentCardAction.getPendingChoices().length > 0) {

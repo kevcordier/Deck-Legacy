@@ -2,8 +2,7 @@ import { GameContext } from '@contexts/GameContext';
 import deckData from '@data/deck.json';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import {
-  canAffordCardCost,
-  canAffordResources,
+  canAffordCost,
   cardIsBlocked,
   getActiveState,
   getEffectiveProductions,
@@ -219,7 +218,11 @@ export function GameProvider({
     const inst = gs.instances[instanceId];
     if (!inst || cardIsBlocked(instanceId, gs)) return;
     const cs = getActiveState(inst, defs);
-    const action = cs.actions?.find(ce => ce.id === actionId);
+    const triggerEntry = triggerId ? gs.triggerPile[triggerId] : undefined;
+    const isMatchingTriggerAction =
+      triggerEntry?.sourceInstanceId === instanceId && triggerEntry?.effectDef.id === actionId;
+    const triggerAction = isMatchingTriggerAction ? triggerEntry?.effectDef : undefined;
+    const action = triggerAction ?? cs.actions?.find(ce => ce.id === actionId);
     if (!action) return;
 
     const newState = aggRef.current.cardAction(action, instanceId, triggerId);
@@ -247,8 +250,7 @@ export function GameProvider({
       instanceId,
     );
 
-    if (!canAffordResources(gs.resources, effectiveUpgradeCost)) return;
-    if (!canAffordCardCost(effectiveUpgradeCost, instanceId, gs, defs, stickerDefs)) return;
+    if (!canAffordCost(effectiveUpgradeCost, instanceId, gs, defs, stickerDefs)) return;
 
     const [resolvedCost, costPendingChoices] = resolveCost(
       effectiveUpgradeCost,
@@ -356,7 +358,13 @@ export function GameProvider({
 
       const currentState = aggRef.current.getGameState();
       if (
-        !canAffordResources(currentState.resources, { resources: [mergedResolvedCost.resources] })
+        !canAffordCost(
+          { resources: [mergedResolvedCost.resources] },
+          pendingUpgrade.instanceId,
+          currentState,
+          defs,
+          stickerDefs,
+        )
       ) {
         setPendingUpgrade(null);
         setPendingChoices(null);
@@ -439,8 +447,7 @@ export function GameProvider({
                 {
                   id: 1,
                   type: ActionEffectType.PLAY_CARD,
-                  cards: { ids: instanceIds },
-                  pickNumber: instanceIds.length,
+                  cards: { ids: instanceIds, pickNumber: instanceIds.length },
                 },
               ],
             },
@@ -458,8 +465,7 @@ export function GameProvider({
                 {
                   id: 1,
                   type: ActionEffectType.DISCARD_CARD,
-                  cards: { ids: instanceIds },
-                  pickNumber: instanceIds.length,
+                  cards: { ids: instanceIds, pickNumber: instanceIds.length },
                 },
               ],
             },
@@ -477,8 +483,7 @@ export function GameProvider({
                 {
                   id: 1,
                   type: ActionEffectType.DESTROY_CARD,
-                  cards: { ids: instanceIds },
-                  pickNumber: instanceIds.length,
+                  cards: { ids: instanceIds, pickNumber: instanceIds.length },
                 },
               ],
             },
@@ -496,8 +501,7 @@ export function GameProvider({
                 {
                   id: 1,
                   type: ActionEffectType.DISCOVER_CARD,
-                  cards: { ids: instanceIds },
-                  pickNumber: instanceIds.length,
+                  cards: { ids: instanceIds, pickNumber: instanceIds.length },
                 },
               ],
             },
@@ -519,7 +523,7 @@ export function GameProvider({
                   id: 1,
                   type: ActionEffectType.ADD_STICKER,
                   cards: { ids: [instanceId] },
-                  stickerIds: [stickerId],
+                  stickers: { ids: [stickerId] },
                 },
               ],
             },

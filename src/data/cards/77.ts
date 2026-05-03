@@ -11,6 +11,8 @@ export const unknown: CardDef = {
       name: '___',
       chooseName: true,
       tags: [CardTag.PERSON],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/dcb20f36-d9ef-4deb-8cb2-6691a24ae20d/450x%3Cauto%3E_so',
       productions: [{ weapon: 1, goods: 1 }],
       actions: [
         {
@@ -41,11 +43,10 @@ export const unknown: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickerIds: [5, 10],
+                stickers: { ids: [5, 10] },
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                pickNumber: 1,
               },
             ],
           },
@@ -55,11 +56,10 @@ export const unknown: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickerIds: [6, 10],
+                stickers: { ids: [6, 10] },
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                pickNumber: 1,
               },
             ],
           },
@@ -71,6 +71,8 @@ export const unknown: CardDef = {
       name: '___',
       chooseName: true,
       tags: [CardTag.PERSON],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/dfb385d0-bc0e-4ae5-3b5f-27abfe0e6d00/450x%3Cauto%3E_so',
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
         {
@@ -93,33 +95,31 @@ export const unknown: CardDef = {
         vertical: true,
         steps: [
           {
-            id: 1,
+            id: 4,
           },
           {
-            id: 2,
+            id: 5,
             effects: [
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickerIds: [1, 2, 3, 4, 5, 6],
+                stickers: { ids: [1, 2, 3, 4, 5, 6] },
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                pickNumber: 1,
               },
             ],
           },
           {
-            id: 3,
+            id: 6,
             effects: [
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickerIds: [1, 2, 3, 4, 5, 6],
+                stickers: { ids: [1, 2, 3, 4, 5, 6] },
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                pickNumber: 1,
               },
             ],
           },

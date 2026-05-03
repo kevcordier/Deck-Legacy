@@ -43,7 +43,8 @@
   "sections": {
     "permanents": "Permanents",
     "tableau": "Tableau",
-    "events": "Events"
+    "events": "Events",
+    "goals": "Goals"
   },
   "cardCount": "{{count}} card",
   "cardCount_other": "{{count}} cards",
@@ -68,6 +69,7 @@
     "stayInPlay": "Stays in play",
     "increaseGlory": "Glory bonus",
     "adjustProduction": "Adjusted production",
+    "resourceEquivalence": "Wood and goods are interchangeable",
     "state": "State {{id}}",
     "cost": {
       "discard": "Discard {{count}} {{type}}",

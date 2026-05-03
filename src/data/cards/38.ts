@@ -19,8 +19,8 @@ export const stop5: CardDef = {
               type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [48, 49, 50, 51],
+                pickNumber: 2,
               },
-              pickNumber: 2,
             },
             {
               id: 2,
@@ -28,8 +28,8 @@ export const stop5: CardDef = {
               cards: {
                 ids: [48, 49, 50, 51],
                 scope: [TargetScope.DISCOVERY],
+                pickNumber: 2,
               },
-              pickNumber: 2,
             },
           ],
         },

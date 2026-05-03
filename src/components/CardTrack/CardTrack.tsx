@@ -18,11 +18,13 @@ export function CardTrackContent({
   instance,
   track,
   step,
+  isValidated,
 }: {
   t: TFunction;
   instance: CardInstance;
   track: TrackDef;
   step: StepDef;
+  isValidated: boolean;
 }): React.ReactNode[] {
   const contents: React.ReactNode[] = [];
   const actions = step.effects ?? [];
@@ -65,19 +67,19 @@ export function CardTrackContent({
       return <Glory key={action.id} glory={action.accumulated} size="xs" />;
     }
 
-    if (action.accumulated) {
+    if (step.icon === '*') {
       return (
-        <span className="font-display font-bold text-xs" key={action.id}>
-          {action.accumulated}
+        <span className="font-display font-bold text-3xl" key={action.id}>
+          *
         </span>
       );
     }
 
-    return (
-      <span className="font-display font-bold text-3xl" key={action.id}>
-        *
-      </span>
-    );
+    if (isValidated) {
+      return <span>✓</span>;
+    }
+
+    return null;
   };
 
   if (track.inverse) {
@@ -105,7 +107,7 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
         const isValidated = validatedSteps.includes(step.id);
 
         // Determine step button content
-        const contents = CardTrackContent({ t, instance, track, step });
+        const contents = CardTrackContent({ t, instance, track, step, isValidated });
         let cost: React.ReactNode[] = [];
 
         if (step.cost?.resources) {
@@ -122,6 +124,10 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
         }
         if (step.cost?.accumulated) {
           cost.push(step.cost.accumulated.toString());
+        }
+
+        if (track.inverse && isValidated) {
+          cost = [<span key="validated">✓</span>];
         }
 
         return (

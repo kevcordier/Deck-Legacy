@@ -53,6 +53,7 @@ export function CardRow({ cardIds }: CardRowProps) {
     if (type === PassiveType.BLOCK) return t('card.blocked');
     if (type === PassiveType.STAY_IN_PLAY) return t('card.stayInPlay');
     if (type === PassiveType.ADJUST_GLORY) return t('card.increaseGlory');
+    if (type === PassiveType.RESOURCE_EQUIVALENCE) return t('card.resourceEquivalence');
     return t('card.adjustProduction');
   };
 

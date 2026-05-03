@@ -55,7 +55,7 @@ export const exportation: CardDef = {
         },
       ],
       track: {
-        inOrder: true,
+        inOrder: false,
         vertical: true,
         inverse: true,
         steps: [
@@ -68,7 +68,7 @@ export const exportation: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickerIds: [1, 2, 3],
+                stickers: { ids: [1, 2, 3] },
                 cards: {
                   tags: [CardTag.LAND],
                 },
@@ -84,7 +84,7 @@ export const exportation: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickerIds: [7],
+                stickers: { ids: [7] },
                 cards: {
                   tags: [CardTag.PERSON],
                 },
@@ -115,7 +115,7 @@ export const exportation: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickerIds: [4, 5, 6],
+                stickers: { ids: [4, 5, 6] },
                 cards: {
                   tags: [CardTag.BUILDING],
                 },
@@ -131,7 +131,7 @@ export const exportation: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickerIds: [2, 3, 4],
+                stickers: { ids: [2, 3, 4] },
                 cards: {
                   scope: [TargetScope.FRIENDLY],
                 },
@@ -147,7 +147,7 @@ export const exportation: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickerIds: [10],
+                stickers: { ids: [10] },
               },
             ],
           },
@@ -236,17 +236,10 @@ export const exportation: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickerIds: [8],
+                stickers: { ids: [8] },
                 cards: {
                   tags: [CardTag.LAND],
-                },
-              },
-              {
-                id: 1,
-                type: ActionEffectType.ADD_STICKER,
-                stickerIds: [8],
-                cards: {
-                  tags: [CardTag.LAND],
+                  pickNumber: 2,
                 },
               },
             ],
@@ -260,7 +253,7 @@ export const exportation: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickerIds: [10],
+                stickers: { ids: [10] },
                 cards: {
                   tags: [CardTag.PERSON],
                 },
@@ -291,7 +284,7 @@ export const exportation: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickerIds: [10],
+                stickers: { ids: [10] },
                 cards: {
                   tags: [CardTag.BUILDING],
                 },
