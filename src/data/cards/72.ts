@@ -1,14 +1,14 @@
 import { ActionEffectType, CardTag, TargetScope } from '@engine/domain/enums';
-import type { CardDef } from '@engine/domain/types';
+import type { CardDef, StepDef } from '@engine/domain/types';
 
-const makeStep = (id: number, persons: number, cumulated: number) => ({
+const makeStep = (id: number, persons: number, cumulated: number): StepDef => ({
   id,
   icon: 'glory',
   cost: {
     discard: [
       {
         tags: [CardTag.PERSON],
-        number: persons,
+        pickNumber: persons,
       },
     ],
   },

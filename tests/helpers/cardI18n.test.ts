@@ -1,11 +1,9 @@
 import {
   ICON_PASSTHROUGH,
-  tCardActionDescription,
   tCardActionLabel,
+  tCardDescription,
   tCardName,
-  tCardPassiveDescription,
   tCardPassiveLabel,
-  tCardStateDescription,
   tCardTag,
 } from '@helpers/cardI18n';
 import type { TFunction } from 'i18next';
@@ -82,63 +80,23 @@ describe('tCardPassiveLabel', () => {
   });
 });
 
-// — tCardActionDescription —
+// — tCardDescription —
 
-describe('tCardActionDescription', () => {
+describe('tCardDescription', () => {
   it('builds the correct key and returns the description', () => {
-    const t = makeT({ 'descriptions.7_1_a2': 'Gain 2 gold.' });
-    expect(tCardActionDescription(t, 7, 1, 2)).toBe('Gain 2 gold.');
+    const t = makeT({ 'labels.7_1_d2': 'Gain 2 gold.' });
+    expect(tCardDescription(t, 7, 1, 2)).toBe('Gain 2 gold.');
   });
 
   it('returns fallback when key is missing', () => {
     const t = makeT();
-    expect(tCardActionDescription(t, 0, 0, 0)).toBe('descriptions.0_0_a0');
+    expect(tCardDescription(t, 0, 0, 0)).toBe('labels.0_0_d0');
   });
 
   it('does not pass ICON_PASSTHROUGH to t', () => {
     const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
-    tCardActionDescription(t, 1, 0, 0);
-    expect(t).toHaveBeenCalledWith('descriptions.1_0_a0', { ns: 'cards' });
-  });
-});
-
-// — tCardStateDescription —
-
-describe('tCardStateDescription', () => {
-  it('builds key without action/passive suffix', () => {
-    const t = makeT({ 'descriptions.3_0': 'State desc.' });
-    expect(tCardStateDescription(t, 3, 0)).toBe('State desc.');
-  });
-
-  it('returns fallback when key is missing', () => {
-    const t = makeT();
-    expect(tCardStateDescription(t, 0, 0)).toBe('descriptions.0_0');
-  });
-
-  it('passes ns: cards to t', () => {
-    const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
-    tCardStateDescription(t, 2, 1);
-    expect(t).toHaveBeenCalledWith('descriptions.2_1', { ns: 'cards' });
-  });
-});
-
-// — tCardPassiveDescription —
-
-describe('tCardPassiveDescription', () => {
-  it('builds key with passive suffix', () => {
-    const t = makeT({ 'descriptions.5_2_p0': 'Passive desc.' });
-    expect(tCardPassiveDescription(t, 5, 2, 0)).toBe('Passive desc.');
-  });
-
-  it('returns fallback when key is missing', () => {
-    const t = makeT();
-    expect(tCardPassiveDescription(t, 0, 0, 0)).toBe('descriptions.0_0_p0');
-  });
-
-  it('does not pass ICON_PASSTHROUGH to t', () => {
-    const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
-    tCardPassiveDescription(t, 3, 1, 2);
-    expect(t).toHaveBeenCalledWith('descriptions.3_1_p2', { ns: 'cards' });
+    tCardDescription(t, 1, 0, 0);
+    expect(t).toHaveBeenCalledWith('labels.1_0_d0', { ns: 'cards' });
   });
 });
 

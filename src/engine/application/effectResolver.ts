@@ -1,6 +1,7 @@
 import {
   canAffordCost,
   getActiveState,
+  getEffectiveProductions,
   getTotalResourceProduction,
 } from '@engine/application/cardHelpers';
 import { cardSelector } from '@engine/application/cardSelector';
@@ -238,7 +239,37 @@ function resolveResourceTarget(
       resolverAction.resources = {};
     } else if (choices.length === 1) {
       const state = getActiveState(gameState.instances[choices[0]], defs);
-      resolverAction.resources = state.productions?.[0] ?? {};
+      if (state.productions && state.productions.length > 1) {
+        pendingChoices.push({
+          id: `${instanceId}-${actionId}`,
+          kind: actionType,
+          type: PendingChoiceType.CHOOSE_RESOURCE,
+          sourceInstanceId: instanceId,
+          choices: state.productions.map(p =>
+            getEffectiveProductions(
+              p,
+              gameState,
+              defs,
+              gameState.instances[choices[0]],
+              stickerDefs,
+              {},
+            ),
+          ),
+          pickCount: resources.pickNumber ?? 1,
+          pickMin: resources.pickMin ?? resources.pickNumber ?? 1,
+          pickMax: resources.pickMax ?? resources.pickNumber ?? 1,
+          isMandatory,
+        });
+      } else {
+        resolverAction.resources = getEffectiveProductions(
+          state.productions?.[0] ?? {},
+          gameState,
+          defs,
+          gameState.instances[choices[0]],
+          stickerDefs,
+          {},
+        );
+      }
     } else {
       pendingChoices.push({
         id: `${instanceId}-${actionId}`,
@@ -315,6 +346,7 @@ function extractResources(raw: NonNullable<ActionEffect['resources']>): Resource
 }
 
 function applyActionMetadata(resolverAction: ResolvedActionEffect, action: ActionEffect): void {
+  if (action.payingCost !== undefined) resolverAction.payingCost = action.payingCost;
   if (action.accumulated) resolverAction.accumulated = action.accumulated;
   if (action.position !== undefined) resolverAction.position = action.position;
   if (action.type === ActionEffectType.SHUFFLE_DECK && action.deck) {

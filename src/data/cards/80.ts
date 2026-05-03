@@ -1,7 +1,7 @@
 import { ActionEffectType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
-import type { CardDef } from '@engine/domain/types';
+import type { CardDef, StepDef } from '@engine/domain/types';
 
-const makeStep = (id: number) => ({
+const makeStep = (id: number): StepDef => ({
   id,
   effects: [
     {
@@ -93,22 +93,24 @@ export const astronomer: CardDef = {
               effects: [
                 {
                   id: 1,
-                  type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
+                  type: ActionEffectType.PLACE_CARD_IN_PILE,
                   cards: {
                     scope: [TargetScope.BOARD],
                     pickMin: 0,
                     pickMax: 3,
                   },
+                  deck: 'draw',
                   position: 'top',
                 },
                 {
                   id: 2,
-                  type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
+                  type: ActionEffectType.PLACE_CARD_IN_PILE,
                   cards: {
                     scope: [TargetScope.BOARD],
                     pickMin: 0,
                     pickMax: 3,
                   },
+                  deck: 'draw',
                   position: 'bottom',
                 },
               ],

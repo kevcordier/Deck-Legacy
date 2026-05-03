@@ -109,6 +109,7 @@
     "chooseSticker": "Choose a sticker",
     "choices": "Choose {{total}}",
     "choices-between": "Choose between {{min}} and {{max}}",
+    "cancel": "Cancel",
     "confirm": "Confirm ({{selected}})"
   },
   "triggerPile": {

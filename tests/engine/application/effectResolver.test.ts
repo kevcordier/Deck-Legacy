@@ -641,8 +641,9 @@ describe('resolveActionEffect – position', () => {
     const gs = makeState({ board: [2], instances: { 2: inst } });
     const effect = {
       id: 1,
-      type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
+      type: ActionEffectType.PLACE_CARD_IN_PILE,
       cards: { scope: [TargetScope.BOARD] },
+      deck: 'draw' as const,
       position: 'top' as const,
     };
     const [resolved] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);

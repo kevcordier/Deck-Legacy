@@ -30,13 +30,19 @@ export function GameBoard() {
     resolvePayCost,
     skipTrigger,
     skipChoice,
+    globalError,
+    dismissGlobalError,
+    parameters,
   } = useGame();
   const { drawPile, discardPile, destroyedPile, instances } = gameState;
 
   const [openSheet, setOpenSheet] = useState<'draw' | 'discard' | 'destroyed' | null>(null);
   const [destroyedModalOpen, setDestroyedModalOpen] = useState(false);
 
-  const nextCard = instances[drawPile[0]];
+  const nextCards = drawPile
+    .slice(0, parameters.displayedDrawDeckCards)
+    .map(id => instances[id])
+    .filter(Boolean);
 
   const drawDeck = useMemo(() => {
     return [...drawPile]
@@ -68,7 +74,7 @@ export function GameBoard() {
             icon={<DrawCardIcon className="size-4" />}
             emptyText={t('deckViewer.empty')}
             deck={drawDeck}
-            displayedCard={nextCard}
+            displayedCards={nextCards}
           />
         </div>
 
@@ -79,7 +85,7 @@ export function GameBoard() {
             title={t('deckViewer.discard')}
             icon={<DiscardIcon className="size-4" />}
             deck={discardDeck}
-            displayedCard={discardDeck[discardDeck.length - 1]}
+            displayedCards={discardDeck.length > 0 ? [discardDeck[discardDeck.length - 1]] : []}
             footer={
               destroyedPile.length > 0 ? (
                 <Button
@@ -181,6 +187,15 @@ export function GameBoard() {
         />
       )}
 
+      {globalError && (
+        <div className="fixed right-4 bottom-4 z-50 flex max-w-sm items-start gap-3 rounded-xl border border-red-900/30 bg-red-50 px-4 py-3 text-sm text-red-900 shadow-lg">
+          <span className="flex-1">{globalError}</span>
+          <Button onClick={dismissGlobalError} variant="text" color="danger" size="sm">
+            ✕
+          </Button>
+        </div>
+      )}
+
       {/* Destroyed cards modal (desktop) */}
       {destroyedModalOpen && (
         <Modal
@@ -232,11 +247,12 @@ export function GameBoard() {
                 destroyed: destroyedDeck,
               }[openSheet]
             }
-            displayedCard={
+            displayedCards={
               {
-                draw: nextCard,
-                discard: discardDeck[discardDeck.length - 1],
-                destroyed: destroyedDeck[destroyedDeck.length - 1],
+                draw: nextCards,
+                discard: discardDeck.length > 0 ? [discardDeck[discardDeck.length - 1]] : [],
+                destroyed:
+                  destroyedDeck.length > 0 ? [destroyedDeck[destroyedDeck.length - 1]] : [],
               }[openSheet]
             }
           />

@@ -21,6 +21,7 @@ import { Options, PassiveType } from '@engine/domain/enums';
 import type { CardInstance } from '@engine/domain/types';
 import {
   tCardActionLabel,
+  tCardDescription,
   tCardGloryLabel,
   tCardName,
   tCardPassiveLabel,
@@ -63,8 +64,8 @@ export function GameCard({
   const isPermanent = cs?.permanent;
   const isParchment = def?.parchmentCard ?? false;
   const productions = cs.productions?.map(base =>
-    getEffectiveProductions(base, cs, gameState, defs, instance, stickerDefs),
-  ) ?? [getEffectiveProductions({}, cs, gameState, defs, instance, stickerDefs)];
+    getEffectiveProductions(base, gameState, defs, instance, stickerDefs),
+  ) ?? [getEffectiveProductions({}, gameState, defs, instance, stickerDefs)];
   const hasProductions = productions?.some(prod => Object.keys(prod).length > 0) ?? false;
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
@@ -172,6 +173,11 @@ export function GameCard({
         </div>
 
         <div className={`relative z-10 flex flex-col items-center gap-1 p-1 @3xs:p-3`}>
+          {cs.description && (
+            <span className={`text-md italic text-base-ink/90 ${cardActionsClass}`}>
+              {tCardDescription(t, instance.cardId, cs.id)}
+            </span>
+          )}
           {(cs.glory?.condition ?? cs.glory?.valuePerElement) && (
             <span className={cardActionsClass}>
               <PassifIcon className="size-3 @3xs:size-6" /> {tCardGloryLabel(t, def.id, cs.id)}

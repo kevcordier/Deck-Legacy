@@ -20,7 +20,7 @@ const meta: Meta<typeof DeckViewer> = {
         .filter(inst => deck.includes(inst.id));
       return (
         <GameProvider initialState={{ ...EMPTY_STATE }}>
-          <Story args={{ ...parameters, displayedCard: instances[0], deck: instances }} />
+          <Story args={{ ...parameters, displayedCards: [instances[0]], deck: instances }} />
         </GameProvider>
       );
     },

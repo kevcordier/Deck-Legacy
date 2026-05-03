@@ -10,7 +10,7 @@ export const missionary: CardDef = {
       name: 'Missionary',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/73000c23-90cb-4924-b674-a885720c9cba/anim=false,width=450,optimized=true/03BKNQ3THTSJ7S8AXBBE9A74H0.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/9f50fdae-1dbf-49b6-0639-b7cc3edccd00/450x%3Cauto%3E_so',
       actions: [
         {
           id: '88-1-1',

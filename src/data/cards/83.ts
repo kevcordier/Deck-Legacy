@@ -1,19 +1,19 @@
 import { ActionEffectType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
-import type { CardDef } from '@engine/domain/types';
+import type { CardAction, CardDef, StepDef } from '@engine/domain/types';
 
-const makeGoldStep = (id: number) => ({
+const makeGoldStep = (id: number): StepDef => ({
   id,
   effects: [{ id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { [ResourceType.GOLD]: 1 } }],
 });
 
-const makeGoodsStep = (id: number) => ({
+const makeGoodsStep = (id: number): StepDef => ({
   id,
   effects: [
     { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { [ResourceType.GOODS]: 1 } },
   ],
 });
 
-const makeGoldUpgradeStep = (id: number, upgradeTo: number) => ({
+const makeGoldUpgradeStep = (id: number, upgradeTo: number): StepDef => ({
   id,
   effects: [
     { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { [ResourceType.GOLD]: 1 } },
@@ -26,7 +26,7 @@ const makeGoldUpgradeStep = (id: number, upgradeTo: number) => ({
   ],
 });
 
-const makeGoodsUpgradeStep = (id: number, upgradeTo: number) => ({
+const makeGoodsUpgradeStep = (id: number, upgradeTo: number): StepDef => ({
   id,
   effects: [
     { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { [ResourceType.GOODS]: 1 } },
@@ -39,7 +39,7 @@ const makeGoodsUpgradeStep = (id: number, upgradeTo: number) => ({
   ],
 });
 
-const makeUpgradeStep = (id: number, upgradeTo: number) => ({
+const makeUpgradeStep = (id: number, upgradeTo: number): StepDef => ({
   id,
   effects: [
     {
@@ -51,7 +51,7 @@ const makeUpgradeStep = (id: number, upgradeTo: number) => ({
   ],
 });
 
-const makeDiscardToDeckStep = (id: number) => ({
+const makeDiscardToDeckStep = (id: number): StepDef => ({
   id,
   effects: [
     {
@@ -61,17 +61,18 @@ const makeDiscardToDeckStep = (id: number) => ({
     },
     {
       id: 1,
-      type: ActionEffectType.PLACE_CARD_IN_DRAW_PILE,
+      type: ActionEffectType.PLACE_CARD_IN_PILE,
       cards: {
         scope: [TargetScope.TOP_OF_DISCARD],
         pickNumber: 15,
       },
+      deck: 'draw' as const,
       position: 'bottom' as const,
     },
   ],
 });
 
-const makeSeafaringTrackAdvance = (actionId: string) => ({
+const makeSeafaringTrackAdvance = (actionId: string): CardAction => ({
   id: actionId,
   endsTurn: true,
   actionEffects: [

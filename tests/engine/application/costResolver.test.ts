@@ -21,7 +21,7 @@ describe('resolveCost – resources', () => {
     const [resolved, pending] = resolveCost(
       { resources: [{ gold: 2 }] },
       1,
-      makeState(),
+      makeState({ resources: { gold: 2 } }),
       defs,
       stickerDefs,
     );
@@ -33,7 +33,7 @@ describe('resolveCost – resources', () => {
     const [resolved, pending] = resolveCost(
       { resources: [{ gold: 1 }, { wood: 1 }] },
       5,
-      makeState(),
+      makeState({ resources: { gold: 1, wood: 1 } }),
       defs,
       stickerDefs,
     );
@@ -47,27 +47,33 @@ describe('resolveCost – resources', () => {
     const [, pending] = resolveCost(
       { resources: [{ gold: 1 }, { wood: 1 }] },
       5,
-      makeState(),
+      makeState({ resources: { gold: 1, wood: 1 } }),
       defs,
       stickerDefs,
       true,
     );
     expect(pending[0].isMandatory).toBe(true);
   });
+
+  it('throws when no resource option is affordable', () => {
+    expect(() =>
+      resolveCost(
+        { resources: [{ gold: 2 }] },
+        1,
+        makeState({ resources: { gold: 1 } }),
+        defs,
+        stickerDefs,
+      ),
+    ).toThrow('Not enough resources to pay this cost.');
+  });
 });
 
 describe('resolveCost – discard', () => {
   it('resolves empty discardedCardIds when no candidates on board', () => {
     const gs = makeState({ board: [] });
-    const [resolved, pending] = resolveCost(
-      { discard: [{ scope: [TargetScope.BOARD] }] },
-      1,
-      gs,
-      defs,
-      stickerDefs,
-    );
-    expect(resolved.discardedCardIds).toEqual([]);
-    expect(pending).toHaveLength(0);
+    expect(() =>
+      resolveCost({ discard: [{ scope: [TargetScope.BOARD] }] }, 1, gs, defs, stickerDefs),
+    ).toThrow('Not enough cards available to pay this discard cost.');
   });
 
   it('resolves discard directly when exactly one candidate matches', () => {
@@ -161,14 +167,9 @@ describe('resolveCost – discard', () => {
   it('only considers board cards for destroy candidates', () => {
     const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({ drawPile: [2], instances: { 2: inst } });
-    const [resolved] = resolveCost(
-      { destroy: { scope: [TargetScope.BOARD] } },
-      99,
-      gs,
-      defs,
-      stickerDefs,
-    );
-    expect(resolved.destroyedCardIds).toEqual([]);
+    expect(() =>
+      resolveCost({ destroy: { scope: [TargetScope.BOARD] } }, 99, gs, defs, stickerDefs),
+    ).toThrow('Not enough cards available to pay this destroy cost.');
   });
 
   it('auto-resolves destroy with one candidate and no explicit number', () => {

@@ -1,7 +1,7 @@
 import { ActionEffectType, CardTag, ResourceType, TargetScope } from '@engine/domain/enums';
-import type { CardDef } from '@engine/domain/types';
+import type { CardDef, StepDef } from '@engine/domain/types';
 
-const makeStep = (id: number) => ({
+const makeStep = (id: number): StepDef => ({
   id,
   effects: [
     {

@@ -1,4 +1,4 @@
-import { getActiveState } from '@engine/application/cardHelpers';
+import { getActiveState, getEffectiveProductions } from '@engine/application/cardHelpers';
 import { mergeResources } from '@engine/application/gameStateHelper';
 import type { PlayerChoiceStrategy } from '@engine/application/playerChoice/PlayerChoiceStrategy';
 import { ActionEffectType, PendingChoiceType } from '@engine/domain/enums';
@@ -22,6 +22,8 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
     choice: ResolvedActionEffect,
     resolvedAction: ResolvedActionEffect,
     pendingChoices: PendingChoice[],
+    gs: GameState,
+    instanceId: number,
   ): [ResolvedActionEffect, PendingChoice[]] {
     if (productions && productions.length > 0) {
       if (productions.length > 1) {
@@ -31,7 +33,16 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
           type: PendingChoiceType.CHOOSE_RESOURCE,
           sourceInstanceId: choice.sourceInstanceId,
           kind: choice.type,
-          choices: productions,
+          choices: productions.map(p =>
+            getEffectiveProductions(
+              p,
+              gs,
+              this.defs,
+              gs.instances[instanceId],
+              this.stickerDefs,
+              {},
+            ),
+          ),
           pickCount: 1,
           isMandatory: true,
         });
@@ -42,7 +53,17 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
       return [
         {
           ...resolvedAction,
-          resources: mergeResources(resolvedAction.resources ?? {}, productions[0]),
+          resources: mergeResources(
+            resolvedAction.resources ?? {},
+            getEffectiveProductions(
+              productions[0],
+              gs,
+              this.defs,
+              gs.instances[instanceId],
+              this.stickerDefs,
+              {},
+            ),
+          ),
         },
         pendingChoices.slice(1),
       ];
@@ -113,6 +134,8 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
         choice,
         resolvedAction,
         pendingChoices,
+        gs,
+        choice.instanceIds[0],
       );
     } else if (choice.type === ActionEffectType.BOOST_CARD) {
       return this.boostCardFromCardChoice(

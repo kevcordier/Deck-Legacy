@@ -76,25 +76,8 @@ export function tCardTrackAction(
   );
 }
 
-export function tCardActionDescription(
-  t: TFunction,
-  cardId = 0,
-  stateId = 0,
-  idx: string | number = '0',
-): React.ReactNode {
-  return renderTextWithIcons(
-    t(`descriptions.${cardId}_${stateId}_a${idx}`, {
-      ns: 'cards',
-    }),
-  );
-}
-
-export function tCardStateDescription(t: TFunction, cardId = 0, stateId = 0): string {
-  return t(`descriptions.${cardId}_${stateId}`, { ns: 'cards' });
-}
-
-export function tCardPassiveDescription(t: TFunction, cardId = 0, stateId = 0, idx = 0): string {
-  return t(`descriptions.${cardId}_${stateId}_p${idx}`, {
+export function tCardDescription(t: TFunction, cardId = 0, stateId = 0, idx = 0): string {
+  return t(`labels.${cardId}_${stateId}_d${idx}`, {
     ns: 'cards',
   });
 }

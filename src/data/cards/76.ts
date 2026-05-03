@@ -5,15 +5,15 @@ import {
   ResourceType,
   TargetScope,
 } from '@engine/domain/enums';
-import type { CardDef } from '@engine/domain/types';
+import type { CardDef, StepDef } from '@engine/domain/types';
 import { CardPassives } from '@engine/domain/types/effects';
 
-const makeWoodStep = (id: number, wood: number) => ({
+const makeWoodStep = (id: number, wood: number): StepDef => ({
   id,
   cost: { resources: [{ [ResourceType.WOOD]: wood }] },
 });
 
-const makeArkStep = (id: number) => ({
+const makeArkStep = (id: number): StepDef => ({
   id,
   effects: [
     {

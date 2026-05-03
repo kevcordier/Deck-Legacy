@@ -2,7 +2,6 @@ import { GameContext } from '@contexts/GameContext';
 import deckData from '@data/deck.json';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import {
-  canAffordCost,
   cardIsBlocked,
   getActiveState,
   getEffectiveProductions,
@@ -67,6 +66,8 @@ export function GameProvider({
     upgradeTo: number;
     resolvedCost: ResolvedCost;
   } | null>(null);
+  const [globalError, setGlobalError] = useState<string | null>(null);
+  const [parameters, setParameters] = useState(agg.getParameters());
 
   const getParchementDefFromTriggerPile = (
     state: GameState,
@@ -102,15 +103,36 @@ export function GameProvider({
     const choices = current?.getPendingChoices() ?? [];
     setGameState(aggRef.current.getGameState());
     setPendingChoices(choices.length > 0 ? choices : null);
+    setParameters(aggRef.current.getParameters());
     return choices.length > 0;
   };
 
+  const dismissGlobalError = () => {
+    setGlobalError(null);
+  };
+
+  const cancelPendingAction = () => {
+    aggRef.current.cancelCurrentCardAction();
+    setPendingUpgrade(null);
+    setPendingChoices(null);
+  };
+
+  const handleActionError = (error: unknown) => {
+    cancelPendingAction();
+    setGlobalError(error instanceof Error ? error.message : 'An unexpected error occurred.');
+  };
+
   const triggerAction = (instanceId: number, action: CardAction, triggerId?: string): GameState => {
-    const nextState = aggRef.current.cardAction(action, instanceId, triggerId);
-    if (syncAggregatePending()) {
+    try {
+      const nextState = aggRef.current.cardAction(action, instanceId, triggerId);
+      if (syncAggregatePending()) {
+        return gameState;
+      }
+      return nextState;
+    } catch (error) {
+      handleActionError(error);
       return gameState;
     }
-    return nextState;
   };
 
   const sync = (newState: GameState) => {
@@ -119,6 +141,7 @@ export function GameProvider({
     }
 
     setGameState(newState);
+    setParameters(aggRef.current.getParameters());
     saveGame(aggRef.current.getEvents());
 
     const triggers = newState.triggerPile;
@@ -179,6 +202,7 @@ export function GameProvider({
     deleteSave();
     aggRef.current = makeAggregate({ ...EMPTY_STATE }, defs, stickerDefs);
     setGameState(aggRef.current.getGameState());
+    setParameters(aggRef.current.getParameters());
   };
 
   // ── Card actions ──────────────────────────────────────────────────────────
@@ -204,7 +228,6 @@ export function GameProvider({
     const resourcesGained = getEffectiveProductions(
       defs[inst.cardId].states.find(s => s.id === inst.stateId)?.productions?.[chosenResource] ??
         {},
-      getActiveState(inst, defs),
       gs,
       defs,
       inst,
@@ -225,11 +248,15 @@ export function GameProvider({
     const action = triggerAction ?? cs.actions?.find(ce => ce.id === actionId);
     if (!action) return;
 
-    const newState = aggRef.current.cardAction(action, instanceId, triggerId);
-    if (syncAggregatePending()) {
-      return;
+    try {
+      const newState = aggRef.current.cardAction(action, instanceId, triggerId);
+      if (syncAggregatePending()) {
+        return;
+      }
+      sync(newState);
+    } catch (error) {
+      handleActionError(error);
     }
-    sync(newState);
   };
 
   const resolveUpgrade = (instanceId: number, chosenUpgradeTo?: number) => {
@@ -250,36 +277,38 @@ export function GameProvider({
       instanceId,
     );
 
-    if (!canAffordCost(effectiveUpgradeCost, instanceId, gs, defs, stickerDefs)) return;
-
-    const [resolvedCost, costPendingChoices] = resolveCost(
-      effectiveUpgradeCost,
-      instanceId,
-      gs,
-      defs,
-      stickerDefs,
-      true,
-    );
-
-    if (costPendingChoices.length > 0) {
-      setPendingUpgrade({
+    try {
+      const [resolvedCost, costPendingChoices] = resolveCost(
+        effectiveUpgradeCost,
         instanceId,
-        upgradeTo: upgrade.upgradeTo,
-        resolvedCost,
-      });
-      setPendingChoices(costPendingChoices);
-      return;
+        gs,
+        defs,
+        stickerDefs,
+        true,
+      );
+
+      if (costPendingChoices.length > 0) {
+        setPendingUpgrade({
+          instanceId,
+          upgradeTo: upgrade.upgradeTo,
+          resolvedCost,
+        });
+        setPendingChoices(costPendingChoices);
+        return;
+      }
+
+      sync(
+        aggRef.current.upgradeCard(
+          instanceId,
+          upgrade.upgradeTo,
+          resolvedCost.resources,
+          resolvedCost.discardedCardIds,
+          resolvedCost.destroyedCardIds,
+        ),
+      );
+    } catch (error) {
+      handleActionError(error);
     }
-
-    sync(
-      aggRef.current.upgradeCard(
-        instanceId,
-        upgrade.upgradeTo,
-        resolvedCost.resources,
-        resolvedCost.discardedCardIds,
-        resolvedCost.destroyedCardIds,
-      ),
-    );
   };
 
   // ── Turn flow ─────────────────────────────────────────────────────────────
@@ -296,11 +325,15 @@ export function GameProvider({
   // ── Choice resolution ─────────────────────────────────────────────────────
 
   const resolvePlayerChoice = (choice: ResolvedActionEffect, choiceType: PendingChoiceType) => {
-    const newState = aggRef.current.resolveCardActionChoice(choice, choiceType);
-    if (syncAggregatePending()) {
-      return;
+    try {
+      const newState = aggRef.current.resolveCardActionChoice(choice, choiceType);
+      if (syncAggregatePending()) {
+        return;
+      }
+      sync(newState);
+    } catch (error) {
+      handleActionError(error);
     }
-    sync(newState);
   };
 
   const dismissParchmentText = () => {
@@ -324,72 +357,57 @@ export function GameProvider({
     sync(aggRef.current.skipTrigger(uuid));
   };
 
-  const skipChoice = (uuid: string) => {
-    setPendingChoices(prev => {
-      if (!prev) return null;
-      const updated = prev.filter(choice => choice.id !== uuid);
-      return updated.length > 0 ? updated : null;
-    });
+  const skipChoice = () => {
+    cancelPendingAction();
   };
 
   // This function is called when the player has made a choice needed to pay an action's cost.
   const resolvePayCost = (resolved: ResolvedCost) => {
     if (!resolved) return;
 
-    if (pendingUpgrade) {
-      const mergedResolvedCost: ResolvedCost = {
-        resources: mergeResources(pendingUpgrade.resolvedCost.resources, resolved.resources),
-        discardedCardIds: [
-          ...pendingUpgrade.resolvedCost.discardedCardIds,
-          ...resolved.discardedCardIds,
-        ],
-        destroyedCardIds: [
-          ...pendingUpgrade.resolvedCost.destroyedCardIds,
-          ...resolved.destroyedCardIds,
-        ],
-      };
+    try {
+      if (pendingUpgrade) {
+        const mergedResolvedCost: ResolvedCost = {
+          resources: mergeResources(pendingUpgrade.resolvedCost.resources, resolved.resources),
+          discardedCardIds: [
+            ...pendingUpgrade.resolvedCost.discardedCardIds,
+            ...resolved.discardedCardIds,
+          ],
+          destroyedCardIds: [
+            ...pendingUpgrade.resolvedCost.destroyedCardIds,
+            ...resolved.destroyedCardIds,
+          ],
+        };
 
-      const remainingChoices = (pendingChoices ?? []).slice(1);
-      if (remainingChoices.length > 0) {
-        setPendingUpgrade({ ...pendingUpgrade, resolvedCost: mergedResolvedCost });
-        setPendingChoices(remainingChoices);
-        return;
-      }
+        const remainingChoices = (pendingChoices ?? []).slice(1);
+        if (remainingChoices.length > 0) {
+          setPendingUpgrade({ ...pendingUpgrade, resolvedCost: mergedResolvedCost });
+          setPendingChoices(remainingChoices);
+          return;
+        }
 
-      const currentState = aggRef.current.getGameState();
-      if (
-        !canAffordCost(
-          { resources: [mergedResolvedCost.resources] },
+        const newState = aggRef.current.upgradeCard(
           pendingUpgrade.instanceId,
-          currentState,
-          defs,
-          stickerDefs,
-        )
-      ) {
+          pendingUpgrade.upgradeTo,
+          mergedResolvedCost.resources,
+          mergedResolvedCost.discardedCardIds,
+          mergedResolvedCost.destroyedCardIds,
+        );
+
         setPendingUpgrade(null);
         setPendingChoices(null);
+        sync(newState);
         return;
       }
 
-      const newState = aggRef.current.upgradeCard(
-        pendingUpgrade.instanceId,
-        pendingUpgrade.upgradeTo,
-        mergedResolvedCost.resources,
-        mergedResolvedCost.discardedCardIds,
-        mergedResolvedCost.destroyedCardIds,
-      );
-
-      setPendingUpgrade(null);
-      setPendingChoices(null);
+      const newState = aggRef.current.resolveCardActionCost(resolved);
+      if (syncAggregatePending()) {
+        return;
+      }
       sync(newState);
-      return;
+    } catch (error) {
+      handleActionError(error);
     }
-
-    const newState = aggRef.current.resolveCardActionCost(resolved);
-    if (syncAggregatePending()) {
-      return;
-    }
-    sync(newState);
   };
 
   // ── Rewind  ───────────────────────────────────────────────────────────
@@ -562,6 +580,8 @@ export function GameProvider({
         resolvePayCost,
         skipTrigger,
         skipChoice,
+        globalError,
+        dismissGlobalError,
         parchmentTextPending,
         dismissParchmentText,
         canRewind,
@@ -570,6 +590,7 @@ export function GameProvider({
         displayNewCards,
         setDisplayNewCards,
         getEvents: () => aggRef.current.getEvents(),
+        parameters,
       }}
     >
       {children}

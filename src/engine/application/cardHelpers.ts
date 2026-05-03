@@ -125,7 +125,7 @@ export function getTotalResourceProduction(
     const prodKeyCount = ((state.productions as Resources[]) || [{}])
       .map(p => {
         return (
-          getEffectiveProductions(p, state, gameState, defs, gameState.instances[id], stickerDefs, {
+          getEffectiveProductions(p, gameState, defs, gameState.instances[id], stickerDefs, {
             includeBoardEffects: false,
             includePassives: false,
           })[resourceType] ?? 0
@@ -251,7 +251,6 @@ function calculePassiveProductionBonus(
 
 export function getEffectiveProductions(
   base: Resources,
-  activeState: CardState,
   gameState: GameState,
   defs: Record<number, CardDef>,
   instance: CardInstance,
@@ -261,6 +260,7 @@ export function getEffectiveProductions(
     includePassives = true,
   }: { includeBoardEffects?: boolean; includePassives?: boolean } = {},
 ): Resources {
+  const activeState = getActiveState(instance, defs);
   const stickerBonus = (instance.stickers[instance.stateId] ?? []).reduce<Resources>(
     (acc, stickerId) => {
       const sticker = stickerDefs[stickerId];

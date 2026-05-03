@@ -38,7 +38,7 @@ interface PendingChoiceModalProps {
     triggerId: string,
   ) => void;
   readonly onSkipTrigger: (uuid: string) => void;
-  readonly onSkipChoice: (uuid: string) => void;
+  readonly onSkipChoice: () => void;
 }
 
 function getSelectedCount(choice: PendingChoice | undefined, selectedIds: number[]): number {
@@ -206,12 +206,17 @@ export function PendingChoiceModal({
     }));
   }
 
-  const onClose = choice?.isMandatory === false ? () => onSkipChoice(choice.id) : undefined;
+  const onClose = choice?.isMandatory === false ? () => onSkipChoice() : undefined;
   return (
     <Modal title={title} onClose={onClose} subtitle={subtitle}>
       {content}
-      {isMultiSelect && choice && (
+      {choice && (isMultiSelect || choice.isMandatory === false) && (
         <div className="flex justify-end items-center gap-2 pt-2">
+          {choice.isMandatory === false && (
+            <Button onClick={() => onSkipChoice()} variant="outlined" color="ink">
+              {t('pendingChoice.cancel')}
+            </Button>
+          )}
           <span>
             {minSelect === maxSelect
               ? t('pendingChoice.choices', {
@@ -222,15 +227,17 @@ export function PendingChoiceModal({
                   max: maxSelect,
                 })}
           </span>
-          <Button
-            onClick={handleMultiConfirm}
-            disabled={selectedCount < minSelect || selectedIds.length > maxSelect}
-            color="base-primary"
-          >
-            {t('pendingChoice.confirm', {
-              selected: selectedCount,
-            })}
-          </Button>
+          {isMultiSelect && (
+            <Button
+              onClick={handleMultiConfirm}
+              disabled={selectedCount < minSelect || selectedIds.length > maxSelect}
+              color="base-primary"
+            >
+              {t('pendingChoice.confirm', {
+                selected: selectedCount,
+              })}
+            </Button>
+          )}
         </div>
       )}
     </Modal>

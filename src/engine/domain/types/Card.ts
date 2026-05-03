@@ -6,7 +6,7 @@ import type {
   TargetScope,
   Trigger,
 } from '@engine/domain/enums';
-import type { Cost, Resources } from '@engine/domain/types';
+import type { Cost, GameParameters, Resources } from '@engine/domain/types';
 
 export type Condition =
   | { type: 'cardCount'; cards: CardSelector; min?: number; max?: number }
@@ -57,6 +57,7 @@ export type CardState = {
   upgrade?: UpgradeDef[];
   track?: TrackDef;
   illustration?: string;
+  description?: boolean; // if true, the card has a description text that needs to be displayed in the UI
 };
 
 export type UpgradeDef = {
@@ -85,11 +86,12 @@ export type ValuePerElement = {
 };
 
 export type RemovedResourceScope = 'production' | 'actionCost' | 'upgradeCost';
-export type DeckTarget = 'draw' | 'discard';
+export type DeckTarget = 'draw' | 'discard' | 'discovery';
 
 export type ActionEffect = {
   id: number;
   type: ActionEffectType;
+  payingCost?: boolean;
   deck?: DeckTarget;
   cards?: CardSelector;
   resources?: ResourceSelector;
@@ -123,7 +125,6 @@ export type Passive = {
     gold?: number;
     wood?: number;
     stone?: number;
-    food?: number;
     iron?: number;
     weapon?: number;
     goods?: number;
@@ -134,6 +135,7 @@ export type Passive = {
   valuePerElement?: ValuePerElement;
   condition?: Condition;
   options?: unknown[];
+  parameters?: Partial<GameParameters>;
 };
 
 export type Having = {
@@ -158,7 +160,6 @@ export type ResourceSelector = {
   gold?: number;
   wood?: number;
   stone?: number;
-  food?: number;
   iron?: number;
   weapon?: number;
   goods?: number;
@@ -166,7 +167,6 @@ export type ResourceSelector = {
     gold?: number;
     wood?: number;
     stone?: number;
-    food?: number;
     iron?: number;
     weapon?: number;
     goods?: number;
@@ -188,6 +188,7 @@ export type ResolvedActionEffect = {
   id: string;
   type: ActionEffectType;
   sourceInstanceId: number;
+  payingCost?: boolean;
   deck?: DeckTarget;
   instanceIds?: number[];
   effect?: Passive;

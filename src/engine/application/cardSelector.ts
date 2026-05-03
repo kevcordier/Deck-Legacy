@@ -88,18 +88,10 @@ function matchesProductions(
   return produces.some(r =>
     state.productions?.some(prod =>
       Object.keys(
-        getEffectiveProductions(
-          prod,
-          state,
-          gameState,
-          defs,
-          gameState.instances[id],
-          stickerDefs,
-          {
-            includeBoardEffects: false,
-            includePassives: false,
-          },
-        ),
+        getEffectiveProductions(prod, gameState, defs, gameState.instances[id], stickerDefs, {
+          includeBoardEffects: false,
+          includePassives: false,
+        }),
       ).includes(r),
     ),
   );

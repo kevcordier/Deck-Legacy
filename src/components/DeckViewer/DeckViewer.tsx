@@ -23,7 +23,7 @@ type DeckViewerProps = {
   readonly icon: ReactNode;
   readonly emptyText?: string;
   readonly deck: CardInstance[];
-  readonly displayedCard?: CardInstance;
+  readonly displayedCards?: CardInstance[];
   readonly isSheet?: boolean;
   readonly footer?: ReactNode;
 };
@@ -33,7 +33,7 @@ export function DeckViewer({
   icon,
   emptyText,
   deck,
-  displayedCard,
+  displayedCards,
   isSheet = false,
   footer,
 }: DeckViewerProps) {
@@ -86,9 +86,11 @@ export function DeckViewer({
       </div>
       {deck.length > 0 ? (
         <>
-          {displayedCard && (
+          {displayedCards && displayedCards.length > 0 && (
             <div className="@container flex min-w-xs flex-col items-center p-2 lg:min-w-0">
-              <GameCard instance={displayedCard} className="w-full" />
+              {displayedCards.map(displayedCard => (
+                <GameCard key={displayedCard.id} instance={displayedCard} className="w-full" />
+              ))}
             </div>
           )}
           {deck.length > 1 && (

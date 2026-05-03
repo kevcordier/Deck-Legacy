@@ -17,6 +17,7 @@ import type {
   CardProducedEvent,
   ChooseStateEvent,
   GameEvent,
+  GameParameters,
   GameStartedEvent,
   GameState,
   ResolvedActionEffect,
@@ -52,21 +53,17 @@ export const EMPTY_STATE: GameState = {
   phase: Phase.PREGAME,
 };
 
-function getAdvanceCardsToDraw(gameState: GameState): number {
-  const baseDrawCount = 2;
-  const bonusDrawCount = Object.values(gameState.boardEffects)
-    .flat()
-    .filter(passive => passive.type === PassiveType.ADJUST_ADVANCE_CARDS)
-    .reduce((total, passive) => total + (passive.amount ?? 0), 0);
-
-  return Math.max(0, baseDrawCount + bonusDrawCount);
-}
-
 export class GameAggregate {
   private events: GameEvent[];
   private gameState: GameState;
   private readonly gameEventContext: GameEventContext;
   private currentCardAction: CardActionAggregate | null = null;
+
+  private parameters: GameParameters = {
+    displayedDrawDeckCards: 1,
+    advanceCardDrawn: 2,
+    turnCardDrawn: 4,
+  };
 
   constructor(
     readonly initialState: GameState,
@@ -186,7 +183,10 @@ export class GameAggregate {
     }
 
     const turn = this.gameState.turn + 1;
-    const turnCards: number[] = this.gameState.drawPile.slice(0, 4);
+    const turnCards: number[] = this.gameState.drawPile.slice(
+      0,
+      this.getParameters().turnCardDrawn,
+    );
 
     const event: TurnStartedEvent = {
       id: crypto.randomUUID(),
@@ -232,6 +232,21 @@ export class GameAggregate {
     return this.gameState;
   }
 
+  public getParameters(): GameParameters {
+    return Object.values(this.gameState.boardEffects)
+      .flat()
+      .filter(
+        passive =>
+          passive.type === PassiveType.SET_GAME_PARAMETER && passive.parameters !== undefined,
+      )
+      .reduce(
+        (params, passive) => {
+          return Object.assign(params, passive.parameters);
+        },
+        { ...this.parameters },
+      );
+  }
+
   public advance(): GameState {
     if (this.gameState.drawPile.length === 0 || !canUseOptions(this.gameState, Options.ADVANCE)) {
       return this.gameState;
@@ -239,7 +254,7 @@ export class GameAggregate {
 
     const turnCards: number[] = this.gameState.drawPile.slice(
       0,
-      getAdvanceCardsToDraw(this.gameState),
+      this.getParameters().advanceCardDrawn,
     );
 
     const event: AdvanceEvent = {
@@ -408,5 +423,9 @@ export class GameAggregate {
 
   public getCurrentCardAction(): CardActionAggregate | null {
     return this.currentCardAction;
+  }
+
+  public cancelCurrentCardAction(): void {
+    this.currentCardAction = null;
   }
 }

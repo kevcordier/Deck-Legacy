@@ -1,10 +1,10 @@
 import { CardActionContext } from '@engine/application/cardAction';
 import {
-  canAffordCost,
   canAffordTrackAdvanceCost,
   cardIsBlocked,
   getActiveState,
   getEffectiveActionCost,
+  getEffectiveUpgradeCost,
 } from '@engine/application/cardHelpers';
 import { resolveCost } from '@engine/application/costResolver';
 import { resolveActionEffect } from '@engine/application/effectResolver';
@@ -49,6 +49,11 @@ export class CardActionAggregate {
   };
   private pendingEffectIndex = -1;
   private pendingResolvedAction: ResolvedActionEffect | null = null;
+  private pendingUpgradeCost: {
+    resolvedAction: ResolvedActionEffect;
+    resolvedCost: ResolvedCost;
+    effectIndex: number;
+  } | null = null;
   private readonly action: CardAction;
 
   // triger Action
@@ -81,6 +86,58 @@ export class CardActionAggregate {
     this.gameState = this.cardActionContext.apply(this.gameState, resolvedAction);
   }
 
+  private tryResolveUpgradeCost(
+    resolvedAction: ResolvedActionEffect,
+    effectIndex: number,
+  ): 'continue' | 'wait' | 'skip' {
+    if (resolvedAction.type !== ActionEffectType.UPGRADE_CARD || !resolvedAction.payingCost) {
+      return 'continue';
+    }
+
+    const targetId = resolvedAction.instanceIds?.[0];
+    if (targetId === undefined) return 'skip';
+
+    const targetInstance = this.gameState.instances[targetId];
+    if (!targetInstance) return 'skip';
+
+    const currentState = getActiveState(targetInstance, this.cardDefs);
+    const targetStateId = resolvedAction.stateId ?? currentState?.upgrade?.[0]?.upgradeTo;
+    if (targetStateId === undefined || !currentState?.upgrade) return 'skip';
+
+    const targetUpgrade = currentState.upgrade.find(u => u.upgradeTo === targetStateId);
+    if (!targetUpgrade) return 'skip';
+
+    const effectiveUpgradeCost = getEffectiveUpgradeCost(
+      targetUpgrade.cost,
+      this.gameState,
+      this.cardDefs,
+      this.stickerDefs,
+      targetId,
+    );
+
+    const [resolvedCost, costPendingChoices] = resolveCost(
+      effectiveUpgradeCost,
+      targetId,
+      this.gameState,
+      this.cardDefs,
+      this.stickerDefs,
+      true,
+    );
+
+    if (costPendingChoices.length > 0) {
+      this.pendingUpgradeCost = {
+        resolvedAction,
+        resolvedCost,
+        effectIndex,
+      };
+      this.pendingChoices = costPendingChoices;
+      return 'wait';
+    }
+
+    this.resolvePayCost(resolvedCost);
+    return 'continue';
+  }
+
   resolveAction() {
     if (this.action.onTime) {
       if (this.instance.usedActionIds.includes(this.action.id)) return;
@@ -90,13 +147,6 @@ export class CardActionAggregate {
     const effectiveActionCost = getEffectiveActionCost(this.action.cost, currentInstance);
 
     if (
-      !canAffordCost(
-        effectiveActionCost,
-        this.instance.id,
-        this.gameState,
-        this.cardDefs,
-        this.stickerDefs,
-      ) ||
       !canAffordTrackAdvanceCost(
         this.action,
         this.instance,
@@ -153,6 +203,15 @@ export class CardActionAggregate {
 
       if (resolvedAction.newActionEffects) {
         this.effects.splice(index + 1, 0, ...resolvedAction.newActionEffects);
+      }
+
+      const upgradeCostResolution = this.tryResolveUpgradeCost(resolvedAction, index);
+      if (upgradeCostResolution === 'wait') {
+        return;
+      }
+      if (upgradeCostResolution === 'skip') {
+        index++;
+        continue;
       }
 
       this.apply(resolvedAction);
@@ -228,6 +287,41 @@ export class CardActionAggregate {
   }
 
   resolveCostChoice(resolvedCost: ResolvedCost) {
+    if (this.pendingUpgradeCost) {
+      const mergedResolvedCost: ResolvedCost = {
+        resources: mergeResources(
+          this.pendingUpgradeCost.resolvedCost.resources,
+          resolvedCost.resources,
+        ),
+        discardedCardIds: [
+          ...this.pendingUpgradeCost.resolvedCost.discardedCardIds,
+          ...resolvedCost.discardedCardIds,
+        ],
+        destroyedCardIds: [
+          ...this.pendingUpgradeCost.resolvedCost.destroyedCardIds,
+          ...resolvedCost.destroyedCardIds,
+        ],
+      };
+
+      const remainingChoices = this.pendingChoices.slice(1);
+      if (remainingChoices.length > 0) {
+        this.pendingUpgradeCost = {
+          ...this.pendingUpgradeCost,
+          resolvedCost: mergedResolvedCost,
+        };
+        this.pendingChoices = remainingChoices;
+        return;
+      }
+
+      this.resolvePayCost(mergedResolvedCost);
+      this.apply(this.pendingUpgradeCost.resolvedAction);
+      const nextIndex = this.pendingUpgradeCost.effectIndex + 1;
+      this.pendingUpgradeCost = null;
+      this.pendingChoices = [];
+      this.resolveEffectsFrom(nextIndex);
+      return;
+    }
+
     this.pendingChoices = [];
     this.resolvePayCost(resolvedCost);
     this.resolveEffectsFrom(0);

@@ -2,6 +2,7 @@ import { makeInstance, makeState, makeStickerDefs } from './fixtures';
 import {
   canAffordCost,
   canAffordResources,
+  canAffordTrackAdvanceCost,
   cardIsBlocked,
   cardShouldStayInPlay,
   evaluateCondition,
@@ -13,6 +14,7 @@ import {
   getEffectiveUpgradeCost,
   getFirstAvailableTrackStep,
   getInstancesTriggerEffects,
+  getTotalResourceProduction,
   tagClass,
 } from '@engine/application/cardHelpers';
 import {
@@ -80,68 +82,41 @@ describe('getAffectedCardsByBoardEffects', () => {
 
 describe('getEffectiveProductions', () => {
   const baseInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+  const defs: Record<number, CardDef> = {
+    1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+  };
 
-  it('returns base resources when no bonuses', () => {
-    const state = { id: 1, name: 'S' };
-    const stickerDefs: Record<number, Sticker> = {};
-    const result = getEffectiveProductions(
-      { gold: 2 },
-      state,
-      makeState(),
-      {},
-      baseInst,
-      stickerDefs,
-    );
-    expect(result).toEqual({ gold: 2 });
+  it('returns base production unchanged when no extras', () => {
+    const gs = makeState({ instances: { 1: baseInst } });
+    expect(getEffectiveProductions({ gold: 2 }, gs, defs, baseInst, {})).toEqual({ gold: 2 });
   });
 
-  it('removes production resources configured on card instance state', () => {
-    const state = { id: 1, name: 'S' };
-    const inst = makeInstance({
-      id: 1,
-      cardId: 1,
-      stateId: 1,
-      removedResourcesByState: {
-        1: {
-          production: [ResourceType.GOLD],
-        },
-      },
-    });
-
-    const result = getEffectiveProductions({ gold: 2, wood: 1 }, state, makeState(), {}, inst, {});
-
-    expect(result).toEqual({ wood: 1 });
-  });
-
-  it('adds sticker production bonus', () => {
-    const inst = makeInstance({ id: 1, stateId: 1, stickers: { 1: [10] } });
-    const stickers: Record<number, Sticker> = makeStickerDefs(10);
-    const state = { id: 1, name: 'S' };
-    const result = getEffectiveProductions({ gold: 1 }, state, makeState(), {}, inst, stickers);
+  it('adds sticker production bonus for stickers on current state', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, stickers: { 1: [1] } });
+    const gs = makeState({ instances: { 1: inst } });
+    const result = getEffectiveProductions({ gold: 1 }, gs, defs, inst, makeStickerDefs(1));
     expect(result.gold).toBe(2);
   });
 
-  it('ignores sticker with wrong type', () => {
-    const inst = makeInstance({ id: 1, stateId: 1, stickers: { 1: [10] } });
-    const stickers: Record<number, Sticker> = makeStickerDefs(10);
-    stickers[10].effectId = 'stay_in_play';
-    stickers[10].production = undefined;
-    const state = { id: 1, name: 'S' };
-    const result = getEffectiveProductions({ gold: 1 }, state, makeState(), {}, inst, stickers);
-    expect(result.gold).toBe(1);
+  it('skips sticker when sticker def is not found', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, stickers: { 1: [99] } });
+    const gs = makeState({ instances: { 1: inst } });
+    expect(getEffectiveProductions({ gold: 1 }, gs, defs, inst, {})).toEqual({ gold: 1 });
   });
 
-  it('ignores unknown stickerId', () => {
-    const inst = makeInstance({ id: 1, stateId: 1, stickers: { 1: [99] } });
-    const state = { id: 1, name: 'S' };
-    const result = getEffectiveProductions({ gold: 1 }, state, makeState(), {}, inst, {});
-    expect(result.gold).toBe(1);
+  it('skips sticker when sticker def has no production field', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, stickers: { 1: [5] } });
+    const gs = makeState({ instances: { 1: inst } });
+    const noProductionSticker: Record<number, Sticker> = { 5: { id: 5 } };
+    expect(getEffectiveProductions({ gold: 1 }, gs, defs, inst, noProductionSticker)).toEqual({
+      gold: 1,
+    });
   });
 
-  it('adds passive ADJUST_PRODUCTION bonus based on card count', () => {
+  it('adds ADJUST_PRODUCTION passive bonus via valuePerElement cards selector', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
-    const defs: Record<number, CardDef> = {
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const defsWithPassive: Record<number, CardDef> = {
       1: {
         id: 1,
         name: 'C',
@@ -151,11 +126,11 @@ describe('getEffectiveProductions', () => {
             name: 'S',
             passives: [
               {
-                id: 'p',
+                id: 'p1',
                 type: PassiveType.ADJUST_PRODUCTION,
                 valuePerElement: {
-                  amount: 2,
-                  resource: ['gold' as never],
+                  amount: 1,
+                  resource: [ResourceType.GOLD],
                   cards: { scope: [TargetScope.BOARD] },
                 },
               },
@@ -163,18 +138,15 @@ describe('getEffectiveProductions', () => {
           },
         ],
       },
-      2: { id: 2, name: 'D', states: [{ id: 1, name: 'S2' }] },
     };
     const gs = makeState({ board: [2], instances: { 1: inst, 2: inst2 } });
-    const state = defs[1].states[0];
-    const stickerDefs: Record<number, Sticker> = {};
-    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
+    const result = getEffectiveProductions({ gold: 1 }, gs, defsWithPassive, inst, {});
     expect(result.gold).toBe(2);
   });
 
-  it('uses accumulation for passive bonus when no cards selector', () => {
+  it('adds ADJUST_PRODUCTION passive bonus via accumulation', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: 3 });
-    const defs: Record<number, CardDef> = {
+    const defsWithPassive: Record<number, CardDef> = {
       1: {
         id: 1,
         name: 'C',
@@ -184,11 +156,11 @@ describe('getEffectiveProductions', () => {
             name: 'S',
             passives: [
               {
-                id: 'p',
+                id: 'p1',
                 type: PassiveType.ADJUST_PRODUCTION,
                 valuePerElement: {
-                  amount: 1,
-                  resource: ['wood' as never],
+                  amount: 2,
+                  resource: [ResourceType.GOLD],
                   accumulation: true,
                 },
               },
@@ -198,15 +170,13 @@ describe('getEffectiveProductions', () => {
       },
     };
     const gs = makeState({ instances: { 1: inst } });
-    const state = defs[1].states[0];
-    const stickerDefs: Record<number, Sticker> = {};
-    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
-    expect(result.wood).toBe(3);
+    const result = getEffectiveProductions({}, gs, defsWithPassive, inst, {});
+    expect(result.gold).toBe(6);
   });
 
-  it('skips passive bonus when count is zero', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const defs: Record<number, CardDef> = {
+  it('does not add passive bonus when count is zero', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: 0 });
+    const defsWithPassive: Record<number, CardDef> = {
       1: {
         id: 1,
         name: 'C',
@@ -216,12 +186,12 @@ describe('getEffectiveProductions', () => {
             name: 'S',
             passives: [
               {
-                id: 'p',
+                id: 'p1',
                 type: PassiveType.ADJUST_PRODUCTION,
                 valuePerElement: {
                   amount: 2,
-                  resource: ['gold' as never],
-                  cards: { scope: [TargetScope.BOARD] },
+                  resource: [ResourceType.GOLD],
+                  accumulation: true,
                 },
               },
             ],
@@ -229,90 +199,82 @@ describe('getEffectiveProductions', () => {
         ],
       },
     };
-    const gs = makeState({ board: [], instances: { 1: inst } });
-    const state = defs[1].states[0];
-    const stickerDefs: Record<number, Sticker> = {};
-    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
-    expect(result.gold).toBeUndefined();
+    const gs = makeState({ instances: { 1: inst } });
+    expect(getEffectiveProductions({}, gs, defsWithPassive, inst, {})).toEqual({});
   });
 
-  it('adds board effect ADJUST_PRODUCTION bonus', () => {
-    const inst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
-    const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      1: { id: 1, name: 'S', states: [{ id: 1, name: 'S1' }] },
-      2: { id: 2, name: 'T', states: [{ id: 1, name: 'T1' }] },
+  it('does not add passive bonus when valuePerElement has neither cards nor accumulation', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defsWithPassive: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [
+          {
+            id: 1,
+            name: 'S',
+            passives: [
+              {
+                id: 'p1',
+                type: PassiveType.ADJUST_PRODUCTION,
+                valuePerElement: {
+                  amount: 5,
+                  resource: [ResourceType.GOLD],
+                  // no cards, no accumulation → count stays 0
+                },
+              },
+            ],
+          },
+        ],
+      },
     };
+    const gs = makeState({ instances: { 1: inst } });
+    expect(getEffectiveProductions({}, gs, defsWithPassive, inst, {})).toEqual({});
+  });
+
+  it('adds ADJUST_PRODUCTION board effect bonus when instance is targeted', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({
       board: [2],
-      instances: { 1: sourceInst, 2: inst },
+      instances: { 2: inst },
       boardEffects: {
         1: [
           {
             id: 'be',
             type: PassiveType.ADJUST_PRODUCTION,
-            resources: { gold: 3 },
+            resources: { wood: 2 },
             cards: { scope: [TargetScope.BOARD] },
           },
         ],
       },
     });
-    const state = { id: 1, name: 'S' };
-    const stickerDefs: Record<number, Sticker> = {};
-    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
-    expect(result.gold).toBe(3);
+    const result = getEffectiveProductions({}, gs, defs, inst, {});
+    expect(result.wood).toBe(2);
   });
 
-  it('applies board effect without explicit cards selector (uses BOARD default)', () => {
-    const inst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
-    const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      1: { id: 1, name: 'S', states: [{ id: 1, name: 'S1' }] },
-      2: { id: 2, name: 'T', states: [{ id: 1, name: 'T1' }] },
-    };
+  it('excludes board effects when includeBoardEffects is false', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({
       board: [2],
-      instances: { 1: sourceInst, 2: inst },
-      boardEffects: {
-        1: [{ id: 'be', type: PassiveType.ADJUST_PRODUCTION, resources: { gold: 2 } }],
-      },
-    });
-    const state = { id: 1, name: 'S' };
-    const stickerDefs: Record<number, Sticker> = {};
-    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
-    expect(result.gold).toBe(2);
-  });
-
-  it('does not apply board effect when instance not in cards selector', () => {
-    const inst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
-    const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      1: { id: 1, name: 'S', states: [{ id: 1, name: 'S1' }] },
-      2: { id: 2, name: 'T', states: [{ id: 1, name: 'T1' }] },
-    };
-    const gs = makeState({
-      board: [2],
-      instances: { 1: sourceInst, 2: inst },
+      instances: { 2: inst },
       boardEffects: {
         1: [
           {
             id: 'be',
             type: PassiveType.ADJUST_PRODUCTION,
-            resources: { gold: 5 },
-            cards: { ids: [99] },
+            resources: { wood: 2 },
+            cards: { scope: [TargetScope.BOARD] },
           },
         ],
       },
     });
-    const state = { id: 1, name: 'S' };
-    const stickerDefs: Record<number, Sticker> = {};
-    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
-    expect(result.gold).toBeUndefined();
+    const result = getEffectiveProductions({}, gs, defs, inst, {}, { includeBoardEffects: false });
+    expect(result.wood).toBeUndefined();
   });
 
-  it('skips passive ADJUST_PRODUCTION without resource in valuePerElement', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const defs: Record<number, CardDef> = {
+  it('excludes passives when includePassives is false', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: 5 });
+    const defsWithPassive: Record<number, CardDef> = {
       1: {
         id: 1,
         name: 'C',
@@ -322,67 +284,11 @@ describe('getEffectiveProductions', () => {
             name: 'S',
             passives: [
               {
-                id: 'p',
-                type: PassiveType.ADJUST_PRODUCTION,
-                valuePerElement: { amount: 2 },
-              },
-            ],
-          },
-        ],
-      },
-    };
-    const gs = makeState({ instances: { 1: inst } });
-    const state = defs[1].states[0];
-    const stickerDefs: Record<number, Sticker> = {};
-    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
-    expect(result.gold).toBeUndefined();
-  });
-
-  it('skips passive bonus when neither cards selector nor accumulation defined', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      1: {
-        id: 1,
-        name: 'C',
-        states: [
-          {
-            id: 1,
-            name: 'S',
-            passives: [
-              {
-                id: 'p',
-                type: PassiveType.ADJUST_PRODUCTION,
-                valuePerElement: { amount: 2, resource: ['gold' as never] },
-              },
-            ],
-          },
-        ],
-      },
-    };
-    const gs = makeState({ instances: { 1: inst } });
-    const state = defs[1].states[0];
-    const stickerDefs: Record<number, Sticker> = {};
-    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
-    expect(result.gold).toBeUndefined();
-  });
-
-  it('treats missing accumulation value as 0 and skips bonus', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      1: {
-        id: 1,
-        name: 'C',
-        states: [
-          {
-            id: 1,
-            name: 'S',
-            passives: [
-              {
-                id: 'p',
+                id: 'p1',
                 type: PassiveType.ADJUST_PRODUCTION,
                 valuePerElement: {
                   amount: 1,
-                  resource: ['wood' as never],
+                  resource: [ResourceType.GOLD],
                   accumulation: true,
                 },
               },
@@ -392,29 +298,49 @@ describe('getEffectiveProductions', () => {
       },
     };
     const gs = makeState({ instances: { 1: inst } });
-    const state = defs[1].states[0];
-    const stickerDefs: Record<number, Sticker> = {};
-    const result = getEffectiveProductions({}, state, gs, defs, inst, stickerDefs);
-    expect(result.wood).toBeUndefined();
+    const result = getEffectiveProductions(
+      {},
+      gs,
+      defsWithPassive,
+      inst,
+      {},
+      {
+        includePassives: false,
+      },
+    );
+    expect(result).toEqual({});
   });
 
-  it('treats missing sticker as 0 glory', () => {
-    const inst = makeInstance({ id: 1, stateId: 1, stickers: { 1: [999] } });
-    const state = { id: 1, name: 'S', glory: { amount: 3 } };
-    const stickerDefs: Record<number, Sticker> = {};
-    expect(getEffectiveGlory(state, makeState(), {}, inst, stickerDefs)).toBe(3);
+  it('uses default BOARD scope for ADJUST_PRODUCTION board effect with no cards field', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      board: [2],
+      instances: { 2: inst },
+      boardEffects: {
+        1: [
+          {
+            id: 'be',
+            type: PassiveType.ADJUST_PRODUCTION,
+            resources: { stone: 1 },
+            // no cards field → defaults to { scope: [TargetScope.BOARD] }
+          },
+        ],
+      },
+    });
+    const result = getEffectiveProductions({}, gs, defs, inst, {});
+    expect(result.stone).toBe(1);
   });
 
-  it('returns land class', () => {
-    expect(tagClass('land', false)).toContain('border-tag-land');
-  });
-
-  it('returns livestock class', () => {
-    expect(tagClass('livestock', false)).toContain('border-tag-livestock');
-  });
-
-  it('returns generic tag class for unknown tags', () => {
-    expect(tagClass('event', false)).toContain('border-tag-tag');
+  it('removes production resources configured in removedResourcesByState', () => {
+    const inst = makeInstance({
+      id: 1,
+      cardId: 1,
+      stateId: 1,
+      removedResourcesByState: { 1: { production: [ResourceType.GOLD] } },
+    });
+    const gs = makeState({ instances: { 1: inst } });
+    const result = getEffectiveProductions({ gold: 3, wood: 1 }, gs, defs, inst, {});
+    expect(result).toEqual({ wood: 1 });
   });
 });
 
@@ -692,6 +618,18 @@ describe('canAffordCardCost', () => {
   it('returns true when accumulated cost is met with missing instance (cumulated treated as 0)', () => {
     const gs = makeState({ instances: {} });
     expect(canAffordCost({ accumulated: 0 }, 99, gs, defs, makeStickerDefs())).toBe(true);
+  });
+
+  it('returns false when accumulated cost is not met and instance is missing (cumulated defaults to 0)', () => {
+    const gs = makeState({ instances: {} });
+    expect(canAffordCost({ accumulated: 3 }, 99, gs, defs, makeStickerDefs())).toBe(false);
+  });
+
+  it('filters discard candidates to only those on the board', () => {
+    // Instance 2 matches selector but is NOT on the board — after filter, 0 candidates < 1 needed
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [], instances: { 2: inst } });
+    expect(canAffordCost({ discard: [{ ids: [2] }] }, 99, gs, defs, makeStickerDefs())).toBe(false);
   });
 });
 
@@ -1247,6 +1185,18 @@ describe('tagClass additional branches', () => {
   it('returns seafaring class', () => {
     expect(tagClass('seafaring', false)).toContain('border-tag-seafaring');
   });
+
+  it('returns land class', () => {
+    expect(tagClass('land', false)).toContain('border-tag-land');
+  });
+
+  it('returns livestock class', () => {
+    expect(tagClass('livestock', false)).toContain('border-tag-livestock');
+  });
+
+  it('returns default tag class for unknown tag', () => {
+    expect(tagClass('unknown', false)).toContain('border-tag-tag');
+  });
 });
 
 // ─── getFirstAvailableTrackStep ───────────────────────────────────────────────
@@ -1344,5 +1294,245 @@ describe('getFirstAvailableTrackStep', () => {
       {},
     );
     expect(result).toBeUndefined();
+  });
+});
+
+// ─── getEffectiveUpgradeCost (sourceInstance absent) ──────────────────────────
+
+describe('getEffectiveUpgradeCost (no sourceInstance)', () => {
+  it('returns adjusted cost without removedKeys when instance is absent', () => {
+    const result = getEffectiveUpgradeCost(
+      { resources: [{ gold: 3 }] },
+      makeState({ instances: {} }),
+      {},
+      {},
+      99, // no instance with this id
+    );
+    expect(result.resources?.[0]).toEqual({ gold: 3 });
+  });
+
+  it('fills empty resources array with [{}] when base cost has no resources', () => {
+    const source = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const target = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'A', states: [{ id: 1, name: 'A' }] },
+      2: { id: 2, name: 'B', states: [{ id: 1, name: 'B' }] },
+    };
+    const gs = makeState({
+      board: [1, 2],
+      instances: { 1: source, 2: target },
+      boardEffects: {
+        1: [
+          {
+            id: 'adj',
+            type: PassiveType.ADJUST_UPDATE_COST,
+            resources: { gold: 2 },
+            cards: { scope: [TargetScope.BOARD], ids: [2] },
+          },
+        ],
+      },
+    });
+    // baseCost has no resources array → branch that defaults to [{}]
+    const result = getEffectiveUpgradeCost({}, gs, defs, {}, 2);
+    expect(result.resources?.[0]).toEqual({ gold: 2 });
+  });
+
+  it('uses default BOARD scope when passive has no cards selector', () => {
+    const source = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const target = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'A', states: [{ id: 1, name: 'A' }] },
+      2: { id: 2, name: 'B', states: [{ id: 1, name: 'B' }] },
+    };
+    const gs = makeState({
+      board: [1, 2],
+      instances: { 1: source, 2: target },
+      boardEffects: {
+        1: [
+          {
+            id: 'adj',
+            type: PassiveType.ADJUST_UPDATE_COST,
+            resources: { wood: 1 },
+            // no cards field → defaults to { scope: [TargetScope.BOARD] }
+          },
+        ],
+      },
+    });
+    const result = getEffectiveUpgradeCost({ resources: [{ gold: 2 }] }, gs, defs, {}, 2);
+    expect(result.resources?.[0]).toEqual({ gold: 2, wood: 1 });
+  });
+});
+
+// ─── getEffectiveGlory (sticker glory) ───────────────────────────────────────
+
+describe('getEffectiveGlory sticker bonus', () => {
+  it('adds sticker glory to base glory', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, stickers: { 1: [5] } });
+    const stickerDefs: Record<number, Sticker> = { 5: { id: 5, glory: 3 } };
+    const state = { id: 1, name: 'S', glory: { amount: 2 } };
+    expect(getEffectiveGlory(state, makeState(), {}, inst, stickerDefs)).toBe(5);
+  });
+
+  it('returns base glory only when sticker has no glory field', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, stickers: { 1: [5] } });
+    const stickerDefs: Record<number, Sticker> = { 5: { id: 5 } };
+    const state = { id: 1, name: 'S', glory: { amount: 4 } };
+    expect(getEffectiveGlory(state, makeState(), {}, inst, stickerDefs)).toBe(4);
+  });
+
+  it('uses 0 when glory.amount is undefined', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    // glory object present but no amount property
+    const state = { id: 1, name: 'S', glory: { amount: 0 } };
+    expect(getEffectiveGlory(state, makeState(), {}, inst, {})).toBe(0);
+  });
+
+  it('returns glory when condition is present and evaluates to true', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+    const gs = makeState({ board: [2], instances: { 1: inst, 2: inst2 } });
+    const state = {
+      id: 1,
+      name: 'S',
+      glory: {
+        amount: 3,
+        condition: { type: 'cardCount' as const, cards: { scope: [TargetScope.BOARD] }, min: 1 },
+      },
+    };
+    // condition passes (1 card on board) → glory is returned
+    expect(getEffectiveGlory(state, gs, defs, inst)).toBe(3);
+  });
+});
+
+// ─── getTotalResourceProduction ───────────────────────────────────────────────
+
+describe('getTotalResourceProduction', () => {
+  it('returns 0 when no card produces the resource', () => {
+    const gs = makeState({ board: [], instances: {} });
+    expect(getTotalResourceProduction(99, ResourceType.GOLD, gs, {}, {})).toBe(0);
+  });
+
+  it('returns total gold produced by board cards', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S', productions: [{ gold: 3 }] }] },
+    };
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    expect(getTotalResourceProduction(99, ResourceType.GOLD, gs, defs, {})).toBe(3);
+  });
+
+  it('picks the maximum across multiple production options for a card', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [{ id: 1, name: 'S', productions: [{ gold: 1 }, { gold: 4 }] }],
+      },
+    };
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    expect(getTotalResourceProduction(99, ResourceType.GOLD, gs, defs, {})).toBe(4);
+  });
+
+  it('sums production across multiple cards', () => {
+    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S', productions: [{ gold: 2 }] }] },
+    };
+    const gs = makeState({ board: [1, 2], instances: { 1: inst1, 2: inst2 } });
+    expect(getTotalResourceProduction(99, ResourceType.GOLD, gs, defs, {})).toBe(4);
+  });
+
+  it('treats missing resource key in a production option as 0', () => {
+    // Card has two production choices: {gold:3} and {wood:1} — gold value in wood option is undefined → ?? 0
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [{ id: 1, name: 'S', productions: [{ gold: 3 }, { wood: 1 }] }],
+      },
+    };
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    // max(3, 0) = 3
+    expect(getTotalResourceProduction(99, ResourceType.GOLD, gs, defs, {})).toBe(3);
+  });
+});
+
+// ─── canAffordTrackAdvanceCost ────────────────────────────────────────────────
+
+describe('canAffordTrackAdvanceCost', () => {
+  const trackDefs: Record<number, CardDef> = {
+    1: {
+      id: 1,
+      name: 'C',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          track: { inOrder: true, steps: [{ id: 10, cost: { resources: [{ gold: 2 }] } }] },
+        },
+      ],
+    },
+  };
+
+  it('returns true when action has no TRACK_ADVANCE effect', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const action = { id: 'a1', actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }] };
+    expect(canAffordTrackAdvanceCost(action, inst, makeState(), trackDefs, {})).toBe(true);
+  });
+
+  it('returns true when card state has no track', () => {
+    const noTrackDefs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const action = {
+      id: 'a1',
+      actionEffects: [{ id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { ids: [1] } }],
+    };
+    expect(
+      canAffordTrackAdvanceCost(
+        action,
+        inst,
+        makeState({ instances: { 1: inst } }),
+        noTrackDefs,
+        {},
+      ),
+    ).toBe(true);
+  });
+
+  it('returns false when first available step cost cannot be afforded', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 1: inst }, resources: { gold: 0 } });
+    const action = {
+      id: 'a1',
+      actionEffects: [{ id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { ids: [1] } }],
+    };
+    expect(canAffordTrackAdvanceCost(action, inst, gs, trackDefs, {})).toBe(false);
+  });
+
+  it('returns true when first available step cost can be afforded', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 1: inst }, resources: { gold: 5 } });
+    const action = {
+      id: 'a1',
+      actionEffects: [{ id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { ids: [1] } }],
+    };
+    expect(canAffordTrackAdvanceCost(action, inst, gs, trackDefs, {})).toBe(true);
+  });
+
+  it('returns false when no step is available (all completed)', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, trackProgress: [10] });
+    const gs = makeState({ instances: { 1: inst }, resources: { gold: 5 } });
+    const action = {
+      id: 'a1',
+      actionEffects: [{ id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { ids: [1] } }],
+    };
+    expect(canAffordTrackAdvanceCost(action, inst, gs, trackDefs, {})).toBe(false);
   });
 });

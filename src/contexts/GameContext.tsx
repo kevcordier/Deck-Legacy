@@ -3,6 +3,7 @@ import type { PendingChoiceType } from '@engine/domain/enums';
 import type {
   CardDef,
   GameEvent,
+  GameParameters,
   GameState,
   PendingChoice,
   ResolvedActionEffect,
@@ -34,7 +35,9 @@ export type GameContextType = {
   resolvePlayerChoice: (choice: ResolvedActionEffect, choiceType: PendingChoiceType) => void;
   resolvePayCost: (resolved: ResolvedCost) => void;
   skipTrigger: (uuid: string) => void;
-  skipChoice: (uuid: string) => void;
+  skipChoice: () => void;
+  globalError: string | null;
+  dismissGlobalError: () => void;
   parchmentTextPending: CardDef | null;
   dismissParchmentText: () => void;
   canRewind: () => boolean;
@@ -43,6 +46,7 @@ export type GameContextType = {
   displayNewCards: boolean;
   setDisplayNewCards: (value: boolean) => void;
   getEvents: () => GameEvent[];
+  parameters: GameParameters;
 };
 
 export const GameContext = createContext<GameContextType>({} as GameContextType);

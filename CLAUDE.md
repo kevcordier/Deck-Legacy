@@ -127,7 +127,7 @@ CardAction {
 Action {
   id: number                    // unique action effect identifier
   type: ActionType              // ADD_RESOURCES | DISCARD_CARD | DISCOVER_CARD | DESTROY_CARD |
-                                // UPGRADE_CARD | PLACE_CARD_IN_DRAW_PILE | BLOCK_CARD | PLAY_CARD |
+                                // UPGRADE_CARD | PLACE_CARD_IN_PILE | BLOCK_CARD | PLAY_CARD |
                                 // ADD_STICKER | CHOOSE_STATE | BOOST_CARD | TRACK_ADVANCE | …
   cards?: CardeSelector         // target card filter (scope, tags, ids…)
   resources?: ResourceSelector  // target resource filter

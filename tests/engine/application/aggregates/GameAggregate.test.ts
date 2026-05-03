@@ -381,7 +381,13 @@ describe('GameAggregate.advance', () => {
       drawPile: [1, 2],
       instances: { 1: inst1, 2: inst2 },
       boardEffects: {
-        99: [{ id: 'no-amount', type: PassiveType.ADJUST_ADVANCE_CARDS }],
+        99: [
+          {
+            id: 'no-amount',
+            type: PassiveType.SET_GAME_PARAMETER,
+            parameters: { advanceCardDrawn: undefined },
+          },
+        ],
       },
       phase: Phase.PLAYING,
       round: 1,
@@ -401,7 +407,13 @@ describe('GameAggregate.advance', () => {
       drawPile: [1, 2, 3, 4, 5],
       instances: { 1: inst1, 2: inst2, 3: inst3, 4: inst4, 5: inst5 },
       boardEffects: {
-        99: [{ id: 'bonus-advance', type: PassiveType.ADJUST_ADVANCE_CARDS, amount: 2 }],
+        99: [
+          {
+            id: 'bonus-advance',
+            type: PassiveType.SET_GAME_PARAMETER,
+            parameters: { advanceCardDrawn: 4 },
+          },
+        ],
       },
       phase: Phase.PLAYING,
       round: 1,
@@ -648,7 +660,7 @@ describe('GameAggregate.resolveCardActionCost', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const state = makeState({
       board: [1],
-      resources: { gold: 5 },
+      resources: { gold: 5, stone: 1 },
       instances: { 1: inst },
       phase: Phase.PLAYING,
       round: 1,

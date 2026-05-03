@@ -103,15 +103,14 @@ describe('CardActionAggregate.resolveAction', () => {
     expect(gs.discardPile).not.toContain(1);
   });
 
-  it('skips when card cannot afford resources', () => {
+  it('throws when card cannot afford resources', () => {
     const action: CardAction = {
       id: 'a1',
       actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
       cost: { resources: [{ gold: 5 }] },
     };
     const agg = makeAggregate({ action, resources: {} });
-    agg.resolveAction();
-    expect(agg.getGameState().resources.gold).toBeUndefined();
+    expect(() => agg.resolveAction()).toThrow('Not enough resources to pay this cost.');
   });
 
   it('skips when card is blocked', () => {
@@ -212,7 +211,7 @@ describe('CardActionAggregate.resolveAction', () => {
     expect(agg.getGameState().instances[1].usedActionIds).toContain('one-time');
   });
 
-  it('skips when canAffordCardCost fails (destroy)', () => {
+  it('throws when cost cannot be paid', () => {
     const action: CardAction = {
       id: 'a1',
       actionEffects: [],
@@ -223,9 +222,9 @@ describe('CardActionAggregate.resolveAction', () => {
       instances: { 1: makeInstance({ id: 1, cardId: 1, stateId: 1 }) },
     });
     const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, gs.instances[1], action);
-    agg.resolveAction();
-    expect(agg.getPendingChoices()).toHaveLength(0);
-    expect(agg.getGameState().resources.gold).toBeUndefined();
+    expect(() => agg.resolveAction()).toThrow(
+      'Not enough cards available to pay this destroy cost.',
+    );
   });
 
   it('splices step effects into the queue (newActionEffects from inOrder track)', () => {
@@ -259,6 +258,53 @@ describe('CardActionAggregate.resolveAction', () => {
     const agg = new CardActionAggregate({ 4: trackDef }, {}, gs, inst, action);
     agg.resolveAction();
     expect(agg.getGameState().resources.gold).toBe(5);
+  });
+
+  it('pays upgrade cost when UPGRADE_CARD has payingCost set', () => {
+    const sourceDef: CardDef = {
+      id: 1,
+      name: 'PriestLike',
+      states: [{ id: 1, name: 'S' }],
+    };
+    const targetDef: CardDef = {
+      id: 2,
+      name: 'Upgradeable',
+      states: [
+        {
+          id: 1,
+          name: 'Base',
+          upgrade: [{ cost: { resources: [{ gold: 2 }] }, upgradeTo: 2 }],
+        },
+        { id: 2, name: 'Upgraded' },
+      ],
+    };
+
+    const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const targetInst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const gs = makeState({
+      board: [1, 2],
+      resources: { gold: 2 },
+      instances: { 1: sourceInst, 2: targetInst },
+    });
+
+    const action: CardAction = {
+      id: 'paying-upgrade',
+      actionEffects: [
+        {
+          id: 1,
+          type: ActionEffectType.UPGRADE_CARD,
+          payingCost: true,
+          cards: { ids: [2] },
+          states: [2],
+        },
+      ],
+    };
+
+    const agg = new CardActionAggregate({ 1: sourceDef, 2: targetDef }, {}, gs, sourceInst, action);
+    agg.resolveAction();
+
+    expect(agg.getGameState().instances[2].stateId).toBe(2);
+    expect(agg.getGameState().resources.gold ?? 0).toBe(0);
   });
 });
 
@@ -373,7 +419,7 @@ describe('CardActionAggregate.resolveCostChoice', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({
       board: [1],
-      resources: { gold: 5 },
+      resources: { gold: 5, wood: 1 },
       instances: { 1: inst },
     });
     const action: CardAction = {
@@ -388,7 +434,7 @@ describe('CardActionAggregate.resolveCostChoice', () => {
     agg.resolveCostChoice({ resources: { gold: 1 }, discardedCardIds: [], destroyedCardIds: [] });
     expect(agg.getPendingChoices()).toHaveLength(0);
     expect(agg.getGameState().resources.gold).toBe(4);
-    expect(agg.getGameState().resources.wood).toBe(1);
+    expect(agg.getGameState().resources.wood).toBe(2);
   });
 });
 

@@ -9,6 +9,23 @@ import type {
   Sticker,
 } from '@engine/domain/types';
 
+export class CostResolutionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'CostResolutionError';
+  }
+}
+
+function canAffordResourceCost(
+  availableResources: GameState['resources'],
+  resourceCost: ResolvedCost['resources'],
+): boolean {
+  return Object.entries(resourceCost).every(
+    ([resource, amount]) =>
+      (availableResources[resource as keyof typeof availableResources] ?? 0) >= amount,
+  );
+}
+
 export function resolveCost(
   cost: Cost,
   instanceId: number,
@@ -25,15 +42,23 @@ export function resolveCost(
   };
 
   if (cost.resources) {
-    if (cost.resources.length === 1) {
-      resolvedCost.resources = cost.resources[0];
+    const payableResourceCosts = cost.resources.filter(resourceCost =>
+      canAffordResourceCost(gameState.resources, resourceCost),
+    );
+
+    if (payableResourceCosts.length === 0) {
+      throw new CostResolutionError('Not enough resources to pay this cost.');
+    }
+
+    if (payableResourceCosts.length === 1) {
+      resolvedCost.resources = payableResourceCosts[0];
     } else {
       pendingChoices.push({
         id: `${instanceId}-cost`,
         kind: ActionEffectType.COST,
         type: PendingChoiceType.CHOOSE_RESOURCE,
         sourceInstanceId: instanceId,
-        choices: cost.resources,
+        choices: payableResourceCosts,
         pickCount: 1,
         isMandatory,
       });
@@ -45,16 +70,20 @@ export function resolveCost(
       const candidates = cardSelector(discardCost, instanceId, gameState, defs, stickerDefs).filter(
         id => gameState.board.includes(id),
       );
-      if (candidates.length === (discardCost.pickNumber ?? 1)) {
+      const requiredCount = discardCost.pickNumber ?? 1;
+      if (candidates.length < requiredCount) {
+        throw new CostResolutionError('Not enough cards available to pay this discard cost.');
+      }
+      if (candidates.length === requiredCount) {
         resolvedCost.discardedCardIds.push(...candidates);
-      } else if (candidates.length > 0) {
+      } else {
         pendingChoices.push({
           id: `${instanceId}-discard-${index}`,
           kind: ActionEffectType.COST,
           type: PendingChoiceType.CHOOSE_CARD,
           sourceInstanceId: instanceId,
           choices: candidates,
-          pickCount: discardCost.pickNumber ?? 1,
+          pickCount: requiredCount,
           isMandatory,
         });
       }
@@ -65,9 +94,11 @@ export function resolveCost(
     const candidates = cardSelector(cost.destroy, instanceId, gameState, defs, stickerDefs).filter(
       id => gameState.board.includes(id),
     );
-    if (candidates.length === 0) {
-      resolvedCost.destroyedCardIds = [];
-    } else if (candidates.length === (cost.destroy.pickNumber ?? 1)) {
+    const requiredCount = cost.destroy.pickNumber ?? 1;
+    if (candidates.length < requiredCount) {
+      throw new CostResolutionError('Not enough cards available to pay this destroy cost.');
+    }
+    if (candidates.length === requiredCount) {
       resolvedCost.destroyedCardIds = candidates;
     } else {
       pendingChoices.push({
@@ -76,7 +107,7 @@ export function resolveCost(
         type: PendingChoiceType.CHOOSE_CARD,
         sourceInstanceId: instanceId,
         choices: candidates,
-        pickCount: cost.destroy.pickNumber ?? 1,
+        pickCount: requiredCount,
         isMandatory,
       });
     }

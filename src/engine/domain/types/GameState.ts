@@ -28,3 +28,9 @@ export type GameState = {
   turn: number;
   phase: Phase;
 };
+
+export type GameParameters = {
+  displayedDrawDeckCards: number;
+  advanceCardDrawn: number;
+  turnCardDrawn: number;
+};

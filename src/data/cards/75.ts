@@ -1,7 +1,7 @@
 import { ActionEffectType, TargetScope } from '@engine/domain/enums';
-import type { CardDef } from '@engine/domain/types';
+import type { CardDef, StepDef } from '@engine/domain/types';
 
-const makeStep = (id: number, iron: number, cumulated: number) => ({
+const makeStep = (id: number, iron: number, cumulated: number): StepDef => ({
   id,
   cost: { resources: [{ iron }] },
   icon: 'glory',

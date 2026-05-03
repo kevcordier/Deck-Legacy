@@ -109,6 +109,7 @@
     "chooseSticker": "Choisir un autocollant",
     "choices": "Choisissez {{total}}",
     "choices-between": "Choisissez entre {{min}} et {{max}}",
+    "cancel": "Annuler",
     "confirm": "Confirmer ({{selected}})"
   },
   "triggerPile": {
