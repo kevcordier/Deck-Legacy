@@ -1,10 +1,13 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import { getActiveState } from '@engine/application/cardHelpers';
 import { discardCards } from '@engine/application/gameStateHelper';
-import type { CardDef, GameState, ResolvedActionEffect } from '@engine/domain/types';
+import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '@engine/domain/types';
 
 export class UpgradeCardStrategy implements CardActionStrategy {
-  constructor(private readonly cardDefs: Record<number, CardDef>) {}
+  constructor(
+    private readonly cardDefs: Record<number, CardDef>,
+    private readonly stickerDefs: Record<number, Sticker>,
+  ) {}
 
   apply(gameState: GameState, payload: ResolvedActionEffect): GameState {
     const instanceId = payload.instanceIds?.[0];
@@ -27,6 +30,6 @@ export class UpgradeCardStrategy implements CardActionStrategy {
       };
     }
 
-    return { ...gs, ...discardCards(gs, [instanceId]) };
+    return { ...gs, ...discardCards(gs, [instanceId], this.cardDefs, this.stickerDefs) };
   }
 }

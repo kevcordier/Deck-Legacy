@@ -153,7 +153,7 @@ export function PendingChoiceModal({
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const minSelect = choice?.pickMin ?? choice?.pickCount ?? 1;
-  const maxSelect = choice?.pickMax ?? choice?.pickCount ?? 1;
+  const maxSelect = choice?.pickMax ?? choice?.pickCount ?? choice?.choices.length ?? 1;
   const selectedCount = getSelectedCount(choice, selectedIds);
 
   const onToggleId = (id: number) => {

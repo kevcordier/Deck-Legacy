@@ -28,7 +28,7 @@ export const exportation: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              accumulated: 1,
+              value: 1,
             },
           ],
           cost: {
@@ -163,7 +163,7 @@ export const exportation: CardDef = {
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                accumulated: 0,
+                value: 0,
               },
               {
                 id: 2,
@@ -196,7 +196,7 @@ export const exportation: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              accumulated: 1,
+              value: 1,
             },
           ],
           cost: {

@@ -18,6 +18,7 @@ describe('createInstance', () => {
       cumulated: 0,
       usedActionIds: [],
       removedResourcesByState: {},
+      glories: [],
     });
   });
 

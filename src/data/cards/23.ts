@@ -64,9 +64,11 @@ export const entrepreneur: CardDef = {
             {
               id: 1,
               type: ActionEffectType.ADD_RESOURCES,
+              resources: {
+                [ResourceType.GOLD]: 1,
+              },
               valuePerElement: {
                 amount: 1,
-                resource: [ResourceType.GOLD],
                 cards: {
                   scope: [TargetScope.BOARD],
                   tags: [CardTag.PERSON],

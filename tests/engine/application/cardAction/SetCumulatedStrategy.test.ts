@@ -12,7 +12,7 @@ describe('SetCumulatedStrategy', () => {
       id: 'x',
       type: ActionEffectType.SET_CUMULATED,
       sourceInstanceId: 1,
-      accumulated: 5,
+      value: 5,
     });
     expect(result).toBe(gs);
   });
@@ -37,7 +37,7 @@ describe('SetCumulatedStrategy', () => {
       type: ActionEffectType.SET_CUMULATED,
       sourceInstanceId: 1,
       instanceIds: [1],
-      accumulated: 3,
+      value: 3,
     });
     expect(result.instances[1].cumulated).toBe(3);
   });

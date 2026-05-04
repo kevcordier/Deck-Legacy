@@ -1,11 +1,11 @@
-import { makeInstance, makeState } from '../fixtures';
+import { makeDefs, makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { CardProducedStrategy } from '@engine/application/gameEvent/CardProducedStrategy';
 import { GameEventType } from '@engine/domain/enums';
 import type { CardProducedEvent } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
 describe('CardProducedStrategy', () => {
-  const strategy = new CardProducedStrategy();
+  const strategy = new CardProducedStrategy(makeDefs(), makeStickerDefs());
 
   it('adds productions to resources', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });

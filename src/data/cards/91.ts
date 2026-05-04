@@ -11,7 +11,7 @@ function makeStep(id: number): StepDef {
         cards: {
           scope: [TargetScope.SELF],
         },
-        accumulated: 1,
+        value: 1,
       },
     ],
   };

@@ -35,6 +35,8 @@ export function makeInstance(overrides?: Partial<CardInstance>): CardInstance {
     trackProgress: [],
     cumulated: 0,
     usedActionIds: [],
+    glories: [],
+    removedResourcesByState: {},
     ...overrides,
   };
 }

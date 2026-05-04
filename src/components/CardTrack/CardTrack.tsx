@@ -63,8 +63,8 @@ export function CardTrackContent({
       );
     }
 
-    if (action.accumulated && step.icon === 'glory') {
-      return <Glory key={action.id} glory={action.accumulated} size="xs" />;
+    if (action.value && step.icon === 'glory') {
+      return <Glory key={action.id} glory={action.value} size="xs" />;
     }
 
     if (step.icon === '*') {

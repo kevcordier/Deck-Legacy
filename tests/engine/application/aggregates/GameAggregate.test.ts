@@ -103,9 +103,19 @@ describe('EMPTY_STATE', () => {
 describe('GameAggregate.gameStarted', () => {
   it('creates GAME_STARTED event and sets up instances', () => {
     // Use 5 cards so gameStarted's internal roundStarted+turnStarted(x2) never hits empty drawPile.
-    const insts = [1, 2, 3, 4, 5].map(id => makeInstance({ id, cardId: 1, stateId: 1 }));
     const agg = new GameAggregate(EMPTY_STATE, { 1: plainDef }, {}, []);
-    agg.gameStarted(insts, [1, 2, 3, 4, 5], {}, []);
+    agg.gameStarted(
+      [1, 2, 3, 4, 5],
+      [
+        { id: 1, cardId: 1 },
+        { id: 2, cardId: 1 },
+        { id: 3, cardId: 1 },
+        { id: 4, cardId: 1 },
+        { id: 5, cardId: 1 },
+      ],
+      {},
+      [],
+    );
     expect(agg.getGameState().instances[1]).toBeDefined();
     expect(agg.getEvents().length).toBeGreaterThan(0);
   });
@@ -116,12 +126,11 @@ describe('GameAggregate.gameStarted', () => {
 describe('GameAggregate.loadFromHistory', () => {
   it('replays events and updates game state', () => {
     const agg = new GameAggregate(EMPTY_STATE, { 1: plainDef }, {}, []);
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const event: GameEvent = {
       id: 'e1',
       type: GameEventType.GAME_STARTED,
       timestamp: 0,
-      cardInstances: [inst],
+      deck: [{ id: 1, cardId: 1 }],
       initialDeck: [1],
       stickerStock: {},
       discoveryPile: [],

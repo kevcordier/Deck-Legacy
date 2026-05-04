@@ -18,11 +18,11 @@ export class GameEventContext {
 
   constructor(cardDefs: Record<number, CardDef>, stickerDefs: Record<number, Sticker>) {
     this.strategies = {
-      [GameEventType.GAME_STARTED]: new GameStartedStrategy(),
+      [GameEventType.GAME_STARTED]: new GameStartedStrategy(cardDefs),
       [GameEventType.ROUND_STARTED]: new RoundStartedStrategy(),
       [GameEventType.ROUND_ENDED]: new RoundEndedStrategy(cardDefs, stickerDefs),
       [GameEventType.TURN_STARTED]: new TurnStartedStrategy(cardDefs, stickerDefs),
-      [GameEventType.CARD_PRODUCED]: new CardProducedStrategy(),
+      [GameEventType.CARD_PRODUCED]: new CardProducedStrategy(cardDefs, stickerDefs),
       [GameEventType.ADVANCE]: new AdvanceStrategy(cardDefs, stickerDefs),
       [GameEventType.UPGRADE_CARD]: new UpgradeCardEventStrategy(cardDefs, stickerDefs),
       [GameEventType.CARD_ACTION]: new CardActionEventStrategy(cardDefs, stickerDefs),

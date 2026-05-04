@@ -232,8 +232,12 @@ function calculePassiveProductionBonus(
 ): Resources {
   let passiveBonus: Resources = {};
   for (const passive of activeState.passives ?? []) {
-    if (passive.type === PassiveType.ADJUST_PRODUCTION && passive.valuePerElement?.resource) {
-      const { amount, resource, cards: sel, accumulation } = passive.valuePerElement;
+    if (
+      passive.type === PassiveType.ADJUST_PRODUCTION &&
+      passive.valuePerElement &&
+      passive.resources
+    ) {
+      const { amount, cards: sel, accumulation } = passive.valuePerElement;
       let count = 0;
       if (sel) {
         count = cardSelector(sel, instance.id, gameState, defs, stickerDefs).length;
@@ -242,7 +246,9 @@ function calculePassiveProductionBonus(
       }
 
       if (count > 0) {
-        passiveBonus = mergeResources(passiveBonus, { [resource[0]]: amount * count });
+        passiveBonus = mergeResources(passiveBonus, {
+          [Object.keys(passive.resources)[0]]: Object.values(passive.resources)[0] * amount * count,
+        });
       }
     }
   }

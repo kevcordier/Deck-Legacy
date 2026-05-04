@@ -128,9 +128,9 @@ describe('getEffectiveProductions', () => {
               {
                 id: 'p1',
                 type: PassiveType.ADJUST_PRODUCTION,
+                resources: { [ResourceType.GOLD]: 1 },
                 valuePerElement: {
                   amount: 1,
-                  resource: [ResourceType.GOLD],
                   cards: { scope: [TargetScope.BOARD] },
                 },
               },
@@ -158,9 +158,9 @@ describe('getEffectiveProductions', () => {
               {
                 id: 'p1',
                 type: PassiveType.ADJUST_PRODUCTION,
+                resources: { [ResourceType.GOLD]: 1 },
                 valuePerElement: {
                   amount: 2,
-                  resource: [ResourceType.GOLD],
                   accumulation: true,
                 },
               },
@@ -188,9 +188,9 @@ describe('getEffectiveProductions', () => {
               {
                 id: 'p1',
                 type: PassiveType.ADJUST_PRODUCTION,
+                resources: { [ResourceType.GOLD]: 1 },
                 valuePerElement: {
                   amount: 2,
-                  resource: [ResourceType.GOLD],
                   accumulation: true,
                 },
               },
@@ -217,9 +217,9 @@ describe('getEffectiveProductions', () => {
               {
                 id: 'p1',
                 type: PassiveType.ADJUST_PRODUCTION,
+                resources: { [ResourceType.GOLD]: 1 },
                 valuePerElement: {
                   amount: 5,
-                  resource: [ResourceType.GOLD],
                   // no cards, no accumulation → count stays 0
                 },
               },
@@ -286,9 +286,9 @@ describe('getEffectiveProductions', () => {
               {
                 id: 'p1',
                 type: PassiveType.ADJUST_PRODUCTION,
+                resources: { [ResourceType.GOLD]: 1 },
                 valuePerElement: {
                   amount: 1,
-                  resource: [ResourceType.GOLD],
                   accumulation: true,
                 },
               },

@@ -115,9 +115,9 @@ export const eastCliffs: CardDef = {
             {
               id: 1,
               type: ActionEffectType.ADD_RESOURCES,
+              resources: { [ResourceType.WEAPON]: 1 },
               valuePerElement: {
                 amount: 1,
-                resource: [ResourceType.WEAPON],
                 cards: {
                   scope: [TargetScope.BOARD],
                   tags: [CardTag.PERSON],

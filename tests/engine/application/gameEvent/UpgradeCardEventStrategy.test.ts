@@ -1,4 +1,4 @@
-import { makeDefs, makeInstance, makeState, makeStickerDefs } from '../fixtures';
+import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import * as cardHelpers from '@engine/application/cardHelpers';
 import { UpgradeCardEventStrategy } from '@engine/application/gameEvent/UpgradeCardEventStrategy';
 import { GameEventType } from '@engine/domain/enums';
@@ -6,7 +6,18 @@ import type { UpgradeCardEvent } from '@engine/domain/types';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('UpgradeCardEventStrategy', () => {
-  const strategy = new UpgradeCardEventStrategy(makeDefs(), makeStickerDefs());
+  const multiStateDefs = {
+    1: {
+      id: 1,
+      name: 'C',
+      states: [
+        { id: 1, name: 'S1' },
+        { id: 2, name: 'S2' },
+        { id: 3, name: 'S3' },
+      ],
+    },
+  };
+  const strategy = new UpgradeCardEventStrategy(multiStateDefs, makeStickerDefs());
 
   it('updates stateId on the instance', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });

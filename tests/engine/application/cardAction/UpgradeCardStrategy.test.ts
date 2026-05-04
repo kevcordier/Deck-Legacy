@@ -1,11 +1,19 @@
-import { makeDefs, makeInstance, makeState } from '../fixtures';
+import { makeDefs, makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { UpgradeCardStrategy } from '@engine/application/cardAction/UpgradeCardStrategy';
 import * as cardHelpers from '@engine/application/cardHelpers';
 import { ActionEffectType } from '@engine/domain/enums';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('UpgradeCardStrategy', () => {
-  const strategy = new UpgradeCardStrategy(makeDefs());
+  const strategy = new UpgradeCardStrategy(
+    makeDefs({
+      states: [
+        { id: 1, name: 'State 1' },
+        { id: 2, name: 'State 2' },
+      ],
+    }),
+    makeStickerDefs(),
+  );
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -32,6 +40,7 @@ describe('UpgradeCardStrategy', () => {
           { id: 2, name: 'State 2' },
         ],
       }),
+      makeStickerDefs(),
     );
     vi.spyOn(cardHelpers, 'getActiveState').mockImplementation(instance =>
       instance.stateId === 1

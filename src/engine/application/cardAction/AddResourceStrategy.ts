@@ -45,12 +45,19 @@ export class AddResourceStrategy implements CardActionStrategy {
       type: ActionEffectType;
       sourceInstanceId: number;
       resources: Resources;
+      value?: number;
     },
   ): GameState {
+    const resources = Object.fromEntries(
+      Object.entries(payload.resources).map(([key, amount]) => [
+        key,
+        amount * (payload.value ?? 1),
+      ]),
+    );
     const adjustedResources = this.applyAdjustAddResourcesPassives(
       gameState,
       payload.sourceInstanceId,
-      payload.resources,
+      resources,
     );
 
     return { ...gameState, resources: mergeResources(gameState.resources, adjustedResources) };

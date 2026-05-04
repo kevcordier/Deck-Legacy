@@ -5,6 +5,7 @@ export type Sticker = {
   description?: string;
   production?: string;
   glory?: number;
+  additionalGlory?: number;
   tags?: string[];
   effectId?: string;
 };

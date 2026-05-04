@@ -69,11 +69,18 @@ describe('resolveCost – resources', () => {
 });
 
 describe('resolveCost – discard', () => {
-  it('resolves empty discardedCardIds when no candidates on board', () => {
+  it('creates pending choice with empty candidates when no cards on board and no pickNumber', () => {
     const gs = makeState({ board: [] });
-    expect(() =>
-      resolveCost({ discard: [{ scope: [TargetScope.BOARD] }] }, 1, gs, defs, stickerDefs),
-    ).toThrow('Not enough cards available to pay this discard cost.');
+    const [resolved, pending] = resolveCost(
+      { discard: [{ scope: [TargetScope.BOARD] }] },
+      1,
+      gs,
+      defs,
+      stickerDefs,
+    );
+    expect(resolved.discardedCardIds).toEqual([]);
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe('choose_card');
   });
 
   it('resolves discard directly when exactly one candidate matches', () => {
@@ -121,7 +128,7 @@ describe('resolveCost – discard', () => {
     expect(pending[0].pickCount).toBe(2);
   });
 
-  it('defaults pickCount to 1 when discard number is not specified', () => {
+  it('passes undefined pickCount when discard number is not specified', () => {
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2, 3], instances: { 2: inst2, 3: inst3 } });
@@ -132,7 +139,7 @@ describe('resolveCost – discard', () => {
       defs,
       stickerDefs,
     );
-    expect(pending[0].pickCount).toBe(1);
+    expect(pending[0].pickCount).toBeUndefined();
   });
 
   it('resolves destroy directly when candidates equal number needed', () => {
@@ -164,40 +171,48 @@ describe('resolveCost – discard', () => {
     expect(pending[0].type).toBe('choose_card');
   });
 
-  it('only considers board cards for destroy candidates', () => {
+  it('only considers board cards for destroy candidates (creates pending with empty choices when not on board)', () => {
     const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const gs = makeState({ drawPile: [2], instances: { 2: inst } });
-    expect(() =>
-      resolveCost({ destroy: { scope: [TargetScope.BOARD] } }, 99, gs, defs, stickerDefs),
-    ).toThrow('Not enough cards available to pay this destroy cost.');
-  });
-
-  it('auto-resolves destroy with one candidate and no explicit number', () => {
-    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const gs = makeState({ board: [2], instances: { 2: inst } });
     const [resolved, pending] = resolveCost(
-      { destroy: { scope: [TargetScope.BOARD] } }, // no number, defaults to 1
+      { destroy: { scope: [TargetScope.BOARD] } },
       99,
       gs,
       defs,
       stickerDefs,
     );
-    expect(resolved.destroyedCardIds).toEqual([2]);
-    expect(pending).toHaveLength(0);
+    expect(resolved.destroyedCardIds).toEqual([]);
+    expect(pending).toHaveLength(1);
+    expect(pending[0].choices).toEqual([]);
   });
 
-  it('creates pending choice with default pickCount when no number specified', () => {
+  it('creates pending choice when one candidate exists and no explicit number', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    const [resolved, pending] = resolveCost(
+      { destroy: { scope: [TargetScope.BOARD] } }, // no number
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
+    expect(resolved.destroyedCardIds).toEqual([]);
+    expect(pending).toHaveLength(1);
+    expect(pending[0].choices).toEqual([2]);
+  });
+
+  it('creates pending choice with undefined pickCount when no number specified', () => {
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [2, 3], instances: { 2: inst2, 3: inst3 } });
     const [, pending] = resolveCost(
-      { destroy: { scope: [TargetScope.BOARD] } }, // no number, defaults to 1
+      { destroy: { scope: [TargetScope.BOARD] } }, // no number
       99,
       gs,
       defs,
       stickerDefs,
     );
     expect(pending).toHaveLength(1);
-    expect(pending[0].pickCount).toBe(1);
+    expect(pending[0].pickCount).toBeUndefined();
   });
 });

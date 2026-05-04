@@ -19,7 +19,7 @@ export class UpgradeCardEventStrategy implements GameEventStrategy {
   apply(gameState: GameState, event: GameEvent): GameState {
     const e = event as UpgradeCardEvent;
     const paidState = destroyCards(
-      discardCards(gameState, e.discardedCardIds ?? []),
+      discardCards(gameState, e.discardedCardIds ?? [], this.cardDefs, this.stickerDefs),
       e.destroyedCardIds ?? [],
     );
     const updatedInstances = {
@@ -37,7 +37,7 @@ export class UpgradeCardEventStrategy implements GameEventStrategy {
 
     const newState = {
       ...upgradedState,
-      ...discardCards(upgradedState, [e.cardInstanceId]),
+      ...discardCards(upgradedState, [e.cardInstanceId], this.cardDefs, this.stickerDefs),
     };
 
     return new TurnEndedStrategy(this.cardDefs, this.stickerDefs).apply(newState);

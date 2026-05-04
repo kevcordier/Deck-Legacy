@@ -15,7 +15,7 @@ const makeStep = (id: number, weapon: number, cumulated: number): StepDef => ({
     {
       id: 1,
       type: ActionEffectType.SET_CUMULATED,
-      accumulated: cumulated,
+      value: cumulated,
       cards: {
         scope: [TargetScope.SELF],
       },

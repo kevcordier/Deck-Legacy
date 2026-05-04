@@ -70,8 +70,8 @@ export function resolveCost(
       const candidates = cardSelector(discardCost, instanceId, gameState, defs, stickerDefs).filter(
         id => gameState.board.includes(id),
       );
-      const requiredCount = discardCost.pickNumber ?? 1;
-      if (candidates.length < requiredCount) {
+      const requiredCount = discardCost.pickNumber;
+      if (requiredCount && candidates.length < requiredCount) {
         throw new CostResolutionError('Not enough cards available to pay this discard cost.');
       }
       if (candidates.length === requiredCount) {
@@ -84,6 +84,8 @@ export function resolveCost(
           sourceInstanceId: instanceId,
           choices: candidates,
           pickCount: requiredCount,
+          pickMax: discardCost.pickMax,
+          pickMin: discardCost.pickMin,
           isMandatory,
         });
       }
@@ -94,8 +96,8 @@ export function resolveCost(
     const candidates = cardSelector(cost.destroy, instanceId, gameState, defs, stickerDefs).filter(
       id => gameState.board.includes(id),
     );
-    const requiredCount = cost.destroy.pickNumber ?? 1;
-    if (candidates.length < requiredCount) {
+    const requiredCount = cost.destroy.pickNumber;
+    if (requiredCount && candidates.length < requiredCount) {
       throw new CostResolutionError('Not enough cards available to pay this destroy cost.');
     }
     if (candidates.length === requiredCount) {
@@ -108,6 +110,8 @@ export function resolveCost(
         sourceInstanceId: instanceId,
         choices: candidates,
         pickCount: requiredCount,
+        pickMin: cost.destroy.pickMin,
+        pickMax: cost.destroy.pickMax,
         isMandatory,
       });
     }

@@ -1,4 +1,4 @@
-import { makeInstance, makeState } from '../fixtures';
+import { makeDefs, makeState } from '../fixtures';
 import { GameStartedStrategy } from '@engine/application/gameEvent/GameStartedStrategy';
 import { GameEventType } from '@engine/domain/enums';
 import type { GameStartedEvent } from '@engine/domain/types';
@@ -6,15 +6,17 @@ import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
 describe('GameStartedStrategy', () => {
-  const strategy = new GameStartedStrategy();
+  const strategy = new GameStartedStrategy(makeDefs());
 
   it('populates instances, drawPile, stickerStock, discoveryPile', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const result = strategy.apply(makeState(), {
       id: 'e1',
       type: GameEventType.GAME_STARTED,
       timestamp: 0,
-      cardInstances: [inst],
+      deck: [
+        { id: 1, cardId: 1 },
+        { id: 2, cardId: 1 },
+      ],
       initialDeck: [1],
       stickerStock: { 1: 3 },
       discoveryPile: [2],
@@ -27,19 +29,18 @@ describe('GameStartedStrategy', () => {
   });
 
   it('normalizes card instance fields (stickers, trackProgress, etc.)', () => {
-    const bare = { id: 5, cardId: 1, stateId: 1 } as never;
     const result = strategy.apply(makeState(), {
       id: 'e1',
       type: GameEventType.GAME_STARTED,
       timestamp: 0,
-      cardInstances: [bare],
-      initialDeck: [],
+      deck: [{ id: 1, cardId: 1 }],
+      initialDeck: [1],
       stickerStock: {},
       discoveryPile: [],
     } as GameStartedEvent);
-    expect(result.instances[5].stickers).toEqual({});
-    expect(result.instances[5].trackProgress).toEqual([]);
-    expect(result.instances[5].cumulated).toEqual({});
-    expect(result.instances[5].usedActionIds).toEqual([]);
+    expect(result.instances[1].stickers).toEqual({});
+    expect(result.instances[1].trackProgress).toEqual([]);
+    expect(result.instances[1].cumulated).toBe(0);
+    expect(result.instances[1].usedActionIds).toEqual([]);
   });
 });

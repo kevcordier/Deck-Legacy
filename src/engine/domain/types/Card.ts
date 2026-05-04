@@ -41,6 +41,7 @@ export type GloryDef = {
   amount: number;
   valuePerElement?: ValuePerElement;
   condition?: Condition;
+  emptyValues?: number;
 };
 
 export type CardState = {
@@ -78,7 +79,6 @@ export type CardAction = {
 
 export type ValuePerElement = {
   amount: number;
-  resource?: ResourceType[];
   cards?: CardSelector;
   productionTotal?: ResourceType;
   accumulation?: boolean;
@@ -95,7 +95,7 @@ export type ActionEffect = {
   deck?: DeckTarget;
   cards?: CardSelector;
   resources?: ResourceSelector;
-  accumulated?: number;
+  value?: number;
   states?: number[];
   stickers?: StickerSelector;
   valuePerElement?: ValuePerElement;
@@ -197,7 +197,7 @@ export type ResolvedActionEffect = {
   stateId?: number;
   position?: number | 'top' | 'bottom';
   stepIds?: number[];
-  accumulated?: number;
   resourceScopes?: RemovedResourceScope[];
   newActionEffects?: ActionEffect[];
+  value?: number;
 };

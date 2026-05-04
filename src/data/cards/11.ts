@@ -151,8 +151,8 @@ export const hill: CardDef = {
           cards: {
             scope: [TargetScope.SELF],
           },
+          resources: { [ResourceType.GOLD]: 1 },
           valuePerElement: {
-            resource: [ResourceType.GOLD],
             amount: 1,
             cards: {
               scope: [TargetScope.BOARD],

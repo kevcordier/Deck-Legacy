@@ -13,7 +13,6 @@ import type {
   CardAction,
   CardActionEvent,
   CardDef,
-  CardInstance,
   CardProducedEvent,
   ChooseStateEvent,
   GameEvent,
@@ -59,7 +58,7 @@ export class GameAggregate {
   private readonly gameEventContext: GameEventContext;
   private currentCardAction: CardActionAggregate | null = null;
 
-  private parameters: GameParameters = {
+  private readonly parameters: GameParameters = {
     displayedDrawDeckCards: 1,
     advanceCardDrawn: 2,
     turnCardDrawn: 4,
@@ -112,8 +111,8 @@ export class GameAggregate {
   }
 
   public gameStarted(
-    cardInstances: CardInstance[],
     initialDeck: number[],
+    deck: { id: number; cardId: number }[],
     stickerStock: Record<string, number>,
     discoveryPile: number[],
   ): GameState {
@@ -121,8 +120,8 @@ export class GameAggregate {
       id: crypto.randomUUID(),
       type: GameEventType.GAME_STARTED,
       timestamp: Date.now(),
-      cardInstances,
       initialDeck,
+      deck,
       stickerStock,
       discoveryPile,
     };

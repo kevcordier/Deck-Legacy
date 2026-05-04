@@ -1,25 +1,19 @@
 import type { GameEventStrategy } from './GameEventStrategy';
-import type { CardInstance, GameEvent, GameStartedEvent, GameState } from '@engine/domain/types';
+import { createInstance } from '@engine/application/factory';
+import type { CardDef, GameEvent, GameStartedEvent, GameState } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 
-function normalizeCardInstance(instance: CardInstance): CardInstance {
-  return {
-    ...instance,
-    stickers: instance.stickers ?? {},
-    trackProgress: instance.trackProgress ?? [],
-    cumulated: instance.cumulated ?? {},
-    usedActionIds: instance.usedActionIds ?? [],
-    removedResourcesByState: instance.removedResourcesByState ?? {},
-  };
-}
-
 export class GameStartedStrategy implements GameEventStrategy {
+  constructor(private readonly defs: Record<number, CardDef>) {}
   apply(gameState: GameState, event: GameEvent): GameState {
     const e = event as GameStartedEvent;
+    const allInstances = e.deck.map(entry =>
+      createInstance(entry.id, entry.cardId, this.defs[entry.cardId].states[0].id, this.defs),
+    );
     return {
       ...gameState,
       instances: Object.fromEntries(
-        e.cardInstances.map(inst => [inst.id, normalizeCardInstance(inst)]),
+        [...e.initialDeck, ...e.discoveryPile].map(inst => [inst, allInstances[inst - 1]]),
       ),
       drawPile: e.initialDeck,
       stickerStock: e.stickerStock,

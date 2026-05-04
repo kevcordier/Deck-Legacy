@@ -20,7 +20,7 @@ const makeArkStep = (id: number): StepDef => ({
       id: 1,
       type: ActionEffectType.ADD_CUMULATED,
       cards: { scope: [TargetScope.SELF] },
-      accumulated: 1,
+      value: 1,
     },
   ],
 });

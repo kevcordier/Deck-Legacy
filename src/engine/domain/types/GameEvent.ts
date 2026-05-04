@@ -1,5 +1,5 @@
 import type { GameEventType } from '@engine/domain/enums';
-import type { CardInstance, GameState, Resources } from '@engine/domain/types';
+import type { GameState, Resources } from '@engine/domain/types';
 
 export interface GameEvent {
   id: string;
@@ -9,8 +9,8 @@ export interface GameEvent {
 
 export interface GameStartedEvent extends GameEvent {
   type: GameEventType.GAME_STARTED;
-  cardInstances: CardInstance[];
   initialDeck: number[];
+  deck: { id: number; cardId: number }[];
   stickerStock: Record<string, number>;
   discoveryPile: number[];
 }

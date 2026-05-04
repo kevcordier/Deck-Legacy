@@ -20,8 +20,23 @@ export const pickGlobalBoardEffects = (
   return globalBoardEffects;
 };
 
-export const discardCards = (_gameState: GameState, cardIds: number[]): GameState => {
+export const discardCards = (
+  _gameState: GameState,
+  cardIds: number[],
+  cardDefs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
+  gameState.lastDiscardedCards = cardIds;
+  getInstancesTriggerEffects(
+    cardIds.map(id => gameState.instances[id]).filter(Boolean),
+    cardDefs,
+    stickerDefs,
+    Trigger.ON_DISCARD,
+    gameState,
+  ).forEach(({ effectDef, sourceInstanceId }) => {
+    gameState.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+  });
   cardIds.forEach(cardId => {
     if (gameState.destroyedPile.includes(cardId)) {
       return;
@@ -133,7 +148,11 @@ export const destroyCards = (_gameState: GameState, cardIds: number[]): GameStat
   return gameState;
 };
 
-export const endTurn = (_gameState: GameState, cardDefs: Record<number, CardDef>): GameState => {
+export const endTurn = (
+  _gameState: GameState,
+  cardDefs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
   gameState.resources = {};
 
@@ -152,7 +171,7 @@ export const endTurn = (_gameState: GameState, cardDefs: Record<number, CardDef>
   });
 
   gameState.boardEffects = newBoardEffects;
-  return { ...gameState, ...discardCards(gameState, cardsToDiscard) };
+  return { ...gameState, ...discardCards(gameState, cardsToDiscard, cardDefs, stickerDefs) };
 };
 
 export const spendResources = (_gameState: GameState, resources: Resources): GameState => {
@@ -196,7 +215,20 @@ export function computeGameStateDiff(before: GameState, after: GameState): Parti
   return Object.fromEntries(
     (Object.keys(after) as (keyof GameState)[])
       .filter(key => JSON.stringify(before[key]) !== JSON.stringify(after[key]))
-      .map(key => [key, after[key]]),
+      .map(key => {
+        if (key === 'instances') {
+          return [
+            key,
+            Object.fromEntries(
+              Object.entries(after.instances).filter(
+                ([id, inst]) =>
+                  JSON.stringify(before.instances[Number(id)]) !== JSON.stringify(inst),
+              ),
+            ),
+          ];
+        }
+        return [key, after[key]];
+      }),
   );
 }
 

@@ -179,8 +179,8 @@ export function GameProvider({
     const agg = makeAggregate(gameState, defs, stickerDefs);
     aggRef.current = agg;
     const newState = aggRef.current.gameStarted(
-      allInstances,
       initialDeck,
+      deckEntries,
       loadInitialStickerStock(),
       discoveryPile,
     );

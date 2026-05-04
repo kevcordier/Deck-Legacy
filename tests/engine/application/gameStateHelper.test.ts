@@ -41,7 +41,7 @@ describe('discardCards', () => {
   it('moves a card from board to discardPile', () => {
     const inst = makeInstance({ id: 10, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [10], instances: { 10: inst } });
-    const result = discardCards(gs, [10]);
+    const result = discardCards(gs, [10], makeDefs(), makeStickerDefs());
     expect(result.board).not.toContain(10);
     expect(result.discardPile).toContain(10);
   });
@@ -49,7 +49,7 @@ describe('discardCards', () => {
   it('removes card from drawPile', () => {
     const inst = makeInstance({ id: 5 });
     const gs = makeState({ drawPile: [5], instances: { 5: inst } });
-    const result = discardCards(gs, [5]);
+    const result = discardCards(gs, [5], makeDefs(), makeStickerDefs());
     expect(result.drawPile).not.toContain(5);
     expect(result.discardPile).toContain(5);
   });
@@ -57,7 +57,7 @@ describe('discardCards', () => {
   it('removes card from discoveryPile', () => {
     const inst = makeInstance({ id: 7 });
     const gs = makeState({ discoveryPile: [7], instances: { 7: inst } });
-    const result = discardCards(gs, [7]);
+    const result = discardCards(gs, [7], makeDefs(), makeStickerDefs());
     expect(result.discoveryPile).not.toContain(7);
     expect(result.discardPile).toContain(7);
   });
@@ -65,7 +65,7 @@ describe('discardCards', () => {
   it('skips cards already in destroyedPile', () => {
     const inst = makeInstance({ id: 3 });
     const gs = makeState({ destroyedPile: [3], board: [3], instances: { 3: inst } });
-    const result = discardCards(gs, [3]);
+    const result = discardCards(gs, [3], makeDefs(), makeStickerDefs());
     expect(result.board).toContain(3);
     expect(result.discardPile).not.toContain(3);
   });
@@ -77,7 +77,7 @@ describe('discardCards', () => {
       instances: { 2: inst },
       boardEffects: { 2: [{ id: 'x', type: PassiveType.BLOCK }] },
     });
-    const result = discardCards(gs, [2]);
+    const result = discardCards(gs, [2], makeDefs(), makeStickerDefs());
     expect(result.boardEffects[2]).toBeUndefined();
   });
 
@@ -88,7 +88,7 @@ describe('discardCards', () => {
       instances: { 12: inst },
       boardEffects: { 12: [{ id: 'g', type: PassiveType.BLOCK, global: true }] },
     });
-    const result = discardCards(gs, [12]);
+    const result = discardCards(gs, [12], makeDefs(), makeStickerDefs());
     expect(result.boardEffects[12]).toHaveLength(1);
     expect(result.boardEffects[12][0].global).toBe(true);
   });
@@ -96,7 +96,7 @@ describe('discardCards', () => {
   it('does not duplicate in discardPile', () => {
     const inst = makeInstance({ id: 4 });
     const gs = makeState({ discardPile: [4], instances: { 4: inst } });
-    const result = discardCards(gs, [4]);
+    const result = discardCards(gs, [4], makeDefs(), makeStickerDefs());
     expect(result.discardPile.filter(id => id === 4)).toHaveLength(1);
   });
 });
@@ -214,7 +214,7 @@ describe('endTurn', () => {
       1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
     };
     const gs = makeState({ board: [1], resources: { gold: 5 }, instances: { 1: inst } });
-    const result = endTurn(gs, defs);
+    const result = endTurn(gs, defs, makeStickerDefs());
     expect(result.resources).toEqual({});
   });
 
@@ -224,7 +224,7 @@ describe('endTurn', () => {
       2: { id: 2, name: 'C', states: [{ id: 1, name: 'S' }] },
     };
     const gs = makeState({ board: [2], instances: { 2: inst } });
-    const result = endTurn(gs, defs);
+    const result = endTurn(gs, defs, makeStickerDefs());
     expect(result.board).not.toContain(2);
     expect(result.discardPile).toContain(2);
   });
@@ -235,7 +235,7 @@ describe('endTurn', () => {
       3: { id: 3, name: 'P', states: [{ id: 1, name: 'S', permanent: true }] },
     };
     const gs = makeState({ board: [3], instances: { 3: inst } });
-    const result = endTurn(gs, defs);
+    const result = endTurn(gs, defs, makeStickerDefs());
     expect(result.board).toContain(3);
   });
 
@@ -249,7 +249,7 @@ describe('endTurn', () => {
       },
     };
     const gs = makeState({ board: [4], instances: { 4: inst } });
-    const result = endTurn(gs, defs);
+    const result = endTurn(gs, defs, makeStickerDefs());
     expect(result.board).toContain(4);
   });
 
@@ -263,7 +263,7 @@ describe('endTurn', () => {
       instances: { 5: inst },
       boardEffects: { 5: [{ id: 'z', type: PassiveType.BLOCK }] },
     });
-    const result = endTurn(gs, defs);
+    const result = endTurn(gs, defs, makeStickerDefs());
     expect(result.boardEffects[5]).toBeUndefined();
   });
 
@@ -277,7 +277,7 @@ describe('endTurn', () => {
       instances: { 14: inst },
       boardEffects: { 14: [{ id: 'g', type: PassiveType.BLOCK, global: true }] },
     });
-    const result = endTurn(gs, defs);
+    const result = endTurn(gs, defs, makeStickerDefs());
     expect(result.boardEffects[14]).toHaveLength(1);
     expect(result.boardEffects[14][0].global).toBe(true);
   });
@@ -289,7 +289,7 @@ describe('endTurn', () => {
       instances: {},
       boardEffects: { 99: [{ id: 'local', type: PassiveType.BLOCK }] },
     });
-    const result = endTurn(gs, defs);
+    const result = endTurn(gs, defs, makeStickerDefs());
     expect(result.boardEffects[99]).toBeUndefined();
   });
 });

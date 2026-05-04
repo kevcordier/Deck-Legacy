@@ -79,6 +79,16 @@ export function GameCard({
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
   const [name, setName] = useState(() => getCardName(instance.id));
 
+  const emptyGloryBlock =
+    (cs.glory?.emptyValues ?? 0) +
+    (currentStateStickers?.reduce(
+      (sum, stickerId) => sum + (stickerDefs[stickerId]?.additionalGlory ?? 0),
+      0,
+    ) ?? 0);
+  const emptyValues: (number | undefined)[] = Array.from({
+    length: emptyGloryBlock,
+  }).map((_, i) => instance.glories[i]);
+
   const cardClass = [
     'min-w-32 max-w-100 aspect-2/3 rounded-md @3xs:rounded-xl',
     'border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden animate-fade-in-scale',
@@ -152,7 +162,12 @@ export function GameCard({
             />
           )}
 
-          {cs.glory !== undefined && <Glory glory={glory} />}
+          <div className="flex flex-wrap gap-1">
+            {cs.glory !== undefined && !emptyValues.length && <Glory glory={glory} />}
+            {emptyValues.map((value, i) => (
+              <Glory key={`empty-${i.toString()}`} glory={value} />
+            ))}
+          </div>
 
           {currentStateStickers.length > 0 && (
             <div className="flex flex-wrap gap-1">

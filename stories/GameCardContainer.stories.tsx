@@ -11,6 +11,7 @@ type GameCardContainerProps = {
   instanceId: number;
   stickers: Record<number, number[]>;
   trackProgress: number[];
+  glories: number[];
   cumulated: number;
   wood: number;
   gold: number;
@@ -42,6 +43,7 @@ const meta: Meta<GameCardContainerProps> = {
     instanceId,
     stickers = {},
     trackProgress = [],
+    glories = [],
     cumulated = 0,
     isOnBoard,
     isBlocked,
@@ -55,7 +57,7 @@ const meta: Meta<GameCardContainerProps> = {
   }) => {
     const defs = loadCardDefs();
 
-    const validCardId = deckData.deck.find(({ id }) => id === instanceId)?.cardId || 1;
+    const validCardId = deckData.deck.find(({ id }) => id === instanceId)?.cardId ?? 1;
     const def = defs[validCardId];
     const instance = makeInstance({
       id: instanceId,
@@ -64,6 +66,7 @@ const meta: Meta<GameCardContainerProps> = {
       stickers,
       trackProgress,
       cumulated,
+      glories,
     });
 
     const colClass = ['grid-cols-1', 'grid-cols-2', 'grid-cols-3', 'grid-cols-4'][
@@ -118,6 +121,7 @@ export const GameCardPreview: Story = {
     instanceId: 1,
     stickers: {},
     trackProgress: [],
+    glories: [],
     cumulated: 0,
     wood: 2,
     gold: 2,

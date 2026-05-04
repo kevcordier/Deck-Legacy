@@ -68,5 +68,6 @@ export function makePreviewInstance(
     trackProgress: [],
     cumulated: 0,
     usedActionIds: [],
+    glories: [],
   };
 }

@@ -231,7 +231,12 @@ export class CardActionAggregate {
       !getActiveState(this.instance, this.cardDefs)?.permanent &&
       !this.def.parchmentCard
     ) {
-      this.gameState = discardCards(this.gameState, [this.instance.id]);
+      this.gameState = discardCards(
+        this.gameState,
+        [this.instance.id],
+        this.cardDefs,
+        this.stickerDefs,
+      );
     }
 
     if (this.def.parchmentCard) {
@@ -344,6 +349,8 @@ export class CardActionAggregate {
       discardCards(
         spendResources(this.gameState, this.resolvedCost.resources),
         this.resolvedCost.discardedCardIds,
+        this.cardDefs,
+        this.stickerDefs,
       ),
       this.resolvedCost.destroyedCardIds,
     );

@@ -8,7 +8,7 @@ const makeStep = (id: number): StepDef => ({
       id: 1,
       type: ActionEffectType.ADD_CUMULATED,
       cards: { scope: [TargetScope.SELF] },
-      accumulated: 1,
+      value: 1,
     },
   ],
 });
@@ -83,16 +83,16 @@ export const inventor: CardDef = {
                 {
                   id: 4,
                   type: ActionEffectType.ADD_RESOURCES,
+                  resources: {
+                    [ResourceType.GOLD]: 1,
+                    [ResourceType.WOOD]: 1,
+                    [ResourceType.STONE]: 1,
+                    [ResourceType.IRON]: 1,
+                    [ResourceType.WEAPON]: 1,
+                    [ResourceType.GOODS]: 1,
+                  },
                   valuePerElement: {
                     amount: 1,
-                    resource: [
-                      ResourceType.GOLD,
-                      ResourceType.WOOD,
-                      ResourceType.STONE,
-                      ResourceType.IRON,
-                      ResourceType.WEAPON,
-                      ResourceType.GOODS,
-                    ],
                     accumulation: true,
                   },
                 },

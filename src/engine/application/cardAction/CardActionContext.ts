@@ -1,5 +1,6 @@
 import { AddBoardEffectStrategy } from '@engine/application/cardAction/AddBoardEffectStrategy';
 import { AddCumulatedStrategy } from '@engine/application/cardAction/AddCumulatedStrategy';
+import { AddGloryStrategy } from '@engine/application/cardAction/AddGloryStrategy';
 import { AddResourceStrategy } from '@engine/application/cardAction/AddResourceStrategy';
 import { AddStickerStrategy } from '@engine/application/cardAction/AddStickerStrategy';
 import { BlockCardStrategy } from '@engine/application/cardAction/BlockCardStrategy';
@@ -30,7 +31,7 @@ export class CardActionContext {
       [ActionEffectType.DISCARD_CARD]: new DiscardCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.DESTROY_CARD]: new DestroyCardStrategy(),
-      [ActionEffectType.UPGRADE_CARD]: new UpgradeCardStrategy(cardDefs),
+      [ActionEffectType.UPGRADE_CARD]: new UpgradeCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.PLACE_CARD_IN_PILE]: new PlaceCardInPileStrategy(),
       [ActionEffectType.BLOCK_CARD]: new BlockCardStrategy(),
       [ActionEffectType.ADD_BOARD_EFFECT]: new AddBoardEffectStrategy(),
@@ -43,6 +44,7 @@ export class CardActionContext {
       [ActionEffectType.ADD_CUMULATED]: new AddCumulatedStrategy(),
       [ActionEffectType.END_GAME]: new EndGameStrategy(),
       [ActionEffectType.SHUFFLE_DECK]: new ShuffleDeckStrategy(),
+      [ActionEffectType.ADD_GLORY]: new AddGloryStrategy(cardDefs, stickerDefs),
     };
   }
 

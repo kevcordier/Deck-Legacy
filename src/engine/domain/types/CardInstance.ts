@@ -20,4 +20,6 @@ export type CardInstance = {
   usedActionIds: string[];
   /** Resource keys removed for each state, split by concern (production/actionCost/upgradeCost). */
   removedResourcesByState?: Record<number, RemovedResourcesByScope>;
+  /** Empty glory values */
+  glories: number[];
 };

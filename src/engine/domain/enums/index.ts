@@ -62,6 +62,7 @@ export enum ActionEffectType {
   CHOOSE_EFFECT = 'CHOOSE_EFFECT',
   END_GAME = 'END_GAME',
   SHUFFLE_DECK = 'SHUFFLE_DECK',
+  ADD_GLORY = 'ADD_GLORY',
 }
 
 export enum PassiveType {

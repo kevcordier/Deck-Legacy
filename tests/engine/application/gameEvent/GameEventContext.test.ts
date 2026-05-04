@@ -16,24 +16,32 @@ import type {
 import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it, vi } from 'vitest';
 
-const defs = { 1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] } };
+const defs = {
+  1: {
+    id: 1,
+    name: 'C',
+    states: [
+      { id: 1, name: 'S' },
+      { id: 2, name: 'S2' },
+    ],
+  },
+};
 
 describe('GameEventContext', () => {
   it('throws for unknown event types', () => {
     const ctx = new GameEventContext(defs, makeStickerDefs());
-    expect(() =>
-      ctx.apply(makeState(), { id: 'x', type: 'UNKNOWN_EVENT', timestamp: 0 } as never),
-    ).toThrow('Unknown event type: UNKNOWN_EVENT');
+    expect(() => ctx.apply(makeState(), { id: 'x', type: 'UNKNOWN_EVENT', timestamp: 0 })).toThrow(
+      'Unknown event type: UNKNOWN_EVENT',
+    );
   });
 
   it('dispatches GAME_STARTED', () => {
     const ctx = new GameEventContext(defs, makeStickerDefs());
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const result = ctx.apply(makeState(), {
       id: 'e1',
       type: GameEventType.GAME_STARTED,
       timestamp: 0,
-      cardInstances: [inst],
+      deck: [{ id: 1, cardId: 1 }],
       initialDeck: [1],
       stickerStock: {},
       discoveryPile: [],

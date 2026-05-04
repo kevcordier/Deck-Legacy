@@ -12,7 +12,7 @@ describe('AddCumulatedStrategy', () => {
       id: 'x',
       type: ActionEffectType.ADD_CUMULATED,
       sourceInstanceId: 1,
-      accumulated: 1,
+      value: 1,
     });
     expect(result).toBe(gs);
   });
@@ -37,7 +37,7 @@ describe('AddCumulatedStrategy', () => {
       type: ActionEffectType.ADD_CUMULATED,
       sourceInstanceId: 1,
       instanceIds: [1],
-      accumulated: 3,
+      value: 3,
     });
     expect(result.instances[1].cumulated).toBe(5);
   });
@@ -50,7 +50,7 @@ describe('AddCumulatedStrategy', () => {
       type: ActionEffectType.ADD_CUMULATED,
       sourceInstanceId: 1,
       instanceIds: [1],
-      accumulated: 4,
+      value: 4,
     });
     expect(result.instances[1].cumulated).toBe(4);
   });

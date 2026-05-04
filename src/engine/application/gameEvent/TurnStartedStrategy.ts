@@ -19,7 +19,7 @@ export class TurnStartedStrategy implements GameEventStrategy {
     const e = event as TurnStartedEvent;
 
     const afterDraw = drawCards(
-      endTurn({ ...gameState, turn: e.turn }, this.cardDefs),
+      endTurn({ ...gameState, turn: e.turn }, this.cardDefs, this.stickerDefs),
       e.turnCards,
       this.cardDefs,
       this.stickerDefs,

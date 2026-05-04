@@ -513,7 +513,7 @@ describe('resolveActionEffect – valuePerElement', () => {
       },
     };
     const [resolved] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
-    expect(resolved.resources).toEqual({ gold: 4 });
+    expect(resolved.value).toBe(2);
   });
 
   it('resolves resource from accumulation', () => {
@@ -525,7 +525,7 @@ describe('resolveActionEffect – valuePerElement', () => {
       valuePerElement: { amount: 1, resource: ['wood' as never], accumulation: true },
     };
     const [resolved] = resolveActionEffect(effect, 1, gs, defs, stickerDefs);
-    expect(resolved.resources).toEqual({ wood: 3 });
+    expect(resolved.value).toBe(3);
   });
 
   it('returns early when count is 0', () => {
@@ -556,9 +556,9 @@ describe('resolveActionEffect – valuePerElement', () => {
         cards: { scope: [TargetScope.BOARD] },
       },
     };
-    const [, pending] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
-    expect(pending).toHaveLength(2);
-    expect(pending[0].type).toBe('choose_resource');
+    const [resolved, pending] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
+    expect(pending).toHaveLength(0);
+    expect(resolved.value).toBe(2);
   });
 
   it('resolves resource from productionTotal', () => {
@@ -579,7 +579,7 @@ describe('resolveActionEffect – valuePerElement', () => {
       },
     };
     const [resolved] = resolveActionEffect(effect, 99, gs, { 2: woodProducerDef }, stickerDefs);
-    expect(resolved.resources).toEqual({ gold: 3 });
+    expect(resolved.value).toBe(3);
   });
 
   it('returns 0 for productionTotal when a production does not include the key', () => {
@@ -622,14 +622,14 @@ describe('resolveActionEffect – valuePerElement', () => {
 // ─── accumulated ──────────────────────────────────────────────────────────────
 
 describe('resolveActionEffect – accumulated', () => {
-  it('passes accumulated through to resolved action', () => {
+  it('passes value through to resolved action', () => {
     const effect = {
       id: 1,
       type: ActionEffectType.ADD_CUMULATED,
-      accumulated: 1,
+      value: 1,
     };
     const [resolved] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
-    expect(resolved.accumulated).toEqual(1);
+    expect(resolved.value).toEqual(1);
   });
 });
 
