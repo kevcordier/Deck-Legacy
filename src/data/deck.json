@@ -539,18 +539,53 @@
     {
       "id": 135,
       "cardId": 118
-    },
-    {
-      "id": 136,
-      "cardId": 119
-    },
-    {
-      "id": 137,
-      "cardId": 120
-    },
-    {
-      "id": 138,
-      "cardId": 121
     }
-  ]
+  ],
+  "expansions": {
+    "Prosperity": {
+      "purge": {
+        "permanent": 1,
+        "purge": 12
+      },
+      "parameters": {
+        "discoverPerRound": 0
+      },
+      "deck": [
+        {
+          "id": 136,
+          "cardId": 119
+        }
+      ]
+    },
+    "The Water Mill": {
+      "purge": {
+        "permanent": 1,
+        "purge": 12
+      },
+      "parameters": {
+        "discoverPerRound": 0
+      },
+      "deck": [
+        {
+          "id": 137,
+          "cardId": 120
+        }
+      ]
+    },
+    "Border Dispute": {
+      "purge": {
+        "permanent": 1,
+        "purge": 12
+      },
+      "parameters": {
+        "discoverPerRound": 0
+      },
+      "deck": [
+        {
+          "id": 138,
+          "cardId": 121
+        }
+      ]
+    }
+  }
 }

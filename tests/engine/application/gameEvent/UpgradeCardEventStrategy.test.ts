@@ -1,7 +1,7 @@
 import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import * as cardHelpers from '@engine/application/cardHelpers';
 import { UpgradeCardEventStrategy } from '@engine/application/gameEvent/UpgradeCardEventStrategy';
-import { GameEventType } from '@engine/domain/enums';
+import { ActionEffectType, GameEventType, Trigger } from '@engine/domain/enums';
 import type { UpgradeCardEvent } from '@engine/domain/types';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -77,5 +77,51 @@ describe('UpgradeCardEventStrategy', () => {
     expect(result.discardPile).toContain(2);
     expect(result.destroyedPile).toContain(3);
     expect(result.resources.gold).toBe(4);
+  });
+
+  it('registers ON_UPGRADE triggers from source state', () => {
+    const defsWithTrigger = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [
+          {
+            id: 1,
+            name: 'S1',
+            actions: [
+              {
+                id: '1-1-1',
+                trigger: Trigger.ON_UPGRADE,
+                actionEffects: [
+                  {
+                    id: 1,
+                    type: ActionEffectType.ADD_RESOURCES,
+                    resources: { gold: 1 },
+                  },
+                ],
+              },
+            ],
+          },
+          { id: 2, name: 'S2' },
+        ],
+      },
+    } as never;
+    const strategyWithTrigger = new UpgradeCardEventStrategy(defsWithTrigger, makeStickerDefs());
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+
+    const result = strategyWithTrigger.apply(gs, {
+      id: 'e1',
+      type: GameEventType.UPGRADE_CARD,
+      timestamp: 0,
+      cardInstanceId: 1,
+      stateId: 2,
+      cost: {},
+    } as UpgradeCardEvent);
+
+    expect(Object.keys(result.triggerPile)).toHaveLength(1);
+    const trigger = Object.values(result.triggerPile)[0];
+    expect(trigger.sourceInstanceId).toBe(1);
+    expect(trigger.effectDef.trigger).toBe(Trigger.ON_UPGRADE);
   });
 });

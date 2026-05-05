@@ -9,8 +9,7 @@ export type PendingChoice = {
   sourceInstanceId: number;
   targetInstanceId?: number;
   choices: (number | string | Resources | ActionEffect)[];
-  pickCount?: number;
-  pickMin?: number;
-  pickMax?: number;
+  pickMin: number;
+  pickMax: number;
   isMandatory: boolean;
 };

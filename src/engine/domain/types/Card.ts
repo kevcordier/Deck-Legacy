@@ -96,7 +96,7 @@ export type ActionEffect = {
   cards?: CardSelector;
   resources?: ResourceSelector;
   value?: number;
-  states?: number[];
+  states?: StateSelector;
   stickers?: StickerSelector;
   valuePerElement?: ValuePerElement;
   resourceScopes?: RemovedResourceScope[];
@@ -130,7 +130,6 @@ export type Passive = {
     goods?: number;
   };
   glory?: number;
-  states?: number[];
   stickerIds?: number[];
   valuePerElement?: ValuePerElement;
   condition?: Condition;
@@ -141,6 +140,10 @@ export type Passive = {
 export type Having = {
   minGlory?: number;
   maxGlory?: number;
+  minProduction?: number;
+  maxProduction?: number;
+  minStickers?: number;
+  maxStickers?: number;
 };
 
 export type CardSelector = {
@@ -182,6 +185,11 @@ export type StickerSelector = {
   pickNumber?: number;
   pickMin?: number;
   pickMax?: number;
+};
+
+export type StateSelector = {
+  ids?: number[];
+  having?: Having;
 };
 
 export type ResolvedActionEffect = {

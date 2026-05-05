@@ -34,16 +34,10 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
           sourceInstanceId: choice.sourceInstanceId,
           kind: choice.type,
           choices: productions.map(p =>
-            getEffectiveProductions(
-              p,
-              gs,
-              this.defs,
-              gs.instances[instanceId],
-              this.stickerDefs,
-              {},
-            ),
+            getEffectiveProductions(p, gs, this.defs, gs.instances[instanceId], this.stickerDefs),
           ),
-          pickCount: 1,
+          pickMin: 1,
+          pickMax: 1,
           isMandatory: true,
         });
 
@@ -61,7 +55,6 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
               this.defs,
               gs.instances[instanceId],
               this.stickerDefs,
-              {},
             ),
           ),
         },
@@ -91,7 +84,8 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
           sourceInstanceId: choice.sourceInstanceId,
           kind: choice.type,
           choices: stickerChoices,
-          pickCount: 1,
+          pickMin: 1,
+          pickMax: 1,
           isMandatory: true,
         });
 

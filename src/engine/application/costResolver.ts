@@ -1,4 +1,5 @@
 import { cardSelector } from '@engine/application/cardSelector';
+import { getPickNumbers } from '@engine/application/effectResolver';
 import { ActionEffectType, PendingChoiceType } from '@engine/domain/enums';
 import type {
   CardDef,
@@ -59,7 +60,8 @@ export function resolveCost(
         type: PendingChoiceType.CHOOSE_RESOURCE,
         sourceInstanceId: instanceId,
         choices: payableResourceCosts,
-        pickCount: 1,
+        pickMax: 1,
+        pickMin: 1,
         isMandatory,
       });
     }
@@ -70,11 +72,11 @@ export function resolveCost(
       const candidates = cardSelector(discardCost, instanceId, gameState, defs, stickerDefs).filter(
         id => gameState.board.includes(id),
       );
-      const requiredCount = discardCost.pickNumber;
-      if (requiredCount && candidates.length < requiredCount) {
+      const picks = getPickNumbers(discardCost);
+      if (picks.pickMin && candidates.length < picks.pickMin) {
         throw new CostResolutionError('Not enough cards available to pay this discard cost.');
       }
-      if (candidates.length === requiredCount) {
+      if (candidates.length === picks.pickMax) {
         resolvedCost.discardedCardIds.push(...candidates);
       } else {
         pendingChoices.push({
@@ -83,9 +85,7 @@ export function resolveCost(
           type: PendingChoiceType.CHOOSE_CARD,
           sourceInstanceId: instanceId,
           choices: candidates,
-          pickCount: requiredCount,
-          pickMax: discardCost.pickMax,
-          pickMin: discardCost.pickMin,
+          ...picks,
           isMandatory,
         });
       }
@@ -96,11 +96,11 @@ export function resolveCost(
     const candidates = cardSelector(cost.destroy, instanceId, gameState, defs, stickerDefs).filter(
       id => gameState.board.includes(id),
     );
-    const requiredCount = cost.destroy.pickNumber;
-    if (requiredCount && candidates.length < requiredCount) {
+    const picks = getPickNumbers(cost.destroy);
+    if (picks.pickMin && candidates.length < picks.pickMin) {
       throw new CostResolutionError('Not enough cards available to pay this destroy cost.');
     }
-    if (candidates.length === requiredCount) {
+    if (candidates.length === picks.pickMax) {
       resolvedCost.destroyedCardIds = candidates;
     } else {
       pendingChoices.push({
@@ -109,9 +109,7 @@ export function resolveCost(
         type: PendingChoiceType.CHOOSE_CARD,
         sourceInstanceId: instanceId,
         choices: candidates,
-        pickCount: requiredCount,
-        pickMin: cost.destroy.pickMin,
-        pickMax: cost.destroy.pickMax,
+        ...picks,
         isMandatory,
       });
     }

@@ -12,6 +12,8 @@ interface CardRowProps {
 
 type EffectEntry = { sourceId: number; passive: Passive };
 
+const STACK_OFFSET_PX = 36;
+
 function effectsOnCard(
   gameState: GameState,
   instanceId: number,
@@ -35,19 +37,22 @@ export function CardRow({ cardIds }: CardRowProps) {
   const { t } = useTranslation();
   const { gameState, defs, stickerDefs } = useGame();
 
-  const blockedByMap: Record<number, number> = {};
+  const blockingMap: Record<number, number[]> = {};
   Object.entries(gameState.boardEffects).forEach(([sourceId, passives]) => {
     passives
       .filter(be => be.type === PassiveType.BLOCK)
       .forEach(be => {
-        be.cards?.ids?.forEach(blockedId => {
-          blockedByMap[blockedId] = Number(sourceId);
-        });
+        const targets = be.cards
+          ? cardSelector(be.cards, Number(sourceId), gameState, defs, stickerDefs)
+          : [];
+        if (targets.length > 0) {
+          const sid = Number(sourceId);
+          blockingMap[sid] = [...(blockingMap[sid] ?? []), ...targets];
+        }
       });
   });
 
-  const blockedIds = new Set(Object.keys(blockedByMap).map(Number));
-  const blockerIds = new Set(Object.values(blockedByMap).map(Number));
+  const blockedIds = new Set(Object.values(blockingMap).flat());
 
   const effectLabel = (type: PassiveType): string => {
     if (type === PassiveType.BLOCK) return t('card.blocked');
@@ -64,27 +69,36 @@ export function CardRow({ cardIds }: CardRowProps) {
       }
     >
       {cardIds
-        .filter(id => !blockerIds.has(id))
+        .filter(id => !blockedIds.has(id))
         .map((id, index) => {
           const inst = gameState.instances[id];
           if (!inst) return null;
 
-          const isBlocked = blockedIds.has(id);
-          const blockerId = blockedByMap[id] ?? null;
-          const blockerInst = blockerId ? gameState.instances[blockerId] : null;
+          const blockedCardIds = blockingMap[id] ?? [];
+          const blockedInsts = blockedCardIds.map(bid => gameState.instances[bid]);
+
           const effects = effectsOnCard(gameState, id, defs, stickerDefs).filter(
             ({ passive }) => ![PassiveType.STAY_IN_PLAY].includes(passive.type),
           );
 
           return (
             <div key={id} className="@container shrink-0">
-              <div className="relative">
-                <GameCard instance={inst} isOnBoard index={index} />
-                {isBlocked && blockerInst && (
-                  <div className="absolute inset-0 top-9 z-30">
-                    <GameCard instance={blockerInst} isOnBoard index={index} />
+              <div
+                className="relative"
+                style={{ paddingTop: `${blockedInsts.length * STACK_OFFSET_PX}px` }}
+              >
+                {blockedInsts.map((blockedInst, i) => (
+                  <div
+                    key={blockedInst.id}
+                    className="absolute inset-x-0 z-0"
+                    style={{ top: `${i * STACK_OFFSET_PX}px` }}
+                  >
+                    <GameCard instance={blockedInst} isOnBoard index={index} />
                   </div>
-                )}
+                ))}
+                <div className="relative z-10">
+                  <GameCard instance={inst} isOnBoard index={index} />
+                </div>
               </div>
 
               {effects.length > 0 && (

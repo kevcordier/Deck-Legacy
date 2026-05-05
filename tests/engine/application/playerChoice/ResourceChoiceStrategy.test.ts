@@ -21,7 +21,8 @@ describe('ResourceChoiceStrategy', () => {
         sourceInstanceId: 1,
         kind: ActionEffectType.ADD_RESOURCES,
         choices: [],
-        pickCount: 1,
+        pickMin: 1,
+        pickMax: 1,
         isMandatory: true,
       },
     ];
@@ -44,7 +45,8 @@ describe('ResourceChoiceStrategy', () => {
         sourceInstanceId: 1,
         kind: ActionEffectType.ADD_RESOURCES,
         choices: [],
-        pickCount: 1,
+        pickMin: 1,
+        pickMax: 1,
         isMandatory: true,
       },
     ];
@@ -60,7 +62,8 @@ describe('ResourceChoiceStrategy', () => {
         sourceInstanceId: 1,
         kind: ActionEffectType.ADD_RESOURCES,
         choices: [],
-        pickCount: 1,
+        pickMin: 1,
+        pickMax: 1,
         isMandatory: true,
       },
     ];
@@ -81,7 +84,8 @@ describe('ResourceChoiceStrategy', () => {
         sourceInstanceId: 1,
         kind: ActionEffectType.ADD_RESOURCES,
         choices: [],
-        pickCount: 1,
+        pickMin: 1,
+        pickMax: 1,
         isMandatory: true,
       },
       {
@@ -90,7 +94,8 @@ describe('ResourceChoiceStrategy', () => {
         sourceInstanceId: 1,
         kind: ActionEffectType.ADD_RESOURCES,
         choices: [],
-        pickCount: 1,
+        pickMin: 1,
+        pickMax: 1,
         isMandatory: true,
       },
     ];

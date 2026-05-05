@@ -36,7 +36,7 @@ export const volcanicEruption: CardDef = {
                 cards: {
                   scope: [TargetScope.TRIGGER_SOURCE],
                 },
-                states: [2],
+                states: { ids: [2] },
               },
             ],
           },

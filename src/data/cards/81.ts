@@ -35,7 +35,7 @@ export const alchemist: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [2, 3, 4],
+              states: { ids: [2, 3, 4] },
             },
           ],
         },
@@ -64,7 +64,7 @@ export const alchemist: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [1],
+              states: { ids: [1] },
             },
           ],
         },
@@ -100,7 +100,7 @@ export const alchemist: CardDef = {
                 cards: {
                   scope: [TargetScope.TRIGGER_SOURCE],
                 },
-                states: [1],
+                states: { ids: [1] },
               },
             ],
           },
@@ -130,7 +130,7 @@ export const alchemist: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [1],
+              states: { ids: [1] },
             },
           ],
         },

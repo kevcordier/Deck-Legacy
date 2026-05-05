@@ -618,7 +618,8 @@ describe('GameAggregate.resolveCardActionChoice', () => {
       type: PendingChoiceType as never,
       sourceInstanceId: 1,
       choices: [{ gold: 1 }, { wood: 1 }],
-      pickCount: 1,
+      pickMin: 1,
+      pickMax: 1,
       isMandatory: true,
     };
     const resolved: ResolvedActionEffect = {

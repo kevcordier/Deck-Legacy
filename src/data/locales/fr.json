@@ -149,6 +149,12 @@
     "title": "Règles",
     "open": "Règles"
   },
+  "stickerStock": {
+    "title": "Stock d'autocollants",
+    "open": "Stock d'autocollants",
+    "count": "×{{count}}",
+    "outOfStock": "Épuisé"
+  },
   "options": {
     "title": "Options",
     "theme": "Thème",

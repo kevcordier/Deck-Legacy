@@ -252,7 +252,7 @@ describe('cardSelector – tag filter', () => {
     expect(result).not.toContain(20);
   });
 
-  it('requires all tags to match', () => {
+  it('matches any tag (OR logic)', () => {
     const gs = baseState();
     const result = cardSelector(
       { scope: [TargetScope.BOARD], tags: ['building' as never, 'person' as never] },
@@ -261,7 +261,8 @@ describe('cardSelector – tag filter', () => {
       defs,
       stickerDefs,
     );
-    expect(result).toHaveLength(0);
+    expect(result).toContain(10);
+    expect(result).not.toContain(20);
   });
 });
 
@@ -420,6 +421,60 @@ describe('cardSelector – having filter', () => {
       stickerDefs,
     );
     expect(result).not.toContain(70);
+  });
+
+  it('includes card when production meets minProduction', () => {
+    const defProd: CardDef = {
+      id: 8,
+      name: 'P',
+      states: [{ id: 1, name: 'P', productions: [{ gold: 2, wood: 1 }] }],
+    };
+    const instProd = makeInstance({ id: 80, cardId: 8, stateId: 1 });
+    const gs = makeState({ board: [80], instances: { 80: instProd } });
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD], having: { minProduction: 3 } },
+      99,
+      gs,
+      { 8: defProd },
+      stickerDefs,
+    );
+    expect(result).toContain(80);
+  });
+
+  it('excludes card when production is below minProduction', () => {
+    const defProd: CardDef = {
+      id: 8,
+      name: 'P',
+      states: [{ id: 1, name: 'P', productions: [{ gold: 2, wood: 1 }] }],
+    };
+    const instProd = makeInstance({ id: 80, cardId: 8, stateId: 1 });
+    const gs = makeState({ board: [80], instances: { 80: instProd } });
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD], having: { minProduction: 4 } },
+      99,
+      gs,
+      { 8: defProd },
+      stickerDefs,
+    );
+    expect(result).not.toContain(80);
+  });
+
+  it('excludes card when production exceeds maxProduction', () => {
+    const defProd: CardDef = {
+      id: 8,
+      name: 'P',
+      states: [{ id: 1, name: 'P', productions: [{ gold: 2, wood: 1 }] }],
+    };
+    const instProd = makeInstance({ id: 80, cardId: 8, stateId: 1 });
+    const gs = makeState({ board: [80], instances: { 80: instProd } });
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD], having: { maxProduction: 2 } },
+      99,
+      gs,
+      { 8: defProd },
+      stickerDefs,
+    );
+    expect(result).not.toContain(80);
   });
 });
 

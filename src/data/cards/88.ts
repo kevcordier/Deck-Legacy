@@ -29,7 +29,7 @@ export const missionary: CardDef = {
                 scope: [TargetScope.BOARD],
                 ids: [14, 16, 60, 64],
               },
-              states: [2],
+              states: { ids: [2] },
             },
           ],
         },

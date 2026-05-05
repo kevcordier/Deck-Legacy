@@ -295,7 +295,7 @@ describe('CardActionAggregate.resolveAction', () => {
           type: ActionEffectType.UPGRADE_CARD,
           payingCost: true,
           cards: { ids: [2] },
-          states: [2],
+          states: { ids: [2] },
         },
       ],
     };
@@ -356,7 +356,8 @@ describe('CardActionAggregate.resolvePlayerChoice', () => {
       type: PendingChoiceType.CHOOSE_RESOURCE,
       sourceInstanceId: 1,
       choices: [{ gold: 1 }, { wood: 1 }],
-      pickCount: 1,
+      pickMin: 1,
+      pickMax: 1,
       isMandatory: true,
     };
     const resolved: ResolvedActionEffect = {
@@ -407,6 +408,69 @@ describe('CardActionAggregate.resolvePlayerChoice', () => {
     expect(agg.getPendingChoices()).toHaveLength(0);
     // newActionEffects were spliced in and applied (ADD_RESOURCES gold: 5).
     expect(agg.getGameState().resources.gold).toBe(5);
+  });
+
+  it('enforces upgrade cost when target is chosen via pending choice', () => {
+    const sourceDef: CardDef = {
+      id: 1,
+      name: 'PriestLike',
+      states: [{ id: 1, name: 'S' }],
+    };
+    const upgradeableDef: CardDef = {
+      id: 2,
+      name: 'Upgradeable',
+      states: [
+        {
+          id: 1,
+          name: 'Base',
+          upgrade: [{ cost: { resources: [{ gold: 2 }] }, upgradeTo: 2 }],
+        },
+        { id: 2, name: 'Upgraded' },
+      ],
+    };
+
+    const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const targetInstA = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const targetInstB = makeInstance({ id: 3, cardId: 2, stateId: 1 });
+    const gs = makeState({
+      board: [1, 2, 3],
+      resources: {},
+      instances: { 1: sourceInst, 2: targetInstA, 3: targetInstB },
+    });
+
+    const action: CardAction = {
+      id: 'paying-upgrade-choice',
+      actionEffects: [
+        {
+          id: 1,
+          type: ActionEffectType.UPGRADE_CARD,
+          payingCost: true,
+          cards: { scope: [TargetScope.BOARD], pickNumber: 1 },
+        },
+      ],
+    };
+
+    const agg = new CardActionAggregate(
+      { 1: sourceDef, 2: upgradeableDef },
+      {},
+      gs,
+      sourceInst,
+      action,
+    );
+
+    agg.resolveAction();
+    expect(agg.getPendingChoices()).toHaveLength(1);
+
+    expect(() =>
+      agg.resolvePlayerChoice({
+        id: '1-1',
+        type: ActionEffectType.UPGRADE_CARD,
+        sourceInstanceId: 1,
+        instanceIds: [2],
+      }),
+    ).toThrow('Not enough resources to pay this cost.');
+
+    expect(agg.getGameState().instances[2].stateId).toBe(1);
   });
 });
 

@@ -52,7 +52,7 @@ export const thunderstorm: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [2],
+              states: { ids: [2] },
             },
           ],
         },
@@ -89,7 +89,7 @@ export const thunderstorm: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [1],
+              states: { ids: [1] },
             },
           ],
         },

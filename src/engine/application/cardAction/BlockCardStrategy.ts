@@ -12,7 +12,7 @@ export class BlockCardStrategy implements CardActionStrategy {
       ...(gs.boardEffects[payload.sourceInstanceId] || []),
       {
         ...CardPassives[PassiveType.BLOCK],
-        cards: { ids: [ids[0]] },
+        cards: { ids },
       },
     ];
     return gs;

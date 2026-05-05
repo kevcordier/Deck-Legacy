@@ -22,7 +22,7 @@ describe('resolveActionEffect – CHOOSE_EFFECT', () => {
     expect(pending).toHaveLength(1);
     expect(pending[0].type).toBe('choose_action_effect');
     expect(pending[0].choices).toEqual([subEffect]);
-    expect(pending[0].pickCount).toBe(1);
+    expect(pending[0].pickMax).toBe(1);
     expect(pending[0].isMandatory).toBe(true);
   });
 });
@@ -211,7 +211,7 @@ describe('resolveActionEffect – pickNumber', () => {
     expect(pending).toHaveLength(0);
   });
 
-  it('creates pending with custom pickCount from pickNumber', () => {
+  it('creates pending with custom pickNumber from pickNumber', () => {
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
     const inst4 = makeInstance({ id: 4, cardId: 1, stateId: 1 });
@@ -223,7 +223,7 @@ describe('resolveActionEffect – pickNumber', () => {
     };
     const [, pending] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
     expect(pending).toHaveLength(1);
-    expect(pending[0].pickCount).toBe(2);
+    expect(pending[0].pickMax).toBe(2);
   });
 });
 
@@ -273,9 +273,22 @@ describe('resolveActionEffect – ADD_STICKER', () => {
       type: ActionEffectType.ADD_STICKER,
       stickers: { ids: [3], pickNumber: 1 },
     };
-    const [resolved, pending] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
+    const gs = makeState({ stickerStock: { 3: 2 } });
+    const [resolved, pending] = resolveActionEffect(effect, 1, gs, defs, stickerDefs);
     expect(resolved.stickerIds).toEqual([3]);
     expect(pending).toHaveLength(0);
+  });
+
+  it('filters out stickers with no remaining stock', () => {
+    const effect = {
+      id: 1,
+      type: ActionEffectType.ADD_STICKER,
+      stickers: { ids: [3], pickNumber: 1 },
+    };
+    const gs = makeState({ stickerStock: { 3: 0 } });
+    const [, pending] = resolveActionEffect(effect, 1, gs, defs, stickerDefs);
+    expect(pending).toHaveLength(1);
+    expect(pending[0].choices).toHaveLength(0);
   });
 
   it('creates pending choice for multiple sticker ids', () => {
@@ -284,9 +297,58 @@ describe('resolveActionEffect – ADD_STICKER', () => {
       type: ActionEffectType.ADD_STICKER,
       stickers: { ids: [3, 5], pickNumber: 1 },
     };
-    const [, pending] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
+    const gs = makeState({ stickerStock: { 3: 2, 5: 1 } });
+    const [, pending] = resolveActionEffect(effect, 1, gs, defs, stickerDefs);
     expect(pending).toHaveLength(1);
     expect(pending[0].type).toBe('choose_sticker');
+  });
+});
+
+// ─── ADD_STICKER – production cap ────────────────────────────────────────────
+
+describe('resolveActionEffect – ADD_STICKER production cap', () => {
+  const highProdDef: CardDef = {
+    id: 10,
+    name: 'High',
+    states: [{ id: 1, name: 'S', productions: [{ gold: 9 }] }],
+  };
+  const lowProdDef: CardDef = {
+    id: 11,
+    name: 'Low',
+    states: [{ id: 1, name: 'S', productions: [{ gold: 3 }] }],
+  };
+
+  it('excludes card with total production >= 9 from card target choices', () => {
+    const effect = {
+      id: 1,
+      type: ActionEffectType.ADD_STICKER,
+      cards: { scope: [TargetScope.BOARD] },
+      stickers: { ids: [3], pickNumber: 1 },
+    };
+    const inst = makeInstance({ id: 2, cardId: 10, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst }, stickerStock: { 3: 5 } });
+    const [resolved, pending] = resolveActionEffect(
+      effect,
+      1,
+      gs,
+      { ...defs, 10: highProdDef },
+      stickerDefs,
+    );
+    expect(resolved.instanceIds).toBeUndefined();
+    expect(pending).toHaveLength(0);
+  });
+
+  it('includes card with total production < 9 as valid sticker target', () => {
+    const effect = {
+      id: 1,
+      type: ActionEffectType.ADD_STICKER,
+      cards: { scope: [TargetScope.BOARD] },
+      stickers: { ids: [3], pickNumber: 1 },
+    };
+    const inst = makeInstance({ id: 2, cardId: 11, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst }, stickerStock: { 3: 5 } });
+    const [resolved] = resolveActionEffect(effect, 1, gs, { ...defs, 11: lowProdDef }, stickerDefs);
+    expect(resolved.instanceIds).toEqual([2]);
   });
 });
 
@@ -294,14 +356,14 @@ describe('resolveActionEffect – ADD_STICKER', () => {
 
 describe('resolveActionEffect – CHOOSE_STATE', () => {
   it('auto-resolves single state', () => {
-    const effect = { id: 1, type: ActionEffectType.CHOOSE_STATE, states: [2] };
+    const effect = { id: 1, type: ActionEffectType.CHOOSE_STATE, states: { ids: [2] } };
     const [resolved, pending] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
     expect(resolved.stateId).toBe(2);
     expect(pending).toHaveLength(0);
   });
 
   it('creates pending choice for multiple states', () => {
-    const effect = { id: 1, type: ActionEffectType.CHOOSE_STATE, states: [1, 2, 3] };
+    const effect = { id: 1, type: ActionEffectType.CHOOSE_STATE, states: { ids: [1, 2, 3] } };
     const [, pending] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
     expect(pending).toHaveLength(1);
     expect(pending[0].type).toBe('choose_state');
@@ -490,7 +552,6 @@ describe('resolveActionEffect – TRACK_ADVANCE', () => {
     };
     const [, pending] = resolveActionEffect(effect, 99, gs, { 2: defTrack }, stickerDefs);
     expect(pending).toHaveLength(1);
-    expect(pending[0].pickCount).toBe(2);
     expect(pending[0].pickMin).toBe(2);
     expect(pending[0].pickMax).toBe(2);
   });

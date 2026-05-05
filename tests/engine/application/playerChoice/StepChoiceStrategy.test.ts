@@ -40,7 +40,8 @@ describe('StepChoiceStrategy', () => {
     sourceInstanceId: 1,
     kind: ActionEffectType.TRACK_ADVANCE,
     choices: [1, 2],
-    pickCount: 1,
+    pickMin: 1,
+    pickMax: 1,
     isMandatory: true,
   };
 

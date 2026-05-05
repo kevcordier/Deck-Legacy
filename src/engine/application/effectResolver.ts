@@ -2,6 +2,7 @@ import {
   canAffordCost,
   getActiveState,
   getEffectiveProductions,
+  getTotalProduction,
   getTotalResourceProduction,
 } from '@engine/application/cardHelpers';
 import { cardSelector } from '@engine/application/cardSelector';
@@ -25,6 +26,8 @@ import type {
   ValuePerElement,
 } from '@engine/domain/types';
 
+const STICKER_PRODUCTION_CAP = 9;
+
 interface ResolveContext {
   actionId: number;
   actionType: ActionEffectType;
@@ -33,6 +36,21 @@ interface ResolveContext {
   gameState: GameState;
   defs: Record<number, CardDef>;
   stickerDefs: Record<number, Sticker>;
+}
+
+export function getPickNumbers(picks: {
+  pickNumber?: number;
+  pickMin?: number;
+  pickMax?: number;
+}): { pickMin: number; pickMax: number } {
+  if (!picks.pickNumber && !picks.pickMin && !picks.pickMax) {
+    return { pickMin: 1, pickMax: 1 };
+  }
+
+  return {
+    pickMin: picks.pickMin ?? picks.pickNumber ?? 0,
+    pickMax: picks.pickMax ?? picks.pickNumber ?? Infinity,
+  };
 }
 
 function resolveTrackAdvanceEffect(
@@ -58,6 +76,8 @@ function resolveTrackAdvanceEffect(
 
   resolverAction.instanceIds = [targetId];
 
+  const picks = getPickNumbers(steps);
+
   if (track.inOrder) {
     const sortedSteps = [...availableSteps].sort((a, b) => a.id - b.id);
     resolverAction.stepIds = [sortedSteps[0].id];
@@ -79,9 +99,7 @@ function resolveTrackAdvanceEffect(
       sourceInstanceId: instanceId,
       targetInstanceId: targetId,
       choices,
-      pickCount: steps.pickNumber,
-      pickMin: steps.pickMin,
-      pickMax: steps.pickMax,
+      ...picks,
       isMandatory,
     });
   }
@@ -126,7 +144,8 @@ function resolveChooseActionEffect(
     type: PendingChoiceType.CHOOSE_ACTION_EFFECT,
     sourceInstanceId: instanceId,
     choices: effects,
-    pickCount: 1,
+    pickMin: 1,
+    pickMax: 1,
     isMandatory: true,
   });
   return [resolverAction, pendingChoices];
@@ -140,17 +159,22 @@ function resolveCardTarget(
 ): [ResolvedActionEffect, PendingChoice[]] {
   const { actionId, actionType, instanceId, isMandatory, gameState, defs, stickerDefs } = ctx;
 
-  const choices = cardSelector(cards, instanceId, gameState, defs, stickerDefs);
+  const picks = getPickNumbers(cards);
+  const isStickerAction =
+    actionType === ActionEffectType.ADD_STICKER || actionType === ActionEffectType.BOOST_CARD;
+  const choices = cardSelector(cards, instanceId, gameState, defs, stickerDefs).filter(
+    id =>
+      !isStickerAction ||
+      getTotalProduction(id, gameState, defs, stickerDefs) < STICKER_PRODUCTION_CAP,
+  );
   if (choices.length === 0) {
     resolverAction.instanceIds = undefined;
     return [resolverAction, pendingChoices];
   }
-  const pickCount = cards.pickNumber;
-  const pickMin = cards.pickMin;
-  const pickMax = cards.pickMax;
+
   if (
     choices.length === 1 ||
-    (cards.scope &&
+    (cards.scope?.length === 1 &&
       (cards.scope.includes(TargetScope.SELF) ||
         cards.scope.includes(TargetScope.TOP_OF_DECK) ||
         cards.scope.includes(TargetScope.TOP_OF_DISCARD)))
@@ -158,7 +182,7 @@ function resolveCardTarget(
     resolverAction.instanceIds = [choices[0]];
     return [resolverAction, pendingChoices];
   }
-  if (pickCount && choices.length <= pickCount) {
+  if (choices.length <= picks.pickMax) {
     resolverAction.instanceIds = choices;
     return [resolverAction, pendingChoices];
   }
@@ -168,9 +192,7 @@ function resolveCardTarget(
     type: PendingChoiceType.CHOOSE_CARD,
     sourceInstanceId: instanceId,
     choices,
-    pickCount,
-    pickMin,
-    pickMax,
+    ...picks,
     isMandatory,
   });
   return [resolverAction, pendingChoices];
@@ -184,6 +206,8 @@ function resolveResourceTarget(
 ): [ResolvedActionEffect, PendingChoice[]] {
   const { actionId, actionType, instanceId, isMandatory, gameState, defs, stickerDefs } = ctx;
 
+  const picks = getPickNumbers(resources);
+
   if (resources.choice && resources.choice.length > 1) {
     pendingChoices.push({
       id: `${instanceId}-${actionId}`,
@@ -191,9 +215,7 @@ function resolveResourceTarget(
       type: PendingChoiceType.CHOOSE_RESOURCE,
       sourceInstanceId: instanceId,
       choices: resources.choice,
-      pickCount: resources.pickNumber,
-      pickMin: resources.pickMin,
-      pickMax: resources.pickMax,
+      ...picks,
       isMandatory,
     });
     return [resolverAction, pendingChoices];
@@ -217,12 +239,9 @@ function resolveResourceTarget(
               defs,
               gameState.instances[choices[0]],
               stickerDefs,
-              {},
             ),
           ),
-          pickCount: resources.pickNumber,
-          pickMin: resources.pickMin,
-          pickMax: resources.pickMax,
+          ...picks,
           isMandatory,
         });
       } else {
@@ -232,7 +251,6 @@ function resolveResourceTarget(
           defs,
           gameState.instances[choices[0]],
           stickerDefs,
-          {},
         );
       }
     } else {
@@ -242,9 +260,7 @@ function resolveResourceTarget(
         type: PendingChoiceType.CHOOSE_CARD,
         sourceInstanceId: instanceId,
         choices,
-        pickCount: resources.pickNumber,
-        pickMin: resources.pickMin,
-        pickMax: resources.pickMax,
+        ...picks,
         isMandatory,
       });
     }
@@ -260,10 +276,12 @@ function resolveStickerTarget(
   ctx: ResolveContext,
   stickers: StickerSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const { actionId, actionType, instanceId, isMandatory } = ctx;
+  const { actionId, actionType, instanceId, isMandatory, gameState } = ctx;
+  const picks = getPickNumbers(stickers);
+  const availableIds = (stickers.ids ?? []).filter(id => (gameState.stickerStock[id] ?? 0) > 0);
 
-  if (stickers.ids && stickers.ids.length === stickers.pickNumber) {
-    resolverAction.stickerIds = stickers.ids;
+  if (availableIds.length === picks.pickMax) {
+    resolverAction.stickerIds = availableIds;
     return [resolverAction, pendingChoices];
   }
   pendingChoices.push({
@@ -271,10 +289,8 @@ function resolveStickerTarget(
     kind: actionType,
     type: PendingChoiceType.CHOOSE_STICKER,
     sourceInstanceId: instanceId,
-    choices: stickers.ids ?? [],
-    pickCount: stickers.pickNumber,
-    pickMin: stickers.pickMin,
-    pickMax: stickers.pickMax,
+    choices: availableIds,
+    ...picks,
     isMandatory,
   });
   return [resolverAction, pendingChoices];
@@ -298,7 +314,8 @@ function resolveStateTarget(
     type: PendingChoiceType.CHOOSE_STATE,
     sourceInstanceId: instanceId,
     choices: states,
-    pickCount: 1,
+    pickMin: 1,
+    pickMax: 1,
     isMandatory,
   });
   return [resolverAction, pendingChoices];
@@ -370,9 +387,8 @@ export function resolveActionEffect(
         countValuePerElement(action.valuePerElement, gameState, instanceId, defs, stickerDefs) *
           action.valuePerElement.amount,
       );
+
       steps.pickNumber = derivedPick;
-      steps.pickMin = derivedPick;
-      steps.pickMax = derivedPick;
     }
     // Populate instanceIds from the card selector before delegating — preserved as fallback when
     // the target has no track or all steps are complete.
@@ -429,7 +445,7 @@ export function resolveActionEffect(
       resolverAction,
       pendingChoices,
       ctx,
-      action.states,
+      action.states.ids ?? [],
     );
   }
 

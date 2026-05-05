@@ -103,7 +103,7 @@ export const deepPit: CardDef = {
                 cards: {
                   scope: [TargetScope.SELF],
                 },
-                states: [4],
+                states: { ids: [4] },
               },
             ],
           },

@@ -21,7 +21,7 @@ const makeGoldUpgradeStep = (id: number, upgradeTo: number): StepDef => ({
       id: 2,
       type: ActionEffectType.UPGRADE_CARD,
       cards: { scope: [TargetScope.SELF] },
-      states: [upgradeTo],
+      states: { ids: [upgradeTo] },
     },
   ],
 });
@@ -34,7 +34,7 @@ const makeGoodsUpgradeStep = (id: number, upgradeTo: number): StepDef => ({
       id: 2,
       type: ActionEffectType.UPGRADE_CARD,
       cards: { scope: [TargetScope.SELF] },
-      states: [upgradeTo],
+      states: { ids: [upgradeTo] },
     },
   ],
 });
@@ -46,7 +46,7 @@ const makeUpgradeStep = (id: number, upgradeTo: number): StepDef => ({
       id: 1,
       type: ActionEffectType.UPGRADE_CARD,
       cards: { scope: [TargetScope.SELF] },
-      states: [upgradeTo],
+      states: { ids: [upgradeTo] },
     },
   ],
 });

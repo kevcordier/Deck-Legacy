@@ -116,61 +116,50 @@ describe('getEffectiveProductions', () => {
   it('adds ADJUST_PRODUCTION passive bonus via valuePerElement cards selector', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const defsWithPassive: Record<number, CardDef> = {
-      1: {
-        id: 1,
-        name: 'C',
-        states: [
+    const gs = makeState({
+      board: [1, 2],
+      instances: { 1: inst, 2: inst2 },
+      boardEffects: {
+        2: [
           {
-            id: 1,
-            name: 'S',
-            passives: [
-              {
-                id: 'p1',
-                type: PassiveType.ADJUST_PRODUCTION,
-                resources: { [ResourceType.GOLD]: 1 },
-                valuePerElement: {
-                  amount: 1,
-                  cards: { scope: [TargetScope.BOARD] },
-                },
-              },
-            ],
+            id: 'p1',
+            type: PassiveType.ADJUST_PRODUCTION,
+            resources: { [ResourceType.GOLD]: 1 },
+            cards: { scope: [TargetScope.BOARD] },
+            valuePerElement: {
+              amount: 1,
+              cards: { scope: [TargetScope.BOARD] },
+            },
           },
         ],
       },
-    };
-    const gs = makeState({ board: [2], instances: { 1: inst, 2: inst2 } });
-    const result = getEffectiveProductions({ gold: 1 }, gs, defsWithPassive, inst, {});
+    });
+    const result = getEffectiveProductions({ gold: 1 }, gs, defs, inst, {});
     expect(result.gold).toBe(2);
   });
 
   it('adds ADJUST_PRODUCTION passive bonus via accumulation', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: 3 });
-    const defsWithPassive: Record<number, CardDef> = {
-      1: {
-        id: 1,
-        name: 'C',
-        states: [
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      board: [1, 2],
+      instances: { 1: inst, 2: inst2 },
+      boardEffects: {
+        2: [
           {
-            id: 1,
-            name: 'S',
-            passives: [
-              {
-                id: 'p1',
-                type: PassiveType.ADJUST_PRODUCTION,
-                resources: { [ResourceType.GOLD]: 1 },
-                valuePerElement: {
-                  amount: 2,
-                  accumulation: true,
-                },
-              },
-            ],
+            id: 'p1',
+            type: PassiveType.ADJUST_PRODUCTION,
+            resources: { [ResourceType.GOLD]: 2 },
+            cards: { scope: [TargetScope.BOARD] },
+            valuePerElement: {
+              amount: 2,
+              accumulation: true,
+            },
           },
         ],
       },
-    };
-    const gs = makeState({ instances: { 1: inst } });
-    const result = getEffectiveProductions({}, gs, defsWithPassive, inst, {});
+    });
+    const result = getEffectiveProductions({}, gs, defs, inst, {});
     expect(result.gold).toBe(6);
   });
 
@@ -268,7 +257,7 @@ describe('getEffectiveProductions', () => {
         ],
       },
     });
-    const result = getEffectiveProductions({}, gs, defs, inst, {}, { includeBoardEffects: false });
+    const result = getEffectiveProductions({}, gs, defs, inst, {}, false);
     expect(result.wood).toBeUndefined();
   });
 
@@ -298,16 +287,7 @@ describe('getEffectiveProductions', () => {
       },
     };
     const gs = makeState({ instances: { 1: inst } });
-    const result = getEffectiveProductions(
-      {},
-      gs,
-      defsWithPassive,
-      inst,
-      {},
-      {
-        includePassives: false,
-      },
-    );
+    const result = getEffectiveProductions({}, gs, defsWithPassive, inst, {}, false);
     expect(result).toEqual({});
   });
 

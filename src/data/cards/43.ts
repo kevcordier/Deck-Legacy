@@ -105,7 +105,7 @@ export const mightyMound: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [1],
+              states: { ids: [1] },
             },
           ],
         },

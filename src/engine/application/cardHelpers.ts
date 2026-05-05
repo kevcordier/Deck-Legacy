@@ -125,14 +125,30 @@ export function getTotalResourceProduction(
     const prodKeyCount = ((state.productions as Resources[]) || [{}])
       .map(p => {
         return (
-          getEffectiveProductions(p, gameState, defs, gameState.instances[id], stickerDefs, {
-            includeBoardEffects: false,
-            includePassives: false,
-          })[resourceType] ?? 0
+          getEffectiveProductions(p, gameState, defs, gameState.instances[id], stickerDefs, false)[
+            resourceType
+          ] ?? 0
         );
       })
       .reduce((a, b) => Math.max(a, b), -Infinity);
     return total + prodKeyCount;
+  }, 0);
+}
+
+export function getTotalProduction(
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): number {
+  const instance = gameState.instances[instanceId];
+  if (!instance) return 0;
+  const state = getActiveState(instance, defs);
+  const productions = (state.productions as Resources[]) ?? [{}];
+  return productions.reduce((maxTotal, base) => {
+    const effective = getEffectiveProductions(base, gameState, defs, instance, stickerDefs, false);
+    const total = Object.values(effective).reduce<number>((sum, v) => sum + (v ?? 0), 0);
+    return Math.max(maxTotal, total);
   }, 0);
 }
 
@@ -203,56 +219,38 @@ function calculeBoardEffectsBonus(
 ): Resources {
   let bonus: Resources = {};
   for (const [instanceSource, passives] of Object.entries(gameState.boardEffects)) {
-    for (const passive of passives
-      .flat()
-      .filter(p => p.type === PassiveType.ADJUST_PRODUCTION && p.resources)) {
-      if (
-        cardSelector(
-          passive.cards ?? { scope: [TargetScope.BOARD] },
-          Number(instanceSource),
-          gameState,
-          defs,
-          stickerDefs,
-        ).includes(instance.id) &&
-        passive.resources
-      ) {
-        bonus = mergeResources(bonus, passive.resources);
-      }
-    }
+    passives
+      .filter(
+        p =>
+          p.type === PassiveType.ADJUST_PRODUCTION &&
+          cardSelector(
+            p.cards ?? { scope: [TargetScope.BOARD] },
+            Number(instanceSource),
+            gameState,
+            defs,
+            stickerDefs,
+          ).includes(instance.id) &&
+          p.resources,
+      )
+      .forEach(passive => {
+        if (passive.valuePerElement && passive.resources) {
+          const count = countValuePerElement(
+            passive.valuePerElement,
+            gameState,
+            instance.id,
+            defs,
+            stickerDefs,
+          );
+          bonus = mergeResources(
+            bonus,
+            Object.fromEntries(Object.entries(passive.resources).map(([k, v]) => [k, v * count])),
+          );
+        } else if (passive.resources) {
+          bonus = mergeResources(bonus, passive.resources);
+        }
+      });
   }
   return bonus;
-}
-
-function calculePassiveProductionBonus(
-  activeState: CardState,
-  instance: CardInstance,
-  gameState: GameState,
-  defs: Record<number, CardDef>,
-  stickerDefs: Record<number, Sticker>,
-): Resources {
-  let passiveBonus: Resources = {};
-  for (const passive of activeState.passives ?? []) {
-    if (
-      passive.type === PassiveType.ADJUST_PRODUCTION &&
-      passive.valuePerElement &&
-      passive.resources
-    ) {
-      const { amount, cards: sel, accumulation } = passive.valuePerElement;
-      let count = 0;
-      if (sel) {
-        count = cardSelector(sel, instance.id, gameState, defs, stickerDefs).length;
-      } else if (accumulation) {
-        count = instance.cumulated ?? 0;
-      }
-
-      if (count > 0) {
-        passiveBonus = mergeResources(passiveBonus, {
-          [Object.keys(passive.resources)[0]]: Object.values(passive.resources)[0] * amount * count,
-        });
-      }
-    }
-  }
-  return passiveBonus;
 }
 
 export function getEffectiveProductions(
@@ -261,12 +259,8 @@ export function getEffectiveProductions(
   defs: Record<number, CardDef>,
   instance: CardInstance,
   stickerDefs: Record<number, Sticker>,
-  {
-    includeBoardEffects = true,
-    includePassives = true,
-  }: { includeBoardEffects?: boolean; includePassives?: boolean } = {},
+  includeBoardEffects = true,
 ): Resources {
-  const activeState = getActiveState(instance, defs);
   const stickerBonus = (instance.stickers[instance.stateId] ?? []).reduce<Resources>(
     (acc, stickerId) => {
       const sticker = stickerDefs[stickerId];
@@ -283,18 +277,11 @@ export function getEffectiveProductions(
     {},
   );
 
-  const passiveBonus = includePassives
-    ? calculePassiveProductionBonus(activeState, instance, gameState, defs, stickerDefs)
-    : {};
-
   const boardEffectsBonus = includeBoardEffects
     ? calculeBoardEffectsBonus(instance, gameState, defs, stickerDefs)
     : {};
 
-  const finalProduction = mergeResources(
-    mergeResources(base, stickerBonus),
-    mergeResources(passiveBonus, boardEffectsBonus),
-  );
+  const finalProduction = mergeResources(mergeResources(base, stickerBonus), boardEffectsBonus);
 
   const removedKeys = getRemovedResourcesForState(instance, instance.stateId, 'production');
   return removeResourceKeys(finalProduction, removedKeys);
@@ -524,6 +511,20 @@ export function cardShouldStayInPlay(
       .includes(instanceId)
   )
     return true;
+  if (
+    Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK))
+      .flat()
+      .includes(instanceId)
+  ) {
+    const state = def?.states.find(s => s.id === instance.stateId);
+    if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
+    if (
+      Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))
+        .flat()
+        .includes(instanceId)
+    )
+      return true;
+  }
   const stickers = instance.stickers[instance.stateId] ?? [];
   return stickers.includes(STAYS_IN_PLAY_STICKER_ID);
 }

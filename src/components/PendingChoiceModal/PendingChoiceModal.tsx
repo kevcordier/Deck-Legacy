@@ -5,7 +5,12 @@ import { ChooseStateSection } from './ChooseStateSection';
 import { ChooseStepSection } from './ChooseStepSection';
 import { ChooseStickerSection } from './ChooseStickerSection';
 import { TriggerPileSection } from './TriggerPileSection';
-import { type ChoiceSection, type ChoiceSectionProps, getChoiceActionLabel } from './shared';
+import {
+  type ChoiceSection,
+  type ChoiceSectionProps,
+  buildCardCostResolution,
+  getChoiceActionLabel,
+} from './shared';
 import { Button } from '@components/ui/Button/Button';
 import { Modal } from '@components/ui/Modal/Modal';
 import { PendingChoiceType } from '@engine/domain/enums';
@@ -71,11 +76,7 @@ function getChoiceSection(props: ChoiceSectionProps): ChoiceSection {
             return;
           }
           if (props.choice.kind === 'COST') {
-            props.resolvePayCost({
-              resources: {},
-              discardedCardIds: props.selectedIds,
-              destroyedCardIds: [],
-            });
+            props.resolvePayCost(buildCardCostResolution(props.choice, props.selectedIds));
             return;
           }
           props.resolvePlayerChoice(
@@ -152,8 +153,8 @@ export function PendingChoiceModal({
   const { t } = useTranslation();
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const minSelect = choice?.pickMin ?? choice?.pickCount ?? 1;
-  const maxSelect = choice?.pickMax ?? choice?.pickCount ?? choice?.choices.length ?? 1;
+  const minSelect = choice?.pickMin ?? 1;
+  const maxSelect = choice?.pickMax ?? 1;
   const selectedCount = getSelectedCount(choice, selectedIds);
 
   const onToggleId = (id: number) => {

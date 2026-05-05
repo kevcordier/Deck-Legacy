@@ -50,7 +50,7 @@ export const witch: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [2],
+              states: { ids: [2] },
             },
           ],
         },
@@ -78,7 +78,7 @@ export const witch: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [2],
+              states: { ids: [2] },
             },
           ],
         },
@@ -117,6 +117,7 @@ export const witch: CardDef = {
           cost: {
             destroy: {
               tags: [CardTag.PERSON],
+              pickNumber: 1,
             },
           },
           actionEffects: [

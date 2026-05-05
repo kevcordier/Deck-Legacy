@@ -1,6 +1,7 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
-import { getActiveState } from '@engine/application/cardHelpers';
+import { getActiveState, getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { discardCards } from '@engine/application/gameStateHelper';
+import { Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '@engine/domain/types';
 
 export class UpgradeCardStrategy implements CardActionStrategy {
@@ -20,6 +21,18 @@ export class UpgradeCardStrategy implements CardActionStrategy {
     if (targetStateId === undefined) return gameState;
 
     const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
+    const instanceBeforeStateChange = gs.instances[instanceId];
+    if (instanceBeforeStateChange) {
+      getInstancesTriggerEffects(
+        [instanceBeforeStateChange],
+        this.cardDefs,
+        this.stickerDefs,
+        Trigger.ON_UPGRADE,
+        gs,
+      ).forEach(({ effectDef, sourceInstanceId }) => {
+        gs.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+      });
+    }
     gs.instances[instanceId].stateId = targetStateId;
     // if new state is permanent add it to permanents pile
     if (getActiveState(gs.instances[instanceId], this.cardDefs)?.permanent) {
@@ -30,6 +43,10 @@ export class UpgradeCardStrategy implements CardActionStrategy {
       };
     }
 
-    return { ...gs, ...discardCards(gs, [instanceId], this.cardDefs, this.stickerDefs) };
+    return {
+      ...gs,
+      ...discardCards(gs, [instanceId], this.cardDefs, this.stickerDefs),
+      permanents: gs.permanents.filter(id => id !== instanceId),
+    };
   }
 }

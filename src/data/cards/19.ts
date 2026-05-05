@@ -168,7 +168,7 @@ export const exportation: CardDef = {
               {
                 id: 2,
                 type: ActionEffectType.UPGRADE_CARD,
-                states: [2],
+                states: { ids: [2] },
                 cards: {
                   scope: [TargetScope.SELF],
                 },

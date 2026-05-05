@@ -1,14 +1,18 @@
+import { StickerStockModal } from '@components/StickerStockModal/StickerStockModal';
+import { Button } from '@components/ui/Button/Button';
 import { Divider } from '@components/ui/Divider/Divider';
 import { GloryIcon } from '@components/ui/Icon/icon';
 import { IconColors } from '@components/ui/Icon/iconColors';
 import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Stat } from '@components/ui/Stat/Stat';
 import { useGame } from '@hooks/useGame';
+import { useGameUI } from '@hooks/useGameInterface';
 import { useTranslation } from 'react-i18next';
 
 export function ResourceBar() {
   const { t } = useTranslation();
   const { gameState, score } = useGame();
+  const { setStickerStockOpen } = useGameUI();
 
   const { resources, round, turn, drawPile, discardPile } = gameState;
   const entries = Object.entries(resources).filter(([, v]) => v > 0);
@@ -61,8 +65,18 @@ export function ResourceBar() {
               {t('resourceBar.glory')}
             </span>
           </div>
+          <Divider orientation="vertical" />
+          <Button
+            onClick={() => setStickerStockOpen(true)}
+            variant="outlined"
+            size="xs"
+            title={t('stickerStock.open')}
+          >
+            🏷
+          </Button>
         </div>
       </div>
+      <StickerStockModal />
     </div>
   );
 }

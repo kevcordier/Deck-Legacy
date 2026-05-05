@@ -1,5 +1,7 @@
 import type { GameEventStrategy } from './GameEventStrategy';
+import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { discardCards, mergeResources } from '@engine/application/gameStateHelper';
+import { Trigger } from '@engine/domain/enums';
 import type {
   CardDef,
   CardProducedEvent,
@@ -20,9 +22,27 @@ export class CardProducedStrategy implements GameEventStrategy {
       ...gameState,
       resources: mergeResources(gameState.resources, e.productions),
     };
+    const instance = withResources.instances[e.cardInstanceId];
+    const stateWithTriggers = instance
+      ? (() => {
+          const triggers = getInstancesTriggerEffects(
+            [instance],
+            this.cardDefs,
+            this.stickerDefs,
+            Trigger.ON_PRODUCE,
+            withResources,
+          );
+          if (triggers.length === 0) return withResources;
+          const gs = JSON.parse(JSON.stringify(withResources)) as GameState;
+          triggers.forEach(({ effectDef, sourceInstanceId }) => {
+            gs.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+          });
+          return gs;
+        })()
+      : withResources;
     return {
-      ...withResources,
-      ...discardCards(withResources, [e.cardInstanceId], this.cardDefs, this.stickerDefs),
+      ...stateWithTriggers,
+      ...discardCards(stateWithTriggers, [e.cardInstanceId], this.cardDefs, this.stickerDefs),
     };
   }
 }

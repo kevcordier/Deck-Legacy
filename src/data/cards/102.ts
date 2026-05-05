@@ -23,7 +23,7 @@ export const smallSchool: CardDef = {
                 scope: [TargetScope.BOARD],
                 tags: [CardTag.PERSON],
               },
-              states: [1, 2, 3, 4],
+              states: { ids: [1, 2, 3, 4] },
             },
             {
               id: 2,
@@ -31,7 +31,7 @@ export const smallSchool: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [2],
+              states: { ids: [2] },
             },
           ],
         },
@@ -55,7 +55,7 @@ export const smallSchool: CardDef = {
                 scope: [TargetScope.BOARD],
                 tags: [CardTag.PERSON],
               },
-              states: [1, 2, 3, 4],
+              states: { ids: [1, 2, 3, 4] },
             },
             {
               id: 2,
@@ -63,7 +63,7 @@ export const smallSchool: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [3],
+              states: { ids: [3] },
             },
           ],
         },
@@ -96,7 +96,7 @@ export const smallSchool: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [4],
+              states: { ids: [4] },
             },
           ],
         },

@@ -1,4 +1,4 @@
-import { type ChoiceSectionProps, makePreviewInstance } from './shared';
+import { type ChoiceSectionProps, buildCardCostResolution, makePreviewInstance } from './shared';
 import { GameCard } from '@components/GameCard/GameCard';
 
 export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
@@ -19,7 +19,7 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
       return;
     }
     if (choice.kind === 'COST') {
-      resolvePayCost({ resources: {}, discardedCardIds: [instanceId], destroyedCardIds: [] });
+      resolvePayCost(buildCardCostResolution(choice, [instanceId]));
       return;
     }
     resolvePlayerChoice(

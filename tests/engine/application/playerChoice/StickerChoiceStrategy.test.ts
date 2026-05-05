@@ -17,7 +17,8 @@ describe('StickerChoiceStrategy', () => {
     sourceInstanceId: 1,
     kind: ActionEffectType.ADD_STICKER,
     choices: [3, 5],
-    pickCount: 1,
+    pickMin: 1,
+    pickMax: 1,
     isMandatory: true,
   };
 

@@ -62,7 +62,7 @@ export const inventor: CardDef = {
               id: 1,
               type: ActionEffectType.UPGRADE_CARD,
               cards: { scope: [TargetScope.SELF] },
-              states: [1],
+              states: { ids: [1] },
             },
             {
               id: 2,

@@ -17,7 +17,8 @@ describe('ChooseActionEffectStrategy', () => {
     sourceInstanceId: 1,
     kind: ActionEffectType.CHOOSE_EFFECT,
     choices: [],
-    pickCount: 1,
+    pickMin: 1,
+    pickMax: 1,
     isMandatory: true,
   };
 

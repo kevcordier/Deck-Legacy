@@ -30,7 +30,15 @@ export const skilledBandit: CardDef = {
               type: ActionEffectType.BLOCK_CARD,
               cards: {
                 scope: [TargetScope.BOARD],
-                produces: [ResourceType.GOLD],
+                tags: [CardTag.BUILDING, CardTag.LAND],
+                produces: [
+                  ResourceType.GOLD,
+                  ResourceType.WOOD,
+                  ResourceType.STONE,
+                  ResourceType.IRON,
+                  ResourceType.WEAPON,
+                  ResourceType.GOODS,
+                ],
                 pickNumber: 3,
               },
             },

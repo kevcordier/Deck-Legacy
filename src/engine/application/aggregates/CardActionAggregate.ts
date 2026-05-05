@@ -283,7 +283,19 @@ export class CardActionAggregate {
       return;
     }
 
-    if (mergedResolvedAction.type !== ActionEffectType.CHOOSE_EFFECT) {
+    const upgradeCostResolution = this.tryResolveUpgradeCost(
+      mergedResolvedAction,
+      this.pendingEffectIndex,
+    );
+    if (upgradeCostResolution === 'wait') {
+      this.pendingResolvedAction = null;
+      return;
+    }
+
+    if (
+      mergedResolvedAction.type !== ActionEffectType.CHOOSE_EFFECT &&
+      upgradeCostResolution !== 'skip'
+    ) {
       this.apply(mergedResolvedAction);
     }
     this.pendingChoices = [];

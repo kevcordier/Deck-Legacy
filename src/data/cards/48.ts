@@ -22,7 +22,7 @@ export const assassin: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a34eebe4-d52c-4f21-811c-688ff14c440b/anim=false,width=450,optimized=true/J48J5DR9Z0YSGWZYXZHYJGXKV0.jpeg',
       passives: [
         {
-          id: '1',
+          id: '48_1_1',
           type: PassiveType.ADD_TRIGGER,
           trigger: {
             type: Trigger.ON_PLAY,
@@ -32,12 +32,19 @@ export const assassin: CardDef = {
             },
             actions: [
               {
+                id: 1,
+                type: ActionEffectType.DESTROY_CARD,
+                cards: {
+                  scope: [TargetScope.SELF],
+                },
+              },
+              {
                 id: 2,
                 type: ActionEffectType.UPGRADE_CARD,
                 cards: {
                   scope: [TargetScope.TRIGGER_SOURCE],
                 },
-                states: [2],
+                states: { ids: [2] },
               },
             ],
           },
@@ -60,7 +67,7 @@ export const assassin: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [2],
+              states: { ids: [2] },
             },
           ],
         },

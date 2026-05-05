@@ -43,7 +43,7 @@ export const youngPrincess: CardDef = {
                   cards: {
                     scope: [TargetScope.SELF],
                   },
-                  states: [2],
+                  states: { ids: [2] },
                 },
               ],
             },
@@ -118,7 +118,7 @@ export const youngPrincess: CardDef = {
       name: 'Educated Princess',
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/bb643708-8549-4430-bfb2-dc29e7158b47/anim=false,width=450,optimized=true/00016-2617440945.jpeg',
-      tags: [CardTag.PERSON, CardTag.ELDER],
+      tags: [CardTag.PERSON, CardTag.LADY],
       glory: { amount: 8 },
       actions: [
         {

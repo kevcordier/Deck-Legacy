@@ -7,6 +7,7 @@ import { Section } from '@components/ui/Section/Section';
 import { getActiveState } from '@engine/application/cardHelpers';
 import { CardTag } from '@engine/domain/enums';
 import { Phase } from '@engine/domain/types/Phase';
+import { tCardName } from '@helpers/cardI18n';
 import { useGame } from '@hooks/useGame';
 import { useTranslation } from 'react-i18next';
 
@@ -42,7 +43,9 @@ function NewCardSelection({
                       className="flex-1"
                       onClick={() => chooseState(inst.id, stateId)}
                     >
-                      {stateDef?.name ?? `${t('roundpreview.switchState')} ${stateId}`}
+                      {stateDef?.name
+                        ? tCardName(t, inst.cardId, stateId)
+                        : `${t('roundpreview.switchState')} ${stateId}`}
                     </Button>
                   );
                 })}
@@ -154,7 +157,7 @@ export function MainBoard() {
           </>
         )}
 
-      {gameState.phase === Phase.PLAYING &&
+      {[Phase.PLAYING, Phase.POSTTURN].includes(gameState.phase) &&
         Object.keys(gameState.triggerPile).length === 0 &&
         gameState.lastAddedCards.length > 0 &&
         displayNewCards && (

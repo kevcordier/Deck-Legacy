@@ -108,7 +108,7 @@ export const river: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [3],
+              states: { ids: [3] },
             },
           ],
         },

@@ -16,6 +16,9 @@ export enum CardTag {
   INVENTION = 'invention',
   POTION = 'potion',
   LOOT = 'loot',
+  LIVESTOCK = 'livestock',
+  HORSE = 'horse',
+  LADY = 'lady',
 }
 
 export enum Trigger {
@@ -25,6 +28,9 @@ export enum Trigger {
   END_OF_ROUND = 'end_of_round',
   ON_PURGE = 'on_purge',
   ON_DISCARD = 'on_discard',
+  ON_PRODUCE = 'on_produce',
+  ON_UPGRADE = 'on_upgrade',
+  ON_TRACK_END = 'on_track_end',
 }
 
 export enum GameEventType {
@@ -77,6 +83,7 @@ export enum PassiveType {
   ADJUST_UPDATE_COST = 'ADJUST_UPDATE_COST',
   RESOURCE_EQUIVALENCE = 'RESOURCE_EQUIVALENCE',
   SET_GAME_PARAMETER = 'SET_GAME_PARAMETER',
+  CANT_BE_DESTROYED = 'CANT_BE_DESTROYED',
 }
 
 export enum Options {

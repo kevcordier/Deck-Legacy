@@ -73,7 +73,7 @@ function matchesAlignmentAndName(
 
 function matchesTags(state: CardState, tags: CardTag[] | undefined): boolean {
   if (!tags || tags.length === 0) return true;
-  return !!(state.tags && tags.every(tag => state.tags?.includes(tag)));
+  return !!(state.tags && tags.some(tag => state.tags?.includes(tag)));
 }
 
 function matchesProductions(
@@ -88,10 +88,7 @@ function matchesProductions(
   return produces.some(r =>
     state.productions?.some(prod =>
       Object.keys(
-        getEffectiveProductions(prod, gameState, defs, gameState.instances[id], stickerDefs, {
-          includeBoardEffects: false,
-          includePassives: false,
-        }),
+        getEffectiveProductions(prod, gameState, defs, gameState.instances[id], stickerDefs, false),
       ).includes(r),
     ),
   );
@@ -100,15 +97,36 @@ function matchesProductions(
 function matchHaving(id: number, ctx: CardCriteriaContext): boolean {
   const { gameState, defs, stickerDefs, selector } = ctx;
   if (!selector.having) return true;
+  const activeState = getActiveState(gameState.instances[id], defs);
   const baseGlory = getEffectiveGlory(
-    getActiveState(gameState.instances[id], defs),
+    activeState,
     gameState,
     defs,
     gameState.instances[id],
     stickerDefs,
   );
+  const baseProduction = (activeState.productions ?? []).reduce((maxProduction, production) => {
+    const effectiveProduction = getEffectiveProductions(
+      production,
+      gameState,
+      defs,
+      gameState.instances[id],
+      stickerDefs,
+      false,
+    );
+    const totalProduction = Object.values(effectiveProduction).reduce(
+      (sum, amount) => sum + amount,
+      0,
+    );
+    return Math.max(maxProduction, totalProduction);
+  }, 0);
+
   if (selector.having.minGlory !== undefined && baseGlory < selector.having.minGlory) return false;
   if (selector.having.maxGlory !== undefined && baseGlory > selector.having.maxGlory) return false;
+  if (selector.having.minProduction !== undefined && baseProduction < selector.having.minProduction)
+    return false;
+  if (selector.having.maxProduction !== undefined && baseProduction > selector.having.maxProduction)
+    return false;
   return true;
 }
 

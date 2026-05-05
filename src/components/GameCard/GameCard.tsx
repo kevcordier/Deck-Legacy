@@ -16,6 +16,7 @@ import {
   getEffectiveUpgradeCost,
   tagClass,
 } from '@engine/application/cardHelpers';
+import { getPickNumbers } from '@engine/application/effectResolver';
 import { canUseOptions } from '@engine/application/gameStateHelper';
 import { Options, PassiveType } from '@engine/domain/enums';
 import type { CardInstance } from '@engine/domain/types';
@@ -163,7 +164,9 @@ export function GameCard({
           )}
 
           <div className="flex flex-wrap gap-1">
-            {cs.glory !== undefined && !emptyValues.length && <Glory glory={glory} />}
+            {cs.glory !== undefined && (cs.glory.amount > 0 || cs.glory.valuePerElement) && (
+              <Glory glory={glory} />
+            )}
             {emptyValues.map((value, i) => (
               <Glory key={`empty-${i.toString()}`} glory={value} />
             ))}
@@ -257,7 +260,7 @@ export function GameCard({
               const discardLabel = effectiveUpgradeCost.discard
                 ?.map(d => {
                   return t('card.cost.discard', {
-                    count: d.pickNumber ?? 1,
+                    count: getPickNumbers(d).pickMin,
                     type: d.name ?? d.tags?.[0] ?? t('card.cost.cards'),
                   });
                 })

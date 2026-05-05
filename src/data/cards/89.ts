@@ -14,6 +14,7 @@ export const priest: CardDef = {
       actions: [
         {
           id: '89-1-1',
+          cost: { resources: [{ gold: 2 }] },
           actionEffects: [
             {
               id: 1,
@@ -23,7 +24,6 @@ export const priest: CardDef = {
                 scope: [TargetScope.BOARD],
                 pickNumber: 1,
               },
-              states: [1, 2, 3, 4],
             },
           ],
         },
@@ -61,7 +61,6 @@ export const priest: CardDef = {
                 scope: [TargetScope.BOARD],
                 pickNumber: 1,
               },
-              states: [1, 2, 3, 4],
             },
           ],
         },

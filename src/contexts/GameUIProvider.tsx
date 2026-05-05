@@ -17,6 +17,7 @@ function resolveTheme(theme: Theme): 'light' | 'dark' {
 export function GameUIProvider({ children }: { readonly children: ReactNode }) {
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [rulesOpen, setRulesOpen] = useState(false);
+  const [stickerStockOpen, setStickerStockOpen] = useState(false);
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
 
   function applyTheme(newTheme: Theme) {
@@ -45,6 +46,8 @@ export function GameUIProvider({ children }: { readonly children: ReactNode }) {
         setOptionsOpen,
         rulesOpen,
         setRulesOpen,
+        stickerStockOpen,
+        setStickerStockOpen,
         theme,
         applyTheme,
       }}

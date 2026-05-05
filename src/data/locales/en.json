@@ -149,6 +149,12 @@
     "title": "Rules",
     "open": "Rules"
   },
+  "stickerStock": {
+    "title": "Sticker stock",
+    "open": "Sticker stock",
+    "count": "×{{count}}",
+    "outOfStock": "Out of stock"
+  },
   "options": {
     "title": "Options",
     "theme": "Theme",

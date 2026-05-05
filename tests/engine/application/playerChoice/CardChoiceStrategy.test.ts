@@ -40,7 +40,8 @@ const pending = (id = 'p1') => ({
   sourceInstanceId: 99,
   kind: ActionEffectType.ADD_RESOURCES,
   choices: [],
-  pickCount: 1,
+  pickMin: 1,
+  pickMax: 1,
   isMandatory: true,
 });
 

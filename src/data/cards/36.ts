@@ -37,7 +37,7 @@ export const darkKnight: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: [2],
+              states: { ids: [2] },
             },
           ],
         },
