@@ -674,6 +674,23 @@ describe('cardShouldStayInPlay', () => {
     const gs = makeState({ instances: { 1: inst } });
     expect(cardShouldStayInPlay(1, gs, defs)).toBe(false);
   });
+
+  it('returns true when blocked card is affected by a board STAY_IN_PLAY effect', () => {
+    const inst = makeInstance({ id: 1, cardId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+    const gs = makeState({
+      instances: { 1: inst },
+      boardEffects: {
+        99: [
+          { id: 'b', type: PassiveType.BLOCK, cards: { ids: [1] } },
+          { id: 'sip', type: PassiveType.STAY_IN_PLAY, cards: { ids: [1] } },
+        ],
+      },
+    });
+    expect(cardShouldStayInPlay(1, gs, defs)).toBe(true);
+  });
 });
 
 // ─── cardIsBlocked ────────────────────────────────────────────────────────────

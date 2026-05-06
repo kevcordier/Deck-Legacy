@@ -18,6 +18,8 @@ export const ploughs: CardDef = {
       id: 1,
       name: 'Ploughs',
       tags: [CardTag.LAND, CardTag.INVENTION],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/c32bb468-8e8a-4ea3-85ad-05e2d12eb72d/450x%3Cauto%3E_so',
       glory: { amount: 4 },
       productions: [{ [ResourceType.GOLD]: 3 }],
       upgrade: [

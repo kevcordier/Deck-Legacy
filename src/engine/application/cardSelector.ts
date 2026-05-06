@@ -189,9 +189,12 @@ export function cardSelector(
     return [gameState.discoveryPile[0]].filter(Boolean);
   }
 
-  const blockedInstanceIds = Object.values(
-    getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK),
-  ).flat();
+  const blockedEffect = getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK);
+
+  if (scope.includes(TargetScope.BLOCKED_BY_THIS)) {
+    return blockedEffect[instanceId] ?? [];
+  }
+  const blockedInstanceIds = Object.values(blockedEffect).flat();
 
   const locationScopes = scope.filter(s => LOCATION_SCOPES.has(s));
   const hasBlocked = scope.includes(TargetScope.BLOCKED);

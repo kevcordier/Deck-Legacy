@@ -123,6 +123,7 @@ export const shore: CardDef = {
           id: '62-4-1',
           trigger: Trigger.ON_PLAY,
           optional: false,
+          onTime: true,
           actionEffects: [
             {
               id: 1,

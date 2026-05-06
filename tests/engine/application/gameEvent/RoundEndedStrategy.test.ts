@@ -1,6 +1,6 @@
 import { makeDef, makeDefs, makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { RoundEndedStrategy } from '@engine/application/gameEvent/RoundEndedStrategy';
-import { ActionEffectType, PassiveType, Trigger } from '@engine/domain/enums';
+import { ActionEffectType, Trigger } from '@engine/domain/enums';
 import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
@@ -19,25 +19,6 @@ describe('RoundEndedStrategy', () => {
     const result = strategy.apply(gs);
     expect(result.board).toEqual([]);
     expect(result.discardPile).toContain(10);
-  });
-
-  it('clears boardEffects', () => {
-    const gs = makeState({ boardEffects: { 1: [{ id: 'local', type: PassiveType.BLOCK }] } });
-    const result = strategy.apply(gs);
-    expect(result.boardEffects).toEqual({});
-  });
-
-  it('keeps global boardEffects', () => {
-    const gs = makeState({
-      boardEffects: {
-        1: [{ id: 'global', type: PassiveType.BLOCK, global: true }],
-        2: [{ id: 'local', type: PassiveType.BLOCK }],
-      },
-    });
-    const result = strategy.apply(gs);
-    expect(result.boardEffects).toEqual({
-      1: [{ id: 'global', type: PassiveType.BLOCK, global: true }],
-    });
   });
 
   it('discovers up to 2 cards from discoveryPile', () => {

@@ -86,7 +86,7 @@ export const plague: CardDef = {
               id: 1,
               type: ActionEffectType.DESTROY_CARD,
               cards: {
-                scope: [TargetScope.BOARD, TargetScope.BLOCKED],
+                scope: [TargetScope.BLOCKED_BY_THIS],
               },
             },
           ],

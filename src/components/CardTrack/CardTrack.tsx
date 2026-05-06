@@ -46,11 +46,19 @@ export function CardTrackContent({
 
   const getActionContent = (action: ActionEffect): JSX.Element | null => {
     if (action.type === ActionEffectType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
-      return <span key={action.id}>#{action.cards.ids[0]}</span>;
+      return (
+        <span className="text-xs" key={action.id}>
+          #{action.cards.ids[0]}
+        </span>
+      );
     }
 
     if (action.type === ActionEffectType.UPGRADE_CARD) {
-      return <span key={action.id}>⬆</span>;
+      return (
+        <span className="text-xs" key={action.id}>
+          ⬆
+        </span>
+      );
     }
 
     if (action.resources) {
@@ -133,7 +141,7 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
         return (
           <div
             key={step.id}
-            className={`flex ${track.vertical ? 'flex-row-reverse justify-end' : 'flex-col justify-center'} items-center gap-1`}
+            className={`flex ${track.vertical ? 'flex-row-reverse justify-end' : 'flex-col justify-center'} items-center gap-0.5`}
           >
             {cost && (
               <div className={`flex items-center gap-0.5 text-base text-base-ink`}>
@@ -142,7 +150,7 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
             )}
             <div
               className={[
-                `${track.vertical ? 'size-7' : 'size-10'} shrink-0 text-base flex flex-col items-center justify-center border-2 leading-none font-bold rounded-md text-base-ink bg-card border-base-ink`,
+                `${track.vertical ? 'size-7' : 'size-9'} shrink-0 text-base flex flex-col items-center justify-center border-2 leading-none font-bold rounded-md text-base-ink bg-card border-base-ink`,
                 isValidated ? 'border-success bg-success/20! text-success' : '',
               ].join(' ')}
               title={isValidated ? '✓' : undefined}

@@ -92,19 +92,20 @@ export function GameCard({
 
   const cardClass = [
     'min-w-32 max-w-100 aspect-2/3 rounded-md @3xs:rounded-xl',
-    'border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden animate-fade-in-scale',
+    'border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden motion-safe:animate-fade-in-scale motion-safe:opacity-0 motion-safe:[transform:translateY(18px)_scale(0.96)] motion-reduce:animate-none',
   ]
     .filter(Boolean)
     .join(' ');
 
-  const animationDelayClass = [`delay-50`, `delay-100`, `delay-1500`, `delay-200`][index];
+  const animationDelay = `${Math.min(index, 3) * 70}ms`;
 
   const cardActionsClass =
     'font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md';
 
   return (
     <div
-      className={`${cardClass} ${className} ${animationDelayClass} ${isPermanent ? 'border-5 border-permanent' : ''}`}
+      className={`${cardClass} ${className} ${isPermanent ? 'border-5 border-permanent' : ''}`}
+      style={{ animationDelay, animationFillMode: 'both' }}
     >
       <div className={`border-b border-black/10 bg-black/5 p-1 pb-2 @3xs:p-3`}>
         <div className="flex items-start justify-between gap-2">

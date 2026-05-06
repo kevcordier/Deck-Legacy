@@ -84,7 +84,7 @@ export const tornado: CardDef = {
                   id: 3,
                   type: ActionEffectType.DESTROY_CARD,
                   cards: {
-                    scope: [TargetScope.BOARD, TargetScope.BLOCKED],
+                    scope: [TargetScope.BLOCKED_BY_THIS],
                     tags: [CardTag.BUILDING],
                   },
                 },

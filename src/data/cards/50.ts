@@ -58,7 +58,7 @@ export const mysteriousCave: CardDef = {
       name: 'Lost Civilization',
       tags: [CardTag.LAND],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1269601b-be64-4550-b144-dabce73d2b62/anim=false,width=450,optimized=true/1000013294.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/b85d6851-18b0-45e2-89f1-47686e30740d/450x%3Cauto%3E_so',
       glory: { amount: 5 },
       actions: [
         {

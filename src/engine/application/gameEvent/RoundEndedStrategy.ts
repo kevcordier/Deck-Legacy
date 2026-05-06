@@ -1,6 +1,6 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
-import { discoverCards, pickGlobalBoardEffects } from '@engine/application/gameStateHelper';
+import { discoverCards } from '@engine/application/gameStateHelper';
 import { Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState, Sticker } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
@@ -40,7 +40,6 @@ export class RoundEndedStrategy implements GameEventStrategy {
 
     return {
       ...gameState,
-      boardEffects: pickGlobalBoardEffects(gameState.boardEffects),
       discardPile: [...gameState.board, ...gameState.discardPile],
       board: [],
       phase: Phase.PREROUND,

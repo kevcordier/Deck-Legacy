@@ -99,6 +99,35 @@ describe('PlaceCardInPileStrategy', () => {
     expect(result.drawPile[result.drawPile.length - 1]).toBe(5);
   });
 
+  it('places card in discard pile', () => {
+    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const gs = makeState({ discardPile: [1, 2], instances: { 5: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_PILE,
+      sourceInstanceId: 99,
+      instanceIds: [5],
+      deck: 'discard',
+      position: 0,
+    });
+    expect(result.discardPile).toContain(5);
+    expect(result.discardPile[0]).toBe(5);
+  });
+
+  it('places card at bottom of discard pile', () => {
+    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const gs = makeState({ discardPile: [1, 2], instances: { 5: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_PILE,
+      sourceInstanceId: 99,
+      instanceIds: [5],
+      deck: 'discard',
+      position: 'bottom',
+    });
+    expect(result.discardPile[result.discardPile.length - 1]).toBe(5);
+  });
+
   it('clears boardEffects for placed card', () => {
     const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
     const gs = makeState({

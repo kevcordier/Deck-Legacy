@@ -124,4 +124,20 @@ describe('UpgradeCardEventStrategy', () => {
     expect(trigger.sourceInstanceId).toBe(1);
     expect(trigger.effectDef.trigger).toBe(Trigger.ON_UPGRADE);
   });
+
+  it('removes upgraded card from permanents when new state is not permanent', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], permanents: [1, 2], instances: { 1: inst } });
+    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S', permanent: false });
+    const result = strategy.apply(gs, {
+      id: 'e1',
+      type: GameEventType.UPGRADE_CARD,
+      timestamp: 0,
+      cardInstanceId: 1,
+      stateId: 2,
+      cost: {},
+    } as UpgradeCardEvent);
+    expect(result.permanents).not.toContain(1);
+    expect(result.permanents).toContain(2);
+  });
 });

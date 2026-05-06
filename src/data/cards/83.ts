@@ -96,6 +96,8 @@ export const compass: CardDef = {
       id: 1,
       name: 'Compass',
       tags: [CardTag.SEAFARING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/23da17e2-311e-44d5-872d-33cc49975f18/450x%3Cauto%3E_so',
       glory: { amount: 2 },
       actions: [makeSeafaringTrackAdvance('83-1-1')],
       track: {
@@ -116,6 +118,8 @@ export const compass: CardDef = {
       id: 2,
       name: 'Navigation',
       tags: [CardTag.SEAFARING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/fb3b1461-799e-4316-b862-52d4157dd8ce/450x%3Cauto%3E_so',
       glory: { amount: 8 },
       actions: [makeSeafaringTrackAdvance('83-2-1')],
       track: {
@@ -136,6 +140,8 @@ export const compass: CardDef = {
       id: 3,
       name: 'Astrolabe',
       tags: [CardTag.SEAFARING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/04ca154b-2ac4-4e5b-a95d-48b443328f12/450x%3Cauto%3E_so',
       glory: { amount: 15 },
       actions: [makeSeafaringTrackAdvance('83-3-1')],
       track: {
@@ -156,6 +162,8 @@ export const compass: CardDef = {
       id: 4,
       name: 'Calendar',
       tags: [CardTag.INVENTION],
+      illustration:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Calendar_%28part_of_a_set%29_MET_DP-13486-011.jpg/1920px-Calendar_%28part_of_a_set%29_MET_DP-13486-011.jpg',
       glory: { amount: 15 },
       actions: [
         {

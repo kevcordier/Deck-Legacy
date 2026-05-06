@@ -144,4 +144,18 @@ describe('PlayCardStrategy', () => {
     expect(result.boardEffects[30]).toHaveLength(1);
     expect(result.boardEffects[30][0].id).toBe('sip');
   });
+
+  it('adds ON_PLAY trigger to triggerPile', () => {
+    const defs = { 2: onPlayDef };
+    const strategy = new PlayCardStrategy(defs, makeStickerDefs());
+    const inst = makeInstance({ id: 10, cardId: 2, stateId: 1 });
+    const gs = makeState({ instances: { 10: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLAY_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [10],
+    });
+    expect(Object.keys(result.triggerPile)).toHaveLength(1);
+  });
 });

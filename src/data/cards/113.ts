@@ -25,6 +25,8 @@ export const townBorder: CardDef = {
     {
       id: 2,
       name: 'Watchtower',
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/04320a87-5b0d-4f19-871b-42b1982fdeee/450x%3Cauto%3E_so',
       tags: [CardTag.BUILDING],
       productions: [{ weapon: 1 }],
       glory: { amount: 4 },

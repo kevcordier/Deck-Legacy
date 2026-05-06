@@ -111,6 +111,7 @@ export enum TargetScope {
   DISCOVERY = 'discovery',
   PERMANENTS = 'permanents',
   BLOCKED = 'blocked',
+  BLOCKED_BY_THIS = 'blocked_by_this',
   FRIENDLY = 'friendly',
   ENEMY = 'enemy',
   SELF = 'self',

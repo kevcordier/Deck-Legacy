@@ -479,7 +479,8 @@ export function getInstancesTriggerEffects(
         return (
           ce.trigger === effect &&
           canAffordCost(ce.cost, instance.id, gameState, defs, stickerDefs) &&
-          canAffordTrackAdvanceCost(ce, instance, gameState, defs, stickerDefs)
+          canAffordTrackAdvanceCost(ce, instance, gameState, defs, stickerDefs) &&
+          !instance.usedActionIds?.includes(ce.id)
         );
       }) ?? [];
 

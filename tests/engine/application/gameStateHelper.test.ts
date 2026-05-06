@@ -344,6 +344,18 @@ describe('computeGameStateDiff', () => {
     const diff = computeGameStateDiff(before, after);
     expect(diff).toHaveProperty('board', [1]);
   });
+
+  it('returns only changed instances when instances differ', () => {
+    const before = makeState({
+      instances: { 1: makeInstance({ id: 1, stateId: 1 }), 2: makeInstance({ id: 2, stateId: 1 }) },
+    });
+    const after = makeState({
+      instances: { 1: makeInstance({ id: 1, stateId: 2 }), 2: makeInstance({ id: 2, stateId: 1 }) },
+    });
+    const diff = computeGameStateDiff(before, after);
+    expect(diff.instances).toBeDefined();
+    expect(Object.keys(diff.instances ?? {})).toEqual(['1']);
+  });
 });
 
 // ─── drawCards with passives ──────────────────────────────────────────────────

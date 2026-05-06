@@ -106,6 +106,25 @@ describe('resolveActionEffect – ADD_RESOURCES', () => {
     const [resolved] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
     expect(resolved.resources).toEqual({});
   });
+
+  it('creates pending CHOOSE_RESOURCE when card has multiple production alternatives', () => {
+    const multiProdDef: CardDef = {
+      id: 2,
+      name: 'M',
+      states: [{ id: 1, name: 'S', productions: [{ gold: 1 }, { wood: 1 }] }],
+    };
+    const inst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst } });
+    const effect = {
+      id: 1,
+      type: ActionEffectType.ADD_RESOURCES,
+      resources: { cards: { scope: [TargetScope.BOARD] } },
+    };
+    const [, pending] = resolveActionEffect(effect, 99, gs, { 2: multiProdDef }, stickerDefs);
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe('choose_resource');
+    expect(pending[0].choices).toHaveLength(2);
+  });
 });
 
 // ─── DISCARD_CARD / DESTROY_CARD ──────────────────────────────────────────────

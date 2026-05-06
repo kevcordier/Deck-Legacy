@@ -13,7 +13,7 @@ export const jester: CardDef = {
       tags: [CardTag.PERSON],
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c5efb41f-0d2c-4c9b-adc6-b8d6d4cc73ae/anim=false,width=450,optimized=true/Refined_00002_.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/801f2cb5-58b3-4ca5-8093-4b4bde551bd3/450x%3Cauto%3E_so',
       actions: [
         {
           id: '32-1-1',
