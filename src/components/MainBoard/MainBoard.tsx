@@ -23,7 +23,7 @@ function NewCardSelection({
   const { t } = useTranslation();
 
   return (
-    <div className="flex w-full flex-row flex-wrap justify-center place-items-center gap-2 lg:gap-4">
+    <div className="flex w-full flex-row flex-wrap justify-center place-items-end-safe gap-2 lg:gap-4">
       {cardIds.map((id: number) => {
         const inst = gameState.instances[id];
         if (!inst) return null;
@@ -33,7 +33,7 @@ function NewCardSelection({
           return (
             <div
               key={id}
-              className="flex basis-[calc(50%-0.25rem)] flex-col gap-1 lg:basis-[calc(33.333%-0.667rem)]"
+              className="flex min-w-0 basis-[calc(50%-0.25rem)] flex-col gap-1 lg:basis-[calc(33.333%-0.667rem)]"
             >
               <div className="mb-2 flex w-full flex-wrap gap-2">
                 {chooseStateIds.map(stateId => {

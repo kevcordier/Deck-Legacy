@@ -105,7 +105,7 @@ export function GameBoard() {
       <EventPanel />
 
       {/* Mobile action bar */}
-      <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t px-1 pt-1 pb-4 lg:hidden">
+      <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t px-2 pt-2 pb-[max(1rem,env(safe-area-inset-bottom))] lg:hidden">
         <Button
           onClick={() => setOpenSheet(o => (o === 'draw' ? null : 'draw'))}
           variant="outlined"
