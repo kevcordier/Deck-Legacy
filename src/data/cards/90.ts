@@ -173,6 +173,7 @@ export const smallHillTown: CardDef = {
         {
           id: '90_4_1',
           cost: { resources: [{ gold: 2 }] },
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,

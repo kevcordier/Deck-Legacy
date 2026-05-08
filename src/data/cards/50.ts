@@ -63,6 +63,7 @@ export const mysteriousCave: CardDef = {
       actions: [
         {
           id: '50-3-1',
+          limitedTime: 1,
           cost: {
             discard: [
               {

@@ -112,7 +112,7 @@ export const smallSchool: CardDef = {
       actions: [
         {
           id: '102-4-1',
-          onTime: true,
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,

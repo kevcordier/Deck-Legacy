@@ -19,6 +19,7 @@ export const stable: CardDef = {
         {
           id: '96-1-1',
           endsTurn: true,
+          limitedTime: 1,
           cost: {
             resources: [
               {
@@ -50,6 +51,7 @@ export const stable: CardDef = {
         {
           id: '96-2-1',
           endsTurn: true,
+          limitedTime: 1,
           cost: {
             resources: [
               {
@@ -81,6 +83,7 @@ export const stable: CardDef = {
         {
           id: '96-3-1',
           endsTurn: true,
+          limitedTime: 1,
           cost: {
             resources: [
               {
@@ -112,7 +115,6 @@ export const stable: CardDef = {
         {
           id: '96-4-1',
           trigger: Trigger.ON_PLAY,
-          optional: false,
           actionEffects: [
             {
               id: 1,

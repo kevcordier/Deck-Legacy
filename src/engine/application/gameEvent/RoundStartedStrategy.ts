@@ -6,17 +6,19 @@ import { Phase } from '@engine/domain/types/Phase';
 export class RoundStartedStrategy implements GameEventStrategy {
   apply(gameState: GameState, event: GameEvent): GameState {
     const e = event as RoundStartedEvent;
+    const addedCards = e.lastAddedCards ?? [];
 
     return {
       ...gameState,
       round: e.round,
       turn: 0,
       drawPile: e.newDrawPile,
+      discoveryPile: gameState.discoveryPile.filter(id => !addedCards.includes(id)),
+      lastAddedCards: addedCards,
       boardEffects: pickGlobalBoardEffects(gameState.boardEffects),
       discardPile: [],
       board: [],
-      lastAddedCards: [],
-      phase: Phase.PRETURN,
+      phase: Phase.ROUND_START,
     };
   }
 }

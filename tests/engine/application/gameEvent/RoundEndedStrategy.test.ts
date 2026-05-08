@@ -10,7 +10,7 @@ describe('RoundEndedStrategy', () => {
   it('sets phase to PREROUND', () => {
     const gs = makeState();
     const result = strategy.apply(gs);
-    expect(result.phase).toBe(Phase.PREROUND);
+    expect(result.phase).toBe(Phase.ROUND_END);
   });
 
   it('moves board cards to discardPile', () => {
@@ -30,9 +30,7 @@ describe('RoundEndedStrategy', () => {
       instances: { 1: inst1, 2: inst2, 3: inst3 },
     });
     const result = strategy.apply(gs);
-    expect(result.discoveryPile).not.toContain(1);
-    expect(result.discoveryPile).not.toContain(2);
-    expect(result.discoveryPile).toContain(3);
+    expect(result.discoveryPile).toEqual([1, 2, 3]);
   });
 
   it('adds END_OF_ROUND triggers from permanent cards', () => {

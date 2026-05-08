@@ -18,7 +18,7 @@ export const EMPTY_STATE: GameState = {
   lastDiscardedCards: [],
   round: 0,
   turn: 0,
-  phase: Phase.PREGAME,
+  phase: Phase.PRE_GAME,
 };
 
 export function makeState(overrides?: Partial<GameState>): GameState {

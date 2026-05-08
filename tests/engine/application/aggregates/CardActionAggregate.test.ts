@@ -193,22 +193,40 @@ describe('CardActionAggregate.resolveAction', () => {
     expect(agg.getGameState().discoveryPile).not.toContain(1);
   });
 
-  it('skips onTime action already used', () => {
+  it('skips limitedTime action already fully used', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, usedActionIds: ['one-time'] });
     const gs = makeState({ board: [1], instances: { 1: inst } });
-    const action: CardAction = { id: 'one-time', actionEffects: [], onTime: true };
+    const action: CardAction = { id: 'one-time', actionEffects: [], limitedTime: 1 };
     const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
     agg.resolveAction();
     expect(agg.getGameState().resources.gold).toBeUndefined();
   });
 
-  it('records onTime action in usedActionIds after first use', () => {
+  it('records limitedTime action in usedActionIds after use', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, usedActionIds: [] });
     const gs = makeState({ board: [1], instances: { 1: inst } });
-    const action: CardAction = { id: 'one-time', actionEffects: [], onTime: true };
+    const action: CardAction = { id: 'one-time', actionEffects: [], limitedTime: 1 };
     const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
     agg.resolveAction();
     expect(agg.getGameState().instances[1].usedActionIds).toContain('one-time');
+  });
+
+  it('allows action until limitedTime count is reached', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, usedActionIds: ['limited'] });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    const action: CardAction = {
+      id: 'limited',
+      actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
+      limitedTime: 2,
+    };
+
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
+    agg.resolveAction();
+
+    expect(agg.getGameState().resources.gold).toBe(1);
+    expect(
+      agg.getGameState().instances[1].usedActionIds.filter(id => id === 'limited'),
+    ).toHaveLength(2);
   });
 
   it('throws when cost cannot be paid', () => {
@@ -260,51 +278,46 @@ describe('CardActionAggregate.resolveAction', () => {
     expect(agg.getGameState().resources.gold).toBe(5);
   });
 
-  it('pays upgrade cost when UPGRADE_CARD has payingCost set', () => {
-    const sourceDef: CardDef = {
-      id: 1,
-      name: 'PriestLike',
-      states: [{ id: 1, name: 'S' }],
-    };
-    const targetDef: CardDef = {
-      id: 2,
-      name: 'Upgradeable',
+  it('pays inOrder track step cost before applying step effects', () => {
+    const trackDef: CardDef = {
+      id: 4,
+      name: 'Tracked',
       states: [
         {
           id: 1,
-          name: 'Base',
-          upgrade: [{ cost: { resources: [{ gold: 2 }] }, upgradeTo: 2 }],
+          name: 'S',
+          track: {
+            inOrder: true,
+            steps: [
+              {
+                id: 1,
+                cost: { resources: [{ gold: 2 }] },
+                effects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 5 } }],
+              },
+            ],
+          },
         },
-        { id: 2, name: 'Upgraded' },
       ],
     };
 
-    const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const targetInst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const inst = makeInstance({ id: 1, cardId: 4, stateId: 1 });
     const gs = makeState({
-      board: [1, 2],
+      board: [1],
       resources: { gold: 2 },
-      instances: { 1: sourceInst, 2: targetInst },
+      instances: { 1: inst },
     });
-
     const action: CardAction = {
-      id: 'paying-upgrade',
+      id: 'ta',
       actionEffects: [
-        {
-          id: 1,
-          type: ActionEffectType.UPGRADE_CARD,
-          payingCost: true,
-          cards: { ids: [2] },
-          states: { ids: [2] },
-        },
+        { id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
       ],
     };
 
-    const agg = new CardActionAggregate({ 1: sourceDef, 2: targetDef }, {}, gs, sourceInst, action);
+    const agg = new CardActionAggregate({ 4: trackDef }, {}, gs, inst, action);
     agg.resolveAction();
 
-    expect(agg.getGameState().instances[2].stateId).toBe(2);
-    expect(agg.getGameState().resources.gold ?? 0).toBe(0);
+    expect(agg.getGameState().resources.gold).toBe(5);
+    expect(agg.getGameState().instances[1].trackProgress).toContain(1);
   });
 });
 
@@ -499,6 +512,48 @@ describe('CardActionAggregate.resolveCostChoice', () => {
     expect(agg.getPendingChoices()).toHaveLength(0);
     expect(agg.getGameState().resources.gold).toBe(4);
     expect(agg.getGameState().resources.wood).toBe(2);
+  });
+
+  it('resolves all choices sequentially when discard cost has multiple conditions', () => {
+    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const inst4 = makeInstance({ id: 4, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      board: [1, 2, 3, 4],
+      instances: { 1: inst1, 2: inst2, 3: inst3, 4: inst4 },
+    });
+    const action: CardAction = {
+      id: 'a1',
+      actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
+      cost: {
+        discard: [
+          { scope: [TargetScope.BOARD], pickNumber: 2 },
+          { scope: [TargetScope.BOARD], pickNumber: 1 },
+        ],
+      },
+    };
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst1, action);
+    agg.resolveAction();
+
+    // Two discard conditions → two pending choices
+    expect(agg.getPendingChoices()).toHaveLength(2);
+
+    // Resolve first discard choice (2 cards)
+    agg.resolveCostChoice({ resources: {}, discardedCardIds: [2, 3], destroyedCardIds: [] });
+    expect(agg.getPendingChoices()).toHaveLength(1);
+    expect(agg.getGameState().board).toContain(4); // not yet discarded
+
+    // Resolve second discard choice (1 card)
+    agg.resolveCostChoice({ resources: {}, discardedCardIds: [4], destroyedCardIds: [] });
+    expect(agg.getPendingChoices()).toHaveLength(0);
+
+    // All 3 cost cards discarded
+    expect(agg.getGameState().discardPile).toContain(2);
+    expect(agg.getGameState().discardPile).toContain(3);
+    expect(agg.getGameState().discardPile).toContain(4);
+    // Effect applied
+    expect(agg.getGameState().resources.gold).toBe(1);
   });
 });
 

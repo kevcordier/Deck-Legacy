@@ -152,6 +152,7 @@ export function PendingChoiceModal({
 }: PendingChoiceModalProps) {
   const { t } = useTranslation();
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [peeking, setPeeking] = useState(false);
 
   const minSelect = choice?.pickMin ?? 1;
   const maxSelect = choice?.pickMax ?? 1;
@@ -209,8 +210,14 @@ export function PendingChoiceModal({
 
   const onClose = choice?.isMandatory === false ? () => onSkipChoice() : undefined;
   return (
-    <Modal title={title} onClose={onClose} subtitle={subtitle}>
-      {content}
+    <Modal
+      title={title}
+      onClose={onClose}
+      subtitle={subtitle}
+      peeking={peeking}
+      onPeekToggle={() => setPeeking(p => !p)}
+    >
+      <div className="scrollbar">{content}</div>
       {choice && (isMultiSelect || choice.isMandatory === false) && (
         <div className="flex justify-end items-center gap-2 pt-2">
           {choice.isMandatory === false && (

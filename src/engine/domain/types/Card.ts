@@ -74,7 +74,7 @@ export type CardAction = {
   endsTurn?: boolean;
   trigger?: Trigger;
   optional?: boolean;
-  onTime?: boolean; // if true, the action is usable only one time then disappears
+  limitedTime?: number; // max number of uses for this action
 };
 
 export type ValuePerElement = {

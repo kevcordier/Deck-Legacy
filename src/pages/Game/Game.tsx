@@ -16,7 +16,7 @@ export function Game() {
   const { t } = useTranslation();
   const { setOptionsOpen, setRulesOpen, optionsOpen, rulesOpen } = useGameUI();
 
-  const isGamePlaying = gameState.phase !== Phase.PREGAME && gameState.phase !== Phase.GAME_OVER;
+  const isGamePlaying = gameState.phase !== Phase.PRE_GAME && gameState.phase !== Phase.GAME_OVER;
 
   return (
     <div className="z-1 flex h-screen flex-col">
@@ -26,7 +26,7 @@ export function Game() {
 
       {isGamePlaying && <GameBoard />}
 
-      {gameState.phase === Phase.PREGAME && (
+      {gameState.phase === Phase.PRE_GAME && (
         <EmptyState
           title={t('game.title')}
           subtitle={t('game.subtitle')}

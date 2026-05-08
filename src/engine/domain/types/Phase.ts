@@ -1,8 +1,9 @@
 export enum Phase {
-  PREGAME = 'pregame',
-  PREROUND = 'preRound',
+  PRE_GAME = 'pregame',
+  ROUND_START = 'roundStart',
+  ROUND_END = 'roundEnd',
+  TURN_END = 'turnEnd',
+  PARCHMENT = 'parchment',
   PLAYING = 'playing',
-  PRETURN = 'preTurn',
-  POSTTURN = 'postTurn',
   GAME_OVER = 'gameOver',
 }

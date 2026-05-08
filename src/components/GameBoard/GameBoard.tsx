@@ -2,11 +2,12 @@ import { DeckViewer } from '@components/DeckViewer/DeckViewer';
 import { EventPanel } from '@components/EventPanel/EventPanel';
 import { GameCard } from '@components/GameCard/GameCard';
 import { MainBoard } from '@components/MainBoard/MainBoard';
-import { ParchmentModal } from '@components/ParchmentModal/ParchmentModal';
 import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
 import { Button } from '@components/ui/Button/Button';
 import { DestroyIcon, DiscardIcon, DrawCardIcon } from '@components/ui/Icon/icon';
+import { MarkdownText } from '@components/ui/MarkdownText/MarckdownText';
 import { Modal } from '@components/ui/Modal/Modal';
+import { tCardParchmentText } from '@helpers/cardI18n';
 import { useGame } from '@hooks/useGame';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -79,6 +80,17 @@ export function GameBoard() {
         </div>
 
         <MainBoard />
+
+        {parchmentTextPending && (
+          <div className="flex flex-col gap-4 p-4">
+            <MarkdownText text={tCardParchmentText(t, parchmentTextPending.id)} />
+            <div className="flex justify-end">
+              <Button color="base-primary" onClick={dismissParchmentText}>
+                {t('parchmentCard.continue')}
+              </Button>
+            </div>
+          </div>
+        )}
 
         <div className="hidden lg:contents">
           <DeckViewer
@@ -165,10 +177,6 @@ export function GameBoard() {
           )}
         </div>
       </nav>
-
-      {parchmentTextPending && (
-        <ParchmentModal def={parchmentTextPending} onContinue={dismissParchmentText} />
-      )}
 
       {((pendingChoices !== null && pendingChoices.length > 0) ||
         (triggerPile && Object.keys(triggerPile).length > 0)) && (

@@ -63,6 +63,7 @@ export const eastCliffs: CardDef = {
       actions: [
         {
           id: '12-2-1',
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,

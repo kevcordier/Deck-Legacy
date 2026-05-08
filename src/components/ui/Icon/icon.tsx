@@ -388,3 +388,59 @@ export function PassifIcon({ color = 'currentColor', className, style, alt }: Ic
     </svg>
   );
 }
+
+export function EyeIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="800"
+      height="800"
+      fill="none"
+      viewBox="0 0 24 24"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <path
+        fill={color}
+        fillRule="evenodd"
+        d="M11.994 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m0-2.006a1.494 1.494 0 1 1 0-2.988 1.494 1.494 0 0 1 0 2.988"
+        clipRule="evenodd"
+      />
+      <path
+        fill={color}
+        fillRule="evenodd"
+        d="M12 5C7.189 5 3.917 7.609 2.19 9.48a3.68 3.68 0 0 0 0 5.04C3.916 16.391 7.188 19 12 19s8.083-2.609 9.81-4.48a3.68 3.68 0 0 0 0-5.04C20.084 7.609 16.812 5 12 5m-8.341 5.837C5.189 9.18 7.967 7 12 7s6.812 2.18 8.341 3.837a1.68 1.68 0 0 1 0 2.326C18.811 14.82 16.033 17 12 17s-6.812-2.18-8.341-3.837a1.68 1.68 0 0 1 0-2.326"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
+export function EyeOffIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="800"
+      height="800"
+      fill="none"
+      viewBox="0 0 24 24"
+      className={`inline ${className}`}
+      style={style}
+      aria-label={alt}
+    >
+      <path
+        fill={color}
+        d="M4.496 7.44c-.949.678-1.718 1.402-2.307 2.04a3.68 3.68 0 0 0 0 5.04C3.917 16.391 7.19 19 12 19c1.296 0 2.48-.19 3.552-.502l-1.662-1.663A11 11 0 0 1 12 17c-4.033 0-6.812-2.18-8.341-3.837a1.68 1.68 0 0 1 0-2.326 13 13 0 0 1 2.273-1.96z"
+      />
+      <path
+        fill={color}
+        d="M8.533 11.478q-.038.256-.039.522a3.5 3.5 0 0 0 4.022 3.461zM15.466 12.447l-3.919-3.919q.22-.027.447-.028a3.5 3.5 0 0 1 3.472 3.947"
+      />
+      <path
+        fill={color}
+        d="M18.112 15.093a13 13 0 0 0 2.23-1.93 1.68 1.68 0 0 0 0-2.326C18.811 9.18 16.032 7 12 7c-.64 0-1.25.055-1.827.154L8.505 5.486A12.6 12.6 0 0 1 12 5c4.811 0 8.083 2.609 9.81 4.48a3.68 3.68 0 0 1 0 5.04c-.58.629-1.334 1.34-2.263 2.008zM2.008 3.422a1 1 0 1 1 1.414-1.414L22 20.586A1 1 0 1 1 20.586 22z"
+      />
+    </svg>
+  );
+}

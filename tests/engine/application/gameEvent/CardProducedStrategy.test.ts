@@ -54,7 +54,6 @@ describe('CardProducedStrategy', () => {
             {
               id: '2-1-1',
               trigger: Trigger.ON_PRODUCE,
-              optional: false,
               actionEffects: [
                 {
                   id: 1,

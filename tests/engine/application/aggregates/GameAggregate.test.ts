@@ -6,6 +6,7 @@ import {
   GameEventType,
   PassiveType,
   PendingChoiceType,
+  TargetScope,
   Trigger,
 } from '@engine/domain/enums';
 import type { CardDef, GameEvent, PendingChoice, ResolvedActionEffect } from '@engine/domain/types';
@@ -50,6 +51,25 @@ const endOfTurnDef: CardDef = {
     { id: 1, name: 'S', actions: [{ id: 'et', actionEffects: [], trigger: Trigger.END_OF_TURN }] },
   ],
 };
+const unlimitedPermanentDef: CardDef = {
+  id: 8,
+  name: 'UnlimitedPermanent',
+  states: [
+    {
+      id: 1,
+      name: 'S',
+      permanent: true,
+      actions: [
+        {
+          id: 'up-1',
+          unlimited: true,
+          cost: { discard: [{ scope: [TargetScope.BOARD], pickNumber: 1 }] },
+          actionEffects: [],
+        },
+      ],
+    },
+  ],
+};
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -92,7 +112,7 @@ function mockStrategyApply(
 
 describe('EMPTY_STATE', () => {
   it('has phase PREGAME and all empty collections', () => {
-    expect(EMPTY_STATE.phase).toBe(Phase.PREGAME);
+    expect(EMPTY_STATE.phase).toBe(Phase.PRE_GAME);
     expect(EMPTY_STATE.board).toHaveLength(0);
     expect(EMPTY_STATE.round).toBe(0);
   });
@@ -145,17 +165,17 @@ describe('GameAggregate.loadFromHistory', () => {
 
 describe('GameAggregate.roundStarted', () => {
   it('increments round and draws cards', () => {
-    // 1 card available: roundStarted shuffles it, turnStarted draws it.
+    // roundStarted shuffles cards and stays at ROUND_START — player must call turnStarted.
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const state = makeState({ drawPile: [1], instances: { 1: inst }, round: 0 });
     const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.roundStarted();
     expect(gs.round).toBe(1);
-    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.phase).toBe(Phase.ROUND_START);
   });
 
   it('processes discoveryPile when drawPile is empty', () => {
-    // Empty drawPile: roundStarted → turnStarted → roundEnded → processes discoveryPile.
+    // Empty drawPile: roundStarted adds discovery cards then stays at ROUND_START.
     const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const state = makeState({
@@ -166,9 +186,9 @@ describe('GameAggregate.roundStarted', () => {
     });
     const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.roundStarted();
-    // roundEnded was triggered, discovery cards processed, phase is PREROUND
+    // roundStarted adds discovery cards to drawPile, waits at ROUND_START for player.
     expect(gs.round).toBe(2);
-    expect(gs.phase).toBe(Phase.PREROUND);
+    expect(gs.phase).toBe(Phase.ROUND_START);
   });
 
   it('handles parchment card as first discovered card', () => {
@@ -182,7 +202,7 @@ describe('GameAggregate.roundStarted', () => {
     });
     const agg = new GameAggregate(state, { 3: parchmentDef }, {}, []);
     const gs = agg.roundStarted();
-    expect(gs.round).toBe(2);
+    expect(gs.round).toBe(1);
   });
 
   it('fires ON_DISCOVER trigger for discovered cards', () => {
@@ -210,7 +230,7 @@ describe('GameAggregate.turnStarted', () => {
       drawPile: [1],
       instances: { 1: inst },
       round: 1,
-      phase: Phase.PRETURN,
+      phase: Phase.ROUND_START,
     });
     const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.turnStarted();
@@ -230,9 +250,9 @@ describe('GameAggregate.turnStarted', () => {
     });
     const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.turnStarted();
-    // roundEnded is triggered but does NOT increment round (roundStarted does)
-    expect(gs.round).toBe(1);
-    expect(gs.phase).toBe(Phase.PREROUND);
+    // turnStarted with empty drawPile → roundEnded → roundStarted, waits at ROUND_START.
+    expect(gs.round).toBe(2);
+    expect(gs.phase).toBe(Phase.ROUND_START);
   });
 
   it('does not auto-fire ON_PLAY triggers — leaves them in the pile', () => {
@@ -241,11 +261,10 @@ describe('GameAggregate.turnStarted', () => {
       drawPile: [1],
       instances: { 1: inst },
       round: 1,
-      phase: Phase.PRETURN,
+      phase: Phase.ROUND_START,
     });
     const agg = new GameAggregate(state, { 4: onPlayDef }, {}, []);
     const gs = agg.turnStarted();
-    // ON_PLAY triggers are excluded from autoTrigger — they remain in the pile
     expect(gs.phase).toBe(Phase.PLAYING);
     expect(Object.keys(gs.triggerPile)).toHaveLength(1);
   });
@@ -261,7 +280,7 @@ describe('GameAggregate.turnStarted', () => {
       drawPile: [1],
       instances: { 1: inst },
       round: 1,
-      phase: Phase.PRETURN,
+      phase: Phase.ROUND_START,
       triggerPile: {
         [triggerId]: {
           effectDef: onDiscoverAction,
@@ -272,7 +291,6 @@ describe('GameAggregate.turnStarted', () => {
     const agg = new GameAggregate(state, { 7: parchmentOnDiscoverDef }, {}, []);
     agg.turnStarted();
     const gs = agg.getGameState();
-    // ON_DISCOVER from parchment cards are excluded from autoTrigger
     expect(Object.keys(gs.triggerPile)).toHaveLength(1);
   });
 });
@@ -293,7 +311,7 @@ describe('GameAggregate.turnEnded', () => {
     });
     const agg = new GameAggregate(state, { 6: endOfTurnDef }, {}, []);
     const gs = agg.turnEnded();
-    expect(gs.phase).toBe(Phase.POSTTURN);
+    expect(gs.phase).toBe(Phase.TURN_END);
   });
 
   it('calls roundEnded when no triggers and drawPile is empty', () => {
@@ -309,7 +327,8 @@ describe('GameAggregate.turnEnded', () => {
     });
     const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.turnEnded();
-    expect(gs.phase).toBe(Phase.PREROUND);
+    expect(gs.round).toBe(2);
+    expect(gs.phase).toBe(Phase.ROUND_START);
   });
 
   it('does not call roundEnded when trigger pile is empty but drawPile is not empty', () => {
@@ -324,25 +343,69 @@ describe('GameAggregate.turnEnded', () => {
     });
     const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.turnEnded();
-    expect(gs.phase).toBe(Phase.POSTTURN);
+    expect(gs.phase).toBe(Phase.PLAYING);
   });
-});
 
-// ─── autoTrigger ──────────────────────────────────────────────────────────────
-
-describe('GameAggregate.autoTrigger (via roundEnded)', () => {
-  it('auto-resolves mandatory ON_DISCOVER trigger and removes it from pile', () => {
-    const inst = makeInstance({ id: 1, cardId: 5, stateId: 1 });
-    const onDiscoverAction = { id: 'od', actionEffects: [], trigger: Trigger.ON_DISCOVER };
-    const triggerId = 'auto-trigger-id';
+  it('does not auto-start next turn when an unlimited action is affordable on permanents', () => {
+    const perm1 = makeInstance({ id: 1, cardId: 8, stateId: 1 });
+    const perm2 = makeInstance({ id: 2, cardId: 8, stateId: 1 });
+    const nextTurnCard = makeInstance({ id: 3, cardId: 1, stateId: 1 });
     const state = makeState({
-      instances: { 1: inst },
+      drawPile: [3],
+      permanents: [1, 2],
+      instances: { 1: perm1, 2: perm2, 3: nextTurnCard },
+      triggerPile: {},
+      phase: Phase.PLAYING,
       round: 1,
-      triggerPile: { [triggerId]: { effectDef: onDiscoverAction, sourceInstanceId: 1 } },
+      turn: 1,
     });
-    const agg = new GameAggregate(state, { 5: onDiscoverDef }, {}, []);
-    const gs = agg.roundEnded();
-    expect(Object.keys(gs.triggerPile)).toHaveLength(0);
+
+    const agg = new GameAggregate(state, { 1: plainDef, 8: unlimitedPermanentDef }, {}, []);
+    const gs = agg.turnEnded();
+
+    expect(gs.phase).toBe(Phase.TURN_END);
+    expect(gs.turn).toBe(1);
+    expect(gs.drawPile).toEqual([3]);
+  });
+
+  it('auto-starts next turn when unlimited actions exist but their cost is not affordable', () => {
+    const costlyUnlimitedDef: CardDef = {
+      id: 9,
+      name: 'CostlyUnlimited',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          permanent: true,
+          actions: [
+            {
+              id: 'up-2',
+              unlimited: true,
+              cost: { discard: [{ scope: [TargetScope.BOARD], pickNumber: 2 }] },
+              actionEffects: [],
+            },
+          ],
+        },
+      ],
+    };
+
+    const perm = makeInstance({ id: 1, cardId: 9, stateId: 1 });
+    const nextTurnCard = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [3],
+      permanents: [1],
+      instances: { 1: perm, 3: nextTurnCard },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+
+    const agg = new GameAggregate(state, { 1: plainDef, 9: costlyUnlimitedDef }, {}, []);
+    const gs = agg.turnEnded();
+
+    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.board).toContain(3);
   });
 });
 
@@ -557,7 +620,7 @@ describe('GameAggregate.cardAction', () => {
     const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const action = { id: 'et', actionEffects: [], endsTurn: true };
     const gs = agg.cardAction(action, 1);
-    expect(gs.phase).toBe(Phase.POSTTURN);
+    expect(gs.phase).toBe(Phase.TURN_END);
   });
 });
 
@@ -760,7 +823,7 @@ describe('GameAggregate.skipTrigger', () => {
     const state = makeState({
       board: [1, 2],
       instances: { 1: inst1, 2: inst2 },
-      phase: Phase.PRETURN,
+      phase: Phase.ROUND_START,
       round: 1,
       turn: 1,
       triggerPile: {
@@ -772,7 +835,7 @@ describe('GameAggregate.skipTrigger', () => {
     const gs = agg.skipTrigger('tid1');
     expect(gs.triggerPile['tid1']).toBeUndefined();
     expect(gs.triggerPile['tid2']).toBeDefined();
-    expect(gs.phase).toBe(Phase.PRETURN);
+    expect(gs.phase).toBe(Phase.ROUND_START);
   });
 
   it('starts next turn after skipping last trigger in PRETURN phase', () => {
@@ -804,29 +867,7 @@ describe('GameAggregate.skipTrigger', () => {
     agg.turnEnded();
     const triggerId = Object.keys(agg.getGameState().triggerPile)[0];
     const gs = agg.skipTrigger(triggerId);
-    expect(gs.phase).toBe(Phase.POSTTURN);
-  });
-
-  it('starts next turn when last trigger is skipped in PRETURN phase', () => {
-    // Set phase to PRETURN with one optional trigger and cards in drawPile
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const state = makeState({
-      drawPile: [2],
-      instances: { 1: inst, 2: inst2 },
-      phase: Phase.PRETURN,
-      round: 1,
-      turn: 0,
-      triggerPile: {
-        tid1: {
-          effectDef: { id: 'et', actionEffects: [], optional: true },
-          sourceInstanceId: 1,
-        },
-      },
-    });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
-    const gs = agg.skipTrigger('tid1');
-    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.phase).toBe(Phase.TURN_END);
   });
 });
 
@@ -852,8 +893,8 @@ describe('GameAggregate.turnEnded – empty drawPile', () => {
     });
     const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     const gs = agg.turnEnded();
-    expect(gs.round).toBe(1);
-    expect(gs.phase).toBe(Phase.PREROUND);
+    expect(gs.round).toBe(2);
+    expect(gs.phase).toBe(Phase.ROUND_START);
   });
 });
 

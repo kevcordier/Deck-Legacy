@@ -60,6 +60,7 @@ export const scientist: CardDef = {
       actions: [
         {
           id: '24-2-1',
+          limitedTime: 1,
           endsTurn: true,
           actionEffects: [
             {
@@ -103,6 +104,7 @@ export const scientist: CardDef = {
       actions: [
         {
           id: '24-3-1',
+          limitedTime: 1,
           endsTurn: true,
           actionEffects: [
             {

@@ -58,10 +58,9 @@ describe('GameEventContext', () => {
       round: 1,
       newCards: [],
       newDrawPile: [],
-      onDiscoverEvents: [],
     } as RoundStartedEvent);
     expect(result.round).toBe(1);
-    expect(result.phase).toBe(Phase.PRETURN);
+    expect(result.phase).toBe(Phase.ROUND_START);
   });
 
   it('dispatches TURN_STARTED', () => {
@@ -72,7 +71,6 @@ describe('GameEventContext', () => {
       timestamp: 0,
       turn: 1,
       turnCards: [],
-      onPlayEvents: [],
     } as TurnStartedEvent);
     expect(result.phase).toBe(Phase.PLAYING);
   });
@@ -98,7 +96,6 @@ describe('GameEventContext', () => {
       type: GameEventType.ADVANCE,
       timestamp: 0,
       turnCards: [],
-      onPlayEvents: [],
     } as AdvanceEvent);
     expect(result).toBeDefined();
   });
@@ -155,6 +152,6 @@ describe('GameEventContext', () => {
       timestamp: 0,
       onTurnEndedEvents: [],
     } as TurnEndedEvent);
-    expect(result.phase).toBe(Phase.POSTTURN);
+    expect(result.phase).toBe(Phase.TURN_END);
   });
 });

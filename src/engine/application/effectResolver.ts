@@ -6,6 +6,7 @@ import {
   getTotalResourceProduction,
 } from '@engine/application/cardHelpers';
 import { cardSelector } from '@engine/application/cardSelector';
+import { CardChoiceStrategy } from '@engine/application/playerChoice/CardChoiceStrategy';
 import {
   ActionEffectType,
   PendingChoiceType,
@@ -173,19 +174,16 @@ function resolveCardTarget(
   }
 
   if (
-    choices.length === 1 ||
+    (actionType === ActionEffectType.DISCOVER_CARD && choices.length <= picks.pickMax) ||
     (cards.scope?.length === 1 &&
       (cards.scope.includes(TargetScope.SELF) ||
         cards.scope.includes(TargetScope.TOP_OF_DECK) ||
         cards.scope.includes(TargetScope.TOP_OF_DISCARD)))
   ) {
-    resolverAction.instanceIds = [choices[0]];
-    return [resolverAction, pendingChoices];
-  }
-  if (choices.length <= picks.pickMax) {
     resolverAction.instanceIds = choices;
     return [resolverAction, pendingChoices];
   }
+
   pendingChoices.push({
     id: `${instanceId}-${actionId}`,
     kind: actionType,
@@ -245,12 +243,16 @@ function resolveResourceTarget(
           isMandatory,
         });
       } else {
-        resolverAction.resources = getEffectiveProductions(
-          state.productions?.[0] ?? {},
+        [resolverAction, pendingChoices] = new CardChoiceStrategy(defs, stickerDefs).apply(
+          {
+            id: `${instanceId}-${actionId}`,
+            type: actionType,
+            sourceInstanceId: instanceId,
+            instanceIds: choices,
+          },
+          resolverAction,
           gameState,
-          defs,
-          gameState.instances[choices[0]],
-          stickerDefs,
+          pendingChoices,
         );
       }
     } else {

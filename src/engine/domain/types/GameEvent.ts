@@ -24,6 +24,12 @@ export interface RoundStartedEvent extends GameEvent {
   type: GameEventType.ROUND_STARTED;
   round: number;
   newDrawPile: number[];
+  lastAddedCards?: number[];
+}
+
+export interface ParchmentCardDiscoveredEvent extends GameEvent {
+  type: GameEventType.PARCHMENT_CARD_DISCOVERED;
+  cardInstanceId: number;
 }
 
 export interface TurnStartedEvent extends GameEvent {

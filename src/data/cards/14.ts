@@ -87,6 +87,7 @@ export const lake: CardDef = {
       actions: [
         {
           id: '14-3-1',
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,

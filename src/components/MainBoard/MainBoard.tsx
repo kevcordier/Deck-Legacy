@@ -84,12 +84,12 @@ export function MainBoard() {
   const permanents = gameState.permanents.filter(c => !goals.includes(c));
   return (
     <main className="scrollbar @container/main flex flex-1 flex-col gap-6 p-4">
-      {gameState.phase === Phase.PREROUND && (
+      {gameState.phase === Phase.ROUND_START && (
         <EmptyState
-          title={t('roundpreview.title', { round: gameState.round + 1 })}
+          title={t('roundpreview.title', { round: gameState.round })}
           subtitle={t('roundpreview.subtitle')}
           action={
-            <Button onClick={startRound} color="primary" size="md">
+            <Button onClick={startTurn} color="primary" size="md">
               {t('roundpreview.start')}
             </Button>
           }
@@ -100,8 +100,7 @@ export function MainBoard() {
         </EmptyState>
       )}
 
-      {(gameState.phase === Phase.PRETURN ||
-        (gameState.phase === Phase.POSTTURN && gameState.drawPile.length > 0)) && (
+      {gameState.phase === Phase.TURN_END && gameState.drawPile.length > 0 && (
         <EmptyState
           title={t('endturn.title', { turn: gameState.turn + 1 })}
           action={
@@ -112,11 +111,12 @@ export function MainBoard() {
         />
       )}
 
-      {gameState.phase === Phase.POSTTURN && gameState.drawPile.length === 0 && (
+      {(gameState.phase === Phase.ROUND_END ||
+        (gameState.phase === Phase.TURN_END && gameState.drawPile.length === 0)) && (
         <EmptyState
           title={t('endround.title', { round: gameState.round })}
           action={
-            <Button onClick={startTurn} color="primary" size="md">
+            <Button onClick={startRound} color="primary" size="md">
               {t('endround.end')}
             </Button>
           }
@@ -131,6 +131,7 @@ export function MainBoard() {
           <CardRow cardIds={gameState.board} />
         </Section>
       )}
+
       {gameState.phase === Phase.PLAYING && gameState.board.length === 0 && (
         <EmptyState
           title={t('endturn.title', { turn: gameState.turn + 1 })}
@@ -142,7 +143,7 @@ export function MainBoard() {
         />
       )}
 
-      {[Phase.PLAYING, Phase.POSTTURN].includes(gameState.phase) &&
+      {[Phase.PLAYING, Phase.TURN_END].includes(gameState.phase) &&
         gameState.permanents.length > 0 && (
           <>
             <Section
@@ -157,7 +158,7 @@ export function MainBoard() {
           </>
         )}
 
-      {[Phase.PLAYING, Phase.POSTTURN].includes(gameState.phase) &&
+      {[Phase.PLAYING, Phase.TURN_END].includes(gameState.phase) &&
         Object.keys(gameState.triggerPile).length === 0 &&
         gameState.lastAddedCards.length > 0 &&
         displayNewCards && (

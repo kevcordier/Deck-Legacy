@@ -95,18 +95,6 @@ describe('resolveActionEffect – ADD_RESOURCES', () => {
     expect(resolved.resources).toEqual({});
   });
 
-  it('sets empty resources when single selected card has no productions', () => {
-    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const gs = makeState({ board: [2], instances: { 2: inst } });
-    const effect = {
-      id: 1,
-      type: ActionEffectType.ADD_RESOURCES,
-      resources: { cards: { scope: [TargetScope.BOARD] } },
-    };
-    const [resolved] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
-    expect(resolved.resources).toEqual({});
-  });
-
   it('creates pending CHOOSE_RESOURCE when card has multiple production alternatives', () => {
     const multiProdDef: CardDef = {
       id: 2,
@@ -130,19 +118,6 @@ describe('resolveActionEffect – ADD_RESOURCES', () => {
 // ─── DISCARD_CARD / DESTROY_CARD ──────────────────────────────────────────────
 
 describe('resolveActionEffect – DISCARD_CARD', () => {
-  it('auto-selects single candidate', () => {
-    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const gs = makeState({ board: [2], instances: { 2: inst } });
-    const effect = {
-      id: 1,
-      type: ActionEffectType.DISCARD_CARD,
-      cards: { scope: [TargetScope.BOARD] },
-    };
-    const [resolved, pending] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
-    expect(resolved.instanceIds).toEqual([2]);
-    expect(pending).toHaveLength(0);
-  });
-
   it('creates pending choice for multiple candidates', () => {
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
@@ -198,38 +173,9 @@ describe('resolveActionEffect – SELF / TOP_OF_DECK scopes', () => {
   });
 });
 
-// ─── ids shortcut ─────────────────────────────────────────────────────────────
-
-describe('resolveActionEffect – ids shortcut', () => {
-  it('uses ids directly when a single id is provided', () => {
-    const effect = {
-      id: 1,
-      type: ActionEffectType.DISCARD_CARD,
-      cards: { ids: [42] },
-    };
-    const [resolved, pending] = resolveActionEffect(effect, 99, makeState(), defs, stickerDefs);
-    expect(resolved.instanceIds).toEqual([42]);
-    expect(pending).toHaveLength(0);
-  });
-});
-
 // ─── pickNumber / all candidates ──────────────────────────────────────────────
 
 describe('resolveActionEffect – pickNumber', () => {
-  it('auto-selects all when candidates <= pickNumber', () => {
-    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    const gs = makeState({ board: [2, 3], instances: { 2: inst2, 3: inst3 } });
-    const effect = {
-      id: 1,
-      type: ActionEffectType.DISCARD_CARD,
-      cards: { scope: [TargetScope.BOARD], pickNumber: 3 },
-    };
-    const [resolved, pending] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
-    expect(resolved.instanceIds).toEqual([2, 3]);
-    expect(pending).toHaveLength(0);
-  });
-
   it('creates pending with custom pickNumber from pickNumber', () => {
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
@@ -259,27 +205,6 @@ describe('resolveActionEffect – DISCOVER_CARD', () => {
     };
     const [resolved] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
     expect(resolved.instanceIds).toEqual([5]);
-  });
-});
-
-// ─── BOOST_CARD ───────────────────────────────────────────────────────────────
-
-describe('resolveActionEffect – BOOST_CARD', () => {
-  it('forces all resource types into produces filter', () => {
-    const defProd: CardDef = {
-      id: 2,
-      name: 'P',
-      states: [{ id: 1, name: 'S', productions: [{ gold: 1 }] }],
-    };
-    const inst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
-    const gs = makeState({ board: [2], instances: { 2: inst } });
-    const effect = {
-      id: 1,
-      type: ActionEffectType.BOOST_CARD,
-      cards: { scope: [TargetScope.BOARD] },
-    };
-    const [resolved] = resolveActionEffect(effect, 99, gs, { 2: defProd }, stickerDefs);
-    expect(resolved.instanceIds).toEqual([2]);
   });
 });
 
@@ -331,11 +256,6 @@ describe('resolveActionEffect – ADD_STICKER production cap', () => {
     name: 'High',
     states: [{ id: 1, name: 'S', productions: [{ gold: 9 }] }],
   };
-  const lowProdDef: CardDef = {
-    id: 11,
-    name: 'Low',
-    states: [{ id: 1, name: 'S', productions: [{ gold: 3 }] }],
-  };
 
   it('excludes card with total production >= 9 from card target choices', () => {
     const effect = {
@@ -355,19 +275,6 @@ describe('resolveActionEffect – ADD_STICKER production cap', () => {
     );
     expect(resolved.instanceIds).toBeUndefined();
     expect(pending).toHaveLength(0);
-  });
-
-  it('includes card with total production < 9 as valid sticker target', () => {
-    const effect = {
-      id: 1,
-      type: ActionEffectType.ADD_STICKER,
-      cards: { scope: [TargetScope.BOARD] },
-      stickers: { ids: [3], pickNumber: 1 },
-    };
-    const inst = makeInstance({ id: 2, cardId: 11, stateId: 1 });
-    const gs = makeState({ board: [2], instances: { 2: inst }, stickerStock: { 3: 5 } });
-    const [resolved] = resolveActionEffect(effect, 1, gs, { ...defs, 11: lowProdDef }, stickerDefs);
-    expect(resolved.instanceIds).toEqual([2]);
   });
 });
 

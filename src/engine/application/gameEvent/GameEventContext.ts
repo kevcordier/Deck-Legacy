@@ -9,6 +9,7 @@ import { TurnEndedStrategy } from './TurnEndedStrategy';
 import { TurnStartedStrategy } from './TurnStartedStrategy';
 import { UpgradeCardEventStrategy } from './UpgradeCardEventStrategy';
 import { ChooseStateEventStrategy } from '@engine/application/gameEvent/ChooseStateEventStrategy';
+import { ParchmentCardDiscoveredStrategy } from '@engine/application/gameEvent/ParchmentCardDiscoveredStrategy';
 import { RoundEndedStrategy } from '@engine/application/gameEvent/RoundEndedStrategy';
 import { GameEventType } from '@engine/domain/enums';
 import type { CardDef, GameEvent, GameState, Sticker } from '@engine/domain/types';
@@ -29,6 +30,7 @@ export class GameEventContext {
       [GameEventType.SKIP_TRIGGER]: new SkipTriggerStrategy(),
       [GameEventType.TURN_ENDED]: new TurnEndedStrategy(cardDefs, stickerDefs),
       [GameEventType.CHOOSE_STATE]: new ChooseStateEventStrategy(),
+      [GameEventType.PARCHMENT_CARD_DISCOVERED]: new ParchmentCardDiscoveredStrategy(cardDefs),
     };
   }
 

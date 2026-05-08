@@ -15,6 +15,7 @@ export const envoy: CardDef = {
         {
           id: '39-1-1',
           endsTurn: true,
+          limitedTime: 1,
           cost: {
             resources: [
               {
@@ -56,6 +57,7 @@ export const envoy: CardDef = {
       actions: [
         {
           id: '39-2-1',
+          limitedTime: 1,
           endsTurn: true,
           cost: {
             resources: [
@@ -98,6 +100,7 @@ export const envoy: CardDef = {
       actions: [
         {
           id: '39-3-1',
+          limitedTime: 1,
           endsTurn: true,
           cost: {
             resources: [
@@ -140,6 +143,7 @@ export const envoy: CardDef = {
       actions: [
         {
           id: '39-4-1',
+          limitedTime: 1,
           endsTurn: true,
           cost: {
             resources: [

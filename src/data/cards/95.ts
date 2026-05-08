@@ -20,7 +20,6 @@ export const manor: CardDef = {
         {
           id: '95-1-1',
           trigger: Trigger.ON_PRODUCE,
-          optional: false,
           actionEffects: [
             {
               id: 1,
@@ -48,7 +47,6 @@ export const manor: CardDef = {
         {
           id: '95-2-1',
           trigger: Trigger.ON_PRODUCE,
-          optional: false,
           actionEffects: [
             {
               id: 1,
@@ -76,7 +74,6 @@ export const manor: CardDef = {
         {
           id: '95-3-1',
           trigger: Trigger.ON_PRODUCE,
-          optional: false,
           actionEffects: [
             {
               id: 1,
@@ -104,6 +101,7 @@ export const manor: CardDef = {
       actions: [
         {
           id: '95-4-1',
+          limitedTime: 1,
           endsTurn: true,
           actionEffects: [
             {

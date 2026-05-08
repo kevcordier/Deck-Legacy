@@ -52,6 +52,7 @@ export const hill: CardDef = {
       actions: [
         {
           id: '11-2-1',
+          limitedTime: 1,
           cost: {
             resources: [
               {
@@ -99,6 +100,7 @@ export const hill: CardDef = {
       actions: [
         {
           id: '11-3-1',
+          limitedTime: 1,
           cost: {
             resources: [
               {

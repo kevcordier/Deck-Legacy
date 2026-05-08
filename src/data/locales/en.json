@@ -73,6 +73,7 @@
     "state": "State {{id}}",
     "cost": {
       "discard": "Discard {{count}} {{type}}",
+      "destroy": "Destroy {{count}} {{type}}",
       "cards": "cards"
     }
   },

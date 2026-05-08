@@ -15,6 +15,7 @@ export const magistrate: CardDef = {
         {
           id: '42-1-1',
           endsTurn: true,
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,
@@ -49,6 +50,7 @@ export const magistrate: CardDef = {
         {
           id: '42-2-1',
           endsTurn: true,
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,
@@ -85,6 +87,7 @@ export const magistrate: CardDef = {
         {
           id: '42-3-1',
           endsTurn: true,
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,

@@ -94,7 +94,7 @@ export const mercenay: CardDef = {
         {
           id: '27-2-1',
           endsTurn: true,
-          onTime: true,
+          limitedTime: 1,
           cost: {
             resources: [
               {
@@ -116,7 +116,7 @@ export const mercenay: CardDef = {
         {
           id: '27-2-2',
           endsTurn: true,
-          onTime: true,
+          limitedTime: 1,
           cost: {
             resources: [
               {

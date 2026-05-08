@@ -23,7 +23,12 @@ export const tornado: CardDef = {
               id: 1,
               type: ActionEffectType.DESTROY_CARD,
               cards: {
-                scope: [TargetScope.BOARD, TargetScope.FRIENDLY],
+                scope: [
+                  TargetScope.DISCARD,
+                  TargetScope.BOARD,
+                  TargetScope.DRAWN,
+                  TargetScope.FRIENDLY,
+                ],
                 pickNumber: 3,
               },
             },
@@ -51,7 +56,6 @@ export const tornado: CardDef = {
         {
           id: '55-2-1',
           trigger: Trigger.ON_PLAY,
-          optional: false,
           actionEffects: [
             {
               id: 1,
@@ -67,7 +71,6 @@ export const tornado: CardDef = {
         {
           id: '55-2-2',
           trigger: Trigger.END_OF_ROUND,
-          optional: false,
           actionEffects: [
             {
               id: 1,

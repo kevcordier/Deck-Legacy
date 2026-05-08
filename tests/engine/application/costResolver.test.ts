@@ -76,20 +76,6 @@ describe('resolveCost – discard', () => {
     ).toThrow('Not enough cards available to pay this discard cost.');
   });
 
-  it('resolves discard directly when exactly one candidate matches', () => {
-    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const gs = makeState({ board: [2], instances: { 2: inst } });
-    const [resolved, pending] = resolveCost(
-      { discard: [{ scope: [TargetScope.BOARD], pickNumber: 1 }] },
-      99,
-      gs,
-      defs,
-      stickerDefs,
-    );
-    expect(resolved.discardedCardIds).toEqual([2]);
-    expect(pending).toHaveLength(0);
-  });
-
   it('creates pending choice when more candidates than needed', () => {
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
@@ -135,20 +121,6 @@ describe('resolveCost – discard', () => {
     expect(pending[0].pickMax).toBe(1);
   });
 
-  it('resolves destroy directly when candidates equal number needed', () => {
-    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const gs = makeState({ board: [2], instances: { 2: inst } });
-    const [resolved, pending] = resolveCost(
-      { destroy: { scope: [TargetScope.BOARD], pickNumber: 1 } },
-      99,
-      gs,
-      defs,
-      stickerDefs,
-    );
-    expect(resolved.destroyedCardIds).toEqual([2]);
-    expect(pending).toHaveLength(0);
-  });
-
   it('creates pending choice when more candidates than needed for destroy', () => {
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
@@ -170,20 +142,6 @@ describe('resolveCost – discard', () => {
     expect(() =>
       resolveCost({ destroy: { scope: [TargetScope.BOARD] } }, 99, gs, defs, stickerDefs),
     ).toThrow('Not enough cards available to pay this destroy cost.');
-  });
-
-  it('auto-resolves when one candidate exists and no explicit number', () => {
-    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const gs = makeState({ board: [2], instances: { 2: inst } });
-    const [resolved, pending] = resolveCost(
-      { destroy: { scope: [TargetScope.BOARD] } }, // no number → pickMin:1, pickMax:1
-      99,
-      gs,
-      defs,
-      stickerDefs,
-    );
-    expect(resolved.destroyedCardIds).toEqual([2]);
-    expect(pending).toHaveLength(0);
   });
 
   it('creates pending choice with undefined pickNumber when no number specified', () => {

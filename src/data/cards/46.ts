@@ -17,6 +17,7 @@ export const lordAethan: CardDef = {
       actions: [
         {
           id: '46-1-1',
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,
@@ -29,6 +30,7 @@ export const lordAethan: CardDef = {
         },
         {
           id: '46-1-2',
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,

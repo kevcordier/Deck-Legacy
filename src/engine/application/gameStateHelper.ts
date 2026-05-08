@@ -83,47 +83,8 @@ export const drawCards = (
     });
   });
 
-  turnCards = turnCards.filter(id => !gameState.destroyedPile.includes(id));
   gameState.drawPile = [...new Set(gameState.drawPile.filter(id => !turnCards.includes(id)))];
   gameState.board = [...new Set([...gameState.board, ...turnCards])];
-
-  return gameState;
-};
-
-export const discoverCards = (
-  _gameState: GameState,
-  cardIds: number[],
-  cardDefs: Record<number, CardDef>,
-  stickerDefs: Record<number, Sticker>,
-): GameState => {
-  const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
-  gameState.discoveryPile = [
-    ...new Set(gameState.discoveryPile.filter(id => !cardIds.includes(id))),
-  ];
-  getInstancesTriggerEffects(
-    cardIds.map(cardId => gameState.instances[cardId]),
-    cardDefs,
-    stickerDefs,
-    Trigger.ON_DISCOVER,
-    gameState,
-  ).forEach(effectDef => {
-    gameState.triggerPile[crypto.randomUUID()] = effectDef;
-  });
-
-  gameState.lastAddedCards = [];
-  cardIds.forEach(instanceId => {
-    const cardDef = cardDefs[gameState.instances[instanceId].cardId];
-
-    if (!cardDef.parchmentCard) {
-      gameState.lastAddedCards.push(instanceId);
-
-      if (getActiveState(gameState.instances[instanceId], cardDefs)?.permanent) {
-        gameState.permanents.push(instanceId);
-      } else {
-        gameState.discardPile = [...new Set([...gameState.discardPile, instanceId])];
-      }
-    }
-  });
 
   return gameState;
 };

@@ -1,13 +1,14 @@
 import { CardActionAggregate } from '@engine/application/aggregates/CardActionAggregate';
+import {
+  canAffordCost,
+  canAffordTrackAdvanceCost,
+  cardIsBlocked,
+  getActiveState,
+  getEffectiveActionCost,
+} from '@engine/application/cardHelpers';
 import { GameEventContext } from '@engine/application/gameEvent/GameEventContext';
 import { canUseOptions, computeGameStateDiff } from '@engine/application/gameStateHelper';
-import {
-  GameEventType,
-  Options,
-  PassiveType,
-  type PendingChoiceType,
-  Trigger,
-} from '@engine/domain/enums';
+import { GameEventType, Options, PassiveType, type PendingChoiceType } from '@engine/domain/enums';
 import type {
   AdvanceEvent,
   CardAction,
@@ -19,6 +20,7 @@ import type {
   GameParameters,
   GameStartedEvent,
   GameState,
+  ParchmentCardDiscoveredEvent,
   ResolvedActionEffect,
   ResolvedCost,
   Resources,
@@ -49,7 +51,7 @@ export const EMPTY_STATE: GameState = {
   lastDiscardedCards: [],
   round: 0,
   turn: 0,
-  phase: Phase.PREGAME,
+  phase: Phase.PRE_GAME,
 };
 
 export class GameAggregate {
@@ -62,6 +64,7 @@ export class GameAggregate {
     displayedDrawDeckCards: 1,
     advanceCardDrawn: 2,
     turnCardDrawn: 4,
+    discoverPerRound: 2,
   };
 
   constructor(
@@ -76,32 +79,11 @@ export class GameAggregate {
   }
 
   private apply(event: GameEvent) {
-    this.gameState = this.gameEventContext.apply(this.gameState, event);
+    this.gameState = this.gameEventContext.apply(
+      JSON.parse(JSON.stringify(this.gameState)) as GameState,
+      event,
+    );
     this.currentCardAction = null;
-  }
-
-  private autoTrigger(): GameState {
-    let changed = true;
-    while (changed) {
-      changed = false;
-      for (const [triggerId, trigger] of Object.entries(this.gameState.triggerPile)) {
-        if (trigger.effectDef.trigger !== Trigger.ON_DISCOVER || trigger.effectDef.optional) {
-          continue;
-        }
-        const sourceInstance = this.gameState.instances[trigger.sourceInstanceId];
-        if (
-          trigger.effectDef.trigger === Trigger.ON_DISCOVER &&
-          sourceInstance &&
-          this.cardDefs[sourceInstance.cardId]?.parchmentCard === true
-        ) {
-          continue;
-        }
-        this.gameState = this.cardAction(trigger.effectDef, trigger.sourceInstanceId, triggerId);
-        changed = true;
-        break;
-      }
-    }
-    return this.gameState;
   }
 
   public loadFromHistory(events: GameEvent[]): GameState {
@@ -128,6 +110,7 @@ export class GameAggregate {
     this.apply(event);
     this.events.push(event);
     this.roundStarted();
+    this.turnStarted();
     return this.gameState;
   }
 
@@ -151,28 +134,66 @@ export class GameAggregate {
 
     this.apply(event);
     this.events.push(event);
-    this.autoTrigger();
+
+    const hasCards =
+      this.gameState.drawPile.length > 0 ||
+      this.gameState.discardPile.length > 0 ||
+      this.gameState.board.length > 0 ||
+      this.gameState.discoveryPile.length > 0;
+
+    if (
+      Object.keys(this.gameState.triggerPile).length === 0 &&
+      this.gameState.phase === Phase.ROUND_END &&
+      hasCards
+    ) {
+      return this.roundStarted();
+    }
+
     return this.gameState;
   }
 
-  public roundStarted(): GameState {
+  public roundStarted(cardNumberToDiscover?: number): GameState {
     const round = this.gameState.round + 1;
+    cardNumberToDiscover = cardNumberToDiscover ?? this.parameters.discoverPerRound;
+    const lastAddedCards: number[] = [];
+    if (round > 1) {
+      const discoveredCard = this.gameState.discoveryPile.slice(0, cardNumberToDiscover);
+
+      for (const cardId of discoveredCard) {
+        const cardInstance = this.gameState.instances[cardId];
+        const cardDef = this.cardDefs[cardInstance.cardId];
+
+        if (cardDef.parchmentCard) {
+          const parchEvent: ParchmentCardDiscoveredEvent = {
+            id: crypto.randomUUID(),
+            type: GameEventType.PARCHMENT_CARD_DISCOVERED,
+            timestamp: Date.now(),
+            cardInstanceId: cardId,
+          };
+          this.apply(parchEvent);
+          this.events.push(parchEvent);
+          return this.gameState;
+        }
+
+        lastAddedCards.push(cardId);
+      }
+    }
 
     const event: RoundStartedEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.ROUND_STARTED,
       timestamp: Date.now(),
       round,
+      lastAddedCards,
       newDrawPile: this.shuffle([
         ...this.gameState.drawPile,
         ...this.gameState.discardPile,
         ...this.gameState.board,
+        ...lastAddedCards,
       ]),
     };
     this.apply(event);
     this.events.push(event);
-    this.autoTrigger();
-    this.turnStarted();
     return this.gameState;
   }
 
@@ -196,7 +217,6 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
-    this.autoTrigger();
     return this.gameState;
   }
 
@@ -209,13 +229,67 @@ export class GameAggregate {
     this.apply(event);
     this.events.push(event);
 
-    if (Object.keys(this.gameState.triggerPile).length === 0) {
+    if (
+      Object.keys(this.gameState.triggerPile).length === 0 &&
+      !this.hasAvailableUnlimitedAction()
+    ) {
       if (this.gameState.drawPile.length === 0) {
         return this.roundEnded();
+      } else {
+        return this.turnStarted();
       }
     }
 
     return this.gameState;
+  }
+
+  private hasAvailableUnlimitedAction(): boolean {
+    if (!canUseOptions(this.gameState, Options.ACTION)) {
+      return false;
+    }
+
+    const playableIds = [...new Set([...this.gameState.board, ...this.gameState.permanents])];
+    const stateForCostCheck: GameState = {
+      ...this.gameState,
+      board: [...new Set([...this.gameState.board, ...this.gameState.permanents])],
+    };
+
+    return playableIds.some(instanceId => {
+      const instance = this.gameState.instances[instanceId];
+      if (!instance || cardIsBlocked(instanceId, this.gameState)) {
+        return false;
+      }
+
+      const state = getActiveState(instance, this.cardDefs);
+      return (
+        state.actions?.some(action => {
+          if (!action.unlimited || action.trigger) return false;
+
+          if (action.limitedTime !== undefined) {
+            const usageCount = instance.usedActionIds.filter(id => id === action.id).length;
+            if (usageCount >= action.limitedTime) return false;
+          }
+
+          const effectiveCost = getEffectiveActionCost(action.cost, instance);
+          return (
+            canAffordCost(
+              effectiveCost,
+              instanceId,
+              stateForCostCheck,
+              this.cardDefs,
+              this.stickerDefs,
+            ) &&
+            canAffordTrackAdvanceCost(
+              action,
+              instance,
+              stateForCostCheck,
+              this.cardDefs,
+              this.stickerDefs,
+            )
+          );
+        }) ?? false
+      );
+    });
   }
 
   public cardProduced(cardInstanceId: number, productions: Record<string, number>): GameState {
@@ -264,7 +338,6 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
-    this.autoTrigger();
     return this.gameState;
   }
 
@@ -386,7 +459,24 @@ export class GameAggregate {
 
     this.apply(event);
     this.events.push(event);
-    this.autoTrigger();
+
+    if (this.gameState.phase === Phase.PARCHMENT) {
+      const event: RoundStartedEvent = {
+        id: crypto.randomUUID(),
+        type: GameEventType.ROUND_STARTED,
+        timestamp: Date.now(),
+        round: this.gameState.round,
+        lastAddedCards: this.gameState.lastAddedCards,
+        newDrawPile: this.shuffle([
+          ...this.gameState.drawPile,
+          ...this.gameState.discardPile,
+          ...this.gameState.board,
+          ...this.gameState.lastAddedCards,
+        ]),
+      };
+      this.apply(event);
+      this.events.push(event);
+    }
 
     return this.gameState;
   }
@@ -403,12 +493,7 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
-    if (
-      this.gameState.phase === Phase.PRETURN &&
-      Object.keys(this.gameState.triggerPile).length === 0
-    ) {
-      return this.turnStarted();
-    }
+
     return this.gameState;
   }
 

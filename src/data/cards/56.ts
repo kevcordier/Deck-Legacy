@@ -22,7 +22,7 @@ export const youngPrincess: CardDef = {
         {
           id: '56-1-1',
           trigger: Trigger.END_OF_TURN,
-          optional: true,
+          optional: false,
           actionEffects: [
             {
               id: 1,
@@ -71,7 +71,7 @@ export const youngPrincess: CardDef = {
               },
             ],
           },
-          upgradeTo: 2,
+          upgradeTo: 3,
         },
       ],
     },

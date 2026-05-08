@@ -36,6 +36,7 @@ export const treasureHunt: CardDef = {
         {
           id: '78-2-1',
           trigger: Trigger.END_OF_TURN,
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,

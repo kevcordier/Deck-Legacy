@@ -40,6 +40,7 @@ export class CardProducedStrategy implements GameEventStrategy {
           return gs;
         })()
       : withResources;
+
     return {
       ...stateWithTriggers,
       ...discardCards(stateWithTriggers, [e.cardInstanceId], this.cardDefs, this.stickerDefs),

@@ -73,6 +73,7 @@
     "state": "État {{id}}",
     "cost": {
       "discard": "Défaussez {{count}} {{type}}",
+      "destroy": "Détruisez {{count}} {{type}}",
       "cards": "cartes"
     }
   },

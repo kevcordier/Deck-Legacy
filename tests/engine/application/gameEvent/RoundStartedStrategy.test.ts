@@ -17,13 +17,12 @@ describe('RoundStartedStrategy', () => {
       round: 2,
       newCards: [3],
       newDrawPile: [1, 2, 3],
-      onDiscoverEvents: [],
     } as RoundStartedEvent);
     expect(result.round).toBe(2);
     expect(result.board).toEqual([]);
     expect(result.discardPile).toEqual([]);
     expect(result.drawPile).toEqual([1, 2, 3]);
-    expect(result.phase).toBe(Phase.PRETURN);
+    expect(result.phase).toBe(Phase.ROUND_START);
   });
 
   it('removes newCards from discoveryPile', () => {

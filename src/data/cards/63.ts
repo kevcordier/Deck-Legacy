@@ -91,6 +91,7 @@ export const pirate: CardDef = {
       actions: [
         {
           id: '63-2-1',
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,

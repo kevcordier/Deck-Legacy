@@ -10,7 +10,7 @@ describe('TurnEndedStrategy', () => {
     const strategy = new TurnEndedStrategy({}, makeStickerDefs());
     const gs = makeState();
     const result = strategy.apply(gs);
-    expect(result.phase).toBe(Phase.POSTTURN);
+    expect(result.phase).toBe(Phase.TURN_END);
   });
 
   it('adds END_OF_TURN triggers to triggerPile for board cards', () => {

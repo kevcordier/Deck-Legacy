@@ -73,6 +73,6 @@ describe('CardActionEventStrategy', () => {
       actionId: 'a1',
       endsTurn: true,
     } as CardActionEvent);
-    expect(result.phase).toBe(Phase.POSTTURN);
+    expect(result.phase).toBe(Phase.TURN_END);
   });
 });

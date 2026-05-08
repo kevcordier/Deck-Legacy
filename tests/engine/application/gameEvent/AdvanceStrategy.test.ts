@@ -15,7 +15,6 @@ describe('AdvanceStrategy', () => {
       type: GameEventType.ADVANCE,
       timestamp: 0,
       turnCards: [1],
-      onPlayEvents: [],
     } as AdvanceEvent);
     expect(result.board).toContain(1);
     expect(result.drawPile).not.toContain(1);

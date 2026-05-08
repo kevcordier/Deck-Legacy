@@ -8,7 +8,7 @@ import { Title } from '@components/ui/Title/Title';
 import { getActiveState } from '@engine/application/cardHelpers';
 import { CardTag } from '@engine/domain/enums';
 import type { CardInstance } from '@engine/domain/types';
-import { tCardTag } from '@helpers/cardI18n';
+import { tCardName, tCardTag } from '@helpers/cardI18n';
 import { useGame } from '@hooks/useGame';
 import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -109,7 +109,9 @@ export function DeckViewer({
                     style={{ animationDelay: `${i * 15}ms` }}
                   >
                     <span className="min-w-4.5 text-xs">#{inst.id}</span>
-                    <span className="truncate text-xs font-semibold">{cs.name}</span>
+                    <span className="truncate text-xs font-semibold">
+                      {tCardName(t, inst.cardId, cs.id)}
+                    </span>
                   </div>
                 );
               })}

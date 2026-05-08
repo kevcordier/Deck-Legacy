@@ -205,7 +205,6 @@ export const TriggerPileForced: Story = {
         effectDef: {
           id: 'e1',
           actionEffects: [],
-          optional: false,
         },
       },
     },
@@ -225,7 +224,7 @@ export const TriggerPileMultiple: Story = {
       },
       'trigger-uuid-b': {
         sourceInstanceId: 2,
-        effectDef: { id: 'e2', actionEffects: [], optional: false },
+        effectDef: { id: 'e2', actionEffects: [] },
       },
     },
     defs,

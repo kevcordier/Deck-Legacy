@@ -20,7 +20,7 @@ export class GameStartedStrategy implements GameEventStrategy {
       discoveryPile: e.discoveryPile,
       round: 0,
       turn: 0,
-      phase: Phase.PREGAME,
+      phase: Phase.PRE_GAME,
     };
   }
 }

@@ -41,6 +41,7 @@ export const sawMill: CardDef = {
       actions: [
         {
           id: '85-2-1',
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,

@@ -10,17 +10,23 @@ import {
 import { resolveCost } from '@engine/application/costResolver';
 import { createInstance } from '@engine/application/factory';
 import { computeScore, mergeResources } from '@engine/application/gameStateHelper';
-import { ActionEffectType, type PendingChoiceType, Trigger } from '@engine/domain/enums';
-import type {
-  CardAction,
-  CardDef,
-  GameEvent,
-  GameState,
-  PendingChoice,
-  ResolvedActionEffect,
-  ResolvedCost,
-  Sticker,
-  TriggerEntry,
+import {
+  ActionEffectType,
+  GameEventType,
+  type PendingChoiceType,
+  Trigger,
+} from '@engine/domain/enums';
+import {
+  type CardAction,
+  type CardDef,
+  type GameEvent,
+  type GameState,
+  type PendingChoice,
+  Phase,
+  type ResolvedActionEffect,
+  type ResolvedCost,
+  type Sticker,
+  type TriggerEntry,
 } from '@engine/domain/types';
 import {
   loadCardDefs,
@@ -69,11 +75,15 @@ export function GameProvider({
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [parameters, setParameters] = useState(agg.getParameters());
 
-  const getParchementDefFromTriggerPile = (
+  const getParchmentCardDefFromPhase = (
     state: GameState,
     defs: Record<number, CardDef>,
   ): CardDef | null => {
-    // If any trigger comes from a parchment card, show the text modal first.
+    // If in PARCHMENT phase, find and return the parchment card's definition
+    if (state.phase !== Phase.PARCHMENT) {
+      return null;
+    }
+
     const parchmentTrigger = Object.values(state.triggerPile).find(t => {
       const inst = state.instances[t.sourceInstanceId];
       return (
@@ -89,7 +99,7 @@ export function GameProvider({
   };
 
   const [parchmentTextPending, setParchmentTextPending] = useState<CardDef | null>(() =>
-    getParchementDefFromTriggerPile(agg.getGameState(), defs),
+    getParchmentCardDefFromPhase(agg.getGameState(), defs),
   );
 
   const [triggerPile, setTriggerPile] = useState<Record<string, TriggerEntry> | null>(
@@ -146,7 +156,7 @@ export function GameProvider({
 
     const triggers = newState.triggerPile;
 
-    const parchmentDef = getParchementDefFromTriggerPile(newState, defs);
+    const parchmentDef = getParchmentCardDefFromPhase(newState, defs);
     if (parchmentDef) {
       setParchmentTextPending(parchmentDef);
       setTriggerPile(null);
@@ -412,14 +422,33 @@ export function GameProvider({
 
   // ── Rewind  ───────────────────────────────────────────────────────────
 
+  const lastEventDrewCards = (event: GameEvent): boolean => {
+    if (event.type === GameEventType.TURN_STARTED || event.type === GameEventType.ADVANCE) {
+      return true;
+    }
+
+    if (event.type !== GameEventType.CARD_ACTION) {
+      return false;
+    }
+
+    const gameStateChanges = (event as { gameStateChanges?: Partial<GameState> }).gameStateChanges;
+    return (
+      !gameStateChanges || Object.prototype.hasOwnProperty.call(gameStateChanges, 'lastDrawnCards')
+    );
+  };
+
   const canRewind = () => {
     const events = aggRef.current.getEvents();
-    return events.length > 0;
+    if (events.length === 0) return false;
+    if (import.meta.env.DEV) return true;
+
+    return !lastEventDrewCards(events[events.length - 1]);
   };
 
   const rewindEvent = () => {
+    if (!canRewind()) return;
+
     const events = aggRef.current.getEvents();
-    if (events.length === 0) return;
 
     const agg = makeAggregate(EMPTY_STATE, defs, stickerDefs);
     agg.loadFromHistory(events.slice(0, events.length - 1));

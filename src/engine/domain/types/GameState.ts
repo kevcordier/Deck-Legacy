@@ -33,4 +33,5 @@ export type GameParameters = {
   displayedDrawDeckCards: number;
   advanceCardDrawn: number;
   turnCardDrawn: number;
+  discoverPerRound: number;
 };

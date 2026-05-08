@@ -19,6 +19,7 @@ export const royalArchitect: CardDef = {
       actions: [
         {
           id: '40-1-1',
+          limitedTime: 1,
           cost: {
             destroy: {
               name: 'Castle',
@@ -37,6 +38,7 @@ export const royalArchitect: CardDef = {
         },
         {
           id: '40-2-1',
+          limitedTime: 1,
           cost: {
             destroy: {
               name: 'Diamond Mine',
@@ -55,6 +57,7 @@ export const royalArchitect: CardDef = {
         },
         {
           id: '40-3-1',
+          limitedTime: 1,
           cost: {
             destroy: {
               name: 'Temple',

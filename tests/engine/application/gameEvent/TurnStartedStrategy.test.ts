@@ -21,7 +21,6 @@ describe('TurnStartedStrategy', () => {
       timestamp: 0,
       turn: 1,
       turnCards: [1],
-      onPlayEvents: [],
     } as TurnStartedEvent);
     expect(result.board).toContain(1);
     expect(result.drawPile).not.toContain(1);
@@ -35,7 +34,6 @@ describe('TurnStartedStrategy', () => {
       timestamp: 0,
       turn: 1,
       turnCards: [],
-      onPlayEvents: [],
     } as TurnStartedEvent);
     expect(result.phase).toBe(Phase.PLAYING);
   });

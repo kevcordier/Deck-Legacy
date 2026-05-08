@@ -1,5 +1,5 @@
 import type { GameEventStrategy } from './GameEventStrategy';
-import { drawCards, endTurn } from '@engine/application/gameStateHelper';
+import { drawCards } from '@engine/application/gameStateHelper';
 import type {
   CardDef,
   GameEvent,
@@ -18,15 +18,12 @@ export class TurnStartedStrategy implements GameEventStrategy {
   apply(gameState: GameState, event: GameEvent): GameState {
     const e = event as TurnStartedEvent;
 
-    const afterDraw = drawCards(
-      endTurn({ ...gameState, turn: e.turn }, this.cardDefs, this.stickerDefs),
-      e.turnCards,
-      this.cardDefs,
-      this.stickerDefs,
-    );
+    gameState.lastAddedCards = [];
+    const afterDraw = drawCards(gameState, e.turnCards, this.cardDefs, this.stickerDefs);
     return {
       ...gameState,
       ...afterDraw,
+      turn: e.turn,
       resources: {},
       phase: Phase.PLAYING,
     };

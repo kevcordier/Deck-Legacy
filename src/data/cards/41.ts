@@ -10,10 +10,11 @@ export const traveler: CardDef = {
       name: 'Traveller',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7453a1f7-b5f5-4eaa-8325-9d68e884355c/anim=false,width=450,optimized=true/TZC6AQS68Z2KPZ1EY0ZX3KHNQ0.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/a6cb6d65-ae66-489a-a393-cf5933d72d09/450x%3Cauto%3E_so',
       actions: [
         {
           id: '41-1-1',
+          limitedTime: 1,
           endsTurn: true,
           actionEffects: [
             {
@@ -44,10 +45,11 @@ export const traveler: CardDef = {
       name: 'Traveller',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/fed1ef0d-e748-4806-82f2-81c1c9bb0fdc/anim=false,width=450,optimized=true/NMV1STHBSY5PDYDCEAX4834MQ0.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/fe9474c2-3883-4f82-8917-9e843df01e2a/450x%3Cauto%3E_so',
       actions: [
         {
           id: '41-2-1',
+          limitedTime: 1,
           endsTurn: true,
           actionEffects: [
             {
@@ -78,10 +80,11 @@ export const traveler: CardDef = {
       name: 'Traveller',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/44e0b91f-d1e9-4641-8165-aed05326b6f9/anim=false,width=450,optimized=true/NC6RKX2W2ZYX4FRFH8G1NJ83G0.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/f10bdf41-55fd-46e3-bb5e-2eeaf2b7a59e/450x%3Cauto%3E_so',
       actions: [
         {
           id: '41-3-1',
+          limitedTime: 1,
           endsTurn: true,
           actionEffects: [
             {
@@ -113,10 +116,11 @@ export const traveler: CardDef = {
       tags: [CardTag.PERSON],
       glory: { amount: 2 },
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/91b81c8d-2c5c-47d9-bc47-db309c95d908/anim=false,width=450,optimized=true/VKXSZ9HJE5S4Z0Z5W91MFKMP60.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/81e55ee1-a93c-46ef-ab17-23ebfd1b2003/450x%3Cauto%3E_so',
       actions: [
         {
           id: '41-4-1',
+          limitedTime: 1,
           endsTurn: true,
           actionEffects: [
             {

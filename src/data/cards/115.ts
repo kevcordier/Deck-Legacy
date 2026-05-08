@@ -32,6 +32,8 @@ export const southHills: CardDef = {
       id: 3,
       name: 'Windmill',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/e6e0e8e8-ff18-4226-8ab8-fae1fe5f9521/450x%3Cauto%3E_so',
       productions: [
         {
           gold: 3,

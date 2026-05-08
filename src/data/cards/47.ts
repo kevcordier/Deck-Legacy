@@ -65,7 +65,6 @@ export const plague: CardDef = {
         {
           id: '47_2_1',
           trigger: Trigger.ON_PLAY,
-          optional: false,
           actionEffects: [
             {
               id: 1,
@@ -80,7 +79,6 @@ export const plague: CardDef = {
         {
           id: '47_2_2',
           trigger: Trigger.END_OF_ROUND,
-          optional: false,
           actionEffects: [
             {
               id: 1,

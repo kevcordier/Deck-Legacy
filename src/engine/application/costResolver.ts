@@ -1,6 +1,6 @@
 import { cardSelector } from '@engine/application/cardSelector';
 import { getPickNumbers } from '@engine/application/effectResolver';
-import { ActionEffectType, PendingChoiceType } from '@engine/domain/enums';
+import { ActionEffectType, PendingChoiceType, TargetScope } from '@engine/domain/enums';
 import type {
   CardDef,
   Cost,
@@ -76,8 +76,12 @@ export function resolveCost(
       if (picks.pickMin && candidates.length < picks.pickMin) {
         throw new CostResolutionError('Not enough cards available to pay this discard cost.');
       }
-      if (candidates.length === picks.pickMax) {
-        resolvedCost.discardedCardIds.push(...candidates);
+      if (
+        candidates.length === 1 &&
+        discardCost.scope?.length === 1 &&
+        discardCost.scope[0] === TargetScope.SELF
+      ) {
+        resolvedCost.discardedCardIds = candidates;
       } else {
         pendingChoices.push({
           id: `${instanceId}-discard-${index}`,
@@ -100,7 +104,11 @@ export function resolveCost(
     if (picks.pickMin && candidates.length < picks.pickMin) {
       throw new CostResolutionError('Not enough cards available to pay this destroy cost.');
     }
-    if (candidates.length === picks.pickMax) {
+    if (
+      candidates.length === 1 &&
+      cost.destroy.scope?.length === 1 &&
+      cost.destroy.scope[0] === TargetScope.SELF
+    ) {
       resolvedCost.destroyedCardIds = candidates;
     } else {
       pendingChoices.push({

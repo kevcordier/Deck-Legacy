@@ -23,7 +23,6 @@ export const bandit2: CardDef = {
         {
           id: '10-1-1',
           trigger: Trigger.ON_PLAY,
-          optional: false,
           actionEffects: [
             {
               id: 1,

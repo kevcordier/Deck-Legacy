@@ -54,6 +54,11 @@ export class CardActionAggregate {
     resolvedCost: ResolvedCost;
     effectIndex: number;
   } | null = null;
+  private pendingTrackCost: {
+    resolvedAction: ResolvedActionEffect;
+    resolvedCost: ResolvedCost;
+    effectIndex: number;
+  } | null = null;
   private readonly action: CardAction;
 
   // triger Action
@@ -83,7 +88,10 @@ export class CardActionAggregate {
 
   // Apply an action effect to the game state
   private apply(resolvedAction: ResolvedActionEffect) {
-    this.gameState = this.cardActionContext.apply(this.gameState, resolvedAction);
+    this.gameState = this.cardActionContext.apply(
+      JSON.parse(JSON.stringify(this.gameState)) as GameState,
+      resolvedAction,
+    );
   }
 
   private tryResolveUpgradeCost(
@@ -138,9 +146,90 @@ export class CardActionAggregate {
     return 'continue';
   }
 
+  private tryResolveTrackStepCost(
+    resolvedAction: ResolvedActionEffect,
+    effectIndex: number,
+  ): 'continue' | 'wait' | 'skip' {
+    if (resolvedAction.type !== ActionEffectType.TRACK_ADVANCE) return 'continue';
+
+    const targetId = resolvedAction.instanceIds?.[0];
+    if (targetId === undefined) return 'skip';
+
+    const targetInstance = this.gameState.instances[targetId];
+    if (!targetInstance) return 'skip';
+
+    const targetState = getActiveState(targetInstance, this.cardDefs);
+    const track = targetState.track;
+    if (!track || !resolvedAction.stepIds || resolvedAction.stepIds.length === 0) {
+      return 'continue';
+    }
+
+    let simulatedState = this.gameState;
+    let mergedResolvedCost: ResolvedCost = {
+      resources: {},
+      discardedCardIds: [],
+      destroyedCardIds: [],
+    };
+    const costPendingChoices: PendingChoice[] = [];
+
+    for (const stepId of resolvedAction.stepIds) {
+      const step = track.steps.find(s => s.id === stepId);
+      if (!step) continue;
+
+      const [stepResolvedCost, stepPendingChoices] = resolveCost(
+        step.cost ?? {},
+        resolvedAction.sourceInstanceId,
+        simulatedState,
+        this.cardDefs,
+        this.stickerDefs,
+        true,
+      );
+
+      mergedResolvedCost = {
+        resources: mergeResources(mergedResolvedCost.resources, stepResolvedCost.resources),
+        discardedCardIds: [
+          ...mergedResolvedCost.discardedCardIds,
+          ...stepResolvedCost.discardedCardIds,
+        ],
+        destroyedCardIds: [
+          ...mergedResolvedCost.destroyedCardIds,
+          ...stepResolvedCost.destroyedCardIds,
+        ],
+      };
+
+      costPendingChoices.push(...stepPendingChoices);
+
+      simulatedState = destroyCards(
+        discardCards(
+          spendResources(simulatedState, stepResolvedCost.resources),
+          stepResolvedCost.discardedCardIds,
+          this.cardDefs,
+          this.stickerDefs,
+        ),
+        stepResolvedCost.destroyedCardIds,
+      );
+    }
+
+    if (costPendingChoices.length > 0) {
+      this.pendingTrackCost = {
+        resolvedAction,
+        resolvedCost: mergedResolvedCost,
+        effectIndex,
+      };
+      this.pendingChoices = costPendingChoices;
+      return 'wait';
+    }
+
+    this.resolvePayCost(mergedResolvedCost);
+    return 'continue';
+  }
+
   resolveAction() {
-    if (this.action.onTime) {
-      if (this.instance.usedActionIds.includes(this.action.id)) return;
+    if (this.action.limitedTime !== undefined) {
+      const currentUsageCount = this.gameState.instances[this.instance.id].usedActionIds.filter(
+        usedId => usedId === this.action.id,
+      ).length;
+      if (currentUsageCount >= this.action.limitedTime) return;
     }
 
     const currentInstance = this.gameState.instances[this.instance.id];
@@ -201,27 +290,18 @@ export class CardActionAggregate {
         return;
       }
 
-      if (resolvedAction.newActionEffects) {
-        this.effects.splice(index + 1, 0, ...resolvedAction.newActionEffects);
-      }
-
-      const upgradeCostResolution = this.tryResolveUpgradeCost(resolvedAction, index);
-      if (upgradeCostResolution === 'wait') {
+      const outcome = this.processResolvedAction(resolvedAction, index);
+      if (outcome === 'wait') {
         return;
       }
-      if (upgradeCostResolution === 'skip') {
-        index++;
-        continue;
-      }
 
-      this.apply(resolvedAction);
       index++;
     }
 
     this.pendingEffectIndex = -1;
     this.pendingResolvedAction = null;
 
-    if (this.action.onTime) {
+    if (this.action.limitedTime !== undefined) {
       this.gameState.instances[this.instance.id].usedActionIds.push(this.action.id);
     }
 
@@ -250,6 +330,34 @@ export class CardActionAggregate {
       const { [this.triggerId]: _used, ...restTriggers } = this.gameState.triggerPile;
       this.gameState.triggerPile = restTriggers;
     }
+  }
+
+  private processResolvedAction(
+    resolvedAction: ResolvedActionEffect,
+    index: number,
+  ): 'wait' | 'next' {
+    if (resolvedAction.newActionEffects) {
+      this.effects.splice(index + 1, 0, ...resolvedAction.newActionEffects);
+    }
+
+    const trackCostResolution = this.tryResolveTrackStepCost(resolvedAction, index);
+    if (trackCostResolution === 'wait') {
+      return 'wait';
+    }
+    if (trackCostResolution === 'skip') {
+      return 'next';
+    }
+
+    const upgradeCostResolution = this.tryResolveUpgradeCost(resolvedAction, index);
+    if (upgradeCostResolution === 'wait') {
+      return 'wait';
+    }
+    if (upgradeCostResolution === 'skip') {
+      return 'next';
+    }
+
+    this.apply(resolvedAction);
+    return 'next';
   }
 
   resolvePlayerChoice(choice: ResolvedActionEffect, choiceType?: PendingChoiceType) {
@@ -283,6 +391,15 @@ export class CardActionAggregate {
       return;
     }
 
+    const trackCostResolution = this.tryResolveTrackStepCost(
+      mergedResolvedAction,
+      this.pendingEffectIndex,
+    );
+    if (trackCostResolution === 'wait') {
+      this.pendingResolvedAction = null;
+      return;
+    }
+
     const upgradeCostResolution = this.tryResolveUpgradeCost(
       mergedResolvedAction,
       this.pendingEffectIndex,
@@ -294,6 +411,7 @@ export class CardActionAggregate {
 
     if (
       mergedResolvedAction.type !== ActionEffectType.CHOOSE_EFFECT &&
+      trackCostResolution !== 'skip' &&
       upgradeCostResolution !== 'skip'
     ) {
       this.apply(mergedResolvedAction);
@@ -304,6 +422,41 @@ export class CardActionAggregate {
   }
 
   resolveCostChoice(resolvedCost: ResolvedCost) {
+    if (this.pendingTrackCost) {
+      const mergedResolvedCost: ResolvedCost = {
+        resources: mergeResources(
+          this.pendingTrackCost.resolvedCost.resources,
+          resolvedCost.resources,
+        ),
+        discardedCardIds: [
+          ...this.pendingTrackCost.resolvedCost.discardedCardIds,
+          ...resolvedCost.discardedCardIds,
+        ],
+        destroyedCardIds: [
+          ...this.pendingTrackCost.resolvedCost.destroyedCardIds,
+          ...resolvedCost.destroyedCardIds,
+        ],
+      };
+
+      const remainingChoices = this.pendingChoices.slice(1);
+      if (remainingChoices.length > 0) {
+        this.pendingTrackCost = {
+          ...this.pendingTrackCost,
+          resolvedCost: mergedResolvedCost,
+        };
+        this.pendingChoices = remainingChoices;
+        return;
+      }
+
+      this.resolvePayCost(mergedResolvedCost);
+      this.apply(this.pendingTrackCost.resolvedAction);
+      const nextIndex = this.pendingTrackCost.effectIndex + 1;
+      this.pendingTrackCost = null;
+      this.pendingChoices = [];
+      this.resolveEffectsFrom(nextIndex);
+      return;
+    }
+
     if (this.pendingUpgradeCost) {
       const mergedResolvedCost: ResolvedCost = {
         resources: mergeResources(
@@ -339,8 +492,21 @@ export class CardActionAggregate {
       return;
     }
 
+    // Regular action cost: accumulate the resolved choice and handle remaining choices
+    this.resolvedCost = {
+      resources: mergeResources(this.resolvedCost.resources, resolvedCost.resources),
+      discardedCardIds: [...this.resolvedCost.discardedCardIds, ...resolvedCost.discardedCardIds],
+      destroyedCardIds: [...this.resolvedCost.destroyedCardIds, ...resolvedCost.destroyedCardIds],
+    };
+
+    const remainingChoices = this.pendingChoices.slice(1);
+    if (remainingChoices.length > 0) {
+      this.pendingChoices = remainingChoices;
+      return;
+    }
+
     this.pendingChoices = [];
-    this.resolvePayCost(resolvedCost);
+    this.resolvePayCost();
     this.resolveEffectsFrom(0);
   }
 

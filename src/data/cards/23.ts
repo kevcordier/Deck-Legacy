@@ -20,6 +20,7 @@ export const entrepreneur: CardDef = {
         {
           id: '23-1-1',
           endsTurn: true,
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,
@@ -107,6 +108,7 @@ export const entrepreneur: CardDef = {
       actions: [
         {
           id: '23-3-1',
+          limitedTime: 1,
           cost: {
             discard: [
               {
@@ -156,6 +158,7 @@ export const entrepreneur: CardDef = {
       actions: [
         {
           id: '23-4-1',
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,

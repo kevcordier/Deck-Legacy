@@ -71,7 +71,9 @@ export function GameCard({
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
   const actions = (cs.actions ?? []).filter(
-    action => !action.onTime || !instance.usedActionIds.includes(action.id),
+    action =>
+      action.limitedTime === undefined ||
+      instance.usedActionIds.filter(usedId => usedId === action.id).length < action.limitedTime,
   );
   const rawCardName = t(`names.${instance.cardId}_${cs.id}`, { ns: 'cards' });
   const canChooseName = cs.chooseName === true && rawCardName.includes('_____');
@@ -165,7 +167,7 @@ export function GameCard({
           )}
 
           <div className="flex flex-wrap gap-1">
-            {cs.glory !== undefined && (cs.glory.amount > 0 || cs.glory.valuePerElement) && (
+            {cs.glory !== undefined && (cs.glory.amount !== 0 || cs.glory.valuePerElement) && (
               <Glory glory={glory} />
             )}
             {emptyValues.map((value, i) => (
@@ -266,6 +268,15 @@ export function GameCard({
                   });
                 })
                 .join(', ');
+              const destroyLabel = effectiveUpgradeCost.destroy
+                ? t('card.cost.destroy', {
+                    count: getPickNumbers(effectiveUpgradeCost.destroy).pickMin,
+                    type:
+                      effectiveUpgradeCost.destroy.name ??
+                      effectiveUpgradeCost.destroy.tags?.[0] ??
+                      t('card.cost.cards'),
+                  })
+                : '';
 
               return (
                 <Button
@@ -280,7 +291,7 @@ export function GameCard({
                   {targetState
                     ? tCardName(t, def.id, targetState.id)
                     : t('card.state', { id: upg.upgradeTo })}
-                  {(effectiveUpgradeCost.resources?.[0] ?? discardLabel) && (
+                  {(effectiveUpgradeCost.resources?.[0] ?? discardLabel ?? destroyLabel) && (
                     <span>
                       {' '}
                       (
@@ -298,7 +309,8 @@ export function GameCard({
                           );
                         },
                       )}{' '}
-                      {discardLabel})
+                      {discardLabel}
+                      {destroyLabel})
                     </span>
                   )}
                 </Button>

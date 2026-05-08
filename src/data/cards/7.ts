@@ -94,6 +94,7 @@ export const river: CardDef = {
       actions: [
         {
           id: '7-4-1',
+          limitedTime: 4,
           actionEffects: [
             {
               id: 1,

@@ -14,6 +14,7 @@ export const engineer: CardDef = {
       actions: [
         {
           id: '25-1-1',
+          limitedTime: 1,
           cost: {
             destroy: {
               scope: [TargetScope.BOARD],
@@ -32,6 +33,7 @@ export const engineer: CardDef = {
         },
         {
           id: '25-1-2',
+          limitedTime: 1,
           cost: {
             destroy: {
               scope: [TargetScope.BOARD],
@@ -50,6 +52,7 @@ export const engineer: CardDef = {
         },
         {
           id: '25-1-3',
+          limitedTime: 1,
           cost: {
             destroy: {
               scope: [TargetScope.BOARD],

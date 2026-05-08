@@ -23,7 +23,6 @@ export const skilledBandit2: CardDef = {
         {
           id: '54-1-1',
           trigger: Trigger.ON_PLAY,
-          optional: false,
           actionEffects: [
             {
               id: 1,

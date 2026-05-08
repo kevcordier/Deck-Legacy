@@ -111,17 +111,6 @@ describe('drawCards', () => {
     expect(result.drawPile).not.toContain(1);
     expect(result.board).toContain(1);
   });
-
-  it('skips already-destroyed cards', () => {
-    const inst = makeInstance({ id: 9 });
-    const gs = makeState({
-      drawPile: [9],
-      destroyedPile: [9],
-      instances: { 9: inst },
-    });
-    const result = drawCards(gs, [9], makeDefs(), makeStickerDefs());
-    expect(result.board).not.toContain(9);
-  });
 });
 
 // ─── destroyCards ─────────────────────────────────────────────────────────────

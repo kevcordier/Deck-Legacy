@@ -1,5 +1,6 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
+import { endTurn } from '@engine/application/gameStateHelper';
 import { Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState, Sticker } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
@@ -20,6 +21,9 @@ export class TurnEndedStrategy implements GameEventStrategy {
       gameState.triggerPile[crypto.randomUUID()] = effectDef;
     });
 
-    return { ...gameState, phase: Phase.POSTTURN };
+    return {
+      ...endTurn(gameState, this.cardDefs, this.stickerDefs),
+      phase: Phase.TURN_END,
+    };
   }
 }

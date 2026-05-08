@@ -70,6 +70,7 @@ export const scribe: CardDef = {
         {
           id: '45-2-1',
           endsTurn: true,
+          limitedTime: 2,
           actionEffects: [
             {
               id: 1,

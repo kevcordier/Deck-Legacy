@@ -88,7 +88,6 @@ export const assassin: CardDef = {
         {
           id: '48_2_1',
           trigger: Trigger.ON_PLAY,
-          optional: false,
           actionEffects: [
             {
               id: 1,
@@ -103,7 +102,6 @@ export const assassin: CardDef = {
         {
           id: '48_2_2',
           trigger: Trigger.END_OF_ROUND,
-          optional: false,
           actionEffects: [
             {
               id: 1,
