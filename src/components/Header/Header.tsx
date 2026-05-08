@@ -61,7 +61,15 @@ export function Header() {
 
   return (
     <header className="bg-background border-b-border z-101 flex items-center justify-between border-b px-6 py-3">
-      <Title level={2}>{t('game.title')}</Title>
+      <Title level={2}>
+        <img
+          src="icon-192x192.png"
+          alt="Deck Legacy Logo"
+          className="h-8 w-auto inline mr-2"
+          draggable={false}
+        />
+        {t('game.title')}
+      </Title>
 
       <div className="align-center flex gap-2">
         <div className="hidden items-center gap-2 lg:flex">

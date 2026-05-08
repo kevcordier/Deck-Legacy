@@ -27,3 +27,4 @@ tsconfig.tsbuildinfo
 coverage
 .claude
 storybook-static
+dev-dist
