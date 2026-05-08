@@ -177,8 +177,10 @@ function resolveCardTarget(
     (actionType === ActionEffectType.DISCOVER_CARD && choices.length <= picks.pickMax) ||
     (cards.scope?.length === 1 &&
       (cards.scope.includes(TargetScope.SELF) ||
+        cards.scope.includes(TargetScope.TRIGGER_SOURCE) ||
         cards.scope.includes(TargetScope.TOP_OF_DECK) ||
-        cards.scope.includes(TargetScope.TOP_OF_DISCARD)))
+        cards.scope.includes(TargetScope.TOP_OF_DISCARD))) ||
+    cards.ids?.length === 1
   ) {
     resolverAction.instanceIds = choices;
     return [resolverAction, pendingChoices];

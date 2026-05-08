@@ -12,7 +12,6 @@ export const stop6: CardDef = {
       actions: [
         {
           id: '58-1-1',
-          trigger: Trigger.ON_DISCOVER,
           actionEffects: [
             {
               id: 1,

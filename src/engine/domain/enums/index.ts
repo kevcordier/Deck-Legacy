@@ -23,7 +23,6 @@ export enum CardTag {
 
 export enum Trigger {
   END_OF_TURN = 'end_of_turn',
-  ON_DISCOVER = 'on_discover',
   ON_PLAY = 'on_play',
   END_OF_ROUND = 'end_of_round',
   ON_PURGE = 'on_purge',

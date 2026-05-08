@@ -10,12 +10,7 @@ import {
 import { resolveCost } from '@engine/application/costResolver';
 import { createInstance } from '@engine/application/factory';
 import { computeScore, mergeResources } from '@engine/application/gameStateHelper';
-import {
-  ActionEffectType,
-  GameEventType,
-  type PendingChoiceType,
-  Trigger,
-} from '@engine/domain/enums';
+import { ActionEffectType, GameEventType, type PendingChoiceType } from '@engine/domain/enums';
 import {
   type CardAction,
   type CardDef,
@@ -80,22 +75,12 @@ export function GameProvider({
     defs: Record<number, CardDef>,
   ): CardDef | null => {
     // If in PARCHMENT phase, find and return the parchment card's definition
-    if (state.phase !== Phase.PARCHMENT) {
+    if (state.phase !== Phase.PARCHMENT || !state.onGoingParchment) {
       return null;
     }
 
-    const parchmentTrigger = Object.values(state.triggerPile).find(t => {
-      const inst = state.instances[t.sourceInstanceId];
-      return (
-        inst && defs[inst.cardId]?.parchmentCard && t.effectDef.trigger === Trigger.ON_DISCOVER
-      );
-    });
-    if (parchmentTrigger) {
-      const inst = state.instances[parchmentTrigger.sourceInstanceId];
-      return defs[inst.cardId];
-    }
-
-    return null;
+    const inst = state.instances[state.onGoingParchment];
+    return defs[inst.cardId];
   };
 
   const [parchmentTextPending, setParchmentTextPending] = useState<CardDef | null>(() =>
@@ -347,18 +332,11 @@ export function GameProvider({
   };
 
   const dismissParchmentText = () => {
-    const gs = aggRef.current.getGameState();
-
-    const parchmentEntry = Object.entries(gs.triggerPile).find(([, t]) => {
-      const inst = gs.instances[t.sourceInstanceId];
-      return inst && defs[inst.cardId]?.parchmentCard;
-    });
-
-    setParchmentTextPending(null);
-
-    if (parchmentEntry) {
-      const [triggerId, trigger] = parchmentEntry;
-      const newState = triggerAction(trigger.sourceInstanceId, trigger.effectDef, triggerId);
+    if (gameState.onGoingParchment && parchmentTextPending?.states[0].actions?.[0]) {
+      const newState = triggerAction(
+        gameState.onGoingParchment,
+        parchmentTextPending.states[0].actions[0],
+      );
       sync(newState);
     }
   };

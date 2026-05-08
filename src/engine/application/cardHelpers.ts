@@ -512,19 +512,17 @@ export function cardShouldStayInPlay(
       .includes(instanceId)
   )
     return true;
+  // If the card is blocked by a card that also has STAY_IN_PLAY, it should stay in play
+  const blockerCard = Object.entries(
+    getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK),
+  ).find(([_, ids]) => ids.includes(instanceId))?.[0];
   if (
-    Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK))
+    blockerCard &&
+    Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))
       .flat()
-      .includes(instanceId)
+      .includes(Number(blockerCard))
   ) {
-    const state = def?.states.find(s => s.id === instance.stateId);
-    if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
-    if (
-      Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))
-        .flat()
-        .includes(instanceId)
-    )
-      return true;
+    return true;
   }
   const stickers = instance.stickers[instance.stateId] ?? [];
   return stickers.includes(STAYS_IN_PLAY_STICKER_ID);

@@ -1,7 +1,7 @@
 import { makeDefs, makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { UpgradeCardStrategy } from '@engine/application/cardAction/UpgradeCardStrategy';
 import * as cardHelpers from '@engine/application/cardHelpers';
-import { ActionEffectType } from '@engine/domain/enums';
+import { ActionEffectType, Trigger } from '@engine/domain/enums';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('UpgradeCardStrategy', () => {
@@ -112,5 +112,55 @@ describe('UpgradeCardStrategy', () => {
     expect(result.permanents).toContain(1);
     expect(result.board).not.toContain(1);
     expect(result.discardPile).not.toContain(1);
+  });
+
+  it('removes card from permanents when upgraded to a non-permanent state', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ permanents: [1], instances: { 1: inst } });
+    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S', permanent: false });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.UPGRADE_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [1],
+      stateId: 2,
+    });
+    expect(result.instances[1].stateId).toBe(2);
+    expect(result.permanents).not.toContain(1);
+    expect(result.discardPile).toContain(1);
+  });
+
+  it('adds ON_UPGRADE trigger to triggerPile when upgraded card has an ON_UPGRADE trigger', () => {
+    const onUpgradeDef = makeDefs({
+      states: [
+        {
+          id: 1,
+          name: 'S1',
+          actions: [{ id: 'ou', actionEffects: [], trigger: Trigger.ON_UPGRADE }],
+        },
+        { id: 2, name: 'S2' },
+      ],
+    });
+    const stratWithTrigger = new UpgradeCardStrategy(onUpgradeDef, {});
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    vi.spyOn(cardHelpers, 'getActiveState').mockImplementation(instance =>
+      instance.stateId === 1
+        ? {
+            id: 1,
+            name: 'S1',
+            actions: [{ id: 'ou', actionEffects: [], trigger: Trigger.ON_UPGRADE }],
+          }
+        : { id: 2, name: 'S2' },
+    );
+    const result = stratWithTrigger.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.UPGRADE_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [1],
+      stateId: 2,
+    });
+    expect(Object.values(result.triggerPile)).toHaveLength(1);
+    expect(Object.values(result.triggerPile)[0].sourceInstanceId).toBe(1);
   });
 });

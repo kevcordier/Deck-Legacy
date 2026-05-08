@@ -29,21 +29,6 @@ const onPlayDef: CardDef = {
     { id: 1, name: 'S', actions: [{ id: 'op', actionEffects: [], trigger: Trigger.ON_PLAY }] },
   ],
 };
-const onDiscoverDef: CardDef = {
-  id: 5,
-  name: 'OnDiscover',
-  states: [
-    { id: 1, name: 'S', actions: [{ id: 'od', actionEffects: [], trigger: Trigger.ON_DISCOVER }] },
-  ],
-};
-const parchmentOnDiscoverDef: CardDef = {
-  id: 7,
-  name: 'ParchOnDiscover',
-  parchmentCard: true,
-  states: [
-    { id: 1, name: 'S', actions: [{ id: 'pod', actionEffects: [], trigger: Trigger.ON_DISCOVER }] },
-  ],
-};
 const endOfTurnDef: CardDef = {
   id: 6,
   name: 'EndTurn',
@@ -204,21 +189,6 @@ describe('GameAggregate.roundStarted', () => {
     const gs = agg.roundStarted();
     expect(gs.round).toBe(1);
   });
-
-  it('fires ON_DISCOVER trigger for discovered cards', () => {
-    // onDiscoverDef has an ON_DISCOVER trigger that auto-resolves.
-    const inst1 = makeInstance({ id: 1, cardId: 5, stateId: 1 }); // onDiscover
-    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const state = makeState({
-      drawPile: [],
-      discoveryPile: [1, 2],
-      instances: { 1: inst1, 2: inst2 },
-      round: 1,
-    });
-    const agg = new GameAggregate(state, { 5: onDiscoverDef, 1: plainDef }, {}, []);
-    agg.roundStarted();
-    expect(agg.getGameState().round).toBe(2);
-  });
 });
 
 // ─── turnStarted ──────────────────────────────────────────────────────────────
@@ -266,31 +236,6 @@ describe('GameAggregate.turnStarted', () => {
     const agg = new GameAggregate(state, { 4: onPlayDef }, {}, []);
     const gs = agg.turnStarted();
     expect(gs.phase).toBe(Phase.PLAYING);
-    expect(Object.keys(gs.triggerPile)).toHaveLength(1);
-  });
-
-  it('does not auto-fire ON_DISCOVER triggers from parchment cards — leaves them in the pile', () => {
-    const inst = makeInstance({ id: 1, cardId: 7, stateId: 1 });
-    const triggerId = 'test-trigger-uuid';
-    const onDiscoverAction = parchmentOnDiscoverDef.states[0].actions?.[0];
-    if (!onDiscoverAction) {
-      throw new Error('Missing ON_DISCOVER action for parchmentOnDiscoverDef');
-    }
-    const state = makeState({
-      drawPile: [1],
-      instances: { 1: inst },
-      round: 1,
-      phase: Phase.ROUND_START,
-      triggerPile: {
-        [triggerId]: {
-          effectDef: onDiscoverAction,
-          sourceInstanceId: 1,
-        },
-      },
-    });
-    const agg = new GameAggregate(state, { 7: parchmentOnDiscoverDef }, {}, []);
-    agg.turnStarted();
-    const gs = agg.getGameState();
     expect(Object.keys(gs.triggerPile)).toHaveLength(1);
   });
 });
@@ -978,5 +923,184 @@ describe('GameAggregate.cardAction – blocked by option', () => {
     };
     const gs = agg.cardAction(action, 1);
     expect(gs).toBe(gsBefore);
+  });
+});
+
+// ─── roundEnded – early return ────────────────────────────────────────────────
+
+describe('GameAggregate.roundEnded – early return', () => {
+  it('returns without starting next round when END_OF_ROUND triggers exist', () => {
+    const endOfRoundDef: CardDef = {
+      id: 5,
+      name: 'EOR',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          actions: [{ id: 'eor', actionEffects: [], trigger: Trigger.END_OF_ROUND }],
+        },
+      ],
+    };
+    const inst = makeInstance({ id: 1, cardId: 5, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      instances: { 1: inst },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+    });
+    const agg = new GameAggregate(state, { 5: endOfRoundDef }, {}, []);
+    const gs = agg.roundEnded();
+    // END_OF_ROUND trigger is in the pile → condition fails → no roundStarted
+    expect(gs.phase).toBe(Phase.ROUND_END);
+    expect(Object.keys(gs.triggerPile)).toHaveLength(1);
+  });
+});
+
+// ─── hasAvailableUnlimitedAction – limitedTime ────────────────────────────────
+
+describe('GameAggregate.turnEnded – hasAvailableUnlimitedAction', () => {
+  it('auto-starts turn when unlimited action limitedTime is exhausted', () => {
+    const limitedDef: CardDef = {
+      id: 10,
+      name: 'LimitedUnlimited',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          permanent: true,
+          actions: [{ id: 'lu', unlimited: true, limitedTime: 1, actionEffects: [] }],
+        },
+      ],
+    };
+    const perm = makeInstance({ id: 1, cardId: 10, stateId: 1, usedActionIds: ['lu'] });
+    const nextCard = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [2],
+      permanents: [1],
+      instances: { 1: perm, 2: nextCard },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef, 10: limitedDef }, {}, []);
+    const gs = agg.turnEnded();
+    // limitedTime exhausted → hasAvailableUnlimitedAction = false → next turn starts
+    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.board).toContain(2);
+  });
+
+  it('returns false immediately when ACTION option is disabled', () => {
+    const freeUnlimitedDef: CardDef = {
+      id: 11,
+      name: 'FreeUnlimited',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          permanent: true,
+          actions: [{ id: 'fu', unlimited: true, actionEffects: [] }],
+        },
+      ],
+    };
+    const perm = makeInstance({ id: 1, cardId: 11, stateId: 1 });
+    const nextCard = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [2],
+      permanents: [1],
+      instances: { 1: perm, 2: nextCard },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+      boardEffects: {
+        99: [{ id: 'da', type: 'DESACTIVATE_OPTION' as never, options: ['action'], global: true }],
+      },
+    });
+    const agg = new GameAggregate(state, { 1: plainDef, 11: freeUnlimitedDef }, {}, []);
+    const gs = agg.turnEnded();
+    // ACTION disabled → hasAvailableUnlimitedAction returns false immediately → next turn starts
+    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.board).toContain(2);
+  });
+
+  it('skips blocked instances in hasAvailableUnlimitedAction', () => {
+    const freeUnlimitedDef: CardDef = {
+      id: 11,
+      name: 'FreeUnlimited',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          permanent: true,
+          actions: [{ id: 'fu', unlimited: true, actionEffects: [] }],
+        },
+      ],
+    };
+    const perm = makeInstance({ id: 1, cardId: 11, stateId: 1 });
+    const nextCard = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [2],
+      permanents: [1],
+      instances: { 1: perm, 2: nextCard },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+      boardEffects: {
+        99: [{ id: 'block', type: 'BLOCK' as never, cards: { ids: [1] }, global: true }],
+      },
+    });
+    const agg = new GameAggregate(state, { 1: plainDef, 11: freeUnlimitedDef }, {}, []);
+    const gs = agg.turnEnded();
+    // Permanent is blocked → skipped → hasAvailableUnlimitedAction = false → next turn starts
+    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.board).toContain(2);
+  });
+});
+
+// ─── cardAction – PARCHMENT finalization ─────────────────────────────────────
+
+// ─── cancelCurrentCardAction ─────────────────────────────────────────────────
+
+describe('GameAggregate.cancelCurrentCardAction', () => {
+  it('sets currentCardAction to null', () => {
+    const state = makeState({
+      board: [1],
+      instances: { 1: makeInstance({ id: 1 }) },
+      phase: Phase.PLAYING,
+      round: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    agg.cancelCurrentCardAction();
+    expect(agg.getCurrentCardAction()).toBeNull();
+  });
+});
+
+describe('GameAggregate.cardAction – PARCHMENT finalization', () => {
+  it('emits ROUND_STARTED after parchment card action resolves', () => {
+    const inst = makeInstance({ id: 1, cardId: 3, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      discardPile: [2],
+      instances: {
+        1: inst,
+        2: makeInstance({ id: 2, cardId: 1, stateId: 1 }),
+      },
+      phase: Phase.PARCHMENT,
+      onGoingParchment: 1,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef, 3: parchmentDef }, {}, []);
+    const action = {
+      id: 'parch-action',
+      actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
+    };
+    const gs = agg.cardAction(action, 1);
+    // After parchment action, ROUND_STARTED is emitted → phase becomes ROUND_START
+    expect(gs.phase).toBe(Phase.ROUND_START);
+    expect(gs.round).toBe(1);
   });
 });

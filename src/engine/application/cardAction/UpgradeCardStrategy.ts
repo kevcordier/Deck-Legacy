@@ -22,17 +22,15 @@ export class UpgradeCardStrategy implements CardActionStrategy {
 
     const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
     const instanceBeforeStateChange = gs.instances[instanceId];
-    if (instanceBeforeStateChange) {
-      getInstancesTriggerEffects(
-        [instanceBeforeStateChange],
-        this.cardDefs,
-        this.stickerDefs,
-        Trigger.ON_UPGRADE,
-        gs,
-      ).forEach(({ effectDef, sourceInstanceId }) => {
-        gs.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
-      });
-    }
+    getInstancesTriggerEffects(
+      [instanceBeforeStateChange],
+      this.cardDefs,
+      this.stickerDefs,
+      Trigger.ON_UPGRADE,
+      gs,
+    ).forEach(({ effectDef, sourceInstanceId }) => {
+      gs.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+    });
     gs.instances[instanceId].stateId = targetStateId;
     // if new state is permanent add it to permanents pile
     if (getActiveState(gs.instances[instanceId], this.cardDefs)?.permanent) {

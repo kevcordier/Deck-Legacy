@@ -32,7 +32,7 @@ export const eastCliffs: CardDef = {
               },
             ],
           },
-          upgradeTo: 3,
+          upgradeTo: 4,
         },
         {
           cost: {

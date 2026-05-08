@@ -124,6 +124,14 @@ export class GameAggregate {
     return a;
   }
 
+  private filterNonPermanentCardIds(cardIds: number[]): number[] {
+    return cardIds.filter(cardId => {
+      const instance = this.gameState.instances[cardId];
+      if (!instance) return false;
+      return getActiveState(instance, this.cardDefs)?.permanent !== true;
+    });
+  }
+
   public roundEnded(): GameState {
     const event: RoundEndedEvent = {
       id: crypto.randomUUID(),
@@ -189,7 +197,7 @@ export class GameAggregate {
         ...this.gameState.drawPile,
         ...this.gameState.discardPile,
         ...this.gameState.board,
-        ...lastAddedCards,
+        ...this.filterNonPermanentCardIds(lastAddedCards),
       ]),
     };
     this.apply(event);
@@ -446,6 +454,7 @@ export class GameAggregate {
 
   private finalizeCurrentCardAction(currentCardAction: CardActionAggregate): GameState {
     const newGameState = currentCardAction.getGameState();
+    const sourceInstanceId = currentCardAction.getSourceInstanceId();
 
     const event: CardActionEvent = {
       id: crypto.randomUUID(),
@@ -459,8 +468,10 @@ export class GameAggregate {
 
     this.apply(event);
     this.events.push(event);
-
-    if (this.gameState.phase === Phase.PARCHMENT) {
+    if (
+      this.gameState.phase === Phase.PARCHMENT &&
+      this.gameState.onGoingParchment === sourceInstanceId
+    ) {
       const event: RoundStartedEvent = {
         id: crypto.randomUUID(),
         type: GameEventType.ROUND_STARTED,
@@ -471,7 +482,7 @@ export class GameAggregate {
           ...this.gameState.drawPile,
           ...this.gameState.discardPile,
           ...this.gameState.board,
-          ...this.gameState.lastAddedCards,
+          ...this.filterNonPermanentCardIds(this.gameState.lastAddedCards),
         ]),
       };
       this.apply(event);

@@ -1,5 +1,7 @@
 import { type ChoiceSectionProps, buildCardCostResolution, makePreviewInstance } from './shared';
 import { GameCard } from '@components/GameCard/GameCard';
+import { Button } from '@components/ui/Button/Button';
+import { useTranslation } from 'react-i18next';
 
 export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
   const {
@@ -12,6 +14,7 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
     resolvePlayerChoice,
     resolvePayCost,
   } = props;
+  const { t } = useTranslation();
 
   const handleCardClick = (instanceId: number) => {
     if (isMultiSelect) {
@@ -34,7 +37,7 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 p-2">
       {choice.choices.map((id, index) => {
         if (typeof id !== 'number') return null;
         const inst = instances[id];
@@ -43,15 +46,12 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
         const state = def.states.find(s => s.id === inst.stateId) ?? def.states[0];
         const isSelected = isMultiSelect && selectedIds.includes(id);
         return (
-          <div
-            className={`relative transition-transform hover:scale-[1.02]${isSelected ? ' ring-primary rounded-xl ring-2' : ''}`}
-            key={`${id}-${index.toString()}`}
-          >
-            <button
-              onClick={() => handleCardClick(id)}
-              className="absolute inset-0 z-12 cursor-pointer!"
-            ></button>
-            <GameCard instance={makePreviewInstance(id, def, state)} hideStatePreview />
+          <div key={`${id}-${index.toString()}`} className="flex flex-col items-stretch gap-2 p-2">
+            <GameCard
+              instance={makePreviewInstance(id, def, state)}
+              className={`relative ${isSelected ? ' ring-primary rounded-xl ring-2' : ''}`}
+            />
+            <Button onClick={() => handleCardClick(id)}>{t('pendingChoice.select')}</Button>
           </div>
         );
       })}

@@ -201,21 +201,6 @@ export const With2BanditsAndOneAvailableCard: Story = {
   },
 };
 
-export const WithOnDiscoverChooseStates: Story = {
-  name: 'With ON_DISCOVER choose states',
-  args: {
-    saveState: {
-      ...PLAYING_STATE,
-      instances: {
-        ...INSTANCES_BASE,
-      },
-      drawPile: [],
-      discoveryPile: [13, 14],
-      board: [],
-    },
-  },
-};
-
 // Cathedral (Hill state 4) + 3 person cards on board
 // Expected: Cathedral shows 4 gold production (1 base + 3 from persons)
 const CATHEDRAL_STATE: GameState = {
@@ -241,19 +226,6 @@ export const CathedralAdjustProduction: Story = {
   name: 'Cathedral — ADJUST_production (3 personnes → +3 or)',
   args: {
     saveState: CATHEDRAL_STATE,
-  },
-};
-
-export const WithStopCard: Story = {
-  name: 'With ON_DISCOVER stop card',
-  args: {
-    saveState: {
-      ...PLAYING_STATE,
-      drawPile: [],
-      discardPile: Array.from({ length: 30 }, (_, i) => i),
-      discoveryPile: Array.from({ length: 5 }, (_, i) => 30 + i),
-      board: [],
-    },
   },
 };
 

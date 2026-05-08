@@ -861,7 +861,7 @@ describe('getInstancesTriggerEffects', () => {
             id: 'trig',
             type: PassiveType.ADD_TRIGGER,
             trigger: {
-              type: Trigger.ON_DISCOVER,
+              type: Trigger.ON_PLAY,
               cards: { ids: [99] },
               actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
             },

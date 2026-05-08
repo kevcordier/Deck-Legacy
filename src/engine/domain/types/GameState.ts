@@ -27,6 +27,7 @@ export type GameState = {
   round: number;
   turn: number;
   phase: Phase;
+  onGoingParchment?: number;
 };
 
 export type GameParameters = {

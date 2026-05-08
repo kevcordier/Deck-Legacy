@@ -29,7 +29,7 @@ export class CardActionContext {
       [ActionEffectType.ADD_RESOURCES]: new AddResourceStrategy(cardDefs, stickerDefs),
       [ActionEffectType.REMOVE_RESOURCE_ON_CARD]: new RemoveResourceOnCardStrategy(),
       [ActionEffectType.DISCARD_CARD]: new DiscardCardStrategy(cardDefs, stickerDefs),
-      [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs, stickerDefs),
+      [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs),
       [ActionEffectType.DESTROY_CARD]: new DestroyCardStrategy(),
       [ActionEffectType.UPGRADE_CARD]: new UpgradeCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.PLACE_CARD_IN_PILE]: new PlaceCardInPileStrategy(),

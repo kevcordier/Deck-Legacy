@@ -23,27 +23,19 @@ export class CardProducedStrategy implements GameEventStrategy {
       resources: mergeResources(gameState.resources, e.productions),
     };
     const instance = withResources.instances[e.cardInstanceId];
-    const stateWithTriggers = instance
-      ? (() => {
-          const triggers = getInstancesTriggerEffects(
-            [instance],
-            this.cardDefs,
-            this.stickerDefs,
-            Trigger.ON_PRODUCE,
-            withResources,
-          );
-          if (triggers.length === 0) return withResources;
-          const gs = JSON.parse(JSON.stringify(withResources)) as GameState;
-          triggers.forEach(({ effectDef, sourceInstanceId }) => {
-            gs.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
-          });
-          return gs;
-        })()
-      : withResources;
+    getInstancesTriggerEffects(
+      [instance],
+      this.cardDefs,
+      this.stickerDefs,
+      Trigger.ON_PRODUCE,
+      withResources,
+    ).forEach(({ effectDef, sourceInstanceId }) => {
+      withResources.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+    });
 
     return {
-      ...stateWithTriggers,
-      ...discardCards(stateWithTriggers, [e.cardInstanceId], this.cardDefs, this.stickerDefs),
+      ...withResources,
+      ...discardCards(withResources, [e.cardInstanceId], this.cardDefs, this.stickerDefs),
     };
   }
 }

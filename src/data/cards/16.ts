@@ -1,4 +1,4 @@
-import { ActionEffectType, CardTag, Trigger } from '@engine/domain/enums';
+import { ActionEffectType, CardTag } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const stop2: CardDef = {
@@ -12,7 +12,6 @@ export const stop2: CardDef = {
       actions: [
         {
           id: '16-1-1',
-          trigger: Trigger.ON_DISCOVER,
           actionEffects: [
             {
               id: 1,

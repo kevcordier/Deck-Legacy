@@ -2,12 +2,13 @@ import { CardRow } from '@components/CardRow/CardRow';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
 import { EmptyState } from '@components/ui/EmptyState/EmptyState';
+import { MarkdownText } from '@components/ui/MarkdownText/MarckdownText';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Section } from '@components/ui/Section/Section';
 import { getActiveState } from '@engine/application/cardHelpers';
 import { CardTag } from '@engine/domain/enums';
 import { Phase } from '@engine/domain/types/Phase';
-import { tCardName } from '@helpers/cardI18n';
+import { tCardName, tCardParchmentText } from '@helpers/cardI18n';
 import { useGame } from '@hooks/useGame';
 import { useTranslation } from 'react-i18next';
 
@@ -75,6 +76,8 @@ export function MainBoard() {
     displayNewCards,
     setDisplayNewCards,
     defs,
+    parchmentTextPending,
+    dismissParchmentText,
   } = useGame();
   const { t } = useTranslation();
 
@@ -84,6 +87,16 @@ export function MainBoard() {
   const permanents = gameState.permanents.filter(c => !goals.includes(c));
   return (
     <main className="scrollbar @container/main flex flex-1 flex-col gap-6 p-4">
+      {parchmentTextPending && (
+        <div className="flex flex-col gap-4 p-4 bg-card rounded-lg">
+          <MarkdownText text={tCardParchmentText(t, parchmentTextPending.id)} ink />
+          <div className="flex justify-end">
+            <Button color="base-primary" onClick={dismissParchmentText}>
+              {t('parchmentCard.continue')}
+            </Button>
+          </div>
+        </div>
+      )}
       {gameState.phase === Phase.ROUND_START && (
         <EmptyState
           title={t('roundpreview.title', { round: gameState.round })}
@@ -143,20 +156,20 @@ export function MainBoard() {
         />
       )}
 
-      {[Phase.PLAYING, Phase.TURN_END].includes(gameState.phase) &&
-        gameState.permanents.length > 0 && (
-          <>
-            <Section
-              title={t('sections.permanents')}
-              subtitle={t('cardCount', { count: permanents.length })}
-            >
-              <CardRow cardIds={permanents} />
-            </Section>
-            <Section title={t('sections.goals')} subtitle={t('cardCount', { count: goals.length })}>
-              <CardRow cardIds={goals} />
-            </Section>
-          </>
-        )}
+      {[Phase.PLAYING, Phase.TURN_END].includes(gameState.phase) && permanents.length > 0 && (
+        <Section
+          title={t('sections.permanents')}
+          subtitle={t('cardCount', { count: permanents.length })}
+        >
+          <CardRow cardIds={permanents} />
+        </Section>
+      )}
+
+      {[Phase.PLAYING, Phase.TURN_END].includes(gameState.phase) && goals.length > 0 && (
+        <Section title={t('sections.goals')} subtitle={t('cardCount', { count: goals.length })}>
+          <CardRow cardIds={goals} />
+        </Section>
+      )}
 
       {[Phase.PLAYING, Phase.TURN_END].includes(gameState.phase) &&
         Object.keys(gameState.triggerPile).length === 0 &&
