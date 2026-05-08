@@ -13,6 +13,8 @@ export function Header() {
   const {
     progress,
     endTurnVoluntary,
+    startTurn,
+    startRound,
     rewindEvent,
     canRewind,
     pendingChoices,
@@ -72,7 +74,7 @@ export function Header() {
       </Title>
 
       <div className="align-center flex gap-2">
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="flex items-center gap-2">
           {canRewind() && (
             <Button
               onClick={() => rewindEvent()}
@@ -84,7 +86,7 @@ export function Header() {
             </Button>
           )}
           {gameState.phase === Phase.PLAYING && (
-            <>
+            <div className="items-center gap-2 hidden lg:flex">
               <Button
                 onClick={progress}
                 disabled={deckEmpty || haveChoiceToDo || cantAdvance}
@@ -103,7 +105,29 @@ export function Header() {
               >
                 {t('header.endTurn')}
               </Button>
-            </>
+            </div>
+          )}
+          {gameState.phase === Phase.ROUND_START && (
+            <div className="items-center gap-2 hidden lg:flex">
+              <Button onClick={startTurn} variant="outlined" size="xs">
+                {t('roundpreview.start')}
+              </Button>
+            </div>
+          )}
+          {gameState.phase === Phase.TURN_END && gameState.drawPile.length > 0 && (
+            <div className="items-center gap-2 hidden lg:flex">
+              <Button onClick={startTurn} variant="outlined" size="xs">
+                {t('endturn.start')}
+              </Button>
+            </div>
+          )}
+          {(gameState.phase === Phase.ROUND_END ||
+            (gameState.phase === Phase.TURN_END && gameState.drawPile.length === 0)) && (
+            <div className="items-center gap-2 hidden lg:flex">
+              <Button onClick={startRound} variant="outlined" size="xs">
+                {t('endround.end')}
+              </Button>
+            </div>
           )}
         </div>
         <Button onClick={() => setRulesOpen(true)} color="danger" size="xs" title={t('rules.open')}>

@@ -6,6 +6,7 @@ import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoice
 import { Button } from '@components/ui/Button/Button';
 import { DestroyIcon, DiscardIcon, DrawCardIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
+import { Phase } from '@engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,8 +19,8 @@ export function GameBoard() {
     stickerDefs,
     progress,
     endTurnVoluntary,
-    rewindEvent,
-    canRewind,
+    startTurn,
+    startRound,
     pendingChoices,
     triggerPile,
     resolveAction,
@@ -104,7 +105,7 @@ export function GameBoard() {
       <EventPanel />
 
       {/* Mobile action bar */}
-      <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t px-2 py-2 lg:hidden">
+      <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t px-1 pt-1 pb-4 lg:hidden">
         <Button
           onClick={() => setOpenSheet(o => (o === 'draw' ? null : 'draw'))}
           variant="outlined"
@@ -114,31 +115,48 @@ export function GameBoard() {
           <DrawCardIcon className="size-4" alt={t('deckViewer.draw')} /> ({drawPile.length})
         </Button>
 
-        <div className="flex items-center gap-1">
-          {canRewind() && (
+        {gameState.phase === Phase.PLAYING && (
+          <div className="flex items-center gap-1">
             <Button
-              onClick={() => rewindEvent()}
-              title={t('header.undoTitle')}
-              color="danger"
+              onClick={progress}
+              disabled={deckEmpty || haveChoiceToDo}
+              variant="outlined"
               size="sm"
             >
-              ↩
+              {deckEmpty ? '››' : `›› (${Math.min(2, drawPile.length)})`}
             </Button>
-          )}
-          <Button
-            onClick={progress}
-            disabled={deckEmpty || haveChoiceToDo}
-            variant="outlined"
-            size="sm"
-          >
-            <span className="hidden lg:inline">›› </span>
-            {t('header.progress')}
-            {deckEmpty ? '' : ` (${Math.min(2, drawPile.length)})`}
-          </Button>
-          <Button onClick={endTurnVoluntary} disabled={haveChoiceToDo} variant="outlined" size="sm">
-            {t('header.endTurn')}
-          </Button>
-        </div>
+            <Button
+              onClick={endTurnVoluntary}
+              disabled={haveChoiceToDo}
+              variant="outlined"
+              size="sm"
+            >
+              {t('header.endTurn')}
+            </Button>
+          </div>
+        )}
+        {gameState.phase === Phase.ROUND_START && (
+          <div className="flex items-center gap-1">
+            <Button onClick={startTurn} variant="outlined" size="sm">
+              {t('roundpreview.start')}
+            </Button>
+          </div>
+        )}
+        {gameState.phase === Phase.TURN_END && gameState.drawPile.length > 0 && (
+          <div className="flex items-center gap-1">
+            <Button onClick={startTurn} variant="outlined" size="sm">
+              {t('endturn.start')}
+            </Button>
+          </div>
+        )}
+        {(gameState.phase === Phase.ROUND_END ||
+          (gameState.phase === Phase.TURN_END && gameState.drawPile.length === 0)) && (
+          <div className="flex items-center gap-1">
+            <Button onClick={startRound} variant="outlined" size="sm">
+              {t('endround.end')}
+            </Button>
+          </div>
+        )}
 
         <div className="flex items-center gap-1">
           <Button

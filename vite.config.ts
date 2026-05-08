@@ -64,7 +64,13 @@ export default defineConfig({
             src: 'icon-512x512.png', // Large icon
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable', // Works in various environments
+            purpose: 'any',
+          },
+          {
+            src: 'icon-512x512.png', // Large icon
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
           },
         ],
       },
