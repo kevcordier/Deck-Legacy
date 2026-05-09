@@ -14,7 +14,9 @@ export class DiscoverCardStrategy implements CardActionStrategy {
     ids.forEach(instanceId => {
       const cardDef = this.cardDefs[gameState.instances[instanceId].cardId];
 
-      if (!cardDef.parchmentCard) {
+      if (cardDef.parchmentCard) {
+        gameState.onGoingParchment = instanceId;
+      } else {
         gameState.lastAddedCards.push(instanceId);
 
         if (getActiveState(gameState.instances[instanceId], this.cardDefs)?.permanent) {
@@ -22,8 +24,6 @@ export class DiscoverCardStrategy implements CardActionStrategy {
         } else {
           gameState.discardPile = [...new Set([...gameState.discardPile, instanceId])];
         }
-      } else {
-        gameState.onGoingParchment = instanceId;
       }
     });
 

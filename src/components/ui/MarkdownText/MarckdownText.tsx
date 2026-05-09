@@ -12,7 +12,7 @@ import {
 } from '@components/ui/Icon/icon';
 import { Title } from '@components/ui/Title/Title';
 import React from 'react';
-import ReactMarkdown, { type Components } from 'react-markdown';
+import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 const ICON_MAP: Record<string, React.ComponentType> = {
@@ -57,45 +57,52 @@ type MarkdownTextProps = {
 };
 
 export function MarkdownText({ text, ink }: MarkdownTextProps) {
-  const components: Components = {
-    img: ({ src, alt }) => <IconImg src={src} alt={alt} className="inline-block size-5" />,
-    h1: () => '',
-    h2: ({ children }) => (
-      <Title level={2} className={`mb-1 not-first-of-type:mt-3 ${ink ? 'text-base-ink!' : ''}`}>
-        {children}
-      </Title>
-    ),
-    h3: ({ children }) => (
-      <Title level={3} className={`mb-1 not-first-of-type:mt-3 ${ink ? 'text-base-ink!' : ''}`}>
-        {children}
-      </Title>
-    ),
-    strong: ({ children }) => <strong className="font-bold">{children}</strong>,
-    hr: () => <Divider color="border" />,
-    p: ({ children }) => <p className="mt-2">{children}</p>,
-    table: ({ children }) => (
-      <div className="mt-2 overflow-x-auto">
-        <table className="w-full border-collapse text-sm">{children}</table>
-      </div>
-    ),
-    thead: ({ children }) => <thead className="bg-background-secondary">{children}</thead>,
-    tbody: ({ children }) => <tbody className="divide-y divide-border">{children}</tbody>,
-    tr: ({ children }) => (
-      <tr className="hover:bg-background-secondary/50 transition-colors">{children}</tr>
-    ),
-    th: ({ children }) => (
-      <th className="border border-border px-3 py-2 text-left font-semibold text-primary">
-        {children}
-      </th>
-    ),
-    td: ({ children }) => (
-      <td className="border border-border px-3 py-2 text-secondary">{children}</td>
-    ),
-  };
-
   return (
     <div className={`${ink ? 'text-base-ink!' : ''}`}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          img: ({ src, alt }) => <IconImg src={src} alt={alt} className="inline-block size-5" />,
+          h1: () => '',
+          h2: ({ children }) => (
+            <Title
+              level={2}
+              className={`mb-1 not-first-of-type:mt-3 ${ink ? 'text-base-ink!' : ''}`}
+            >
+              {children}
+            </Title>
+          ),
+          h3: ({ children }) => (
+            <Title
+              level={3}
+              className={`mb-1 not-first-of-type:mt-3 ${ink ? 'text-base-ink!' : ''}`}
+            >
+              {children}
+            </Title>
+          ),
+          strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+          hr: () => <Divider color="border" />,
+          p: ({ children }) => <p className="mt-2">{children}</p>,
+          table: ({ children }) => (
+            <div className="mt-2 overflow-x-auto">
+              <table className="w-full border-collapse text-sm">{children}</table>
+            </div>
+          ),
+          thead: ({ children }) => <thead className="bg-background-secondary">{children}</thead>,
+          tbody: ({ children }) => <tbody className="divide-y divide-border">{children}</tbody>,
+          tr: ({ children }) => (
+            <tr className="hover:bg-background-secondary/50 transition-colors">{children}</tr>
+          ),
+          th: ({ children }) => (
+            <th className="border border-border px-3 py-2 text-left font-semibold text-primary">
+              {children}
+            </th>
+          ),
+          td: ({ children }) => (
+            <td className="border border-border px-3 py-2 text-secondary">{children}</td>
+          ),
+        }}
+      >
         {injectIcons(text)}
       </ReactMarkdown>
     </div>
