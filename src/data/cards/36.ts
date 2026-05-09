@@ -12,7 +12,7 @@ export const darkKnight: CardDef = {
       tags: [CardTag.ENEMY],
       negative: true,
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1fd6f7fc-7918-4c18-8e7a-5fc7d898aa11/anim=false,width=450,optimized=true/image%20-%202024-09-08T171735.811.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/902c58f5-4166-4cc0-b8a7-a7e3d49b393e/450x%3Cauto%3E_so',
       glory: { amount: -3 },
       passives: [
         {

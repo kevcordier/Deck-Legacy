@@ -17,7 +17,7 @@ export const darkPrince: CardDef = {
       id: 1,
       name: 'Dark Prince',
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d874034e-ba76-438c-99a1-c637a4314f79/anim=false,width=450,optimized=true/00013-2515686132.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/1fd6f7fc-7918-4c18-8e7a-5fc7d898aa11/450x%3Cauto%3E_so',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -7 },
