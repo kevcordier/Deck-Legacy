@@ -16,7 +16,7 @@ export const cityFire: CardDef = {
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
         {
-          id: '49_1_1',
+          id: '49-1-1',
           trigger: Trigger.END_OF_ROUND,
           actionEffects: [
             {
@@ -61,7 +61,7 @@ export const cityFire: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/86f44a78-5253-43b3-0045-b513f59fc800/anim=false,width=450,optimized=true/312846.jpeg',
       actions: [
         {
-          id: '49-3-a0',
+          id: '49-3-1',
           endsTurn: true,
           actionEffects: [
             {

@@ -31,10 +31,8 @@ export function TriggerPileSection({
         const state =
           def?.states.find(candidate => candidate.id === inst?.stateId) ?? def?.states[0];
         if (!inst || !def || !state) return null;
-        const actionIdx =
-          state?.actions?.findIndex(action => action.id === trigger.effectDef.id) ?? -1;
-        const cardName = tCardName(t, def?.id, state?.id);
-        const actionLabel = tCardActionLabel(t, def?.id, state?.id, actionIdx, inst.cumulated);
+        const cardName = tCardName(t, state?.name || '');
+        const actionLabel = tCardActionLabel(t, trigger.effectDef.id, inst.cumulated);
 
         return (
           <div key={triggerId} className="flex flex-col items-center gap-2">

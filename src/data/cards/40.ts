@@ -37,7 +37,7 @@ export const royalArchitect: CardDef = {
           ],
         },
         {
-          id: '40-2-1',
+          id: '40-1-2',
           limitedTime: 1,
           cost: {
             destroy: {
@@ -56,7 +56,7 @@ export const royalArchitect: CardDef = {
           ],
         },
         {
-          id: '40-3-1',
+          id: '40-1-3',
           limitedTime: 1,
           cost: {
             destroy: {

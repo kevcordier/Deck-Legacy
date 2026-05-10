@@ -47,7 +47,7 @@ export const priest: CardDef = {
       name: 'Cardinal',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/73000c23-90cb-4924-b674-a885720c9cba/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/455e17fd-b4d9-4734-b129-012990339b6b/450x%3Cauto%3E_so',
       glory: { amount: 5 },
       actions: [
         {

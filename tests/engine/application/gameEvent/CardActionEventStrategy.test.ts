@@ -1,12 +1,11 @@
-import { makeDefs, makeState, makeStickerDefs } from '../fixtures';
+import { makeState } from '../fixtures';
 import { CardActionEventStrategy } from '@engine/application/gameEvent/CardActionEventStrategy';
 import { GameEventType } from '@engine/domain/enums';
 import type { CardActionEvent } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
 describe('CardActionEventStrategy', () => {
-  const strategy = new CardActionEventStrategy(makeDefs(), makeStickerDefs());
+  const strategy = new CardActionEventStrategy();
 
   it('merges gameStateChanges into game state', () => {
     const gs = makeState({ resources: { gold: 1 } });
@@ -60,19 +59,5 @@ describe('CardActionEventStrategy', () => {
       endsTurn: false,
     } as CardActionEvent);
     expect(result.instances[1].stateId).toBe(2);
-  });
-
-  it('applies TurnEndedStrategy when endsTurn is true', () => {
-    const gs = makeState();
-    const result = strategy.apply(gs, {
-      id: 'e1',
-      type: GameEventType.CARD_ACTION,
-      timestamp: 0,
-      gameStateChanges: {},
-      sourceInstanceId: 1,
-      actionId: 'a1',
-      endsTurn: true,
-    } as CardActionEvent);
-    expect(result.phase).toBe(Phase.TURN_END);
   });
 });

@@ -10,6 +10,8 @@ export const southHills: CardDef = {
       id: 1,
       name: 'South Hills',
       tags: [CardTag.LAND],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/e948061a-20dd-47a2-a7a7-fbadebfdd284/450x%3Cauto%3E_so',
       productions: [{ gold: 1 }],
       upgrade: [
         { cost: { resources: [{ stone: 2, gold: 1 }] }, upgradeTo: 2 },
@@ -20,6 +22,8 @@ export const southHills: CardDef = {
       id: 2,
       name: 'Terraced Land',
       tags: [CardTag.LAND],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/0d3913d3-6ed1-4218-a33a-7a5dbe5eb62f/450x%3Cauto%3E_so',
       productions: [
         {
           [ResourceType.WEAPON]: 1,

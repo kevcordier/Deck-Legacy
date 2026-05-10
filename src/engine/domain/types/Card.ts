@@ -117,6 +117,7 @@ export type Passive = {
   global?: boolean;
   cards?: CardSelector;
   trigger?: {
+    id: string;
     type: Trigger;
     cards?: CardSelector;
     actions?: ActionEffect[];

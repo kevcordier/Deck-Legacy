@@ -9,6 +9,8 @@ export const raid: CardDef = {
       id: 1,
       name: 'Raid',
       tags: [CardTag.EVENT],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/83621fed-b9f4-4c52-85bd-16907fceecbc/450x%3Cauto%3E_so_hm',
       actions: [
         {
           id: '116-1-1',
@@ -47,6 +49,8 @@ export const raid: CardDef = {
       id: 2,
       name: 'Looting',
       tags: [CardTag.EVENT],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/97e6bffd-60a3-4597-b19e-c2b39d2c2520/450x%3Cauto%3E_so',
       actions: [
         {
           id: '116-2-1',
@@ -99,6 +103,8 @@ export const raid: CardDef = {
       id: 3,
       name: 'Pillaging',
       tags: [CardTag.EVENT],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/0016c3ca-71d8-4dba-99c4-1fcf29b4da6b/450x%3Cauto%3E_so',
       glory: { amount: 3 },
       actions: [
         {
@@ -152,6 +158,8 @@ export const raid: CardDef = {
       id: 4,
       name: 'Plundering',
       tags: [CardTag.EVENT],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/4840fa0b-1410-4f29-9556-2ddb5de024a0/450x%3Cauto%3E_so',
       glory: { amount: 5 },
       actions: [
         {

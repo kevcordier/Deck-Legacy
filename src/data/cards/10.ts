@@ -109,7 +109,7 @@ export const bandit2: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/afa4cf05-2f0a-4ac7-bc90-bd9d3f2f5832/anim=false,width=450,optimized=true/ComfyUI_00998_.jpeg',
       actions: [
         {
-          id: '8-1-1',
+          id: '10-2-1',
           actionEffects: [
             {
               id: 1,

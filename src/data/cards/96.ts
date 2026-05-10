@@ -15,6 +15,8 @@ export const stable: CardDef = {
       id: 1,
       name: 'Stable',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/68ace779-8119-408b-9c06-5e2644ee35bb/450x%3Cauto%3E_so',
       actions: [
         {
           id: '96-1-1',
@@ -47,6 +49,8 @@ export const stable: CardDef = {
       id: 2,
       name: 'Stable',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/b313e69c-35b8-4ae0-9682-805bb592d63b/450x%3Cauto%3E_so',
       actions: [
         {
           id: '96-2-1',
@@ -79,6 +83,8 @@ export const stable: CardDef = {
       id: 3,
       name: 'Large Stable',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/9d4fb70e-211e-4110-87d7-09ef93c67d0d/450x%3Cauto%3E_so',
       actions: [
         {
           id: '96-3-1',
@@ -111,6 +117,8 @@ export const stable: CardDef = {
       id: 4,
       name: 'Groom',
       tags: [CardTag.PERSON],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/d72ad081-6fcb-48ee-b8c2-9bb049139e66/450x%3Cauto%3E_so',
       actions: [
         {
           id: '96-4-1',

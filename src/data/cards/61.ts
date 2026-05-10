@@ -61,7 +61,7 @@ export const westCanyon: CardDef = {
       ],
       passives: [
         {
-          id: 'count_as_2',
+          id: '61-2-1',
           type: PassiveType.COUNT_AS_2,
         },
       ],

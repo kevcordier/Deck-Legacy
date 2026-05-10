@@ -15,6 +15,8 @@ export const grandCastle: CardDef = {
       id: 1,
       name: 'Grand Castle',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/50de741d-36d7-4d51-8ad0-bd758b20d74f/450x%3Cauto%3E_so',
       glory: { amount: 15 },
       productions: [{ [ResourceType.WEAPON]: 1 }],
       actions: [
@@ -48,6 +50,8 @@ export const grandCastle: CardDef = {
       id: 2,
       name: 'Huge Castle',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/69cbc639-698e-4889-a914-52e800f557d4/450x%3Cauto%3E_so',
       glory: { amount: 20 },
       productions: [{ [ResourceType.WEAPON]: 2 }],
       actions: [
@@ -80,6 +84,8 @@ export const grandCastle: CardDef = {
       id: 3,
       name: 'Fortress',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/dc7de93f-349c-4071-8faf-a5200c6bdb10/450x%3Cauto%3E_so',
       glory: { amount: 25 },
       productions: [{ [ResourceType.WEAPON]: 2 }],
       actions: [
@@ -112,6 +118,8 @@ export const grandCastle: CardDef = {
       id: 4,
       name: 'Impregnable Fortress',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/d5844a74-8e74-45ba-893a-510546f28d85/450x%3Cauto%3E_so',
       glory: { amount: 30 },
       productions: [{ [ResourceType.WEAPON]: 3 }],
       actions: [

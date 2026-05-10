@@ -68,6 +68,7 @@ export const thunderstorm: CardDef = {
       passives: [
         {
           ...CardPassives[PassiveType.ADJUST_PRODUCTION],
+          id: '35-2-1',
           cards: {
             scope: [TargetScope.BOARD],
             tags: [CardTag.LAND],
@@ -76,7 +77,11 @@ export const thunderstorm: CardDef = {
             gold: 2,
           },
         },
-        { ...CardPassives[PassiveType.DESACTIVATE_OPTION], options: [Options.ADVANCE] },
+        {
+          ...CardPassives[PassiveType.DESACTIVATE_OPTION],
+          id: '35-2-2',
+          options: [Options.ADVANCE],
+        },
       ],
       actions: [
         {

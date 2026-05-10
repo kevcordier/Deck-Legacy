@@ -18,19 +18,17 @@ export const ICON_PASSTHROUGH = {
   trigger: '{{trigger}}',
 };
 
-export function tCardName(t: TFunction, cardId = 0, stateId = 0): React.ReactNode {
-  return renderTextWithIcons(t(`names.${cardId}_${stateId}`, { ns: 'cards' }));
+export function tCardName(t: TFunction, stateName = ''): React.ReactNode {
+  return renderTextWithIcons(t(`names.${stateName}`, { ns: 'cards' }));
 }
 
 export function tCardActionLabel(
   t: TFunction,
-  cardId = 0,
-  stateId = 0,
-  idx: string | number = '0',
+  actionId: string,
   accumulated?: number,
 ): React.ReactNode {
   return renderTextWithIcons(
-    t(`labels.${cardId}_${stateId}_a${idx}`, {
+    t(`actions.${actionId}`, {
       ns: 'cards',
       accumulated,
       ...ICON_PASSTHROUGH,
@@ -40,13 +38,11 @@ export function tCardActionLabel(
 
 export function tCardPassiveLabel(
   t: TFunction,
-  cardId = 0,
-  stateId = 0,
-  idx: string | number = '0',
+  passiveId: string,
   accumulated?: number,
 ): React.ReactNode {
   return renderTextWithIcons(
-    t(`labels.${cardId}_${stateId}_p${idx}`, {
+    t(`passives.${passiveId}`, {
       ns: 'cards',
       ...ICON_PASSTHROUGH,
       accumulated,
@@ -56,7 +52,7 @@ export function tCardPassiveLabel(
 
 export function tCardGloryLabel(t: TFunction, cardId = 0, stateId = 0): React.ReactNode {
   return renderTextWithIcons(
-    t(`labels.${cardId}_${stateId}_g0`, {
+    t(`glory.${cardId}-${stateId}`, {
       ns: 'cards',
       ...ICON_PASSTHROUGH,
     }),
@@ -70,14 +66,14 @@ export function tCardTrackAction(
   idx: string | number = '0',
 ): React.ReactNode {
   return renderTextWithIcons(
-    t(`labels.${cardId}_${stateId}_t${idx}`, {
+    t(`tracks.${cardId}-${stateId}-${idx}`, {
       ns: 'cards',
     }),
   );
 }
 
 export function tCardDescription(t: TFunction, cardId = 0, stateId = 0, idx = 0): string {
-  return t(`labels.${cardId}_${stateId}_d${idx}`, {
+  return t(`descriptions.${cardId}-${stateId}-${idx}`, {
     ns: 'cards',
   });
 }

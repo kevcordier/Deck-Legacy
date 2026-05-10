@@ -17,13 +17,13 @@ const makeStep = (id: number): StepDef => ({
   ],
 });
 
-export const mercenay: CardDef = {
+export const mercenary: CardDef = {
   id: 27,
-  name: 'Mercenay',
+  name: 'Mercenary',
   states: [
     {
       id: 1,
-      name: 'Mercenay',
+      name: 'Mercenary',
       tags: [CardTag.PERSON],
       illustration:
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/610b2928-1cd1-4d21-af6f-3fb85d074067/anim=false,width=450,optimized=true/01132-3623825044.jpeg',
@@ -79,7 +79,7 @@ export const mercenay: CardDef = {
     },
     {
       id: 2,
-      name: 'Sir ___',
+      name: 'Sir _____',
       chooseName: true,
       tags: [CardTag.PERSON, CardTag.KNIGHT],
       illustration:

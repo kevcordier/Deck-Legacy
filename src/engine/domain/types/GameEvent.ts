@@ -1,5 +1,5 @@
 import type { GameEventType } from '@engine/domain/enums';
-import type { GameState, Resources } from '@engine/domain/types';
+import type { GameState, Phase, Resources, TriggerEntry } from '@engine/domain/types';
 
 export interface GameEvent {
   id: string;
@@ -69,7 +69,6 @@ export interface CardActionEvent extends GameEvent {
   gameStateChanges: Partial<GameState>;
   sourceInstanceId: number;
   actionId: string;
-  endsTurn: boolean;
 }
 
 export interface SkipTriggerEvent extends GameEvent {
@@ -79,4 +78,10 @@ export interface SkipTriggerEvent extends GameEvent {
 
 export interface TurnEndedEvent extends GameEvent {
   type: GameEventType.TURN_ENDED;
+}
+
+export interface TriggerEventsEvent extends GameEvent {
+  type: GameEventType.TRIGGER_EVENTS;
+  triggerPile: Record<string, TriggerEntry>;
+  phase: Phase;
 }

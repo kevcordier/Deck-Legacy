@@ -767,6 +767,7 @@ describe('getInstancesTriggerEffects', () => {
             id: 'trig',
             type: PassiveType.ADD_TRIGGER,
             trigger: {
+              id: 't1',
               type: Trigger.END_OF_TURN,
               actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
             },
@@ -794,6 +795,7 @@ describe('getInstancesTriggerEffects', () => {
             id: 'trig',
             type: PassiveType.ADD_TRIGGER,
             trigger: {
+              id: 't1',
               type: Trigger.END_OF_TURN,
               cards: { scope: [TargetScope.BOARD] },
               actions: [
@@ -828,6 +830,7 @@ describe('getInstancesTriggerEffects', () => {
             id: 'trig',
             type: PassiveType.ADD_TRIGGER,
             trigger: {
+              id: 't1',
               type: Trigger.END_OF_TURN,
               cards: { scope: [TargetScope.BOARD] },
               actions: [
@@ -861,6 +864,7 @@ describe('getInstancesTriggerEffects', () => {
             id: 'trig',
             type: PassiveType.ADD_TRIGGER,
             trigger: {
+              id: 't1',
               type: Trigger.ON_PLAY,
               cards: { ids: [99] },
               actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
@@ -880,7 +884,7 @@ describe('getInstancesTriggerEffects', () => {
           {
             id: 'trig',
             type: PassiveType.ADD_TRIGGER,
-            trigger: { type: Trigger.END_OF_TURN },
+            trigger: { id: 't1', type: Trigger.END_OF_TURN },
           },
         ],
       },
@@ -897,6 +901,7 @@ describe('getInstancesTriggerEffects', () => {
             id: 'trig',
             type: PassiveType.ADD_TRIGGER,
             trigger: {
+              id: 't1',
               type: Trigger.END_OF_TURN,
               cards: { scope: [TargetScope.BOARD], ids: [99] }, // no card with id 99 on board
               actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],

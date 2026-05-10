@@ -81,6 +81,7 @@ export const alchemist: CardDef = {
           id: '81-3-1',
           type: PassiveType.ADD_TRIGGER,
           trigger: {
+            id: '81-3-1',
             type: Trigger.ON_DISCARD,
             cards: {
               scope: [TargetScope.DISCARDED],

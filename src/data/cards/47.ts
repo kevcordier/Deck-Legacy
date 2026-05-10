@@ -26,7 +26,7 @@ export const plague: CardDef = {
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
         {
-          id: '47_1_1',
+          id: '47-1-1',
           trigger: Trigger.END_OF_ROUND,
           actionEffects: [
             {
@@ -63,7 +63,7 @@ export const plague: CardDef = {
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
         {
-          id: '47_2_1',
+          id: '47-2-1',
           trigger: Trigger.ON_PLAY,
           actionEffects: [
             {
@@ -77,7 +77,7 @@ export const plague: CardDef = {
           ],
         },
         {
-          id: '47_2_2',
+          id: '47-2-2',
           trigger: Trigger.END_OF_ROUND,
           actionEffects: [
             {
@@ -90,7 +90,7 @@ export const plague: CardDef = {
           ],
         },
         {
-          id: '47_2_3',
+          id: '47-2-3',
           cost: {
             resources: [
               {

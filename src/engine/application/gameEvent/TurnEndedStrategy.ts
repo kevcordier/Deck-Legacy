@@ -1,8 +1,7 @@
 import type { GameEventStrategy } from './GameEventStrategy';
-import { getInstancesTriggerEffects } from '@engine/application/cardHelpers';
-import { endTurn } from '@engine/application/gameStateHelper';
-import { Trigger } from '@engine/domain/enums';
-import type { CardDef, GameState, Sticker } from '@engine/domain/types';
+import { cardShouldStayInPlay } from '@engine/application/cardHelpers';
+import { discardCards } from '@engine/application/gameStateHelper';
+import type { CardDef, GameState, Passive, Sticker } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 
 export class TurnEndedStrategy implements GameEventStrategy {
@@ -10,19 +9,28 @@ export class TurnEndedStrategy implements GameEventStrategy {
     private readonly cardDefs: Record<number, CardDef>,
     private readonly stickerDefs: Record<number, Sticker>,
   ) {}
-  apply(gameState: GameState): GameState {
-    getInstancesTriggerEffects(
-      gameState.board.map(cardId => gameState.instances[cardId]),
-      this.cardDefs,
-      this.stickerDefs,
-      Trigger.END_OF_TURN,
-      gameState,
-    ).forEach(effectDef => {
-      gameState.triggerPile[crypto.randomUUID()] = effectDef;
+  apply(_gameState: GameState): GameState {
+    const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
+    gameState.resources = {};
+
+    const cardsToDiscard = gameState.board.filter(
+      id => !cardShouldStayInPlay(id, gameState, this.cardDefs),
+    );
+
+    const newBoardEffects: Record<number, Passive[]> = {};
+    Object.keys(gameState.boardEffects).forEach((key: string) => {
+      if (
+        gameState.boardEffects[Number(key)] &&
+        (gameState.board.includes(Number(key)) ||
+          gameState.boardEffects[Number(key)].some(effect => effect.global === true))
+      )
+        newBoardEffects[Number(key)] = gameState.boardEffects[Number(key)];
     });
 
+    gameState.boardEffects = newBoardEffects;
     return {
-      ...endTurn(gameState, this.cardDefs, this.stickerDefs),
+      ...gameState,
+      ...discardCards(gameState, cardsToDiscard, this.cardDefs, this.stickerDefs),
       phase: Phase.TURN_END,
     };
   }

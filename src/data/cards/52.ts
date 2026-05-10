@@ -24,6 +24,7 @@ export const darkPrince: CardDef = {
       passives: [
         {
           ...CardPassives[PassiveType.DESACTIVATE_OPTION],
+          id: '52-1-1',
           options: [Options.ADVANCE, Options.UPGRADE, Options.END_TURN_ACTION],
         },
       ],

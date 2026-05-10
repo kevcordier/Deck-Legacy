@@ -49,6 +49,7 @@ describe('DiscardCardStrategy', () => {
             id: 'p1',
             type: PassiveType.ADD_TRIGGER,
             trigger: {
+              id: 'p1',
               type: Trigger.ON_DISCARD,
               cards: { scope: [TargetScope.DISCARDED], tags: [CardTag.PERSON] },
               actions: [
@@ -88,6 +89,7 @@ describe('DiscardCardStrategy', () => {
             id: 'p1',
             type: PassiveType.ADD_TRIGGER,
             trigger: {
+              id: 'p1',
               type: Trigger.ON_DISCARD,
               cards: { scope: [TargetScope.DISCARDED], tags: [CardTag.PERSON] },
               actions: [{ id: 1, type: ActionEffectType.ADD_RESOURCES }],

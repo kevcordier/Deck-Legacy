@@ -148,7 +148,7 @@ export const hill: CardDef = {
       glory: { amount: 7 },
       passives: [
         {
-          id: 'ADJUST_production',
+          id: '11-4-1',
           type: PassiveType.ADJUST_PRODUCTION,
           cards: {
             scope: [TargetScope.SELF],

@@ -53,6 +53,7 @@ export const deepPit: CardDef = {
       passives: [
         {
           ...CardPassives[PassiveType.ADJUST_PRODUCTION],
+          id: '74-2-1',
           cards: {
             scope: [TargetScope.BOARD],
             tags: [CardTag.BUILDING],

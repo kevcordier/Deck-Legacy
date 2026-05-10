@@ -22,9 +22,10 @@ export const assassin: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a34eebe4-d52c-4f21-811c-688ff14c440b/anim=false,width=450,optimized=true/J48J5DR9Z0YSGWZYXZHYJGXKV0.jpeg',
       passives: [
         {
-          id: '48_1_1',
+          id: '48-1-1',
           type: PassiveType.ADD_TRIGGER,
           trigger: {
+            id: '48-1-1',
             type: Trigger.ON_PLAY,
             cards: {
               scope: [TargetScope.DRAWN],
@@ -52,7 +53,7 @@ export const assassin: CardDef = {
       ],
       actions: [
         {
-          id: '48_2_3',
+          id: '48-1-1',
           cost: {
             resources: [
               {
@@ -86,7 +87,7 @@ export const assassin: CardDef = {
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
         {
-          id: '48_2_1',
+          id: '48-2-1',
           trigger: Trigger.ON_PLAY,
           actionEffects: [
             {
@@ -100,7 +101,7 @@ export const assassin: CardDef = {
           ],
         },
         {
-          id: '48_2_2',
+          id: '48-2-2',
           trigger: Trigger.END_OF_ROUND,
           actionEffects: [
             {
@@ -113,7 +114,7 @@ export const assassin: CardDef = {
           ],
         },
         {
-          id: '48_2_3',
+          id: '48-2-3',
           cost: {
             resources: [
               {

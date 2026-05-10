@@ -68,7 +68,7 @@ export const opportunist: CardDef = {
       glory: { amount: 4 },
       actions: [
         {
-          id: '21-4-a0',
+          id: '21-4-1',
           actionEffects: [
             {
               id: 1,

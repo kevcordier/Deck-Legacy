@@ -18,7 +18,7 @@ import {
 } from '@engine/application/cardHelpers';
 import { getPickNumbers } from '@engine/application/effectResolver';
 import { canUseOptions } from '@engine/application/gameStateHelper';
-import { Options, PassiveType } from '@engine/domain/enums';
+import { Options } from '@engine/domain/enums';
 import type { CardInstance } from '@engine/domain/types';
 import {
   tCardActionLabel,
@@ -132,7 +132,7 @@ export function GameCard({
                   {nameSuffix}
                 </span>
               ) : (
-                tCardName(t, instance.cardId, cs.id)
+                tCardName(t, cs.name || '')
               )}
             </span>
           </span>
@@ -204,25 +204,17 @@ export function GameCard({
               <PassifIcon className="size-3 @3xs:size-6" /> {tCardGloryLabel(t, def.id, cs.id)}
             </span>
           )}
-          {(cs.passives ?? []).map((passive, i) => (
+          {(cs.passives ?? []).map(passive => (
             <span key={passive.id} className={cardActionsClass}>
               <PassifIcon className="size-3 @3xs:size-6" />{' '}
-              {passive.type === PassiveType.STAY_IN_PLAY
-                ? t('card.stayInPlay')
-                : tCardPassiveLabel(t, def.id, cs.id, i, instance.cumulated)}
+              {tCardPassiveLabel(t, passive.id, instance.cumulated)}
             </span>
           ))}
 
           {!isBlocked &&
             !isParchment &&
-            actions.map((action, i) => {
-              const actionLabel = tCardActionLabel(
-                t,
-                instance.cardId,
-                cs.id,
-                i,
-                instance.cumulated,
-              );
+            actions.map(action => {
+              const actionLabel = tCardActionLabel(t, action.id, instance.cumulated);
               return (
                 <CardAction
                   key={action.id}
@@ -260,21 +252,26 @@ export function GameCard({
               );
               const optionDisabled = !canUseOptions(gameState, Options.UPGRADE);
               const targetState = def?.states.find(s => s.id === upg.upgradeTo);
+              const cardText = ({ name, tags }: { name?: string; tags?: string[] }) => {
+                if (name) return t(`names.${name}`, { ns: 'cards' });
+                if (tags && tags.length > 0) return t(`tags.${tags[0]}`, { ns: 'cards' });
+                return t('card.cost.cards');
+              };
               const discardLabel = effectiveUpgradeCost.discard
                 ?.map(d => {
                   return t('card.cost.discard', {
                     count: getPickNumbers(d).pickMin,
-                    type: d.name ?? d.tags?.[0] ?? t('card.cost.cards'),
+                    type: cardText({ name: d.name, tags: d.tags }),
                   });
                 })
                 .join(', ');
               const destroyLabel = effectiveUpgradeCost.destroy
                 ? t('card.cost.destroy', {
                     count: getPickNumbers(effectiveUpgradeCost.destroy).pickMin,
-                    type:
-                      effectiveUpgradeCost.destroy.name ??
-                      effectiveUpgradeCost.destroy.tags?.[0] ??
-                      t('card.cost.cards'),
+                    type: cardText({
+                      name: effectiveUpgradeCost.destroy.name,
+                      tags: effectiveUpgradeCost.destroy.tags,
+                    }),
                   })
                 : '';
 
@@ -289,7 +286,7 @@ export function GameCard({
                 >
                   ⬆{' '}
                   {targetState
-                    ? tCardName(t, def.id, targetState.id)
+                    ? tCardName(t, targetState.name || '')
                     : t('card.state', { id: upg.upgradeTo })}
                   {(effectiveUpgradeCost.resources?.[0] ?? discardLabel ?? destroyLabel) && (
                     <span>

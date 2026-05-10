@@ -17,6 +17,7 @@ export const darkKnight: CardDef = {
       passives: [
         {
           ...CardPassives[PassiveType.DESACTIVATE_OPTION],
+          id: '36-1-1',
           options: [Options.ADVANCE, Options.UPGRADE, Options.END_TURN_ACTION],
         },
       ],

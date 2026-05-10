@@ -23,6 +23,8 @@ export const largeTemple: CardDef = {
       id: 1,
       name: 'Large Temple',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/198e4f96-be8c-4e1e-8ba3-9aa2b7d094b9/450x%3Cauto%3E_so',
       glory: { amount: 18 },
       actions: [
         {
@@ -68,6 +70,8 @@ export const largeTemple: CardDef = {
       id: 2,
       name: 'Ornate Temple',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/f822506d-abc0-4888-9bca-fd4acb4ad15b/450x%3Cauto%3E_so',
       glory: { amount: 22 },
       actions: [
         {
@@ -114,6 +118,8 @@ export const largeTemple: CardDef = {
       id: 3,
       name: 'Legendary Temple',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/6dc4b5dc-7815-4e3b-a096-0c53c75a5439/450x%3Cauto%3E_so',
       glory: { amount: 28 },
       actions: [
         {
@@ -158,6 +164,8 @@ export const largeTemple: CardDef = {
       id: 4,
       name: 'Temple of Light',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/a816fa23-8b65-465a-b2c3-7a468a8d0fca/450x%3Cauto%3E_so',
       glory: { amount: 30, emptyValues: 1 },
       actions: [
         {

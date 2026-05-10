@@ -14,9 +14,10 @@ export const volcanicEruption: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c0a9fb7a-78c2-452f-a2f4-947f4c527cd8/anim=false,width=450,optimized=true/38CERAJFMBW55EYDDDX8W2T1M0.jpeg',
       passives: [
         {
-          id: '1',
+          id: '20-1-1',
           type: PassiveType.ADD_TRIGGER,
           trigger: {
+            id: '20-1-1',
             type: Trigger.ON_PLAY,
             cards: {
               scope: [TargetScope.DRAWN],
@@ -65,7 +66,7 @@ export const volcanicEruption: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/86f44a78-5253-43b3-0045-b513f59fc800/anim=false,width=450,optimized=true/312846.jpeg',
       actions: [
         {
-          id: '20-3-a0',
+          id: '20-3-1',
           endsTurn: true,
           actionEffects: [
             {

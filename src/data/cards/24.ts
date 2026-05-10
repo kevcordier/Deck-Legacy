@@ -21,6 +21,7 @@ export const scientist: CardDef = {
       passives: [
         {
           ...CardPassives[PassiveType.ADJUST_PRODUCTION],
+          id: '24-1-1',
           resources: {
             [ResourceType.GOLD]: 1,
           },

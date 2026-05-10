@@ -66,7 +66,7 @@ function CardStatesModal({ instance, def, onClose }: CardStatesModalProps) {
 
   return (
     <Modal
-      title={tCardName(t, def.id, 1)}
+      title={tCardName(t, def.states[0]?.name || '')}
       subtitle={t('cardPreview.statesMeta', { count: def.states.length, id: instance.id })}
       onClose={onClose}
     >

@@ -29,7 +29,7 @@ function EventRow({ event, gameState, defs }: EventRowProps) {
   const cardName = (instanceId: number): React.ReactNode => {
     const inst = gameState.instances[instanceId];
     const cs = getActiveState(inst, defs);
-    return tCardName(t, inst.cardId, cs.id);
+    return tCardName(t, cs.name || '');
   };
 
   const time = new Date(event.timestamp).toLocaleTimeString([], {

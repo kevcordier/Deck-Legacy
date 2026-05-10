@@ -1,5 +1,4 @@
 import {
-  cardShouldStayInPlay,
   getActiveState,
   getEffectiveGlory,
   getInstancesTriggerEffects,
@@ -107,32 +106,6 @@ export const destroyCards = (_gameState: GameState, cardIds: number[]): GameStat
     }
   });
   return gameState;
-};
-
-export const endTurn = (
-  _gameState: GameState,
-  cardDefs: Record<number, CardDef>,
-  stickerDefs: Record<number, Sticker>,
-): GameState => {
-  const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
-  gameState.resources = {};
-
-  const cardsToDiscard = gameState.board.filter(
-    id => !cardShouldStayInPlay(id, gameState, cardDefs),
-  );
-
-  const newBoardEffects: Record<number, Passive[]> = {};
-  Object.keys(gameState.boardEffects).forEach((key: string) => {
-    if (
-      gameState.boardEffects[Number(key)] &&
-      (gameState.board.includes(Number(key)) ||
-        gameState.boardEffects[Number(key)].some(effect => effect.global === true))
-    )
-      newBoardEffects[Number(key)] = gameState.boardEffects[Number(key)];
-  });
-
-  gameState.boardEffects = newBoardEffects;
-  return { ...gameState, ...discardCards(gameState, cardsToDiscard, cardDefs, stickerDefs) };
 };
 
 export const spendResources = (_gameState: GameState, resources: Resources): GameState => {

@@ -11,6 +11,8 @@ export const aricBlackwood: CardDef = {
       id: 1,
       name: 'Aric Blackwood',
       tags: [CardTag.PERSON],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/c346794d-fd73-41d8-9cf8-40b40797c6da/450x%3Cauto%3E_so',
       productions: [{ gold: 2 }],
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
@@ -31,6 +33,8 @@ export const aricBlackwood: CardDef = {
       id: 2,
       name: 'Eadric Shadowstrike',
       tags: [CardTag.PERSON],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/49826881-9f8d-4eb4-b90f-5b178e47b357/450x%3Cauto%3E_so',
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
         {

@@ -48,7 +48,7 @@ function NewCardSelection({
                       onClick={() => chooseState(inst.id, stateId)}
                     >
                       {stateDef?.name
-                        ? tCardName(t, inst.cardId, stateId)
+                        ? tCardName(t, stateDef.name)
                         : `${t('roundpreview.switchState')} ${stateId}`}
                     </Button>
                   );
@@ -181,6 +181,7 @@ export function MainBoard() {
           <Modal
             title={t('cardAdded.title', { count: gameState.lastAddedCards.length })}
             onClose={() => setDisplayNewCards(false)}
+            className="min-w-4xl"
           >
             <NewCardSelection cardIds={gameState.lastAddedCards} chooseState={chooseState} />
           </Modal>

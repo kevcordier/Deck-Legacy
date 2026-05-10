@@ -42,7 +42,7 @@ export const army: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c482b4a9-396c-4bdd-a45d-3a8866cec739/original=true,quality=90/2025-07-18-235304_Flux%20CopaxTimeless_xplus4_0.jpeg',
       actions: [
         {
-          id: '17_1_1',
+          id: '17-1-1',
           endsTurn: true,
           actionEffects: [
             {
@@ -113,7 +113,7 @@ export const army: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c482b4a9-396c-4bdd-a45d-3a8866cec739/original=true,quality=90/2025-07-18-235304_Flux%20CopaxTimeless_xplus4_0.jpeg',
       actions: [
         {
-          id: '17_2_1',
+          id: '17-2-1',
           endsTurn: true,
           actionEffects: [
             {

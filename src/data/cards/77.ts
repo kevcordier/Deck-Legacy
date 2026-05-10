@@ -8,7 +8,7 @@ export const unknown: CardDef = {
   states: [
     {
       id: 1,
-      name: '___',
+      name: '_____',
       chooseName: true,
       tags: [CardTag.PERSON],
       illustration:
@@ -68,7 +68,7 @@ export const unknown: CardDef = {
     },
     {
       id: 2,
-      name: '___',
+      name: '_____',
       chooseName: true,
       tags: [CardTag.PERSON],
       illustration:

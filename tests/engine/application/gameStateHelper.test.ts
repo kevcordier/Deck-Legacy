@@ -6,7 +6,6 @@ import {
   destroyCards,
   discardCards,
   drawCards,
-  endTurn,
   mergeResources,
   spendResources,
 } from '@engine/application/gameStateHelper';
@@ -191,95 +190,6 @@ describe('spendResources', () => {
     const gs = makeState({ resources: {} });
     const result = spendResources(gs, { gold: 3 });
     expect(result.resources.gold).toBeUndefined();
-  });
-});
-
-// ─── endTurn ──────────────────────────────────────────────────────────────────
-
-describe('endTurn', () => {
-  it('clears resources', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
-    };
-    const gs = makeState({ board: [1], resources: { gold: 5 }, instances: { 1: inst } });
-    const result = endTurn(gs, defs, makeStickerDefs());
-    expect(result.resources).toEqual({});
-  });
-
-  it('discards non-permanent cards from board', () => {
-    const inst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      2: { id: 2, name: 'C', states: [{ id: 1, name: 'S' }] },
-    };
-    const gs = makeState({ board: [2], instances: { 2: inst } });
-    const result = endTurn(gs, defs, makeStickerDefs());
-    expect(result.board).not.toContain(2);
-    expect(result.discardPile).toContain(2);
-  });
-
-  it('keeps permanent cards on board', () => {
-    const inst = makeInstance({ id: 3, cardId: 3, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      3: { id: 3, name: 'P', states: [{ id: 1, name: 'S', permanent: true }] },
-    };
-    const gs = makeState({ board: [3], instances: { 3: inst } });
-    const result = endTurn(gs, defs, makeStickerDefs());
-    expect(result.board).toContain(3);
-  });
-
-  it('keeps cards with STAY_IN_PLAY passive on board', () => {
-    const inst = makeInstance({ id: 4, cardId: 4, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      4: {
-        id: 4,
-        name: 'S',
-        states: [{ id: 1, name: 'S', passives: [{ id: 'sip', type: PassiveType.STAY_IN_PLAY }] }],
-      },
-    };
-    const gs = makeState({ board: [4], instances: { 4: inst } });
-    const result = endTurn(gs, defs, makeStickerDefs());
-    expect(result.board).toContain(4);
-  });
-
-  it('removes boardEffects for discarded cards', () => {
-    const inst = makeInstance({ id: 5, cardId: 5, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      5: { id: 5, name: 'C', states: [{ id: 1, name: 'S' }] },
-    };
-    const gs = makeState({
-      board: [5],
-      instances: { 5: inst },
-      boardEffects: { 5: [{ id: 'z', type: PassiveType.BLOCK }] },
-    });
-    const result = endTurn(gs, defs, makeStickerDefs());
-    expect(result.boardEffects[5]).toBeUndefined();
-  });
-
-  it('keeps global boardEffects for discarded cards', () => {
-    const inst = makeInstance({ id: 14, cardId: 14, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      14: { id: 14, name: 'C', states: [{ id: 1, name: 'S' }] },
-    };
-    const gs = makeState({
-      board: [14],
-      instances: { 14: inst },
-      boardEffects: { 14: [{ id: 'g', type: PassiveType.BLOCK, global: true }] },
-    });
-    const result = endTurn(gs, defs, makeStickerDefs());
-    expect(result.boardEffects[14]).toHaveLength(1);
-    expect(result.boardEffects[14][0].global).toBe(true);
-  });
-
-  it('removes non-global boardEffects when source is not on board', () => {
-    const defs: Record<number, CardDef> = {};
-    const gs = makeState({
-      board: [],
-      instances: {},
-      boardEffects: { 99: [{ id: 'local', type: PassiveType.BLOCK }] },
-    });
-    const result = endTurn(gs, defs, makeStickerDefs());
-    expect(result.boardEffects[99]).toBeUndefined();
   });
 });
 

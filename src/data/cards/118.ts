@@ -15,10 +15,12 @@ export const borderingLands: CardDef = {
       id: 1,
       name: 'Bordering Lands',
       tags: [CardTag.ENEMY, CardTag.LAND],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/5e13d03c-1a40-45d8-a2f8-c01119884362/450x%3Cauto%3E_so',
       negative: true,
       actions: [
         {
-          id: '118_1_a0',
+          id: '118-1-1',
           unlimited: true,
           cost: { resources: [{ [ResourceType.WEAPON]: 4 }] },
           actionEffects: [
@@ -43,9 +45,11 @@ export const borderingLands: CardDef = {
       id: 2,
       name: 'Occupation',
       tags: [CardTag.EVENT],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/fc71dceb-47d0-424b-920b-344eb30d4071/450x%3Cauto%3E_so',
       actions: [
         {
-          id: '118_2_a0',
+          id: '118-2-1',
           unlimited: true,
           cost: { resources: [{ [ResourceType.WEAPON]: 4 }] },
           actionEffects: [
@@ -70,9 +74,11 @@ export const borderingLands: CardDef = {
       id: 3,
       name: 'Unruly Towns',
       tags: [CardTag.LAND],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/436e3391-0a84-4b5f-b0f6-01013431c0da/450x%3Cauto%3E_so',
       actions: [
         {
-          id: '118_3_a0',
+          id: '118-3-1',
           unlimited: true,
           cost: { resources: [{ [ResourceType.WEAPON]: 4 }] },
           actionEffects: [
@@ -86,7 +92,7 @@ export const borderingLands: CardDef = {
           ],
         },
         {
-          id: '118_3_a1',
+          id: '118-3-2',
           trigger: Trigger.ON_UPGRADE,
           actionEffects: [
             {
@@ -109,10 +115,12 @@ export const borderingLands: CardDef = {
       id: 4,
       name: 'Vassal States',
       tags: [CardTag.LAND],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/5e885504-de72-4cb6-a771-c261ed4311a5/450x%3Cauto%3E_so',
       glory: { amount: 0, emptyValues: 9 },
       actions: [
         {
-          id: '118_4_a0',
+          id: '118-4-1',
           actionEffects: [
             {
               id: 1,

@@ -28,7 +28,7 @@ export const handsomeRival: CardDef = {
       glory: { amount: 20, valuePerElement: { accumulation: true, amount: -5 } },
       passives: [
         {
-          id: 'cant_be_destroyed',
+          id: '117-1-1',
           type: PassiveType.CANT_BE_DESTROYED,
           condition: {
             type: 'cardCount',

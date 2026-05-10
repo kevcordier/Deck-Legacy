@@ -62,7 +62,7 @@ export const backstabber: CardDef = {
       negative: true,
       passives: [
         {
-          id: '79-2-p0',
+          id: '79-2-1',
           type: PassiveType.SET_GAME_PARAMETER,
           parameters: {
             advanceCardDrawn: 4,

@@ -41,18 +41,18 @@ export function getChoiceActionLabel(
   defs: Record<number, CardDef>,
   t: TFunction,
 ): ReactNode | undefined {
-  const actionId = Number.parseInt(choice.id.split('-')[1]);
-  if (Number.isNaN(actionId)) return undefined;
+  const actionEffectId = Number.parseInt(choice.id.split('-')[1]);
+  if (Number.isNaN(actionEffectId)) return undefined;
   const inst = instances[choice.sourceInstanceId];
   const def = inst ? defs[inst.cardId] : undefined;
   const state = def?.states.find(s => s.id === inst?.stateId);
-  const effects = state?.actions;
-  if (!effects || !def || !state) return undefined;
-  const effectIdx = effects.findIndex(e =>
-    e.actionEffects.some(a => a.id === actionId && a.type === choice.kind),
+  const actions = state?.actions;
+  if (!actions || !def || !state) return undefined;
+  const action = actions.find(a =>
+    a.actionEffects.some(ae => ae.id === actionEffectId && ae.type === choice.kind),
   );
-  if (effectIdx === -1) return undefined;
-  return tCardActionLabel(t, def.id, state.id, effectIdx, inst.cumulated) ?? undefined;
+  if (!action) return undefined;
+  return tCardActionLabel(t, action.id, inst.cumulated) ?? undefined;
 }
 
 export function makePreviewInstance(

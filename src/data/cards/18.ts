@@ -42,7 +42,7 @@ export const treasury: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/12e629f3-73f2-4edb-91ce-bfb83fa2c2d2/anim=false,width=450,optimized=true/3EDE5F2CA834FA6C31BA7A57752727C762B454184E7180BF089258EA6C299E19.jpeg',
       actions: [
         {
-          id: '17_1_1',
+          id: '18-1-1',
           endsTurn: true,
           actionEffects: [
             {
@@ -108,7 +108,7 @@ export const treasury: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/12e629f3-73f2-4edb-91ce-bfb83fa2c2d2/anim=false,width=450,optimized=true/3EDE5F2CA834FA6C31BA7A57752727C762B454184E7180BF089258EA6C299E19.jpeg',
       actions: [
         {
-          id: '17_1_1',
+          id: '18-2-1',
           endsTurn: true,
           actionEffects: [
             {

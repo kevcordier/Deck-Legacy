@@ -22,7 +22,7 @@ export const fieldWorker2: CardDef = {
         'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/afa4cf05-2f0a-4ac7-bc90-bd9d3f2f5832/anim=false,width=450,optimized=true/ComfyUI_00998_.jpeg',
       actions: [
         {
-          id: '8-1-1',
+          id: '33-1-1',
           actionEffects: [
             {
               id: 1,
@@ -56,7 +56,7 @@ export const fieldWorker2: CardDef = {
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
         {
-          id: '21-1-1',
+          id: '33-2-1',
           trigger: Trigger.END_OF_TURN,
           optional: true,
           cost: {

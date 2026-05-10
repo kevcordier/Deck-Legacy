@@ -17,10 +17,11 @@ export const stop6: CardDef = {
               id: 1,
               type: ActionEffectType.ADD_BOARD_EFFECT,
               effect: {
-                id: 'end_game',
+                id: '58-1-1',
                 global: true,
                 type: PassiveType.ADD_TRIGGER,
                 trigger: {
+                  id: '58-1-1',
                   type: Trigger.END_OF_ROUND,
                   actions: [
                     {

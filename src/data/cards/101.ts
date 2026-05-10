@@ -8,6 +8,8 @@ export const tradeRelations: CardDef = {
     {
       id: 1,
       name: 'Trade Relations',
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/fc6f65dd-c0c9-4d80-a734-53757a11a5ad/450x%3Cauto%3E_so',
       permanent: true,
       actions: [
         {

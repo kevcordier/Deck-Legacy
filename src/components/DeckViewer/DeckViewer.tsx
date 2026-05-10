@@ -110,7 +110,7 @@ export function DeckViewer({
                   >
                     <span className="min-w-4.5 text-xs">#{inst.id}</span>
                     <span className="truncate text-xs font-semibold">
-                      {tCardName(t, inst.cardId, cs.id)}
+                      {tCardName(t, cs.name || '')}
                     </span>
                   </div>
                 );

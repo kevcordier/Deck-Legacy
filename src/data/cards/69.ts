@@ -22,7 +22,7 @@ export const shrine: CardDef = {
       glory: { amount: 3 },
       actions: [
         {
-          id: '21-1-1',
+          id: '69-1-1',
           trigger: Trigger.END_OF_TURN,
           optional: true,
           cost: {
@@ -68,7 +68,7 @@ export const shrine: CardDef = {
       glory: { amount: 5 },
       actions: [
         {
-          id: '21-2-1',
+          id: '69-2-1',
           trigger: Trigger.END_OF_TURN,
           optional: true,
           cost: {
@@ -115,7 +115,7 @@ export const shrine: CardDef = {
       glory: { amount: 9 },
       actions: [
         {
-          id: '21-3-1',
+          id: '69-3-1',
           trigger: Trigger.END_OF_TURN,
           optional: true,
           cost: {
@@ -162,7 +162,7 @@ export const shrine: CardDef = {
       glory: { amount: 15 },
       actions: [
         {
-          id: '21-4-1',
+          id: '69-4-1',
           trigger: Trigger.END_OF_TURN,
           optional: true,
           cost: {

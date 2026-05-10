@@ -493,9 +493,12 @@ describe('GameAggregate.upgradeCard', () => {
     const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const inst4 = makeInstance({ id: 4, cardId: 1, stateId: 1 });
+    const inst5 = makeInstance({ id: 5, cardId: 1, stateId: 1 });
     const state = makeState({
+      drawPile: [4, 5],
       board: [1, 2, 3],
-      instances: { 1: inst1, 2: inst2, 3: inst3 },
+      instances: { 1: inst1, 2: inst2, 3: inst3, 4: inst4, 5: inst5 },
       phase: Phase.PLAYING,
       round: 1,
       turn: 1,
@@ -546,26 +549,6 @@ describe('GameAggregate.cardAction', () => {
     const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
     agg.cardAction(makeChooseEffectAction(), 1);
     expect(agg.getCurrentCardAction()?.getPendingChoices().length).toBeGreaterThan(0);
-  });
-
-  it('ends turn when action.endsTurn is true', () => {
-    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
-    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
-    const inst4 = makeInstance({ id: 4, cardId: 1, stateId: 1 });
-    const inst5 = makeInstance({ id: 5, cardId: 1, stateId: 1 });
-    const state = makeState({
-      board: [1, 2, 3, 4],
-      drawPile: [5],
-      instances: { 1: inst1, 2: inst2, 3: inst3, 4: inst4, 5: inst5 },
-      phase: Phase.PLAYING,
-      round: 1,
-      turn: 1,
-    });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
-    const action = { id: 'et', actionEffects: [], endsTurn: true };
-    const gs = agg.cardAction(action, 1);
-    expect(gs.phase).toBe(Phase.TURN_END);
   });
 });
 

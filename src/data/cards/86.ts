@@ -36,6 +36,7 @@ export const ploughs: CardDef = {
       name: 'Farming Machines',
       tags: [CardTag.LAND, CardTag.INVENTION],
       glory: { amount: 8 },
+      illustration: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Batteuse_1881.jpg',
       productions: [{ [ResourceType.GOLD]: 4 }],
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
     },
@@ -43,6 +44,8 @@ export const ploughs: CardDef = {
       id: 3,
       name: 'Larger Barns',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/b7941898-e708-4c09-b924-b362dd14f4d6/450x%3Cauto%3E_so',
       glory: { amount: 3 },
       productions: [{ [ResourceType.GOLD]: 2 }],
       actions: [
@@ -83,6 +86,8 @@ export const ploughs: CardDef = {
       id: 4,
       name: 'Royal Storehouse',
       tags: [CardTag.BUILDING],
+      illustration:
+        'https://image-b2.civitai.com/file/civitai-media-cache/43f0fcbd-4800-4909-9f73-b39e57ecd6f3/450x%3Cauto%3E_so',
       glory: { amount: 5 },
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [

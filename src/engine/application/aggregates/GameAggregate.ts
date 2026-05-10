@@ -5,10 +5,17 @@ import {
   cardIsBlocked,
   getActiveState,
   getEffectiveActionCost,
+  getInstancesTriggerEffects,
 } from '@engine/application/cardHelpers';
 import { GameEventContext } from '@engine/application/gameEvent/GameEventContext';
 import { canUseOptions, computeGameStateDiff } from '@engine/application/gameStateHelper';
-import { GameEventType, Options, PassiveType, type PendingChoiceType } from '@engine/domain/enums';
+import {
+  GameEventType,
+  Options,
+  PassiveType,
+  type PendingChoiceType,
+  Trigger,
+} from '@engine/domain/enums';
 import type {
   AdvanceEvent,
   CardAction,
@@ -28,6 +35,8 @@ import type {
   RoundStartedEvent,
   SkipTriggerEvent,
   Sticker,
+  TriggerEntry,
+  TriggerEventsEvent,
   TurnEndedEvent,
   TurnStartedEvent,
   UpgradeCardEvent,
@@ -132,7 +141,39 @@ export class GameAggregate {
     });
   }
 
-  public roundEnded(): GameState {
+  public roundEnded(includeTriggers = true): GameState {
+    if (includeTriggers) {
+      const allRoundInstances = [...this.gameState.permanents, ...this.gameState.board].map(
+        id => this.gameState.instances[id],
+      );
+      const triggers = getInstancesTriggerEffects(
+        allRoundInstances,
+        this.cardDefs,
+        this.stickerDefs,
+        Trigger.END_OF_ROUND,
+        this.gameState,
+      ).reduce(
+        (acc, { effectDef, sourceInstanceId }) => {
+          acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+          return acc;
+        },
+        {} as Record<string, TriggerEntry>,
+      );
+
+      if (Object.keys(triggers).length > 0) {
+        const event: TriggerEventsEvent = {
+          id: crypto.randomUUID(),
+          type: GameEventType.TRIGGER_EVENTS,
+          timestamp: Date.now(),
+          triggerPile: triggers,
+          phase: Phase.ROUND_END,
+        };
+        this.apply(event);
+        this.events.push(event);
+        return this.gameState;
+      }
+    }
+
     const event: RoundEndedEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.ROUND_ENDED,
@@ -228,7 +269,36 @@ export class GameAggregate {
     return this.gameState;
   }
 
-  public turnEnded(): GameState {
+  public turnEnded(includeTriggers = true): GameState {
+    if (includeTriggers) {
+      const triggers = getInstancesTriggerEffects(
+        this.gameState.board.map(cardId => this.gameState.instances[cardId]),
+        this.cardDefs,
+        this.stickerDefs,
+        Trigger.END_OF_TURN,
+        this.gameState,
+      ).reduce(
+        (acc, { effectDef, sourceInstanceId }) => {
+          acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+          return acc;
+        },
+        {} as Record<string, TriggerEntry>,
+      );
+
+      if (Object.keys(triggers).length > 0) {
+        const event: TriggerEventsEvent = {
+          id: crypto.randomUUID(),
+          type: GameEventType.TRIGGER_EVENTS,
+          timestamp: Date.now(),
+          triggerPile: triggers,
+          phase: Phase.TURN_END,
+        };
+        this.apply(event);
+        this.events.push(event);
+        return this.gameState;
+      }
+    }
+
     const event: TurnEndedEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.TURN_ENDED,
@@ -372,7 +442,7 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
-    return this.gameState;
+    return this.turnEnded();
   }
 
   public chooseState(cardInstanceId: number, stateId: number): GameState {
@@ -463,7 +533,6 @@ export class GameAggregate {
       gameStateChanges: computeGameStateDiff(this.gameState, newGameState),
       sourceInstanceId: currentCardAction.getSourceInstanceId(),
       actionId: currentCardAction.getActionId(),
-      endsTurn: currentCardAction.isEndTurn(),
     };
 
     this.apply(event);
@@ -487,6 +556,24 @@ export class GameAggregate {
       };
       this.apply(event);
       this.events.push(event);
+    }
+
+    if (
+      this.gameState.phase === Phase.ROUND_END &&
+      Object.keys(this.gameState.triggerPile).length === 0
+    ) {
+      return this.roundEnded(false);
+    }
+
+    if (
+      this.gameState.phase === Phase.TURN_END &&
+      Object.keys(this.gameState.triggerPile).length === 0
+    ) {
+      return this.turnEnded(false);
+    }
+
+    if (currentCardAction.isEndTurn()) {
+      return this.turnEnded();
     }
 
     return this.gameState;

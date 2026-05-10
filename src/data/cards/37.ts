@@ -31,7 +31,7 @@ export const camp: CardDef = {
       },
       actions: [
         {
-          id: '37_2_1',
+          id: '37-2-1',
           cost: {
             resources: [{ [ResourceType.GOLD]: 1 }],
           },
@@ -57,7 +57,7 @@ export const camp: CardDef = {
     },
     {
       id: 3,
-      name: 'Sir ___',
+      name: 'Sir _____',
       chooseName: true,
       tags: [CardTag.PERSON, CardTag.KNIGHT],
       illustration:

@@ -24,7 +24,7 @@ import { entrepreneur } from './23';
 import { scientist } from './24';
 import { engineer } from './25';
 import { inventor } from './26';
-import { mercenay } from './27';
+import { mercenary } from './27';
 import { stop4 } from './28';
 import { strengthInNumbers } from './29';
 import { expandingBorders } from './30';
@@ -145,7 +145,7 @@ export const cardsData: CardDef[] = [
   scientist,
   engineer,
   inventor,
-  mercenay,
+  mercenary,
   stop4,
   strengthInNumbers,
   expandingBorders,
