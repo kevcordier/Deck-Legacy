@@ -529,3 +529,53 @@ describe('cardSelector – TRIGGER_SOURCE scope', () => {
     expect(result).toEqual([42]);
   });
 });
+
+describe('cardSelector – UPGRADABLE scope', () => {
+  const defUpgradable: CardDef = {
+    id: 10,
+    name: 'U',
+    states: [
+      { id: 1, name: 'S1', upgrade: [{ cost: { resources: [{ gold: 1 }] }, upgradeTo: 2 }] },
+      { id: 2, name: 'S2' },
+    ],
+  };
+  const defNoUpgrade: CardDef = {
+    id: 11,
+    name: 'N',
+    states: [{ id: 1, name: 'S1' }],
+  };
+  const instU = makeInstance({ id: 100, cardId: 10, stateId: 1 });
+  const instN = makeInstance({ id: 110, cardId: 11, stateId: 1 });
+  const localDefs = { 10: defUpgradable, 11: defNoUpgrade };
+
+  it('includes only cards whose current state has upgrades', () => {
+    const gs = makeState({ board: [100, 110], instances: { 100: instU, 110: instN } });
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD, TargetScope.UPGRADABLE] },
+      99,
+      gs,
+      localDefs,
+      stickerDefs,
+    );
+    expect(result).toContain(100);
+    expect(result).not.toContain(110);
+  });
+
+  it('excludes cards whose current state has an empty upgrade array', () => {
+    const defEmptyUpgrade: CardDef = {
+      id: 12,
+      name: 'E',
+      states: [{ id: 1, name: 'S1', upgrade: [] }],
+    };
+    const instE = makeInstance({ id: 120, cardId: 12, stateId: 1 });
+    const gs = makeState({ board: [120], instances: { 120: instE } });
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD, TargetScope.UPGRADABLE] },
+      99,
+      gs,
+      { 12: defEmptyUpgrade },
+      stickerDefs,
+    );
+    expect(result).not.toContain(120);
+  });
+});

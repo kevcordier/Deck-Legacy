@@ -141,6 +141,7 @@ interface CardCriteriaContext {
   isFriendly: boolean;
   isEnemy: boolean;
   hasBlocked: boolean;
+  isUpgradable: boolean;
 }
 
 function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
@@ -159,6 +160,7 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
   if (!matchesTags(state, tags)) return false;
   if (!matchesProductions(id, state, produces, ctx)) return false;
   if (ctx.selector.ids && !ctx.selector.ids.includes(inst.id)) return false;
+  if (ctx.isUpgradable && (!state.upgrade || state.upgrade.length === 0)) return false;
 
   return true;
 }
@@ -200,6 +202,7 @@ export function cardSelector(
   const hasBlocked = scope.includes(TargetScope.BLOCKED);
   const isFriendly = scope.includes(TargetScope.FRIENDLY);
   const isEnemy = scope.includes(TargetScope.ENEMY);
+  const isUpgradable = scope.includes(TargetScope.UPGRADABLE);
 
   const pool = buildCardPool(locationScopes, gameState, blockedInstanceIds);
 
@@ -214,6 +217,7 @@ export function cardSelector(
     isFriendly,
     isEnemy,
     hasBlocked,
+    isUpgradable,
   };
   const selectedIds = pool
     .filter(id => matchesCardCriteria(id, ctx))

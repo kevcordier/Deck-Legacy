@@ -46,7 +46,7 @@ export const alchemist: CardDef = {
       name: 'Potion of Strength',
       tags: [CardTag.POTION, CardTag.ITEM],
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/4091841e-29fe-4a47-aca0-0a1eae3ed1ff/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/7f9afba8-8fab-4ef9-8dc3-2fcbc78f7f13/450x%3Cauto%3E_so',
       actions: [
         {
           id: '81-2-1',
@@ -83,6 +83,7 @@ export const alchemist: CardDef = {
           trigger: {
             id: '81-3-1',
             type: Trigger.ON_DISCARD,
+            optional: true,
             cards: {
               scope: [TargetScope.DISCARDED],
               tags: [CardTag.PERSON],

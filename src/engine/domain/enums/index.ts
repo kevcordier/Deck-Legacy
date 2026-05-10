@@ -121,6 +121,7 @@ export enum TargetScope {
   DRAWN = 'drawn',
   DISCARDED = 'discarded',
   TRIGGER_SOURCE = 'trigger_source',
+  UPGRADABLE = 'upgradable',
 }
 
 export enum PendingChoiceType {

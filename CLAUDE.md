@@ -94,58 +94,71 @@ A card is defined by a `CardDef` object. Each card has one or more `CardState`s 
 CardDef {
   id: number              // unique card identifier
   name: string            // visual name of the card (not use in code, local string use instead)
-  permanent?: boolean     // stays on board instead of going to discard at the end of turn
-  chooseState?: boolean   // player picks the initial state at discovery time
-  parchmentCard?: boolean // special UI rendering at discovery time and distroyed after it's effect
+  chooseState?: number[]  // explicit list of state ids available at discovery time
+  parchmentCard?: boolean // special UI rendering at discovery time and destroyed after its effect
   states: CardState[]
 }
 
 CardState {
   id: number                  // unique state identifier
   name: string                // visual name of the state (not use in code, local string use instead)
-  tags?: CardTag[]            // LAND | BUILDING | PERSON | EVENT | ENEMY | SEAFARING | GOAL | KNIGHT | ELDER
-  negative?: boolean          // define if a card is an alies or an enemy
+  permanent?: boolean         // stays on board instead of going to discard at the end of turn
+  chooseName?: boolean        // if true, the player can choose a name on the card
+  tags?: CardTag[]            // ARTIFACT | LAND | BUILDING | PERSON | EVENT | ENEMY | SEAFARING |
+                              // GOAL | KNIGHT | ELDER | WALL | STATE | SHIP | ITEM | INVENTION |
+                              // POTION | LOOT | LIVESTOCK | HORSE | LADY
+  negative?: boolean          // define if a card is an enemy
   productions?: Resources[]   // resources generated on production action
-  glory?: number              // glory point worth if this state is active
-  actions?: CardAction[]      // liste of state activation
-  passives?: Passive[]        // liste of state passive effect
+  glory?: GloryDef            // glory point definition (amount, condition, valuePerElement…)
+  actions?: CardAction[]      // list of state activations
+  passives?: Passive[]        // list of state passive effects
   upgrade?: UpgradeDef[]      // paths to evolve this state into another
   track?: TrackDef            // optional multi-step track
-  illustration?: string.      // url or path to background image of the state
+  illustration?: string       // url or path to background image of the state
+  description?: boolean       // if true, the card has a description text displayed in the UI
 }
 
 CardAction {
-  id: string              // unique action identifier structured as cardID_stateId_id
-  actions: Action[]       // list of atomic effects to resolve
-  cost?: Cost             // resource or card cost to pay
-  endsTurn?: boolean.     // if it's true then ends turn after this action resolution
-  trigger?: Trigger       // fired automatically on the given trigger
-  passive?: boolean       // resolved without player interaction
-  optional?: boolean      // only use for trigger effect, if optional then allow to skip trigger
+  id: string                // unique action identifier structured as cardID_stateId_id
+  actionEffects: ActionEffect[]  // list of atomic effects to resolve
+  unlimited?: boolean       // action can be used any number of times per turn
+  limitedTime?: number      // max number of uses for this action
+  cost?: Cost               // resource or card cost to pay
+  endsTurn?: boolean        // if true then ends turn after this action resolution
+  trigger?: Trigger         // fired automatically on the given trigger
+  optional?: boolean        // only for trigger effects — allows skipping the trigger
 }
 
-Action {
+ActionEffect {
   id: number                    // unique action effect identifier
-  type: ActionType              // ADD_RESOURCES | DISCARD_CARD | DISCOVER_CARD | DESTROY_CARD |
-                                // UPGRADE_CARD | PLACE_CARD_IN_PILE | BLOCK_CARD | PLAY_CARD |
-                                // ADD_STICKER | CHOOSE_STATE | BOOST_CARD | TRACK_ADVANCE | …
-  cards?: CardeSelector         // target card filter (scope, tags, ids…)
+  type: ActionEffectType        // ADD_RESOURCES | REMOVE_RESOURCE_ON_CARD | DISCARD_CARD |
+                                // DISCOVER_CARD | DESTROY_CARD | UPGRADE_CARD | PLACE_CARD_IN_PILE |
+                                // BLOCK_CARD | PLAY_CARD | ADD_STICKER | CHOOSE_STATE | BOOST_CARD |
+                                // COST | ADD_CUMULATED | SET_CUMULATED | TRACK_ADVANCE |
+                                // ADD_BOARD_EFFECT | CHOOSE_EFFECT | END_GAME | SHUFFLE_DECK | ADD_GLORY
+  cards?: CardSelector          // target card filter (scope, tags, ids…)
   resources?: ResourceSelector  // target resource filter
-  states?: number[]             // state ids choice
-  stickerIds?: number[]         // sticker ids choice
+  states?: StateSelector        // state ids choice
+  stickers?: StickerSelector    // sticker ids choice
+  value?: number                // generic numeric value
+  position?: number | 'top' | 'bottom'  // position in pile for PLACE_CARD_IN_PILE
+  effect?: Passive              // passive effect for ADD_BOARD_EFFECT
+  effects?: ActionEffect[]      // nested effects for CHOOSE_EFFECT
+  steps?: { pickNumber?: number; pickMin?: number; pickMax?: number }
 }
 
 TrackDef {
   steps: StepDef[]        // ordered list of steps
   inOrder: boolean        // must be accessed sequentially
   vertical?: boolean      // display flag
+  inverse?: boolean       // progress from last to first
 }
 
 StepDef {
-  id: number         // unique step identifier
-  label?: string     // visual name of the step (not use in code, local string use instead)
-  cost?: Cost        // resource or card cost to pay to access this step
-  actions?: Action[] // actions of this step
+  id: number                // unique step identifier
+  cost?: Cost               // resource or card cost to pay to access this step
+  effects?: ActionEffect[]  // effects of this step
+  icon?: string             // optional icon for display
 }
 ```
 
@@ -209,11 +222,13 @@ PREGAME → START_ROUND → PLAYING → END_TURN → START_ROUND → … → GAM
 
 ### Strategy Pattern (Card Actions)
 
-`src/engine/application/cardAction/` contains 11 strategies implementing `CardActionStrategy`:
+`src/engine/application/cardAction/` contains 18 strategies implementing `CardActionStrategy`:
 
-- `AddResourceStrategy`, `AddStickerStrategy`, `BlockCardStrategy`, `ChooseStateStrategy`
-- `DestroyCardStrategy`, `DiscardCardStrategy`, `DiscoverCardStrategy`, `PlayCardStrategy`
-- `UpgradeCardStrategy`, `PlaceCardInDrawPileStrategy` (context: `CardActionContext`)
+- `AddResourceStrategy`, `AddStickerStrategy`, `AddBoardEffectStrategy`, `AddCumulatedStrategy`
+- `AddGloryStrategy`, `BlockCardStrategy`, `ChoseStateStrategy`, `DestroyCardStrategy`
+- `DiscardCardStrategy`, `DiscoverCardStrategy`, `EndGameStrategy`, `PlaceCardInDrawPileStrategy`
+- `PlayCardStrategy`, `RemoveResourceOnCardStrategy`, `SetCumulatedStrategy`, `ShuffleDeckStrategy`
+- `TrackAdvanceStrategy`, `UpgradeCardStrategy` (context: `CardActionContext`)
 
 When adding new action types, add a new strategy file and register it in `CardActionContext`.
 

@@ -212,6 +212,8 @@
     "8-2-1": "Gain {{gold}}/{{wood}}/{{stone}}.",
     "80-1-1": "Spend {{gold}}{{gold}} to mark 1 step.",
     "80-2-1": "Put up to 3 other cards in play on top or bottom of your deck.",
+    "80-2-1-1": "Put up to 3 other cards in play on top of your deck.",
+    "80-2-1-2": "Put up to 3 other cards in play on bottom of your deck.",
     "81-1-1": "Spend {{gold}}{{gold}} to choose any state.",
     "81-2-1": "Reset this card (⬆) to gain {{weapon}}{{weapon}}{{weapon}}.",
     "81-4-1": "Reset this card (⬆) to gain {{goods}}{{goods}}{{goods}}{{goods}}{{goods}}.",

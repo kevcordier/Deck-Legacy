@@ -231,8 +231,7 @@ describe('resolveActionEffect – ADD_STICKER', () => {
     };
     const gs = makeState({ stickerStock: { 3: 0 } });
     const [, pending] = resolveActionEffect(effect, 1, gs, defs, stickerDefs);
-    expect(pending).toHaveLength(1);
-    expect(pending[0].choices).toHaveLength(0);
+    expect(pending).toHaveLength(0);
   });
 
   it('creates pending choice for multiple sticker ids', () => {

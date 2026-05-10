@@ -20,6 +20,7 @@ export function Header() {
     pendingChoices,
     triggerPile,
     gameState,
+    parameters,
   } = useGame();
   const { setOptionsOpen, setRulesOpen } = useGameUI();
   const deckEmpty = gameState.drawPile.length === 0;
@@ -95,7 +96,9 @@ export function Header() {
               >
                 <span className="hidden lg:inline">›› </span>
                 {t('header.progress')}
-                {deckEmpty ? '' : ` (${Math.min(2, gameState.drawPile.length)})`}
+                {deckEmpty
+                  ? ''
+                  : ` (${Math.min(parameters.advanceCardDrawn, gameState.drawPile.length)})`}
               </Button>
               <Button
                 onClick={endTurnVoluntary}

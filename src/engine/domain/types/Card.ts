@@ -121,6 +121,7 @@ export type Passive = {
     type: Trigger;
     cards?: CardSelector;
     actions?: ActionEffect[];
+    optional?: boolean;
   };
   resources?: {
     gold?: number;

@@ -453,6 +453,7 @@ function getBoardEffectTriggersAction(
           };
           cardActions.push({
             id: `board_effect_${sourceId}`,
+            optional: passive.trigger?.optional,
             actionEffects: passive.trigger.actions.map(ae => ({
               ...ae,
               cards: getCard(ae),

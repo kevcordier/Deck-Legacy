@@ -1,5 +1,6 @@
 import type { ChoiceSectionProps } from './shared';
 import { Button } from '@components/ui/Button/Button';
+import { ActionEffectType } from '@engine/domain/enums';
 import type { ActionEffect } from '@engine/domain/types';
 import { tCardActionLabel } from '@helpers/cardI18n';
 
@@ -8,15 +9,15 @@ export function ChooseActionEffectSection(props: Readonly<ChoiceSectionProps>) {
   const sourceInstance = instances[choice.sourceInstanceId];
   const sourceDef = sourceInstance ? defs[sourceInstance.cardId] : undefined;
   const sourceState = sourceDef?.states.find(s => s.id === sourceInstance?.stateId);
+  const action = sourceState?.actions?.find(a =>
+    a.actionEffects.some(ae => ae.type === ActionEffectType.CHOOSE_EFFECT),
+  );
 
   return (
     <div className="flex flex-col gap-4">
       {choice.choices.map((actionEffect, index) => {
         // Find the action that contains this effect
         const effectId = (actionEffect as ActionEffect).id;
-        const action = sourceState?.actions?.find(a =>
-          a.actionEffects.some(ae => ae.id === effectId),
-        );
 
         return (
           <div
@@ -25,7 +26,8 @@ export function ChooseActionEffectSection(props: Readonly<ChoiceSectionProps>) {
           >
             <div className="flex-1">
               <div className="font-display text-base-primary mb-1 text-sm font-semibold">
-                {action && tCardActionLabel(t, action.id, sourceInstance?.cumulated)}
+                {action &&
+                  tCardActionLabel(t, action.id + '-' + effectId, sourceInstance?.cumulated)}
               </div>
             </div>
             <div className="flex items-end gap-2">
