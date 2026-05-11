@@ -121,6 +121,16 @@ function matchHaving(id: number, ctx: CardCriteriaContext): boolean {
     return Math.max(maxProduction, totalProduction);
   }, 0);
 
+  if (
+    selector.having.minStickers !== undefined &&
+    Object.values(gameState.instances[id].stickers).length < selector.having.minStickers
+  )
+    return false;
+  if (
+    selector.having.maxStickers !== undefined &&
+    Object.values(gameState.instances[id].stickers).length > selector.having.maxStickers
+  )
+    return false;
   if (selector.having.minGlory !== undefined && baseGlory < selector.having.minGlory) return false;
   if (selector.having.maxGlory !== undefined && baseGlory > selector.having.maxGlory) return false;
   if (selector.having.minProduction !== undefined && baseProduction < selector.having.minProduction)

@@ -210,4 +210,5 @@ export type ResolvedActionEffect = {
   resourceScopes?: RemovedResourceScope[];
   newActionEffects?: ActionEffect[];
   value?: number;
+  unresolvable?: boolean;
 };

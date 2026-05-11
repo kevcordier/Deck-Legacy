@@ -64,7 +64,7 @@ describe('resolveCost – resources', () => {
         defs,
         stickerDefs,
       ),
-    ).toThrow('Not enough resources to pay this cost.');
+    ).toThrow('errors.cost.notEnoughResources');
   });
 });
 
@@ -73,7 +73,7 @@ describe('resolveCost – discard', () => {
     const gs = makeState({ board: [] });
     expect(() =>
       resolveCost({ discard: [{ scope: [TargetScope.BOARD] }] }, 1, gs, defs, stickerDefs),
-    ).toThrow('Not enough cards available to pay this discard cost.');
+    ).toThrow('errors.cost.notEnoughCardsToDiscard');
   });
 
   it('creates pending choice when more candidates than needed', () => {
@@ -141,7 +141,7 @@ describe('resolveCost – discard', () => {
     const gs = makeState({ drawPile: [2], instances: { 2: inst } });
     expect(() =>
       resolveCost({ destroy: { scope: [TargetScope.BOARD] } }, 99, gs, defs, stickerDefs),
-    ).toThrow('Not enough cards available to pay this destroy cost.');
+    ).toThrow('errors.cost.notEnoughCardsToDestroy');
   });
 
   it('creates pending choice with undefined pickNumber when no number specified', () => {

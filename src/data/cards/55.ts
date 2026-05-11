@@ -84,7 +84,7 @@ export const tornado: CardDef = {
               type: ActionEffectType.CHOOSE_EFFECT,
               effects: [
                 {
-                  id: 3,
+                  id: 1,
                   type: ActionEffectType.DESTROY_CARD,
                   cards: {
                     scope: [TargetScope.BLOCKED_BY_THIS],
@@ -92,7 +92,7 @@ export const tornado: CardDef = {
                   },
                 },
                 {
-                  id: 6,
+                  id: 2,
                   type: ActionEffectType.DESTROY_CARD,
                   cards: {
                     scope: [TargetScope.BOARD, TargetScope.FRIENDLY],

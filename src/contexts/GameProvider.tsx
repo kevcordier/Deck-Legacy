@@ -11,6 +11,8 @@ import { resolveCost } from '@engine/application/costResolver';
 import { createInstance } from '@engine/application/factory';
 import { computeScore, mergeResources } from '@engine/application/gameStateHelper';
 import { ActionEffectType, GameEventType, type PendingChoiceType } from '@engine/domain/enums';
+import { ActionCancelledError } from '@engine/domain/errors/ActionCancelledError';
+import { CostResolutionError } from '@engine/domain/errors/CostResolutionError';
 import {
   type CardAction,
   type CardDef,
@@ -30,6 +32,7 @@ import {
 } from '@engine/infrastructure/loaders';
 import { deleteSave, getCardName, saveGame, setCardName } from '@engine/infrastructure/persistence';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 function makeAggregate(
   state: GameState,
@@ -48,6 +51,7 @@ export function GameProvider({
   readonly initialState?: GameState;
   readonly initialEvents?: GameEvent[];
 }) {
+  const { t } = useTranslation();
   const defs = useMemo(() => loadCardDefs(), []);
   const stickerDefs = useMemo(() => loadStickerDefs(), []);
 
@@ -114,7 +118,13 @@ export function GameProvider({
 
   const handleActionError = (error: unknown) => {
     cancelPendingAction();
-    setGlobalError(error instanceof Error ? error.message : 'An unexpected error occurred.');
+    let message = 'errors.unknown';
+    if (error instanceof ActionCancelledError || error instanceof CostResolutionError) {
+      message = t(error.message);
+    } else if (error instanceof Error) {
+      message = error.message;
+    }
+    setGlobalError(message);
   };
 
   const triggerAction = (instanceId: number, action: CardAction, triggerId?: string): GameState => {
@@ -447,7 +457,7 @@ export function GameProvider({
     if (!import.meta.env.DEV) return;
     (globalThis as unknown as Record<string, unknown>).__cheat = {
       addResources: (resources: Record<string, number>) => {
-        sync(aggRef.current.cardProduced(0, resources));
+        sync(aggRef.current.cardProduced(1, resources));
       },
       getState: () => aggRef.current.getGameState(),
       getCurrentAction: () => aggRef.current.getCurrentCardAction(),

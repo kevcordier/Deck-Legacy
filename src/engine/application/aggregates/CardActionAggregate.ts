@@ -49,6 +49,7 @@ export class CardActionAggregate {
   };
   private pendingEffectIndex = -1;
   private pendingResolvedAction: ResolvedActionEffect | null = null;
+  private cancelled = false;
   private pendingUpgradeCost: {
     resolvedAction: ResolvedActionEffect;
     resolvedCost: ResolvedCost;
@@ -287,6 +288,12 @@ export class CardActionAggregate {
         this.pendingEffectIndex = index;
         this.pendingResolvedAction = resolvedAction;
         this.pendingChoices = choices;
+        return;
+      }
+
+      if (resolvedAction.unresolvable) {
+        this.cancelled = true;
+        this.gameState = JSON.parse(JSON.stringify(this.initGameState)) as GameState;
         return;
       }
 
@@ -532,6 +539,10 @@ export class CardActionAggregate {
       ),
       this.resolvedCost.destroyedCardIds,
     );
+  }
+
+  isCancelled(): boolean {
+    return this.cancelled;
   }
 
   // Use when all effects are resolved and we want to update the game state

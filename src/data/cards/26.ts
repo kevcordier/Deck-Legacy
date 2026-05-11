@@ -76,12 +76,12 @@ export const inventor: CardDef = {
               type: ActionEffectType.CHOOSE_EFFECT,
               effects: [
                 {
-                  id: 4,
+                  id: 1,
                   type: ActionEffectType.DISCOVER_CARD,
                   cards: { ids: [97, 98, 99] },
                 },
                 {
-                  id: 4,
+                  id: 2,
                   type: ActionEffectType.ADD_RESOURCES,
                   resources: {
                     [ResourceType.GOLD]: 1,

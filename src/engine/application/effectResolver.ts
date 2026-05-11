@@ -55,7 +55,7 @@ export function getPickNumbers(
   }
 
   return {
-    pickMin: Math.min(min, choiceNumber ?? min),
+    pickMin: min,
     pickMax: Math.min(max, choiceNumber ?? max),
   };
 }
@@ -173,9 +173,18 @@ function resolveCardTarget(
       !isStickerAction ||
       getTotalProduction(id, gameState, defs, stickerDefs) < STICKER_PRODUCTION_CAP,
   );
+
   const picks = getPickNumbers(cards, choices.length);
-  if (choices.length === 0) {
-    resolverAction.instanceIds = undefined;
+  if (choices.length < picks.pickMin) {
+    const originalMin = cards.pickMin ?? cards.pickNumber ?? 1;
+    if (originalMin > 0) {
+      resolverAction.unresolvable = true;
+    }
+    return [resolverAction, pendingChoices];
+  }
+
+  if (choices.length < picks.pickMin) {
+    resolverAction.unresolvable = true;
     return [resolverAction, pendingChoices];
   }
 
@@ -289,6 +298,10 @@ function resolveStickerTarget(
   const { actionId, actionType, instanceId, isMandatory, gameState } = ctx;
   const availableIds = (stickers.ids ?? []).filter(id => (gameState.stickerStock[id] ?? 0) > 0);
   const picks = getPickNumbers(stickers, availableIds.length);
+  if (availableIds.length < picks.pickMin) {
+    resolverAction.unresolvable = true;
+    return [resolverAction, pendingChoices];
+  }
   if (availableIds.length === picks.pickMax) {
     resolverAction.stickerIds = availableIds;
     return [resolverAction, pendingChoices];
@@ -361,6 +374,15 @@ function getEnrichedCardSelector(action: ActionEffect): CardSelector | undefined
   if (action.type === ActionEffectType.DISCOVER_CARD) {
     return { ...action.cards, scope: [TargetScope.DISCOVERY] };
   }
+  if (
+    action.type === ActionEffectType.UPGRADE_CARD &&
+    !action.cards.scope?.includes(TargetScope.SELF)
+  ) {
+    return {
+      ...action.cards,
+      scope: [...(action.cards.scope ?? []), TargetScope.BOARD, TargetScope.UPGRADABLE],
+    };
+  }
   return action.cards;
 }
 
@@ -429,6 +451,9 @@ export function resolveActionEffect(
       ctx,
       cards,
     );
+    if (resolverAction.unresolvable) {
+      return [resolverAction, pendingChoices];
+    }
   }
 
   if (action.resources) {

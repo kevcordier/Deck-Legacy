@@ -199,7 +199,7 @@ export function GameBoard() {
       )}
 
       {globalError && (
-        <div className="fixed right-4 bottom-4 z-50 flex max-w-sm items-start gap-3 rounded-xl border border-danger-900/30 bg-danger-50 px-4 py-3 text-sm text-danger-900 shadow-lg">
+        <div className="fixed right-4 bottom-4 z-50 flex max-w-sm items-center gap-3 rounded-xl border-2 border-danger bg-card px-4 py-3 text-sm text-base-ink shadow-lg">
           <span className="flex-1">{globalError}</span>
           <Button onClick={dismissGlobalError} variant="text" color="danger" size="sm">
             ✕

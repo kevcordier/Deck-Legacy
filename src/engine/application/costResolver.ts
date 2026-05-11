@@ -1,6 +1,7 @@
 import { cardSelector } from '@engine/application/cardSelector';
 import { getPickNumbers } from '@engine/application/effectResolver';
 import { ActionEffectType, PendingChoiceType, TargetScope } from '@engine/domain/enums';
+import { CostResolutionError } from '@engine/domain/errors/CostResolutionError';
 import type {
   CardDef,
   Cost,
@@ -9,13 +10,6 @@ import type {
   ResolvedCost,
   Sticker,
 } from '@engine/domain/types';
-
-export class CostResolutionError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'CostResolutionError';
-  }
-}
 
 function canAffordResourceCost(
   availableResources: GameState['resources'],
@@ -48,7 +42,7 @@ export function resolveCost(
     );
 
     if (payableResourceCosts.length === 0) {
-      throw new CostResolutionError('Not enough resources to pay this cost.');
+      throw new CostResolutionError('errors.cost.notEnoughResources');
     }
 
     if (payableResourceCosts.length === 1) {
@@ -74,7 +68,7 @@ export function resolveCost(
       );
       const picks = getPickNumbers(discardCost);
       if (picks.pickMin && candidates.length < picks.pickMin) {
-        throw new CostResolutionError('Not enough cards available to pay this discard cost.');
+        throw new CostResolutionError('errors.cost.notEnoughCardsToDiscard');
       }
       if (
         candidates.length === 1 &&
@@ -102,7 +96,7 @@ export function resolveCost(
     );
     const picks = getPickNumbers(cost.destroy);
     if (picks.pickMin && candidates.length < picks.pickMin) {
-      throw new CostResolutionError('Not enough cards available to pay this destroy cost.');
+      throw new CostResolutionError('errors.cost.notEnoughCardsToDestroy');
     }
     if (
       candidates.length === 1 &&

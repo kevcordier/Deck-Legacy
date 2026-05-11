@@ -16,6 +16,7 @@ import {
   type PendingChoiceType,
   Trigger,
 } from '@engine/domain/enums';
+import { ActionCancelledError } from '@engine/domain/errors/ActionCancelledError';
 import type {
   AdvanceEvent,
   CardAction,
@@ -486,6 +487,11 @@ export class GameAggregate {
     );
     this.currentCardAction.resolveAction();
 
+    if (this.currentCardAction.isCancelled()) {
+      this.currentCardAction = null;
+      throw new ActionCancelledError();
+    }
+
     if (this.currentCardAction.getPendingChoices().length > 0) {
       return this.gameState;
     }
@@ -502,6 +508,11 @@ export class GameAggregate {
     }
 
     this.currentCardAction.resolvePlayerChoice(choice, choiceType);
+    if (this.currentCardAction.isCancelled()) {
+      this.currentCardAction = null;
+      throw new ActionCancelledError();
+    }
+
     if (this.currentCardAction.getPendingChoices().length > 0) {
       return this.gameState;
     }
@@ -515,6 +526,11 @@ export class GameAggregate {
     }
 
     this.currentCardAction.resolveCostChoice(resolvedCost);
+    if (this.currentCardAction.isCancelled()) {
+      this.currentCardAction = null;
+      throw new ActionCancelledError();
+    }
+
     if (this.currentCardAction.getPendingChoices().length > 0) {
       return this.gameState;
     }

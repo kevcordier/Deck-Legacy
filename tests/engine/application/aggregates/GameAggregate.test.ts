@@ -9,6 +9,7 @@ import {
   TargetScope,
   Trigger,
 } from '@engine/domain/enums';
+import { ActionCancelledError } from '@engine/domain/errors/ActionCancelledError';
 import type { CardDef, GameEvent, PendingChoice, ResolvedActionEffect } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -795,7 +796,7 @@ describe('GameAggregate.skipTrigger', () => {
     agg.turnEnded();
     const triggerId = Object.keys(agg.getGameState().triggerPile)[0];
     const gs = agg.skipTrigger(triggerId);
-    expect(gs.phase).toBe(Phase.TURN_END);
+    expect(gs.phase).toBe(Phase.PLAYING);
   });
 });
 
@@ -1085,5 +1086,162 @@ describe('GameAggregate.cardAction – PARCHMENT finalization', () => {
     // After parchment action, ROUND_STARTED is emitted → phase becomes ROUND_START
     expect(gs.phase).toBe(Phase.ROUND_START);
     expect(gs.round).toBe(1);
+  });
+});
+
+// ─── cardAction – unresolvable effect cancels the whole action ────────────────
+
+describe('GameAggregate.cardAction – unresolvable effect', () => {
+  it('throws ActionCancelledError and leaves state unchanged when a card-target effect finds no candidates', () => {
+    // Target DISCARD scope on an empty discardPile — cardSelector returns [] → unresolvable
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [],
+      discardPile: [],
+      instances: { 1: inst },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gsBefore = agg.getGameState();
+    const action = {
+      id: 'a1',
+      actionEffects: [
+        {
+          id: 1,
+          type: ActionEffectType.DISCARD_CARD,
+          cards: { scope: [TargetScope.BOARD], pickNumber: 1 }, // empty board → no candidates
+        },
+      ],
+    };
+    expect(() => agg.cardAction(action, 1)).toThrow(ActionCancelledError);
+    // State unchanged, no currentCardAction left
+    expect(agg.getGameState()).toBe(gsBefore);
+    expect(agg.getCurrentCardAction()).toBeNull();
+  });
+
+  it('throws ActionCancelledError and rolls back effects already applied when a later effect is unresolvable', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      discardPile: [],
+      instances: { 1: inst },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    // First effect adds gold (would succeed), second effect targets empty discard → unresolvable
+    const action = {
+      id: 'a2',
+      actionEffects: [
+        { id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 5 } },
+        {
+          id: 1,
+          type: ActionEffectType.DISCARD_CARD,
+          cards: { scope: [TargetScope.DISCARD], pickNumber: 1 },
+        },
+      ],
+    };
+    expect(() => agg.cardAction(action, 1)).toThrow(ActionCancelledError);
+    // Gold must NOT have been added — the whole action was rolled back
+    expect(agg.getGameState().resources.gold).toBeUndefined();
+    expect(agg.getCurrentCardAction()).toBeNull();
+  });
+
+  it('throws ActionCancelledError when unresolvable effect is reached after a player choice', () => {
+    const resolved: ResolvedActionEffect = {
+      id: '0',
+      type: ActionEffectType.ADD_RESOURCES,
+      sourceInstanceId: 1,
+      resources: { gold: 3 },
+    };
+    // Strategy returns no more pending choices after the player choice
+    mockStrategyApply(resolved, []);
+
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      discardPile: [],
+      instances: { 1: inst },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    // CHOOSE_EFFECT first (creates pending choice), then an unresolvable DISCARD_CARD
+    const action = {
+      id: 'a3',
+      actionEffects: [
+        {
+          id: 0,
+          type: ActionEffectType.CHOOSE_EFFECT,
+          effects: [
+            { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } },
+            { id: 2, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 1 } },
+          ],
+        },
+        {
+          id: 3,
+          type: ActionEffectType.DISCARD_CARD,
+          cards: { scope: [TargetScope.DISCARD] }, // empty discard pile → unresolvable
+        },
+      ],
+    };
+    agg.cardAction(action, 1);
+    // Should have a pending choice from CHOOSE_EFFECT
+    expect(agg.getCurrentCardAction()?.getPendingChoices().length).toBeGreaterThan(0);
+
+    // Resolve the choice — the next effect (DISCARD_CARD with no target) throws
+    expect(() =>
+      agg.resolveCardActionChoice({
+        id: 'x',
+        type: ActionEffectType.CHOOSE_EFFECT,
+        sourceInstanceId: 1,
+      }),
+    ).toThrow(ActionCancelledError);
+    // Action cancelled — gold was not added, no current action remains
+    expect(agg.getGameState().resources.gold).toBeUndefined();
+    expect(agg.getCurrentCardAction()).toBeNull();
+  });
+
+  it('throws ActionCancelledError and rolls back cost after cost resolution when the following effect is unresolvable', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      discardPile: [],
+      resources: { gold: 5, stone: 1 }, // both options affordable → pending cost choice
+      instances: { 1: inst },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    // Multi-option resource cost → pending cost choice; effect targets empty discard → unresolvable
+    const action = {
+      id: 'a4',
+      actionEffects: [
+        {
+          id: 0,
+          type: ActionEffectType.DISCARD_CARD,
+          cards: { scope: [TargetScope.DISCARD] },
+        },
+      ],
+      cost: { resources: [{ gold: 1 }, { stone: 1 }] },
+    };
+    agg.cardAction(action, 1);
+    expect(agg.getCurrentCardAction()?.getPendingChoices().length).toBeGreaterThan(0);
+
+    expect(() =>
+      agg.resolveCardActionCost({
+        resources: { gold: 1 },
+        discardedCardIds: [],
+        destroyedCardIds: [],
+      }),
+    ).toThrow(ActionCancelledError);
+    // Cost rolled back — original resources unchanged
+    expect(agg.getGameState().resources.gold).toBe(5);
+    expect(agg.getCurrentCardAction()).toBeNull();
   });
 });

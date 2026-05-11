@@ -16,7 +16,7 @@ export const youngPrincess: CardDef = {
       name: 'Young Princess',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/38e86790-d1f2-4e58-b558-4cb5eb4a49de/anim=false,width=450,optimized=true/00002-1285690597.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/0fbd780a-d3dc-4f7f-9963-91f8a56cbda9/450x%3Cauto%3E_so',
       glory: { amount: 2 },
       actions: [
         {
@@ -29,7 +29,7 @@ export const youngPrincess: CardDef = {
               type: ActionEffectType.CHOOSE_EFFECT,
               effects: [
                 {
-                  id: 2,
+                  id: 1,
                   type: ActionEffectType.DISCARD_CARD,
                   cards: {
                     scope: [TargetScope.BOARD],
@@ -38,7 +38,7 @@ export const youngPrincess: CardDef = {
                   },
                 },
                 {
-                  id: 3,
+                  id: 2,
                   type: ActionEffectType.UPGRADE_CARD,
                   cards: {
                     scope: [TargetScope.SELF],

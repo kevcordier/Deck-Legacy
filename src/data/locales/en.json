@@ -1,4 +1,13 @@
 {
+  "errors": {
+    "unknown": "An unexpected error occurred.",
+    "actionCancelled": "This action cannot be resolved: no valid target available.",
+    "cost": {
+      "notEnoughResources": "Not enough resources to pay this cost.",
+      "notEnoughCardsToDiscard": "Not enough cards available to discard.",
+      "notEnoughCardsToDestroy": "Not enough cards available to destroy."
+    }
+  },
   "parchmentCard": {
     "continue": "Continue"
   },
@@ -103,6 +112,7 @@
       "PLAY_CARD": "Choose a card to play",
       "PLAY_CARD_other": "Choose {{count}} cards to play"
     },
+    "chooseActionEffect": "Choose an effect to resolve",
     "chooseStep": "Choose a track step",
     "chooseState": "Choose a state",
     "chooseResource": "Choose a resource",

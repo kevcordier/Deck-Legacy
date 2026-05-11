@@ -1,4 +1,13 @@
 {
+  "errors": {
+    "unknown": "An unexpected error occurred.",
+    "actionCancelled": "Cette action ne peut pas être résolue : aucune cible valide disponible.",
+    "cost": {
+      "notEnoughResources": "Pas assez de ressources pour payer ce coût.",
+      "notEnoughCardsToDiscard": "Pas assez de cartes disponibles à défausser.",
+      "notEnoughCardsToDestroy": "Pas assez de cartes disponibles à détruire."
+    }
+  },
   "parchmentCard": {
     "continue": "Continuer"
   },
@@ -103,6 +112,7 @@
       "PLAY_CARD": "Choisissez une carte à jouer",
       "PLAY_CARD_other": "Choisissez {{count}} cartes à jouer"
     },
+    "chooseActionEffect": "Choisissez un effet à résoudre",
     "chooseStep": "Choisir une étape",
     "chooseState": "Choisir un état",
     "chooseResource": "Choisir une ressource",

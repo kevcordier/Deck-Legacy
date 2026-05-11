@@ -110,7 +110,7 @@ describe('CardActionAggregate.resolveAction', () => {
       cost: { resources: [{ gold: 5 }] },
     };
     const agg = makeAggregate({ action, resources: {} });
-    expect(() => agg.resolveAction()).toThrow('Not enough resources to pay this cost.');
+    expect(() => agg.resolveAction()).toThrow('errors.cost.notEnoughResources');
   });
 
   it('skips when card is blocked', () => {
@@ -240,9 +240,7 @@ describe('CardActionAggregate.resolveAction', () => {
       instances: { 1: makeInstance({ id: 1, cardId: 1, stateId: 1 }) },
     });
     const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, gs.instances[1], action);
-    expect(() => agg.resolveAction()).toThrow(
-      'Not enough cards available to pay this destroy cost.',
-    );
+    expect(() => agg.resolveAction()).toThrow('errors.cost.notEnoughCardsToDestroy');
   });
 
   it('splices step effects into the queue (newActionEffects from inOrder track)', () => {
@@ -481,7 +479,7 @@ describe('CardActionAggregate.resolvePlayerChoice', () => {
         sourceInstanceId: 1,
         instanceIds: [2],
       }),
-    ).toThrow('Not enough resources to pay this cost.');
+    ).toThrow('errors.cost.notEnoughResources');
 
     expect(agg.getGameState().instances[2].stateId).toBe(1);
   });
