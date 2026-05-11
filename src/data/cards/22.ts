@@ -28,6 +28,7 @@ export const stop3: CardDef = {
                 scope: [TargetScope.DISCOVERY],
                 ids: [31, 32, 33, 34],
                 pickNumber: 2,
+                autoPick: true,
               },
             },
           ],

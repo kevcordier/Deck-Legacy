@@ -7,6 +7,7 @@ import {
 } from '@engine/application/cardHelpers';
 import { cardSelector } from '@engine/application/cardSelector';
 import { CardChoiceStrategy } from '@engine/application/playerChoice/CardChoiceStrategy';
+import { stateSelector } from '@engine/application/stateSelector';
 import {
   ActionEffectType,
   PendingChoiceType,
@@ -22,6 +23,7 @@ import type {
   ResolvedActionEffect,
   ResourceSelector,
   Resources,
+  StateSelector,
   Sticker,
   StickerSelector,
   ValuePerElement,
@@ -176,26 +178,21 @@ function resolveCardTarget(
 
   const picks = getPickNumbers(cards, choices.length);
   if (choices.length < picks.pickMin) {
-    const originalMin = cards.pickMin ?? cards.pickNumber ?? 1;
-    if (originalMin > 0) {
-      resolverAction.unresolvable = true;
-    }
-    return [resolverAction, pendingChoices];
-  }
-
-  if (choices.length < picks.pickMin) {
     resolverAction.unresolvable = true;
     return [resolverAction, pendingChoices];
   }
 
   if (
-    (actionType === ActionEffectType.DISCOVER_CARD && choices.length <= picks.pickMax) ||
+    (picks.pickMax === picks.pickMin &&
+      actionType === ActionEffectType.DISCOVER_CARD &&
+      choices.length <= picks.pickMax) ||
     (cards.scope?.length === 1 &&
       (cards.scope.includes(TargetScope.SELF) ||
         cards.scope.includes(TargetScope.TRIGGER_SOURCE) ||
         cards.scope.includes(TargetScope.TOP_OF_DECK) ||
         cards.scope.includes(TargetScope.TOP_OF_DISCARD))) ||
-    cards.ids?.length === 1
+    cards.ids?.length === 1 ||
+    cards.autoPick
   ) {
     resolverAction.instanceIds = choices;
     return [resolverAction, pendingChoices];
@@ -322,12 +319,13 @@ function resolveStateTarget(
   resolverAction: ResolvedActionEffect,
   pendingChoices: PendingChoice[],
   ctx: ResolveContext,
-  states: number[],
+  states: StateSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const { actionId, actionType, instanceId, isMandatory } = ctx;
+  const { actionId, actionType, instanceId, isMandatory, gameState, defs, stickerDefs } = ctx;
 
-  if (states.length === 1) {
-    resolverAction.stateId = states[0];
+  const choices = stateSelector(states, instanceId, gameState, defs, stickerDefs);
+  if (choices.length === 1) {
+    resolverAction.stateId = choices[0];
     return [resolverAction, pendingChoices];
   }
   pendingChoices.push({
@@ -335,7 +333,7 @@ function resolveStateTarget(
     kind: actionType,
     type: PendingChoiceType.CHOOSE_STATE,
     sourceInstanceId: instanceId,
-    choices: states,
+    choices,
     pickMin: 1,
     pickMax: 1,
     isMandatory,
@@ -456,6 +454,15 @@ export function resolveActionEffect(
     }
   }
 
+  if (action.states) {
+    [resolverAction, pendingChoices] = resolveStateTarget(
+      resolverAction,
+      pendingChoices,
+      ctx,
+      action.states,
+    );
+  }
+
   if (action.resources) {
     [resolverAction, pendingChoices] = resolveResourceTarget(
       resolverAction,
@@ -471,15 +478,6 @@ export function resolveActionEffect(
       pendingChoices,
       ctx,
       action.stickers,
-    );
-  }
-
-  if (action.states) {
-    [resolverAction, pendingChoices] = resolveStateTarget(
-      resolverAction,
-      pendingChoices,
-      ctx,
-      action.states.ids ?? [],
     );
   }
 

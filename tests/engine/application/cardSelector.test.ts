@@ -372,50 +372,50 @@ describe('cardSelector – having filter', () => {
     name: 'G',
     states: [{ id: 1, name: 'S', glory: { amount: 3 } }],
   };
-  const instG = makeInstance({ id: 70, cardId: 7, stateId: 1 });
+  const instG = makeInstance({ id: 7, cardId: 7, stateId: 1 });
   const localDefs = { 7: defWithGlory };
 
   it('includes card when glory meets minGlory', () => {
-    const gs = makeState({ board: [70], instances: { 70: instG } });
+    const gs = makeState({ board: [7], instances: { 7: instG } });
     const result = cardSelector(
-      { scope: [TargetScope.BOARD], having: { minGlory: 3 } },
-      99,
+      { scope: [TargetScope.BOARD, TargetScope.SELF], having: { minGlory: 3 } },
+      7,
       gs,
       localDefs,
       stickerDefs,
     );
-    expect(result).toContain(70);
+    expect(result).toContain(7);
   });
 
   it('excludes card when glory is below minGlory', () => {
-    const gs = makeState({ board: [70], instances: { 70: instG } });
+    const gs = makeState({ board: [7], instances: { 7: instG } });
     const result = cardSelector(
-      { scope: [TargetScope.BOARD], having: { minGlory: 5 } },
-      99,
+      { scope: [TargetScope.BOARD, TargetScope.SELF], having: { minGlory: 5 } },
+      7,
       gs,
       localDefs,
       stickerDefs,
     );
-    expect(result).not.toContain(70);
+    expect(result).not.toContain(7);
   });
 
   it('includes card when glory meets maxGlory', () => {
-    const gs = makeState({ board: [70], instances: { 70: instG } });
+    const gs = makeState({ board: [7], instances: { 7: instG } });
     const result = cardSelector(
-      { scope: [TargetScope.BOARD], having: { maxGlory: 5 } },
-      99,
+      { scope: [TargetScope.BOARD, TargetScope.SELF], having: { maxGlory: 5 } },
+      7,
       gs,
       localDefs,
       stickerDefs,
     );
-    expect(result).toContain(70);
+    expect(result).toContain(7);
   });
 
   it('excludes card when glory exceeds maxGlory', () => {
-    const gs = makeState({ board: [70], instances: { 70: instG } });
+    const gs = makeState({ board: [7], instances: { 7: instG } });
     const result = cardSelector(
-      { scope: [TargetScope.BOARD], having: { maxGlory: 2 } },
-      99,
+      { scope: [TargetScope.BOARD, TargetScope.SELF], having: { maxGlory: 2 } },
+      7,
       gs,
       localDefs,
       stickerDefs,
@@ -429,16 +429,16 @@ describe('cardSelector – having filter', () => {
       name: 'P',
       states: [{ id: 1, name: 'P', productions: [{ gold: 2, wood: 1 }] }],
     };
-    const instProd = makeInstance({ id: 80, cardId: 8, stateId: 1 });
-    const gs = makeState({ board: [80], instances: { 80: instProd } });
+    const instProd = makeInstance({ id: 8, cardId: 8, stateId: 1 });
+    const gs = makeState({ board: [8], instances: { 8: instProd } });
     const result = cardSelector(
-      { scope: [TargetScope.BOARD], having: { minProduction: 3 } },
-      99,
+      { scope: [TargetScope.BOARD, TargetScope.SELF], having: { minProduction: 3 } },
+      8,
       gs,
       { 8: defProd },
       stickerDefs,
     );
-    expect(result).toContain(80);
+    expect(result).toContain(8);
   });
 
   it('excludes card when production is below minProduction', () => {
@@ -447,16 +447,16 @@ describe('cardSelector – having filter', () => {
       name: 'P',
       states: [{ id: 1, name: 'P', productions: [{ gold: 2, wood: 1 }] }],
     };
-    const instProd = makeInstance({ id: 80, cardId: 8, stateId: 1 });
-    const gs = makeState({ board: [80], instances: { 80: instProd } });
+    const instProd = makeInstance({ id: 8, cardId: 8, stateId: 1 });
+    const gs = makeState({ board: [8], instances: { 8: instProd } });
     const result = cardSelector(
-      { scope: [TargetScope.BOARD], having: { minProduction: 4 } },
-      99,
+      { scope: [TargetScope.BOARD, TargetScope.SELF], having: { minProduction: 4 } },
+      8,
       gs,
       { 8: defProd },
       stickerDefs,
     );
-    expect(result).not.toContain(80);
+    expect(result).not.toContain(8);
   });
 
   it('excludes card when production exceeds maxProduction', () => {
@@ -465,16 +465,16 @@ describe('cardSelector – having filter', () => {
       name: 'P',
       states: [{ id: 1, name: 'P', productions: [{ gold: 2, wood: 1 }] }],
     };
-    const instProd = makeInstance({ id: 80, cardId: 8, stateId: 1 });
-    const gs = makeState({ board: [80], instances: { 80: instProd } });
+    const instProd = makeInstance({ id: 8, cardId: 8, stateId: 1 });
+    const gs = makeState({ board: [8], instances: { 8: instProd } });
     const result = cardSelector(
-      { scope: [TargetScope.BOARD], having: { maxProduction: 2 } },
-      99,
+      { scope: [TargetScope.BOARD, TargetScope.SELF], having: { maxProduction: 2 } },
+      8,
       gs,
       { 8: defProd },
       stickerDefs,
     );
-    expect(result).not.toContain(80);
+    expect(result).not.toContain(8);
   });
 });
 

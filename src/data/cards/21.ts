@@ -76,7 +76,7 @@ export const opportunist: CardDef = {
               cards: {
                 scope: [TargetScope.SELF],
               },
-              states: { ids: [1, 2, 3], having: { maxStickers: 0 } },
+              states: { ids: [1, 2, 3, 4], having: { maxStickers: 0 } },
               stickers: { ids: [1, 2, 3, 4, 5, 6] },
             },
             {

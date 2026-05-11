@@ -1,9 +1,8 @@
 import {
-  getActiveState,
   getAffectedCardsByBoardEffects,
-  getEffectiveGlory,
   getEffectiveProductions,
 } from '@engine/application/cardHelpers';
+import { matchHaving } from '@engine/application/stateSelector';
 import { type CardTag, PassiveType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, CardSelector, CardState, GameState, Sticker } from '@engine/domain/types';
 
@@ -92,52 +91,6 @@ function matchesProductions(
       ).includes(r),
     ),
   );
-}
-
-function matchHaving(id: number, ctx: CardCriteriaContext): boolean {
-  const { gameState, defs, stickerDefs, selector } = ctx;
-  if (!selector.having) return true;
-  const activeState = getActiveState(gameState.instances[id], defs);
-  const baseGlory = getEffectiveGlory(
-    activeState,
-    gameState,
-    defs,
-    gameState.instances[id],
-    stickerDefs,
-  );
-  const baseProduction = (activeState.productions ?? []).reduce((maxProduction, production) => {
-    const effectiveProduction = getEffectiveProductions(
-      production,
-      gameState,
-      defs,
-      gameState.instances[id],
-      stickerDefs,
-      false,
-    );
-    const totalProduction = Object.values(effectiveProduction).reduce(
-      (sum, amount) => sum + amount,
-      0,
-    );
-    return Math.max(maxProduction, totalProduction);
-  }, 0);
-
-  if (
-    selector.having.minStickers !== undefined &&
-    Object.values(gameState.instances[id].stickers).length < selector.having.minStickers
-  )
-    return false;
-  if (
-    selector.having.maxStickers !== undefined &&
-    Object.values(gameState.instances[id].stickers).length > selector.having.maxStickers
-  )
-    return false;
-  if (selector.having.minGlory !== undefined && baseGlory < selector.having.minGlory) return false;
-  if (selector.having.maxGlory !== undefined && baseGlory > selector.having.maxGlory) return false;
-  if (selector.having.minProduction !== undefined && baseProduction < selector.having.minProduction)
-    return false;
-  if (selector.having.maxProduction !== undefined && baseProduction > selector.having.maxProduction)
-    return false;
-  return true;
 }
 
 interface CardCriteriaContext {
@@ -229,9 +182,10 @@ export function cardSelector(
     hasBlocked,
     isUpgradable,
   };
+
   const selectedIds = pool
     .filter(id => matchesCardCriteria(id, ctx))
-    .filter(id => matchHaving(id, ctx));
+    .filter(id => matchHaving(id, gameState.instances[id].stateId, ctx));
 
   const countAs2InstanceIds = new Set(
     Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.COUNT_AS_2)).flat(),

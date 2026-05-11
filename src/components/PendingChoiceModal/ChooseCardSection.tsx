@@ -49,7 +49,7 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
           <div key={`${id}-${index.toString()}`} className="flex flex-col items-stretch gap-2 p-2">
             <GameCard
               instance={makePreviewInstance(id, def, state)}
-              className={`relative ${isSelected ? ' ring-primary rounded-xl ring-2' : ''}`}
+              className={`relative ${isSelected ? ' inset-ring-primary rounded-xl inset-ring-2' : ''}`}
             />
             <Button onClick={() => handleCardClick(id)}>{t('pendingChoice.select')}</Button>
           </div>

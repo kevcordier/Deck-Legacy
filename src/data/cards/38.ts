@@ -28,6 +28,7 @@ export const stop5: CardDef = {
                 ids: [48, 49, 50, 51],
                 scope: [TargetScope.DISCOVERY],
                 pickNumber: 2,
+                autoPick: true,
               },
             },
           ],

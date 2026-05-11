@@ -159,6 +159,7 @@ export type CardSelector = {
   pickNumber?: number;
   pickMin?: number;
   pickMax?: number;
+  autoPick?: boolean;
 };
 
 export type ResourceSelector = {

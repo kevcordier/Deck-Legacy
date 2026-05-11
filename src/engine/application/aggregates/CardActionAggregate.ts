@@ -312,20 +312,6 @@ export class CardActionAggregate {
       this.gameState.instances[this.instance.id].usedActionIds.push(this.action.id);
     }
 
-    if (
-      !this.triggerId &&
-      !this.action.unlimited &&
-      !getActiveState(this.instance, this.cardDefs)?.permanent &&
-      !this.def.parchmentCard
-    ) {
-      this.gameState = discardCards(
-        this.gameState,
-        [this.instance.id],
-        this.cardDefs,
-        this.stickerDefs,
-      );
-    }
-
     if (this.def.parchmentCard) {
       this.gameState = {
         ...this.gameState,
@@ -518,6 +504,20 @@ export class CardActionAggregate {
   }
 
   resolvePayCost(resolvedCost?: ResolvedCost) {
+    if (
+      !this.triggerId &&
+      !this.action.unlimited &&
+      !getActiveState(this.instance, this.cardDefs)?.permanent &&
+      !this.def.parchmentCard
+    ) {
+      this.gameState = discardCards(
+        this.gameState,
+        [this.instance.id],
+        this.cardDefs,
+        this.stickerDefs,
+      );
+    }
+
     this.resolvedCost = {
       resources: mergeResources(this.resolvedCost.resources, resolvedCost?.resources),
       discardedCardIds: [

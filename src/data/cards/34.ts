@@ -83,6 +83,7 @@ export const mason: CardDef = {
               cards: {
                 ids: [109, 110],
                 scope: [TargetScope.DISCOVERY],
+                autoPick: true,
               },
             },
           ],
@@ -132,6 +133,7 @@ export const mason: CardDef = {
               cards: {
                 ids: [111, 112],
                 scope: [TargetScope.DISCOVERY],
+                autoPick: true,
               },
             },
           ],
