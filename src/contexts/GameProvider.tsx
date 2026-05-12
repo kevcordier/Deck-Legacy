@@ -32,6 +32,7 @@ import {
 } from '@engine/infrastructure/loaders';
 import { deleteSave, getCardName, saveGame, setCardName } from '@engine/infrastructure/persistence';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
 function makeAggregate(
@@ -71,7 +72,6 @@ export function GameProvider({
     upgradeTo: number;
     resolvedCost: ResolvedCost;
   } | null>(null);
-  const [globalError, setGlobalError] = useState<string | null>(null);
   const [parameters, setParameters] = useState(agg.getParameters());
 
   const getParchmentCardDefFromPhase = (
@@ -106,10 +106,6 @@ export function GameProvider({
     return choices.length > 0;
   };
 
-  const dismissGlobalError = () => {
-    setGlobalError(null);
-  };
-
   const cancelPendingAction = () => {
     aggRef.current.cancelCurrentCardAction();
     setPendingUpgrade(null);
@@ -124,7 +120,7 @@ export function GameProvider({
     } else if (error instanceof Error) {
       message = error.message;
     }
-    setGlobalError(message);
+    toast.error(message, { style: { zIndex: 9999 } });
   };
 
   const triggerAction = (instanceId: number, action: CardAction, triggerId?: string): GameState => {
@@ -597,8 +593,6 @@ export function GameProvider({
         resolvePayCost,
         skipTrigger,
         skipChoice,
-        globalError,
-        dismissGlobalError,
         parchmentTextPending,
         dismissParchmentText,
         canRewind,

@@ -36,8 +36,6 @@ export type GameContextType = {
   resolvePayCost: (resolved: ResolvedCost) => void;
   skipTrigger: (uuid: string) => void;
   skipChoice: () => void;
-  globalError: string | null;
-  dismissGlobalError: () => void;
   parchmentTextPending: CardDef | null;
   dismissParchmentText: () => void;
   canRewind: () => boolean;

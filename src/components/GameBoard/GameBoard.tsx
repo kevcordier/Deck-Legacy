@@ -28,8 +28,6 @@ export function GameBoard() {
     resolvePayCost,
     skipTrigger,
     skipChoice,
-    globalError,
-    dismissGlobalError,
     parameters,
   } = useGame();
   const { drawPile, discardPile, destroyedPile, instances } = gameState;
@@ -196,15 +194,6 @@ export function GameBoard() {
           onSkipTrigger={skipTrigger}
           onSkipChoice={skipChoice}
         />
-      )}
-
-      {globalError && (
-        <div className="fixed right-4 bottom-4 z-50 flex max-w-sm items-center gap-3 rounded-xl border-2 border-danger bg-card px-4 py-3 text-sm text-base-ink shadow-lg">
-          <span className="flex-1">{globalError}</span>
-          <Button onClick={dismissGlobalError} variant="text" color="danger" size="sm">
-            ✕
-          </Button>
-        </div>
       )}
 
       {/* Destroyed cards modal (desktop) */}
