@@ -45,6 +45,7 @@ export const mysteriousCave: CardDef = {
             discard: [
               {
                 pickNumber: 2,
+                pickMin: 2,
                 tags: [CardTag.PERSON],
               },
             ],
@@ -68,6 +69,7 @@ export const mysteriousCave: CardDef = {
             discard: [
               {
                 pickNumber: 6,
+                pickMin: 6,
                 scope: [TargetScope.FRIENDLY],
               },
             ],

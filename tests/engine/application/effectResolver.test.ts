@@ -139,7 +139,7 @@ describe('resolveActionEffect – DISCARD_CARD', () => {
       cards: { scope: [TargetScope.BOARD] },
     };
     const [resolved] = resolveActionEffect(effect, 99, makeState(), defs, stickerDefs);
-    expect(resolved.instanceIds).toBeUndefined();
+    expect(resolved.instanceIds?.length).toBe(0);
   });
 });
 
@@ -272,7 +272,7 @@ describe('resolveActionEffect – ADD_STICKER production cap', () => {
       { ...defs, 10: highProdDef },
       stickerDefs,
     );
-    expect(resolved.instanceIds).toBeUndefined();
+    expect(resolved.instanceIds?.length).toBe(0);
     expect(pending).toHaveLength(0);
   });
 });

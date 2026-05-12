@@ -34,6 +34,8 @@ export function GameBoard() {
 
   const [openSheet, setOpenSheet] = useState<'draw' | 'discard' | 'destroyed' | null>(null);
   const [destroyedModalOpen, setDestroyedModalOpen] = useState(false);
+  const [pinnedLeft, setPinnedLeft] = useState(true);
+  const [pinnedRight, setPinnedRight] = useState(false);
 
   const nextCards = drawPile
     .slice(0, parameters.displayedDrawDeckCards)
@@ -60,27 +62,42 @@ export function GameBoard() {
     (!!pendingChoices && pendingChoices.length > 0) ||
     (!!triggerPile && Object.keys(triggerPile).length > 0);
 
+  const columnClassLeft =
+    'w-15 hover:w-64 absolute z-50 left-0 hover:shadow-xl transition-[width] hover:delay-500 ease-in-out hover:position-absolute';
+  const columnClassRight =
+    'w-15 hover:w-64 absolute z-50 right-0 hover:shadow-xl transition-[width] hover:delay-500 ease-in-out hover:position-absolute';
+
   return (
     <div className="flex h-full flex-1 flex-col overflow-hidden">
       {/* Main content row — sidebars hidden on mobile */}
-      <div className="flex flex-1 items-stretch overflow-hidden gap-1">
-        <div className="hidden lg:contents">
+      <div className="flex relative flex-1 items-stretch overflow-hidden gap-1">
+        <div className={`hidden lg:flex h-full ${pinnedLeft ? 'w-64 delay-0' : columnClassLeft}`}>
           <DeckViewer
             title={t('deckViewer.draw')}
             icon={<DrawCardIcon className="size-4" />}
             emptyText={t('deckViewer.empty')}
+            pinned={pinnedLeft}
+            onTogglePinned={() => setPinnedLeft(p => !p)}
             deck={drawDeck}
+            variant="left"
             displayedCards={nextCards}
           />
         </div>
 
-        <MainBoard />
+        <div
+          className={`${!pinnedLeft ? 'lg:pl-15' : ''} ${!pinnedRight ? 'lg:pr-15' : ''} flex-1 h-full relative scrollbar `}
+        >
+          <MainBoard />
+        </div>
 
-        <div className="hidden lg:contents">
+        <div className={`hidden lg:flex h-full ${pinnedRight ? 'w-64 delay-0' : columnClassRight}`}>
           <DeckViewer
             title={t('deckViewer.discard')}
             icon={<DiscardIcon className="size-4" />}
             deck={discardDeck}
+            pinned={pinnedRight}
+            onTogglePinned={() => setPinnedRight(p => !p)}
+            variant="right"
             displayedCards={discardDeck.length > 0 ? [discardDeck[discardDeck.length - 1]] : []}
             footer={
               destroyedPile.length > 0 ? (
@@ -224,7 +241,7 @@ export function GameBoard() {
           className="bg-background border-border absolute right-0 bottom-0 left-0 max-h-[90vh] overflow-y-auto rounded-t-2xl border-t shadow-2xl"
         >
           <DeckViewer
-            isSheet
+            variant="full"
             icon={
               {
                 draw: <DrawCardIcon className="size-4" />,

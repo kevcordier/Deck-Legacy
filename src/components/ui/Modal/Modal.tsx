@@ -68,12 +68,10 @@ export function Modal({
       <div
         className={`flex w-full items-start justify-between ${peeking ? 'pointer-events-none opacity-0' : ''}`}
       >
-        {title || subtitle ? (
-          <div>
-            {title && <div className="text-primary font-bold uppercase">{title}</div>}
-            {subtitle && <div className="text-ink text-sm">{subtitle}</div>}
-          </div>
-        ) : null}
+        <div>
+          {title && <div className="text-primary font-bold uppercase">{title}</div>}
+          {subtitle && <div className="text-ink text-sm">{subtitle}</div>}
+        </div>
         {onClose && (
           <Button onClick={onClose} variant="text" color="ink" size="sm">
             ✕

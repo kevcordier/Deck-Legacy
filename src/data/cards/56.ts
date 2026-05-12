@@ -35,6 +35,7 @@ export const youngPrincess: CardDef = {
                     scope: [TargetScope.BOARD],
                     tags: [CardTag.PERSON],
                     pickNumber: 2,
+                    pickMin: 2,
                   },
                 },
                 {

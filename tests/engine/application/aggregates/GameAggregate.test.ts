@@ -1111,7 +1111,7 @@ describe('GameAggregate.cardAction – unresolvable effect', () => {
         {
           id: 1,
           type: ActionEffectType.DISCARD_CARD,
-          cards: { scope: [TargetScope.BOARD], pickNumber: 1 }, // empty board → no candidates
+          cards: { scope: [TargetScope.BOARD], pickMin: 1 }, // empty board → no candidates
         },
       ],
     };
@@ -1140,7 +1140,7 @@ describe('GameAggregate.cardAction – unresolvable effect', () => {
         {
           id: 1,
           type: ActionEffectType.DISCARD_CARD,
-          cards: { scope: [TargetScope.DISCARD], pickNumber: 1 },
+          cards: { scope: [TargetScope.DISCARD], pickMin: 1 },
         },
       ],
     };
@@ -1185,7 +1185,7 @@ describe('GameAggregate.cardAction – unresolvable effect', () => {
         {
           id: 3,
           type: ActionEffectType.DISCARD_CARD,
-          cards: { scope: [TargetScope.DISCARD] }, // empty discard pile → unresolvable
+          cards: { scope: [TargetScope.DISCARD], pickMin: 1 }, // empty discard pile → unresolvable
         },
       ],
     };
@@ -1225,7 +1225,7 @@ describe('GameAggregate.cardAction – unresolvable effect', () => {
         {
           id: 0,
           type: ActionEffectType.DISCARD_CARD,
-          cards: { scope: [TargetScope.DISCARD] },
+          cards: { scope: [TargetScope.DISCARD], pickMin: 1 },
         },
       ],
       cost: { resources: [{ gold: 1 }, { stone: 1 }] },

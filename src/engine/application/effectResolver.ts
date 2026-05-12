@@ -177,12 +177,13 @@ function resolveCardTarget(
   );
 
   const picks = getPickNumbers(cards, choices.length);
-  if (choices.length < picks.pickMin) {
+  if (cards.pickMin && choices.length < cards.pickMin) {
     resolverAction.unresolvable = true;
     return [resolverAction, pendingChoices];
   }
 
   if (
+    choices.length < picks.pickMin ||
     (picks.pickMax === picks.pickMin &&
       actionType === ActionEffectType.DISCOVER_CARD &&
       choices.length <= picks.pickMax) ||
@@ -295,11 +296,11 @@ function resolveStickerTarget(
   const { actionId, actionType, instanceId, isMandatory, gameState } = ctx;
   const availableIds = (stickers.ids ?? []).filter(id => (gameState.stickerStock[id] ?? 0) > 0);
   const picks = getPickNumbers(stickers, availableIds.length);
-  if (availableIds.length < picks.pickMin) {
+  if (stickers.pickMin && availableIds.length < stickers.pickMin) {
     resolverAction.unresolvable = true;
     return [resolverAction, pendingChoices];
   }
-  if (availableIds.length === picks.pickMax) {
+  if (availableIds.length <= picks.pickMax) {
     resolverAction.stickerIds = availableIds;
     return [resolverAction, pendingChoices];
   }

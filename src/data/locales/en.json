@@ -139,7 +139,9 @@
     "modalSubtitle": "{{count}} card",
     "modalSubtitle_other": "{{count}} cards",
     "emptyDeck": "The deck is empty",
-    "remainingCards": "Other cards"
+    "remainingCards": "Other cards",
+    "pinPanel": "Pin the panel",
+    "unpinPanel": "Unpin the panel"
   },
   "cardList": {
     "noCards": "No cards",

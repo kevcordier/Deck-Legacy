@@ -89,7 +89,7 @@ export function MainBoard() {
   );
   const permanents = gameState.permanents.filter(c => !goals.includes(c));
   return (
-    <main className="scrollbar @container/main flex flex-1 flex-col gap-6 p-2 lg:p-4">
+    <main className="@container/main flex flex-1 flex-col gap-6 p-2 lg:p-4">
       {parchmentTextPending && (
         <div className="flex flex-col gap-4 p-4 bg-card rounded-lg">
           <MarkdownText text={tCardParchmentText(t, parchmentTextPending.id)} ink />

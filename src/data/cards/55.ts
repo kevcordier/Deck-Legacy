@@ -63,7 +63,7 @@ export const tornado: CardDef = {
               cards: {
                 scope: [TargetScope.BOARD],
                 tags: [CardTag.BUILDING],
-                pickMin: 5,
+                pickNumber: 5,
               },
             },
           ],
