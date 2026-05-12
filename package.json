@@ -29,7 +29,7 @@
     "react-i18next": "^17.0.7",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "tailwindcss": "^4.2.4"
+    "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.7.4",
