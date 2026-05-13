@@ -456,16 +456,7 @@ export class GameAggregate {
     };
     this.apply(event);
 
-    const oldEvent = this.events.findIndex(
-      e =>
-        e.type === GameEventType.CHOOSE_STATE &&
-        (e as ChooseStateEvent).cardInstanceId === cardInstanceId,
-    );
-    if (oldEvent >= 0) {
-      this.events[oldEvent] = event;
-    } else {
-      this.events.push(event);
-    }
+    this.events.push(event);
 
     return this.gameState;
   }

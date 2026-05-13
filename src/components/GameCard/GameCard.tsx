@@ -93,7 +93,7 @@ export function GameCard({
   }).map((_, i) => instance.glories[i]);
 
   const cardClass = [
-    'min-w-32 max-w-100 aspect-2/3 rounded-md @3xs:rounded-xl',
+    'min-w-32 max-w-80 aspect-2/3 rounded-md @3xs:rounded-xl',
     'border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden motion-safe:animate-fade-in-scale motion-safe:opacity-0 motion-safe:[transform:translateY(18px)_scale(0.96)] motion-reduce:animate-none',
   ]
     .filter(Boolean)

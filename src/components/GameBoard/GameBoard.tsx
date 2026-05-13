@@ -1,5 +1,5 @@
+import { CheatPanel } from '@components/CheatPanel/CheatPanel';
 import { DeckViewer } from '@components/DeckViewer/DeckViewer';
-import { EventPanel } from '@components/EventPanel/EventPanel';
 import { GameCard } from '@components/GameCard/GameCard';
 import { MainBoard } from '@components/MainBoard/MainBoard';
 import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
@@ -85,7 +85,7 @@ export function GameBoard() {
         </div>
 
         <div
-          className={`${!pinnedLeft ? 'lg:pl-15' : ''} ${!pinnedRight ? 'lg:pr-15' : ''} flex-1 h-full relative scrollbar `}
+          className={`${pinnedLeft ? '' : 'lg:pl-15'} ${pinnedRight ? '' : 'lg:pr-15'} flex-1 h-full relative scrollbar `}
         >
           <MainBoard />
         </div>
@@ -117,7 +117,7 @@ export function GameBoard() {
         </div>
       </div>
 
-      <EventPanel />
+      <CheatPanel />
 
       {/* Mobile action bar */}
       <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t px-2 pt-2 pb-[max(1rem,env(safe-area-inset-bottom))] lg:hidden">

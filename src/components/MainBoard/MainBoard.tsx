@@ -60,7 +60,10 @@ function NewCardSelection({
         }
 
         return (
-          <div key={id} className="basis-[calc(50%-0.25rem)] lg:basis-[calc(33.333%-0.667rem)]">
+          <div
+            key={id}
+            className="basis-[calc(50%-0.25rem)] lg:basis-[calc(33.333%-0.667rem)] max-w-80"
+          >
             <GameCard instance={inst} />
           </div>
         );

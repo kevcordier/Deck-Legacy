@@ -860,27 +860,6 @@ describe('GameAggregate.chooseState', () => {
     const gs = agg.chooseState(1, 2);
     expect(gs.instances[1].stateId).toBe(2);
   });
-
-  it('updates existing CHOOSE_STATE event when called again for same card', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const state = makeState({ instances: { 1: inst } });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
-    agg.chooseState(1, 2);
-    const eventsBefore = agg.getEvents().length;
-    agg.chooseState(1, 3);
-    // Should replace existing event, not push a new one
-    expect(agg.getEvents().length).toBe(eventsBefore);
-    expect(agg.getGameState().instances[1].stateId).toBe(3);
-  });
-
-  it('pushes a new event when no existing CHOOSE_STATE event for that card', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const state = makeState({ instances: { 1: inst } });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
-    const eventsBefore = agg.getEvents().length;
-    agg.chooseState(1, 2);
-    expect(agg.getEvents().length).toBe(eventsBefore + 1);
-  });
 });
 
 // ─── cardAction canUseOptions ─────────────────────────────────────────────────

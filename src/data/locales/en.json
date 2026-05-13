@@ -183,8 +183,8 @@
     "resetYes": "Yes, start over",
     "resetNo": "Cancel"
   },
-  "eventLog": {
-    "title": "Event log",
+  "cheatPanel": {
+    "title": "Cheat panel",
     "gameStarted": "Game started",
     "roundStarted": "Round {{round}} started",
     "turnStarted": "Turn {{turn}} — {{count}} card drawn",

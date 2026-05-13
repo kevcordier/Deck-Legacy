@@ -183,8 +183,8 @@
     "resetYes": "Oui, recommencer",
     "resetNo": "Annuler"
   },
-  "eventLog": {
-    "title": "Journal d'événements",
+  "cheatPanel": {
+    "title": "Cheat panel",
     "gameStarted": "Partie démarrée",
     "roundStarted": "Manche {{round}} démarrée",
     "turnStarted": "Tour {{turn}} — {{count}} carte piochée",
