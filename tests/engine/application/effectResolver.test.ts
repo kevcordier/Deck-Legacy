@@ -245,6 +245,57 @@ describe('resolveActionEffect – ADD_STICKER', () => {
     expect(pending).toHaveLength(1);
     expect(pending[0].type).toBe('choose_sticker');
   });
+
+  it('marks action as unresolvable when pickMin exceeds available stickers', () => {
+    const effect = {
+      id: 1,
+      type: ActionEffectType.ADD_STICKER,
+      stickers: { ids: [3], pickMin: 2, pickMax: 2 },
+    };
+    const gs = makeState({ stickerStock: { 3: 1 } });
+
+    const [resolved, pending] = resolveActionEffect(effect, 1, gs, defs, stickerDefs);
+
+    expect(resolved.unresolvable).toBe(true);
+    expect(pending).toHaveLength(0);
+  });
+});
+
+describe('resolveActionEffect – BOOST_CARD selector enrichment', () => {
+  it('enriches selector with produces and keeps only cards that can produce', () => {
+    const producerDef: CardDef = {
+      id: 2,
+      name: 'Producer',
+      states: [{ id: 1, name: 'S', productions: [{ gold: 1 }] }],
+    };
+    const plainDef: CardDef = {
+      id: 3,
+      name: 'Plain',
+      states: [{ id: 1, name: 'S' }],
+    };
+    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 3, stateId: 1 });
+    const gs = makeState({ board: [2, 3], instances: { 2: inst2, 3: inst3 } });
+
+    const effect = {
+      id: 1,
+      type: ActionEffectType.BOOST_CARD,
+      cards: { scope: [TargetScope.BOARD] },
+    };
+
+    const [resolved, pending] = resolveActionEffect(
+      effect,
+      99,
+      gs,
+      { ...defs, 2: producerDef, 3: plainDef },
+      stickerDefs,
+    );
+
+    expect(resolved.instanceIds).toBeUndefined();
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe('choose_card');
+    expect(pending[0].choices).toEqual([2]);
+  });
 });
 
 // ─── ADD_STICKER – production cap ────────────────────────────────────────────

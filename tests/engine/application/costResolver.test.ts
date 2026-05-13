@@ -121,6 +121,22 @@ describe('resolveCost – discard', () => {
     expect(pending[0].pickMax).toBe(1);
   });
 
+  it('resolves discard directly when only SELF is targeted', () => {
+    const self = makeInstance({ id: 99, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [99], instances: { 99: self } });
+
+    const [resolved, pending] = resolveCost(
+      { discard: [{ scope: [TargetScope.SELF] }] },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
+
+    expect(resolved.discardedCardIds).toEqual([99]);
+    expect(pending).toHaveLength(0);
+  });
+
   it('creates pending choice when more candidates than needed for destroy', () => {
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
@@ -157,5 +173,21 @@ describe('resolveCost – discard', () => {
     );
     expect(pending).toHaveLength(1);
     expect(pending[0].pickMax).toBe(1);
+  });
+
+  it('resolves destroy directly when only SELF is targeted', () => {
+    const self = makeInstance({ id: 99, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [99], instances: { 99: self } });
+
+    const [resolved, pending] = resolveCost(
+      { destroy: { scope: [TargetScope.SELF] } },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
+
+    expect(resolved.destroyedCardIds).toEqual([99]);
+    expect(pending).toHaveLength(0);
   });
 });

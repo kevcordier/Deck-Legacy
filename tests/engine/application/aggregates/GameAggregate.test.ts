@@ -918,6 +918,24 @@ describe('GameAggregate.roundEnded – early return', () => {
     expect(gs.phase).toBe(Phase.ROUND_END);
     expect(Object.keys(gs.triggerPile)).toHaveLength(1);
   });
+
+  it('returns current round-ended state when there are no remaining cards', () => {
+    const state = makeState({
+      drawPile: [],
+      discardPile: [],
+      board: [],
+      discoveryPile: [],
+      instances: {},
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const gs = agg.roundEnded(false);
+
+    expect(gs.phase).toBe(Phase.ROUND_END);
+    expect(gs.round).toBe(1);
+  });
 });
 
 // ─── hasAvailableUnlimitedAction – limitedTime ────────────────────────────────
@@ -1065,6 +1083,58 @@ describe('GameAggregate.cardAction – PARCHMENT finalization', () => {
     // After parchment action, ROUND_STARTED is emitted → phase becomes ROUND_START
     expect(gs.phase).toBe(Phase.ROUND_START);
     expect(gs.round).toBe(1);
+  });
+
+  it('triggers roundEnded(false) when finalizing from ROUND_END with empty trigger pile', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      drawPile: [2],
+      instances: {
+        1: inst,
+        2: makeInstance({ id: 2, cardId: 1, stateId: 1 }),
+      },
+      triggerPile: {},
+      phase: Phase.ROUND_END,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const action = {
+      id: 'a-round-end',
+      actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
+    };
+
+    const gs = agg.cardAction(action, 1);
+
+    expect(gs.phase).toBe(Phase.ROUND_START);
+    expect(gs.round).toBe(2);
+  });
+
+  it('calls turnEnded when action.endsTurn is true', () => {
+    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      drawPile: [2],
+      instances: { 1: inst1, 2: inst2 },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const action = {
+      id: 'a-end-turn',
+      endsTurn: true,
+      actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
+    };
+
+    const gs = agg.cardAction(action, 1);
+
+    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.turn).toBe(2);
+    expect(gs.board).toContain(2);
   });
 });
 

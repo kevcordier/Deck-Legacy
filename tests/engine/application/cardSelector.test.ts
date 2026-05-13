@@ -173,6 +173,26 @@ describe('cardSelector – BLOCKED scope', () => {
     const result = cardSelector({ scope: [TargetScope.BOARD] }, 10, gs, defs, stickerDefs);
     expect(result).not.toContain(20);
   });
+
+  it('returns cards blocked by the current instance with BLOCKED_BY_THIS scope', () => {
+    const gs = makeState({
+      board: [10, 20],
+      instances: { 10: instA, 20: instB },
+      boardEffects: {
+        10: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [20] } }],
+      },
+    });
+
+    const result = cardSelector(
+      { scope: [TargetScope.BLOCKED_BY_THIS] },
+      10,
+      gs,
+      defs,
+      stickerDefs,
+    );
+
+    expect(result).toEqual([20]);
+  });
 });
 
 describe('cardSelector – COUNT_AS_2 passive', () => {

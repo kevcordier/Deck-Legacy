@@ -317,6 +317,124 @@ describe('CardActionAggregate.resolveAction', () => {
     expect(agg.getGameState().resources.gold).toBe(5);
     expect(agg.getGameState().instances[1].trackProgress).toContain(1);
   });
+
+  it('returns early when track advance cost cannot be afforded', () => {
+    const trackDef: CardDef = {
+      id: 4,
+      name: 'Tracked',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          track: {
+            inOrder: true,
+            steps: [{ id: 1, cost: { resources: [{ gold: 1 }] } }],
+          },
+        },
+      ],
+    };
+    const inst = makeInstance({ id: 1, cardId: 4, stateId: 1 });
+    const gs = makeState({ board: [1], resources: {}, instances: { 1: inst } });
+    const action: CardAction = {
+      id: 'ta',
+      actionEffects: [
+        { id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
+      ],
+    };
+
+    const agg = new CardActionAggregate({ 4: trackDef }, {}, gs, inst, action);
+    agg.resolveAction();
+
+    expect(agg.getGameState().instances[1].trackProgress).toEqual([]);
+    expect(agg.getGameState().discardPile).toEqual([]);
+  });
+
+  it('continues when TRACK_ADVANCE resolves without any target', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], discoveryPile: [], instances: { 1: inst } });
+    const action: CardAction = {
+      id: 'skip-track',
+      actionEffects: [
+        { id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.DISCOVERY] } },
+        { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 2 } },
+      ],
+    };
+
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
+    agg.resolveAction();
+
+    expect(agg.getGameState().resources.gold).toBe(2);
+  });
+
+  it('continues when TRACK_ADVANCE targets a card without track', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    const action: CardAction = {
+      id: 'continue-no-track',
+      actionEffects: [
+        { id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
+        { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } },
+      ],
+    };
+
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
+    agg.resolveAction();
+
+    expect(agg.getGameState().resources.gold).toBe(1);
+  });
+
+  it('continues when UPGRADE_CARD resolves without target', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], discoveryPile: [], instances: { 1: inst } });
+    const action: CardAction = {
+      id: 'skip-upgrade',
+      actionEffects: [
+        {
+          id: 0,
+          type: ActionEffectType.UPGRADE_CARD,
+          payingCost: true,
+          cards: { scope: [TargetScope.DISCOVERY] },
+        },
+        { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 2 } },
+      ],
+    };
+
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
+    agg.resolveAction();
+
+    expect(agg.getGameState().resources.wood).toBe(2);
+  });
+
+  it('pays upgrade cost immediately when there is no pending cost choice', () => {
+    const upgradableDef: CardDef = {
+      id: 5,
+      name: 'Upg',
+      states: [
+        { id: 1, name: 'S1', upgrade: [{ cost: { resources: [{ gold: 1 }] }, upgradeTo: 2 }] },
+        { id: 2, name: 'S2' },
+      ],
+    };
+    const inst = makeInstance({ id: 1, cardId: 5, stateId: 1 });
+    const gs = makeState({ board: [1], resources: { gold: 2 }, instances: { 1: inst } });
+    const action: CardAction = {
+      id: 'upg-now',
+      actionEffects: [
+        {
+          id: 0,
+          type: ActionEffectType.UPGRADE_CARD,
+          payingCost: true,
+          cards: { scope: [TargetScope.SELF] },
+        },
+      ],
+    };
+
+    const agg = new CardActionAggregate({ 5: upgradableDef }, {}, gs, inst, action);
+    agg.resolveAction();
+
+    expect(agg.getPendingChoices()).toHaveLength(0);
+    expect(agg.getGameState().instances[1].stateId).toBe(2);
+    expect(agg.getGameState().resources.gold).toBe(1);
+  });
 });
 
 // ─── resolvePlayerChoice ──────────────────────────────────────────────────────
@@ -482,6 +600,96 @@ describe('CardActionAggregate.resolvePlayerChoice', () => {
     ).toThrow('errors.cost.notEnoughResources');
 
     expect(agg.getGameState().instances[2].stateId).toBe(1);
+  });
+
+  it('waits for track step cost resolution after choice', () => {
+    const trackDef: CardDef = {
+      id: 4,
+      name: 'Tracked',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          track: {
+            inOrder: true,
+            steps: [{ id: 1, cost: { resources: [{ gold: 1 }, { wood: 1 }] } }],
+          },
+        },
+      ],
+    };
+    const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const trackedInst = makeInstance({ id: 2, cardId: 4, stateId: 1 });
+    const gs = makeState({
+      board: [1, 2],
+      resources: { gold: 2, wood: 2 },
+      instances: { 1: sourceInst, 2: trackedInst },
+    });
+
+    const resolved: ResolvedActionEffect = {
+      id: '0',
+      type: ActionEffectType.TRACK_ADVANCE,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      stepIds: [1],
+    };
+    mockStrategyApply(resolved, []);
+
+    const agg = new CardActionAggregate(
+      { 1: plainDef, 4: trackDef },
+      {},
+      gs,
+      sourceInst,
+      makeChooseEffectAction(),
+    );
+    agg.resolveAction();
+    agg.resolvePlayerChoice({ id: 'x', type: ActionEffectType.CHOOSE_EFFECT, sourceInstanceId: 1 });
+
+    expect(agg.getPendingChoices()).toHaveLength(1);
+    expect(agg.getPendingChoices()[0].type).toBe(PendingChoiceType.CHOOSE_RESOURCE);
+  });
+
+  it('waits for upgrade cost resolution after choice', () => {
+    const upgradableDef: CardDef = {
+      id: 5,
+      name: 'Upg',
+      states: [
+        {
+          id: 1,
+          name: 'S1',
+          upgrade: [{ cost: { resources: [{ gold: 1 }, { wood: 1 }] }, upgradeTo: 2 }],
+        },
+        { id: 2, name: 'S2' },
+      ],
+    };
+    const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const targetInst = makeInstance({ id: 2, cardId: 5, stateId: 1 });
+    const gs = makeState({
+      board: [1, 2],
+      resources: { gold: 2, wood: 2 },
+      instances: { 1: sourceInst, 2: targetInst },
+    });
+
+    const resolved: ResolvedActionEffect = {
+      id: '0',
+      type: ActionEffectType.UPGRADE_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      payingCost: true,
+    };
+    mockStrategyApply(resolved, []);
+
+    const agg = new CardActionAggregate(
+      { 1: plainDef, 5: upgradableDef },
+      {},
+      gs,
+      sourceInst,
+      makeChooseEffectAction(),
+    );
+    agg.resolveAction();
+    agg.resolvePlayerChoice({ id: 'x', type: ActionEffectType.CHOOSE_EFFECT, sourceInstanceId: 1 });
+
+    expect(agg.getPendingChoices()).toHaveLength(1);
+    expect(agg.getPendingChoices()[0].type).toBe(PendingChoiceType.CHOOSE_RESOURCE);
   });
 });
 
@@ -654,6 +862,56 @@ describe('CardActionAggregate.resolveCostChoice – pendingUpgradeCost', () => {
     expect(agg.getGameState().instances[1].stateId).toBe(2);
     expect(agg.getGameState().resources.gold).toBe(1);
   });
+
+  it('keeps pendingUpgradeCost when there are remaining cost choices', () => {
+    const upgradableDef: CardDef = {
+      id: 5,
+      name: 'Upg',
+      states: [
+        {
+          id: 1,
+          name: 'S1',
+          upgrade: [
+            {
+              cost: {
+                discard: [
+                  { scope: [TargetScope.BOARD], pickNumber: 1 },
+                  { scope: [TargetScope.BOARD], pickNumber: 1 },
+                ],
+              },
+              upgradeTo: 2,
+            },
+          ],
+        },
+        { id: 2, name: 'S2' },
+      ],
+    };
+
+    const inst1 = makeInstance({ id: 1, cardId: 5, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1, 2, 3], instances: { 1: inst1, 2: inst2, 3: inst3 } });
+    const action: CardAction = {
+      id: 'upg-multi',
+      actionEffects: [
+        {
+          id: 0,
+          type: ActionEffectType.UPGRADE_CARD,
+          payingCost: true,
+          cards: { scope: [TargetScope.SELF] },
+        },
+      ],
+    };
+
+    const agg = new CardActionAggregate({ 1: plainDef, 5: upgradableDef }, {}, gs, inst1, action);
+    agg.resolveAction();
+    expect(agg.getPendingChoices()).toHaveLength(2);
+
+    agg.resolveCostChoice({ resources: {}, discardedCardIds: [2], destroyedCardIds: [] });
+
+    expect(agg.getPendingChoices()).toHaveLength(1);
+    expect(agg.getGameState().instances[1].stateId).toBe(1);
+  });
 });
 
 // ─── resolveCostChoice – pendingTrackCost ─────────────────────────────────────
@@ -729,5 +987,53 @@ describe('CardActionAggregate.resolveCostChoice – pendingTrackCost', () => {
     expect(agg.getGameState().instances[1].trackProgress).toContain(1);
     // 2 gold (initial) - 1 gold (cost) + 5 gold (step effect) = 6
     expect(agg.getGameState().resources.gold).toBe(6);
+  });
+
+  it('keeps pendingTrackCost when there are remaining cost choices', () => {
+    const trackDef: CardDef = {
+      id: 4,
+      name: 'Tracked',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          track: {
+            inOrder: true,
+            steps: [
+              {
+                id: 1,
+                cost: {
+                  discard: [
+                    { scope: [TargetScope.BOARD], pickNumber: 1 },
+                    { scope: [TargetScope.BOARD], pickNumber: 1 },
+                  ],
+                },
+                effects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 5 } }],
+              },
+            ],
+          },
+        },
+      ],
+    };
+
+    const inst1 = makeInstance({ id: 1, cardId: 4, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1, 2, 3], instances: { 1: inst1, 2: inst2, 3: inst3 } });
+    const action: CardAction = {
+      id: 'ta-multi',
+      actionEffects: [
+        { id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
+      ],
+    };
+
+    const agg = new CardActionAggregate({ 1: plainDef, 4: trackDef }, {}, gs, inst1, action);
+    agg.resolveAction();
+    expect(agg.getPendingChoices()).toHaveLength(2);
+
+    agg.resolveCostChoice({ resources: {}, discardedCardIds: [2], destroyedCardIds: [] });
+
+    expect(agg.getPendingChoices()).toHaveLength(1);
+    expect(agg.getGameState().instances[1].trackProgress).toEqual([]);
   });
 });
