@@ -27,6 +27,7 @@
     "i18next": "^26.1.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-error-boundary": "^6.1.1",
     "react-hot-toast": "^2.6.0",
     "react-i18next": "^17.0.7",
     "react-markdown": "^10.1.0",

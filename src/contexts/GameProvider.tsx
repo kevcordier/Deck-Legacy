@@ -12,6 +12,7 @@ import { createInstance } from '@engine/application/factory';
 import { computeScore, mergeResources } from '@engine/application/gameStateHelper';
 import { ActionEffectType, GameEventType, type PendingChoiceType } from '@engine/domain/enums';
 import { ActionCancelledError } from '@engine/domain/errors/ActionCancelledError';
+import { CorruptedSaveError } from '@engine/domain/errors/CorruptedSaveError';
 import { CostResolutionError } from '@engine/domain/errors/CostResolutionError';
 import {
   type CardAction,
@@ -60,7 +61,13 @@ export function GameProvider({
     () => makeAggregate(initialState ?? EMPTY_STATE, defs, stickerDefs),
     [initialState, defs, stickerDefs],
   );
-  const initState = useMemo(() => agg.loadFromHistory(initialEvents), [initialEvents, agg]);
+  const initState = useMemo(() => {
+    try {
+      return agg.loadFromHistory(initialEvents);
+    } catch (error) {
+      throw new CorruptedSaveError(error instanceof Error ? error.message : String(error));
+    }
+  }, [initialEvents, agg]);
   const aggRef = useRef<GameAggregate>(agg);
   const [gameState, setGameState] = useState<GameState>(initState);
   const [pendingChoices, setPendingChoices] = useState<PendingChoice[] | null>(() => {
@@ -120,7 +127,7 @@ export function GameProvider({
     } else if (error instanceof Error) {
       message = error.message;
     }
-    toast.error(message, { style: { zIndex: 9999 } });
+    toast.error(message);
   };
 
   const triggerAction = (instanceId: number, action: CardAction, triggerId?: string): GameState => {

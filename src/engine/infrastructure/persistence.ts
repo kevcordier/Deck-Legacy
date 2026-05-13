@@ -47,11 +47,7 @@ export function loadSave(): SaveData | null {
 }
 
 export function deleteSave(): void {
-  try {
-    localStorage.removeItem(SAVE_KEY);
-  } catch {
-    // ignore
-  }
+  localStorage.removeItem(SAVE_KEY);
 }
 
 export function setCardName(instanceId: number, chosenName: string): void {

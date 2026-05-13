@@ -1,5 +1,6 @@
 import { Game } from './pages/Game/Game';
 import './styles/game.css';
+import { ErrorBoundary } from '@components/ui/ErrorBoundary/ErrorBoundary';
 import { GameProvider } from '@contexts/GameProvider';
 import { GameUIProvider } from '@contexts/GameUIProvider';
 import { loadSave } from '@engine/infrastructure/persistence';
@@ -9,7 +10,7 @@ export default function App() {
   const save = loadSave();
 
   return (
-    <>
+    <ErrorBoundary>
       <GameUIProvider>
         <GameProvider initialEvents={save?.events}>
           <Game />
@@ -23,6 +24,6 @@ export default function App() {
         reverseOrder={false}
         containerStyle={{ zIndex: 9999 }}
       />
-    </>
+    </ErrorBoundary>
   );
 }

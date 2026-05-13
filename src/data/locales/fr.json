@@ -6,6 +6,13 @@
       "notEnoughResources": "Pas assez de ressources pour payer ce coût.",
       "notEnoughCardsToDiscard": "Pas assez de cartes disponibles à défausser.",
       "notEnoughCardsToDestroy": "Pas assez de cartes disponibles à détruire."
+    },
+    "boundary": {
+      "title": "Quelque chose s'est mal passé",
+      "subtitle": "Le jeu a rencontré une erreur inattendue et ne peut pas continuer.",
+      "corruptedSave": "Votre sauvegarde n'a pas pu être chargée. Effacez la sauvegarde puis rechargez pour continuer.",
+      "clearSave": "Effacer la sauvegarde et recharger",
+      "reload": "Recharger la page"
     }
   },
   "parchmentCard": {

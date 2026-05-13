@@ -1,6 +1,13 @@
 {
   "errors": {
     "unknown": "An unexpected error occurred.",
+    "boundary": {
+      "title": "Something went wrong",
+      "subtitle": "The game hit an unexpected error and could not continue.",
+      "corruptedSave": "Your saved game could not be loaded. Clear the save and reload to continue.",
+      "clearSave": "Clear save and reload",
+      "reload": "Reload page"
+    },
     "actionCancelled": "This action cannot be resolved: no valid target available.",
     "cost": {
       "notEnoughResources": "Not enough resources to pay this cost.",
