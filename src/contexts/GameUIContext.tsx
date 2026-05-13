@@ -10,6 +10,8 @@ type GameUIContextType = {
   setStickerStockOpen: (open: boolean) => void;
   theme: Theme;
   applyTheme: (theme: Theme) => void;
+  tutorialEnabled: boolean;
+  setTutorialEnabled: (enabled: boolean) => void;
 };
 
 export const GameUIContext = createContext<GameUIContextType>({} as GameUIContextType);

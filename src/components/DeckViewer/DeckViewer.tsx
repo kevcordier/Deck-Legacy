@@ -10,6 +10,7 @@ import { CardTag } from '@engine/domain/enums';
 import type { CardInstance } from '@engine/domain/types';
 import { tCardTag } from '@helpers/cardI18n';
 import { useGame } from '@hooks/useGame';
+import { useTutorial } from '@hooks/useTutorial';
 import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -43,6 +44,7 @@ export function DeckViewer({
 }: DeckViewerProps) {
   const { defs } = useGame();
   const { t } = useTranslation();
+  const { run, stepIndex, nextStep } = useTutorial();
   const [modalOpen, setModalOpen] = useState(false);
   const [cardFilter, setCardFilter] = useState<CardListFilter>({
     search: '',
@@ -75,6 +77,7 @@ export function DeckViewer({
       >
         {variant !== 'full' && (
           <button
+            data-tour={isLeft ? 'draw-viewer-pin' : 'discard-viewer-pin'}
             onClick={onTogglePinned}
             className="text-ink/40 hover:text-ink text-xs leading-none transition-colors"
             title={pinned ? t('deckViewer.unpinPanel') : t('deckViewer.pinPanel')}
@@ -93,10 +96,16 @@ export function DeckViewer({
           {deck.length > 1 && (
             <Button
               className={elementClass}
-              onClick={() => setModalOpen(true)}
+              onClick={() => {
+                if (run && stepIndex === 14) {
+                  nextStep();
+                }
+                setModalOpen(true);
+              }}
               size="xs"
               variant="text"
               color="ink"
+              data-tour={isLeft ? 'draw-viewer-open' : 'discard-viewer-open'}
             >
               {t('deckViewer.viewAll')}
             </Button>
@@ -134,9 +143,12 @@ export function DeckViewer({
           onClose={() => {
             setModalOpen(false);
             setCardFilter({ search: '', tag: '' });
+            if (run && stepIndex === 16) {
+              nextStep();
+            }
           }}
         >
-          <div className="flex flex-col">
+          <div className="flex flex-col" data-tour={'deck-viewer'}>
             <form className="py-4">
               <div className="flex justify-between items-center gap-4 mb-4">
                 <TextInput

@@ -8,6 +8,8 @@ type GameUIHook = {
   rulesOpen: boolean;
   stickerStockOpen: boolean;
   setStickerStockOpen: (open: boolean) => void;
+  tutorialEnabled: boolean;
+  setTutorialEnabled: (enabled: boolean) => void;
 };
 
 export function useGameUI(): GameUIHook {
@@ -18,6 +20,8 @@ export function useGameUI(): GameUIHook {
     rulesOpen,
     stickerStockOpen,
     setStickerStockOpen,
+    tutorialEnabled,
+    setTutorialEnabled,
   } = use(GameUIContext);
 
   return {
@@ -27,5 +31,7 @@ export function useGameUI(): GameUIHook {
     rulesOpen,
     stickerStockOpen,
     setStickerStockOpen,
+    tutorialEnabled,
+    setTutorialEnabled,
   };
 }

@@ -14,7 +14,11 @@ export function ResourcePill({ resource, size = 'lg', className }: ResourcePillP
   const meta = getResMeta(resource);
   return (
     meta.icon && (
-      <meta.icon className={`${meta.cls} ${sizeMap[size]} ${className}`} alt={t(meta.label)} />
+      <meta.icon
+        className={`${sizeMap[size]} ${className}`}
+        color={meta.color}
+        alt={t(meta.label)}
+      />
     )
   );
 }

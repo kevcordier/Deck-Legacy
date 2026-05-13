@@ -8,6 +8,7 @@ import { DestroyIcon, DiscardIcon, DrawCardIcon } from '@components/ui/Icon/icon
 import { Modal } from '@components/ui/Modal/Modal';
 import { Phase } from '@engine/domain/types';
 import { useGame } from '@hooks/useGame';
+import { useTutorial } from '@hooks/useTutorial';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -31,6 +32,8 @@ export function GameBoard() {
     parameters,
   } = useGame();
   const { drawPile, discardPile, destroyedPile, instances } = gameState;
+
+  const { run, nextStep, stepIndex } = useTutorial();
 
   const [openSheet, setOpenSheet] = useState<'draw' | 'discard' | 'destroyed' | null>(null);
   const [destroyedModalOpen, setDestroyedModalOpen] = useState(false);
@@ -68,10 +71,13 @@ export function GameBoard() {
     'w-15 hover:w-64 absolute z-50 right-0 hover:shadow-xl transition-[width] hover:delay-500 ease-in-out hover:position-absolute';
 
   return (
-    <div className="flex h-full flex-1 flex-col overflow-hidden">
+    <div className="flex h-full flex-1 flex-col overflow-hidden" data-tour="game-board">
       {/* Main content row — sidebars hidden on mobile */}
       <div className="flex relative flex-1 items-stretch overflow-hidden gap-1">
-        <div className={`hidden lg:flex h-full ${pinnedLeft ? 'w-64 delay-0' : columnClassLeft}`}>
+        <div
+          className={`hidden lg:flex h-full ${pinnedLeft ? 'w-64 delay-0' : columnClassLeft}`}
+          data-tour="draw-column"
+        >
           <DeckViewer
             title={t('deckViewer.draw')}
             icon={<DrawCardIcon className="size-4" />}
@@ -90,13 +96,22 @@ export function GameBoard() {
           <MainBoard />
         </div>
 
-        <div className={`hidden lg:flex h-full ${pinnedRight ? 'w-64 delay-0' : columnClassRight}`}>
+        <div
+          className={`hidden lg:flex h-full ${pinnedRight ? 'w-64 delay-0' : columnClassRight}`}
+          data-tour="discard-column"
+        >
           <DeckViewer
             title={t('deckViewer.discard')}
             icon={<DiscardIcon className="size-4" />}
             deck={discardDeck}
             pinned={pinnedRight}
-            onTogglePinned={() => setPinnedRight(p => !p)}
+            onTogglePinned={() => {
+              // Tutorial step: when the user pins the discard viewer, if we're on step 5, move to the next step which explains the discard viewer content
+              if (run && stepIndex === 5) {
+                nextStep();
+              }
+              setPinnedRight(p => !p);
+            }}
             variant="right"
             displayedCards={discardDeck.length > 0 ? [discardDeck[discardDeck.length - 1]] : []}
             footer={
@@ -107,6 +122,7 @@ export function GameBoard() {
                   color="danger"
                   size="xs"
                   className="w-full"
+                  data-tour="destroyed-button-desktop"
                 >
                   <DestroyIcon className="size-4" />
                   {t('deckViewer.destroyed')} ({destroyedPile.length})
@@ -126,6 +142,7 @@ export function GameBoard() {
           variant="outlined"
           color="ink"
           size="sm"
+          data-tour="draw-mobile-button"
         >
           <DrawCardIcon className="size-4" alt={t('deckViewer.draw')} /> ({drawPile.length})
         </Button>
@@ -179,6 +196,7 @@ export function GameBoard() {
             variant="outlined"
             color="ink"
             size="sm"
+            data-tour="discard-mobile-button"
           >
             <DiscardIcon className="size-4" alt={t('deckViewer.discard')} /> ({discardPile.length})
           </Button>
@@ -188,6 +206,7 @@ export function GameBoard() {
               variant="outlined"
               color="danger"
               size="sm"
+              data-tour="destroyed-button-mobile"
             >
               <DestroyIcon className="size-4" alt={t('deckViewer.destroyed')} /> (
               {destroyedPile.length})

@@ -35,7 +35,8 @@ export function CardTrackContent({
       .map((_, i) =>
         meta.icon ? (
           <meta.icon
-            className={`${meta.cls} size-3`}
+            className="size-3"
+            color={meta.color}
             alt={resKey}
             key={`${actionId}-${i.toString()}`}
           />
@@ -125,7 +126,7 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
             return (
               <React.Fragment key={k}>
                 {v}
-                {meta.icon && <meta.icon className={`${meta.cls} size-4`} alt={k} />}
+                {meta.icon && <meta.icon className="size-4" color={meta.color} alt={k} />}
               </React.Fragment>
             );
           });

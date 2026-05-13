@@ -108,6 +108,7 @@ export function GameCard({
     <div
       className={`${cardClass} ${className} ${isPermanent ? 'border-5 border-permanent' : ''}`}
       style={{ animationDelay, animationFillMode: 'both' }}
+      data-tour="card-root"
     >
       <div className={`border-b border-black/10 bg-black/5 p-1 pb-2 @3xs:p-3`}>
         <div className="flex items-start justify-between gap-2">
@@ -115,9 +116,14 @@ export function GameCard({
             className={`text-base-ink flex min-w-0 items-center gap-1 text-xs leading-tight @3xs:text-base`}
           >
             {instance.id !== 0 && (
-              <span className={`mr-1 rounded bg-black/6 px-1 font-bold`}>#{instance.id}</span>
+              <span className={`mr-1 rounded bg-black/6 px-1 font-bold`} data-tour="card-number">
+                #{instance.id}
+              </span>
             )}
-            <span className={`font-display truncate font-bold ${isEnemy ? 'text-tag-enemy' : ''}`}>
+            <span
+              className={`font-display truncate font-bold ${isEnemy ? 'text-tag-enemy' : ''}`}
+              data-tour="card-name"
+            >
               {canChooseName ? (
                 <span className="inline-flex min-w-0 items-baseline gap-1">
                   {namePrefix}
@@ -139,7 +145,7 @@ export function GameCard({
           {!hideStatePreview && <CardStatePreview instance={instance} defs={defs} />}
         </div>
 
-        <div className="mt-1 flex flex-wrap items-center gap-1">
+        <div className="mt-1 flex flex-wrap items-center gap-1" data-tour="card-tags">
           {(cs.tags ?? []).map(tag => (
             <Tag key={tag} label={tCardTag(t, tag)} className={tagClass(tag, isEnemy)} />
           ))}
@@ -159,11 +165,13 @@ export function GameCard({
 
         <div className={`relative z-10 flex flex-1 flex-col items-start gap-1 p-1 @3xs:p-3`}>
           {hasProductions && productions && (
-            <ResourceChoice
-              onSelect={choosenOption => resolveProduction(instance.id, choosenOption)}
-              options={productions}
-              disabled={!canActivate || !isOnBoard || isBlocked}
-            />
+            <div data-tour="card-production">
+              <ResourceChoice
+                onSelect={choosenOption => resolveProduction(instance.id, choosenOption)}
+                options={productions}
+                disabled={!canActivate || !isOnBoard || isBlocked}
+              />
+            </div>
           )}
 
           <div className="flex flex-wrap gap-1">
@@ -176,7 +184,7 @@ export function GameCard({
           </div>
 
           {currentStateStickers.length > 0 && (
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1" data-tour="card-glory">
               {currentStateStickers.map((stickerId, index) => {
                 const sticker = stickerDefs[stickerId];
                 if (!sticker) return null;
@@ -205,7 +213,7 @@ export function GameCard({
             </span>
           )}
           {(cs.passives ?? []).map(passive => (
-            <span key={passive.id} className={cardActionsClass}>
+            <span key={passive.id} className={cardActionsClass} data-tour="card-passive">
               <PassifIcon className="size-3 @3xs:size-6" />{' '}
               {tCardPassiveLabel(t, passive.id, instance.cumulated)}
             </span>
@@ -283,6 +291,7 @@ export function GameCard({
                   onClick={() => resolveUpgrade(instance.id, upg.upgradeTo)}
                   disabled={!affordable || !canActivate || optionDisabled}
                   className={cardActionsClass}
+                  data-tour="card-upgrade"
                 >
                   ⬆{' '}
                   {targetState
@@ -300,7 +309,11 @@ export function GameCard({
                               {ci > 0 && ', '}
                               {v}
                               {meta.icon && (
-                                <meta.icon className={`size-4 align-middle ${meta.cls}`} alt={k} />
+                                <meta.icon
+                                  className="size-4 align-middle"
+                                  color={meta.color}
+                                  alt={k}
+                                />
                               )}
                             </React.Fragment>
                           );

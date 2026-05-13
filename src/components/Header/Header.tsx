@@ -5,6 +5,7 @@ import { Options } from '@engine/domain/enums';
 import { Phase } from '@engine/domain/types/Phase';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
+import { useTutorial } from '@hooks/useTutorial';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -23,6 +24,7 @@ export function Header() {
     parameters,
   } = useGame();
   const { setOptionsOpen, setRulesOpen } = useGameUI();
+  const { run } = useTutorial();
   const deckEmpty = gameState.drawPile.length === 0;
 
   const haveChoiceToDo =
@@ -49,7 +51,7 @@ export function Header() {
         !event.shiftKey &&
         event.key.toLowerCase() === 'z';
 
-      if (!isUndoShortcut || !canRewind()) return;
+      if (!isUndoShortcut || !canRewind() || run) return;
 
       event.preventDefault();
       rewindEvent();
@@ -60,10 +62,13 @@ export function Header() {
     return () => {
       globalThis.removeEventListener('keydown', onKeyDown);
     };
-  }, [canRewind, rewindEvent]);
+  }, [canRewind, rewindEvent, run]);
 
   return (
-    <header className="bg-background border-b-border z-101 flex items-center justify-between border-b px-6 py-3">
+    <header
+      className="bg-background border-b-border z-101 flex items-center justify-between border-b px-6 py-3"
+      data-tour="header"
+    >
       <Title level={2}>
         <img
           src="icon-192x192.png"
@@ -93,6 +98,7 @@ export function Header() {
                 disabled={deckEmpty || haveChoiceToDo || cantAdvance}
                 variant="outlined"
                 size="xs"
+                data-tour="progress"
               >
                 <span className="hidden lg:inline">›› </span>
                 {t('header.progress')}
@@ -105,6 +111,7 @@ export function Header() {
                 disabled={haveChoiceToDo}
                 variant="outlined"
                 size="xs"
+                data-tour="end-turn-voluntary"
               >
                 {t('header.endTurn')}
               </Button>

@@ -46,6 +46,7 @@ export function CardStatePreview({ instance, defs }: CardStatePreviewProps) {
         color="base-ink"
         variant="text"
         className="p-1!"
+        data-tour="card-state-preview"
       >
         <EyeIcon />
       </Button>

@@ -1,4 +1,5 @@
 import {
+  ActivatedIcon,
   CrownIcon,
   DestroyIcon,
   GloryIcon,
@@ -16,31 +17,34 @@ import {
 import React from 'react';
 
 // Detects tokens like {{gold}}, {{wood}}, etc. in translated texts
-const ICON_TOKEN = /\{\{(gold|wood|stone|iron|weapon|goods|glory|time|passif|destroy|trigger)\}\}/g;
+const ICON_TOKEN =
+  /\{\{(gold|wood|stone|iron|weapon|goods|glory|action|time|passif|destroy|trigger|optionalTrigger)\}\}/g;
 
 const RESOURCE_META: Record<
   string,
   {
     icon?: React.ComponentType<IconProps>;
-    cls: string;
+    color?: string;
     label: string;
   }
 > = {
-  gold: { icon: GoldIcon, cls: 'color:gold', label: 'resources.gold' },
-  wood: { icon: WoodIcon, cls: 'color:brown', label: 'resources.wood' },
-  stone: { icon: StoneIcon, cls: 'color:gray', label: 'resources.stone' },
-  iron: { icon: IronIcon, cls: 'color:lightsteelblue', label: 'resources.iron' },
-  weapon: { icon: WeaponIcon, cls: 'color:orangered', label: 'resources.weapon' },
-  goods: { icon: GoodsIcon, cls: 'color:limegreen', label: 'resources.goods' },
-  glory: { icon: GloryIcon, cls: 'color:gold', label: 'resources.glory' },
-  time: { icon: TimeIcon, cls: 'color:base-ink', label: 'resources.time' },
-  passif: { icon: PassifIcon, cls: 'color:base-ink', label: 'resources.passif' },
-  destroy: { icon: DestroyIcon, cls: 'color:tag-enemy', label: 'resources.destroy' },
-  trigger: { icon: TriggerIcon, cls: 'color:yellow', label: 'resources.trigger' },
+  gold: { icon: GoldIcon, label: 'resources.gold' },
+  wood: { icon: WoodIcon, label: 'resources.wood' },
+  stone: { icon: StoneIcon, label: 'resources.stone' },
+  iron: { icon: IronIcon, label: 'resources.iron' },
+  weapon: { icon: WeaponIcon, label: 'resources.weapon' },
+  goods: { icon: GoodsIcon, label: 'resources.goods' },
+  glory: { icon: GloryIcon, label: 'resources.glory' },
+  action: { icon: ActivatedIcon, color: 'green', label: 'resources.action' },
+  time: { icon: TimeIcon, color: 'base-ink', label: 'resources.time' },
+  passif: { icon: PassifIcon, color: 'base-ink', label: 'resources.passif' },
+  destroy: { icon: DestroyIcon, color: 'tag-enemy', label: 'resources.destroy' },
+  trigger: { icon: TriggerIcon, color: 'red', label: 'resources.trigger' },
+  optionalTrigger: { icon: TriggerIcon, color: 'yellow', label: 'resources.trigger' },
 };
 
 export function getResMeta(key: string) {
-  return RESOURCE_META[key] ?? { icon: CrownIcon, cls: 'color:gold', label: key };
+  return RESOURCE_META[key] ?? { icon: CrownIcon, color: 'gold', label: key };
 }
 
 /**
@@ -59,7 +63,12 @@ export function renderTextWithIcons(text: string): React.ReactNode {
     const meta = getResMeta(key);
     parts.push(
       meta.icon ? (
-        <meta.icon key={match.index} className={`${meta.cls} size-4 align-middle`} alt={key} />
+        <meta.icon
+          key={match.index}
+          color={meta.color}
+          className={`size-4 align-middle`}
+          alt={key}
+        />
       ) : (
         key
       ),

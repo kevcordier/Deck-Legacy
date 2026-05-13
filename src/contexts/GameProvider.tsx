@@ -32,7 +32,8 @@ import {
   loadStickerDefs,
 } from '@engine/infrastructure/loaders';
 import { deleteSave, getCardName, saveGame, setCardName } from '@engine/infrastructure/persistence';
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { useGameUI } from '@hooks/useGameInterface';
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -54,6 +55,7 @@ export function GameProvider({
   readonly initialEvents?: GameEvent[];
 }) {
   const { t } = useTranslation();
+  const { tutorialEnabled } = useGameUI();
   const defs = useMemo(() => loadCardDefs(), []);
   const stickerDefs = useMemo(() => loadStickerDefs(), []);
 
@@ -61,13 +63,48 @@ export function GameProvider({
     () => makeAggregate(initialState ?? EMPTY_STATE, defs, stickerDefs),
     [initialState, defs, stickerDefs],
   );
+
+  const getTutorialState = useCallback(
+    (aggRef: GameAggregate): GameState => {
+      const deckEntries = (deckData.deck as { id: number; cardId: number }[]).sort(
+        (a, b) => a.id - b.id,
+      );
+      const starterEntries = deckEntries.slice(0, 10);
+      const discoveryEntries = deckEntries.filter(e => e.id > 10);
+      const allInstances = [...starterEntries, ...discoveryEntries].map(entry =>
+        createInstance(entry.id, entry.cardId, defs[entry.cardId].states[0].id, defs),
+      );
+      const initialDeck = starterEntries.map((_, i) => allInstances[i].id);
+      const discoveryPile = discoveryEntries.map(
+        (_, i) => allInstances[starterEntries.length + i].id,
+      );
+      const newState = aggRef.gameStarted(
+        initialDeck,
+        deckEntries,
+        loadInitialStickerStock(),
+        discoveryPile,
+      );
+      newState.discardPile = [3];
+      newState.destroyedPile = [4];
+      newState.drawPile = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      newState.board = [1, 5, 9, 10];
+      newState.resources = { gold: 5, wood: 3, stone: 2, iron: 3, weapon: 4, goods: 2 };
+      return newState;
+    },
+    [defs],
+  );
+
   const initState = useMemo(() => {
     try {
-      return agg.loadFromHistory(initialEvents);
+      if (tutorialEnabled && initialEvents.length > 0) {
+        return getTutorialState(agg);
+      } else {
+        return agg.loadFromHistory(initialEvents);
+      }
     } catch (error) {
       throw new CorruptedSaveError(error instanceof Error ? error.message : String(error));
     }
-  }, [initialEvents, agg]);
+  }, [initialEvents, agg, tutorialEnabled, getTutorialState]);
   const aggRef = useRef<GameAggregate>(agg);
   const [gameState, setGameState] = useState<GameState>(initState);
   const [pendingChoices, setPendingChoices] = useState<PendingChoice[] | null>(() => {
@@ -167,6 +204,10 @@ export function GameProvider({
   };
 
   // ── Démarrage ─────────────────────────────────────────────────────────────
+
+  const startTutorial = () => {
+    sync(getTutorialState(aggRef.current));
+  };
 
   const startGame = () => {
     const deckEntries = (deckData.deck as { id: number; cardId: number }[]).sort(
@@ -586,6 +627,7 @@ export function GameProvider({
         triggerPile,
         deleteSave: deleteSaveCallback,
         startGame,
+        startTutorial,
         startRound,
         startTurn,
         chooseState,

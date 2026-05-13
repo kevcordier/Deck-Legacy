@@ -8,7 +8,7 @@ export interface IconProps {
   readonly alt?: string;
 }
 
-export function ActivatedIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+export function ActivatedIcon({ className, style, alt }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -19,7 +19,7 @@ export function ActivatedIcon({ color = 'currentColor', className, style, alt }:
       aria-label={alt}
     >
       <path
-        fill={color}
+        fill="green"
         d="M1.25 7.25C1.25 3.93629 3.93629 1.25 7.25 1.25H16.75C20.0637 1.25 22.75 3.93629 22.75 7.25V16.75C22.75 20.0637 20.0637 22.75 16.75 22.75H7.25C3.93629 22.75 1.25 20.0637 1.25 16.75V7.25Z"
       />
       <path

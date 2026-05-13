@@ -36,7 +36,8 @@
     "readyToPlay": "Prêt à jouer",
     "deckShuffled": "Deck de {{count}} cartes mélangées",
     "startGame": "▶ Démarrer la partie",
-    "viewRules": "Voir les règles"
+    "viewRules": "Voir les règles",
+    "tutorial": "Activer le tutoriel"
   },
   "preround": {
     "roundEnded": "Manche {{round}} terminée",
@@ -184,14 +185,64 @@
     "language": "Langue",
     "en": "Anglais",
     "fr": "Français",
+    "tutorial": "Activer le tutoriel",
     "reset": "Réinitialiser la partie",
     "resetBtn": "↺ Recommencer",
     "resetConfirm": "Êtes-vous sûr ?",
     "resetYes": "Oui, recommencer",
     "resetNo": "Annuler"
   },
+  "tutorial": {
+    "pinRightColumn": "Clique sur le bouton d'épingle pour afficher la colonne de droite. Tu dois l'épingler pour continuer.",
+    "tooltip": {
+      "badge": "Tutoriel",
+      "close": "Fermer",
+      "skip": "Passer",
+      "back": "Retour",
+      "next": "Suivant",
+      "finish": "Terminer"
+    },
+    "welcome": "Bienvenue dans Deck Legacy.",
+    "goal": "Votre objectif est de construire le royaume le plus puissant possible et de marquer un maximum de gloire.",
+    "interface": {
+      "board": "Voici votre plateau. Vos cartes en jeu, permanentes et objectifs y apparaissent.",
+      "drawColumn": "Voici votre colonne de pioche. Elle montre la carte du dessus de votre deck.",
+      "drawColumnMobile": "Cliquez ici pour voir votre pioche.",
+      "discardColumn": "Voici votre colonne de défausse. Elle montre la carte du dessus de votre pile de défausse.",
+      "discardColumnMobile": "Cliquez ici pour voir votre défausse.",
+      "destroyedButton": "Ce bouton ouvre la pile des cartes détruites.",
+      "header": "Ce header contient les actions principales de tour et les boutons utilitaires.",
+      "resourceBar": "Cette ligne affiche la manche, le tour, les ressources utilisables, les compteurs pioche/défausse et la gloire actuelle."
+    },
+    "setup": {
+      "uniqueNumber": "Chaque carte possède un numéro de série unique.",
+      "startingDeck": "Votre royaume commence avec les cartes #1 à #10. Ouvrez le visualiseur de deck pour inspecter votre set de départ.",
+      "startingDeck2": "Voici votre deck de départ, il est identique pour chaque joueur.",
+      "startingDeck3": "Vous pouvez maintenant fermer le visualiseur de deck."
+    },
+    "gameplay": {
+      "roundFlow": "Chaque manche se compose de plusieurs tours. À chaque tour, vous jouez des cartes depuis le dessus de votre deck vers votre zone de jeu. Un tour se termine quand vous améliorez une de vos cartes. Quand vous ne pouvez plus prendre de tour car votre deck est vide, la manche est terminée. Au début de chaque nouvelle manche (sauf la première), découvrez les 2 cartes suivantes dans l'ordre de série depuis la pile découverte, puis mélangez toutes vos cartes pour former une nouvelle pioche. Continuez jusqu'à découvrir la carte #70: c'est votre dernière manche. Ensuite, comptez votre gloire pour obtenir votre score final. Les cartes au-delà de #70 ne peuvent être découvertes que via des effets de carte.",
+      "availableActions": "Au début de chaque tour, jouez les 4 cartes du dessus de votre deck dans votre zone de jeu (ou toutes les cartes restantes s'il en reste 1 à 3). Ensuite, enchaînez les actions jusqu'à la fin du tour:",
+      "production": "Produire : Défaussez une carte pour obtenir les ressources qu'elle produit. Comme vous défaussez la carte, vous ne pouvez pas utiliser ses effets ou l'améliorer ce tour-ci. Certaines cartes n'ont pas de production et ne peuvent pas être défaussées pour produire. Si une carte est défaussée par d'autres effets, vous ne recevez pas sa production.",
+      "upgrade": "Améliorer : La plupart des cartes ont plusieurs étapes, et les cases montrent le coût pour passer à une nouvelle étape. Vous devez payer le coût d'amélioration pour changer l'état de la carte. Une fois l'amélioration effectuée, votre tour se termine.",
+      "cardActions": "Utiliser l'effet de la carte : De nombreux effets nécessitent de défausser la carte, ce qui signifie que vous ne pouvez pas produire avec elle ou l'améliorer.",
+      "progress": "Avancer : Jouez 2 cartes supplémentaires depuis le dessus de votre deck. Cela est utile lorsque les cartes en jeu ne suffisent pas à faire ce que vous voulez. Rappel : vous pouvez avancer plusieurs fois ! Vous voyez toujours la carte du dessus du deck, mais pas la deuxième carte.",
+      "endTurnVoluntary": "Passer : Si vous avez des effets de fin de tour, ils sont exécutés maintenant. Défaussez toutes les cartes de votre zone de jeu, sauf celles qui restent en jeu. Ensuite, commencez un nouveau tour s'il reste des cartes dans votre deck, sinon c'est la fin de la manche."
+    },
+    "cardAnatomy": {
+      "overview": "Voici une carte. Chaque carte a plusieurs zones d'effets distinctes.",
+      "number": "Numéro. Ce numéro unique identifie la carte.",
+      "name": "Nom. C'est le titre de la carte.",
+      "statePreview": "Aperçu d'état. Ces icônes montrent les différents états de la carte et leurs coûts d'amélioration.",
+      "tags": "Tags. Les tags définissent les traits et synergies.",
+      "production": "Production. Utilisez-la pour gagner des ressources.",
+      "action": "Action. Déclenchez les effets de la carte depuis cette zone. Les effets sont toujours précédés d'une icône d'effet : - {{action}} : Effet activé : Vous pouvez défausser la carte pour réaliser cet effet. - {{time}} : Effet temporel : Vous pouvez défausser la carte (sauf si elle est permanente) et terminer votre tour pour réaliser cet effet. - {{passif}} : Effet passif : Cet effet s'applique toujours, ou peut être utilisé plusieurs fois. - {{destroy}} : Effet de destruction : Vous pouvez détruire la carte pour réaliser cet effet. - {{optionalTrigger}} : Effet optionnel déclenché : Cet effet peut être utilisé lorsqu'il est déclenché (spécifié par l'effet, par exemple \"Fin de tour\"). Il ne défausse pas la carte sauf indication contraire. - {{trigger}}: Effet obligatoire déclenché : Même chose que ci-dessus, mais cet effet n'est pas optionnel, il doit être réalisé.",
+      "upgrade": "Amélioration. Améliorer fait évoluer votre carte et termine le tour."
+    },
+    "end": "Ceci conclut le tutoriel. Vous pouvez le rejouer à tout moment depuis la page d'accueil. Bonne chance pour construire votre royaume !"
+  },
   "cheatPanel": {
-    "title": "Cheat panel",
+    "title": "Panneau de triche",
     "gameStarted": "Partie démarrée",
     "roundStarted": "Manche {{round}} démarrée",
     "turnStarted": "Tour {{turn}} — {{count}} carte piochée",

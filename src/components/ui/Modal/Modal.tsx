@@ -73,7 +73,7 @@ export function Modal({
           {subtitle && <div className="text-ink text-sm">{subtitle}</div>}
         </div>
         {onClose && (
-          <Button onClick={onClose} variant="text" color="ink" size="sm">
+          <Button onClick={onClose} variant="text" color="ink" size="sm" data-tour="modal-close">
             ✕
           </Button>
         )}

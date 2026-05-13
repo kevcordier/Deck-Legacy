@@ -36,7 +36,8 @@
     "readyToPlay": "Ready to play",
     "deckShuffled": "Deck of {{count}} shuffled cards",
     "startGame": "▶ Start game",
-    "viewRules": "View rules"
+    "viewRules": "View rules",
+    "tutorial": "Enable tutorial"
   },
   "preround": {
     "roundEnded": "Round {{round}} ended",
@@ -184,11 +185,62 @@
     "language": "Language",
     "en": "English",
     "fr": "French",
+    "tutorial": "Enable tutorial",
     "reset": "Reset game",
     "resetBtn": "↺ Start over",
     "resetConfirm": "Are you sure?",
     "resetYes": "Yes, start over",
     "resetNo": "Cancel"
+  },
+  "tutorial": {
+    "pinRightColumn": "Click the pin button to show the right column. You must pin it to continue.",
+    "tooltip": {
+      "badge": "Tutorial",
+      "close": "Close",
+      "skip": "Skip",
+      "back": "Back",
+      "next": "Next",
+      "finish": "Finish"
+    },
+    "welcome": "Welcome to Deck Legacy.",
+    "goal": "Your goal is to build the strongest kingdom possible and score as much glory as you can.",
+    "interface": {
+      "board": "This is your board. Your cards in play, permanents, and goals appear here.",
+      "drawColumn": "This is your draw pile column. It shows the top card of your deck.",
+      "drawColumnMobile": "Click here to view your draw pile.",
+      "discardColumn": "This is your discard column. It shows the top card of your discard pile.",
+      "discardColumnMobile": "Click here to view your discard pile.",
+      "destroyedButton": "This button opens your destroyed cards pile. On mobile, it appears in the same bottom action bar.",
+      "header": "This header contains your main turn actions and utility buttons.",
+      "resourceBar": "This row shows round, turn, usable resources, deck/discard counters, and current glory."
+    },
+    "setup": {
+      "uniqueNumber": "Every card has a unique serial number.",
+      "startingDeck": "Your kingdom starts with cards #1 to #10. Open the deck viewer to inspect your starting set.",
+      "startingDeck2": "Here is your starting deck, it is identical for each player.",
+      "startingDeck3": "You can now close the deck viewer."
+    },
+    "gameplay": {
+      "roundFlow": "Each round consists of turns. Each turn, you play cards from the top of your deck into your play area. A turn ends when you upgrade one of your cards. When you cannot take more turns because your deck has run out of cards, the round is over. At the start of each new round (except round 1), discover the next 2 cards in serial order from the discover pile, then shuffle all your cards to form a new draw deck. Continue until you discover card #70: this is your final round. After that, count your glory for your final score. Cards above #70 can only be discovered through card effects.",
+      "availableActions": "At the start of each turn, play the top 4 cards of your deck into your play area (or all remaining cards if 1-3 are left). Then continue taking actions until the end of the turn:",
+      "production": "Produce: Discard a card to gain the resources it produces. Since you discard the card, you cannot use its effects or upgrade it this turn. Some cards don’t have production and cannot be discarded to produce. If a card is discarded by other effects, you do not get its production",
+      "upgrade": "Upgrade: Most cards have several stages, and the boxes show the cost for upgrading to a new stage. You have to pay the upgrade cost to change the card stage. When you have performed the upgrade, your turn ends.",
+      "cardActions": "Use card effect: Some cards offer additional effects. Many effects require you to discard the card, which means you cannot produce with it or upgrade it.",
+      "progress": "Advance: Play 2 more cards from the top of your deck. This is useful when the cards in play are not enough to do what you want. Reminder: you may advance multiple times! You always see the top card of the deck, but not the second card.",
+      "endTurnVoluntary": "Pass: If you have any End of Turn effects, they are performed now. Discard all cards in your play area, except cards that stay in play. Then start a new turn if there are any cards left in your deck, otherwise this is the end of the round."
+    },
+    "cardAnatomy": {
+      "overview": "This is a card. Each card has several distinct effect zones.",
+      "number": "Number. This unique number identifies the card.",
+      "name": "Name. This is the card's title.",
+      "statePreview": "State preview. These icons show the different states of the card and their upgrade costs.",
+      "tags": "Tags. Tags define traits and synergies.",
+      "production": "Production. Use it to gain resources.",
+      "passive": "Passive. Passive effects apply continuously when relevant.",
+      "action": "Action. Trigger card effects from here. Effects are always preceded by an effect icon : - {{action}} : Activated effect: You may discard the card to carry out this effect. - {{time}} : Time effect: You may discard the card (unless it is permanent) and end your turn to carry out this effect. - {{passif}} : Passive effect: This effect always applies, or may be used repeatedly. - {{destroy}} : Destroy effect: You may destroy the card to carry out this effect. - {{optionalTrigger}} : Triggered Optional Effect: This effect may be used when it is triggered (specified by the effect, e.g. “End of Turn”). It doesn’t discard the card unless it says so. - {{trigger}}: Triggered Forced Effect: Same as above, but this effect is not optional, it must be performed.",
+      "upgrade": "Upgrade. Upgrading evolves your card and usually ends the turn."
+    },
+    "end": "This concludes the tutorial. You can replay it anytime on the home page. Good luck building your kingdom!"
   },
   "cheatPanel": {
     "title": "Cheat panel",

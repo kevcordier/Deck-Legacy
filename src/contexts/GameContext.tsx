@@ -21,6 +21,7 @@ export type GameContextType = {
   pendingChoices: PendingChoice[] | null;
   triggerPile: Record<string, TriggerEntry> | null;
   deleteSave: () => void;
+  startTutorial: () => void;
   startGame: () => void;
   startRound: () => void;
   startTurn: () => void;

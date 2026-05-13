@@ -9,6 +9,11 @@ function getInitialTheme(): Theme {
   return 'system';
 }
 
+function getInitialTutorial(): boolean {
+  const stored = localStorage.getItem('deck_legacy_tutorial');
+  return stored !== 'false';
+}
+
 function resolveTheme(theme: Theme): 'light' | 'dark' {
   if (theme !== 'system') return theme;
   return globalThis.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -19,6 +24,7 @@ export function GameUIProvider({ children }: { readonly children: ReactNode }) {
   const [rulesOpen, setRulesOpen] = useState(false);
   const [stickerStockOpen, setStickerStockOpen] = useState(false);
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [tutorialEnabled, setTutorialEnabled] = useState<boolean>(getInitialTutorial);
 
   function applyTheme(newTheme: Theme) {
     localStorage.setItem('deck_legacy_theme', newTheme);
@@ -39,6 +45,11 @@ export function GameUIProvider({ children }: { readonly children: ReactNode }) {
     }
   }, [theme]);
 
+  const handleTutorialChange = (enabled: boolean) => {
+    localStorage.setItem('deck_legacy_tutorial', String(enabled));
+    setTutorialEnabled(enabled);
+  };
+
   return (
     <GameUIContext
       value={{
@@ -50,6 +61,8 @@ export function GameUIProvider({ children }: { readonly children: ReactNode }) {
         setStickerStockOpen,
         theme,
         applyTheme,
+        tutorialEnabled,
+        setTutorialEnabled: handleTutorialChange,
       }}
     >
       {children}

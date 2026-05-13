@@ -18,7 +18,10 @@ export function ResourceBar() {
   const entries = Object.entries(resources).filter(([, v]) => v > 0);
 
   return (
-    <div className="bg-background border-b-border scrollbar z-100 flex items-stretch justify-between gap-3 overflow-x-auto border-b px-3 py-1 lg:gap-6 lg:px-6 lg:py-2">
+    <div
+      className="bg-background border-b-border scrollbar z-100 flex items-stretch justify-between gap-3 overflow-x-auto border-b px-3 py-1 lg:gap-6 lg:px-6 lg:py-2"
+      data-tour="resource-bar"
+    >
       <div className="flex shrink-0 items-stretch gap-2 lg:gap-4">
         <Stat label={t('resourceBar.round')} value={round || '—'} />
         <Divider orientation="vertical" />

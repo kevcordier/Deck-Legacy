@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 describe('getResMeta', () => {
   it('returns known meta for gold', () => {
     const meta = getResMeta('gold');
-    expect(meta.cls).toBe('color:gold');
+    expect(meta.color).toBeUndefined();
     expect(meta.label).toBe('resources.gold');
   });
 
@@ -29,7 +29,7 @@ describe('getResMeta', () => {
 
   it('returns fallback meta for an unknown key', () => {
     const meta = getResMeta('unknown_resource');
-    expect(meta.cls).toBe('color:gold');
+    expect(meta.color).toBe('gold');
     expect(meta.label).toBe('unknown_resource');
   });
 });
