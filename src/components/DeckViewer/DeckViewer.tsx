@@ -29,6 +29,7 @@ type DeckViewerProps = {
   readonly pinned?: boolean;
   readonly onTogglePinned?: () => void;
   readonly footer?: ReactNode;
+  readonly deckName?: 'draw' | 'discard' | 'destroyed';
 };
 
 export function DeckViewer({
@@ -41,10 +42,11 @@ export function DeckViewer({
   pinned,
   onTogglePinned,
   footer,
+  deckName,
 }: DeckViewerProps) {
   const { defs } = useGame();
   const { t } = useTranslation();
-  const { run, stepIndex, nextStep } = useTutorial();
+  const { run, nextStep } = useTutorial();
   const [modalOpen, setModalOpen] = useState(false);
   const [cardFilter, setCardFilter] = useState<CardListFilter>({
     search: '',
@@ -67,6 +69,14 @@ export function DeckViewer({
   const closeIcon = isLeft ? '◀' : '▶';
 
   const elementClass = 'hidden @min-[10rem]/section:inline-flex';
+
+  const tourDataId = deckName
+    ? {
+        draw: 'draw-viewer-open',
+        discard: 'discard-viewer-open',
+        destroyed: 'destroyed-viewer-open',
+      }[deckName]
+    : undefined;
 
   return (
     <section
@@ -97,7 +107,7 @@ export function DeckViewer({
             <Button
               className={elementClass}
               onClick={() => {
-                if (run && stepIndex === 14) {
+                if (run) {
                   nextStep();
                 }
                 setModalOpen(true);
@@ -105,7 +115,7 @@ export function DeckViewer({
               size="xs"
               variant="text"
               color="ink"
-              data-tour={isLeft ? 'draw-viewer-open' : 'discard-viewer-open'}
+              data-tour={tourDataId}
             >
               {t('deckViewer.viewAll')}
             </Button>
@@ -143,10 +153,11 @@ export function DeckViewer({
           onClose={() => {
             setModalOpen(false);
             setCardFilter({ search: '', tag: '' });
-            if (run && stepIndex === 16) {
+            if (run) {
               nextStep();
             }
           }}
+          label={deckName}
         >
           <div className="flex flex-col" data-tour={'deck-viewer'}>
             <form className="py-4">

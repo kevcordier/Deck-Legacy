@@ -33,7 +33,7 @@ export function GameBoard() {
   } = useGame();
   const { drawPile, discardPile, destroyedPile, instances } = gameState;
 
-  const { run, nextStep, stepIndex } = useTutorial();
+  const { run, nextStep } = useTutorial();
 
   const [openSheet, setOpenSheet] = useState<'draw' | 'discard' | 'destroyed' | null>(null);
   const [destroyedModalOpen, setDestroyedModalOpen] = useState(false);
@@ -80,6 +80,7 @@ export function GameBoard() {
         >
           <DeckViewer
             title={t('deckViewer.draw')}
+            deckName="draw"
             icon={<DrawCardIcon className="size-4" />}
             emptyText={t('deckViewer.empty')}
             pinned={pinnedLeft}
@@ -102,12 +103,13 @@ export function GameBoard() {
         >
           <DeckViewer
             title={t('deckViewer.discard')}
+            deckName="discard"
             icon={<DiscardIcon className="size-4" />}
             deck={discardDeck}
             pinned={pinnedRight}
             onTogglePinned={() => {
               // Tutorial step: when the user pins the discard viewer, if we're on step 5, move to the next step which explains the discard viewer content
-              if (run && stepIndex === 5) {
+              if (run) {
                 nextStep();
               }
               setPinnedRight(p => !p);
@@ -138,7 +140,12 @@ export function GameBoard() {
       {/* Mobile action bar */}
       <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t px-2 pt-2 pb-[max(1rem,env(safe-area-inset-bottom))] lg:hidden">
         <Button
-          onClick={() => setOpenSheet(o => (o === 'draw' ? null : 'draw'))}
+          onClick={() => {
+            setOpenSheet('draw');
+            if (run) {
+              nextStep();
+            }
+          }}
           variant="outlined"
           color="ink"
           size="sm"
@@ -154,6 +161,7 @@ export function GameBoard() {
               disabled={deckEmpty || haveChoiceToDo}
               variant="outlined"
               size="sm"
+              data-tour="progress-mobile"
             >
               {deckEmpty ? '››' : `›› (${Math.min(2, drawPile.length)})`}
             </Button>
@@ -162,6 +170,7 @@ export function GameBoard() {
               disabled={haveChoiceToDo}
               variant="outlined"
               size="sm"
+              data-tour="end-turn-voluntary-mobile"
             >
               {t('header.endTurn')}
             </Button>
@@ -192,7 +201,7 @@ export function GameBoard() {
 
         <div className="flex items-center gap-1">
           <Button
-            onClick={() => setOpenSheet(o => (o === 'discard' ? null : 'discard'))}
+            onClick={() => setOpenSheet('discard')}
             variant="outlined"
             color="ink"
             size="sm"
@@ -202,7 +211,7 @@ export function GameBoard() {
           </Button>
           {destroyedPile.length > 0 && (
             <Button
-              onClick={() => setOpenSheet(o => (o === 'destroyed' ? null : 'destroyed'))}
+              onClick={() => setOpenSheet('destroyed')}
               variant="outlined"
               color="danger"
               size="sm"
@@ -256,11 +265,19 @@ export function GameBoard() {
       {/* Mobile bottom sheet for deck viewers */}
       {openSheet !== null && (
         <Modal
-          onClose={() => setOpenSheet(null)}
+          onClose={() => {
+            if (run) {
+              nextStep();
+            }
+            setOpenSheet(null);
+          }}
           className="bg-background border-border absolute right-0 bottom-0 left-0 max-h-[90vh] overflow-y-auto rounded-t-2xl border-t shadow-2xl"
+          label="mobile-deck-viewer"
         >
           <DeckViewer
+            data-tour="mobile-deck-viewer"
             variant="full"
+            deckName={openSheet}
             icon={
               {
                 draw: <DrawCardIcon className="size-4" />,

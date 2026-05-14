@@ -11,6 +11,7 @@ export type ModalProps = {
   readonly className?: string;
   readonly peeking?: boolean;
   readonly onPeekToggle?: () => void;
+  readonly label?: string;
 };
 
 export function Modal({
@@ -21,6 +22,7 @@ export function Modal({
   className = '',
   peeking = false,
   onPeekToggle,
+  label,
 }: ModalProps) {
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -73,13 +75,20 @@ export function Modal({
           {subtitle && <div className="text-ink text-sm">{subtitle}</div>}
         </div>
         {onClose && (
-          <Button onClick={onClose} variant="text" color="ink" size="sm" data-tour="modal-close">
+          <Button
+            onClick={onClose}
+            variant="text"
+            color="ink"
+            size="sm"
+            data-tour={`modal-${label}-close`}
+          >
             ✕
           </Button>
         )}
       </div>
       <div
         className={`scrollbar flex min-h-0 w-full flex-col justify-start gap-6 overflow-y-auto p-1 ${peeking ? 'pointer-events-none opacity-0' : ''}`}
+        data-tour={`modal-${label}-content`}
       >
         {children}
       </div>

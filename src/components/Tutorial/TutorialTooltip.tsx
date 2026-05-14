@@ -15,15 +15,21 @@ export function TutorialTooltip({
   const showSkip = !isLastStep && step.buttons.includes('skip');
   const showPrimary = step.buttons.includes('primary');
   const showClose = step.buttons.includes('close');
+  const tooltipStyle = {
+    width: 'min(calc(100vw - 1rem), 24rem)',
+    maxWidth: 'calc(100vw - 1rem)',
+    maxHeight: 'min(80vh, 36rem)',
+  };
 
   return (
     <div
       data-joyride-step={index}
-      className="animate-fade-in-scale overflow-hidden rounded-2xl border-2 border-primary/70 bg-card text-ink shadow-[0_20px_50px_rgba(74,50,19,0.24)] dark:border-dark-primary/70 dark:bg-dark-background dark:text-dark-ink"
+      className="animate-fade-in-scale overflow-hidden overscroll-contain rounded-2xl border-2 border-primary/70 bg-card text-ink shadow-[0_20px_50px_rgba(74,50,19,0.24)] dark:border-dark-primary/70 dark:bg-dark-background dark:text-dark-ink"
       {...(step.id && { 'data-joyride-id': step.id })}
       {...tooltipProps}
+      style={tooltipStyle}
     >
-      <div className="relative max-w-sm px-5 pb-4 pt-5 sm:px-6 sm:pb-5 sm:pt-6">
+      <div className="relative overflow-y-auto px-4 pb-4 pt-4 sm:px-6 sm:pb-5 sm:pt-6">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-linear-to-b from-primary/18 to-transparent dark:from-dark-primary/14" />
 
         <div className="relative flex items-start justify-between gap-4">
@@ -52,11 +58,11 @@ export function TutorialTooltip({
           ) : null}
         </div>
 
-        <div className="relative mt-4 font-body text-lg leading-6 text-ink dark:text-dark-ink">
+        <div className="relative mt-4 text-base leading-6 text-ink dark:text-dark-ink sm:text-lg">
           {step.content}
         </div>
 
-        <div className="relative mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border/70 pt-4 dark:border-dark-border">
+        <div className="relative mt-6 flex flex-col gap-3 border-t border-border/70 pt-4 dark:border-dark-border sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <div>
             {showSkip ? (
               <Button
@@ -64,7 +70,7 @@ export function TutorialTooltip({
                 color="ink"
                 size="sm"
                 font="body"
-                className="tracking-[0.08em] uppercase"
+                className="w-full justify-center tracking-[0.08em] uppercase sm:w-auto"
                 {...skipProps}
               >
                 {t('tutorial.tooltip.skip')}
@@ -72,9 +78,15 @@ export function TutorialTooltip({
             ) : null}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
             {showPrimary ? (
-              <Button variant="contained" color="primary" size="sm" {...primaryProps}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="sm"
+                className="w-full justify-center sm:w-auto"
+                {...primaryProps}
+              >
                 {isLastStep ? t('tutorial.tooltip.finish') : t('tutorial.tooltip.next')}
               </Button>
             ) : null}

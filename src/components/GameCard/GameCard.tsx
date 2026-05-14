@@ -35,7 +35,6 @@ import { useTranslation } from 'react-i18next';
 
 interface GameCardProps {
   readonly instance: CardInstance;
-  readonly index?: number;
   readonly hideStatePreview?: boolean;
   readonly isOnBoard?: boolean;
   readonly className?: string;

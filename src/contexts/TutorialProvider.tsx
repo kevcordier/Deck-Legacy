@@ -31,6 +31,7 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       {
         target: '[data-tour="main-board"]',
         content: t('tutorial.interface.board'),
+        placement: 'center',
       },
       {
         target: '[data-tour="draw-column"]',
@@ -49,11 +50,6 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         buttons: ['skip'],
         blockTargetInteraction: false,
         placement: 'left',
-      },
-      {
-        target: '[data-tour="discard-mobile-button"]',
-        content: t('tutorial.interface.discardColumn'),
-        placement: 'top',
       },
       {
         target: '[data-tour="discard-column"]',
@@ -82,13 +78,26 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       {
         target: '[data-tour="resource-bar"]',
         content: t('tutorial.interface.resourceBar'),
+        blockTargetInteraction: false,
       },
       {
         target: '[data-tour="main-board"] [data-tour="card-number"]',
         content: t('tutorial.setup.uniqueNumber'),
       },
       {
+        target: '[data-tour="draw-mobile-button"]',
+        content: t('tutorial.setup.startingDeck'),
+        buttons: ['skip'],
+        blockTargetInteraction: false,
+      },
+      {
         target: '[data-tour="draw-viewer-open"]',
+        content: t('tutorial.setup.startingDeck'),
+        buttons: ['skip'],
+        blockTargetInteraction: false,
+      },
+      {
+        target: '[data-tour="modal-mobile-deck-viewer-content"] [data-tour="draw-viewer-open"]',
         content: t('tutorial.setup.startingDeck'),
         buttons: ['skip'],
         blockTargetInteraction: false,
@@ -100,7 +109,13 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         placement: 'left',
       },
       {
-        target: '[data-tour="modal-close"]',
+        target: '[data-tour="modal-draw-close"]',
+        content: t('tutorial.setup.startingDeck3'),
+        blockTargetInteraction: false,
+        buttons: ['skip'],
+      },
+      {
+        target: '[data-tour="modal-mobile-deck-viewer-close"]',
         content: t('tutorial.setup.startingDeck3'),
         blockTargetInteraction: false,
         buttons: ['skip'],
@@ -132,7 +147,7 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       {
         target: '[data-tour="main-board"] [data-tour="card-action"]',
         content: renderTextWithIcons(t('tutorial.cardAnatomy.action')),
-        placement: 'left',
+        placement: 'auto',
       },
       {
         target: '[data-tour="main-board"] [data-tour="card-upgrade"]',
@@ -165,7 +180,15 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         content: t('tutorial.gameplay.progress'),
       },
       {
+        target: '[data-tour="progress-mobile"]',
+        content: t('tutorial.gameplay.progress'),
+      },
+      {
         target: '[data-tour="end-turn-voluntary"]',
+        content: t('tutorial.gameplay.endTurnVoluntary'),
+      },
+      {
+        target: '[data-tour="end-turn-voluntary-mobile"]',
         content: t('tutorial.gameplay.endTurnVoluntary'),
       },
       {
@@ -181,6 +204,7 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     beaconComponent: TutorialBeacon,
     continuous: true,
     options: {
+      skipScroll: true,
       blockTargetInteraction: true,
       overlayClickAction: false,
       buttons: ['skip', 'primary'],

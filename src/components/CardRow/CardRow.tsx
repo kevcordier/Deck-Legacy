@@ -73,11 +73,11 @@ function Card({ id, index, blockingMap }: CardProps) {
             className="absolute inset-x-0 z-0"
             style={{ top: `${i * STACK_OFFSET_PX}px` }}
           >
-            <GameCard instance={blockedInst} isOnBoard index={index} />
+            <GameCard instance={blockedInst} isOnBoard />
           </div>
         ))}
         <div className="relative z-10">
-          <GameCard instance={inst} isOnBoard index={index} />
+          <GameCard instance={inst} isOnBoard />
         </div>
       </div>
 
