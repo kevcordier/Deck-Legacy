@@ -43,7 +43,6 @@ interface GameCardProps {
 
 export function GameCard({
   instance,
-  index = 0,
   hideStatePreview = false,
   isOnBoard = false,
   className = '',
@@ -94,12 +93,10 @@ export function GameCard({
 
   const cardClass = [
     'min-w-32 max-w-80 aspect-2/3 rounded-md @3xs:rounded-xl',
-    'border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden motion-safe:animate-fade-in-scale motion-safe:opacity-0 motion-safe:[transform:translateY(18px)_scale(0.96)] motion-reduce:animate-none',
+    'border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden',
   ]
     .filter(Boolean)
     .join(' ');
-
-  const animationDelay = `${Math.min(index, 3) * 70}ms`;
 
   const cardActionsClass =
     'font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md';
@@ -107,7 +104,6 @@ export function GameCard({
   return (
     <div
       className={`${cardClass} ${className} ${isPermanent ? 'border-5 border-permanent' : ''}`}
-      style={{ animationDelay, animationFillMode: 'both' }}
       data-tour="card-root"
     >
       <div className={`border-b border-black/10 bg-black/5 p-1 pb-2 @3xs:p-3`}>

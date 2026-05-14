@@ -1,5 +1,6 @@
 import { GameCard } from '@components/GameCard/GameCard';
 import { PassifIcon } from '@components/ui/Icon/icon';
+import { useSortable } from '@dnd-kit/react/sortable';
 import { cardSelector } from '@engine/application/cardSelector';
 import { PassiveType } from '@engine/domain/enums';
 import type { CardDef, GameState, Passive, Sticker } from '@engine/domain/types';
@@ -33,8 +34,71 @@ function effectsOnCard(
   );
 }
 
-export function CardRow({ cardIds }: CardRowProps) {
+type CardProps = {
+  readonly id: number;
+  readonly index: number;
+  readonly blockingMap: Record<number, number[]>;
+};
+
+function Card({ id, index, blockingMap }: CardProps) {
+  const { gameState, defs, stickerDefs } = useGame();
   const { t } = useTranslation();
+  const { ref } = useSortable({ id, index });
+  const inst = gameState.instances[id];
+  if (!inst) return null;
+
+  const blockedCardIds = blockingMap[id] ?? [];
+  const blockedInsts = blockedCardIds.map(bid => gameState.instances[bid]);
+
+  const effects = effectsOnCard(gameState, id, defs, stickerDefs).filter(
+    ({ passive }) => ![PassiveType.STAY_IN_PLAY].includes(passive.type),
+  );
+  const effectLabel = (type: PassiveType): string => {
+    if (type === PassiveType.BLOCK) return t('card.blocked');
+    if (type === PassiveType.STAY_IN_PLAY) return t('card.stayInPlay');
+    if (type === PassiveType.ADJUST_GLORY) return t('card.increaseGlory');
+    if (type === PassiveType.RESOURCE_EQUIVALENCE) return t('card.resourceEquivalence');
+    return t('card.adjustProduction');
+  };
+
+  return (
+    <div key={id} className={`@container shrink-0`} ref={ref}>
+      <div
+        className="relative"
+        style={{ paddingTop: `${blockedInsts.length * STACK_OFFSET_PX}px` }}
+      >
+        {blockedInsts.map((blockedInst, i) => (
+          <div
+            key={blockedInst.id}
+            className="absolute inset-x-0 z-0"
+            style={{ top: `${i * STACK_OFFSET_PX}px` }}
+          >
+            <GameCard instance={blockedInst} isOnBoard index={index} />
+          </div>
+        ))}
+        <div className="relative z-10">
+          <GameCard instance={inst} isOnBoard index={index} />
+        </div>
+      </div>
+
+      {effects.length > 0 && (
+        <div className="flex flex-col justify-stretch">
+          {effects.map(({ sourceId, passive: be }) => (
+            <span
+              key={`${sourceId}-${be.id}`}
+              className="font-body! flex items-center gap-1 last-of-type:rounded-b-md border px-3 py-2 text-xs text-base-ink backdrop-blur-sm border-black/40 bg-gray"
+            >
+              <PassifIcon className="size-3" />
+              {effectLabel(be.type)}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function CardRow({ cardIds }: CardRowProps) {
   const { gameState, defs, stickerDefs } = useGame();
 
   const blockingMap: Record<number, number[]> = {};
@@ -54,14 +118,6 @@ export function CardRow({ cardIds }: CardRowProps) {
 
   const blockedIds = new Set(Object.values(blockingMap).flat());
 
-  const effectLabel = (type: PassiveType): string => {
-    if (type === PassiveType.BLOCK) return t('card.blocked');
-    if (type === PassiveType.STAY_IN_PLAY) return t('card.stayInPlay');
-    if (type === PassiveType.ADJUST_GLORY) return t('card.increaseGlory');
-    if (type === PassiveType.RESOURCE_EQUIVALENCE) return t('card.resourceEquivalence');
-    return t('card.adjustProduction');
-  };
-
   return (
     <div
       className={
@@ -70,53 +126,9 @@ export function CardRow({ cardIds }: CardRowProps) {
     >
       {cardIds
         .filter(id => !blockedIds.has(id))
-        .map((id, index) => {
-          const inst = gameState.instances[id];
-          if (!inst) return null;
-
-          const blockedCardIds = blockingMap[id] ?? [];
-          const blockedInsts = blockedCardIds.map(bid => gameState.instances[bid]);
-
-          const effects = effectsOnCard(gameState, id, defs, stickerDefs).filter(
-            ({ passive }) => ![PassiveType.STAY_IN_PLAY].includes(passive.type),
-          );
-
-          return (
-            <div key={id} className="@container shrink-0">
-              <div
-                className="relative"
-                style={{ paddingTop: `${blockedInsts.length * STACK_OFFSET_PX}px` }}
-              >
-                {blockedInsts.map((blockedInst, i) => (
-                  <div
-                    key={blockedInst.id}
-                    className="absolute inset-x-0 z-0"
-                    style={{ top: `${i * STACK_OFFSET_PX}px` }}
-                  >
-                    <GameCard instance={blockedInst} isOnBoard index={index} />
-                  </div>
-                ))}
-                <div className="relative z-10">
-                  <GameCard instance={inst} isOnBoard index={index} />
-                </div>
-              </div>
-
-              {effects.length > 0 && (
-                <div className="flex flex-col justify-stretch">
-                  {effects.map(({ sourceId, passive: be }) => (
-                    <span
-                      key={`${sourceId}-${be.id}`}
-                      className="font-body! flex items-center gap-1 last-of-type:rounded-b-md border px-3 py-2 text-xs text-base-ink backdrop-blur-sm border-black/40 bg-gray"
-                    >
-                      <PassifIcon className="size-3" />
-                      {effectLabel(be.type)}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+        .map((id, index) => (
+          <Card key={id} id={id} index={index} blockingMap={blockingMap} />
+        ))}
     </div>
   );
 }
