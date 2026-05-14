@@ -58,7 +58,7 @@ export function GameProvider({
   initialEvents = [],
 }: {
   readonly children: ReactNode;
-  readonly id: string;
+  readonly id?: string;
   readonly initialState?: GameState;
   readonly initialEvents?: GameEvent[];
 }) {
@@ -68,7 +68,7 @@ export function GameProvider({
   const stickerDefs = useMemo(() => loadStickerDefs(), []);
 
   const agg = useMemo(
-    () => makeAggregate(id, initialState ?? EMPTY_STATE, defs, stickerDefs),
+    () => makeAggregate(id ?? crypto.randomUUID(), initialState ?? EMPTY_STATE, defs, stickerDefs),
     [id, initialState, defs, stickerDefs],
   );
 

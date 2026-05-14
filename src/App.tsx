@@ -12,7 +12,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <GameUIProvider>
-        <GameProvider id={save?.id ?? crypto.randomUUID()} initialEvents={save?.events}>
+        <GameProvider id={save?.id} initialEvents={save?.events}>
           <Game />
         </GameProvider>
       </GameUIProvider>
