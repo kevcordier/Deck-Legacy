@@ -12,7 +12,7 @@ const meta: Meta<typeof CardTrack> = {
   },
   decorators: [
     Story => (
-      <GameProvider>
+      <GameProvider id={crypto.randomUUID()}>
         <Story />
       </GameProvider>
     ),

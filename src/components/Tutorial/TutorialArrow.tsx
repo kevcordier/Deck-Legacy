@@ -9,10 +9,10 @@ export function TutorialArrow({ base, placement, size }: Readonly<ArrowRenderPro
   };
   return (
     <div
-      className="bg-card"
+      className="relative block bg-primary/70 dark:bg-dark-primary "
       style={{
-        width: base,
-        height: size,
+        width: size,
+        height: ['left', 'right'].includes(placement) ? base : size,
         clipPath: clipPath[placement] ?? 'polygon(50% 0%, 0% 100%, 100% 100%)',
       }}
     />

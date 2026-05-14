@@ -111,7 +111,7 @@ const meta: Meta<StoryArgs> = {
   render: args => {
     return (
       <GameUIProvider>
-        <GameProvider initialState={args.saveState}>
+        <GameProvider id={crypto.randomUUID()} initialState={args.saveState}>
           <Game />
         </GameProvider>
       </GameUIProvider>

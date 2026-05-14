@@ -19,7 +19,7 @@ const meta: Meta<typeof DeckViewer> = {
         .map(entry => createInstance(entry.id, entry.cardId, 1, loadCardDefs()))
         .filter(inst => deck.includes(inst.id));
       return (
-        <GameProvider initialState={{ ...EMPTY_STATE }}>
+        <GameProvider id={crypto.randomUUID()} initialState={{ ...EMPTY_STATE }}>
           <Story args={{ ...parameters, displayedCards: [instances[0]], deck: instances }} />
         </GameProvider>
       );

@@ -100,6 +100,51 @@ describe('stateSelector', () => {
 
     expect(result).toEqual([1]);
   });
+
+  it('treats states without productions as 0 production for minProduction checks', () => {
+    const defsNoProduction: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'NoProd',
+        states: [
+          { id: 1, name: 'S1' },
+          { id: 2, name: 'S2' },
+        ],
+      },
+    };
+
+    const result = stateSelector(
+      { ids: [1, 2], having: { minProduction: 1 } },
+      1,
+      baseState(),
+      defsNoProduction,
+      stickerDefs,
+    );
+
+    expect(result).toEqual([]);
+  });
+
+  it('treats missing stickers for a state as an empty array', () => {
+    const instance = makeInstance({
+      id: 1,
+      cardId: 1,
+      stateId: 1,
+      stickers: {
+        1: [1],
+      },
+    });
+    const gs = makeState({ instances: { 1: instance } });
+
+    const result = stateSelector(
+      { ids: [2], having: { maxStickers: 0 } },
+      1,
+      gs,
+      defs,
+      stickerDefs,
+    );
+
+    expect(result).toEqual([2]);
+  });
 });
 
 describe('matchHaving', () => {

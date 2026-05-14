@@ -128,6 +128,20 @@ describe('PlaceCardInPileStrategy', () => {
     expect(result.discardPile[result.discardPile.length - 1]).toBe(5);
   });
 
+  it('places card at bottom of discovery pile', () => {
+    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const gs = makeState({ discoveryPile: [1, 2], instances: { 5: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_PILE,
+      sourceInstanceId: 99,
+      instanceIds: [5],
+      deck: 'discovery',
+      position: 'bottom',
+    });
+    expect(result.discoveryPile[result.discoveryPile.length - 1]).toBe(5);
+  });
+
   it('clears boardEffects for placed card', () => {
     const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
     const gs = makeState({

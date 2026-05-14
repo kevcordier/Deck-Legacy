@@ -19,7 +19,7 @@ const meta: Meta<typeof PendingChoiceModal> = {
     onSkipTrigger: { action: 'skipTrigger' },
   },
   render: args => (
-    <GameProvider initialState={{ ...EMPTY_STATE }}>
+    <GameProvider id={crypto.randomUUID()} initialState={{ ...EMPTY_STATE }}>
       <PendingChoiceModal {...args} />
     </GameProvider>
   ),

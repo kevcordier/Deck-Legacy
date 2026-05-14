@@ -29,7 +29,7 @@ function getActionIcon(action: CardAction, hasDestroyItselfCost: boolean): React
   if (hasDestroyItselfCost) return <DestroyIcon color="red" className="size-3 @3xs:size-6" />;
   if (action.endsTurn) return <TimeIcon className="size-3 @3xs:size-6" />;
   if (action.unlimited) return <PassifIcon className="size-3 @3xs:size-6" />;
-  return <ActivatedIcon color="green" className="size-3 @3xs:size-6" />;
+  return <ActivatedIcon className="size-3 @3xs:size-6" />;
 }
 
 function getTriggerIcon(action: CardAction): ReactNode {

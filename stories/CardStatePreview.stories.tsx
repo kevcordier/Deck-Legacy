@@ -13,7 +13,7 @@ const meta: Meta<typeof CardStatePreview> = {
     layout: 'centered',
   },
   render: args => (
-    <GameProvider initialState={{ ...EMPTY_STATE }}>
+    <GameProvider id={crypto.randomUUID()} initialState={{ ...EMPTY_STATE }}>
       <CardStatePreview {...args} />
     </GameProvider>
   ),

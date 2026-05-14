@@ -25,10 +25,10 @@ const meta: Meta<ResourceBarProps> = {
     drawPile: { control: 'object' },
     discardPile: { control: 'object' },
   },
-  render: ({ round, turn, drawPile, discardPile, resources, instances }) => {
+  render: ({ round, turn, drawPile, discardPile, resources }) => {
     return (
       <GameProvider
-        key={JSON.stringify({ round, turn, drawPile, discardPile, resources, instances })}
+        id={crypto.randomUUID()}
         initialState={{
           ...EMPTY_STATE,
           resources,

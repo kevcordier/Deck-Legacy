@@ -1,5 +1,9 @@
 import { makeInstance, makeState, makeStickerDefs } from './fixtures';
-import { countValuePerElement, resolveActionEffect } from '@engine/application/effectResolver';
+import {
+  countValuePerElement,
+  getPickNumbers,
+  resolveActionEffect,
+} from '@engine/application/effectResolver';
 import { ActionEffectType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, RemovedResourceScope, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
@@ -7,6 +11,18 @@ import { describe, expect, it } from 'vitest';
 const simpleDef: CardDef = { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] };
 const defs: Record<number, CardDef> = { 1: simpleDef };
 const stickerDefs: Record<number, Sticker> = makeStickerDefs();
+
+describe('getPickNumbers', () => {
+  it('prioritizes pickMin over pickNumber when both are provided', () => {
+    const picks = getPickNumbers({ pickMin: 2, pickNumber: 3, pickMax: 4 }, 10);
+    expect(picks).toEqual({ pickMin: 2, pickMax: 4 });
+  });
+
+  it('keeps default pickMin when only pickMax is provided', () => {
+    const picks = getPickNumbers({ pickMax: 2 }, 10);
+    expect(picks).toEqual({ pickMin: 1, pickMax: 2 });
+  });
+});
 
 // ─── CHOOSE_EFFECT ────────────────────────────────────────────────────────────
 
@@ -259,6 +275,36 @@ describe('resolveActionEffect – ADD_STICKER', () => {
     expect(resolved.unresolvable).toBe(true);
     expect(pending).toHaveLength(0);
   });
+
+  it('handles missing stickers.ids by resolving with an empty stickerIds array', () => {
+    const effect = {
+      id: 1,
+      type: ActionEffectType.ADD_STICKER,
+      stickers: { pickNumber: 1 },
+    };
+    const [resolved, pending] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
+
+    expect(resolved.stickerIds).toEqual([]);
+    expect(pending).toHaveLength(0);
+  });
+
+  it('treats absent sticker stock entries as zero', () => {
+    const effect = {
+      id: 1,
+      type: ActionEffectType.ADD_STICKER,
+      stickers: { ids: [77], pickNumber: 1 },
+    };
+    const [resolved, pending] = resolveActionEffect(
+      effect,
+      1,
+      makeState({ stickerStock: {} }),
+      defs,
+      stickerDefs,
+    );
+
+    expect(resolved.stickerIds).toEqual([]);
+    expect(pending).toHaveLength(0);
+  });
 });
 
 describe('resolveActionEffect – BOOST_CARD selector enrichment', () => {
@@ -288,6 +334,39 @@ describe('resolveActionEffect – BOOST_CARD selector enrichment', () => {
       99,
       gs,
       { ...defs, 2: producerDef, 3: plainDef },
+      stickerDefs,
+    );
+
+    expect(resolved.instanceIds).toBeUndefined();
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe('choose_card');
+    expect(pending[0].choices).toEqual([2]);
+  });
+});
+
+describe('resolveActionEffect – UPGRADE_CARD selector enrichment', () => {
+  it('adds BOARD and UPGRADABLE scopes when SELF is not present', () => {
+    const upgradableDef: CardDef = {
+      id: 2,
+      name: 'U',
+      states: [
+        { id: 1, name: 'Base', upgrade: [{ upgradeTo: 2, cost: {} }] },
+        { id: 2, name: 'Upgraded' },
+      ],
+    };
+    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst2 } });
+    const effect = {
+      id: 1,
+      type: ActionEffectType.UPGRADE_CARD,
+      cards: {},
+    };
+
+    const [resolved, pending] = resolveActionEffect(
+      effect,
+      99,
+      gs,
+      { ...defs, 2: upgradableDef },
       stickerDefs,
     );
 

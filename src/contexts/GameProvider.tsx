@@ -38,19 +38,27 @@ import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
 function makeAggregate(
+  id: string,
   state: GameState,
   cardDefs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
 ): GameAggregate {
-  return new GameAggregate(JSON.parse(JSON.stringify(state)) as GameState, cardDefs, stickerDefs);
+  return new GameAggregate(
+    id,
+    JSON.parse(JSON.stringify(state)) as GameState,
+    cardDefs,
+    stickerDefs,
+  );
 }
 
 export function GameProvider({
   children,
+  id,
   initialState,
   initialEvents = [],
 }: {
   readonly children: ReactNode;
+  readonly id: string;
   readonly initialState?: GameState;
   readonly initialEvents?: GameEvent[];
 }) {
@@ -60,8 +68,8 @@ export function GameProvider({
   const stickerDefs = useMemo(() => loadStickerDefs(), []);
 
   const agg = useMemo(
-    () => makeAggregate(initialState ?? EMPTY_STATE, defs, stickerDefs),
-    [initialState, defs, stickerDefs],
+    () => makeAggregate(id, initialState ?? EMPTY_STATE, defs, stickerDefs),
+    [id, initialState, defs, stickerDefs],
   );
 
   const getTutorialState = useCallback(
@@ -106,6 +114,7 @@ export function GameProvider({
     }
   }, [initialEvents, agg, tutorialEnabled, getTutorialState]);
   const aggRef = useRef<GameAggregate>(agg);
+  const [gameId, setGameId] = useState<string>(agg.getId());
   const [gameState, setGameState] = useState<GameState>(initState);
   const [pendingChoices, setPendingChoices] = useState<PendingChoice[] | null>(() => {
     return agg.getCurrentCardAction()?.getPendingChoices() ?? null;
@@ -187,7 +196,7 @@ export function GameProvider({
 
     setGameState(newState);
     setParameters(aggRef.current.getParameters());
-    saveGame(aggRef.current.getEvents());
+    saveGame(aggRef.current.getId(), aggRef.current.getEvents());
 
     const triggers = newState.triggerPile;
 
@@ -206,7 +215,10 @@ export function GameProvider({
   // ── Démarrage ─────────────────────────────────────────────────────────────
 
   const startTutorial = () => {
-    sync(getTutorialState(aggRef.current));
+    const agg = makeAggregate(crypto.randomUUID(), EMPTY_STATE, defs, stickerDefs);
+    aggRef.current = agg;
+    setGameId(agg.getId());
+    sync(getTutorialState(agg));
   };
 
   const startGame = () => {
@@ -225,8 +237,9 @@ export function GameProvider({
       (_, i) => allInstances[starterEntries.length + i].id,
     );
 
-    const agg = makeAggregate(gameState, defs, stickerDefs);
+    const agg = makeAggregate(crypto.randomUUID(), EMPTY_STATE, defs, stickerDefs);
     aggRef.current = agg;
+    setGameId(agg.getId());
     const newState = aggRef.current.gameStarted(
       initialDeck,
       deckEntries,
@@ -249,7 +262,8 @@ export function GameProvider({
 
   const deleteSaveCallback = () => {
     deleteSave();
-    aggRef.current = makeAggregate({ ...EMPTY_STATE }, defs, stickerDefs);
+    aggRef.current = makeAggregate(crypto.randomUUID(), { ...EMPTY_STATE }, defs, stickerDefs);
+    setGameId(aggRef.current.getId());
     setGameState(aggRef.current.getGameState());
     setParameters(aggRef.current.getParameters());
   };
@@ -482,7 +496,7 @@ export function GameProvider({
 
     const events = aggRef.current.getEvents();
 
-    const agg = makeAggregate(EMPTY_STATE, defs, stickerDefs);
+    const agg = makeAggregate(aggRef.current.getId(), EMPTY_STATE, defs, stickerDefs);
     agg.loadFromHistory(events.slice(0, events.length - 1));
     aggRef.current = agg;
     sync(agg.getGameState());
@@ -508,7 +522,7 @@ export function GameProvider({
       getEvents: () => aggRef.current.getEvents(),
       setEvents: (events: GameEvent[]) => {
         try {
-          const agg = makeAggregate(EMPTY_STATE, defs, stickerDefs);
+          const agg = makeAggregate(aggRef.current.getId(), EMPTY_STATE, defs, stickerDefs);
           agg.loadFromHistory(events);
           aggRef.current = agg;
           sync(agg.getGameState());
@@ -619,6 +633,7 @@ export function GameProvider({
   return (
     <GameContext
       value={{
+        id: gameId,
         gameState,
         defs,
         stickerDefs,

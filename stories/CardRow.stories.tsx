@@ -14,7 +14,7 @@ const meta: Meta<typeof CardRow> = {
   },
   decorators: [
     Story => (
-      <GameProvider initialState={EMPTY_STATE}>
+      <GameProvider id={crypto.randomUUID()} initialState={EMPTY_STATE}>
         <Story />
       </GameProvider>
     ),

@@ -78,6 +78,7 @@ export class GameAggregate {
   };
 
   constructor(
+    readonly id: string,
     readonly initialState: GameState,
     readonly cardDefs: Record<number, CardDef>,
     readonly stickerDefs: Record<number, Sticker>,
@@ -623,5 +624,9 @@ export class GameAggregate {
 
   public cancelCurrentCardAction(): void {
     this.currentCardAction = null;
+  }
+
+  public getId(): string {
+    return this.id;
   }
 }

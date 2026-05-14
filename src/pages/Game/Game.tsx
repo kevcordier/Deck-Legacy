@@ -15,7 +15,7 @@ import { useGameUI } from '@hooks/useGameInterface';
 import { useTranslation } from 'react-i18next';
 
 export function Game() {
-  const { gameState, deleteSave, startGame, startTutorial, score } = useGame();
+  const { id, gameState, deleteSave, startGame, startTutorial, score } = useGame();
   const { t, i18n } = useTranslation();
   const {
     setOptionsOpen,
@@ -38,7 +38,7 @@ export function Game() {
   };
 
   return (
-    <TutorialProvider>
+    <TutorialProvider key={id}>
       <div className="z-1 flex h-screen flex-col" data-tour="game">
         <Header />
         {isGamePlaying && <ResourceBar />}

@@ -18,8 +18,8 @@ export const ICON_PASSTHROUGH = {
   trigger: '{{trigger}}',
 };
 
-export function tCardName(t: TFunction, stateName = ''): React.ReactNode {
-  return renderTextWithIcons(t(`names.${stateName}`, { ns: 'cards' }));
+export function tCardName(t: TFunction, stateName = ''): string {
+  return t(`names.${stateName}`, { ns: 'cards' });
 }
 
 export function tCardActionLabel(

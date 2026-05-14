@@ -14,6 +14,7 @@ import {
   getEffectiveUpgradeCost,
   getFirstAvailableTrackStep,
   getInstancesTriggerEffects,
+  getTotalProduction,
   getTotalResourceProduction,
   tagClass,
 } from '@engine/application/cardHelpers';
@@ -138,6 +139,27 @@ describe('getEffectiveProductions', () => {
     expect(result.gold).toBe(2);
   });
 
+  it('adds ADJUST_PRODUCTION board effect bonus without valuePerElement', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      board: [1],
+      instances: { 1: inst },
+      boardEffects: {
+        2: [
+          {
+            id: 'p2',
+            type: PassiveType.ADJUST_PRODUCTION,
+            resources: { [ResourceType.GOLD]: 2 },
+            cards: { ids: [1] },
+          },
+        ],
+      },
+    });
+
+    const result = getEffectiveProductions({ gold: 1 }, gs, defs, inst, {});
+    expect(result.gold).toBe(3);
+  });
+
   it('adds ADJUST_PRODUCTION passive bonus via accumulation', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, cumulated: 3 });
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
@@ -239,6 +261,27 @@ describe('getEffectiveProductions', () => {
     });
     const result = getEffectiveProductions({}, gs, defs, inst, {});
     expect(result.wood).toBe(2);
+  });
+
+  it('applies board effect bonus with default BOARD target on source card itself', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      board: [1],
+      instances: { 1: inst },
+      boardEffects: {
+        1: [
+          {
+            id: 'be-self',
+            type: PassiveType.ADJUST_PRODUCTION,
+            resources: { iron: 1 },
+            cards: { scope: [TargetScope.ANY], ids: [1] },
+          },
+        ],
+      },
+    });
+
+    const result = getEffectiveProductions({}, gs, defs, inst, {});
+    expect(result.iron).toBe(1);
   });
 
   it('excludes board effects when includeBoardEffects is false', () => {
@@ -445,6 +488,39 @@ describe('getEffectiveUpgradeCost', () => {
     );
 
     expect(result.resources?.[0]).toEqual({ wood: 1 });
+  });
+
+  it('ignores invalid adjusted resource values', () => {
+    const source = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const target = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'Aura', states: [{ id: 1, name: 'Aura' }] },
+      2: { id: 2, name: 'Builder', states: [{ id: 1, name: 'Builder' }] },
+    };
+    const gs = makeState({
+      board: [1, 2],
+      instances: { 1: source, 2: target },
+      boardEffects: {
+        1: [
+          {
+            id: 'adjust_upgrade',
+            type: PassiveType.ADJUST_UPDATE_COST,
+            resources: { gold: Number.NaN },
+            cards: { ids: [2] },
+          },
+        ],
+      },
+    });
+
+    const result = getEffectiveUpgradeCost(
+      { resources: [{ gold: 2 }] },
+      gs,
+      defs,
+      makeStickerDefs(),
+      2,
+    );
+
+    expect(result.resources?.[0]).toEqual({});
   });
 });
 
@@ -1402,7 +1478,7 @@ describe('getEffectiveGlory sticker bonus', () => {
   it('uses 0 when glory.amount is undefined', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     // glory object present but no amount property
-    const state = { id: 1, name: 'S', glory: { amount: 0 } };
+    const state = { id: 1, name: 'S' };
     expect(getEffectiveGlory(state, makeState(), {}, inst, {})).toBe(0);
   });
 
@@ -1479,6 +1555,54 @@ describe('getTotalResourceProduction', () => {
     const gs = makeState({ board: [1], instances: { 1: inst } });
     // max(3, 0) = 3
     expect(getTotalResourceProduction(99, ResourceType.GOLD, gs, defs, {})).toBe(3);
+  });
+
+  it('treats null production value as 0 in total resource production', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [{ id: 1, name: 'S', productions: [{ gold: null as unknown as number }] }],
+      },
+    };
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+
+    expect(getTotalResourceProduction(99, ResourceType.GOLD, gs, defs, {})).toBe(0);
+  });
+});
+
+describe('getTotalProduction', () => {
+  it('returns 0 when instance does not exist', () => {
+    expect(getTotalProduction(999, makeState({ instances: {} }), {}, {})).toBe(0);
+  });
+
+  it('returns 0 when active state has no productions', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+
+    expect(getTotalProduction(1, makeState({ instances: { 1: inst } }), defs, {})).toBe(0);
+  });
+
+  it('treats null production values as 0', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [
+          {
+            id: 1,
+            name: 'S',
+            productions: [{ gold: null as unknown as number }],
+          },
+        ],
+      },
+    };
+
+    expect(getTotalProduction(1, makeState({ instances: { 1: inst } }), defs, {})).toBe(0);
   });
 });
 

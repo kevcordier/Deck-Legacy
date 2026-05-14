@@ -14,6 +14,7 @@ import type { loadCardDefs, loadStickerDefs } from '@engine/infrastructure/loade
 import { createContext } from 'react';
 
 export type GameContextType = {
+  id?: string;
   gameState: GameState;
   defs: ReturnType<typeof loadCardDefs>;
   stickerDefs: ReturnType<typeof loadStickerDefs>;

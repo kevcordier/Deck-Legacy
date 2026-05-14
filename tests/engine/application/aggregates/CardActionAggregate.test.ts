@@ -691,6 +691,159 @@ describe('CardActionAggregate.resolvePlayerChoice', () => {
     expect(agg.getPendingChoices()).toHaveLength(1);
     expect(agg.getPendingChoices()[0].type).toBe(PendingChoiceType.CHOOSE_RESOURCE);
   });
+
+  it('skips upgrade cost resolution when target instance is missing', () => {
+    const resolved: ResolvedActionEffect = {
+      id: '0',
+      type: ActionEffectType.UPGRADE_CARD,
+      sourceInstanceId: 1,
+      payingCost: true,
+      instanceIds: [999],
+    };
+    mockStrategyApply(resolved, []);
+
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, makeChooseEffectAction());
+    agg.resolveAction();
+
+    agg.resolvePlayerChoice({ id: 'x', type: ActionEffectType.CHOOSE_EFFECT, sourceInstanceId: 1 });
+
+    expect(agg.getPendingChoices()).toHaveLength(0);
+    expect(agg.getGameState().resources.gold).toBeUndefined();
+  });
+
+  it('skips upgrade cost resolution when target state has no matching upgrade', () => {
+    const upgradeableDef: CardDef = {
+      id: 2,
+      name: 'Upgradeable',
+      states: [
+        { id: 1, name: 'Base', upgrade: [{ cost: { resources: [{ gold: 1 }] }, upgradeTo: 2 }] },
+        { id: 2, name: 'Upgraded' },
+      ],
+    };
+    const resolved: ResolvedActionEffect = {
+      id: '0',
+      type: ActionEffectType.UPGRADE_CARD,
+      sourceInstanceId: 1,
+      payingCost: true,
+      instanceIds: [2],
+      stateId: 99,
+    };
+    mockStrategyApply(resolved, []);
+
+    const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const targetInst = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const gs = makeState({ board: [1, 2], instances: { 1: sourceInst, 2: targetInst } });
+    const agg = new CardActionAggregate(
+      { 1: plainDef, 2: upgradeableDef },
+      {},
+      gs,
+      sourceInst,
+      makeChooseEffectAction(),
+    );
+    agg.resolveAction();
+
+    agg.resolvePlayerChoice({ id: 'x', type: ActionEffectType.CHOOSE_EFFECT, sourceInstanceId: 1 });
+
+    expect(agg.getPendingChoices()).toHaveLength(0);
+    expect(agg.getGameState().instances[2].stateId).toBe(1);
+  });
+
+  it('skips upgrade cost resolution when target state has no upgrade path', () => {
+    const noUpgradeDef: CardDef = {
+      id: 6,
+      name: 'NoUpgrade',
+      states: [{ id: 1, name: 'Base' }],
+    };
+    const resolved: ResolvedActionEffect = {
+      id: '0',
+      type: ActionEffectType.UPGRADE_CARD,
+      sourceInstanceId: 1,
+      payingCost: true,
+      instanceIds: [2],
+    };
+    mockStrategyApply(resolved, []);
+
+    const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const targetInst = makeInstance({ id: 2, cardId: 6, stateId: 1 });
+    const gs = makeState({ board: [1, 2], instances: { 1: sourceInst, 2: targetInst } });
+    const agg = new CardActionAggregate(
+      { 1: plainDef, 6: noUpgradeDef },
+      {},
+      gs,
+      sourceInst,
+      makeChooseEffectAction(),
+    );
+    agg.resolveAction();
+
+    agg.resolvePlayerChoice({ id: 'x', type: ActionEffectType.CHOOSE_EFFECT, sourceInstanceId: 1 });
+
+    expect(agg.getPendingChoices()).toHaveLength(0);
+    expect(agg.getGameState().instances[2].stateId).toBe(1);
+  });
+
+  it('skips track cost resolution when target instance is missing', () => {
+    const resolved: ResolvedActionEffect = {
+      id: '0',
+      type: ActionEffectType.TRACK_ADVANCE,
+      sourceInstanceId: 1,
+      instanceIds: [999],
+      stepIds: [1],
+    };
+    mockStrategyApply(resolved, []);
+
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [1], instances: { 1: inst } });
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, makeChooseEffectAction());
+    agg.resolveAction();
+
+    agg.resolvePlayerChoice({ id: 'x', type: ActionEffectType.CHOOSE_EFFECT, sourceInstanceId: 1 });
+
+    expect(agg.getPendingChoices()).toHaveLength(0);
+  });
+
+  it('continues when track step id is missing in track definition', () => {
+    const trackDef: CardDef = {
+      id: 4,
+      name: 'Tracked',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          track: {
+            inOrder: true,
+            steps: [{ id: 1 }],
+          },
+        },
+      ],
+    };
+    const resolved: ResolvedActionEffect = {
+      id: '0',
+      type: ActionEffectType.TRACK_ADVANCE,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      stepIds: [99],
+    };
+    mockStrategyApply(resolved, []);
+
+    const sourceInst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const trackedInst = makeInstance({ id: 2, cardId: 4, stateId: 1 });
+    const gs = makeState({ board: [1, 2], instances: { 1: sourceInst, 2: trackedInst } });
+    const agg = new CardActionAggregate(
+      { 1: plainDef, 4: trackDef },
+      {},
+      gs,
+      sourceInst,
+      makeChooseEffectAction(),
+    );
+    agg.resolveAction();
+
+    agg.resolvePlayerChoice({ id: 'x', type: ActionEffectType.CHOOSE_EFFECT, sourceInstanceId: 1 });
+
+    expect(agg.getPendingChoices()).toHaveLength(0);
+    expect(agg.getGameState().instances[2].trackProgress).toEqual([]);
+  });
 });
 
 // ─── resolveCostChoice ────────────────────────────────────────────────────────

@@ -15,12 +15,12 @@ function ErrorFallback({ error }: Readonly<FallbackProps>) {
   const canClearSave = error instanceof CorruptedSaveError;
 
   const reloadApp = () => {
-    window.location.reload();
+    globalThis.location.reload();
   };
 
   const clearSaveAndReload = () => {
     deleteSave();
-    window.location.reload();
+    globalThis.location.reload();
   };
 
   return (

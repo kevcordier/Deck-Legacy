@@ -17,6 +17,7 @@ const meta: Meta<HeaderProps> = {
     return (
       <GameUIProvider>
         <GameProvider
+          id={crypto.randomUUID()}
           key={JSON.stringify({ round, turn, drawPile })}
           initialState={{ ...EMPTY_STATE, round, turn, drawPile }}
         >

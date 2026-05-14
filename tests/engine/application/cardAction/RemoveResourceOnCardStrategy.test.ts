@@ -109,4 +109,34 @@ describe('RemoveResourceOnCardStrategy', () => {
     });
     expect(result.instances[99]).toBeUndefined();
   });
+
+  it('ignores undefined resource values when extracting keys', () => {
+    const target = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 2: target } });
+
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      resources: { gold: undefined as unknown as number, wood: 1 },
+      resourceScopes: ['production'],
+    });
+
+    expect(result.instances[2].removedResourcesByState?.[1]).toEqual({ production: ['wood'] });
+  });
+
+  it('returns original state when resources field is omitted', () => {
+    const target = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 2: target } });
+
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+    });
+
+    expect(result).toBe(gs);
+  });
 });

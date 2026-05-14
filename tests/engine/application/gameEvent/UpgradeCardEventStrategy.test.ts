@@ -140,4 +140,32 @@ describe('UpgradeCardEventStrategy', () => {
     expect(result.permanents).not.toContain(1);
     expect(result.permanents).toContain(2);
   });
+
+  it('handles missing pre-upgrade instance when defs include fallback for undefined cardId', () => {
+    const defsWithUndefinedFallback = {
+      ...multiStateDefs,
+      undefined: {
+        id: -1,
+        name: 'Fallback',
+        states: [{ id: 2, name: 'FallbackState', permanent: false }],
+      },
+    } as unknown as typeof multiStateDefs;
+    const strategyWithFallback = new UpgradeCardEventStrategy(
+      defsWithUndefinedFallback,
+      makeStickerDefs(),
+    );
+    const gs = makeState({ board: [], instances: {}, triggerPile: {} });
+
+    const result = strategyWithFallback.apply(gs, {
+      id: 'e-missing',
+      type: GameEventType.UPGRADE_CARD,
+      timestamp: 0,
+      cardInstanceId: 99,
+      stateId: 2,
+      cost: {},
+    } as UpgradeCardEvent);
+
+    expect(Object.keys(result.triggerPile)).toHaveLength(0);
+    expect(result.instances[99].stateId).toBe(2);
+  });
 });

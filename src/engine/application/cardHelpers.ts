@@ -245,7 +245,7 @@ function calculeBoardEffectsBonus(
             bonus,
             Object.fromEntries(Object.entries(passive.resources).map(([k, v]) => [k, v * count])),
           );
-        } else if (passive.resources) {
+        } else {
           bonus = mergeResources(bonus, passive.resources);
         }
       });
@@ -302,7 +302,7 @@ export function getEffectiveGlory(
     return 0;
   }
 
-  const baseGlory = activeState.glory.amount ?? 0;
+  const baseGlory = activeState.glory.amount;
   const stickerGlory = (instance.stickers[instance.stateId] ?? []).reduce(
     (acc, stickerId) => acc + (stickerDefs[stickerId]?.glory ?? 0),
     0,
@@ -318,7 +318,7 @@ export function getEffectiveGlory(
       defs,
       stickerDefs,
     );
-    passiveGlory = (activeState.glory.valuePerElement.amount ?? 0) * count;
+    passiveGlory = activeState.glory.valuePerElement.amount * count;
   }
 
   return baseGlory + stickerGlory + passiveGlory;

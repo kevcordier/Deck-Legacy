@@ -95,4 +95,20 @@ describe('AddGloryStrategy', () => {
     });
     expect(result.instances[1].glories).toEqual([1, 2, 5]);
   });
+
+  it('treats unknown sticker additionalGlory as 0', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, glories: [1, 2], stickers: { 1: [404] } });
+    const gs = makeState({ instances: { 1: inst } });
+    const strategy = new AddGloryStrategy({ 1: limitedDef }, {});
+
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.ADD_GLORY,
+      sourceInstanceId: 1,
+      instanceIds: [1],
+      value: 7,
+    });
+
+    expect(result).toBe(gs);
+  });
 });

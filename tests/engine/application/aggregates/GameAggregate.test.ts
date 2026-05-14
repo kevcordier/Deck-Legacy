@@ -109,7 +109,7 @@ describe('EMPTY_STATE', () => {
 describe('GameAggregate.gameStarted', () => {
   it('creates GAME_STARTED event and sets up instances', () => {
     // Use 5 cards so gameStarted's internal roundStarted+turnStarted(x2) never hits empty drawPile.
-    const agg = new GameAggregate(EMPTY_STATE, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), EMPTY_STATE, { 1: plainDef }, {}, []);
     agg.gameStarted(
       [1, 2, 3, 4, 5],
       [
@@ -131,7 +131,7 @@ describe('GameAggregate.gameStarted', () => {
 
 describe('GameAggregate.loadFromHistory', () => {
   it('replays events and updates game state', () => {
-    const agg = new GameAggregate(EMPTY_STATE, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), EMPTY_STATE, { 1: plainDef }, {}, []);
     const event: GameEvent = {
       id: 'e1',
       type: GameEventType.GAME_STARTED,
@@ -154,7 +154,7 @@ describe('GameAggregate.roundStarted', () => {
     // roundStarted shuffles cards and stays at ROUND_START — player must call turnStarted.
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const state = makeState({ drawPile: [1], instances: { 1: inst }, round: 0 });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.roundStarted();
     expect(gs.round).toBe(1);
     expect(gs.phase).toBe(Phase.ROUND_START);
@@ -170,7 +170,7 @@ describe('GameAggregate.roundStarted', () => {
       instances: { 1: inst1, 2: inst2 },
       round: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.roundStarted();
     // roundStarted adds discovery cards to drawPile, waits at ROUND_START for player.
     expect(gs.round).toBe(2);
@@ -186,7 +186,7 @@ describe('GameAggregate.roundStarted', () => {
       instances: { 1: inst1 },
       round: 1,
     });
-    const agg = new GameAggregate(state, { 3: parchmentDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 3: parchmentDef }, {}, []);
     const gs = agg.roundStarted();
     expect(gs.round).toBe(1);
   });
@@ -203,7 +203,7 @@ describe('GameAggregate.turnStarted', () => {
       round: 1,
       phase: Phase.ROUND_START,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.turnStarted();
     expect(gs.phase).toBe(Phase.PLAYING);
     expect(gs.board).toContain(1);
@@ -219,7 +219,7 @@ describe('GameAggregate.turnStarted', () => {
       instances: { 1: inst1, 2: inst2 },
       round: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.turnStarted();
     // turnStarted with empty drawPile → roundEnded → roundStarted, waits at ROUND_START.
     expect(gs.round).toBe(2);
@@ -234,7 +234,7 @@ describe('GameAggregate.turnStarted', () => {
       round: 1,
       phase: Phase.ROUND_START,
     });
-    const agg = new GameAggregate(state, { 4: onPlayDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 4: onPlayDef }, {}, []);
     const gs = agg.turnStarted();
     expect(gs.phase).toBe(Phase.PLAYING);
     expect(Object.keys(gs.triggerPile)).toHaveLength(1);
@@ -255,7 +255,7 @@ describe('GameAggregate.turnEnded', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 6: endOfTurnDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 6: endOfTurnDef }, {}, []);
     const gs = agg.turnEnded();
     expect(gs.phase).toBe(Phase.TURN_END);
   });
@@ -271,7 +271,7 @@ describe('GameAggregate.turnEnded', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.turnEnded();
     expect(gs.round).toBe(2);
     expect(gs.phase).toBe(Phase.ROUND_START);
@@ -287,7 +287,7 @@ describe('GameAggregate.turnEnded', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.turnEnded();
     expect(gs.phase).toBe(Phase.PLAYING);
   });
@@ -306,7 +306,13 @@ describe('GameAggregate.turnEnded', () => {
       turn: 1,
     });
 
-    const agg = new GameAggregate(state, { 1: plainDef, 8: unlimitedPermanentDef }, {}, []);
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 8: unlimitedPermanentDef },
+      {},
+      [],
+    );
     const gs = agg.turnEnded();
 
     expect(gs.phase).toBe(Phase.TURN_END);
@@ -347,7 +353,13 @@ describe('GameAggregate.turnEnded', () => {
       turn: 1,
     });
 
-    const agg = new GameAggregate(state, { 1: plainDef, 9: costlyUnlimitedDef }, {}, []);
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 9: costlyUnlimitedDef },
+      {},
+      [],
+    );
     const gs = agg.turnEnded();
 
     expect(gs.phase).toBe(Phase.PLAYING);
@@ -367,7 +379,7 @@ describe('GameAggregate.cardProduced', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.cardProduced(1, { gold: 3 });
     expect(gs.resources.gold).toBe(3);
     expect(gs.board).not.toContain(1);
@@ -387,7 +399,7 @@ describe('GameAggregate.advance', () => {
       phase: Phase.PLAYING,
       round: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.advance();
     expect(gs.board).toHaveLength(2);
   });
@@ -410,7 +422,7 @@ describe('GameAggregate.advance', () => {
       phase: Phase.PLAYING,
       round: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.advance();
     expect(gs.board).toHaveLength(2);
   });
@@ -437,14 +449,14 @@ describe('GameAggregate.advance', () => {
       round: 1,
     });
 
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.advance();
 
     expect(gs.board).toHaveLength(4);
   });
 
   it('returns current state when drawPile is empty', () => {
-    const agg = new GameAggregate(EMPTY_STATE, {}, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), EMPTY_STATE, {}, {}, []);
     const gsBefore = agg.getGameState();
     const gs = agg.advance();
     expect(gs).toBe(gsBefore);
@@ -476,7 +488,7 @@ describe('GameAggregate.upgradeCard', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: defUpgrade }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: defUpgrade }, {}, []);
     const gs = agg.upgradeCard(1, 2, {});
     expect(gs.instances[1].stateId).toBe(2);
     expect(gs.discardPile).toContain(1);
@@ -504,7 +516,7 @@ describe('GameAggregate.upgradeCard', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: defUpgrade }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: defUpgrade }, {}, []);
     const gs = agg.upgradeCard(1, 2, {}, [2], [3]);
     expect(gs.instances[1].stateId).toBe(2);
     expect(gs.discardPile).toContain(2);
@@ -528,7 +540,7 @@ describe('GameAggregate.cardAction', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const action = {
       id: 'a1',
       actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 5 } }],
@@ -547,7 +559,7 @@ describe('GameAggregate.cardAction', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     agg.cardAction(makeChooseEffectAction(), 1);
     expect(agg.getCurrentCardAction()?.getPendingChoices().length).toBeGreaterThan(0);
   });
@@ -561,7 +573,7 @@ describe('GameAggregate.resolveCardActionChoice', () => {
   });
 
   it('returns current state when no current card action', () => {
-    const agg = new GameAggregate(EMPTY_STATE, {}, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), EMPTY_STATE, {}, {}, []);
     const gs = agg.resolveCardActionChoice({
       id: 'x',
       type: ActionEffectType.ADD_RESOURCES,
@@ -588,7 +600,7 @@ describe('GameAggregate.resolveCardActionChoice', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     agg.cardAction(makeChooseEffectAction(), 1);
     expect(agg.getCurrentCardAction()?.getPendingChoices().length).toBeGreaterThan(0);
 
@@ -629,7 +641,7 @@ describe('GameAggregate.resolveCardActionChoice', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     agg.cardAction(makeChooseEffectAction(), 1);
 
     const gs = agg.resolveCardActionChoice({
@@ -647,7 +659,7 @@ describe('GameAggregate.resolveCardActionChoice', () => {
 
 describe('GameAggregate.resolveCardActionCost', () => {
   it('returns current state when no current card action', () => {
-    const agg = new GameAggregate(EMPTY_STATE, {}, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), EMPTY_STATE, {}, {}, []);
     const gs = agg.resolveCardActionCost({
       resources: {},
       discardedCardIds: [],
@@ -668,7 +680,7 @@ describe('GameAggregate.resolveCardActionCost', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const action = {
       id: 'a1',
       actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 2 } }],
@@ -698,7 +710,7 @@ describe('GameAggregate.resolveCardActionCost', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const action = {
       id: 'a1',
       actionEffects: [
@@ -730,7 +742,7 @@ describe('GameAggregate.resolveCardActionCost', () => {
 
 describe('GameAggregate.skipTrigger', () => {
   it('throws when triggerId not in triggerPile', () => {
-    const agg = new GameAggregate(EMPTY_STATE, {}, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), EMPTY_STATE, {}, {}, []);
     expect(() => agg.skipTrigger('nonexistent')).toThrow('Trigger with id nonexistent not found');
   });
 
@@ -760,7 +772,7 @@ describe('GameAggregate.skipTrigger', () => {
         tid2: { effectDef: { id: 'et', actionEffects: [] }, sourceInstanceId: 2 },
       },
     });
-    const agg = new GameAggregate(state, { 6: optionalEndOfTurnDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 6: optionalEndOfTurnDef }, {}, []);
     const gs = agg.skipTrigger('tid1');
     expect(gs.triggerPile['tid1']).toBeUndefined();
     expect(gs.triggerPile['tid2']).toBeDefined();
@@ -792,7 +804,13 @@ describe('GameAggregate.skipTrigger', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 6: optionalEndOfTurnDef, 1: plainDef }, {}, []);
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 6: optionalEndOfTurnDef, 1: plainDef },
+      {},
+      [],
+    );
     agg.turnEnded();
     const triggerId = Object.keys(agg.getGameState().triggerPile)[0];
     const gs = agg.skipTrigger(triggerId);
@@ -820,7 +838,7 @@ describe('GameAggregate.turnEnded – empty drawPile', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.turnEnded();
     expect(gs.round).toBe(2);
     expect(gs.phase).toBe(Phase.ROUND_START);
@@ -843,7 +861,7 @@ describe('GameAggregate.upgradeCard – blocked by option', () => {
         2: [{ id: 'da', type: 'DESACTIVATE_OPTION' as never, options: ['upgrade'] }],
       },
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gsBefore = agg.getGameState();
     const gs = agg.upgradeCard(1, 2, {});
     expect(gs).toBe(gsBefore);
@@ -856,7 +874,7 @@ describe('GameAggregate.chooseState', () => {
   it('applies CHOOSE_STATE event and returns updated state', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const state = makeState({ instances: { 1: inst } });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.chooseState(1, 2);
     expect(gs.instances[1].stateId).toBe(2);
   });
@@ -878,7 +896,7 @@ describe('GameAggregate.cardAction – blocked by option', () => {
         2: [{ id: 'da', type: 'DESACTIVATE_OPTION' as never, options: ['action'] }],
       },
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gsBefore = agg.getGameState();
     const action = {
       id: 'a1',
@@ -912,7 +930,7 @@ describe('GameAggregate.roundEnded – early return', () => {
       phase: Phase.PLAYING,
       round: 1,
     });
-    const agg = new GameAggregate(state, { 5: endOfRoundDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 5: endOfRoundDef }, {}, []);
     const gs = agg.roundEnded();
     // END_OF_ROUND trigger is in the pile → condition fails → no roundStarted
     expect(gs.phase).toBe(Phase.ROUND_END);
@@ -930,7 +948,7 @@ describe('GameAggregate.roundEnded – early return', () => {
       phase: Phase.PLAYING,
       round: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gs = agg.roundEnded(false);
 
     expect(gs.phase).toBe(Phase.ROUND_END);
@@ -965,7 +983,13 @@ describe('GameAggregate.turnEnded – hasAvailableUnlimitedAction', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef, 10: limitedDef }, {}, []);
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 10: limitedDef },
+      {},
+      [],
+    );
     const gs = agg.turnEnded();
     // limitedTime exhausted → hasAvailableUnlimitedAction = false → next turn starts
     expect(gs.phase).toBe(Phase.PLAYING);
@@ -999,11 +1023,106 @@ describe('GameAggregate.turnEnded – hasAvailableUnlimitedAction', () => {
         99: [{ id: 'da', type: 'DESACTIVATE_OPTION' as never, options: ['action'], global: true }],
       },
     });
-    const agg = new GameAggregate(state, { 1: plainDef, 11: freeUnlimitedDef }, {}, []);
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 11: freeUnlimitedDef },
+      {},
+      [],
+    );
     const gs = agg.turnEnded();
     // ACTION disabled → hasAvailableUnlimitedAction returns false immediately → next turn starts
     expect(gs.phase).toBe(Phase.PLAYING);
     expect(gs.board).toContain(2);
+  });
+
+  it('ignores unlimited actions that are trigger-based', () => {
+    const triggeredUnlimitedDef: CardDef = {
+      id: 12,
+      name: 'TriggeredUnlimited',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          permanent: true,
+          actions: [
+            {
+              id: 'tu',
+              unlimited: true,
+              trigger: Trigger.ON_PLAY,
+              actionEffects: [],
+            },
+          ],
+        },
+      ],
+    };
+    const perm = makeInstance({ id: 1, cardId: 12, stateId: 1 });
+    const nextCard = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [2],
+      permanents: [1],
+      instances: { 1: perm, 2: nextCard },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 12: triggeredUnlimitedDef },
+      {},
+      [],
+    );
+    const gs = agg.turnEnded();
+
+    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.board).toContain(2);
+  });
+
+  it('keeps TURN_END when limitedTime action is still available', () => {
+    const limitedAvailableDef: CardDef = {
+      id: 13,
+      name: 'LimitedAvailable',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          permanent: true,
+          actions: [
+            {
+              id: 'la',
+              unlimited: true,
+              limitedTime: 2,
+              actionEffects: [],
+            },
+          ],
+        },
+      ],
+    };
+    const perm = makeInstance({ id: 1, cardId: 13, stateId: 1, usedActionIds: ['la'] });
+    const nextCard = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [2],
+      permanents: [1],
+      instances: { 1: perm, 2: nextCard },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 13: limitedAvailableDef },
+      {},
+      [],
+    );
+    const gs = agg.turnEnded();
+
+    expect(gs.phase).toBe(Phase.TURN_END);
+    expect(gs.turn).toBe(1);
+    expect(gs.drawPile).toEqual([2]);
   });
 
   it('skips blocked instances in hasAvailableUnlimitedAction', () => {
@@ -1033,10 +1152,48 @@ describe('GameAggregate.turnEnded – hasAvailableUnlimitedAction', () => {
         99: [{ id: 'block', type: 'BLOCK' as never, cards: { ids: [1] }, global: true }],
       },
     });
-    const agg = new GameAggregate(state, { 1: plainDef, 11: freeUnlimitedDef }, {}, []);
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 11: freeUnlimitedDef },
+      {},
+      [],
+    );
     const gs = agg.turnEnded();
     // Permanent is blocked → skipped → hasAvailableUnlimitedAction = false → next turn starts
     expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.board).toContain(2);
+  });
+
+  it('treats permanent cards without actions as not playable for unlimited checks', () => {
+    const noActionPermanentDef: CardDef = {
+      id: 14,
+      name: 'NoActionPermanent',
+      states: [{ id: 1, name: 'S', permanent: true }],
+    };
+    const perm = makeInstance({ id: 1, cardId: 14, stateId: 1 });
+    const nextCard = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [2],
+      permanents: [1],
+      instances: { 1: perm, 2: nextCard },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 14: noActionPermanentDef },
+      {},
+      [],
+    );
+    const gs = agg.turnEnded();
+
+    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.turn).toBe(2);
     expect(gs.board).toContain(2);
   });
 });
@@ -1053,9 +1210,16 @@ describe('GameAggregate.cancelCurrentCardAction', () => {
       phase: Phase.PLAYING,
       round: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     agg.cancelCurrentCardAction();
     expect(agg.getCurrentCardAction()).toBeNull();
+  });
+
+  it('returns aggregate id with getId', () => {
+    const aggregateId = crypto.randomUUID();
+    const agg = new GameAggregate(aggregateId, EMPTY_STATE, { 1: plainDef }, {}, []);
+
+    expect(agg.getId()).toBe(aggregateId);
   });
 });
 
@@ -1074,7 +1238,13 @@ describe('GameAggregate.cardAction – PARCHMENT finalization', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef, 3: parchmentDef }, {}, []);
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 3: parchmentDef },
+      {},
+      [],
+    );
     const action = {
       id: 'parch-action',
       actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
@@ -1083,6 +1253,35 @@ describe('GameAggregate.cardAction – PARCHMENT finalization', () => {
     // After parchment action, ROUND_STARTED is emitted → phase becomes ROUND_START
     expect(gs.phase).toBe(Phase.ROUND_START);
     expect(gs.round).toBe(1);
+  });
+
+  it('filters out missing ids in parchment lastAddedCards when rebuilding draw pile', () => {
+    const inst = makeInstance({ id: 1, cardId: 3, stateId: 1 });
+    const state = makeState({
+      board: [1],
+      instances: { 1: inst },
+      phase: Phase.PARCHMENT,
+      onGoingParchment: 1,
+      round: 1,
+      turn: 1,
+      lastAddedCards: [999],
+    });
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 3: parchmentDef },
+      {},
+      [],
+    );
+    const action = {
+      id: 'parch-missing-instance',
+      actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
+    };
+
+    const gs = agg.cardAction(action, 1);
+
+    expect(gs.phase).toBe(Phase.ROUND_START);
+    expect(gs.drawPile).not.toContain(999);
   });
 
   it('triggers roundEnded(false) when finalizing from ROUND_END with empty trigger pile', () => {
@@ -1099,7 +1298,7 @@ describe('GameAggregate.cardAction – PARCHMENT finalization', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const action = {
       id: 'a-round-end',
       actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
@@ -1123,7 +1322,7 @@ describe('GameAggregate.cardAction – PARCHMENT finalization', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const action = {
       id: 'a-end-turn',
       endsTurn: true,
@@ -1152,7 +1351,7 @@ describe('GameAggregate.cardAction – unresolvable effect', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     const gsBefore = agg.getGameState();
     const action = {
       id: 'a1',
@@ -1180,7 +1379,7 @@ describe('GameAggregate.cardAction – unresolvable effect', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     // First effect adds gold (would succeed), second effect targets empty discard → unresolvable
     const action = {
       id: 'a2',
@@ -1218,7 +1417,7 @@ describe('GameAggregate.cardAction – unresolvable effect', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     // CHOOSE_EFFECT first (creates pending choice), then an unresolvable DISCARD_CARD
     const action = {
       id: 'a3',
@@ -1266,7 +1465,7 @@ describe('GameAggregate.cardAction – unresolvable effect', () => {
       round: 1,
       turn: 1,
     });
-    const agg = new GameAggregate(state, { 1: plainDef }, {}, []);
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     // Multi-option resource cost → pending cost choice; effect targets empty discard → unresolvable
     const action = {
       id: 'a4',

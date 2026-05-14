@@ -75,6 +75,7 @@ const meta: Meta<GameCardContainerProps> = {
 
     return (
       <GameProvider
+        id={crypto.randomUUID()}
         key={JSON.stringify({
           instanceId,
           isOnBoard,

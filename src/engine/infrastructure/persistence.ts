@@ -15,6 +15,7 @@ const SAVE_KEY = 'deck_legacy_save';
 const NAMES_KEY = 'deck_legacy_names';
 
 export type SaveData = {
+  id: string;
   events: GameEvent[];
   savedAt: number; // timestamp ms
 };
@@ -23,9 +24,10 @@ export type SaveData = {
  * Saves the current game to `localStorage`.
  * Only called when `pendingChoice === null` (game is in a stable state).
  */
-export function saveGame(events: GameEvent[]): void {
+export function saveGame(id: string, events: GameEvent[]): void {
   try {
     const data: SaveData = {
+      id,
       events,
       savedAt: Date.now(),
     };

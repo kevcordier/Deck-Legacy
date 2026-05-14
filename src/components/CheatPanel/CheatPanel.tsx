@@ -208,8 +208,8 @@ function Cheat() {
             onClick={() => {
               const r: Record<string, number> = {};
               for (const [k, v] of Object.entries(resAmounts)) {
-                const n = parseInt(v);
-                if (!isNaN(n) && n !== 0) r[k] = n;
+                const n = Number.parseInt(v);
+                if (!Number.isNaN(n) && n !== 0) r[k] = n;
               }
               cheat?.addResources(r);
               setResAmounts({});
