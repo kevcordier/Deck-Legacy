@@ -40,7 +40,7 @@ export function ResourceBar() {
                 className="border-border flex items-center gap-1 rounded border px-2 py-1"
               >
                 <span className="font-display">{v}</span>
-                <ResourcePill key={k} resource={k} size="sm" />
+                <ResourcePill key={k} resource={k} className="size-5" />
               </div>
             );
           })

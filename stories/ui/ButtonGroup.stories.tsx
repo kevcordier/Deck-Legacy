@@ -8,10 +8,6 @@ const meta: Meta<typeof ButtonGroup> = {
     layout: 'centered',
   },
   argTypes: {
-    size: {
-      control: 'inline-radio',
-      options: ['xs', 'sm', 'md', 'lg'],
-    },
     font: {
       control: 'inline-radio',
       options: ['display', 'body'],
@@ -50,7 +46,6 @@ export const SmallSize: Story = {
   args: {
     label: 'Taille',
     value: 'sm',
-    size: 'sm',
     options: [
       { value: 'sm', children: 'SM' },
       { value: 'md', children: 'MD' },
@@ -67,7 +62,6 @@ export const AllSizes: Story = {
           key={size}
           label={`Taille : ${size}`}
           value="a"
-          size={size}
           options={[
             { value: 'a', children: 'Option A' },
             { value: 'b', children: 'Option B' },

@@ -60,7 +60,7 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
   if (haveTrigger) {
     return (
       <div
-        className={`font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md`}
+        className={`font-body! bg-white/60 p-1! @3xs:px-3! @3xs:py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md`}
         data-tour="card-trigger"
       >
         {getTriggerIcon(action)} {actionLabel}
@@ -83,7 +83,7 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
       }
       variant="text"
       color="base-ink"
-      className={`font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md`}
+      className={`font-body! bg-white/60 p-1! @3xs:px-3! @3xs:py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md`}
       data-tour={dataTour}
     >
       {getActionIcon(action, hasDestroyItselfCost)} {actionLabel}

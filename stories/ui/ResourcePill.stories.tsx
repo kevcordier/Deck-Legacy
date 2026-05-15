@@ -12,10 +12,6 @@ const meta: Meta<typeof ResourcePill> = {
       control: 'select',
       options: ['gold', 'wood', 'stone', 'iron', 'weapon', 'goods', 'glory'],
     },
-    size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-    },
   },
 };
 
@@ -23,40 +19,37 @@ export default meta;
 type Story = StoryObj<typeof ResourcePill>;
 
 export const Gold: Story = {
-  args: { resource: 'gold', size: 'md' },
+  args: { resource: 'gold' },
 };
 
 export const Wood: Story = {
-  args: { resource: 'wood', size: 'md' },
+  args: { resource: 'wood' },
 };
 
 export const Stone: Story = {
-  args: { resource: 'stone', size: 'md' },
+  args: { resource: 'stone' },
 };
 
 export const Iron: Story = {
-  args: { resource: 'iron', size: 'md' },
+  args: { resource: 'iron' },
 };
 
 export const Weapon: Story = {
-  args: { resource: 'weapon', size: 'md' },
+  args: { resource: 'weapon' },
 };
 
 export const Goods: Story = {
-  args: { resource: 'goods', size: 'md' },
+  args: { resource: 'goods' },
 };
 
 export const AllResources: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {(['sm', 'md', 'lg'] as const).map(size => (
-        <div key={size} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <span style={{ color: 'var(--cream)', width: '24px', fontSize: '12px' }}>{size}</span>
-          {['gold', 'wood', 'stone', 'iron', 'weapon', 'goods', 'glory'].map(r => (
-            <ResourcePill key={r} resource={r} />
-          ))}
-        </div>
-      ))}
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        {['gold', 'wood', 'stone', 'iron', 'weapon', 'goods'].map(r => (
+          <ResourcePill key={r} resource={r} className="max-block-8" />
+        ))}
+      </div>
     </div>
   ),
 };

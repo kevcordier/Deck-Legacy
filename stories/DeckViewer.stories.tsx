@@ -1,5 +1,6 @@
 import { DeckViewer } from '@components/DeckViewer/DeckViewer';
 import { GameProvider } from '@contexts/GameProvider';
+import { TutorialProvider } from '@contexts/TutorialProvider';
 import deckData from '@data/deck.json';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import { createInstance } from '@engine/application/factory';
@@ -20,7 +21,9 @@ const meta: Meta<typeof DeckViewer> = {
         .filter(inst => deck.includes(inst.id));
       return (
         <GameProvider id={crypto.randomUUID()} initialState={{ ...EMPTY_STATE }}>
-          <Story args={{ ...parameters, displayedCards: [instances[0]], deck: instances }} />
+          <TutorialProvider>
+            <Story args={{ ...parameters, displayedCards: [instances[0]], deck: instances }} />
+          </TutorialProvider>
         </GameProvider>
       );
     },

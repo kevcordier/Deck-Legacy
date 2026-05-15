@@ -36,7 +36,7 @@ export class UpgradeCardStrategy implements CardActionStrategy {
     if (getActiveState(gs.instances[instanceId], this.cardDefs)?.permanent) {
       return {
         ...gs,
-        permanents: [...gs.permanents, instanceId],
+        permanents: [...new Set([...gs.permanents, instanceId])],
         board: gs.board.filter(id => id !== instanceId),
       };
     }

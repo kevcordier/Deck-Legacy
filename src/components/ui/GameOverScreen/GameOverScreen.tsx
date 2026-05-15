@@ -19,7 +19,7 @@ export function GameOverScreen({ score, round, onStartNewGame }: GameOverScreenP
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <Glory size="lg" glory={score} />
+          <Glory glory={score} className="max-block-20 text-xl" />
           <span className="font-display text-base-ink text-lg">{t('gameOver.glory')}</span>
         </div>
 

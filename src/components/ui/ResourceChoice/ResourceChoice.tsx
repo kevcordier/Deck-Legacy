@@ -6,17 +6,19 @@ interface ResourceChoiceProps {
   readonly options: Resources[];
   readonly disabled?: boolean;
   readonly onSelect: (index: number) => void;
-  readonly size?: 'sm' | 'md' | 'lg';
+  readonly className?: string;
+  readonly pillClassName?: string;
 }
 
 export function ResourceChoice({
   options,
   disabled = false,
   onSelect,
-  size = 'md',
+  className,
+  pillClassName,
 }: ResourceChoiceProps) {
   return (
-    <div className="flex items-center gap-1 flex-wrap justify-center">
+    <div className={`flex items-center gap-1 justify-start w-fit ${className ?? ''}`}>
       {options.map((opt, i) => {
         const entries = Object.entries(opt);
         return (
@@ -31,12 +33,16 @@ export function ResourceChoice({
             {entries.map(([key, val]) =>
               val > 2 ? (
                 <div key={key} className="flex items-start">
-                  <ResourcePill key={`${key}-${i.toString()}`} resource={key} size={size} />
+                  <ResourcePill
+                    key={`${key}-${i.toString()}`}
+                    resource={key}
+                    className={pillClassName}
+                  />
                   <span>x{val}</span>
                 </div>
               ) : (
                 Array.from({ length: val }, (_, j) => (
-                  <ResourcePill key={`${key}-${j}`} resource={key} size={size} />
+                  <ResourcePill key={`${key}-${j}`} resource={key} className={pillClassName} />
                 ))
               ),
             )}

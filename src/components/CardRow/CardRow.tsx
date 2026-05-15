@@ -55,7 +55,6 @@ function Card({ id, index, blockingMap }: CardProps) {
   );
   const effectLabel = (type: PassiveType): string => {
     if (type === PassiveType.BLOCK) return t('card.blocked');
-    if (type === PassiveType.STAY_IN_PLAY) return t('card.stayInPlay');
     if (type === PassiveType.ADJUST_GLORY) return t('card.increaseGlory');
     if (type === PassiveType.RESOURCE_EQUIVALENCE) return t('card.resourceEquivalence');
     return t('card.adjustProduction');
@@ -121,7 +120,7 @@ export function CardRow({ cardIds }: CardRowProps) {
   return (
     <div
       className={
-        'grid grid-cols-1 gap-2 @xs/main:gap-3 @xs/main:grid-cols-2 @xl/main:grid-cols-3 @4xl/main:grid-cols-4 @7xl/main:grid-cols-5 @8xl/main:grid-cols-6'
+        'grid grid-cols-1 gap-2 @xs/main:gap-3 @xs/main:grid-cols-2 @3xl/main:grid-cols-3 @5xl/main:grid-cols-4 @7xl/main:grid-cols-5 @8xl/main:grid-cols-6'
       }
     >
       {cardIds

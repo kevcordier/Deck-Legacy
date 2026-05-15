@@ -1,6 +1,7 @@
 import { Header } from '@components/Header/Header';
 import { GameProvider } from '@contexts/GameProvider';
 import { GameUIProvider } from '@contexts/GameUIProvider';
+import { TutorialProvider } from '@contexts/TutorialProvider';
 import { EMPTY_STATE } from '@engine/application/aggregates/GameAggregate';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -21,7 +22,9 @@ const meta: Meta<HeaderProps> = {
           key={JSON.stringify({ round, turn, drawPile })}
           initialState={{ ...EMPTY_STATE, round, turn, drawPile }}
         >
-          <Header {...props} />
+          <TutorialProvider>
+            <Header {...props} />
+          </TutorialProvider>
         </GameProvider>
       </GameUIProvider>
     );

@@ -253,8 +253,8 @@ export function GameBoard() {
           <div className="flex flex-col">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {destroyedDeck.map(inst => (
-                <div key={inst.id}>
-                  <GameCard instance={inst} className="w-full" />
+                <div className={`@container min-w-60`} key={inst.id}>
+                  <GameCard instance={inst} />
                 </div>
               ))}
             </div>

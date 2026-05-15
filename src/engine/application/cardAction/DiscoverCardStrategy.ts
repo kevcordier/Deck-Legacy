@@ -8,7 +8,7 @@ export class DiscoverCardStrategy implements CardActionStrategy {
   apply(_gameState: GameState, payload: ResolvedActionEffect): GameState {
     const ids = payload.instanceIds ?? [];
     const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
-    gameState.discoveryPile = [...new Set(gameState.discoveryPile.filter(id => !ids.includes(id)))];
+    gameState.discoveryPile = gameState.discoveryPile.filter(id => !ids.includes(id));
 
     gameState.lastAddedCards = [];
     ids.forEach(instanceId => {

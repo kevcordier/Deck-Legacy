@@ -73,7 +73,7 @@ export function CardTrackContent({
     }
 
     if (action.value && step.icon === 'glory') {
-      return <Glory key={action.id} glory={action.value} size="xs" />;
+      return <Glory key={action.id} glory={action.value} />;
     }
 
     if (step.icon === '*') {
@@ -93,7 +93,7 @@ export function CardTrackContent({
 
   if (track.inverse) {
     contents.push(
-      <span key={step.id} className="font-display font-bold text-xs">
+      <span key={step.id} className="font-body font-bold text-[9px] @3xs:text-sm leading-none">
         {tCardTrackAction(t, instance.cardId, instance.stateId, step.id)}
       </span>,
     );
@@ -110,7 +110,7 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
   const { t } = useTranslation();
   return (
     <div
-      className={`flex ${track.vertical ? 'flex-col' : 'flex-row'} justify-center flex-wrap gap-0.5`}
+      className={`flex ${track.vertical ? 'flex-col gap-0.5' : 'flex-row gap-0 @3xs:gap-1'} justify-center flex-wrap`}
     >
       {track.steps.map(step => {
         const isValidated = validatedSteps.includes(step.id);
@@ -145,13 +145,13 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
             className={`flex ${track.vertical ? 'flex-row-reverse justify-end' : 'flex-col justify-center'} items-center gap-0.5`}
           >
             {cost && (
-              <div className={`flex items-center gap-0.5 text-base text-base-ink`}>
+              <div className={`flex items-center gap-0.5 text-base-ink text-xs @2xs:text-sm`}>
                 {track.inverse ? contents : cost}
               </div>
             )}
             <div
               className={[
-                `${track.vertical ? 'size-7' : 'size-9'} shrink-0 text-base flex flex-col items-center justify-center border-2 leading-none font-bold rounded-md text-base-ink bg-card border-base-ink`,
+                `${track.vertical ? 'size-5 @3xs:size-6' : 'size-6 @3xs:size-8'} shrink-0 flex flex-col items-center justify-center border-2 font-bold rounded-md text-base-ink bg-card border-base-ink font-body text-xs @2xs:text-sm`,
                 isValidated ? 'border-success bg-success/20! text-success' : '',
               ].join(' ')}
               title={isValidated ? '✓' : undefined}

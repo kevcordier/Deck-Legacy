@@ -41,8 +41,8 @@ export const discardCards = (
       return;
     }
     gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== cardId);
-    gameState.board = [...new Set(gameState.board.filter(c => c !== cardId))];
-    gameState.drawPile = [...new Set(gameState.drawPile.filter(c => c !== cardId))];
+    gameState.board = gameState.board.filter(c => c !== cardId);
+    gameState.drawPile = gameState.drawPile.filter(c => c !== cardId);
     gameState.discardPile = [...new Set([...gameState.discardPile, cardId])];
     const effectsForCard = gameState.boardEffects[cardId] ?? [];
     const globalEffects = effectsForCard.filter(effect => effect.global === true);
@@ -82,7 +82,7 @@ export const drawCards = (
     });
   });
 
-  gameState.drawPile = [...new Set(gameState.drawPile.filter(id => !turnCards.includes(id)))];
+  gameState.drawPile = gameState.drawPile.filter(id => !turnCards.includes(id));
   gameState.board = [...new Set([...gameState.board, ...turnCards])];
 
   return gameState;
@@ -92,9 +92,9 @@ export const destroyCards = (_gameState: GameState, cardIds: number[]): GameStat
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
   cardIds.forEach(cardId => {
     gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== cardId);
-    gameState.board = [...new Set(gameState.board.filter(c => c !== cardId))];
-    gameState.drawPile = [...new Set(gameState.drawPile.filter(c => c !== cardId))];
-    gameState.discardPile = [...new Set(gameState.discardPile.filter(c => c !== cardId))];
+    gameState.board = gameState.board.filter(c => c !== cardId);
+    gameState.drawPile = gameState.drawPile.filter(c => c !== cardId);
+    gameState.discardPile = gameState.discardPile.filter(c => c !== cardId);
     gameState.destroyedPile = [...new Set([...gameState.destroyedPile, cardId])];
     const effectsForCard = gameState.boardEffects[cardId] ?? [];
     const globalEffects = effectsForCard.filter(effect => effect.global === true);

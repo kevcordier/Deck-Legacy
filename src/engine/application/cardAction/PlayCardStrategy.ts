@@ -44,7 +44,7 @@ export class PlayCardStrategy implements CardActionStrategy {
       gs.drawPile = gs.drawPile.filter(c => c !== instanceId);
       gs.destroyedPile = gs.destroyedPile.filter(c => c !== instanceId);
       gs.discardPile = gs.discardPile.filter(c => c !== instanceId);
-      gs.board = [...gs.board, instanceId];
+      gs.board = [...new Set([...gs.board, instanceId])];
     });
     return gs;
   }

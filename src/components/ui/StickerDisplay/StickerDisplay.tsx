@@ -7,26 +7,28 @@ import { useTranslation } from 'react-i18next';
 
 type StickerProps = {
   readonly sticker: Sticker;
-  readonly size: 'sm' | 'md' | 'lg';
   readonly className?: string;
 };
 
-export const StickerDisplay = ({ sticker, size, className }: StickerProps) => {
+export const StickerDisplay = ({ sticker, className }: StickerProps) => {
   const { t } = useTranslation();
+  const stickerClass = 'rounded-md bg-white/70 border-2 border-danger p-1';
+  const iconClass = `${stickerClass} ${className ?? 'size-10'}`;
+
   if (sticker.production) {
-    return <ResourcePill resource={sticker.production} size={size} className={className} />;
+    return <ResourcePill resource={sticker.production} className={iconClass} />;
   } else if (sticker.glory) {
-    return <Glory glory={sticker.glory} className={className} />;
+    return <Glory glory={sticker.glory} className={`text-md ${iconClass}`} />;
   } else if (sticker.effectId === 'stays_in_play') {
     return (
       <span
-        className={`font-body! text-base-ink rounded-md bg-white/60 px-3! py-2! text-xs backdrop-blur-sm @3xs:text-lg ${className}`}
+        className={`font-body! text-base-ink rounded-md bg-white/60 px-2! py-1! text-xs backdrop-blur-sm @3xs:text-lg ${stickerClass}`}
       >
-        <PassifIcon className="size-3 @3xs:size-6" /> {t('card.stayInPlay')}
+        <PassifIcon className="size-3 @3xs:size-6" /> {t('passives.stay_in_play', { ns: 'cards' })}
       </span>
     );
   } else if (sticker.tags) {
-    return <Tag label={sticker.tags[0]} className={className} />;
+    return <Tag label={sticker.tags[0]} className={stickerClass} />;
   }
-  return <span className={`italic ${className}`}>{sticker.label}</span>;
+  return <span className={`italic ${stickerClass}`}>{sticker.label}</span>;
 };

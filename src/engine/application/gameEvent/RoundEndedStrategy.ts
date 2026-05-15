@@ -6,7 +6,7 @@ export class RoundEndedStrategy implements GameEventStrategy {
   apply(gameState: GameState): GameState {
     return {
       ...gameState,
-      discardPile: [...gameState.board, ...gameState.discardPile],
+      discardPile: [...new Set([...gameState.board, ...gameState.discardPile])],
       board: [],
       phase: Phase.ROUND_END,
     };

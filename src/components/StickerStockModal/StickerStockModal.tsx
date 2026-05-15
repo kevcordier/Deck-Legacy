@@ -23,7 +23,7 @@ export function StickerStockModal() {
               key={sticker.id}
               className={`border-border flex flex-col items-center gap-1 rounded-lg border px-3 py-2 ${count === 0 ? 'opacity-40' : ''}`}
             >
-              <StickerDisplay sticker={sticker} size="md" />
+              <StickerDisplay sticker={sticker} />
               <span className="font-display text-sm">
                 {count === 0 ? t('stickerStock.outOfStock') : t('stickerStock.count', { count })}
               </span>

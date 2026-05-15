@@ -91,21 +91,23 @@ export function GameCard({
   }).map((_, i) => instance.glories[i]);
 
   const cardClass = [
-    'min-w-32 max-w-80 aspect-2/3 rounded-md @3xs:rounded-xl',
+    'min-w-32 w-full max-w-80 aspect-3/5 @container rounded-md @3xs:rounded-xl',
     'border border-solid border-border relative flex-shrink-0 flex flex-col justify-between shadow-lg bg-card overflow-hidden',
   ]
     .filter(Boolean)
     .join(' ');
 
   const cardActionsClass =
-    'font-body! bg-white/60 px-3! py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md';
+    'font-body! bg-white/60 p-1! @3xs:px-3! @3xs:py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md';
 
   return (
     <div
-      className={`${cardClass} ${className} ${isPermanent ? 'border-5 border-permanent' : ''}`}
+      className={`${cardClass} ${className} ${isPermanent ? 'border-t-5 border-permanent' : ''}`}
       data-tour="card-root"
     >
-      <div className={`border-b border-black/10 bg-black/5 p-1 pb-2 @3xs:p-3`}>
+      <div
+        className={`border-b border-black/10 bg-black/5 p-1 @3xs:px-3 @3xs:py-2 gap-1 @3xs:gap-2`}
+      >
         <div className="flex items-start justify-between gap-2">
           <span
             className={`text-base-ink flex min-w-0 items-center gap-1 text-xs leading-tight @3xs:text-base`}
@@ -116,7 +118,7 @@ export function GameCard({
               </span>
             )}
             <span
-              className={`font-display truncate font-bold ${isEnemy ? 'text-tag-enemy' : ''}`}
+              className={`font-display font-bold ${isEnemy ? 'text-tag-enemy' : ''}`}
               data-tour="card-name"
             >
               {canChooseName ? (
@@ -140,7 +142,7 @@ export function GameCard({
           {!hideStatePreview && <CardStatePreview instance={instance} defs={defs} />}
         </div>
 
-        <div className="mt-1 flex flex-wrap items-center gap-1" data-tour="card-tags">
+        <div className="flex flex-wrap items-center gap-1" data-tour="card-tags">
           {(cs.tags ?? []).map(tag => (
             <Tag key={tag} label={tCardTag(t, tag)} className={tagClass(tag, isEnemy)} />
           ))}
@@ -158,45 +160,45 @@ export function GameCard({
           </>
         )}
 
-        <div className={`relative z-10 flex flex-1 flex-col items-start gap-1 p-1 @3xs:p-3`}>
+        <div className={`relative z-10 flex flex-1 flex-col items-start gap-1 p-1 @3xs:p-2`}>
           {hasProductions && productions && (
             <div data-tour="card-production">
               <ResourceChoice
                 onSelect={choosenOption => resolveProduction(instance.id, choosenOption)}
                 options={productions}
                 disabled={!canActivate || !isOnBoard || isBlocked}
+                pillClassName="size-4 @3xs:size-6"
               />
             </div>
           )}
 
           <div className="flex flex-wrap gap-1">
             {cs.glory !== undefined && (cs.glory.amount !== 0 || cs.glory.valuePerElement) && (
-              <Glory glory={glory} />
+              <Glory glory={glory} className="size-8! text-xs @3xs:size-10! @3xs:text-md" />
             )}
             {emptyValues.map((value, i) => (
-              <Glory key={`empty-${i.toString()}`} glory={value} />
+              <Glory
+                key={`empty-${i.toString()}`}
+                glory={value}
+                className="size-8! text-xs @3xs:size-10! @3xs:text-md"
+              />
             ))}
           </div>
 
           {currentStateStickers.length > 0 && (
-            <div className="flex flex-wrap gap-1" data-tour="card-glory">
+            <div className="flex items-center gap-1 justify-start w-full">
               {currentStateStickers.map((stickerId, index) => {
                 const sticker = stickerDefs[stickerId];
                 if (!sticker) return null;
                 return (
-                  <StickerDisplay
-                    key={`${stickerId}-${index.toString()}`}
-                    sticker={sticker}
-                    size="md"
-                    className="rounded-md bg-white/70 border-2 border-danger p-1"
-                  />
+                  <StickerDisplay key={`${stickerId}-${index.toString()}`} sticker={sticker} />
                 );
               })}
             </div>
           )}
         </div>
 
-        <div className={`relative z-10 flex flex-col items-center gap-1 p-1 @3xs:p-3`}>
+        <div className={`relative z-10 flex flex-col items-center gap-1 p-1 @3xs:p-2`}>
           {cs.description && (
             <span className={`text-md italic text-base-ink/90 ${cardActionsClass}`}>
               {tCardDescription(t, instance.cardId, cs.id)}

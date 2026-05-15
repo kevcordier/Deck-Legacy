@@ -51,7 +51,7 @@ export class UpgradeCardEventStrategy implements GameEventStrategy {
     if (getActiveState(upgradedState.instances[e.cardInstanceId], this.cardDefs)?.permanent) {
       return {
         ...upgradedState,
-        permanents: [...upgradedState.permanents, e.cardInstanceId],
+        permanents: [...new Set([...upgradedState.permanents, e.cardInstanceId])],
         board: upgradedState.board.filter(id => id !== e.cardInstanceId),
       };
     }

@@ -80,12 +80,13 @@ function CardStatesModal({ instance, def, onClose }: CardStatesModalProps) {
             trackProgress: isCurrent ? instance.trackProgress : [],
           };
           return (
-            <GameCard
-              key={s.id}
-              instance={fakeInstance}
-              className={`${isCurrent ? 'ring-primary ring-3' : ''}`}
-              hideStatePreview
-            />
+            <div className={`@container min-w-60`} key={s.id}>
+              <GameCard
+                instance={fakeInstance}
+                className={`${isCurrent ? 'ring-primary ring-3' : ''}`}
+                hideStatePreview
+              />
+            </div>
           );
         })}
       </div>

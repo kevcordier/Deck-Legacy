@@ -28,7 +28,7 @@ export function ChooseResourceSection(props: Readonly<ChoiceSectionProps>) {
         (candidate): candidate is Resources =>
           typeof candidate !== 'number' && typeof candidate !== 'string',
       )}
-      size="lg"
+      pillClassName="size-7"
       onSelect={handleResourceSelect}
     />
   );
