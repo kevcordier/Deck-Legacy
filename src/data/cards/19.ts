@@ -301,7 +301,7 @@ export const exportation: CardDef = {
                 id: 1,
                 type: ActionEffectType.TRACK_ADVANCE,
                 cards: {
-                  scope: [TargetScope.PERMANENTS],
+                  scope: [TargetScope.PERMANENTS, TargetScope.WITH_TRACK],
                 },
               },
             ],
@@ -316,7 +316,9 @@ export const exportation: CardDef = {
                 id: 1,
                 type: ActionEffectType.TRACK_ADVANCE,
                 cards: {
-                  scope: [TargetScope.PERMANENTS],
+                  scope: [TargetScope.PERMANENTS, TargetScope.WITH_TRACK],
+                  pickMin: 0,
+                  pickMax: 999,
                 },
               },
             ],

@@ -105,11 +105,21 @@ interface CardCriteriaContext {
   isEnemy: boolean;
   hasBlocked: boolean;
   isUpgradable: boolean;
+  withTrack: boolean;
+}
+
+function hasAvailableTrackStep(state: CardState, trackProgress: number[]): boolean {
+  return !!state.track && state.track.steps.some(step => !trackProgress.includes(step.id));
+}
+
+function passesScopeConstraints(id: number, ctx: CardCriteriaContext): boolean {
+  if (!ctx.scope?.includes(TargetScope.SELF) && id === ctx.instanceId) return false;
+  if (!ctx.hasBlocked && ctx.blockedInstanceIds.includes(id)) return false;
+  return true;
 }
 
 function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
-  if (!ctx.scope?.includes(TargetScope.SELF) && id === ctx.instanceId) return false;
-  if (!ctx.hasBlocked && ctx.blockedInstanceIds.includes(id)) return false;
+  if (!passesScopeConstraints(id, ctx)) return false;
 
   const inst = ctx.gameState.instances[id];
   if (!inst || !ctx.defs) return false;
@@ -124,6 +134,7 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
   if (!matchesProductions(id, state, produces, ctx)) return false;
   if (ctx.selector.ids && !ctx.selector.ids.includes(inst.id)) return false;
   if (ctx.isUpgradable && (!state.upgrade || state.upgrade.length === 0)) return false;
+  if (ctx.withTrack && !hasAvailableTrackStep(state, inst.trackProgress)) return false;
 
   return true;
 }
@@ -166,6 +177,7 @@ export function cardSelector(
   const isFriendly = scope.includes(TargetScope.FRIENDLY);
   const isEnemy = scope.includes(TargetScope.ENEMY);
   const isUpgradable = scope.includes(TargetScope.UPGRADABLE);
+  const withTrack = scope.includes(TargetScope.WITH_TRACK);
 
   const pool = buildCardPool(locationScopes, gameState, blockedInstanceIds);
 
@@ -181,6 +193,7 @@ export function cardSelector(
     isEnemy,
     hasBlocked,
     isUpgradable,
+    withTrack,
   };
 
   const selectedIds = pool

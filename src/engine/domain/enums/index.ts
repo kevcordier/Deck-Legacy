@@ -121,6 +121,7 @@ export enum TargetScope {
   DISCARDED = 'discarded',
   TRIGGER_SOURCE = 'trigger_source',
   UPGRADABLE = 'upgradable',
+  WITH_TRACK = 'with_track',
 }
 
 export enum PendingChoiceType {

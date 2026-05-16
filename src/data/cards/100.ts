@@ -34,7 +34,7 @@ export const aricBlackwood: CardDef = {
       name: 'Eadric Shadowstrike',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/49826881-9f8d-4eb4-b90f-5b178e47b357/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/defdd1ac-0910-4b3f-a237-b886336485bb/450x%3Cauto%3E_so',
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
         {

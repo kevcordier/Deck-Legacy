@@ -12,7 +12,7 @@ export const pirate: CardDef = {
       tags: [CardTag.ENEMY],
       negative: true,
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/f5407050-6e4c-4723-f561-91ffb1b29900/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/e0acb032-f21a-486d-89a5-cddd6482efb5/450x%3Cauto%3E_so',
       glory: { amount: -2 },
       passives: [
         CardPassives[PassiveType.STAY_IN_PLAY],

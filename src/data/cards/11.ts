@@ -139,7 +139,7 @@ export const hill: CardDef = {
       name: 'Cathedral',
       tags: [CardTag.BUILDING],
       illustration:
-        'https://img.freepik.com/photos-gratuite/cathedrale-saint-guy-prague_1204-311.jpg?t=st=1776629221~exp=1776632821~hmac=d0994ce56b7381a1464409321dd0a0b545ffbdbb5c37adb8e15cd3d430b6174e&w=740',
+        'https://image-b2.civitai.com/file/civitai-media-cache/99297e8b-0df6-483a-ab14-7e77e56223a9/450x%3Cauto%3E_so_hm',
       productions: [
         {
           [ResourceType.GOLD]: 1,

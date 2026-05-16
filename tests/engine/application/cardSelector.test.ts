@@ -518,6 +518,69 @@ describe('cardSelector – having filter', () => {
   });
 });
 
+describe('cardSelector – WITH_TRACK scope', () => {
+  it('keeps only cards with a track and at least one available step', () => {
+    const defWithTrack: CardDef = {
+      id: 11,
+      name: 'WT',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }] },
+        },
+      ],
+    };
+    const defWithoutTrack: CardDef = {
+      id: 12,
+      name: 'NT',
+      states: [{ id: 1, name: 'S' }],
+    };
+    const iWithTrack = makeInstance({ id: 110, cardId: 11, stateId: 1, trackProgress: [1] });
+    const iWithoutTrack = makeInstance({ id: 120, cardId: 12, stateId: 1 });
+    const gs = makeState({
+      permanents: [110, 120],
+      instances: { 110: iWithTrack, 120: iWithoutTrack },
+    });
+
+    const result = cardSelector(
+      { scope: [TargetScope.PERMANENTS, TargetScope.WITH_TRACK] },
+      999,
+      gs,
+      { 11: defWithTrack, 12: defWithoutTrack },
+      stickerDefs,
+    );
+
+    expect(result).toEqual([110]);
+  });
+
+  it('excludes cards whose track has no remaining step', () => {
+    const defWithTrack: CardDef = {
+      id: 13,
+      name: 'WT',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          track: { inOrder: false, steps: [{ id: 1 }, { id: 2 }] },
+        },
+      ],
+    };
+    const iCompleted = makeInstance({ id: 130, cardId: 13, stateId: 1, trackProgress: [1, 2] });
+    const gs = makeState({ permanents: [130], instances: { 130: iCompleted } });
+
+    const result = cardSelector(
+      { scope: [TargetScope.PERMANENTS, TargetScope.WITH_TRACK] },
+      999,
+      gs,
+      { 13: defWithTrack },
+      stickerDefs,
+    );
+
+    expect(result).toEqual([]);
+  });
+});
+
 describe('cardSelector – DRAWN scope', () => {
   it('DRAWN scope returns lastDrawnCards', () => {
     const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });

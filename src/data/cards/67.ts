@@ -77,7 +77,7 @@ export const cooperation: CardDef = {
       id: 2,
       name: 'Favor',
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f11b843b-eb00-415c-b414-c022f7700821/anim=false,width=450,optimized=true/ComfyUI_01713_.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/56f58644-40b9-49da-8f03-bd977c2aebf5/450x%3Cauto%3E_so',
       tags: [CardTag.EVENT],
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [

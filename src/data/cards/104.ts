@@ -29,7 +29,7 @@ export const kingAlahar: CardDef = {
       id: 1,
       name: 'King Alahar',
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/133672cc-e593-482b-93d3-89b2517b70de/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/6f87e9a0-61e5-474d-9e40-7bcb72417641/450x%3Cauto%3E_so',
       tags: [CardTag.PERSON],
       glory: { amount: -5 },
       productions: [{ [ResourceType.WEAPON]: 2 }],
