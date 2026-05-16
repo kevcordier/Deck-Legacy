@@ -73,7 +73,7 @@ export function GameCard({
       action.limitedTime === undefined ||
       instance.usedActionIds.filter(usedId => usedId === action.id).length < action.limitedTime,
   );
-  const rawCardName = t(`names.${instance.cardId}_${cs.id}`, { ns: 'cards' });
+  const rawCardName = t(`names.${cs.name}`, { ns: 'cards' });
   const canChooseName = cs.chooseName === true && rawCardName.includes('_____');
   const [namePrefix, nameSuffix] = canChooseName ? rawCardName.split('_____') : ['', ''];
   const glory = getEffectiveGlory(cs, gameState, defs, instance, stickerDefs);
@@ -153,7 +153,7 @@ export function GameCard({
         {cs.illustration && (
           <>
             <div
-              className="absolute inset-0 z-0 bg-cover bg-center opacity-60"
+              className="absolute inset-0 z-0 bg-cover bg-bottom opacity-60"
               style={{ backgroundImage: `url(${cs.illustration})` }}
             />
             <div className="absolute inset-x-0 bottom-0 z-0 h-2/3 bg-linear-to-t from-card via-card/70 to-transparent" />

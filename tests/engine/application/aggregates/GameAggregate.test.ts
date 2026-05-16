@@ -244,7 +244,7 @@ describe('GameAggregate.turnStarted', () => {
 // ─── turnEnded ────────────────────────────────────────────────────────────────
 
 describe('GameAggregate.turnEnded', () => {
-  it('stays in PRETURN phase when end-of-turn triggers exist', () => {
+  it('keeps current phase when end-of-turn triggers exist', () => {
     const inst = makeInstance({ id: 1, cardId: 6, stateId: 1 });
     const state = makeState({
       board: [1],
@@ -257,7 +257,7 @@ describe('GameAggregate.turnEnded', () => {
     });
     const agg = new GameAggregate(crypto.randomUUID(), state, { 6: endOfTurnDef }, {}, []);
     const gs = agg.turnEnded();
-    expect(gs.phase).toBe(Phase.TURN_END);
+    expect(gs.phase).toBe(Phase.PLAYING);
   });
 
   it('calls roundEnded when no triggers and drawPile is empty', () => {
@@ -521,6 +521,39 @@ describe('GameAggregate.upgradeCard', () => {
     expect(gs.instances[1].stateId).toBe(2);
     expect(gs.discardPile).toContain(2);
     expect(gs.destroyedPile).toContain(3);
+  });
+
+  it('adds end-of-turn triggers during upgrade flow', () => {
+    const defUpgrade: CardDef = {
+      id: 1,
+      name: 'U',
+      states: [
+        { id: 1, name: 'S1' },
+        { id: 2, name: 'S2' },
+      ],
+    };
+    const upgradable = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const triggerSource = makeInstance({ id: 2, cardId: 6, stateId: 1 });
+    const state = makeState({
+      board: [1, 2],
+      instances: { 1: upgradable, 2: triggerSource },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+      triggerPile: {},
+    });
+
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: defUpgrade, 6: endOfTurnDef },
+      {},
+      [],
+    );
+    const gs = agg.upgradeCard(1, 2, {});
+
+    expect(gs.instances[1].stateId).toBe(2);
+    expect(Object.keys(gs.triggerPile).length).toBeGreaterThan(0);
   });
 });
 
@@ -814,7 +847,7 @@ describe('GameAggregate.skipTrigger', () => {
     agg.turnEnded();
     const triggerId = Object.keys(agg.getGameState().triggerPile)[0];
     const gs = agg.skipTrigger(triggerId);
-    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(gs.phase).toBe(Phase.TURN_END);
   });
 });
 
@@ -933,7 +966,7 @@ describe('GameAggregate.roundEnded – early return', () => {
     const agg = new GameAggregate(crypto.randomUUID(), state, { 5: endOfRoundDef }, {}, []);
     const gs = agg.roundEnded();
     // END_OF_ROUND trigger is in the pile → condition fails → no roundStarted
-    expect(gs.phase).toBe(Phase.ROUND_END);
+    expect(gs.phase).toBe(Phase.PLAYING);
     expect(Object.keys(gs.triggerPile)).toHaveLength(1);
   });
 
@@ -949,7 +982,7 @@ describe('GameAggregate.roundEnded – early return', () => {
       round: 1,
     });
     const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
-    const gs = agg.roundEnded(false);
+    const gs = agg.roundEnded();
 
     expect(gs.phase).toBe(Phase.ROUND_END);
     expect(gs.round).toBe(1);
@@ -1310,7 +1343,7 @@ describe('GameAggregate.cardAction – PARCHMENT finalization', () => {
     expect(gs.round).toBe(2);
   });
 
-  it('calls turnEnded when action.endsTurn is true', () => {
+  it('ends turn when action.endsTurn is true', () => {
     const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
     const state = makeState({
@@ -1331,9 +1364,39 @@ describe('GameAggregate.cardAction – PARCHMENT finalization', () => {
 
     const gs = agg.cardAction(action, 1);
 
+    expect(gs.phase).toBe(Phase.TURN_END);
+  });
+
+  it('keeps end-turn triggers when endsTurn action creates trigger pile', () => {
+    const actor = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const triggerSource = makeInstance({ id: 2, cardId: 6, stateId: 1 });
+    const nextTurnCard = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const state = makeState({
+      board: [1, 2],
+      drawPile: [3],
+      instances: { 1: actor, 2: triggerSource, 3: nextTurnCard },
+      triggerPile: {},
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+    });
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 6: endOfTurnDef },
+      {},
+      [],
+    );
+    const action = {
+      id: 'a-end-turn-with-trigger',
+      endsTurn: true,
+      actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
+    };
+
+    const gs = agg.cardAction(action, 1);
+
     expect(gs.phase).toBe(Phase.PLAYING);
-    expect(gs.turn).toBe(2);
-    expect(gs.board).toContain(2);
+    expect(Object.keys(gs.triggerPile).length).toBeGreaterThan(0);
   });
 });
 
@@ -1491,5 +1554,59 @@ describe('GameAggregate.cardAction – unresolvable effect', () => {
     // Cost rolled back — original resources unchanged
     expect(agg.getGameState().resources.gold).toBe(5);
     expect(agg.getCurrentCardAction()).toBeNull();
+  });
+
+  it('processes two END_OF_TURN triggers and leaves only 1 trigger after first is resolved', () => {
+    // Create a card with END_OF_TURN trigger
+    const cardWithEndOfTurn: CardDef = {
+      id: 100,
+      name: 'EndOfTurnCard',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          actions: [
+            {
+              id: 'eot-action',
+              actionEffects: [
+                { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } },
+              ],
+              trigger: Trigger.END_OF_TURN,
+            },
+          ],
+        },
+      ],
+    };
+
+    const cardDefs = { 100: cardWithEndOfTurn };
+    const stickerDefs = {};
+    const state = makeState({
+      board: [1, 2],
+      phase: Phase.PLAYING,
+      instances: {
+        1: makeInstance({ id: 1, cardId: 100, stateId: 1 }),
+        2: makeInstance({ id: 2, cardId: 100, stateId: 1 }),
+      },
+    });
+
+    const agg = new GameAggregate(crypto.randomUUID(), state, cardDefs, stickerDefs, []);
+
+    // Trigger END_OF_TURN which generates 2 triggers
+    agg.turnEnded();
+
+    expect(Object.keys(agg.getGameState().triggerPile).length).toBe(2);
+    const triggerIds = Object.keys(agg.getGameState().triggerPile);
+
+    // Process first trigger
+    const action = cardDefs[100].states[0].actions?.[0];
+    if (!action) throw new Error('Action not found on card definition');
+    agg.cardAction(action, 1, triggerIds[0]);
+
+    // After processing first trigger, only 1 should remain (not 2)
+    expect(Object.keys(agg.getGameState().triggerPile).length).toBe(1);
+    expect(agg.getGameState().triggerPile[triggerIds[0]]).toBeUndefined();
+    expect(agg.getGameState().triggerPile[triggerIds[1]]).toBeDefined();
+    // Phase should remain PLAYING because there's still a trigger pending
+    expect(agg.getGameState().phase).toBe(Phase.PLAYING);
   });
 });

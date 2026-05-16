@@ -62,7 +62,7 @@ export const ravine: CardDef = {
       name: 'Excavation Site',
       tags: [CardTag.LAND],
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/df897c37-e2c0-485d-844d-2fcae05c28ba/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/bbaf597f-6734-453c-90b3-3425e932621e/450x%3Cauto%3E_so',
       productions: [{ gold: 1, goods: 1 }],
       glory: { amount: 0, valuePerElement: { amount: 7, accumulation: true } },
       actions: [

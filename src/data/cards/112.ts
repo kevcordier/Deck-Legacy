@@ -44,7 +44,7 @@ export const hotSpring: CardDef = {
       name: 'Fountain',
       tags: [CardTag.LAND],
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/cd57040b-f52a-46f1-9840-a46f63fd5c7b/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/9f7694e2-59e4-4611-a898-e576c82a584e/450x%3Cauto%3E_so_hm',
       glory: { amount: 2 },
       actions: [
         {

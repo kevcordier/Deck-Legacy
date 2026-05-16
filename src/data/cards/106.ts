@@ -85,7 +85,7 @@ export const grandCastle: CardDef = {
       name: 'Fortress',
       tags: [CardTag.BUILDING],
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/dc7de93f-349c-4071-8faf-a5200c6bdb10/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/1a30e0e2-7fcd-4078-ab0c-a52e92a14199/450x%3Cauto%3E_so',
       glory: { amount: 25 },
       productions: [{ [ResourceType.WEAPON]: 2 }],
       actions: [
@@ -119,7 +119,7 @@ export const grandCastle: CardDef = {
       name: 'Impregnable Fortress',
       tags: [CardTag.BUILDING],
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/d5844a74-8e74-45ba-893a-510546f28d85/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/2b5580fe-eb4c-4923-b888-c42e7b48750a/450x%3Cauto%3E_so',
       glory: { amount: 30 },
       productions: [{ [ResourceType.WEAPON]: 3 }],
       actions: [

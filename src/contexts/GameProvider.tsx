@@ -172,6 +172,7 @@ export function GameProvider({
       message = t(error.message);
     } else if (error instanceof Error) {
       message = error.message;
+      console.error(error);
     }
     toast.error(message);
   };

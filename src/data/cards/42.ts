@@ -82,7 +82,7 @@ export const magistrate: CardDef = {
       tags: [CardTag.PERSON],
       glory: { amount: 2 },
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/b47eee3b-c2f7-48b5-bd6c-1443f443bcfc/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/00888491-631e-40ba-864c-589fea86039f/450x%3Cauto%3E_so',
       actions: [
         {
           id: '42-3-1',
@@ -119,7 +119,7 @@ export const magistrate: CardDef = {
       tags: [CardTag.PERSON, CardTag.ELDER],
       glory: { amount: 5 },
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/8d0b0262-520d-4800-a4e4-83eb9d90daf1/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/4b3762dc-c663-4441-bd95-d8a9d331579e/450x%3Cauto%3E_so',
       actions: [
         {
           id: '42-4-1',

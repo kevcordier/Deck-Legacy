@@ -112,6 +112,7 @@ describe('GameEventContext', () => {
       cardInstanceId: 1,
       stateId: 2,
       cost: {},
+      endTurnTrigger: {},
     } as UpgradeCardEvent);
     expect(result.instances[1].stateId).toBe(2);
   });
@@ -150,7 +151,7 @@ describe('GameEventContext', () => {
       id: 'e1',
       type: GameEventType.TURN_ENDED,
       timestamp: 0,
-      onTurnEndedEvents: [],
+      endTurnTrigger: {},
     } as TurnEndedEvent);
     expect(result.phase).toBe(Phase.TURN_END);
   });

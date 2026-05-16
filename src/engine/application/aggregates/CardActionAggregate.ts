@@ -21,7 +21,7 @@ import { ResourceChoiceStrategy } from '@engine/application/playerChoice/Resourc
 import { StateChoiceStrategy } from '@engine/application/playerChoice/StateChoiceStrategy';
 import { StepChoiceStrategy } from '@engine/application/playerChoice/StepChoiceStrategy';
 import { StickerChoiceStrategy } from '@engine/application/playerChoice/StickerChoiceStrategy';
-import { ActionEffectType, PendingChoiceType } from '@engine/domain/enums';
+import { ActionEffectType, PendingChoiceType, Trigger } from '@engine/domain/enums';
 import type {
   ActionEffect,
   CardAction,
@@ -61,6 +61,8 @@ export class CardActionAggregate {
     effectIndex: number;
   } | null = null;
   private readonly action: CardAction;
+  private readonly endTurn: boolean;
+  private readonly endRound: boolean;
 
   // triger Action
   constructor(
@@ -85,6 +87,11 @@ export class CardActionAggregate {
       [PendingChoiceType.CHOOSE_ACTION_EFFECT]: new ChooseActionEffectStrategy(),
     };
     this.effects = this.action.actionEffects;
+    this.endTurn =
+      !!this.action.endsTurn ||
+      this.gameState.triggerPile[this.triggerId ?? '']?.effectDef.trigger === Trigger.END_OF_TURN;
+    this.endRound =
+      this.gameState.triggerPile[this.triggerId ?? '']?.effectDef.trigger === Trigger.END_OF_ROUND;
   }
 
   // Apply an action effect to the game state
@@ -563,6 +570,14 @@ export class CardActionAggregate {
   }
 
   isEndTurn(): boolean {
-    return !!this.action.endsTurn;
+    return this.endTurn;
+  }
+
+  isEndRound(): boolean {
+    return this.endRound;
+  }
+
+  getTriggerId(): string | undefined {
+    return this.triggerId;
   }
 }

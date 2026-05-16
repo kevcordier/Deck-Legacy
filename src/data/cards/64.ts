@@ -88,7 +88,7 @@ export const lagoon: CardDef = {
       name: 'Lush Island',
       tags: [CardTag.LAND, CardTag.SEAFARING],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/2e6e536f-b62c-46ae-8b4b-43e47de5c287/anim=false,width=450,optimized=true/FAAF5974BC96DC1C5F041F2068C9E614595C5FDD9F3649513149A5029604CBA8.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/b5519b5a-4391-40cb-b921-4992b25625a6/450x%3Cauto%3E_so',
       productions: [
         {
           [ResourceType.GOLD]: 2,

@@ -77,7 +77,7 @@ export const lake: CardDef = {
       name: 'Fishing Boat',
       tags: [CardTag.SEAFARING],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/620da338-c2d2-4c44-b7f6-a165535954a0/anim=false,width=450,optimized=true/20260411102620-2343054298.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/54ae3a52-989e-46da-9f7f-85eb77aa0f0a/450x%3Cauto%3E_so',
       productions: [
         {
           [ResourceType.GOLD]: 2,

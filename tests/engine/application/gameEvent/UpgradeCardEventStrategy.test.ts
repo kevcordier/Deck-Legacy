@@ -30,6 +30,7 @@ describe('UpgradeCardEventStrategy', () => {
       cardInstanceId: 1,
       stateId: 3,
       cost: { gold: 3 },
+      endTurnTrigger: {},
     } as UpgradeCardEvent);
     expect(result.instances[1].stateId).toBe(3);
     expect(result.board).not.toContain(1);
@@ -48,6 +49,7 @@ describe('UpgradeCardEventStrategy', () => {
       cardInstanceId: 1,
       stateId: 3,
       cost: {},
+      endTurnTrigger: {},
     } as UpgradeCardEvent);
     expect(result.board).not.toContain(1);
     expect(result.permanents).toContain(1);
@@ -72,6 +74,7 @@ describe('UpgradeCardEventStrategy', () => {
       cost: { gold: 1 },
       discardedCardIds: [2],
       destroyedCardIds: [3],
+      endTurnTrigger: {},
     } as UpgradeCardEvent);
 
     expect(result.discardPile).toContain(2);
@@ -117,6 +120,7 @@ describe('UpgradeCardEventStrategy', () => {
       cardInstanceId: 1,
       stateId: 2,
       cost: {},
+      endTurnTrigger: {},
     } as UpgradeCardEvent);
 
     expect(Object.keys(result.triggerPile)).toHaveLength(1);
@@ -136,6 +140,7 @@ describe('UpgradeCardEventStrategy', () => {
       cardInstanceId: 1,
       stateId: 2,
       cost: {},
+      endTurnTrigger: {},
     } as UpgradeCardEvent);
     expect(result.permanents).not.toContain(1);
     expect(result.permanents).toContain(2);
@@ -163,6 +168,7 @@ describe('UpgradeCardEventStrategy', () => {
       cardInstanceId: 99,
       stateId: 2,
       cost: {},
+      endTurnTrigger: {},
     } as UpgradeCardEvent);
 
     expect(Object.keys(result.triggerPile)).toHaveLength(0);

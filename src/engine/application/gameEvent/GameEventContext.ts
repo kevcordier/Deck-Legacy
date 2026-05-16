@@ -11,7 +11,6 @@ import { UpgradeCardEventStrategy } from './UpgradeCardEventStrategy';
 import { ChooseStateEventStrategy } from '@engine/application/gameEvent/ChooseStateEventStrategy';
 import { ParchmentCardDiscoveredStrategy } from '@engine/application/gameEvent/ParchmentCardDiscoveredStrategy';
 import { RoundEndedStrategy } from '@engine/application/gameEvent/RoundEndedStrategy';
-import { TriggerEventsStrategy } from '@engine/application/gameEvent/TriggerEventsStrategy';
 import { GameEventType } from '@engine/domain/enums';
 import type { CardDef, GameEvent, GameState, Sticker } from '@engine/domain/types';
 
@@ -27,12 +26,11 @@ export class GameEventContext {
       [GameEventType.CARD_PRODUCED]: new CardProducedStrategy(cardDefs, stickerDefs),
       [GameEventType.ADVANCE]: new AdvanceStrategy(cardDefs, stickerDefs),
       [GameEventType.UPGRADE_CARD]: new UpgradeCardEventStrategy(cardDefs, stickerDefs),
-      [GameEventType.CARD_ACTION]: new CardActionEventStrategy(),
-      [GameEventType.SKIP_TRIGGER]: new SkipTriggerStrategy(),
+      [GameEventType.CARD_ACTION]: new CardActionEventStrategy(cardDefs, stickerDefs),
+      [GameEventType.SKIP_TRIGGER]: new SkipTriggerStrategy(cardDefs, stickerDefs),
       [GameEventType.TURN_ENDED]: new TurnEndedStrategy(cardDefs, stickerDefs),
       [GameEventType.CHOOSE_STATE]: new ChooseStateEventStrategy(),
       [GameEventType.PARCHMENT_CARD_DISCOVERED]: new ParchmentCardDiscoveredStrategy(),
-      [GameEventType.TRIGGER_EVENTS]: new TriggerEventsStrategy(),
     };
   }
 

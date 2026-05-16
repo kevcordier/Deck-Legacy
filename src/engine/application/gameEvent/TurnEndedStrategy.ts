@@ -1,7 +1,14 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { cardShouldStayInPlay } from '@engine/application/cardHelpers';
 import { discardCards } from '@engine/application/gameStateHelper';
-import type { CardDef, GameState, Passive, Sticker } from '@engine/domain/types';
+import type {
+  CardDef,
+  GameEvent,
+  GameState,
+  Passive,
+  Sticker,
+  TurnEndedEvent,
+} from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 
 export class TurnEndedStrategy implements GameEventStrategy {
@@ -9,9 +16,20 @@ export class TurnEndedStrategy implements GameEventStrategy {
     private readonly cardDefs: Record<number, CardDef>,
     private readonly stickerDefs: Record<number, Sticker>,
   ) {}
-  apply(_gameState: GameState): GameState {
+  apply(_gameState: GameState, event: GameEvent): GameState {
+    const e = event as TurnEndedEvent;
     const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
-    gameState.resources = {};
+
+    if (Object.keys(e.endTurnTrigger).length > 0) {
+      gameState.triggerPile = { ...gameState.triggerPile, ...e.endTurnTrigger };
+
+      return gameState;
+    }
+
+    // If there are still triggers pending, stay in PLAYING phase
+    if (Object.keys(gameState.triggerPile).length > 0) {
+      return gameState;
+    }
 
     const cardsToDiscard = gameState.board.filter(
       id => !cardShouldStayInPlay(id, gameState, this.cardDefs),

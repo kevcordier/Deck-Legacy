@@ -10,7 +10,7 @@ export const distantMountain: CardDef = {
       name: 'Distant Mountain',
       tags: [CardTag.LAND],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0e18ba94-f431-433a-9569-1d38cf978d97/width=450,quality=90/00533-1442497315.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/4a52da24-b882-474b-acf9-9b8f1ae2bcf5/450x%3Cauto%3E_so',
       upgrade: [
         {
           cost: {
@@ -34,7 +34,7 @@ export const distantMountain: CardDef = {
       name: 'Rocky Area',
       tags: [CardTag.LAND],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/91754d5e-54e3-40d3-942f-445a3724bde0/width=450,quality=90/C5B77689692C7248558CEF3DB8DE191F008F1E70177D4D34BB205F3887C6BFDC.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/91754d5e-54e3-40d3-942f-445a3724bde0/450x%3Cauto%3E_so',
       actions: [
         {
           id: '2-2-1',

@@ -100,7 +100,7 @@ export const forest: CardDef = {
       name: 'Sacred Well',
       tags: [CardTag.BUILDING],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a4fa3901-a970-4c5b-8e43-002c66fded99/width=450,quality=90/00084.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/7bba82f5-cb19-4c78-a2af-5d874fc1ba96/450x%3Cauto%3E_so',
       glory: { amount: 2 },
       actions: [
         {

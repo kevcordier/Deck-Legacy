@@ -96,7 +96,7 @@ export const jungle: CardDef = {
       name: 'Deep Jungle',
       tags: [CardTag.LAND],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d5c28b95-a4e0-4904-9651-be5379577fb9/anim=false,width=450,optimized=true/775F1ECF5D20E5A39C93164302B69062A32D6ECAB4E710A536DEDB267CE1D2F8.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/9ca7a608-cd9a-4616-cad1-600e58b3ea00/450x%3Cauto%3E_so',
       upgrade: [
         {
           cost: {

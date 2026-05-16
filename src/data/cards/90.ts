@@ -58,7 +58,7 @@ export const smallHillTown: CardDef = {
       name: 'Hill Town',
       tags: [CardTag.LAND],
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/dc782d15-be39-485c-912c-bad456c8fd0b/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/b126587c-7f22-4ce9-8a4f-8a840be9b85d/450x%3Cauto%3E_so',
       glory: { amount: 8 },
       actions: [
         {

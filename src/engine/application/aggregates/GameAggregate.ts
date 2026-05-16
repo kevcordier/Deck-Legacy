@@ -37,7 +37,6 @@ import type {
   SkipTriggerEvent,
   Sticker,
   TriggerEntry,
-  TriggerEventsEvent,
   TurnEndedEvent,
   TurnStartedEvent,
   UpgradeCardEvent,
@@ -143,44 +142,30 @@ export class GameAggregate {
     });
   }
 
-  public roundEnded(includeTriggers = true): GameState {
-    if (includeTriggers) {
-      const allRoundInstances = [...this.gameState.permanents, ...this.gameState.board].map(
-        id => this.gameState.instances[id],
-      );
-      const triggers = getInstancesTriggerEffects(
-        allRoundInstances,
-        this.cardDefs,
-        this.stickerDefs,
-        Trigger.END_OF_ROUND,
-        this.gameState,
-      ).reduce(
-        (acc, { effectDef, sourceInstanceId }) => {
-          acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
-          return acc;
-        },
-        {} as Record<string, TriggerEntry>,
-      );
-
-      if (Object.keys(triggers).length > 0) {
-        const event: TriggerEventsEvent = {
-          id: crypto.randomUUID(),
-          type: GameEventType.TRIGGER_EVENTS,
-          timestamp: Date.now(),
-          triggerPile: triggers,
-          phase: Phase.ROUND_END,
-        };
-        this.apply(event);
-        this.events.push(event);
-        return this.gameState;
-      }
-    }
+  public roundEnded(): GameState {
+    const allRoundInstances = [...this.gameState.permanents, ...this.gameState.board].map(
+      id => this.gameState.instances[id],
+    );
+    const triggers = getInstancesTriggerEffects(
+      allRoundInstances,
+      this.cardDefs,
+      this.stickerDefs,
+      Trigger.END_OF_ROUND,
+      this.gameState,
+    ).reduce(
+      (acc, { effectDef, sourceInstanceId }) => {
+        acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+        return acc;
+      },
+      {} as Record<string, TriggerEntry>,
+    );
 
     const event: RoundEndedEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.ROUND_ENDED,
       timestamp: Date.now(),
       round: this.gameState.round,
+      endRoundTriggers: triggers,
     };
 
     this.apply(event);
@@ -271,40 +256,26 @@ export class GameAggregate {
     return this.gameState;
   }
 
-  public turnEnded(includeTriggers = true): GameState {
-    if (includeTriggers) {
-      const triggers = getInstancesTriggerEffects(
-        this.gameState.board.map(cardId => this.gameState.instances[cardId]),
-        this.cardDefs,
-        this.stickerDefs,
-        Trigger.END_OF_TURN,
-        this.gameState,
-      ).reduce(
-        (acc, { effectDef, sourceInstanceId }) => {
-          acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
-          return acc;
-        },
-        {} as Record<string, TriggerEntry>,
-      );
-
-      if (Object.keys(triggers).length > 0) {
-        const event: TriggerEventsEvent = {
-          id: crypto.randomUUID(),
-          type: GameEventType.TRIGGER_EVENTS,
-          timestamp: Date.now(),
-          triggerPile: triggers,
-          phase: Phase.TURN_END,
-        };
-        this.apply(event);
-        this.events.push(event);
-        return this.gameState;
-      }
-    }
+  public turnEnded(): GameState {
+    const triggers = getInstancesTriggerEffects(
+      this.gameState.board.map(cardId => this.gameState.instances[cardId]),
+      this.cardDefs,
+      this.stickerDefs,
+      Trigger.END_OF_TURN,
+      this.gameState,
+    ).reduce(
+      (acc, { effectDef, sourceInstanceId }) => {
+        acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+        return acc;
+      },
+      {} as Record<string, TriggerEntry>,
+    );
 
     const event: TurnEndedEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.TURN_ENDED,
       timestamp: Date.now(),
+      endTurnTrigger: triggers,
     };
     this.apply(event);
     this.events.push(event);
@@ -432,6 +403,20 @@ export class GameAggregate {
       return this.gameState;
     }
 
+    const triggers = getInstancesTriggerEffects(
+      this.gameState.board.map(cardId => this.gameState.instances[cardId]),
+      this.cardDefs,
+      this.stickerDefs,
+      Trigger.END_OF_TURN,
+      this.gameState,
+    ).reduce(
+      (acc, { effectDef, sourceInstanceId }) => {
+        acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+        return acc;
+      },
+      {} as Record<string, TriggerEntry>,
+    );
+
     const event: UpgradeCardEvent = {
       id: crypto.randomUUID(),
       type: GameEventType.UPGRADE_CARD,
@@ -441,10 +426,11 @@ export class GameAggregate {
       cost,
       discardedCardIds,
       destroyedCardIds,
+      endTurnTrigger: triggers,
     };
     this.apply(event);
     this.events.push(event);
-    return this.turnEnded();
+    return this.gameState;
   }
 
   public chooseState(cardInstanceId: number, stateId: number): GameState {
@@ -535,21 +521,34 @@ export class GameAggregate {
       this.gameState.phase === Phase.ROUND_END &&
       Object.keys(this.gameState.triggerPile).length === 0
     ) {
-      return this.roundEnded(false);
+      return this.roundEnded();
     }
 
-    if (
-      this.gameState.phase === Phase.TURN_END &&
-      Object.keys(this.gameState.triggerPile).length === 0
-    ) {
-      return this.turnEnded(false);
-    }
     return this.gameState;
   }
 
   private finalizeCurrentCardAction(currentCardAction: CardActionAggregate): GameState {
     const newGameState = currentCardAction.getGameState();
     const sourceInstanceId = currentCardAction.getSourceInstanceId();
+
+    let triggers = {};
+    // Only generate triggers if this is a normal action with endsTurn flag
+    // (not a trigger effect that was already handled by CardActionAggregate)
+    if (currentCardAction.isEndTurn() && !currentCardAction.getTriggerId()) {
+      triggers = getInstancesTriggerEffects(
+        newGameState.board.map(cardId => newGameState.instances[cardId]),
+        this.cardDefs,
+        this.stickerDefs,
+        Trigger.END_OF_TURN,
+        newGameState,
+      ).reduce(
+        (acc, { effectDef, sourceInstanceId }) => {
+          acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+          return acc;
+        },
+        {} as Record<string, TriggerEntry>,
+      );
+    }
 
     const event: CardActionEvent = {
       id: crypto.randomUUID(),
@@ -558,6 +557,9 @@ export class GameAggregate {
       gameStateChanges: computeGameStateDiff(this.gameState, newGameState),
       sourceInstanceId: currentCardAction.getSourceInstanceId(),
       actionId: currentCardAction.getActionId(),
+      triggers,
+      endTurn: currentCardAction.isEndTurn(),
+      endRound: currentCardAction.isEndRound(),
     };
 
     this.apply(event);
@@ -585,10 +587,6 @@ export class GameAggregate {
 
     this.actionEnd();
 
-    if (currentCardAction.isEndTurn()) {
-      return this.turnEnded();
-    }
-
     return this.gameState;
   }
 
@@ -601,6 +599,8 @@ export class GameAggregate {
       type: GameEventType.SKIP_TRIGGER,
       timestamp: Date.now(),
       triggerId,
+      endTurn: this.gameState.triggerPile[triggerId]?.effectDef?.trigger === Trigger.END_OF_TURN,
+      endRound: this.gameState.triggerPile[triggerId]?.effectDef?.trigger === Trigger.END_OF_ROUND,
     };
     this.apply(event);
     this.events.push(event);

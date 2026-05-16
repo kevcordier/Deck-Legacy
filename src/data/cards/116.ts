@@ -50,7 +50,7 @@ export const raid: CardDef = {
       name: 'Looting',
       tags: [CardTag.EVENT],
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/97e6bffd-60a3-4597-b19e-c2b39d2c2520/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/dcdb1bd6-c0b7-4ac2-90be-e05f330924b0/450x%3Cauto%3E_so',
       actions: [
         {
           id: '116-2-1',

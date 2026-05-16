@@ -57,7 +57,7 @@ export function DeckViewer({
   const cardFilterFn = (inst: CardInstance) => {
     const cs = getActiveState(inst, defs);
     return (
-      t(`names.${inst.cardId}_${cs.id}`, { ns: 'cards' })
+      t(`names.${cs.name}`, { ns: 'cards' })
         ?.toString()
         .toLowerCase()
         .includes(cardFilter.search.toLowerCase()) &&

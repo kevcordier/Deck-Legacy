@@ -1,5 +1,5 @@
 import type { GameEventType } from '@engine/domain/enums';
-import type { GameState, Phase, Resources, TriggerEntry } from '@engine/domain/types';
+import type { GameState, Resources, TriggerEntry } from '@engine/domain/types';
 
 export interface GameEvent {
   id: string;
@@ -18,6 +18,7 @@ export interface GameStartedEvent extends GameEvent {
 export interface RoundEndedEvent extends GameEvent {
   type: GameEventType.ROUND_ENDED;
   round: number;
+  endRoundTriggers: Record<string, TriggerEntry>;
 }
 
 export interface RoundStartedEvent extends GameEvent {
@@ -56,6 +57,7 @@ export interface UpgradeCardEvent extends GameEvent {
   cost: Resources;
   discardedCardIds?: number[];
   destroyedCardIds?: number[];
+  endTurnTrigger: Record<string, TriggerEntry>;
 }
 
 export interface ChooseStateEvent extends GameEvent {
@@ -69,19 +71,19 @@ export interface CardActionEvent extends GameEvent {
   gameStateChanges: Partial<GameState>;
   sourceInstanceId: number;
   actionId: string;
+  triggers: Record<string, TriggerEntry>;
+  endTurn?: boolean;
+  endRound?: boolean;
 }
 
 export interface SkipTriggerEvent extends GameEvent {
   type: GameEventType.SKIP_TRIGGER;
   triggerId: string;
+  endTurn?: boolean;
+  endRound?: boolean;
 }
 
 export interface TurnEndedEvent extends GameEvent {
   type: GameEventType.TURN_ENDED;
-}
-
-export interface TriggerEventsEvent extends GameEvent {
-  type: GameEventType.TRIGGER_EVENTS;
-  triggerPile: Record<string, TriggerEntry>;
-  phase: Phase;
+  endTurnTrigger: Record<string, TriggerEntry>;
 }

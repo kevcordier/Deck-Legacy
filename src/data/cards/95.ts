@@ -103,7 +103,7 @@ export const manor: CardDef = {
       name: 'Grand Residence',
       tags: [CardTag.BUILDING],
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/12ef65ba-29cc-4aa1-a90e-76a1f72a72d2/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/50acc3a7-5d3f-47ec-ca87-9bddf84eed00/450x%3Cauto%3E_so',
       glory: { amount: 5 },
       productions: [{ gold: 3 }],
       actions: [

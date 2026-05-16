@@ -18,7 +18,7 @@ export const shrine: CardDef = {
       name: 'Shrine',
       tags: [CardTag.LAND],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f59490b7-0f35-40f7-b90c-31c3fbe0cd14/anim=false,width=450,optimized=true/2023-12-03%20-%2015.10.49.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/49e9bb1d-3bd1-4ea7-becc-ad86b4d64513/450x%3Cauto%3E_so',
       glory: { amount: 3 },
       actions: [
         {
@@ -64,7 +64,7 @@ export const shrine: CardDef = {
       name: 'Sanctuary',
       tags: [CardTag.BUILDING],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/67985b0d-b178-4ead-a388-25f46add1d9f/anim=false,width=450,optimized=true/8CABABBFA51496A7D1A13B09F48FE371C7B7B561D90AB0B7AE1CDC25AF4168AC.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/54ee1a6d-e506-44bc-95ac-047a93e3aeb1/450x%3Cauto%3E_so',
       glory: { amount: 5 },
       actions: [
         {

@@ -1,5 +1,7 @@
 import { makeState, makeStickerDefs } from '../fixtures';
 import { TurnEndedStrategy } from '@engine/application/gameEvent/TurnEndedStrategy';
+import { GameEventType } from '@engine/domain/enums';
+import type { TurnEndedEvent } from '@engine/domain/types/GameEvent';
 import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
@@ -7,7 +9,13 @@ describe('TurnEndedStrategy', () => {
   it('sets phase to POSTTURN', () => {
     const strategy = new TurnEndedStrategy({}, makeStickerDefs());
     const gs = makeState();
-    const result = strategy.apply(gs);
+    const event: TurnEndedEvent = {
+      id: 'e1',
+      timestamp: 0,
+      endTurnTrigger: {},
+      type: GameEventType.TURN_ENDED,
+    };
+    const result = strategy.apply(gs, event);
     expect(result.phase).toBe(Phase.TURN_END);
   });
 
@@ -20,10 +28,39 @@ describe('TurnEndedStrategy', () => {
         100: [{ id: 'l', type: 'BLOCK' as never }],
       },
     });
-
-    const result = strategy.apply(gs);
+    const event: TurnEndedEvent = {
+      id: 'e2',
+      timestamp: 0,
+      endTurnTrigger: {},
+      type: GameEventType.TURN_ENDED,
+    };
+    const result = strategy.apply(gs, event);
 
     expect(result.boardEffects[99]).toBeDefined();
     expect(result.boardEffects[100]).toBeUndefined();
+  });
+
+  it('stays in PLAYING phase if triggers remain in triggerPile', () => {
+    const strategy = new TurnEndedStrategy({}, makeStickerDefs());
+    const gs = makeState({
+      triggerPile: {
+        'remaining-trigger': {
+          effectDef: { id: 'x', actionEffects: [] },
+          sourceInstanceId: 1,
+        },
+      },
+      board: [],
+      phase: Phase.PLAYING,
+    });
+    const event: TurnEndedEvent = {
+      id: 'e3',
+      timestamp: 0,
+      endTurnTrigger: {},
+      type: GameEventType.TURN_ENDED,
+    };
+    const result = strategy.apply(gs, event);
+
+    expect(result.phase).toBe(Phase.PLAYING);
+    expect(result.triggerPile['remaining-trigger']).toBeDefined();
   });
 });

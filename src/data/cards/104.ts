@@ -40,7 +40,7 @@ export const kingAlahar: CardDef = {
       name: 'Queen Jemimah',
       tags: [CardTag.PERSON, CardTag.LADY],
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/38f2ba31-ef88-40e3-a5ec-d6644faa2062/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/ece793b2-eb9a-4bc0-aa46-500006bd3bcf/450x%3Cauto%3E_so',
       glory: {
         amount: 0,
         valuePerElement: {

@@ -25,7 +25,7 @@ export const astronomer: CardDef = {
       name: 'Astronomer',
       tags: [CardTag.PERSON],
       illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/65e893a1-e9a1-46b9-b81c-05660920ef36/450x%3Cauto%3E_so',
+        'https://image-b2.civitai.com/file/civitai-media-cache/de27f2e5-7bbd-474a-9a51-1dfa0c9d532a/450x%3Cauto%3E_so',
       glory: {
         amount: 0,
         valuePerElement: {

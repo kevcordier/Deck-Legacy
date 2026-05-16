@@ -50,7 +50,7 @@ export const trader: CardDef = {
       name: 'Bazaar',
       tags: [CardTag.BUILDING],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/90745e0d-7ca2-417d-9453-579e41b10885/anim=false,width=450,optimized=true/00006-3168783046.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/32b678bf-9e83-4cc3-8bd0-e39845becc76/450x%3Cauto%3E_so',
       glory: { amount: 1 },
       actions: [
         {
@@ -149,7 +149,7 @@ export const trader: CardDef = {
       name: 'Festival',
       tags: [CardTag.EVENT],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e6224f49-a89d-4180-8ac3-2264855ced51/width=450,quality=90/00013-2617315028.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/717e986a-eed1-4023-9365-08512d055030/450x%3Cauto%3E_so',
       glory: { amount: 4 },
       productions: [
         {

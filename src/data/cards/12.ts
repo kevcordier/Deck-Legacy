@@ -17,7 +17,7 @@ export const eastCliffs: CardDef = {
       name: 'East Cliffs',
       tags: [CardTag.LAND],
       illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0b355473-abc7-45b7-8454-f9fcc0767d43/width=450,quality=90/PRQ3CTSP15QFNGQN1ZYVTJ0DN0.jpeg',
+        'https://image-b2.civitai.com/file/civitai-media-cache/8ef138b2-913a-4eb8-8318-4556b911a4da/450x%3Cauto%3E_so',
       productions: [
         {
           [ResourceType.STONE]: 1,
