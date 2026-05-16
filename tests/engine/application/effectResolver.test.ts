@@ -375,6 +375,37 @@ describe('resolveActionEffect – UPGRADE_CARD selector enrichment', () => {
     expect(pending[0].type).toBe('choose_card');
     expect(pending[0].choices).toEqual([2]);
   });
+
+  it('does not force UPGRADABLE when explicit ids are provided', () => {
+    const nonUpgradableDef: CardDef = {
+      id: 2,
+      name: 'Forced',
+      states: [
+        { id: 1, name: 'Base' },
+        { id: 2, name: 'Transformed' },
+      ],
+    };
+    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst2 } });
+    const effect = {
+      id: 1,
+      type: ActionEffectType.UPGRADE_CARD,
+      cards: { ids: [2] },
+      states: { ids: [2] },
+    };
+
+    const [resolved, pending] = resolveActionEffect(
+      effect,
+      99,
+      gs,
+      { ...defs, 2: nonUpgradableDef },
+      stickerDefs,
+    );
+
+    expect(resolved.instanceIds).toEqual([2]);
+    expect(resolved.stateId).toBe(2);
+    expect(pending).toHaveLength(0);
+  });
 });
 
 // ─── ADD_STICKER – production cap ────────────────────────────────────────────

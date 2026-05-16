@@ -3,7 +3,7 @@ import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
 import { TriggerIcon } from '@components/ui/Icon/icon';
 import type { CardDef, CardInstance, TriggerEntry } from '@engine/domain/types';
-import { tCardActionLabel, tCardName } from '@helpers/cardI18n';
+import { tCardEffectLabel, tCardName } from '@helpers/cardI18n';
 import type { TFunction } from 'i18next';
 
 type TriggerPileSectionProps = {
@@ -32,7 +32,7 @@ export function TriggerPileSection({
           def?.states.find(candidate => candidate.id === inst?.stateId) ?? def?.states[0];
         if (!inst || !def || !state) return null;
         const cardName = tCardName(t, state?.name || '');
-        const actionLabel = tCardActionLabel(t, trigger.effectDef.id, inst.cumulated);
+        const actionLabel = tCardEffectLabel(t, `${trigger.effectDef.id}_1`, inst.cumulated);
 
         return (
           <div key={triggerId} className="flex flex-col items-center gap-2">

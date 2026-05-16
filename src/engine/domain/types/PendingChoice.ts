@@ -4,6 +4,8 @@ import type { Resources } from '@engine/domain/types/Resource';
 
 export type PendingChoice = {
   id: string;
+  actionId?: string;
+  effectId?: number;
   kind: ActionEffectType;
   type: PendingChoiceType;
   sourceInstanceId: number;

@@ -25,7 +25,7 @@ export const assassin: CardDef = {
           id: '48-1-1',
           type: PassiveType.ADD_TRIGGER,
           trigger: {
-            id: '48-1-1',
+            id: '48-1-2',
             type: Trigger.ON_PLAY,
             cards: {
               scope: [TargetScope.DRAWN],

@@ -452,7 +452,7 @@ function getBoardEffectTriggersAction(
             return ae.cards?.scope?.includes(TargetScope.SELF) ? { ids: [instanceId] } : ae.cards;
           };
           cardActions.push({
-            id: `board_effect_${sourceId}`,
+            id: passive.id,
             optional: passive.trigger?.optional,
             actionEffects: passive.trigger.actions.map(ae => ({
               ...ae,

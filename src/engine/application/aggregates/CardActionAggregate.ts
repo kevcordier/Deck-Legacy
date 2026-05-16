@@ -289,6 +289,7 @@ export class CardActionAggregate {
         this.cardDefs,
         this.stickerDefs,
         true,
+        this.action.id,
       );
 
       if (choices.length > 0) {

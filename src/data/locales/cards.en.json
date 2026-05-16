@@ -277,6 +277,27 @@
     "80-1": "This card is worth 2 {{glory}} per marked step.",
     "91-4": "* Worth 40 +5{{glory}} per marked step."
   },
+  "effect": {
+    "19-1-2_1": "End of round: You may mark 1 step.",
+    "19-2-2_1": "End of round: You may mark 1 step.",
+    "20-1-1-1": "Destroy the next land you play.",
+    "22-1-1_1": "Select 2 cards from the next 4 cards to discover. Destroy the other 2 cards.",
+    "25-2-1_1": "Defeat an enemy in play, discard pile, or permanent.",
+    "34-2-1_1": "Look at cards 109 and 110. Discover 1 of them and destroy the other.",
+    "34-3-1_1": "Look at cards 111 and 112. Discover 1 of them and destroy the other.",
+    "38-1-1_1": "Discover 2 of them and destroy the other 2.",
+    "41-4-2_1": "Discard a land to gain any 2 resources.",
+    "42-4-1_1": "Play a Knight or Wall card.",
+    "48-1-1-1": "Destroy the next person you play.",
+    "55-2-2_1": "End of Round: Destroy this and 1 blocked building, or this and any 2 other friendly cards.",
+    "56-1-1_1": "End of Turn: Discard 2 persons or ⬆.",
+    "80-2-1_1": "Put up to 3 other cards in play on top or bottom of your deck.",
+    "81-1-1_1": "Choose any state.",
+    "81-3-1_1": "When discarding a person, you may reset this instead.",
+    "89-1-1_1": "Upgrade 1 card in play, paying as normal. This does NOT end your turn.",
+    "89-2-1_1": "Upgrade 1 card in play, paying as normal. This does NOT end your turn.",
+    "96-4-2_1": "Choose a horse with 0-3 production. Pay {{gold}}{{gold}} to add any 1 resource sticker to it."
+  },
   "passives": {
     "stay_in_play": "Stays in play",
     "11-4-1": "This card has 1+{{gold}} production for each person in play.",
@@ -322,10 +343,6 @@
   },
   "descriptions": {
     "92-1-0": "This card cannot be destroyed. The effect of this magical artifact is yet to be discovered."
-  },
-  "labels": {
-    "20_1_a-1": "Destroy the next land you play. then ⬆.",
-    "55_2_a6-1": "Destroy this and any 2 other friendly cards."
   },
   "names": {
     "Wild Grass": "Wild Grass",

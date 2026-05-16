@@ -46,7 +46,10 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
         const state = def.states.find(s => s.id === inst.stateId) ?? def.states[0];
         const isSelected = isMultiSelect && selectedIds.includes(id);
         return (
-          <div key={`${id}-${index.toString()}`} className="flex flex-col items-stretch gap-2 p-2">
+          <div
+            key={`${id}-${index.toString()}`}
+            className="flex flex-col items-stretch gap-2 p-2 @container min-w-60"
+          >
             <GameCard
               instance={makePreviewInstance(id, def, state)}
               className={`relative ${isSelected ? ' inset-ring-primary rounded-xl inset-ring-2' : ''}`}

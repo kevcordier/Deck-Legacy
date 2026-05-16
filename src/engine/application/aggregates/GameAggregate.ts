@@ -404,7 +404,9 @@ export class GameAggregate {
     }
 
     const triggers = getInstancesTriggerEffects(
-      this.gameState.board.map(cardId => this.gameState.instances[cardId]),
+      this.gameState.board
+        .filter(cardId => cardId !== cardInstanceId)
+        .map(cardId => this.gameState.instances[cardId]),
       this.cardDefs,
       this.stickerDefs,
       Trigger.END_OF_TURN,

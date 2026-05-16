@@ -32,7 +32,8 @@ import type {
 const STICKER_PRODUCTION_CAP = 9;
 
 interface ResolveContext {
-  actionId: number;
+  effectId: number;
+  parentActionId?: string;
   actionType: ActionEffectType;
   instanceId: number;
   isMandatory: boolean;
@@ -69,7 +70,16 @@ function resolveTrackAdvanceEffect(
   cards: CardSelector,
   steps: { pickNumber?: number; pickMin?: number; pickMax?: number },
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const { actionId, actionType, instanceId, isMandatory, gameState, defs, stickerDefs } = ctx;
+  const {
+    effectId,
+    parentActionId,
+    actionType,
+    instanceId,
+    isMandatory,
+    gameState,
+    defs,
+    stickerDefs,
+  } = ctx;
 
   const targetIds = cardSelector(cards, instanceId, gameState, defs, stickerDefs);
   if (targetIds.length === 0) return [resolverAction, pendingChoices];
@@ -102,7 +112,9 @@ function resolveTrackAdvanceEffect(
 
     const picks = getPickNumbers(steps, choices.length);
     pendingChoices.push({
-      id: `${instanceId}-${actionId}`,
+      id: `${instanceId}-${effectId}`,
+      actionId: parentActionId,
+      effectId,
       kind: actionType,
       type: PendingChoiceType.CHOOSE_STEP,
       sourceInstanceId: instanceId,
@@ -145,10 +157,12 @@ function resolveChooseActionEffect(
   ctx: ResolveContext,
   effects: ActionEffect[],
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const { instanceId, actionId, actionType } = ctx;
-  const choiceId = `${instanceId}-${actionId}`;
+  const { instanceId, effectId, parentActionId, actionType } = ctx;
+  const choiceId = `${instanceId}-${effectId}`;
   pendingChoices.push({
     id: choiceId,
+    actionId: parentActionId,
+    effectId,
     kind: actionType,
     type: PendingChoiceType.CHOOSE_ACTION_EFFECT,
     sourceInstanceId: instanceId,
@@ -166,7 +180,16 @@ function resolveCardTarget(
   ctx: ResolveContext,
   cards: CardSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const { actionId, actionType, instanceId, isMandatory, gameState, defs, stickerDefs } = ctx;
+  const {
+    effectId,
+    parentActionId,
+    actionType,
+    instanceId,
+    isMandatory,
+    gameState,
+    defs,
+    stickerDefs,
+  } = ctx;
 
   const isStickerAction =
     actionType === ActionEffectType.ADD_STICKER || actionType === ActionEffectType.BOOST_CARD;
@@ -200,7 +223,9 @@ function resolveCardTarget(
   }
 
   pendingChoices.push({
-    id: `${instanceId}-${actionId}`,
+    id: `${instanceId}-${effectId}`,
+    actionId: parentActionId,
+    effectId,
     kind: actionType,
     type: PendingChoiceType.CHOOSE_CARD,
     sourceInstanceId: instanceId,
@@ -217,13 +242,24 @@ function resolveResourceTarget(
   ctx: ResolveContext,
   resources: ResourceSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const { actionId, actionType, instanceId, isMandatory, gameState, defs, stickerDefs } = ctx;
+  const {
+    effectId,
+    parentActionId,
+    actionType,
+    instanceId,
+    isMandatory,
+    gameState,
+    defs,
+    stickerDefs,
+  } = ctx;
 
   const picks = getPickNumbers(resources, resources.choice?.length);
 
   if (resources.choice && resources.choice.length > 1) {
     pendingChoices.push({
-      id: `${instanceId}-${actionId}`,
+      id: `${instanceId}-${effectId}`,
+      actionId: parentActionId,
+      effectId,
       kind: actionType,
       type: PendingChoiceType.CHOOSE_RESOURCE,
       sourceInstanceId: instanceId,
@@ -241,7 +277,9 @@ function resolveResourceTarget(
       const state = getActiveState(gameState.instances[choices[0]], defs);
       if (state.productions && state.productions.length > 1) {
         pendingChoices.push({
-          id: `${instanceId}-${actionId}`,
+          id: `${instanceId}-${effectId}`,
+          actionId: parentActionId,
+          effectId,
           kind: actionType,
           type: PendingChoiceType.CHOOSE_RESOURCE,
           sourceInstanceId: instanceId,
@@ -260,7 +298,7 @@ function resolveResourceTarget(
       } else {
         [resolverAction, pendingChoices] = new CardChoiceStrategy(defs, stickerDefs).apply(
           {
-            id: `${instanceId}-${actionId}`,
+            id: `${instanceId}-${effectId}`,
             type: actionType,
             sourceInstanceId: instanceId,
             instanceIds: choices,
@@ -272,7 +310,9 @@ function resolveResourceTarget(
       }
     } else {
       pendingChoices.push({
-        id: `${instanceId}-${actionId}`,
+        id: `${instanceId}-${effectId}`,
+        actionId: parentActionId,
+        effectId,
         kind: actionType,
         type: PendingChoiceType.CHOOSE_CARD,
         sourceInstanceId: instanceId,
@@ -293,7 +333,7 @@ function resolveStickerTarget(
   ctx: ResolveContext,
   stickers: StickerSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const { actionId, actionType, instanceId, isMandatory, gameState } = ctx;
+  const { effectId, parentActionId, actionType, instanceId, isMandatory, gameState } = ctx;
   const availableIds = (stickers.ids ?? []).filter(id => (gameState.stickerStock[id] ?? 0) > 0);
   const picks = getPickNumbers(stickers, availableIds.length);
   if (stickers.pickMin && availableIds.length < stickers.pickMin) {
@@ -305,7 +345,9 @@ function resolveStickerTarget(
     return [resolverAction, pendingChoices];
   }
   pendingChoices.push({
-    id: `${instanceId}-${actionId}`,
+    id: `${instanceId}-${effectId}`,
+    actionId: parentActionId,
+    effectId,
     kind: actionType,
     type: PendingChoiceType.CHOOSE_STICKER,
     sourceInstanceId: instanceId,
@@ -322,7 +364,16 @@ function resolveStateTarget(
   ctx: ResolveContext,
   states: StateSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const { actionId, actionType, instanceId, isMandatory, gameState, defs, stickerDefs } = ctx;
+  const {
+    effectId,
+    parentActionId,
+    actionType,
+    instanceId,
+    isMandatory,
+    gameState,
+    defs,
+    stickerDefs,
+  } = ctx;
 
   const choices = stateSelector(states, instanceId, gameState, defs, stickerDefs);
   if (choices.length === 1) {
@@ -330,7 +381,9 @@ function resolveStateTarget(
     return [resolverAction, pendingChoices];
   }
   pendingChoices.push({
-    id: `${instanceId}-${actionId}`,
+    id: `${instanceId}-${effectId}`,
+    actionId: parentActionId,
+    effectId,
     kind: actionType,
     type: PendingChoiceType.CHOOSE_STATE,
     sourceInstanceId: instanceId,
@@ -375,7 +428,8 @@ function getEnrichedCardSelector(action: ActionEffect): CardSelector | undefined
   }
   if (
     action.type === ActionEffectType.UPGRADE_CARD &&
-    !action.cards.scope?.includes(TargetScope.SELF)
+    !action.cards.scope?.includes(TargetScope.SELF) &&
+    !action.cards.ids
   ) {
     return {
       ...action.cards,
@@ -392,6 +446,7 @@ export function resolveActionEffect(
   defs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
   isMandatory = false,
+  parentActionId?: string,
 ): [ResolvedActionEffect, PendingChoice[]] {
   let resolverAction: ResolvedActionEffect = {
     id: `${instanceId}-${action.id}`,
@@ -401,7 +456,8 @@ export function resolveActionEffect(
   let pendingChoices: PendingChoice[] = [];
 
   const ctx: ResolveContext = {
-    actionId: action.id,
+    effectId: action.id,
+    parentActionId,
     actionType: action.type,
     instanceId,
     isMandatory,

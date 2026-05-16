@@ -70,7 +70,7 @@ function getChoiceSection(props: ChoiceSectionProps): ChoiceSection {
         title: props.t(`pendingChoice.chooseCard.${props.choice.kind}`, {
           count: props.maxSelect,
         }),
-        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t),
+        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t).value,
         handleMultiConfirm: () => {
           if (props.selectedCount < props.minSelect || props.selectedIds.length > props.maxSelect) {
             return;
@@ -94,7 +94,7 @@ function getChoiceSection(props: ChoiceSectionProps): ChoiceSection {
     case PendingChoiceType.CHOOSE_STEP:
       return {
         title: props.t('pendingChoice.chooseStep'),
-        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t),
+        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t).value,
         handleMultiConfirm: () => {
           if (props.selectedCount < props.minSelect || props.selectedIds.length > props.maxSelect) {
             return;
@@ -114,25 +114,25 @@ function getChoiceSection(props: ChoiceSectionProps): ChoiceSection {
     case PendingChoiceType.CHOOSE_STATE:
       return {
         title: props.t('pendingChoice.chooseState'),
-        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t),
+        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t).value,
         content: <ChooseStateSection {...props} />,
       };
     case PendingChoiceType.CHOOSE_RESOURCE:
       return {
         title: props.t('pendingChoice.chooseResource'),
-        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t),
+        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t).value,
         content: <ChooseResourceSection {...props} />,
       };
     case PendingChoiceType.CHOOSE_ACTION_EFFECT:
       return {
         title: props.t('pendingChoice.chooseActionEffect'),
-        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t),
+        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t).value,
         content: <ChooseActionEffectSection {...props} />,
       };
     case PendingChoiceType.CHOOSE_STICKER:
       return {
         title: props.t('pendingChoice.chooseSticker'),
-        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t),
+        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t).value,
         content: <ChooseStickerSection {...props} />,
       };
   }

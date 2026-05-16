@@ -36,6 +36,20 @@ export function tCardActionLabel(
   );
 }
 
+export function tCardEffectLabel(
+  t: TFunction,
+  effectKey: string,
+  accumulated?: number,
+): React.ReactNode {
+  return renderTextWithIcons(
+    t(`effect.${effectKey}`, {
+      ns: 'cards',
+      accumulated,
+      ...ICON_PASSTHROUGH,
+    }),
+  );
+}
+
 export function tCardPassiveLabel(
   t: TFunction,
   passiveId: string,
