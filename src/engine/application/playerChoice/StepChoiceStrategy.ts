@@ -17,7 +17,10 @@ export class StepChoiceStrategy implements PlayerChoiceStrategy {
 
     const sourceState = getActiveState(gs.instances[choice.sourceInstanceId], this.cardDefs);
     const newActionEffects = choice.stepIds.flatMap(stepId => {
-      return sourceState?.track?.steps.find(s => s.id === stepId)?.effects ?? [];
+      return (sourceState?.track?.steps.find(s => s.id === stepId)?.effects ?? []).map(e => ({
+        ...e,
+        sourceStepId: stepId,
+      }));
     });
 
     const mergedResolvedAction: ResolvedActionEffect = {

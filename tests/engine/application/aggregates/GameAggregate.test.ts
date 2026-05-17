@@ -1317,32 +1317,6 @@ describe('GameAggregate.cardAction – PARCHMENT finalization', () => {
     expect(gs.drawPile).not.toContain(999);
   });
 
-  it('triggers roundEnded(false) when finalizing from ROUND_END with empty trigger pile', () => {
-    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const state = makeState({
-      board: [1],
-      drawPile: [2],
-      instances: {
-        1: inst,
-        2: makeInstance({ id: 2, cardId: 1, stateId: 1 }),
-      },
-      triggerPile: {},
-      phase: Phase.ROUND_END,
-      round: 1,
-      turn: 1,
-    });
-    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
-    const action = {
-      id: 'a-round-end',
-      actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
-    };
-
-    const gs = agg.cardAction(action, 1);
-
-    expect(gs.phase).toBe(Phase.ROUND_START);
-    expect(gs.round).toBe(2);
-  });
-
   it('ends turn when action.endsTurn is true', () => {
     const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });

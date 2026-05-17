@@ -60,6 +60,7 @@ export class CardActionAggregate {
     resolvedCost: ResolvedCost;
     effectIndex: number;
   } | null = null;
+  private lastSelectedIds: number[] = [];
   private readonly action: CardAction;
   private readonly endTurn: boolean;
   private readonly endRound: boolean;
@@ -100,6 +101,12 @@ export class CardActionAggregate {
       JSON.parse(JSON.stringify(this.gameState)) as GameState,
       resolvedAction,
     );
+  }
+
+  private updateLastSelectedIds(resolvedAction: ResolvedActionEffect) {
+    if (resolvedAction.instanceIds && resolvedAction.instanceIds.length > 0) {
+      this.lastSelectedIds = resolvedAction.instanceIds;
+    }
   }
 
   private tryResolveUpgradeCost(
@@ -288,8 +295,11 @@ export class CardActionAggregate {
         this.gameState,
         this.cardDefs,
         this.stickerDefs,
-        true,
-        this.action.id,
+        {
+          isMandatory: true,
+          parentActionId: this.action.id,
+          lastSelectedIds: this.lastSelectedIds,
+        },
       );
 
       if (choices.length > 0) {
@@ -309,6 +319,8 @@ export class CardActionAggregate {
       if (outcome === 'wait') {
         return;
       }
+
+      this.updateLastSelectedIds(resolvedAction);
 
       index++;
     }
@@ -392,6 +404,8 @@ export class CardActionAggregate {
       return;
     }
 
+    this.updateLastSelectedIds(mergedResolvedAction);
+
     const trackCostResolution = this.tryResolveTrackStepCost(
       mergedResolvedAction,
       this.pendingEffectIndex,
@@ -450,6 +464,7 @@ export class CardActionAggregate {
       }
 
       this.resolvePayCost(mergedResolvedCost);
+      this.updateLastSelectedIds(this.pendingTrackCost.resolvedAction);
       this.apply(this.pendingTrackCost.resolvedAction);
       const nextIndex = this.pendingTrackCost.effectIndex + 1;
       this.pendingTrackCost = null;
@@ -485,6 +500,7 @@ export class CardActionAggregate {
       }
 
       this.resolvePayCost(mergedResolvedCost);
+      this.updateLastSelectedIds(this.pendingUpgradeCost.resolvedAction);
       this.apply(this.pendingUpgradeCost.resolvedAction);
       const nextIndex = this.pendingUpgradeCost.effectIndex + 1;
       this.pendingUpgradeCost = null;

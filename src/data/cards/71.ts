@@ -63,7 +63,7 @@ export const dubbing: CardDef = {
               type: ActionEffectType.ADD_STICKER,
               stickers: { ids: [4, 6] },
               cards: {
-                tags: [CardTag.BUILDING],
+                scope: [TargetScope.LAST_SELECTED],
               },
             },
             {

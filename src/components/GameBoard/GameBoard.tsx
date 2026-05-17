@@ -1,12 +1,12 @@
 import { CheatPanel } from '@components/CheatPanel/CheatPanel';
 import { DeckViewer } from '@components/DeckViewer/DeckViewer';
 import { GameCard } from '@components/GameCard/GameCard';
+import { GamePhaseActions } from '@components/GamePhaseActions/GamePhaseActions';
 import { MainBoard } from '@components/MainBoard/MainBoard';
 import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
 import { Button } from '@components/ui/Button/Button';
 import { DestroyIcon, DiscardIcon, DrawCardIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
-import { Phase } from '@engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import { useTutorial } from '@hooks/useTutorial';
 import { useMemo, useState } from 'react';
@@ -22,6 +22,7 @@ export function GameBoard() {
     endTurnVoluntary,
     startTurn,
     endRound,
+    startRound,
     pendingChoices,
     triggerPile,
     resolveAction,
@@ -154,50 +155,18 @@ export function GameBoard() {
           <DrawCardIcon className="size-4" alt={t('deckViewer.draw')} /> ({drawPile.length})
         </Button>
 
-        {gameState.phase === Phase.PLAYING && (
-          <div className="flex items-center gap-1">
-            <Button
-              onClick={progress}
-              disabled={deckEmpty || haveChoiceToDo}
-              variant="outlined"
-              size="sm"
-              data-tour="progress-mobile"
-            >
-              {deckEmpty ? '››' : `›› (${Math.min(2, drawPile.length)})`}
-            </Button>
-            <Button
-              onClick={endTurnVoluntary}
-              disabled={haveChoiceToDo}
-              variant="outlined"
-              size="sm"
-              data-tour="end-turn-voluntary-mobile"
-            >
-              {t('header.endTurn')}
-            </Button>
-          </div>
-        )}
-        {gameState.phase === Phase.ROUND_START && (
-          <div className="flex items-center gap-1">
-            <Button onClick={startTurn} variant="outlined" size="sm">
-              {t('roundpreview.start')}
-            </Button>
-          </div>
-        )}
-        {gameState.phase === Phase.TURN_END && gameState.drawPile.length > 0 && (
-          <div className="flex items-center gap-1">
-            <Button onClick={startTurn} variant="outlined" size="sm">
-              {t('endturn.start')}
-            </Button>
-          </div>
-        )}
-        {(gameState.phase === Phase.ROUND_END ||
-          (gameState.phase === Phase.TURN_END && gameState.drawPile.length === 0)) && (
-          <div className="flex items-center gap-1">
-            <Button onClick={endRound} variant="outlined" size="sm">
-              {t('endround.end')}
-            </Button>
-          </div>
-        )}
+        <GamePhaseActions
+          gameState={gameState}
+          deckEmpty={deckEmpty}
+          haveChoiceToDo={haveChoiceToDo}
+          parameters={parameters}
+          progress={progress}
+          endTurnVoluntary={endTurnVoluntary}
+          startTurn={startTurn}
+          endRound={endRound}
+          startRound={startRound}
+          variant="mobile"
+        />
 
         <div className="flex items-center gap-1">
           <Button

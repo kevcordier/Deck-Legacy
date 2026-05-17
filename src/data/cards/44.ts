@@ -63,13 +63,7 @@ export const witch: CardDef = {
               type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 scope: [TargetScope.TOP_OF_DISCOVERY],
-              },
-            },
-            {
-              id: 2,
-              type: ActionEffectType.DISCOVER_CARD,
-              cards: {
-                scope: [TargetScope.TOP_OF_DISCOVERY],
+                pickNumber: 2,
               },
             },
             {
@@ -139,13 +133,7 @@ export const witch: CardDef = {
               type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 scope: [TargetScope.TOP_OF_DISCOVERY],
-              },
-            },
-            {
-              id: 2,
-              type: ActionEffectType.DISCOVER_CARD,
-              cards: {
-                scope: [TargetScope.TOP_OF_DISCOVERY],
+                pickNumber: 2,
               },
             },
             {

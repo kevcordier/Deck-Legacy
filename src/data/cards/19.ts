@@ -133,7 +133,12 @@ export const exportation: CardDef = {
                 type: ActionEffectType.ADD_STICKER,
                 stickers: { ids: [2, 3, 4] },
                 cards: {
-                  scope: [TargetScope.FRIENDLY],
+                  scope: [
+                    TargetScope.FRIENDLY,
+                    TargetScope.DISCARD,
+                    TargetScope.DECK,
+                    TargetScope.BOARD,
+                  ],
                 },
               },
             ],
@@ -148,6 +153,14 @@ export const exportation: CardDef = {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
                 stickers: { ids: [10] },
+                cards: {
+                  scope: [
+                    TargetScope.FRIENDLY,
+                    TargetScope.DISCARD,
+                    TargetScope.DECK,
+                    TargetScope.BOARD,
+                  ],
+                },
               },
             ],
           },

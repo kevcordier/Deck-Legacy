@@ -538,6 +538,51 @@ describe('CardActionAggregate.resolvePlayerChoice', () => {
     // newActionEffects were spliced in and applied (ADD_RESOURCES gold: 5).
     expect(agg.getGameState().resources.gold).toBe(5);
   });
+  it('reuses the last selected card ids for a later LAST_SELECTED effect', () => {
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      board: [1, 2, 3],
+      instances: {
+        1: makeInstance({ id: 1, cardId: 1, stateId: 1 }),
+        2: inst2,
+        3: inst3,
+      },
+      stickerStock: { 5: 2, 6: 2 },
+    });
+    const action: CardAction = {
+      id: 'last-selected',
+      actionEffects: [
+        {
+          id: 0,
+          type: ActionEffectType.ADD_STICKER,
+          stickers: { ids: [5], pickNumber: 1 },
+          cards: { scope: [TargetScope.BOARD] },
+        },
+        {
+          id: 1,
+          type: ActionEffectType.ADD_STICKER,
+          stickers: { ids: [6], pickNumber: 1 },
+          cards: { scope: [TargetScope.LAST_SELECTED] },
+        },
+      ],
+    };
+
+    const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, gs.instances[1], action);
+    agg.resolveAction();
+    expect(agg.getPendingChoices()).toHaveLength(1);
+
+    agg.resolvePlayerChoice({
+      id: 'choice',
+      type: ActionEffectType.ADD_STICKER,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+    });
+
+    expect(agg.getPendingChoices()).toHaveLength(0);
+    expect(agg.getGameState().instances[2].stickers[1]).toEqual([5, 6]);
+    expect(agg.getGameState().instances[3].stickers[1]).toBeUndefined();
+  });
 
   it('enforces upgrade cost when target is chosen via pending choice', () => {
     const sourceDef: CardDef = {

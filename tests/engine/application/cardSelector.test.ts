@@ -54,6 +54,27 @@ describe('cardSelector – shortcuts', () => {
     const result = cardSelector({ scope: [TargetScope.SELF] }, 10, baseState(), defs, stickerDefs);
     expect(result).toEqual([10]);
   });
+  it('returns last selected ids for LAST_SELECTED scope', () => {
+    const result = cardSelector(
+      { scope: [TargetScope.LAST_SELECTED], lastSelectedIds: [20, 30] },
+      99,
+      baseState(),
+      defs,
+      stickerDefs,
+    );
+    expect(result).toEqual([20, 30]);
+  });
+
+  it('returns an empty array for LAST_SELECTED when no ids are provided', () => {
+    const result = cardSelector(
+      { scope: [TargetScope.LAST_SELECTED] },
+      99,
+      baseState(),
+      defs,
+      stickerDefs,
+    );
+    expect(result).toEqual([]);
+  });
 
   it('returns top of deck for TOP_OF_DECK scope', () => {
     const gs = makeState({ drawPile: [30, 10], instances: { 10: instA, 30: instC } });

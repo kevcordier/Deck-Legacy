@@ -35,7 +35,7 @@ function NewCardSelection({
               key={id}
               className="flex min-w-0 basis-[calc(50%-0.25rem)] flex-col gap-1 lg:basis-[calc(33.333%-0.667rem)]"
             >
-              <div className="mb-2 flex w-full flex-wrap gap-2">
+              <div className="mb-2 flex w-full flex-col gap-2">
                 {chooseStateIds.map(stateId => {
                   const stateDef = defs[inst.cardId].states.find(s => s.id === stateId);
                   const isCurrent = inst.stateId === stateId;
@@ -78,6 +78,7 @@ export function MainBoard() {
     startTurn,
     endTurnVoluntary,
     endRound,
+    startRound,
     chooseState,
     displayNewCards,
     setDisplayNewCards,
@@ -130,13 +131,23 @@ export function MainBoard() {
         />
       )}
 
-      {(gameState.phase === Phase.ROUND_END ||
-        (gameState.phase === Phase.TURN_END && gameState.drawPile.length === 0)) && (
+      {gameState.phase === Phase.TURN_END && gameState.drawPile.length === 0 && (
         <EmptyState
           title={t('endround.title', { round: gameState.round })}
           action={
             <Button onClick={endRound} color="primary" size="md">
               {t('endround.end')}
+            </Button>
+          }
+        />
+      )}
+
+      {gameState.phase === Phase.ROUND_END && (
+        <EmptyState
+          title={t('roundpreview.title', { round: gameState.round })}
+          action={
+            <Button onClick={startRound} color="primary" size="md">
+              {t('roundpreview.start')}
             </Button>
           }
         />

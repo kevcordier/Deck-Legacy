@@ -1,4 +1,4 @@
-import { type ChoiceSectionProps, buildCardCostResolution, makePreviewInstance } from './shared';
+import { type ChoiceSectionProps, buildCardCostResolution } from './shared';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
 import { useTranslation } from 'react-i18next';
@@ -43,7 +43,6 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
         const inst = instances[id];
         const def = inst ? defs[inst.cardId] : undefined;
         if (!def || !inst) return null;
-        const state = def.states.find(s => s.id === inst.stateId) ?? def.states[0];
         const isSelected = isMultiSelect && selectedIds.includes(id);
         return (
           <div
@@ -51,8 +50,8 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
             className="flex flex-col items-stretch gap-2 p-2 @container min-w-60"
           >
             <GameCard
-              instance={makePreviewInstance(id, def, state)}
-              className={`relative ${isSelected ? ' inset-ring-primary rounded-xl inset-ring-2' : ''}`}
+              instance={inst}
+              className={`relative ${isSelected ? ' ring-primary rounded-xl ring-2' : ''}`}
             />
             <Button onClick={() => handleCardClick(id)}>{t('pendingChoice.select')}</Button>
           </div>

@@ -187,6 +187,20 @@ describe('resolveActionEffect – SELF / TOP_OF_DECK scopes', () => {
     expect(resolved.instanceIds).toEqual([7]);
     expect(pending).toHaveLength(0);
   });
+  it('auto-selects the last selected cards without pending choice', () => {
+    const effect = {
+      id: 1,
+      type: ActionEffectType.DISCARD_CARD,
+      cards: { scope: [TargetScope.LAST_SELECTED] },
+    };
+    const [resolved, pending] = resolveActionEffect(effect, 99, makeState(), defs, stickerDefs, {
+      isMandatory: false,
+      parentActionId: undefined,
+      lastSelectedIds: [2, 3],
+    });
+    expect(resolved.instanceIds).toEqual([2, 3]);
+    expect(pending).toHaveLength(0);
+  });
 });
 
 // ─── pickNumber / all candidates ──────────────────────────────────────────────
@@ -221,6 +235,19 @@ describe('resolveActionEffect – DISCOVER_CARD', () => {
     };
     const [resolved] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
     expect(resolved.instanceIds).toEqual([5]);
+  });
+
+  it('does not force DISCOVERY scope if a different scope is specified', () => {
+    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 6, cardId: 1, stateId: 1 });
+    const gs = makeState({ discoveryPile: [5, 6], instances: { 5: inst, 6: inst2 } });
+    const effect = {
+      id: 1,
+      type: ActionEffectType.DISCOVER_CARD,
+      cards: { scope: [TargetScope.TOP_OF_DISCOVERY], pickNumber: 2 },
+    };
+    const [resolved] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
+    expect(resolved.instanceIds).toEqual([5, 6]);
   });
 });
 
@@ -777,6 +804,16 @@ describe('resolveActionEffect – accumulated', () => {
     };
     const [resolved] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
     expect(resolved.value).toEqual(1);
+  });
+
+  it('keeps value when set to 0', () => {
+    const effect = {
+      id: 1,
+      type: ActionEffectType.SET_CUMULATED,
+      value: 0,
+    };
+    const [resolved] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
+    expect(resolved.value).toBe(0);
   });
 });
 

@@ -518,17 +518,6 @@ export class GameAggregate {
     return this.finalizeCurrentCardAction(this.currentCardAction);
   }
 
-  private actionEnd(): GameState {
-    if (
-      this.gameState.phase === Phase.ROUND_END &&
-      Object.keys(this.gameState.triggerPile).length === 0
-    ) {
-      return this.roundEnded();
-    }
-
-    return this.gameState;
-  }
-
   private finalizeCurrentCardAction(currentCardAction: CardActionAggregate): GameState {
     const newGameState = currentCardAction.getGameState();
     const sourceInstanceId = currentCardAction.getSourceInstanceId();
@@ -587,8 +576,6 @@ export class GameAggregate {
       this.events.push(event);
     }
 
-    this.actionEnd();
-
     return this.gameState;
   }
 
@@ -606,8 +593,6 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
-
-    this.actionEnd();
 
     return this.gameState;
   }

@@ -6,6 +6,7 @@ export type PendingChoice = {
   id: string;
   actionId?: string;
   effectId?: number;
+  sourceStepId?: number;
   kind: ActionEffectType;
   type: PendingChoiceType;
   sourceInstanceId: number;

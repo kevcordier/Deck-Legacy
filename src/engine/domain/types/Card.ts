@@ -108,6 +108,7 @@ export type ActionEffect = {
     pickMin?: number;
     pickMax?: number;
   };
+  sourceStepId?: number;
 };
 
 export type Passive = {
@@ -152,6 +153,7 @@ export type CardSelector = {
   ids?: number[];
   tags?: CardTag[];
   scope?: TargetScope[];
+  lastSelectedIds?: number[];
   name?: string;
   label?: string;
   produces?: ResourceType[];

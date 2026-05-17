@@ -255,6 +255,10 @@ export function GameProvider({
     sync(aggRef.current.roundEnded());
   };
 
+  const startRound = () => {
+    sync(aggRef.current.roundStarted());
+  };
+
   const startTurn = () => {
     sync(aggRef.current.turnStarted());
   };
@@ -645,6 +649,7 @@ export function GameProvider({
         startGame,
         startTutorial,
         endRound,
+        startRound,
         startTurn,
         chooseState,
         resolveProduction,

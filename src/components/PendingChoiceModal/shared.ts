@@ -2,13 +2,12 @@ import type { PendingChoiceType } from '@engine/domain/enums';
 import type {
   CardDef,
   CardInstance,
-  CardState,
   PendingChoice,
   ResolvedActionEffect,
   ResolvedCost,
   Sticker,
 } from '@engine/domain/types';
-import { tCardActionLabel, tCardEffectLabel } from '@helpers/cardI18n';
+import { tCardActionLabel, tCardEffectLabel, tCardTrackAction } from '@helpers/cardI18n';
 import type { TFunction } from 'i18next';
 import type { ReactNode } from 'react';
 
@@ -51,6 +50,11 @@ export function getChoiceActionLabel(
   const actions = state?.actions;
   if (!actions || !def || !state) return { value: null };
 
+  if (choice.sourceStepId !== undefined) {
+    const stepLabel = tCardTrackAction(t, def.id, state.id, choice.sourceStepId);
+    return { value: stepLabel ?? null };
+  }
+
   if (choice.actionId && choice.effectId !== undefined) {
     const effectKey = `${choice.actionId}_${choice.effectId}`;
     if (t(`effect.${effectKey}`, { ns: 'cards' }) !== `effect.${effectKey}`) {
@@ -65,23 +69,6 @@ export function getChoiceActionLabel(
   );
   if (!action) return { value: null };
   return { value: tCardActionLabel(t, action.id, inst.cumulated) ?? null };
-}
-
-export function makePreviewInstance(
-  instanceId: number,
-  def: CardDef,
-  state: CardState,
-): CardInstance {
-  return {
-    id: instanceId,
-    cardId: def.id,
-    stateId: state.id,
-    stickers: {},
-    trackProgress: [],
-    cumulated: 0,
-    usedActionIds: [],
-    glories: [],
-  };
 }
 
 export function buildCardCostResolution(

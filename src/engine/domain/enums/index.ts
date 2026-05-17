@@ -119,6 +119,7 @@ export enum TargetScope {
   TOP_OF_DISCOVERY = 'top_of_discovery',
   DRAWN = 'drawn',
   DISCARDED = 'discarded',
+  LAST_SELECTED = 'last_selected',
   TRIGGER_SOURCE = 'trigger_source',
   UPGRADABLE = 'upgradable',
   WITH_TRACK = 'with_track',

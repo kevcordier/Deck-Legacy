@@ -25,6 +25,7 @@ export type GameContextType = {
   startTutorial: () => void;
   startGame: () => void;
   endRound: () => void;
+  startRound: () => void;
   startTurn: () => void;
   chooseState: (instanceId: number, stateId: number) => void;
   resolveProduction: (instanceId: number, chosenResource: number) => void;

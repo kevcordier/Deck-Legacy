@@ -1,4 +1,4 @@
-import { type ChoiceSectionProps, makePreviewInstance } from './shared';
+import { type ChoiceSectionProps } from './shared';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,16 @@ export function ChooseStateSection(props: Readonly<ChoiceSectionProps>) {
         return (
           <div key={stateId} className="flex flex-col items-stretch gap-2 p-2 @container min-w-60">
             <GameCard
-              instance={makePreviewInstance(choice.sourceInstanceId, cardDef, state)}
+              instance={{
+                id: choice.sourceInstanceId,
+                cardId: cardDef.id,
+                stateId: state.id,
+                stickers: {},
+                trackProgress: [],
+                cumulated: 0,
+                usedActionIds: [],
+                glories: [],
+              }}
               hideStatePreview
               className={`relative`}
             />

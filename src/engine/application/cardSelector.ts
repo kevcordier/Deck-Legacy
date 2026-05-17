@@ -154,6 +154,9 @@ export function cardSelector(
   if (ids && scope.length === 1 && scope.includes(TargetScope.ANY)) return ids;
   if (scope.length === 1 && scope.includes(TargetScope.SELF)) return [instanceId];
   if (scope.length === 1 && scope.includes(TargetScope.TRIGGER_SOURCE)) return [instanceId];
+  if (scope.length === 1 && scope.includes(TargetScope.LAST_SELECTED)) {
+    return selector.lastSelectedIds ?? [];
+  }
   if (scope.includes(TargetScope.TOP_OF_DECK)) {
     return [gameState.drawPile[0]].filter(Boolean);
   }
@@ -162,7 +165,7 @@ export function cardSelector(
     return [topDiscard].filter(Boolean);
   }
   if (scope.includes(TargetScope.TOP_OF_DISCOVERY)) {
-    return [gameState.discoveryPile[0]].filter(Boolean);
+    return gameState.discoveryPile.slice(0, selector.pickNumber ?? 1);
   }
 
   const blockedEffect = getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK);
