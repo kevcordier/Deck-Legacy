@@ -85,7 +85,7 @@ export function Header() {
               color="danger"
               size="xs"
             >
-              ↩
+              ↩︎
             </Button>
           )}
           <GamePhaseActions
@@ -110,7 +110,7 @@ export function Header() {
           size="xs"
           title={t('header.options')}
         >
-          ⚙
+          ⚙︎
         </Button>
       </div>
     </header>

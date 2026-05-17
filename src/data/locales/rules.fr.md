@@ -22,7 +22,7 @@ Cliquez sur **Nouvelle partie** pour mélanger votre deck de départ et lancer l
 
 Au début de chaque nouvelle manche (à partir de la manche 2), **2 nouvelles cartes** sont ajoutées à votre deck depuis la pile de découverte. Si la prochaine carte est une **carte parchemin**, elle applique immédiatement son effet et est détruite.
 
-L'écran **Aperçu de manche** affiche les cartes tout juste ajoutées avant le premier tour — cliquez sur **▶ Commencer la manche** pour continuer.
+L'écran **Aperçu de manche** affiche les cartes tout juste ajoutées avant le premier tour — cliquez sur **▶︎ Commencer la manche** pour continuer.
 
 ### En jeu
 
@@ -129,7 +129,7 @@ Certaines cartes déclenchent des effets automatiquement lorsqu'elles sont tiré
 
 ## Annuler
 
-Le **bouton ↩** (en haut à droite) permet d'annuler la dernière action. Utilisez-le pour corriger une erreur avant de terminer votre tour.
+Le **bouton ↩︎** (en haut à droite) permet d'annuler la dernière action. Utilisez-le pour corriger une erreur avant de terminer votre tour.
 
 ---
 

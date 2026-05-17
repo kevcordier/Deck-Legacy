@@ -32,30 +32,30 @@
     "options": "Options"
   },
   "pregame": {
-    "startNew": "⚜ Start",
+    "startNew": "⚜︎ Start",
     "readyToPlay": "Ready to play",
     "deckShuffled": "Deck of {{count}} shuffled cards",
-    "startGame": "▶ Start game",
+    "startGame": "▶︎ Start game",
     "viewRules": "View rules",
     "tutorial": "Enable tutorial"
   },
   "preround": {
     "roundEnded": "Round {{round}} ended",
-    "newRound": "▶ New round"
+    "newRound": "▶︎ New round"
   },
   "roundpreview": {
     "title": "Round {{round}}",
     "subtitle": "Here are the new cards discovered for this round.",
-    "start": "▶ Start round",
+    "start": "▶︎ Start round",
     "switchState": "Change side"
   },
   "endturn": {
     "title": "Turn {{turn}}",
-    "start": "▶ Start turn"
+    "start": "▶︎ Start turn"
   },
   "endround": {
     "title": "Round {{round}}",
-    "end": "▶ End round"
+    "end": "▶︎ End round"
   },
   "sections": {
     "permanents": "Permanents",

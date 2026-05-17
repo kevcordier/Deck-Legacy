@@ -22,7 +22,7 @@ Click **New game** to shuffle your starting deck and enter the game.
 
 At the start of each new round (from round 2 onwards), **2 new cards** are added to your deck from the discovery pile. If the next card is a **parchment card**, it immediately applies its effect and is destroyed.
 
-The **Round Preview** screen shows which cards were just added before the first turn begins — click **▶ Start round** to continue.
+The **Round Preview** screen shows which cards were just added before the first turn begins — click **▶︎ Start round** to continue.
 
 ### Playing
 
@@ -129,7 +129,7 @@ Some cards trigger effects automatically when drawn or discovered. When **multip
 
 ## Undo
 
-The **↩ button** (top-right) lets you undo the last action. Use it to correct mistakes before ending your turn.
+The **↩︎ button** (top-right) lets you undo the last action. Use it to correct mistakes before ending your turn.
 
 ---
 

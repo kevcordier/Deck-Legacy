@@ -32,30 +32,30 @@
     "options": "Options"
   },
   "pregame": {
-    "startNew": "⚜ Commencer",
+    "startNew": "⚜︎ Commencer",
     "readyToPlay": "Prêt à jouer",
     "deckShuffled": "Deck de {{count}} cartes mélangées",
-    "startGame": "▶ Démarrer la partie",
+    "startGame": "▶︎ Démarrer la partie",
     "viewRules": "Voir les règles",
     "tutorial": "Activer le tutoriel"
   },
   "preround": {
     "roundEnded": "Manche {{round}} terminée",
-    "newRound": "▶ Nouvelle manche"
+    "newRound": "▶︎ Nouvelle manche"
   },
   "roundpreview": {
     "title": "Manche {{round}}",
     "subtitle": "Voici les nouvelles cartes découvertes pour cette manche.",
-    "start": "▶ Commencer la manche",
+    "start": "▶︎ Commencer la manche",
     "switchState": "Changer de côté"
   },
   "endturn": {
     "title": "Tour {{turn}}",
-    "start": "▶ Commencer le tour"
+    "start": "▶︎ Commencer le tour"
   },
   "endround": {
     "title": "Manche {{round}}",
-    "end": "▶ Terminer la manche"
+    "end": "▶︎ Terminer la manche"
   },
   "sections": {
     "permanents": "Permanentes",

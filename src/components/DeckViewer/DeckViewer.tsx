@@ -65,8 +65,8 @@ export function DeckViewer({
     );
   };
 
-  const openIcon = isLeft ? '▶' : '◀';
-  const closeIcon = isLeft ? '◀' : '▶';
+  const openIcon = isLeft ? '▶︎' : '◀︎';
+  const closeIcon = isLeft ? '◀︎' : '▶︎';
 
   const elementClass = 'hidden @min-[10rem]/section:inline-flex';
 

@@ -93,7 +93,7 @@ export function GameBoard() {
         </div>
 
         <div
-          className={`${pinnedLeft ? '' : 'lg:pl-15'} ${pinnedRight ? '' : 'lg:pr-15'} flex-1 h-full relative scrollbar `}
+          className={`${pinnedLeft ? '' : 'lg:ml-15'} ${pinnedRight ? '' : 'lg:mr-15'} flex-1 h-full relative scrollbar `}
         >
           <MainBoard />
         </div>
@@ -139,7 +139,7 @@ export function GameBoard() {
       <CheatPanel />
 
       {/* Mobile action bar */}
-      <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t px-2 pt-2 pb-[max(1rem,env(safe-area-inset-bottom))] lg:hidden">
+      <nav className="bg-background border-t-border z-50 flex items-center justify-between gap-1 border-t p-2 lg:hidden">
         <Button
           onClick={() => {
             setOpenSheet('draw');
