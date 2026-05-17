@@ -27,7 +27,7 @@ export const missionary: CardDef = {
               type: ActionEffectType.UPGRADE_CARD,
               cards: {
                 scope: [TargetScope.BOARD],
-                ids: [14, 16, 60, 64],
+                tags: [CardTag.BANDIT],
               },
               states: { ids: [2] },
             },

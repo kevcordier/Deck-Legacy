@@ -14,7 +14,7 @@ export const bandit: CardDef = {
     {
       id: 1,
       name: 'Bandit',
-      tags: [CardTag.ENEMY],
+      tags: [CardTag.ENEMY, CardTag.BANDIT],
       negative: true,
       glory: { amount: -2 },
       illustration:

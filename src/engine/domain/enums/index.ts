@@ -2,6 +2,7 @@ export enum CardTag {
   ARTIFACT = 'artifact',
   LAND = 'land',
   BUILDING = 'building',
+  BANDIT = 'bandit',
   PERSON = 'person',
   EVENT = 'event',
   ENEMY = 'enemy',
