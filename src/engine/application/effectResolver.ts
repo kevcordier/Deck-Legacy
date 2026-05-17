@@ -462,17 +462,6 @@ function getEnrichedCardSelector(
   if (action.type === ActionEffectType.DISCOVER_CARD && !action.cards.scope?.length) {
     return { ...action.cards, lastSelectedIds, scope: [TargetScope.DISCOVERY] };
   }
-  if (
-    action.type === ActionEffectType.UPGRADE_CARD &&
-    !action.cards.scope?.includes(TargetScope.SELF) &&
-    !action.cards.ids
-  ) {
-    return {
-      ...action.cards,
-      lastSelectedIds,
-      scope: [...(action.cards.scope ?? []), TargetScope.BOARD, TargetScope.UPGRADABLE],
-    };
-  }
   return { ...action.cards, lastSelectedIds };
 }
 

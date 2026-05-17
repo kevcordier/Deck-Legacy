@@ -20,7 +20,7 @@ export const smallSchool: CardDef = {
               id: 1,
               type: ActionEffectType.UPGRADE_CARD,
               cards: {
-                scope: [TargetScope.BOARD],
+                scope: [TargetScope.BOARD, TargetScope.UPGRADABLE],
                 tags: [CardTag.PERSON],
               },
             },
@@ -51,7 +51,7 @@ export const smallSchool: CardDef = {
               id: 1,
               type: ActionEffectType.UPGRADE_CARD,
               cards: {
-                scope: [TargetScope.BOARD],
+                scope: [TargetScope.BOARD, TargetScope.UPGRADABLE],
                 tags: [CardTag.PERSON],
               },
             },

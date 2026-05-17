@@ -21,7 +21,7 @@ export const priest: CardDef = {
               type: ActionEffectType.UPGRADE_CARD,
               payingCost: true,
               cards: {
-                scope: [TargetScope.BOARD],
+                scope: [TargetScope.BOARD, TargetScope.UPGRADABLE],
                 pickNumber: 1,
               },
             },
@@ -58,7 +58,7 @@ export const priest: CardDef = {
               type: ActionEffectType.UPGRADE_CARD,
               payingCost: true,
               cards: {
-                scope: [TargetScope.BOARD],
+                scope: [TargetScope.BOARD, TargetScope.UPGRADABLE],
                 pickNumber: 1,
               },
             },

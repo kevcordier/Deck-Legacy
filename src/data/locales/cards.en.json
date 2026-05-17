@@ -650,6 +650,7 @@
   "tags": {
     "artifact": "Artifact",
     "building": "Building",
+    "bandit": "Bandit",
     "elder": "Elder",
     "enemy": "Enemy",
     "event": "Event",
