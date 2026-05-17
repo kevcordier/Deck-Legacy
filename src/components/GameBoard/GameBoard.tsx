@@ -21,7 +21,7 @@ export function GameBoard() {
     progress,
     endTurnVoluntary,
     startTurn,
-    startRound,
+    endRound,
     pendingChoices,
     triggerPile,
     resolveAction,
@@ -193,7 +193,7 @@ export function GameBoard() {
         {(gameState.phase === Phase.ROUND_END ||
           (gameState.phase === Phase.TURN_END && gameState.drawPile.length === 0)) && (
           <div className="flex items-center gap-1">
-            <Button onClick={startRound} variant="outlined" size="sm">
+            <Button onClick={endRound} variant="outlined" size="sm">
               {t('endround.end')}
             </Button>
           </div>

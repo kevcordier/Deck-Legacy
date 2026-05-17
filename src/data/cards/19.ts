@@ -55,7 +55,7 @@ export const exportation: CardDef = {
         },
       ],
       track: {
-        inOrder: false,
+        inOrder: true,
         vertical: true,
         inverse: true,
         steps: [

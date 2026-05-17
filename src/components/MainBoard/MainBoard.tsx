@@ -77,7 +77,7 @@ export function MainBoard() {
     gameState,
     startTurn,
     endTurnVoluntary,
-    startRound,
+    endRound,
     chooseState,
     displayNewCards,
     setDisplayNewCards,
@@ -135,7 +135,7 @@ export function MainBoard() {
         <EmptyState
           title={t('endround.title', { round: gameState.round })}
           action={
-            <Button onClick={startRound} color="primary" size="md">
+            <Button onClick={endRound} color="primary" size="md">
               {t('endround.end')}
             </Button>
           }

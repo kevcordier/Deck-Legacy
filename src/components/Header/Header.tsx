@@ -15,7 +15,7 @@ export function Header() {
     progress,
     endTurnVoluntary,
     startTurn,
-    startRound,
+    endRound,
     rewindEvent,
     canRewind,
     pendingChoices,
@@ -134,7 +134,7 @@ export function Header() {
           {(gameState.phase === Phase.ROUND_END ||
             (gameState.phase === Phase.TURN_END && gameState.drawPile.length === 0)) && (
             <div className="items-center gap-2 hidden lg:flex">
-              <Button onClick={startRound} variant="outlined" size="xs">
+              <Button onClick={endRound} variant="outlined" size="xs">
                 {t('endround.end')}
               </Button>
             </div>

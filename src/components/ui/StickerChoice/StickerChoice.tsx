@@ -7,6 +7,7 @@ interface StickerChoiceProps {
   readonly disabled?: boolean;
   readonly onSelect: (stickerIds: number[]) => void;
   readonly className?: string;
+  readonly stickerClassName?: string;
 }
 
 export function StickerChoice({
@@ -14,6 +15,7 @@ export function StickerChoice({
   disabled = false,
   onSelect,
   className,
+  stickerClassName,
 }: StickerChoiceProps) {
   return (
     <div className={`flex items-center gap-2 p-2 flex-wrap justify-center ${className}`}>
@@ -26,7 +28,7 @@ export function StickerChoice({
             disabled={disabled}
             className="transition-transform hover:scale-[1.02]"
           >
-            <StickerDisplay sticker={sticker} />
+            <StickerDisplay sticker={sticker} className={stickerClassName} />
           </Button>
         );
       })}

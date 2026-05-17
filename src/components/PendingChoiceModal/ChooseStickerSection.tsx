@@ -10,7 +10,7 @@ export function ChooseStickerSection(props: Readonly<ChoiceSectionProps>) {
         .filter((candidate): candidate is number => typeof candidate === 'number')
         .map(id => stickerDefs[id])
         .filter(Boolean)}
-      className="size-7 text-xs"
+      stickerClassName="size-10 text-xs"
       onSelect={stickerIds =>
         resolvePlayerChoice(
           {

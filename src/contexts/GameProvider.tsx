@@ -251,8 +251,8 @@ export function GameProvider({
     sync(newState);
   };
 
-  const startRound = () => {
-    sync(aggRef.current.roundStarted());
+  const endRound = () => {
+    sync(aggRef.current.roundEnded());
   };
 
   const startTurn = () => {
@@ -644,7 +644,7 @@ export function GameProvider({
         deleteSave: deleteSaveCallback,
         startGame,
         startTutorial,
-        startRound,
+        endRound,
         startTurn,
         chooseState,
         resolveProduction,

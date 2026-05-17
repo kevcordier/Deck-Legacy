@@ -237,7 +237,7 @@ When adding new action types, add a new strategy file and register it in `CardAc
 `src/hooks/useGame.ts` is the single integration point between the engine and React UI. It exposes game state and ~15 action methods:
 
 ```typescript
-startGame()  startRound()  startTurn()
+startGame()  endRound()  startTurn()
 resolveProduction(instanceId, chosenResource?)
 resolveAction(instanceId, actionId)
 resolveUpgrade(instanceId, chosenUpgradeTo?)
