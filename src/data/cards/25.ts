@@ -56,7 +56,7 @@ export const engineer: CardDef = {
           cost: {
             destroy: {
               scope: [TargetScope.BOARD],
-              name: 'Fishing Boats',
+              name: 'Fishing Boat',
             },
           },
           actionEffects: [
