@@ -687,6 +687,74 @@ describe('canAffordCardCost', () => {
     const gs = makeState({ board: [], instances: { 2: inst } });
     expect(canAffordCost({ discard: [{ ids: [2] }] }, 99, gs, defs, makeStickerDefs())).toBe(false);
   });
+
+  it('returns true when resource equivalence makes a cost affordable', () => {
+    const sourceInstanceId = 85;
+    const gs = makeState({
+      board: [sourceInstanceId],
+      resources: { goods: 1 },
+      boardEffects: {
+        [sourceInstanceId]: [
+          {
+            id: '85-4-1',
+            type: PassiveType.RESOURCE_EQUIVALENCE,
+            resources: { wood: 1, goods: 1 },
+          },
+        ],
+      },
+    });
+
+    expect(
+      canAffordCost({ resources: [{ wood: 1 }] }, sourceInstanceId, gs, defs, makeStickerDefs()),
+    ).toBe(true);
+  });
+
+  it('returns true when equivalence passive is present, regardless of cards selector', () => {
+    const sourceInstanceId = 85;
+    const gs = makeState({
+      resources: { goods: 1 },
+      boardEffects: {
+        [sourceInstanceId]: [
+          {
+            id: '85-4-1',
+            type: PassiveType.RESOURCE_EQUIVALENCE,
+            resources: { wood: 1, goods: 1 },
+          },
+        ],
+      },
+    });
+
+    expect(
+      canAffordCost({ resources: [{ wood: 1 }] }, sourceInstanceId, gs, defs, makeStickerDefs()),
+    ).toBe(true);
+  });
+
+  it('returns true when equivalence passive comes from another in-play source and targets the payer', () => {
+    const payerInstanceId = 42;
+    const passiveSourceId = 85;
+    const gs = makeState({
+      board: [payerInstanceId, passiveSourceId],
+      resources: { goods: 1 },
+      instances: {
+        [payerInstanceId]: makeInstance({ id: payerInstanceId, cardId: 1, stateId: 1 }),
+        [passiveSourceId]: makeInstance({ id: passiveSourceId, cardId: 1, stateId: 1 }),
+      },
+      boardEffects: {
+        [passiveSourceId]: [
+          {
+            id: '85-4-1',
+            type: PassiveType.RESOURCE_EQUIVALENCE,
+            resources: { wood: 1, goods: 1 },
+            cards: { scope: [TargetScope.BOARD, TargetScope.PERMANENTS] },
+          },
+        ],
+      },
+    });
+
+    expect(
+      canAffordCost({ resources: [{ wood: 1 }] }, payerInstanceId, gs, defs, makeStickerDefs()),
+    ).toBe(true);
+  });
 });
 
 // ─── cardShouldStayInPlay ─────────────────────────────────────────────────────
@@ -1665,6 +1733,23 @@ describe('canAffordTrackAdvanceCost', () => {
     const action = {
       id: 'a1',
       actionEffects: [{ id: 0, type: ActionEffectType.TRACK_ADVANCE, cards: { ids: [1] } }],
+    };
+    expect(canAffordTrackAdvanceCost(action, inst, gs, trackDefs, {})).toBe(true);
+  });
+
+  it('returns true when first available step cost cannot be afforded but TRACK_ADVANCE is non-paying', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 1: inst }, resources: { gold: 0 } });
+    const action = {
+      id: 'a1',
+      actionEffects: [
+        {
+          id: 0,
+          type: ActionEffectType.TRACK_ADVANCE,
+          payingCost: false,
+          cards: { ids: [1] },
+        },
+      ],
     };
     expect(canAffordTrackAdvanceCost(action, inst, gs, trackDefs, {})).toBe(true);
   });

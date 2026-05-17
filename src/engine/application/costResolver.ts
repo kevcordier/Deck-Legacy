@@ -1,5 +1,10 @@
 import { cardSelector } from '@engine/application/cardSelector';
 import { getPickNumbers } from '@engine/application/effectResolver';
+import {
+  dedupeResourceOptions,
+  getPayableResourceCostVariants,
+  getSourceResourceEquivalence,
+} from '@engine/application/resourceEquivalence';
 import { ActionEffectType, PendingChoiceType, TargetScope } from '@engine/domain/enums';
 import { CostResolutionError } from '@engine/domain/errors/CostResolutionError';
 import type {
@@ -8,6 +13,7 @@ import type {
   GameState,
   PendingChoice,
   ResolvedCost,
+  Resources,
   Sticker,
 } from '@engine/domain/types';
 
@@ -21,6 +27,35 @@ function canAffordResourceCost(
   );
 }
 
+function getPayableResourceCosts(
+  cost: Cost,
+  equivalenceSourceInstanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): Resources[] {
+  if (!cost.resources) return [];
+
+  const equivalence = getSourceResourceEquivalence(
+    equivalenceSourceInstanceId,
+    gameState,
+    defs,
+    stickerDefs,
+  );
+
+  if (!equivalence) {
+    return cost.resources.filter(resourceCost =>
+      canAffordResourceCost(gameState.resources, resourceCost),
+    );
+  }
+
+  return dedupeResourceOptions(
+    cost.resources.flatMap(resourceCost =>
+      getPayableResourceCostVariants(resourceCost, gameState.resources, equivalence),
+    ),
+  );
+}
+
 export function resolveCost(
   cost: Cost,
   instanceId: number,
@@ -28,6 +63,7 @@ export function resolveCost(
   defs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
   isMandatory = false,
+  equivalenceSourceInstanceId = instanceId,
 ): [ResolvedCost, PendingChoice[]] {
   const pendingChoices: PendingChoice[] = [];
   const resolvedCost: ResolvedCost = {
@@ -37,8 +73,12 @@ export function resolveCost(
   };
 
   if (cost.resources) {
-    const payableResourceCosts = cost.resources.filter(resourceCost =>
-      canAffordResourceCost(gameState.resources, resourceCost),
+    const payableResourceCosts = getPayableResourceCosts(
+      cost,
+      equivalenceSourceInstanceId,
+      gameState,
+      defs,
+      stickerDefs,
     );
 
     if (payableResourceCosts.length === 0) {

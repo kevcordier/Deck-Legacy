@@ -29,7 +29,6 @@ export const skilledBandit2: CardDef = {
               type: ActionEffectType.BLOCK_CARD,
               cards: {
                 scope: [TargetScope.BOARD],
-                tags: [CardTag.BUILDING, CardTag.LAND],
                 produces: [
                   ResourceType.GOLD,
                   ResourceType.WOOD,

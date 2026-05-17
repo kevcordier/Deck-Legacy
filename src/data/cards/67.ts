@@ -29,36 +29,78 @@ export const cooperation: CardDef = {
               id: 1,
               type: ActionEffectType.ADD_RESOURCES,
               resources: {
-                gold: 1,
-                wood: 1,
-                stone: 1,
-                iron: 1,
-                weapon: 1,
-                goods: 1,
+                choice: [
+                  {
+                    gold: 1,
+                  },
+                  {
+                    wood: 1,
+                  },
+                  {
+                    stone: 1,
+                  },
+                  {
+                    iron: 1,
+                  },
+                  {
+                    weapon: 1,
+                  },
+                  {
+                    goods: 1,
+                  },
+                ],
               },
             },
             {
               id: 2,
               type: ActionEffectType.ADD_RESOURCES,
               resources: {
-                gold: 1,
-                wood: 1,
-                stone: 1,
-                iron: 1,
-                weapon: 1,
-                goods: 1,
+                choice: [
+                  {
+                    gold: 1,
+                  },
+                  {
+                    wood: 1,
+                  },
+                  {
+                    stone: 1,
+                  },
+                  {
+                    iron: 1,
+                  },
+                  {
+                    weapon: 1,
+                  },
+                  {
+                    goods: 1,
+                  },
+                ],
               },
             },
             {
               id: 3,
               type: ActionEffectType.ADD_RESOURCES,
               resources: {
-                gold: 1,
-                wood: 1,
-                stone: 1,
-                iron: 1,
-                weapon: 1,
-                goods: 1,
+                choice: [
+                  {
+                    gold: 1,
+                  },
+                  {
+                    wood: 1,
+                  },
+                  {
+                    stone: 1,
+                  },
+                  {
+                    iron: 1,
+                  },
+                  {
+                    weapon: 1,
+                  },
+                  {
+                    goods: 1,
+                  },
+                ],
               },
             },
             {
@@ -88,12 +130,26 @@ export const cooperation: CardDef = {
               id: 1,
               type: ActionEffectType.ADD_RESOURCES,
               resources: {
-                gold: 1,
-                wood: 1,
-                stone: 1,
-                iron: 1,
-                weapon: 1,
-                goods: 1,
+                choice: [
+                  {
+                    gold: 1,
+                  },
+                  {
+                    wood: 1,
+                  },
+                  {
+                    stone: 1,
+                  },
+                  {
+                    iron: 1,
+                  },
+                  {
+                    weapon: 1,
+                  },
+                  {
+                    goods: 1,
+                  },
+                ],
               },
             },
             {

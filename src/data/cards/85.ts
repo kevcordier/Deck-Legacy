@@ -1,10 +1,4 @@
-import {
-  ActionEffectType,
-  CardTag,
-  PassiveType,
-  ResourceType,
-  TargetScope,
-} from '@engine/domain/enums';
+import { ActionEffectType, CardTag, PassiveType, ResourceType } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import { CardPassives } from '@engine/domain/types/effects';
 
@@ -82,14 +76,11 @@ export const sawMill: CardDef = {
       passives: [
         CardPassives[PassiveType.STAY_IN_PLAY],
         {
-          id: '85-4-p1',
+          id: '85-4-1',
           type: PassiveType.RESOURCE_EQUIVALENCE,
           resources: {
             [ResourceType.WOOD]: 1,
             [ResourceType.GOODS]: 1,
-          },
-          cards: {
-            scope: [TargetScope.SELF],
           },
         },
       ],

@@ -5,6 +5,7 @@ import { CardPassives } from '@engine/domain/types/effects';
 export const unknown: CardDef = {
   id: 77,
   name: 'Unknown',
+  chooseState: [1, 2],
   states: [
     {
       id: 1,

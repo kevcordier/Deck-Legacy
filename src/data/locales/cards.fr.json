@@ -315,7 +315,7 @@
     "74-2-1": "Les Bâtiments ont +1 de production {{gold}}.",
     "79-2-1": "Quand vous progressez, jouez 2 cartes supplémentaires.",
     "81-3-1": "Quand vous défaussez une personne, vous pouvez réinitialiser celle-ci à la place.",
-    "85-4-2": "{{wood}} et {{goods}} peuvent être utilisés de manière interchangeable.",
+    "85-4-1": "{{wood}} et {{goods}} peuvent être utilisés de manière interchangeable.",
     "87-4-1": "Chaque carte Maritime a +{{gold}} de production."
   },
   "tracks": {

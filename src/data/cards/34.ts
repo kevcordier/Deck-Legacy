@@ -68,7 +68,7 @@ export const mason: CardDef = {
         {
           id: '34-2-1',
           endsTurn: true,
-          limitedTime: 2,
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,
@@ -118,7 +118,7 @@ export const mason: CardDef = {
         {
           id: '34-3-1',
           endsTurn: true,
-          limitedTime: 2,
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,

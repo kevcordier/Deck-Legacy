@@ -145,6 +145,7 @@ export class CardActionAggregate {
       this.cardDefs,
       this.stickerDefs,
       true,
+      resolvedAction.sourceInstanceId,
     );
 
     if (costPendingChoices.length > 0) {
@@ -166,6 +167,7 @@ export class CardActionAggregate {
     effectIndex: number,
   ): 'continue' | 'wait' | 'skip' {
     if (resolvedAction.type !== ActionEffectType.TRACK_ADVANCE) return 'continue';
+    if (resolvedAction.payingCost === false) return 'continue';
 
     const targetId = resolvedAction.instanceIds?.[0];
     if (targetId === undefined) return 'skip';

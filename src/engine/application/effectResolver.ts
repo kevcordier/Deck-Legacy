@@ -499,6 +499,7 @@ export function resolveActionEffect(
   };
 
   if (action.type === ActionEffectType.TRACK_ADVANCE && action.cards) {
+    resolverAction.payingCost = action.payingCost ?? resolverAction.payingCost;
     const trackCards: CardSelector = { ...action.cards, lastSelectedIds };
     const steps = action.steps ?? {};
     if (action.valuePerElement) {

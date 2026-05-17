@@ -129,19 +129,20 @@ export const deepPit: CardDef = {
       actions: [
         {
           id: '74-4-1',
+          cost: {
+            discard: [
+              {
+                scope: [TargetScope.BOARD],
+                tags: [CardTag.ENEMY],
+              },
+            ],
+          },
           actionEffects: [
             {
-              id: 1,
+              id: 2,
               type: ActionEffectType.TRACK_ADVANCE,
               cards: {
                 scope: [TargetScope.SELF],
-              },
-            },
-            {
-              id: 2,
-              type: ActionEffectType.DISCARD_CARD,
-              cards: {
-                tags: [CardTag.ENEMY],
               },
             },
           ],
@@ -152,12 +153,33 @@ export const deepPit: CardDef = {
         steps: [
           {
             id: 4,
+            effects: [
+              {
+                id: 1,
+                type: ActionEffectType.ADD_CUMULATED,
+                value: 1,
+              },
+            ],
           },
           {
             id: 5,
+            effects: [
+              {
+                id: 1,
+                type: ActionEffectType.ADD_CUMULATED,
+                value: 1,
+              },
+            ],
           },
           {
             id: 6,
+            effects: [
+              {
+                id: 1,
+                type: ActionEffectType.ADD_CUMULATED,
+                value: 1,
+              },
+            ],
           },
           {
             id: 7,
@@ -168,6 +190,11 @@ export const deepPit: CardDef = {
                 resources: {
                   [ResourceType.WEAPON]: 1,
                 },
+              },
+              {
+                id: 2,
+                type: ActionEffectType.ADD_CUMULATED,
+                value: 1,
               },
             ],
           },
@@ -181,6 +208,11 @@ export const deepPit: CardDef = {
                   [ResourceType.WEAPON]: 1,
                 },
               },
+              {
+                id: 2,
+                type: ActionEffectType.ADD_CUMULATED,
+                value: 1,
+              },
             ],
           },
           {
@@ -193,6 +225,11 @@ export const deepPit: CardDef = {
                   [ResourceType.GOLD]: 1,
                 },
               },
+              {
+                id: 2,
+                type: ActionEffectType.ADD_CUMULATED,
+                value: 1,
+              },
             ],
           },
           {
@@ -204,6 +241,11 @@ export const deepPit: CardDef = {
                 resources: {
                   [ResourceType.GOLD]: 2,
                 },
+              },
+              {
+                id: 2,
+                type: ActionEffectType.ADD_CUMULATED,
+                value: 1,
               },
             ],
           },

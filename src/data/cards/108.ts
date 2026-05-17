@@ -206,6 +206,9 @@ export const largeTemple: CardDef = {
             {
               id: 1,
               type: ActionEffectType.TRACK_ADVANCE,
+              cards: {
+                scope: [TargetScope.SELF],
+              },
             },
           ],
         },

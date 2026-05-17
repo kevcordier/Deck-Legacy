@@ -108,17 +108,14 @@ export const engineer: CardDef = {
               id: 1,
               type: ActionEffectType.DESTROY_CARD,
               cards: {
-                scope: [
-                  TargetScope.ENEMY,
-                  TargetScope.BOARD,
-                  TargetScope.DISCARD,
-                  TargetScope.PERMANENTS,
-                ],
+                tags: [CardTag.ENEMY],
+                scope: [TargetScope.BOARD, TargetScope.DISCARD, TargetScope.PERMANENTS],
               },
             },
             {
               id: 2,
               type: ActionEffectType.TRACK_ADVANCE,
+              payingCost: false,
               cards: {
                 ids: [25],
               },

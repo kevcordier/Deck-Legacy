@@ -1,6 +1,6 @@
 import { makeInstance, makeState, makeStickerDefs } from './fixtures';
 import { resolveCost } from '@engine/application/costResolver';
-import { TargetScope } from '@engine/domain/enums';
+import { PassiveType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -65,6 +65,116 @@ describe('resolveCost – resources', () => {
         stickerDefs,
       ),
     ).toThrow('errors.cost.notEnoughResources');
+  });
+
+  it('resolves resource cost with equivalence when there is a unique valid payment', () => {
+    const sourceInstanceId = 85;
+    const [resolved, pending] = resolveCost(
+      { resources: [{ wood: 2 }] },
+      sourceInstanceId,
+      makeState({
+        resources: { wood: 1, goods: 1 },
+        boardEffects: {
+          [sourceInstanceId]: [
+            {
+              id: '85-4-1',
+              type: PassiveType.RESOURCE_EQUIVALENCE,
+              resources: { wood: 1, goods: 1 },
+            },
+          ],
+        },
+      }),
+      defs,
+      stickerDefs,
+    );
+
+    expect(resolved.resources).toEqual({ wood: 1, goods: 1 });
+    expect(pending).toHaveLength(0);
+  });
+
+  it('creates a CHOOSE_RESOURCE pending choice when equivalence allows multiple payments', () => {
+    const sourceInstanceId = 85;
+    const [resolved, pending] = resolveCost(
+      { resources: [{ wood: 1 }] },
+      sourceInstanceId,
+      makeState({
+        resources: { wood: 1, goods: 1 },
+        boardEffects: {
+          [sourceInstanceId]: [
+            {
+              id: '85-4-1',
+              type: PassiveType.RESOURCE_EQUIVALENCE,
+              resources: { wood: 1, goods: 1 },
+            },
+          ],
+        },
+      }),
+      defs,
+      stickerDefs,
+    );
+
+    expect(resolved.resources).toEqual({});
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe('choose_resource');
+    expect(pending[0].choices).toContainEqual({ wood: 1 });
+    expect(pending[0].choices).toContainEqual({ goods: 1 });
+  });
+
+  it('throws when resources are still insufficient with equivalence', () => {
+    const sourceInstanceId = 85;
+
+    expect(() =>
+      resolveCost(
+        { resources: [{ wood: 3 }] },
+        sourceInstanceId,
+        makeState({
+          resources: { wood: 1, goods: 1 },
+          boardEffects: {
+            [sourceInstanceId]: [
+              {
+                id: '85-4-1',
+                type: PassiveType.RESOURCE_EQUIVALENCE,
+                resources: { wood: 1, goods: 1 },
+              },
+            ],
+          },
+        }),
+        defs,
+        stickerDefs,
+      ),
+    ).toThrow('errors.cost.notEnoughResources');
+  });
+
+  it('resolves resource cost with equivalence provided by another source in play', () => {
+    const payerInstanceId = 42;
+    const passiveSourceId = 85;
+
+    const [resolved, pending] = resolveCost(
+      { resources: [{ wood: 1 }] },
+      payerInstanceId,
+      makeState({
+        board: [payerInstanceId, passiveSourceId],
+        resources: { goods: 1 },
+        instances: {
+          [payerInstanceId]: makeInstance({ id: payerInstanceId, cardId: 1, stateId: 1 }),
+          [passiveSourceId]: makeInstance({ id: passiveSourceId, cardId: 1, stateId: 1 }),
+        },
+        boardEffects: {
+          [passiveSourceId]: [
+            {
+              id: '85-4-1',
+              type: PassiveType.RESOURCE_EQUIVALENCE,
+              resources: { wood: 1, goods: 1 },
+            },
+          ],
+        },
+      }),
+      defs,
+      stickerDefs,
+    );
+
+    expect(resolved.resources).toEqual({ goods: 1 });
+    expect(pending).toHaveLength(0);
   });
 });
 

@@ -18,7 +18,7 @@ export default function App() {
       </GameUIProvider>
       <Toaster
         toastOptions={{
-          className: 'bg-card! text-ink! border-base-border!',
+          className: 'bg-card! text-base-ink! border-base-border!',
         }}
         position="top-center"
         reverseOrder={false}

@@ -140,8 +140,8 @@
     "47-2-1": "When played, blocks 1 building / land in play.",
     "47-2-2": "End of Round: Destroy the blocked card, if any.",
     "47-2-3": "Spend {{weapon}}{{weapon}} to defeat ({{destroy}}).",
-    "48-1-1": "Destroy the next person you play. If you do, ⬆.",
-    "48-1-2": "Spend {{weapon}}{{weapon}}{{weapon}} to defeat (⬆).",
+    "48-1-1": "Spend {{weapon}}{{weapon}}{{weapon}} to defeat (⬆).",
+    "48-1-2": "Destroy the next person you play. If you do, ⬆.",
     "48-2-1": "When played, blocks 1 building / land in play.",
     "48-2-2": "End of Round: Destroy the blocked card, if any.",
     "48-2-3": "Spend {{weapon}}{{weapon}} to defeat ({{destroy}}).",
@@ -317,7 +317,7 @@
     "74-2-1": "Buildings have +1 {{gold}} production.",
     "79-2-1": "When you advance, play 2 additional cards.",
     "81-3-1": "When discarding a person, you may reset this instead.",
-    "85-4-2": "{{wood}} and {{goods}} may be used interchangeably.",
+    "85-4-1": "{{wood}} and {{goods}} may be used interchangeably.",
     "87-4-1": "Each seafaring card has +{{gold}} production."
   },
   "tracks": {

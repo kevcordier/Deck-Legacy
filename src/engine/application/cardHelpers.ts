@@ -2,6 +2,10 @@ import { cardSelector } from '@engine/application/cardSelector';
 import { countValuePerElement } from '@engine/application/effectResolver';
 import { mergeResources } from '@engine/application/gameStateHelper';
 import {
+  getPayableResourceCostVariants,
+  getSourceResourceEquivalence,
+} from '@engine/application/resourceEquivalence';
+import {
   ActionEffectType,
   PassiveType,
   type ResourceType,
@@ -365,8 +369,26 @@ export function canAffordCost(
   gameState: GameState,
   defs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
+  equivalenceSourceInstanceId = instanceId,
 ): boolean {
-  if (cost?.resources && !canAffordResources(gameState.resources, cost.resources)) return false;
+  if (cost?.resources) {
+    const equivalence = getSourceResourceEquivalence(
+      equivalenceSourceInstanceId,
+      gameState,
+      defs,
+      stickerDefs,
+    );
+
+    const canAffordResourceCostOption = equivalence
+      ? cost.resources.some(
+          resourceCost =>
+            getPayableResourceCostVariants(resourceCost, gameState.resources, equivalence).length >
+            0,
+        )
+      : canAffordResources(gameState.resources, cost.resources);
+
+    if (!canAffordResourceCostOption) return false;
+  }
 
   if (cost?.accumulated && (gameState.instances[instanceId]?.cumulated ?? 0) < cost.accumulated) {
     return false;
@@ -399,22 +421,27 @@ export function canAffordTrackAdvanceCost(
   stickerDefs: Record<number, Sticker>,
 ): boolean {
   const cs = getActiveState(instance, defs);
-  const hasTrackAdvance =
-    action.actionEffects.some(e => e.type === ActionEffectType.TRACK_ADVANCE) && cs?.track;
+  const payableTrackEffects = action.actionEffects.filter(
+    e => e.type === ActionEffectType.TRACK_ADVANCE && e.payingCost !== false,
+  );
+  const hasTrackAdvance = payableTrackEffects.length > 0 && cs?.track;
 
   if (!hasTrackAdvance) return true;
-  const firstTrackStep = getFirstAvailableTrackStep(
-    action.actionEffects,
-    instance.id,
-    gameState,
-    defs,
-    stickerDefs,
-  );
 
-  return (
-    !!firstTrackStep &&
-    canAffordCost(firstTrackStep?.cost, instance.id, gameState, defs, stickerDefs)
-  );
+  return payableTrackEffects.every(trackEffect => {
+    const firstTrackStep = getFirstAvailableTrackStep(
+      [trackEffect],
+      instance.id,
+      gameState,
+      defs,
+      stickerDefs,
+    );
+
+    return (
+      !!firstTrackStep &&
+      canAffordCost(firstTrackStep.cost, instance.id, gameState, defs, stickerDefs)
+    );
+  });
 }
 
 function getBoardEffectTriggersAction(

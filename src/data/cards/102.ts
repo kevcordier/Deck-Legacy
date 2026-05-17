@@ -85,6 +85,8 @@ export const smallSchool: CardDef = {
               cards: {
                 scope: [TargetScope.BOARD],
                 tags: [CardTag.PERSON],
+                pickMin: 1,
+                pickNumber: 1,
               },
               stickers: { ids: [1, 2, 3, 4, 5, 6] },
             },

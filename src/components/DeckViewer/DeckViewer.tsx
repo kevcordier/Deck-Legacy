@@ -142,9 +142,7 @@ export function DeckViewer({
           </p>
         )
       )}
-      {footer && (
-        <div className={`border-t-border mt-auto border-t p-2 ${elementClass}`}>{footer}</div>
-      )}
+      {footer && <div className={`border-t-border mt-auto border-t p-2`}>{footer}</div>}
 
       {modalOpen && (
         <Modal
@@ -172,13 +170,21 @@ export function DeckViewer({
                   value={cardFilter.tag ?? ''}
                   onChange={e => setCardFilter({ ...cardFilter, tag: e.target.value })}
                   options={[
-                    { label: t('cardList.allTags'), value: '' },
-                    ...Object.values(CardTag)
+                    { label: t('cardList.allTags'), value: '' as const },
+                    ...deck
+                      .reduce((acc, inst) => {
+                        const cs = getActiveState(inst, defs);
+                        cs.tags?.forEach(tag => {
+                          if (![CardTag.GOAL].includes(tag) && !acc.includes(tag)) {
+                            acc.push(tag);
+                          }
+                        });
+                        return acc;
+                      }, [] as string[])
                       .map((value: string) => ({
                         label: tCardTag(t, value),
                         value,
                       }))
-                      .filter(option => ![CardTag.GOAL].includes(option.value as CardTag))
                       .sort((a, b) => a.label.localeCompare(b.label)),
                   ]}
                 />

@@ -128,7 +128,9 @@ export function GameBoard() {
                   data-tour="destroyed-button-desktop"
                 >
                   <DestroyIcon className="size-4" />
-                  {t('deckViewer.destroyed')} ({destroyedPile.length})
+                  <span className={`hidden @min-[10rem]/section:inline-flex`}>
+                    {t('deckViewer.destroyed')} ({destroyedPile.length})
+                  </span>
                 </Button>
               ) : null
             }
