@@ -483,9 +483,7 @@ export function GameProvider({
     }
 
     const gameStateChanges = (event as { gameStateChanges?: Partial<GameState> }).gameStateChanges;
-    return (
-      !gameStateChanges || Object.prototype.hasOwnProperty.call(gameStateChanges, 'lastDrawnCards')
-    );
+    return !gameStateChanges || Object.prototype.hasOwnProperty.call(gameStateChanges, 'drawPile');
   };
 
   const canRewind = () => {
