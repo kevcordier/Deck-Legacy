@@ -17,8 +17,7 @@ export const sickness: CardDef = {
       id: 1,
       name: 'Sickness',
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/5a211c23-0280-4b2e-8651-9cecebd9720e/anim=false,width=450,optimized=true/75ABN8H4M4DQQGEGSCM0PY0CV0.jpeg',
+      illustration: 'cards/57_1.jpg',
       negative: true,
       glory: { amount: -8 },
       actions: [
@@ -64,8 +63,7 @@ export const sickness: CardDef = {
       id: 2,
       name: 'Crippled',
       tags: [CardTag.STATE],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/2625fc43-b380-430d-bb5a-50757a03a093/anim=false,width=450,optimized=true/GCW6V2JQD7S95Q4SJEJ3KPN780.jpeg',
+      illustration: 'cards/57_2.jpg',
       permanent: true,
       glory: { amount: -2 },
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
@@ -74,8 +72,7 @@ export const sickness: CardDef = {
       id: 3,
       name: 'Feast',
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/95a499f3-2251-4ec3-a08a-9df9f1255f7f/anim=false,width=450,optimized=true/00157-3751329134.jpeg',
+      illustration: 'cards/57_3.jpg',
       glory: { amount: 2 },
       actions: [
         {

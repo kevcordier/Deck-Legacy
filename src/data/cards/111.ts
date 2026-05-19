@@ -22,8 +22,7 @@ export const ravine: CardDef = {
       id: 1,
       name: 'Ravine',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/0b21b870-c44e-435f-b766-22ffd4ed524e/450x%3Cauto%3E_so',
+      illustration: 'cards/111_1.jpg',
       upgrade: [
         {
           cost: { resources: [{ gold: 2, wood: 2 }] },
@@ -35,8 +34,7 @@ export const ravine: CardDef = {
       id: 2,
       name: 'Chasm',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/15a05f29-8c4e-4a88-87c2-f72dd98b43dc/450x%3Cauto%3E_so',
+      illustration: 'cards/111_2.jpg',
       upgrade: [
         {
           cost: { discard: [{ tags: [CardTag.PERSON], pickNumber: 2 }] },
@@ -48,8 +46,7 @@ export const ravine: CardDef = {
       id: 3,
       name: 'Ancient Ruins',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/338e9817-0f17-4d47-8e9e-c2f7e0f6b3b8/450x%3Cauto%3E_so',
+      illustration: 'cards/111_3.jpg',
       upgrade: [
         {
           cost: { discard: [{ tags: [CardTag.PERSON], pickNumber: 3 }] },
@@ -61,8 +58,7 @@ export const ravine: CardDef = {
       id: 4,
       name: 'Excavation Site',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/bbaf597f-6734-453c-90b3-3425e932621e/450x%3Cauto%3E_so',
+      illustration: 'cards/111_4.jpg',
       productions: [{ gold: 1, goods: 1 }],
       glory: { amount: 0, valuePerElement: { amount: 7, accumulation: true } },
       actions: [

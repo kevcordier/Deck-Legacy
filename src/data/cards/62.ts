@@ -9,8 +9,7 @@ export const shore: CardDef = {
       id: 1,
       name: 'Shore',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c0cd4ecf-2a01-4318-a8f2-513617dbac82/anim=false,width=450,optimized=true/ComfyUI_02607_.jpeg',
+      illustration: 'cards/62_1.jpg',
       productions: [
         {
           gold: 1,
@@ -34,8 +33,7 @@ export const shore: CardDef = {
       id: 2,
       name: 'Shipyard',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f7f1496f-a4e6-41b8-8797-28b320697eda/anim=false,width=450,optimized=true/461951725.jpeg',
+      illustration: 'cards/62_2.jpg',
       glory: { amount: 3 },
       productions: [
         {
@@ -63,8 +61,7 @@ export const shore: CardDef = {
       id: 3,
       name: 'Trade Ship',
       tags: [CardTag.SEAFARING, CardTag.SHIP],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/49b87759-454e-46c6-881e-4d1ca63f1498/anim=false,width=450,optimized=true/123B63DA067F12E1BB8CF819C793D8C36190E322864E922E7A566210F6581FF4.jpeg',
+      illustration: 'cards/62_3.jpg',
       glory: { amount: 6 },
       productions: [
         {
@@ -101,8 +98,7 @@ export const shore: CardDef = {
       id: 4,
       name: 'Trade Route',
       tags: [CardTag.SEAFARING, CardTag.SHIP],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0b2765ee-3bd7-4709-aaed-f28f3c0d9443/anim=false,width=450,optimized=true/02347-3254999818-In%20the%20painting,%20the%20artist%20captures%20a%20breathtaking%20medieval%20scene%20as%20the%20sun%20begins%20its%20descent,%20casting%20a%20warm,%20golden%20glow%20ac.jpeg',
+      illustration: 'cards/62_4.jpg',
       glory: { amount: 13 },
       productions: [
         {

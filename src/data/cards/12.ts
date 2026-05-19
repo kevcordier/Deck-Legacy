@@ -16,8 +16,7 @@ export const eastCliffs: CardDef = {
       id: 1,
       name: 'East Cliffs',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/8ef138b2-913a-4eb8-8318-4556b911a4da/450x%3Cauto%3E_so',
+      illustration: 'cards/12_1.jpg',
       productions: [
         {
           [ResourceType.STONE]: 1,
@@ -52,8 +51,7 @@ export const eastCliffs: CardDef = {
       id: 2,
       name: 'Smithy',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0d3343df-4fde-4eee-b800-8520c07e5694/anim=false,width=450,optimized=true/84BDD954A876ACD8519A0A45EA0BE29BEC7220878410F61AB44D8EF5C0AB5425.jpeg',
+      illustration: 'cards/12_2.jpg',
       productions: [
         {
           [ResourceType.IRON]: 1,
@@ -101,8 +99,7 @@ export const eastCliffs: CardDef = {
       id: 3,
       name: 'Arsenal',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/258b1df4-a27b-44e9-804b-938e4fbbfc2b/anim=false,width=450,optimized=true/1000019686.jpeg',
+      illustration: 'cards/12_3.jpg',
       productions: [
         {
           [ResourceType.IRON]: 1,
@@ -133,8 +130,7 @@ export const eastCliffs: CardDef = {
       id: 4,
       name: 'Wall',
       tags: [CardTag.BUILDING, CardTag.WALL],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7aec4cb2-aa6e-4a92-8e4b-b447573d9cdf/anim=false,width=450,optimized=true/2570720676-1.jpeg',
+      illustration: 'cards/12_4.jpg',
       productions: [
         {
           [ResourceType.WEAPON]: 1,

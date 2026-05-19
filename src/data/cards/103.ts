@@ -9,8 +9,7 @@ export const investor: CardDef = {
       id: 1,
       name: 'Investor',
       tags: [CardTag.PERSON, CardTag.LADY],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/8262fb61-1489-4791-8fba-041bead7481e/450x%3Cauto%3E_so',
+      illustration: 'cards/103_1.jpg',
       actions: [
         {
           id: '103-1-1',
@@ -71,8 +70,7 @@ export const investor: CardDef = {
       id: 2,
       name: 'Investor',
       tags: [CardTag.PERSON, CardTag.LADY],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/582e4d02-ec4e-4ce5-94fe-a0ac9e234996/450x%3Cauto%3E_so',
+      illustration: 'cards/103_2.jpg',
       actions: [
         {
           id: '103-2-1',
@@ -133,8 +131,7 @@ export const investor: CardDef = {
       id: 3,
       name: 'Investor',
       tags: [CardTag.PERSON, CardTag.LADY],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/1ee21262-c2a2-4b03-b41f-c733051fb9eb/450x%3Cauto%3E_so',
+      illustration: 'cards/103_3.jpg',
       actions: [
         {
           id: '103-3-1',
@@ -195,8 +192,7 @@ export const investor: CardDef = {
       id: 4,
       name: 'Investor',
       tags: [CardTag.PERSON, CardTag.LADY],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/847b1588-84fc-4562-8459-f9e4ab3ca56d/450x%3Cauto%3E_so',
+      illustration: 'cards/103_4.jpg',
       actions: [
         {
           id: '103-4-1',

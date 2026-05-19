@@ -28,8 +28,7 @@ export const kingAlahar: CardDef = {
     {
       id: 1,
       name: 'King Alahar',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/6f87e9a0-61e5-474d-9e40-7bcb72417641/450x%3Cauto%3E_so',
+      illustration: 'cards/104_1.jpg',
       tags: [CardTag.PERSON],
       glory: { amount: -5 },
       productions: [{ [ResourceType.WEAPON]: 2 }],
@@ -39,8 +38,7 @@ export const kingAlahar: CardDef = {
       id: 2,
       name: 'Queen Jemimah',
       tags: [CardTag.PERSON, CardTag.LADY],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/ece793b2-eb9a-4bc0-aa46-500006bd3bcf/450x%3Cauto%3E_so',
+      illustration: 'cards/104_2.jpg',
       glory: {
         amount: 0,
         valuePerElement: {

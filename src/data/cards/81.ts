@@ -15,8 +15,7 @@ export const alchemist: CardDef = {
     {
       id: 1,
       name: 'Alchemist',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/854c1bce-03e5-4da3-ba20-4723eeee2863/anim=false,width=450,optimized=true/76490C94706CDDCC2B465B442DEA62AC5350799B4B243728BAF049F9B08D93E6.jpeg',
+      illustration: 'cards/81_1.jpg',
       tags: [CardTag.PERSON],
       actions: [
         {
@@ -45,8 +44,7 @@ export const alchemist: CardDef = {
       id: 2,
       name: 'Potion of Strength',
       tags: [CardTag.POTION, CardTag.ITEM],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/7f9afba8-8fab-4ef9-8dc3-2fcbc78f7f13/450x%3Cauto%3E_so',
+      illustration: 'cards/81_2.jpg',
       actions: [
         {
           id: '81-2-1',
@@ -73,8 +71,7 @@ export const alchemist: CardDef = {
     {
       id: 3,
       name: 'Healing Potion',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/115e7a7a-28fe-4dcb-b282-aafa4233a344/450x%3Cauto%3E_so',
+      illustration: 'cards/81_3.jpg',
       tags: [CardTag.POTION, CardTag.ITEM],
       passives: [
         {
@@ -112,8 +109,7 @@ export const alchemist: CardDef = {
     {
       id: 4,
       name: 'Love Potion',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/ec0654f9-4201-42ae-9bf0-ee55819dda79/450x%3Cauto%3E_so',
+      illustration: 'cards/81_4.jpg',
       tags: [CardTag.POTION, CardTag.ITEM],
       actions: [
         {

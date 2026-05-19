@@ -9,8 +9,7 @@ export const priest: CardDef = {
       id: 1,
       name: 'Priest',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/414d18f8-043c-4afb-ab36-5761975748f5/450x%3Cauto%3E_so_hm',
+      illustration: 'cards/89_1.jpg',
       actions: [
         {
           id: '89-1-1',
@@ -46,8 +45,7 @@ export const priest: CardDef = {
       id: 2,
       name: 'Cardinal',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/455e17fd-b4d9-4734-b129-012990339b6b/450x%3Cauto%3E_so',
+      illustration: 'cards/89_2.jpg',
       glory: { amount: 5 },
       actions: [
         {

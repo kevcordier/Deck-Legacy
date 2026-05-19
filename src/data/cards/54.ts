@@ -17,8 +17,7 @@ export const skilledBandit2: CardDef = {
       tags: [CardTag.ENEMY, CardTag.BANDIT],
       negative: true,
       glory: { amount: -2 },
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a5f3bdbc-6c57-4944-b335-53f8012d491a/anim=false,width=450,optimized=true/D1BZVBJAN80F6SD0Z7AGYE7ZZ0.jpeg',
+      illustration: 'cards/54_1.jpg',
       actions: [
         {
           id: '54-1-1',
@@ -139,8 +138,7 @@ export const skilledBandit2: CardDef = {
       id: 2,
       name: 'Worker',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/afa4cf05-2f0a-4ac7-bc90-bd9d3f2f5832/anim=false,width=450,optimized=true/ComfyUI_00998_.jpeg',
+      illustration: 'cards/54_2.jpg',
       actions: [
         {
           id: '54-2-1',

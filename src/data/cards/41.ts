@@ -9,8 +9,7 @@ export const traveler: CardDef = {
       id: 1,
       name: 'Traveller',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/a6cb6d65-ae66-489a-a393-cf5933d72d09/450x%3Cauto%3E_so',
+      illustration: 'cards/41_1.jpg',
       actions: [
         {
           id: '41-1-1',
@@ -44,8 +43,7 @@ export const traveler: CardDef = {
       id: 2,
       name: 'Traveller',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/fe9474c2-3883-4f82-8917-9e843df01e2a/450x%3Cauto%3E_so',
+      illustration: 'cards/41_2.jpg',
       actions: [
         {
           id: '41-2-1',
@@ -79,8 +77,7 @@ export const traveler: CardDef = {
       id: 3,
       name: 'Traveller',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/f10bdf41-55fd-46e3-bb5e-2eeaf2b7a59e/450x%3Cauto%3E_so',
+      illustration: 'cards/41_3.jpg',
       actions: [
         {
           id: '41-3-1',
@@ -115,8 +112,7 @@ export const traveler: CardDef = {
       name: 'Traveller',
       tags: [CardTag.PERSON],
       glory: { amount: 2 },
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/81e55ee1-a93c-46ef-ab17-23ebfd1b2003/450x%3Cauto%3E_so',
+      illustration: 'cards/41_4.jpg',
       actions: [
         {
           id: '41-4-1',

@@ -17,8 +17,7 @@ export const bandit2: CardDef = {
       tags: [CardTag.ENEMY, CardTag.BANDIT],
       negative: true,
       glory: { amount: -2 },
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/2f2966e7-17b9-418c-b5ec-842f368f390d/width=450,quality=90/bandit%204%20epic.jpeg',
+      illustration: 'cards/10_1.jpg',
       actions: [
         {
           id: '10-1-1',
@@ -105,8 +104,7 @@ export const bandit2: CardDef = {
       id: 2,
       name: 'Field Worker',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/afa4cf05-2f0a-4ac7-bc90-bd9d3f2f5832/anim=false,width=450,optimized=true/ComfyUI_00998_.jpeg',
+      illustration: 'cards/10_2.jpg',
       actions: [
         {
           id: '10-2-1',

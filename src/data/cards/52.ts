@@ -16,8 +16,7 @@ export const darkPrince: CardDef = {
     {
       id: 1,
       name: 'Dark Prince',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/1fd6f7fc-7918-4c18-8e7a-5fc7d898aa11/450x%3Cauto%3E_so',
+      illustration: 'cards/52_1.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -7 },
@@ -54,8 +53,7 @@ export const darkPrince: CardDef = {
     {
       id: 2,
       name: 'Impressed Boy',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d1b64167-814b-4b1f-a566-ab7bf6dbbece/anim=false,width=450,optimized=true/ComfyUI_00709_.jpeg',
+      illustration: 'cards/52_2.jpg',
       tags: [CardTag.PERSON],
       actions: [
         {
@@ -93,8 +91,7 @@ export const darkPrince: CardDef = {
     {
       id: 3,
       name: 'Squire',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/10d909fa-c209-43cd-8573-295aeb0e6cd1/anim=false,width=450,optimized=true/63M5TW26RTB2P2QKNHJ1RP8AJ0.jpeg',
+      illustration: 'cards/52_3.jpg',
       tags: [CardTag.PERSON],
       productions: [
         {

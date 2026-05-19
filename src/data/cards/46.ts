@@ -10,8 +10,7 @@ export const lordAethan: CardDef = {
       id: 1,
       name: 'Lord Aethan',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/ea19c73f-5103-4e87-9135-ebba1530888f/anim=false,width=450,optimized=true/CAVVJ09KPSKPD10ERFWCBG9SF0.jpeg',
+      illustration: 'cards/46_1.jpg',
       glory: { amount: 2 },
       productions: [{ gold: 1, wood: 1, stone: 1 }],
       actions: [
@@ -145,8 +144,7 @@ export const lordAethan: CardDef = {
       id: 2,
       name: 'Lord Nimrod',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f0c503a6-4b62-4870-9971-445a456b8a54/anim=false,width=450,optimized=true/00424-2217828578.jpeg',
+      illustration: 'cards/46_2.jpg',
       glory: { amount: 5 },
       productions: [{ weapon: 1 }],
       actions: [

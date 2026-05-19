@@ -11,8 +11,7 @@ export const pirate: CardDef = {
       name: 'Pirate',
       tags: [CardTag.ENEMY],
       negative: true,
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/e0acb032-f21a-486d-89a5-cddd6482efb5/450x%3Cauto%3E_so',
+      illustration: 'cards/63_1.jpg',
       glory: { amount: -2 },
       passives: [
         CardPassives[PassiveType.STAY_IN_PLAY],
@@ -77,8 +76,7 @@ export const pirate: CardDef = {
       id: 2,
       name: 'Skilled Ally',
       tags: [CardTag.PERSON, CardTag.SEAFARING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/064e7f8a-d137-4f38-bb2e-8d2b860d8639/anim=false,width=450,optimized=true/00046-1058393588.jpeg',
+      illustration: 'cards/63_2.jpg',
       glory: { amount: 3 },
       productions: [
         {

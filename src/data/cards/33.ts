@@ -18,8 +18,7 @@ export const fieldWorker2: CardDef = {
       id: 1,
       name: 'Field Worker',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/afa4cf05-2f0a-4ac7-bc90-bd9d3f2f5832/anim=false,width=450,optimized=true/ComfyUI_00998_.jpeg',
+      illustration: 'cards/33_1.jpg',
       actions: [
         {
           id: '33-1-1',
@@ -50,8 +49,7 @@ export const fieldWorker2: CardDef = {
       id: 2,
       name: 'Storage',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/96ee65fa-2771-4215-9a7c-5c7cacfac93d/original=true,quality=90/00013-3241185053.jpeg',
+      illustration: 'cards/33_2.jpg',
       glory: { amount: 1 },
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [

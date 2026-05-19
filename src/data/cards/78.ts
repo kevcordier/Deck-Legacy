@@ -8,8 +8,7 @@ export const treasureHunt: CardDef = {
     {
       id: 1,
       name: 'Treasure Hunt',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/5073c53a-42eb-4047-8471-28f99fa720ae/450x%3Cauto%3E_so',
+      illustration: 'cards/78_1.jpg',
       tags: [CardTag.SEAFARING],
       upgrade: [
         {
@@ -30,8 +29,7 @@ export const treasureHunt: CardDef = {
       id: 2,
       name: 'Pirate Cove',
       tags: [CardTag.SEAFARING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/5e6b4b00-50f9-4d66-a2e7-94a331a32ddd/450x%3Cauto%3E_so',
+      illustration: 'cards/78_2.jpg',
       actions: [
         {
           id: '78-2-1',
@@ -72,8 +70,7 @@ export const treasureHunt: CardDef = {
       id: 3,
       name: 'Treasure Map',
       tags: [CardTag.SEAFARING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/f676f0c5-9ddf-43b2-888d-49b462f1fe0c/450x%3Cauto%3E_so',
+      illustration: 'cards/78_3.jpg',
       productions: [
         {
           [ResourceType.GOLD]: 1,
@@ -98,8 +95,7 @@ export const treasureHunt: CardDef = {
       id: 4,
       name: 'Pirate Treasure',
       tags: [CardTag.ITEM, CardTag.LOOT],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/b9801fa1-e4c1-47d8-997b-425b5dde9c12/450x%3Cauto%3E_so',
+      illustration: 'cards/78_4.jpg',
       productions: [
         {
           [ResourceType.GOLD]: 2,

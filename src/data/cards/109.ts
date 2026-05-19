@@ -10,8 +10,7 @@ export const pineForest: CardDef = {
       id: 1,
       name: 'Pine Forest',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/bbfe0c93-fbe9-4944-a061-82864bdb5c4c/450x%3Cauto%3E_so',
+      illustration: 'cards/109_1.jpg',
       productions: [{ wood: 1 }],
       upgrade: [
         {
@@ -24,8 +23,7 @@ export const pineForest: CardDef = {
       id: 2,
       name: 'Pine Forest',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/21875ecc-32ed-41c2-8de4-b4747a08201d/450x%3Cauto%3E_so_hm',
+      illustration: 'cards/109_2.jpg',
       productions: [{ wood: 2 }],
       glory: { amount: 1 },
     },
@@ -33,8 +31,7 @@ export const pineForest: CardDef = {
       id: 3,
       name: 'Pond',
       tags: [CardTag.LAND],
-      illustration:
-        'https://img.magnific.com/free-photo/tranquil-forest-pond-reflects-autumn-foliage-beauty-generated-by-ai_188544-37884.jpg?t=st=1778401597~exp=1778405197~hmac=6817cdf4f1d170f5100635307ebad6174d904613c7fb5e090db83c9fda1ad539&w=2000',
+      illustration: 'cards/109_3.jpg',
       productions: [{ gold: 1 }],
       upgrade: [
         {
@@ -47,8 +44,7 @@ export const pineForest: CardDef = {
       id: 4,
       name: 'Fish Pond',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/ef357c76-23f4-4e41-bd92-affafbabc714/450x%3Cauto%3E_so',
+      illustration: 'cards/109_4.jpg',
       productions: [{ gold: 2, goods: 1 }],
       glory: { amount: 1 },
     },

@@ -15,8 +15,7 @@ export const youngPrincess: CardDef = {
       id: 1,
       name: 'Young Princess',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/0fbd780a-d3dc-4f7f-9963-91f8a56cbda9/450x%3Cauto%3E_so',
+      illustration: 'cards/56_1.jpg',
       glory: { amount: 2 },
       actions: [
         {
@@ -79,8 +78,7 @@ export const youngPrincess: CardDef = {
     {
       id: 2,
       name: 'Spoiled Princess',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/445382b2-a1ab-48de-9e57-b3bb7aef0a41/anim=false,width=450,optimized=true/ComfyUI_00020_.jpeg',
+      illustration: 'cards/56_2.jpg',
       tags: [CardTag.PERSON],
       actions: [
         {
@@ -117,8 +115,7 @@ export const youngPrincess: CardDef = {
     {
       id: 3,
       name: 'Educated Princess',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/bb643708-8549-4430-bfb2-dc29e7158b47/anim=false,width=450,optimized=true/00016-2617440945.jpeg',
+      illustration: 'cards/56_3.jpg',
       tags: [CardTag.PERSON, CardTag.LADY],
       glory: { amount: 8 },
       actions: [

@@ -18,8 +18,7 @@ export const assassin: CardDef = {
       name: 'Assassin',
       tags: [CardTag.ENEMY],
       negative: true,
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a34eebe4-d52c-4f21-811c-688ff14c440b/anim=false,width=450,optimized=true/J48J5DR9Z0YSGWZYXZHYJGXKV0.jpeg',
+      illustration: 'cards/48_1.jpg',
       passives: [
         {
           id: '48-1-1',
@@ -78,8 +77,7 @@ export const assassin: CardDef = {
       id: 2,
       name: 'Enemy soldier',
       tags: [CardTag.ENEMY],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/3361d0f0-6e63-4aed-b043-1651218b5aac/anim=false,width=450,optimized=true/generator_import_1774550952553_7.jpeg',
+      illustration: 'cards/48_2.jpg',
       negative: true,
       glory: {
         amount: -2,

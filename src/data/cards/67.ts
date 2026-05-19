@@ -9,8 +9,7 @@ export const cooperation: CardDef = {
     {
       id: 1,
       name: 'Cooperation',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e8e410b5-e9da-4c1d-94ab-218bcfa51609/anim=false,width=450,optimized=true/01122-2373283931.jpeg',
+      illustration: 'cards/67_1.jpg',
       tags: [CardTag.EVENT],
       actions: [
         {
@@ -118,8 +117,7 @@ export const cooperation: CardDef = {
     {
       id: 2,
       name: 'Favor',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/56f58644-40b9-49da-8f03-bd977c2aebf5/450x%3Cauto%3E_so',
+      illustration: 'cards/67_2.jpg',
       tags: [CardTag.EVENT],
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [

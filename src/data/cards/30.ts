@@ -11,8 +11,7 @@ export const expandingBorders: CardDef = {
       name: 'Expanding Borders',
       permanent: true,
       tags: [CardTag.GOAL],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/76e68596-9d6c-422e-b53e-5023ee4acf6a/anim=false,width=450,optimized=true/QNJZN7FBRJKAWGVWSK8KPS12Y0.jpeg',
+      illustration: 'cards/30_1.jpg',
       glory: {
         amount: 0,
         valuePerElement: {
@@ -27,8 +26,7 @@ export const expandingBorders: CardDef = {
       name: 'Maximizer',
       permanent: true,
       tags: [CardTag.GOAL],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/50c07b7a-3b6e-49b5-9f2e-50feba86b08b/anim=false,width=450,optimized=true/8HW4NMGVMG4ZEJ1NW0QY2N8510.jpeg',
+      illustration: 'cards/30_2.jpg',
       glory: {
         amount: 0,
         valuePerElement: {

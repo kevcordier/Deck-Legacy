@@ -25,8 +25,7 @@ export const camelot: CardDef = {
       id: 1,
       name: 'Camelot',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/440d5ac9-8ced-4e78-bbe1-328d8cb45d49/450x%3Cauto%3E_so',
+      illustration: 'cards/91_1.jpg',
       glory: { amount: 15 },
       upgrade: [
         {
@@ -39,8 +38,7 @@ export const camelot: CardDef = {
       id: 2,
       name: 'Camelot',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/707c6f78-12f8-4a7b-9db0-a2e3022744fc/450x%3Cauto%3E_so',
+      illustration: 'cards/91_2.jpg',
       glory: { amount: 20 },
       upgrade: [
         {
@@ -53,8 +51,7 @@ export const camelot: CardDef = {
       id: 3,
       name: 'Camelot',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/1f2aee7f-4623-4c18-ba87-f66ea3984e24/450x%3Cauto%3E_so',
+      illustration: 'cards/91_3.jpg',
       glory: { amount: 30 },
       upgrade: [
         {
@@ -67,8 +64,7 @@ export const camelot: CardDef = {
       id: 4,
       name: 'Camelot',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/1192567c-632b-42a9-91a6-3ddc9447f79c/450x%3Cauto%3E_so',
+      illustration: 'cards/91_4.jpg',
       glory: { amount: 40, valuePerElement: { accumulation: true, amount: 5 } },
       actions: [
         {

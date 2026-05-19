@@ -16,8 +16,7 @@ export const northPlains: CardDef = {
       id: 1,
       name: 'North Plains',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/d723d99f-3c78-4ec6-8815-320923b67aad/450x%3Cauto%3E_so',
+      illustration: 'cards/114_1.jpg',
       productions: [{ gold: 1 }],
       upgrade: [
         { cost: { resources: [{ stone: 3, gold: 1 }] }, upgradeTo: 2 },
@@ -28,8 +27,7 @@ export const northPlains: CardDef = {
       id: 2,
       name: 'Moat',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/a56eb075-d2f3-4693-abfa-dd5de56f975c/450x%3Cauto%3E_so',
+      illustration: 'cards/114_2.jpg',
       productions: [
         {
           [ResourceType.WEAPON]: 1,
@@ -55,8 +53,7 @@ export const northPlains: CardDef = {
       id: 3,
       name: 'Moat Bridge',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/e09918e6-4587-4b82-a929-ea5adef3209c/450x%3Cauto%3E_so_hm',
+      illustration: 'cards/114_3.jpg',
       productions: [
         {
           [ResourceType.WEAPON]: 1,
@@ -81,8 +78,7 @@ export const northPlains: CardDef = {
       id: 4,
       name: 'Wall',
       tags: [CardTag.BUILDING, CardTag.WALL],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7aec4cb2-aa6e-4a92-8e4b-b447573d9cdf/anim=false,width=450,optimized=true/2570720676-1.jpeg',
+      illustration: 'cards/114_4.jpg',
       productions: [
         {
           [ResourceType.WEAPON]: 1,

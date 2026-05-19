@@ -10,8 +10,7 @@ export const boulder: CardDef = {
       id: 1,
       name: 'Boulder',
       tags: [CardTag.LAND],
-      illustration:
-        'https://img.magnific.com/premium-photo/massive-boulder-perched-rocky-terrain-vast-blue-sky-ai_97070-81489.jpg?w=2000',
+      illustration: 'cards/110_1.jpg',
       productions: [{ stone: 1 }],
       upgrade: [
         {
@@ -24,8 +23,7 @@ export const boulder: CardDef = {
       id: 2,
       name: 'Boulders',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/e84ae93b-2e74-4bb1-8011-e4235e89734a/450x%3Cauto%3E_so',
+      illustration: 'cards/110_2.jpg',
       productions: [{ stone: 2 }],
       glory: { amount: 1 },
     },
@@ -33,8 +31,7 @@ export const boulder: CardDef = {
       id: 3,
       name: 'Mushrooms',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/276f5549-971c-4561-97da-160058e4ec40/450x%3Cauto%3E_so',
+      illustration: 'cards/110_3.jpg',
       productions: [{ goods: 1 }],
       upgrade: [
         {
@@ -47,8 +44,7 @@ export const boulder: CardDef = {
       id: 4,
       name: 'Mushrooms',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/d49e1336-d917-4a4d-9504-3974e078fda7/450x%3Cauto%3E_so',
+      illustration: 'cards/110_4.jpg',
       productions: [{ goods: 1 }],
       actions: [
         {

@@ -16,8 +16,7 @@ export const deepPit: CardDef = {
       id: 1,
       name: 'Deep Pit',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/e677f3eb-9a43-4b08-9bf4-c87c6e7334c7/450x%3Cauto%3E_so',
+      illustration: 'cards/74_1.jpg',
       productions: [{ [ResourceType.STONE]: 1 }],
       upgrade: [
         {
@@ -46,8 +45,7 @@ export const deepPit: CardDef = {
     {
       id: 2,
       name: 'Town Well',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/d996cb6d-2ce6-4677-b20f-a25d212881ac/450x%3Cauto%3E_so',
+      illustration: 'cards/74_2.jpg',
       tags: [CardTag.LAND],
       glory: { amount: 3 },
       passives: [
@@ -67,8 +65,7 @@ export const deepPit: CardDef = {
     {
       id: 3,
       name: 'Pit Settlement',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/96345d63-fc00-496d-bf6c-9ac0beced2f4/450x%3Cauto%3E_so',
+      illustration: 'cards/74_3.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ [ResourceType.WOOD]: 1, [ResourceType.STONE]: 1 }],
       glory: { amount: 1 },
@@ -115,8 +112,7 @@ export const deepPit: CardDef = {
       id: 4,
       name: 'Prison',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/201f1019-5336-4b8e-a35f-477b00b05ad4/450x%3Cauto%3E_so',
+      illustration: 'cards/74_4.jpg',
       productions: [{ [ResourceType.WEAPON]: 1 }],
       glory: {
         amount: 0,

@@ -17,8 +17,7 @@ export const shrine: CardDef = {
       id: 1,
       name: 'Shrine',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/49e9bb1d-3bd1-4ea7-becc-ad86b4d64513/450x%3Cauto%3E_so',
+      illustration: 'cards/69_1.jpg',
       glory: { amount: 3 },
       actions: [
         {
@@ -63,8 +62,7 @@ export const shrine: CardDef = {
       id: 2,
       name: 'Sanctuary',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/54ee1a6d-e506-44bc-95ac-047a93e3aeb1/450x%3Cauto%3E_so',
+      illustration: 'cards/69_2.jpg',
       glory: { amount: 5 },
       actions: [
         {
@@ -110,8 +108,7 @@ export const shrine: CardDef = {
       id: 3,
       name: 'Oratory',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1a6733df-1254-44b5-b304-b49f9813c9e4/anim=false,width=450,optimized=true/00177-1658054072.jpeg',
+      illustration: 'cards/69_3.jpg',
       glory: { amount: 9 },
       actions: [
         {
@@ -157,8 +154,7 @@ export const shrine: CardDef = {
       id: 4,
       name: 'Temple',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e17ee73b-9b0e-4f2b-aa1e-7e78c4cfa1c9/anim=false,width=450,optimized=true/00087-2899013593.jpeg',
+      illustration: 'cards/69_4.jpg',
       glory: { amount: 15 },
       actions: [
         {

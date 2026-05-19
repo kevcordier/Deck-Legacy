@@ -12,8 +12,7 @@ export const unknown: CardDef = {
       name: '_____',
       chooseName: true,
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/dcb20f36-d9ef-4deb-8cb2-6691a24ae20d/450x%3Cauto%3E_so',
+      illustration: 'cards/77_1.jpg',
       productions: [{ weapon: 1, goods: 1 }],
       actions: [
         {
@@ -72,8 +71,7 @@ export const unknown: CardDef = {
       name: '_____',
       chooseName: true,
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/dfb385d0-bc0e-4ae5-3b5f-27abfe0e6d00/450x%3Cauto%3E_so',
+      illustration: 'cards/77_2.jpg',
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
         {

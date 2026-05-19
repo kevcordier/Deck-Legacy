@@ -311,6 +311,7 @@ export function getEffectiveGlory(
     (acc, stickerId) => acc + (stickerDefs[stickerId]?.glory ?? 0),
     0,
   );
+  const additionalGlory = instance.glories.reduce((acc, glory) => acc + glory, 0);
 
   let passiveGlory = 0;
 
@@ -325,7 +326,7 @@ export function getEffectiveGlory(
     passiveGlory = activeState.glory.valuePerElement.amount * count;
   }
 
-  return baseGlory + stickerGlory + passiveGlory;
+  return baseGlory + stickerGlory + passiveGlory + additionalGlory;
 }
 
 export function tagClass(tag: string, isEnemy: boolean): string {

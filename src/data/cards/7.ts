@@ -9,8 +9,7 @@ export const river: CardDef = {
       id: 1,
       name: 'River',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/eea05c7b-ba60-4dc7-269a-a60c100c3200/width=450,quality=90/303606.jpeg',
+      illustration: 'cards/7_1.jpg',
       productions: [
         {
           [ResourceType.GOLD]: 1,
@@ -33,8 +32,7 @@ export const river: CardDef = {
       id: 2,
       name: 'Bridge',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/84fe0ac9-bf08-43a1-ace2-d8a3bb7e031c/width=450,quality=90/917C9432AD8F6E1400F86041E08556D6B4CEE45B81C1978436B7CA303EF933E1.jpeg',
+      illustration: 'cards/7_2.jpg',
       productions: [
         {
           [ResourceType.GOLD]: 1,
@@ -57,8 +55,7 @@ export const river: CardDef = {
     {
       id: 3,
       name: 'Stone Bridge',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/599762ab-02f4-4e53-8ce3-289871b82beb/anim=false,width=450,optimized=true/00004-3622657758.jpeg',
+      illustration: 'cards/7_3.jpg',
       tags: [CardTag.LAND],
       productions: [
         {
@@ -82,8 +79,7 @@ export const river: CardDef = {
     {
       id: 4,
       name: 'Explorers',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/9ef40777-f81c-4067-bba6-529dd3dc2919/anim=false,width=450,optimized=true/2025-09-20T21.32.45_1.jpeg',
+      illustration: 'cards/7_4.jpg',
       tags: [CardTag.PERSON],
       productions: [
         {

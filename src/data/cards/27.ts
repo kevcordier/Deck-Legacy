@@ -25,8 +25,7 @@ export const mercenary: CardDef = {
       id: 1,
       name: 'Mercenary',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/610b2928-1cd1-4d21-af6f-3fb85d074067/anim=false,width=450,optimized=true/01132-3623825044.jpeg',
+      illustration: 'cards/27_1.jpg',
       actions: [
         {
           id: '27-1-1',
@@ -82,8 +81,7 @@ export const mercenary: CardDef = {
       name: 'Sir _____',
       chooseName: true,
       tags: [CardTag.PERSON, CardTag.KNIGHT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/b30c1e9b-b9fe-4519-9410-e7eb0c944f02/anim=false,width=450,optimized=true/00045-940162767-0000-0000.jpeg',
+      illustration: 'cards/27_2.jpg',
       productions: [
         {
           [ResourceType.WEAPON]: 1,

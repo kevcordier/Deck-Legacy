@@ -9,8 +9,7 @@ export const spinningWheel: CardDef = {
       id: 1,
       name: 'Spinning Wheel',
       tags: [CardTag.INVENTION],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/c76fbe09-2cee-4464-8488-165767170935/450x%3Cauto%3E_so',
+      illustration: 'cards/82_1.jpg',
       glory: { amount: 2 },
       upgrade: [
         {
@@ -29,8 +28,7 @@ export const spinningWheel: CardDef = {
       id: 2,
       name: 'Silk',
       tags: [CardTag.INVENTION],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/4431f03e-6043-429e-984e-572e2639628c/original',
+      illustration: 'cards/82_2.jpg',
       glory: { amount: 4 },
       productions: [
         {
@@ -54,8 +52,7 @@ export const spinningWheel: CardDef = {
       id: 3,
       name: 'Cloth Export',
       tags: [CardTag.INVENTION],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/423ea154-147b-4d30-bb29-25b56327b06d/450x%3Cauto%3E_so_hm',
+      illustration: 'cards/82_3.jpg',
       glory: { amount: 6 },
       productions: [
         {
@@ -79,8 +76,7 @@ export const spinningWheel: CardDef = {
       id: 4,
       name: 'Fashion',
       tags: [CardTag.INVENTION],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/691118ed-8eb7-479b-9ef0-2b6812e7eb38/450x%3Cauto%3E_so',
+      illustration: 'cards/82_4.jpg',
       glory: { amount: 10 },
       productions: [
         {

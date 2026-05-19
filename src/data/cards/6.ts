@@ -10,8 +10,7 @@ export const jungle: CardDef = {
       id: 1,
       name: 'Jungle',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d189302c-ea8e-444f-80ab-e64415e97789/anim=false,width=450,optimized=true/00312-841554700.jpeg',
+      illustration: 'cards/6_1.jpg',
       actions: [
         {
           id: '6-1-1',
@@ -50,8 +49,7 @@ export const jungle: CardDef = {
       id: 2,
       name: 'Huge Trees',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/56def3aa-dfb9-4cb8-66b9-a7832a433200/anim=false,width=450,optimized=true/311658.jpeg',
+      illustration: 'cards/6_2.jpg',
       actions: [
         {
           id: '6-2-1',
@@ -95,8 +93,7 @@ export const jungle: CardDef = {
       id: 3,
       name: 'Deep Jungle',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/9ca7a608-cd9a-4616-cad1-600e58b3ea00/450x%3Cauto%3E_so',
+      illustration: 'cards/6_3.jpg',
       upgrade: [
         {
           cost: {
@@ -119,8 +116,7 @@ export const jungle: CardDef = {
       id: 4,
       name: 'Treehouses',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8ac9e087-8d36-49b6-8f02-9d422c10faa1/width=450,quality=90/00004-4001576903.jpeg',
+      illustration: 'cards/6_4.jpg',
       glory: { amount: 4 },
       productions: [
         {

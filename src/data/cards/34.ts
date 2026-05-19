@@ -9,8 +9,7 @@ export const mason: CardDef = {
       id: 1,
       name: 'Mason',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/649b5682-509e-4cbd-bdb7-7ca61511aa7c/anim=false,width=450,optimized=true/RBB7BJW5YGRBW6WY6P5MTZM1N0.jpeg',
+      illustration: 'cards/34_1.jpg',
       productions: [
         {
           stone: 1,
@@ -56,8 +55,7 @@ export const mason: CardDef = {
       id: 2,
       name: 'Brick Road',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/77dce95d-fdee-44b0-bdcd-c3fd19be4f9a/anim=false,width=450,optimized=true/00103-288352753.jpeg',
+      illustration: 'cards/34_2.jpg',
       glory: { amount: 3 },
       productions: [
         {
@@ -106,8 +104,7 @@ export const mason: CardDef = {
       id: 3,
       name: 'Stone Street',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/9461f8c3-9abb-4049-b2d4-df5f40de2bb1/anim=false,width=450,optimized=true/00004-2661110346.jpeg',
+      illustration: 'cards/34_3.jpg',
       glory: { amount: 7 },
       productions: [
         {

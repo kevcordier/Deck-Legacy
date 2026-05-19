@@ -11,8 +11,7 @@ export const sawMill: CardDef = {
       id: 1,
       name: 'Saw Mill',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/33e02052-9238-464a-b0b2-0d382f1f9671/450x%3Cauto%3E_so',
+      illustration: 'cards/85_1.jpg',
       glory: { amount: 3 },
       productions: [{ [ResourceType.WOOD]: 3 }],
       upgrade: [
@@ -27,8 +26,7 @@ export const sawMill: CardDef = {
     {
       id: 2,
       name: 'Wood Industry',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/9a4d5554-0ade-4dc8-8458-4d8f9af3c513/450x%3Cauto%3E_so',
+      illustration: 'cards/85_2.jpg',
       tags: [CardTag.BUILDING],
       glory: { amount: 3 },
       productions: [{ [ResourceType.WOOD]: 4 }],
@@ -51,8 +49,7 @@ export const sawMill: CardDef = {
     {
       id: 3,
       name: 'Wood Export',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/bf22e559-972b-4261-93d7-1de238ac3586/450x%3Cauto%3E_so',
+      illustration: 'cards/85_3.jpg',
       tags: [CardTag.BUILDING],
       glory: { amount: 4 },
       productions: [{ [ResourceType.GOODS]: 2 }],
@@ -68,8 +65,7 @@ export const sawMill: CardDef = {
     {
       id: 4,
       name: 'Wood Shipment',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/90d55c8e-e16d-4761-842e-6ddcb9fa0472/450x%3Cauto%3E_so',
+      illustration: 'cards/85_4.jpg',
       tags: [CardTag.SEAFARING, CardTag.SHIP],
       glory: { amount: 6 },
       productions: [{ [ResourceType.WOOD]: 2 }, { [ResourceType.GOODS]: 2 }],

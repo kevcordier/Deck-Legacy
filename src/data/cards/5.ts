@@ -9,8 +9,7 @@ export const trader: CardDef = {
       id: 1,
       name: 'Trader',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a3c75bb9-fce0-4f97-835b-bab57310e6d3/width=450,quality=90/cyberxl21_41.jpeg',
+      illustration: 'cards/5_1.jpg',
       actions: [
         {
           id: '5-1-1',
@@ -49,8 +48,7 @@ export const trader: CardDef = {
       id: 2,
       name: 'Bazaar',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/32b678bf-9e83-4cc3-8bd0-e39845becc76/450x%3Cauto%3E_so',
+      illustration: 'cards/5_2.jpg',
       glory: { amount: 1 },
       actions: [
         {
@@ -97,8 +95,7 @@ export const trader: CardDef = {
       id: 3,
       name: 'Market',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7cc8814f-ba25-47ea-8066-9457ef651d28/anim=false,width=450,optimized=true/85KPN5KPHVH1N8RAJ9F8KPNTJ0.jpeg',
+      illustration: 'cards/5_3.jpg',
       glory: { amount: 3 },
       actions: [
         {
@@ -148,8 +145,7 @@ export const trader: CardDef = {
       id: 4,
       name: 'Festival',
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/717e986a-eed1-4023-9365-08512d055030/450x%3Cauto%3E_so',
+      illustration: 'cards/5_4.jpg',
       glory: { amount: 4 },
       productions: [
         {

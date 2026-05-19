@@ -9,8 +9,7 @@ export const headquarters: CardDef = {
       id: 1,
       name: 'Headquarters',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/5a04b232-0a88-4b5c-97ae-399aa109b3d4/width=450,quality=90/1P7KP4HEYR2NJQ5T54PVHXF4A0.jpeg',
+      illustration: 'cards/4_1.jpg',
       upgrade: [
         {
           cost: {
@@ -34,8 +33,7 @@ export const headquarters: CardDef = {
       id: 2,
       name: 'Town Hall',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e33f38e6-50a1-45b8-832a-7d1c07d405cb/width=450,quality=90/5M4AR3T0ACAWE2Q7TEEK1ZFK80.jpeg',
+      illustration: 'cards/4_2.jpg',
       glory: { amount: 3 },
       actions: [
         {
@@ -75,8 +73,7 @@ export const headquarters: CardDef = {
       id: 3,
       name: 'Keep',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/83d38c62-35ff-41e5-917c-df91b3b7c4e0/width=450,quality=90/9BBA545BFEBB64D6E822FBC2DBDBB43070FFC4E76475DAB0A070380A9A229A41.jpeg',
+      illustration: 'cards/4_3.jpg',
       glory: { amount: 7 },
       actions: [
         {
@@ -117,8 +114,7 @@ export const headquarters: CardDef = {
       id: 4,
       name: 'Castle',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/39e939dc-f7c2-449c-bbd5-2d3e33d5dc5e/width=450,quality=90/00049-2184064133.jpeg',
+      illustration: 'cards/4_4.jpg',
       glory: { amount: 12 },
       actions: [
         {

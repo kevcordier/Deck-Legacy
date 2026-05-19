@@ -10,8 +10,7 @@ export const etherCrystal: CardDef = {
       name: 'Ether Crystal',
       permanent: true,
       tags: [CardTag.ARTIFACT],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/10c16e56-d9f8-4466-9606-33bb3c68ecd2/450x%3Cauto%3E_so',
+      illustration: 'cards/92_1.jpg',
       glory: { amount: 10 },
       description: true,
     },

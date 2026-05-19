@@ -8,8 +8,7 @@ export const mightyMound: CardDef = {
     {
       id: 1,
       name: 'Mighty Mound',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/97117fa6-dfb4-4f70-8ed2-2273306e8684/anim=false,width=450,optimized=true/00211-323982169-0000.jpeg',
+      illustration: 'cards/43_1.jpg',
       tags: [CardTag.LAND],
       upgrade: [
         {
@@ -27,8 +26,7 @@ export const mightyMound: CardDef = {
     {
       id: 2,
       name: 'Hill Settlement',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0422215f-c777-4c58-9cc0-87556d3c9639/anim=false,width=450,optimized=true/mklanIllustriousReal_v10-30-7-1051972383-H5420.jpeg',
+      illustration: 'cards/43_2.jpg',
       tags: [CardTag.LAND],
       productions: [
         {
@@ -52,8 +50,7 @@ export const mightyMound: CardDef = {
     {
       id: 3,
       name: 'Hill Village',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/453eb5d1-a476-4112-a69a-dfbbf1e78270/anim=false,width=450,optimized=true/FXAZNQZH3J6T4JCHWME63MYNT0.jpeg',
+      illustration: 'cards/43_3.jpg',
       tags: [CardTag.LAND],
       productions: [
         {
@@ -78,8 +75,7 @@ export const mightyMound: CardDef = {
     {
       id: 4,
       name: 'Peak Village',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/89ab407a-7aa0-427d-8634-ffef4cb37b97/anim=false,width=450,optimized=true/4e05bfae-39e4-43a9-98ce-2934cfe0029d-1.jpeg',
+      illustration: 'cards/43_4.jpg',
       tags: [CardTag.LAND],
       productions: [
         {

@@ -8,8 +8,7 @@ export const aethanEstate: CardDef = {
     {
       id: 1,
       name: 'Aethan Estate',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/407ce3e2-ab83-4631-88d0-bad3faf2f383/original=true,quality=90/00092-3009365662.jpeg',
+      illustration: 'cards/68_1.jpg',
       tags: [CardTag.LAND],
       upgrade: [
         {
@@ -28,8 +27,7 @@ export const aethanEstate: CardDef = {
     {
       id: 2,
       name: 'Aethan Estate',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/407ce3e2-ab83-4631-88d0-bad3faf2f383/original=true,quality=90/00092-3009365662.jpeg',
+      illustration: 'cards/68_2.jpg',
       tags: [CardTag.LAND],
       glory: { amount: 3 },
       actions: [
@@ -56,8 +54,7 @@ export const aethanEstate: CardDef = {
     {
       id: 3,
       name: 'Aethan Estate',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/407ce3e2-ab83-4631-88d0-bad3faf2f383/original=true,quality=90/00092-3009365662.jpeg',
+      illustration: 'cards/68_3.jpg',
       tags: [CardTag.LAND],
       glory: { amount: 6 },
       actions: [
@@ -85,8 +82,7 @@ export const aethanEstate: CardDef = {
     {
       id: 4,
       name: 'Aethan Estate',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/407ce3e2-ab83-4631-88d0-bad3faf2f383/original=true,quality=90/00092-3009365662.jpeg',
+      illustration: 'cards/68_4.jpg',
       tags: [CardTag.LAND],
       glory: { amount: 10 },
       actions: [

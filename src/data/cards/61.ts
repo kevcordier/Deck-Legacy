@@ -10,8 +10,7 @@ export const westCanyon: CardDef = {
       id: 1,
       name: 'West Canyon',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/2156a7aa-6e04-4176-981d-8e4ef810037a/anim=false,width=450,optimized=true/2024-03-04_18-13-03_2486.jpeg',
+      illustration: 'cards/61_1.jpg',
       productions: [
         {
           stone: 1,
@@ -50,8 +49,7 @@ export const westCanyon: CardDef = {
       id: 2,
       name: 'Miners',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/957a15af-7f01-416b-881c-66dac0ae85b8/anim=false,width=450,optimized=true/DMR7EN9D5GGW70FNTXDNNXCMR0.jpeg',
+      illustration: 'cards/61_2.jpg',
       glory: { amount: 2 },
       productions: [
         {
@@ -82,8 +80,7 @@ export const westCanyon: CardDef = {
       id: 3,
       name: 'Forced Labor',
       tags: [CardTag.STATE],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/de58ff4c-d5d8-436a-9400-9af267bb49a8/anim=false,width=450,optimized=true/2024-05-31_07-44-19_7665.jpeg',
+      illustration: 'cards/61_3.jpg',
       glory: { amount: -3 },
       productions: [
         {
@@ -96,8 +93,7 @@ export const westCanyon: CardDef = {
       id: 4,
       name: 'Wall',
       tags: [CardTag.BUILDING, CardTag.WALL],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7aec4cb2-aa6e-4a92-8e4b-b447573d9cdf/anim=false,width=450,optimized=true/2570720676-1.jpeg',
+      illustration: 'cards/61_4.jpg',
       productions: [
         {
           [ResourceType.WEAPON]: 1,

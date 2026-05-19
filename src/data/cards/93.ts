@@ -9,8 +9,7 @@ export const smallGuild: CardDef = {
       id: 1,
       name: 'Small Guild',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/6b549f75-fb43-45ef-9ff3-a64835d8efce/450x%3Cauto%3E_so',
+      illustration: 'cards/93_1.jpg',
       productions: [{ gold: 1 }],
       upgrade: [
         {
@@ -26,8 +25,7 @@ export const smallGuild: CardDef = {
       id: 2,
       name: 'Guild',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/7231155a-ac0f-40ed-9a4a-b514c61394eb/450x%3Cauto%3E_so',
+      illustration: 'cards/93_2.jpg',
       productions: [{ gold: 1 }, { wood: 1 }],
       glory: { amount: 2 },
       upgrade: [
@@ -44,8 +42,7 @@ export const smallGuild: CardDef = {
       id: 3,
       name: 'Guild Hall',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/7e764bba-0e2a-435a-a87e-0e042806e819/450x%3Cauto%3E_so',
+      illustration: 'cards/93_3.jpg',
       productions: [{ gold: 1 }, { wood: 1 }, { stone: 1 }],
       glory: { amount: 3 },
       upgrade: [
@@ -61,8 +58,7 @@ export const smallGuild: CardDef = {
       id: 4,
       name: 'Grand Guild Hall',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/f8a0478f-76af-4d77-afdc-38e06821eae0/450x%3Cauto%3E_so',
+      illustration: 'cards/93_4.jpg',
       productions: [{ gold: 1, wood: 1, stone: 1 }],
       glory: { amount: 0, emptyValues: 3 },
       actions: [

@@ -16,8 +16,7 @@ export const lake: CardDef = {
       id: 1,
       name: 'Lake',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/2b14f727-bbdc-4269-fd11-2479d4b1f700/anim=false,width=450,optimized=true/IMG_8169.jpeg',
+      illustration: 'cards/14_1.jpg',
       productions: [
         {
           [ResourceType.GOLD]: 1,
@@ -51,8 +50,7 @@ export const lake: CardDef = {
       id: 2,
       name: "Fisherman's Cabin",
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/3abd3e55-01b6-4877-90a8-432cb1805590/anim=false,width=450,optimized=true/QM9ED3P6EY72NPJ4HKMPP5B7R0.jpeg',
+      illustration: 'cards/14_2.jpg',
       productions: [
         {
           [ResourceType.GOLD]: 1,
@@ -76,8 +74,7 @@ export const lake: CardDef = {
       id: 3,
       name: 'Fishing Boat',
       tags: [CardTag.SEAFARING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/54ae3a52-989e-46da-9f7f-85eb77aa0f0a/450x%3Cauto%3E_so',
+      illustration: 'cards/14_3.jpg',
       productions: [
         {
           [ResourceType.GOLD]: 2,
@@ -104,8 +101,7 @@ export const lake: CardDef = {
       id: 4,
       name: 'Lighthouse',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/2da2ea79-bc04-4308-9304-7a1769782459/anim=false,width=450,optimized=true/5119A792AB2904953333213333F165E49A0B1D63A8D053A97C3B8008EBCE2A84.jpeg',
+      illustration: 'cards/14_4.jpg',
       glory: { amount: 5 },
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [

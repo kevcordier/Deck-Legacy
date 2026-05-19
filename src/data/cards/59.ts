@@ -10,8 +10,7 @@ export const finishingTouch: CardDef = {
       id: 1,
       name: 'Finishing Touch',
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/4bdc3475-e4f0-49c6-abc4-2e2109b90806/anim=false,width=450,optimized=true/00038-2479743949.jpeg',
+      illustration: 'cards/59_1.jpg',
       actions: [
         {
           id: '59-1-1',
@@ -35,8 +34,7 @@ export const finishingTouch: CardDef = {
       id: 2,
       name: 'Banquet',
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c52e5229-7684-4bac-85be-639502a108f6/anim=false,width=450,optimized=true/00009-4200906816.jpeg',
+      illustration: 'cards/59_2.jpg',
       actions: [
         {
           id: '59-2-1',

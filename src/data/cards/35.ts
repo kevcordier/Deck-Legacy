@@ -18,8 +18,7 @@ export const thunderstorm: CardDef = {
       name: 'Thunderstorm',
       negative: true,
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/ba519c84-b1d1-4b49-8d58-23f053a0dea5/anim=false,width=450,optimized=true/2260031F3D278EFDAD6D5BF7D74CF4523228DD96C276BF7B0DFAE6268C3611FA.jpeg',
+      illustration: 'cards/35_1.jpg',
       actions: [
         {
           id: '35-1-1',
@@ -63,8 +62,7 @@ export const thunderstorm: CardDef = {
       name: 'Rain',
       negative: true,
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/71abe2bf-814f-4e24-9928-460126c484cb/anim=false,width=450,optimized=true/00377-1961154424.jpeg',
+      illustration: 'cards/35_2.jpg',
       passives: [
         {
           ...CardPassives[PassiveType.ADJUST_PRODUCTION],

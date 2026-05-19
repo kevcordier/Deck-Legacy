@@ -10,8 +10,7 @@ export const tornado: CardDef = {
       id: 1,
       name: 'Tornado',
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/581202d4-4c9e-4772-90fc-fce22749a21b/anim=false,width=450,optimized=true/1DFABB2D505230C0DADD5A5718407D050DFC239E337870877F1A23282D62D558.jpeg',
+      illustration: 'cards/55_1.jpg',
       negative: true,
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
@@ -48,8 +47,7 @@ export const tornado: CardDef = {
       id: 2,
       name: 'Flooding',
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/fe2772cd-e681-48b6-94a9-ece26ac1893c/anim=false,width=450,optimized=true/54CE752DC5EE04A3A89C421AFA0027FB37514F468D5982A63A8EC401B0C29E01.jpeg',
+      illustration: 'cards/55_2.jpg',
       negative: true,
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [

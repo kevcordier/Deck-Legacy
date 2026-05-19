@@ -11,8 +11,7 @@ export const loyalty: CardDef = {
       name: 'Loyalty',
       permanent: true,
       tags: [CardTag.GOAL],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a6911400-1a99-4454-9c30-d449c13b0260/anim=false,width=450,optimized=true/00160-1296651632.jpeg',
+      illustration: 'cards/31_1.jpg',
       glory: {
         amount: 25,
         condition: { type: 'cardCount', cards: { tags: [CardTag.ENEMY] }, max: 0 },
@@ -27,8 +26,7 @@ export const loyalty: CardDef = {
         amount: 25,
         condition: { type: 'production', resourceType: ResourceType.GOODS, min: 10 },
       },
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/b7419552-cbe0-48e9-98da-79992a77b26a/anim=false,width=450,optimized=true/00001-2999530579.jpeg',
+      illustration: 'cards/31_2.jpg',
     },
   ],
 };

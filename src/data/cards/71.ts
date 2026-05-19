@@ -10,8 +10,7 @@ export const dubbing: CardDef = {
       id: 1,
       name: 'Dubbing',
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/fedb52b1-92da-48f6-8551-c0acaf4934c5/450x%3Cauto%3E_so',
+      illustration: 'cards/71_1.jpg',
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
         {
@@ -41,8 +40,7 @@ export const dubbing: CardDef = {
     {
       id: 2,
       name: 'Renovation',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/b9687e5e-a9fa-4e9f-9457-f6db81c298f0/450x%3Cauto%3E_so',
+      illustration: 'cards/71_2.jpg',
       tags: [CardTag.EVENT],
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [

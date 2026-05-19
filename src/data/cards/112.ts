@@ -15,8 +15,7 @@ export const hotSpring: CardDef = {
       id: 1,
       name: 'Hot Springs',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/d48c648d-197d-427c-bfbc-a74bff279c18/450x%3Cauto%3E_so',
+      illustration: 'cards/112_1.jpg',
       actions: [
         {
           id: '112-1-1',
@@ -43,8 +42,7 @@ export const hotSpring: CardDef = {
       id: 2,
       name: 'Fountain',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/9f7694e2-59e4-4611-a898-e576c82a584e/450x%3Cauto%3E_so_hm',
+      illustration: 'cards/112_2.jpg',
       glory: { amount: 2 },
       actions: [
         {
@@ -71,8 +69,7 @@ export const hotSpring: CardDef = {
       id: 3,
       name: 'Canals',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/3cb50939-0553-49bb-99b8-694c1ba8c054/450x%3Cauto%3E_so',
+      illustration: 'cards/112_3.jpg',
       glory: { amount: 5 },
       actions: [
         {
@@ -95,8 +92,7 @@ export const hotSpring: CardDef = {
       id: 4,
       name: 'Sweet Water River',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/37c261e8-115d-46c7-8ffe-f9c64dff3624/450x%3Cauto%3E_so_hm',
+      illustration: 'cards/112_4.jpg',
       glory: { amount: 9 },
     },
   ],

@@ -1,8 +1,4 @@
-import {
-  getActiveState,
-  getEffectiveGlory,
-  getInstancesTriggerEffects,
-} from '@engine/application/cardHelpers';
+import { getActiveState, getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { type Options, PassiveType, type ResourceType, Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState, Passive, Resources, Sticker } from '@engine/domain/types';
 
@@ -122,20 +118,6 @@ export const spendResources = (_gameState: GameState, resources: Resources): Gam
   }
   return gameState;
 };
-
-export function computeScore(
-  state: GameState,
-  defs: Record<number, CardDef>,
-  stickers: Record<string, Sticker>,
-): number {
-  const allIds = [...state.drawPile, ...state.discardPile, ...state.board, ...state.permanents];
-  return allIds.reduce((total, id) => {
-    const instance = state.instances[id];
-    if (!instance) return total;
-    const cs = getActiveState(instance, defs);
-    return total + getEffectiveGlory(cs, state, defs, instance, stickers);
-  }, 0);
-}
 
 export function mergeResources(a: Resources, b?: Resources): Resources {
   const result = JSON.parse(JSON.stringify(a)) as Resources;

@@ -9,7 +9,7 @@ import {
 } from '@engine/application/cardHelpers';
 import { resolveCost } from '@engine/application/costResolver';
 import { createInstance } from '@engine/application/factory';
-import { computeScore, mergeResources } from '@engine/application/gameStateHelper';
+import { mergeResources } from '@engine/application/gameStateHelper';
 import { ActionEffectType, GameEventType, type PendingChoiceType } from '@engine/domain/enums';
 import { ActionCancelledError } from '@engine/domain/errors/ActionCancelledError';
 import { CorruptedSaveError } from '@engine/domain/errors/CorruptedSaveError';
@@ -116,6 +116,7 @@ export function GameProvider({
   const aggRef = useRef<GameAggregate>(agg);
   const [gameId, setGameId] = useState<string>(agg.getId());
   const [gameState, setGameState] = useState<GameState>(initState);
+  const [score, setScore] = useState<number>(agg.getScore());
   const [pendingChoices, setPendingChoices] = useState<PendingChoice[] | null>(() => {
     return agg.getCurrentCardAction()?.getPendingChoices() ?? null;
   });
@@ -197,6 +198,7 @@ export function GameProvider({
 
     setGameState(newState);
     setParameters(aggRef.current.getParameters());
+    setScore(aggRef.current.getScore());
     saveGame(aggRef.current.getId(), aggRef.current.getEvents());
 
     const triggers = newState.triggerPile;
@@ -504,13 +506,6 @@ export function GameProvider({
     aggRef.current = agg;
     sync(agg.getGameState());
   };
-
-  // ── Score ─────────────────────────────────────────────────────────────────
-
-  const score = useMemo(
-    () => computeScore(gameState, defs, stickerDefs),
-    [gameState, defs, stickerDefs],
-  );
 
   // ── Dev cheat ─────────────────────────────────────────────────────────
 

@@ -2,7 +2,6 @@ import { makeDefs, makeInstance, makeState, makeStickerDefs } from './fixtures';
 import {
   canUseOptions,
   computeGameStateDiff,
-  computeScore,
   destroyCards,
   discardCards,
   drawCards,
@@ -190,34 +189,6 @@ describe('spendResources', () => {
     const gs = makeState({ resources: {} });
     const result = spendResources(gs, { gold: 3 });
     expect(result.resources.gold).toBeUndefined();
-  });
-});
-
-// ─── computeScore ─────────────────────────────────────────────────────────────
-
-describe('computeScore', () => {
-  it('returns 0 for empty state', () => {
-    expect(computeScore(makeState(), {}, {})).toBe(0);
-  });
-
-  it('sums glory from all piles', () => {
-    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
-    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      1: { id: 1, name: 'C1', states: [{ id: 1, name: 'S', glory: { amount: 3 } }] },
-      2: { id: 2, name: 'C2', states: [{ id: 1, name: 'S', glory: { amount: 2 } }] },
-    };
-    const gs = makeState({
-      drawPile: [1],
-      discardPile: [2],
-      instances: { 1: inst1, 2: inst2 },
-    });
-    expect(computeScore(gs, defs, {})).toBe(5);
-  });
-
-  it('skips instances not in instances record', () => {
-    const gs = makeState({ drawPile: [99] });
-    expect(computeScore(gs, {}, {})).toBe(0);
   });
 });
 

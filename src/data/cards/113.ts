@@ -10,8 +10,7 @@ export const townBorder: CardDef = {
       id: 1,
       name: 'Town Border',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/b886d51e-f8f8-4033-9637-614d27c96896/450x%3Cauto%3E_so',
+      illustration: 'cards/113_1.jpg',
       productions: [{ gold: 1 }],
       upgrade: [
         {
@@ -27,8 +26,7 @@ export const townBorder: CardDef = {
     {
       id: 2,
       name: 'Watchtower',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/04320a87-5b0d-4f19-871b-42b1982fdeee/450x%3Cauto%3E_so',
+      illustration: 'cards/113_2.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ weapon: 1 }],
       glory: { amount: 4 },
@@ -46,8 +44,7 @@ export const townBorder: CardDef = {
       id: 3,
       name: 'Inner Wall',
       tags: [CardTag.BUILDING, CardTag.WALL],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/253e8e41-55ea-4d22-9938-d943ba104bb0/450x%3Cauto%3E_so',
+      illustration: 'cards/113_3.jpg',
       productions: [{ weapon: 1 }],
       glory: { amount: 3 },
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
@@ -62,8 +59,7 @@ export const townBorder: CardDef = {
       id: 4,
       name: 'Double Wall',
       tags: [CardTag.BUILDING, CardTag.WALL],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/3df1ddad-1dac-4e69-93af-9e8f672dba4b/450x%3Cauto%3E_so',
+      illustration: 'cards/113_4.jpg',
       productions: [{ weapon: 2 }],
       glory: {
         valuePerElement: {

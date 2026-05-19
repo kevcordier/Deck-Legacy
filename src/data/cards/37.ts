@@ -9,8 +9,7 @@ export const camp: CardDef = {
       id: 1,
       name: 'Camp',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/24749212-1658-4666-a72d-78de8dfd795d/anim=false,width=450,optimized=true/Gemini_Generated_Image_7ukp8m7ukp8m7ukp.jpeg',
+      illustration: 'cards/37_1.jpg',
       upgrade: [
         {
           cost: {
@@ -24,8 +23,7 @@ export const camp: CardDef = {
       id: 2,
       name: 'Training Grounds',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/4d3011bb-0810-4e03-aac2-cc98a55a95a6/anim=false,width=450,optimized=true/ComfyUI_00601_.jpeg',
+      illustration: 'cards/37_2.jpg',
       glory: {
         amount: 1,
       },
@@ -60,8 +58,7 @@ export const camp: CardDef = {
       name: 'Sir _____',
       chooseName: true,
       tags: [CardTag.PERSON, CardTag.KNIGHT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e880fa00-c376-45c9-9455-ca39c8bf4747/anim=false,width=450,optimized=true/00049-[nightvisionXLPhotorealisticPortrait_v0743ReleaseBakedvae]-[DPM++%202M%20SDE%20Heun%20Karras]-2768784185-30-7-20231105193945.jpeg',
+      illustration: 'cards/37_3.jpg',
       productions: [
         {
           [ResourceType.WEAPON]: 2,

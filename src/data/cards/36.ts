@@ -11,8 +11,7 @@ export const darkKnight: CardDef = {
       name: 'Dark Knight',
       tags: [CardTag.ENEMY],
       negative: true,
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/902c58f5-4166-4cc0-b8a7-a7e3d49b393e/450x%3Cauto%3E_so',
+      illustration: 'cards/36_1.jpg',
       glory: { amount: -3 },
       passives: [
         {
@@ -48,8 +47,7 @@ export const darkKnight: CardDef = {
       id: 2,
       name: 'Impressed Boy',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d1b64167-814b-4b1f-a566-ab7bf6dbbece/anim=false,width=450,optimized=true/ComfyUI_00709_.jpeg',
+      illustration: 'cards/36_2.jpg',
       actions: [
         {
           id: '36-2-1',
@@ -87,8 +85,7 @@ export const darkKnight: CardDef = {
       id: 3,
       name: 'Squire',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/10d909fa-c209-43cd-8573-295aeb0e6cd1/anim=false,width=450,optimized=true/63M5TW26RTB2P2QKNHJ1RP8AJ0.jpeg',
+      illustration: 'cards/36_3.jpg',
       productions: [
         {
           weapon: 1,

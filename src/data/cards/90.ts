@@ -8,8 +8,7 @@ export const smallHillTown: CardDef = {
     {
       id: 1,
       name: 'Small Hill Town',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/2d8ad81a-feaa-4546-996f-627cf1650f07/450x%3Cauto%3E_so',
+      illustration: 'cards/90_1.jpg',
       tags: [CardTag.LAND],
       glory: { amount: 6 },
       actions: [
@@ -57,8 +56,7 @@ export const smallHillTown: CardDef = {
       id: 2,
       name: 'Hill Town',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/b126587c-7f22-4ce9-8a4f-8a840be9b85d/450x%3Cauto%3E_so',
+      illustration: 'cards/90_2.jpg',
       glory: { amount: 8 },
       actions: [
         {
@@ -105,8 +103,7 @@ export const smallHillTown: CardDef = {
       id: 3,
       name: 'Large Town',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/6b5594d4-6605-40b2-bc9e-0765ffa25a79/450x%3Cauto%3E_so',
+      illustration: 'cards/90_3.jpg',
       glory: { amount: 10 },
       actions: [
         {
@@ -174,8 +171,7 @@ export const smallHillTown: CardDef = {
       id: 4,
       name: 'City on a Hill',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/3dffb556-c505-43c7-a568-f2d8784436e8/450x%3Cauto%3E_so',
+      illustration: 'cards/90_4.jpg',
       glory: { amount: 12 },
       actions: [
         {

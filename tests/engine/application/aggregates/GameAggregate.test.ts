@@ -1,4 +1,4 @@
-import { makeInstance, makeState } from '../fixtures';
+import { makeDefs, makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import { ChooseActionEffectStrategy } from '@engine/application/playerChoice/ChooseActionEffectStrategy';
 import {
@@ -1582,5 +1582,41 @@ describe('GameAggregate.cardAction – unresolvable effect', () => {
     expect(agg.getGameState().triggerPile[triggerIds[1]]).toBeDefined();
     // Phase should remain PLAYING because there's still a trigger pending
     expect(agg.getGameState().phase).toBe(Phase.PLAYING);
+  });
+});
+// ─── getScore ─────────────────────────────────────────────────────────────
+
+describe('getScore', () => {
+  it('returns 0 for empty state', () => {
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      EMPTY_STATE,
+      makeDefs(),
+      makeStickerDefs(),
+      [],
+    );
+    expect(agg.getScore()).toBe(0);
+  });
+
+  it('sums glory from all piles', () => {
+    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C1', states: [{ id: 1, name: 'S', glory: { amount: 3 } }] },
+      2: { id: 2, name: 'C2', states: [{ id: 1, name: 'S', glory: { amount: 2 } }] },
+    };
+    const gs = makeState({
+      drawPile: [1],
+      discardPile: [2],
+      instances: { 1: inst1, 2: inst2 },
+    });
+    const agg = new GameAggregate(crypto.randomUUID(), gs, defs, makeStickerDefs(), []);
+    expect(agg.getScore()).toBe(5);
+  });
+
+  it('skips instances not in instances record', () => {
+    const gs = makeState({ drawPile: [99] });
+    const agg = new GameAggregate(crypto.randomUUID(), gs, {}, makeStickerDefs(), []);
+    expect(agg.getScore()).toBe(0);
   });
 });

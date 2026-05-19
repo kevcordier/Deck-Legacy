@@ -11,8 +11,7 @@ export const strengthInNumbers: CardDef = {
       permanent: true,
       name: 'Strength in Numbers',
       tags: [CardTag.GOAL],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/3615dcc2-a135-4591-9246-1c97dbfc5e82/anim=false,width=450,optimized=true/2026-02-26-02059-FLUX.2-klein-9B-1024x1024-Seed20260226-CFG1-AG0-STEP4.jpeg',
+      illustration: 'cards/29_1.jpg',
       glory: {
         amount: 0,
         valuePerElement: {
@@ -26,8 +25,7 @@ export const strengthInNumbers: CardDef = {
       name: 'Military Dominance',
       tags: [CardTag.GOAL],
       permanent: true,
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/4ae44403-0397-4338-9df7-2c582cca25b0/anim=false,width=450,optimized=true/Zim+BigLove_2025-11-30%2017-55-23-0131.jpeg',
+      illustration: 'cards/29_2.jpg',
       glory: {
         amount: 0,
         valuePerElement: {

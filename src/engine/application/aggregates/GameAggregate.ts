@@ -5,6 +5,7 @@ import {
   cardIsBlocked,
   getActiveState,
   getEffectiveActionCost,
+  getEffectiveGlory,
   getInstancesTriggerEffects,
 } from '@engine/application/cardHelpers';
 import { GameEventContext } from '@engine/application/gameEvent/GameEventContext';
@@ -615,5 +616,22 @@ export class GameAggregate {
 
   public getId(): string {
     return this.id;
+  }
+
+  public getScore(): number {
+    const allIds = [
+      ...this.gameState.drawPile,
+      ...this.gameState.discardPile,
+      ...this.gameState.board,
+      ...this.gameState.permanents,
+    ];
+    return allIds.reduce((total, id) => {
+      const instance = this.gameState.instances[id];
+      if (!instance) return total;
+      const cs = getActiveState(instance, this.cardDefs);
+      return (
+        total + getEffectiveGlory(cs, this.gameState, this.cardDefs, instance, this.stickerDefs)
+      );
+    }, 0);
   }
 }

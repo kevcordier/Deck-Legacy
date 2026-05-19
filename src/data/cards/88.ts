@@ -9,8 +9,7 @@ export const missionary: CardDef = {
       id: 1,
       name: 'Missionary',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/9f50fdae-1dbf-49b6-0639-b7cc3edccd00/450x%3Cauto%3E_so',
+      illustration: 'cards/88_1.jpg',
       actions: [
         {
           id: '88-1-1',
@@ -50,8 +49,7 @@ export const missionary: CardDef = {
     {
       id: 2,
       name: 'Beekeeper',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/c9ac5a15-7b60-4dc1-b491-cbc1bfaf5034/450x%3Cauto%3E_so',
+      illustration: 'cards/88_2.jpg',
       tags: [CardTag.PERSON],
       productions: [
         {

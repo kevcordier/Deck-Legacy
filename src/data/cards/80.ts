@@ -24,8 +24,7 @@ export const astronomer: CardDef = {
       id: 1,
       name: 'Astronomer',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/de27f2e5-7bbd-474a-9a51-1dfa0c9d532a/450x%3Cauto%3E_so',
+      illustration: 'cards/80_1.jpg',
       glory: {
         amount: 0,
         valuePerElement: {
@@ -80,8 +79,7 @@ export const astronomer: CardDef = {
       id: 2,
       name: 'Astrologist',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/3a01687e-ca3c-494d-8495-3fdc90563a9a/450x%3Cauto%3E_so_hm',
+      illustration: 'cards/80_2.jpg',
       productions: [{ [ResourceType.WEAPON]: 1 }],
       actions: [
         {

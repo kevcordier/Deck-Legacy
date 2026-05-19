@@ -30,8 +30,7 @@ export const aPerfectTower: CardDef = {
     {
       id: 1,
       name: 'A Perfect Tower',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e6094f93-eaed-4dfc-94cd-504288ba59da/original=true,quality=90/9406B4DAC1E3366487E84BF3125C829DF46845F06B56F04E12F7E5C5159C6ACB.jpeg',
+      illustration: 'cards/73_1.jpg',
       permanent: true,
       glory: {
         amount: 0,

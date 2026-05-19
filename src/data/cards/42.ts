@@ -9,8 +9,7 @@ export const magistrate: CardDef = {
       id: 1,
       name: 'Magistrate',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/5cec5072-bff2-4680-83c3-831ac4f5150d/450x%3Cauto%3E_so',
+      illustration: 'cards/42_1.jpg',
       actions: [
         {
           id: '42-1-1',
@@ -44,8 +43,7 @@ export const magistrate: CardDef = {
       id: 2,
       name: 'Magistrate',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/98da4eac-3b68-473f-b10e-5a9ebac9a36a/450x%3Cauto%3E_so',
+      illustration: 'cards/42_2.jpg',
       actions: [
         {
           id: '42-2-1',
@@ -81,8 +79,7 @@ export const magistrate: CardDef = {
       name: 'Magistrate',
       tags: [CardTag.PERSON],
       glory: { amount: 2 },
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/00888491-631e-40ba-864c-589fea86039f/450x%3Cauto%3E_so',
+      illustration: 'cards/42_3.jpg',
       actions: [
         {
           id: '42-3-1',
@@ -118,8 +115,7 @@ export const magistrate: CardDef = {
       name: 'Strategist',
       tags: [CardTag.PERSON, CardTag.ELDER],
       glory: { amount: 5 },
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/4b3762dc-c663-4441-bd95-d8a9d331579e/450x%3Cauto%3E_so',
+      illustration: 'cards/42_4.jpg',
       actions: [
         {
           id: '42-4-1',

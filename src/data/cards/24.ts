@@ -16,8 +16,7 @@ export const scientist: CardDef = {
       id: 1,
       name: 'Scientist',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://img.freepik.com/free-photo/portrait-male-scribe-medieval-times_23-2150931875.jpg?semt=ais_hybrid&w=740&q=80',
+      illustration: 'cards/24_1.jpg',
       passives: [
         {
           ...CardPassives[PassiveType.ADJUST_PRODUCTION],
@@ -50,7 +49,7 @@ export const scientist: CardDef = {
       id: 2,
       name: 'Observatory',
       tags: [CardTag.BUILDING],
-      illustration: 'https://corwyn.wdfiles.com/local--files/skyreach-observatory/OBSERVATORY.jpg',
+      illustration: 'cards/24_2.jpg',
       glory: { amount: 5 },
       productions: [
         {
@@ -93,8 +92,7 @@ export const scientist: CardDef = {
       id: 3,
       name: 'Lab',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://img.freepik.com/premium-vector/scientific-laboratory-medieval-science-laboratory-fantasy-lab-with-different-glassware-solutio_899391-2466.jpg',
+      illustration: 'cards/24_3.jpg',
       glory: { amount: 10 },
       productions: [
         {

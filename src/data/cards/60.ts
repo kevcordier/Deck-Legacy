@@ -10,8 +10,7 @@ export const royalVisit: CardDef = {
       id: 1,
       name: 'Royal Visit',
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/292e1ca1-f3d6-4f2e-bdbd-fa3fa9935516/anim=false,width=450,optimized=true/00001-2621158977.jpeg',
+      illustration: 'cards/60_1.jpg',
       glory: { amount: 2 },
       actions: [
         {
@@ -43,8 +42,7 @@ export const royalVisit: CardDef = {
       id: 2,
       name: 'Inquisitor',
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f846b7a7-a6c7-4a7a-b96c-327ef05a5a12/anim=false,width=450,optimized=true/00076-1419421906.jpeg',
+      illustration: 'cards/60_2.jpg',
       productions: [{ gold: 1 }],
       actions: [
         {

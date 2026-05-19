@@ -17,8 +17,7 @@ export const fishingShips: CardDef = {
       id: 1,
       name: 'Fishing Ships',
       tags: [CardTag.SEAFARING, CardTag.SHIP],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/4129aea6-3683-4e86-a115-32b448434dd2/450x%3Cauto%3E_so',
+      illustration: 'cards/87_1.jpg',
       glory: { amount: 2 },
       productions: [{ [ResourceType.GOLD]: 3 }],
       upgrade: [
@@ -39,8 +38,7 @@ export const fishingShips: CardDef = {
     {
       id: 2,
       name: "Fish n' Chips",
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/38aa8113-4d2e-4228-bef6-da8a5d9258f9/450x%3Cauto%3E_so',
+      illustration: 'cards/87_2.jpg',
       tags: [CardTag.SEAFARING],
       glory: { amount: 4 },
       productions: [{ [ResourceType.GOLD]: 2, [ResourceType.GOODS]: 2 }],
@@ -49,8 +47,7 @@ export const fishingShips: CardDef = {
       id: 3,
       name: 'Fish Quota',
       tags: [CardTag.SEAFARING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/ba2ab390-abb6-4d55-9e2c-298708b773dd/450x%3Cauto%3E_so',
+      illustration: 'cards/87_3.jpg',
       glory: { amount: 4 },
       productions: [{ [ResourceType.GOLD]: 2 }],
       actions: [
@@ -93,8 +90,7 @@ export const fishingShips: CardDef = {
       id: 4,
       name: 'Fishing Excellence',
       tags: [CardTag.STATE],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/0ac0a398-59c8-48b4-9917-6d5188b564b1/450x%3Cauto%3E_so',
+      illustration: 'cards/87_4.jpg',
       permanent: true,
       glory: { amount: 13 },
       passives: [

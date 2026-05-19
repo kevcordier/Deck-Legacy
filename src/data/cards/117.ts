@@ -22,8 +22,7 @@ export const handsomeRival: CardDef = {
     {
       id: 1,
       name: 'Handsome Rival',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/ce305d5e-469b-4023-aadf-5c800612533d/450x%3Cauto%3E_so',
+      illustration: 'cards/117_1.jpg',
       tags: [CardTag.PERSON],
       glory: { amount: 20, valuePerElement: { accumulation: true, amount: -5 } },
       passives: [
@@ -78,8 +77,7 @@ export const handsomeRival: CardDef = {
       id: 2,
       name: 'Noble Ally',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/ce305d5e-469b-4023-aadf-5c800612533d/450x%3Cauto%3E_so',
+      illustration: 'cards/117_2.jpg',
       glory: { amount: 6 },
       actions: [
         {

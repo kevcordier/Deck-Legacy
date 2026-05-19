@@ -17,8 +17,7 @@ export const plague: CardDef = {
       id: 1,
       name: 'Plague',
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/cc470830-9713-4645-a665-57af495f5009/anim=false,width=450,optimized=true/1833339934731181DE4503C0B9B24912ECD7C31F74CE592F4DAE2CA4B3CE342F.jpeg',
+      illustration: 'cards/47_1.jpg',
       negative: true,
       glory: {
         amount: -2,
@@ -54,8 +53,7 @@ export const plague: CardDef = {
       id: 2,
       name: 'Enemy soldier',
       tags: [CardTag.ENEMY],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/3361d0f0-6e63-4aed-b043-1651218b5aac/anim=false,width=450,optimized=true/generator_import_1774550952553_7.jpeg',
+      illustration: 'cards/47_2.jpg',
       negative: true,
       glory: {
         amount: -2,

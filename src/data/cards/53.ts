@@ -16,8 +16,7 @@ export const farField: CardDef = {
       id: 1,
       name: 'Far Field',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/15bd8f4b-4902-4f28-8412-d8dee8ecc885/anim=false,width=450,optimized=true/00023-1054815488.jpeg',
+      illustration: 'cards/53_1.jpg',
       productions: [
         {
           [ResourceType.GOLD]: 1,
@@ -52,8 +51,7 @@ export const farField: CardDef = {
       id: 2,
       name: 'Inn',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/813f44b3-0bfd-480b-9b86-ce6295480cca/anim=false,width=450,optimized=true/00614-2353157717.jpeg',
+      illustration: 'cards/53_2.jpg',
       productions: [
         {
           [ResourceType.GOLD]: 2,
@@ -77,8 +75,7 @@ export const farField: CardDef = {
       id: 3,
       name: 'Wall',
       tags: [CardTag.BUILDING, CardTag.WALL],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7aec4cb2-aa6e-4a92-8e4b-b447573d9cdf/anim=false,width=450,optimized=true/2570720676-1.jpeg',
+      illustration: 'cards/53_3.jpg',
       productions: [
         {
           [ResourceType.WEAPON]: 1,
@@ -91,8 +88,7 @@ export const farField: CardDef = {
       id: 4,
       name: 'Innkeeper',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f492dee9-5b14-4e22-ac84-4ec5dfe2a153/anim=false,width=450,optimized=true/C57CDE16AEBCE06DFDDBF8096F8A830104BF5BD412F69716117A14C05E0AF49C.jpeg',
+      illustration: 'cards/53_4.jpg',
       glory: { amount: 3 },
       actions: [
         {

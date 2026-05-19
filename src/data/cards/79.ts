@@ -17,8 +17,7 @@ export const backstabber: CardDef = {
       id: 1,
       name: 'Backstabber',
       tags: [CardTag.ENEMY],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/bb01de98-17f8-4ba8-a4f5-2022f8e65283/450x%3Cauto%3E_so',
+      illustration: 'cards/79_1.jpg',
       negative: true,
       glory: { amount: -4 },
       actions: [
@@ -57,8 +56,7 @@ export const backstabber: CardDef = {
       id: 2,
       name: 'Blood Curse',
       tags: [CardTag.EVENT],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/6ee6709b-a957-43ef-917d-ff09745cc860/450x%3Cauto%3E_so',
+      illustration: 'cards/79_2.jpg',
       negative: true,
       passives: [
         {

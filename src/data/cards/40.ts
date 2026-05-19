@@ -9,8 +9,7 @@ export const royalArchitect: CardDef = {
       id: 1,
       name: 'Royal Architect',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1a9d0128-b1ff-4cb3-bc7f-6f436c3c1a72/anim=false,width=450,optimized=true/7E42DFE164030F49FF7F13152FF659F580F126CB795D6862F655470E42F74FE4.jpeg',
+      illustration: 'cards/40_1.jpg',
       productions: [
         {
           stone: 1,
@@ -90,8 +89,7 @@ export const royalArchitect: CardDef = {
     {
       id: 2,
       name: 'Bridge of Marvel',
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7fe6e5da-4198-48af-a7f5-233623f15096/anim=false,width=450,optimized=true/00000-3318507171.jpeg',
+      illustration: 'cards/40_2.jpg',
       tags: [CardTag.BUILDING],
       glory: { amount: 15 },
     },

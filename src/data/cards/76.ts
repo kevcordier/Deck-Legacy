@@ -32,8 +32,7 @@ export const buildAnArk: CardDef = {
     {
       id: 1,
       name: 'Build an Ark',
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/1c386e60-d480-41eb-bdd3-390042789f1c/original',
+      illustration: 'cards/76_1.jpg',
       permanent: true,
       actions: [
         {
@@ -78,8 +77,7 @@ export const buildAnArk: CardDef = {
       id: 2,
       name: 'The Ark',
       tags: [CardTag.SEAFARING, CardTag.SHIP],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/1c386e60-d480-41eb-bdd3-390042789f1c/original',
+      illustration: 'cards/76_2.jpg',
       glory: {
         amount: 24,
         valuePerElement: {

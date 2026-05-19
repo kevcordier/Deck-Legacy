@@ -9,8 +9,7 @@ export const engineer: CardDef = {
       id: 1,
       name: 'Engineer',
       tags: [CardTag.PERSON],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d1e13140-c150-41fa-91e1-b67ad84a742e/anim=false,width=450,optimized=true/00459-honey2D_v30_3241350609_scaled.jpeg',
+      illustration: 'cards/25_1.jpg',
       actions: [
         {
           id: '25-1-1',
@@ -88,8 +87,7 @@ export const engineer: CardDef = {
       id: 2,
       name: 'Trebuchet',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f2db8879-ac24-4c7d-9d09-eb2927f806fa/anim=false,width=450,optimized=true/00007-2893402591.jpeg',
+      illustration: 'cards/25_2.jpg',
       productions: [
         {
           weapon: 1,

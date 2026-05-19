@@ -9,8 +9,7 @@ export const forest: CardDef = {
       id: 1,
       name: 'Forest',
       tags: [CardTag.LAND],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1d7adfad-280d-4cc5-8c88-97f3a42cb7b5/anim=false,width=450,optimized=true/8088900BBA42AB5468EFEAE413FD1584F4F2ED2F8DB7A12E06D3E3E1E945503D.jpeg',
+      illustration: 'cards/3_1.jpg',
       upgrade: [
         {
           cost: {
@@ -55,8 +54,7 @@ export const forest: CardDef = {
       id: 2,
       name: 'Felled Forest',
       tags: [CardTag.LAND],
-      illustration:
-        'https://www.azolifesciences.com/image-handler/ts/20200320043042/ri/673/picture/2020/3/shutterstock_569562037.jpg',
+      illustration: 'cards/3_2.jpg',
       upgrade: [
         {
           cost: {
@@ -86,8 +84,7 @@ export const forest: CardDef = {
       id: 3,
       name: 'Lumberjack',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/289541b5-4f30-4dba-936f-68502266080f/width=450,quality=90/00079-3523319267.jpeg',
+      illustration: 'cards/3_3.jpg',
       glory: { amount: 2 },
       productions: [
         {
@@ -99,8 +96,7 @@ export const forest: CardDef = {
       id: 4,
       name: 'Sacred Well',
       tags: [CardTag.BUILDING],
-      illustration:
-        'https://image-b2.civitai.com/file/civitai-media-cache/7bba82f5-cb19-4c78-a2af-5d874fc1ba96/450x%3Cauto%3E_so',
+      illustration: 'cards/3_4.jpg',
       glory: { amount: 2 },
       actions: [
         {
