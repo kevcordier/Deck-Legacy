@@ -1,5 +1,6 @@
 import { GameCard } from '@components/GameCard/GameCard';
 import { PassifIcon } from '@components/ui/Icon/icon';
+import { DragDropProvider } from '@dnd-kit/react';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { cardSelector } from '@engine/application/cardSelector';
 import { PassiveType } from '@engine/domain/enums';
@@ -9,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 interface CardRowProps {
   readonly cardIds: number[];
+  readonly onReorder?: (newOrder: number[]) => void;
 }
 
 type EffectEntry = { sourceId: number; passive: Passive };
@@ -38,12 +40,13 @@ type CardProps = {
   readonly id: number;
   readonly index: number;
   readonly blockingMap: Record<number, number[]>;
+  readonly sortableGroup: string;
 };
 
-function Card({ id, index, blockingMap }: CardProps) {
+function Card({ id, index, blockingMap, sortableGroup }: CardProps) {
   const { gameState, defs, stickerDefs } = useGame();
   const { t } = useTranslation();
-  const { ref } = useSortable({ id, index });
+  const { ref } = useSortable({ id, index, group: sortableGroup });
   const inst = gameState.instances[id];
   if (!inst) return null;
 
@@ -116,18 +119,27 @@ export function CardRow({ cardIds }: CardRowProps) {
   });
 
   const blockedIds = new Set(Object.values(blockingMap).flat());
+  const visibleCardIds = cardIds.filter(id => !blockedIds.has(id));
+
+  const sortableGroup = `card-row-${visibleCardIds.join('-')}`;
 
   return (
-    <div
-      className={
-        'grid grid-cols-1 gap-2 @xs/main:gap-3 @xs/main:grid-cols-2 @3xl/main:grid-cols-3 @5xl/main:grid-cols-4 @7xl/main:grid-cols-5 @8xl/main:grid-cols-6'
-      }
-    >
-      {cardIds
-        .filter(id => !blockedIds.has(id))
-        .map((id, index) => (
-          <Card key={id} id={id} index={index} blockingMap={blockingMap} />
+    <DragDropProvider>
+      <div
+        className={
+          'grid grid-cols-1 gap-2 @xs/main:gap-3 @xs/main:grid-cols-2 @3xl/main:grid-cols-3 @5xl/main:grid-cols-4 @7xl/main:grid-cols-5 @8xl/main:grid-cols-6'
+        }
+      >
+        {visibleCardIds.map((id, index) => (
+          <Card
+            key={id}
+            id={id}
+            index={index}
+            blockingMap={blockingMap}
+            sortableGroup={sortableGroup}
+          />
         ))}
-    </div>
+      </div>
+    </DragDropProvider>
   );
 }

@@ -151,7 +151,7 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
             )}
             <div
               className={[
-                `${track.vertical ? 'size-5 @3xs:size-6' : 'size-6 @3xs:size-8'} shrink-0 flex flex-col items-center justify-center border-2 font-bold rounded-md text-base-ink bg-card border-base-ink font-body text-xs @2xs:text-sm`,
+                `${track.vertical ? 'size-5 @3xs:size-6' : 'size-8'} shrink-0 flex flex-col items-center justify-center border-2 font-bold rounded-md text-base-ink bg-card border-base-ink font-body text-xs @2xs:text-sm`,
                 isValidated ? 'border-success bg-success/20! text-success' : '',
               ].join(' ')}
               title={isValidated ? '✓' : undefined}
