@@ -3,7 +3,9 @@ import { ButtonGroup } from '@components/ui/ButtonGroup/ButtonGroup';
 import { Modal } from '@components/ui/Modal/Modal';
 import { GameUIContext } from '@contexts/GameUIContext';
 import type { Theme } from '@contexts/GameUIProvider';
-import { use, useState } from 'react';
+import { exportSaveDataAsJson, importSaveDataFromJson } from '@engine/infrastructure/persistence';
+import { type ChangeEvent, use, useRef, useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
 interface OptionsModalProps {
@@ -14,11 +16,65 @@ interface OptionsModalProps {
 export function OptionsModal({ onClose, onReset }: OptionsModalProps) {
   const { t, i18n } = useTranslation();
   const [confirmReset, setConfirmReset] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { theme, applyTheme } = use(GameUIContext);
 
   function handleReset() {
     onReset();
     onClose();
+  }
+
+  function handleExportSave() {
+    const saveAsJson = exportSaveDataAsJson();
+    if (!saveAsJson) {
+      toast.error(t('options.exportNoSave'));
+      return;
+    }
+
+    const blob = new Blob([saveAsJson], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'deck-legacy-save.json';
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success(t('options.exportSuccess'));
+  }
+
+  function handleOpenImport() {
+    fileInputRef.current?.click();
+  }
+
+  async function handleImportFile(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const fileName = file.name.toLowerCase();
+    const isJsonFile = fileName.endsWith('.json') || file.type === 'application/json';
+    if (!isJsonFile) {
+      toast.error(t('options.importInvalidFile'));
+      event.target.value = '';
+      return;
+    }
+
+    const rawContent = await file.text();
+    const importError = importSaveDataFromJson(rawContent);
+    event.target.value = '';
+
+    if (importError === 'invalid_json') {
+      toast.error(t('options.importInvalidJson'));
+      return;
+    }
+
+    if (importError === 'invalid_schema') {
+      toast.error(t('options.importInvalidSchema'));
+      return;
+    }
+
+    toast.success(t('options.importSuccess'));
+    window.location.reload();
   }
 
   return (
@@ -47,6 +103,25 @@ export function OptionsModal({ onClose, onReset }: OptionsModalProps) {
           { children: t('options.fr'), value: 'fr' },
         ]}
       />
+
+      <div className="flex flex-col items-start gap-2">
+        <span className="text-xs">{t('options.saveData')}</span>
+        <div className="flex gap-2">
+          <Button size="sm" color="ink" onClick={handleExportSave} font="body">
+            {t('options.exportJson')}
+          </Button>
+          <Button size="sm" color="ink" onClick={handleOpenImport} font="body">
+            {t('options.importJson')}
+          </Button>
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json,application/json"
+          className="hidden"
+          onChange={handleImportFile}
+        />
+      </div>
 
       <div className="flex flex-col items-start gap-2">
         {confirmReset ? (

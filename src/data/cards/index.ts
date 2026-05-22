@@ -116,6 +116,9 @@ import { southHills } from './115';
 import { raid } from './116';
 import { handsomeRival } from './117';
 import { borderingLands } from './118';
+import { prosperity } from './119';
+import { waterMill } from './120';
+import { borderDispute } from './121';
 import type { CardDef } from '@engine/domain/types';
 
 export const cardsData: CardDef[] = [
@@ -237,4 +240,7 @@ export const cardsData: CardDef[] = [
   raid,
   handsomeRival,
   borderingLands,
+  prosperity,
+  waterMill,
+  borderDispute,
 ];

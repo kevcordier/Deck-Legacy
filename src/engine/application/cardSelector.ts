@@ -15,6 +15,7 @@ const LOCATION_SCOPES = new Set([
   TargetScope.DISCARD,
   TargetScope.BLOCKED,
   TargetScope.PERMANENTS,
+  TargetScope.PURGE_SELECTED,
   TargetScope.ANY,
 ]);
 
@@ -33,6 +34,10 @@ function addLocationScopeParts(
   if (locationScopes.includes(TargetScope.BLOCKED)) parts.push(...blockedInstanceIds);
   if (locationScopes.includes(TargetScope.PERMANENTS))
     parts.push(...Object.values(gameState.permanents));
+  if (locationScopes.includes(TargetScope.PURGE_SELECTED)) {
+    parts.push(...(gameState.purgeState?.selectedCardIds ?? []));
+    parts.push(...(gameState.purgeState?.selectedPermanentIds ?? []));
+  }
 }
 
 function buildCardPool(

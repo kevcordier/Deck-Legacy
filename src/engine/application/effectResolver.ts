@@ -1,6 +1,7 @@
 import {
   canAffordCost,
   getActiveState,
+  getAffectedCardsByBoardEffects,
   getEffectiveProductions,
   getTotalProduction,
   getTotalResourceProduction,
@@ -10,6 +11,7 @@ import { CardChoiceStrategy } from '@engine/application/playerChoice/CardChoiceS
 import { stateSelector } from '@engine/application/stateSelector';
 import {
   ActionEffectType,
+  PassiveType,
   PendingChoiceType,
   ResourceType,
   TargetScope,
@@ -212,10 +214,20 @@ function resolveCardTarget(
 
   const isStickerAction =
     actionType === ActionEffectType.ADD_STICKER || actionType === ActionEffectType.BOOST_CARD;
+  const cantBeDestroyedInstanceIds =
+    actionType === ActionEffectType.DESTROY_CARD
+      ? new Set(
+          Object.values(
+            getAffectedCardsByBoardEffects(gameState, PassiveType.CANT_BE_DESTROYED),
+          ).flat(),
+        )
+      : null;
+
   const choices = cardSelector(cards, instanceId, gameState, defs, stickerDefs).filter(
     id =>
-      !isStickerAction ||
-      getTotalProduction(id, gameState, defs, stickerDefs) < STICKER_PRODUCTION_CAP,
+      (!isStickerAction ||
+        getTotalProduction(id, gameState, defs, stickerDefs) < STICKER_PRODUCTION_CAP) &&
+      (actionType !== ActionEffectType.DESTROY_CARD || !cantBeDestroyedInstanceIds?.has(id)),
   );
 
   const picks = getPickNumbers(cards, choices.length);

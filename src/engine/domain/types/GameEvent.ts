@@ -1,5 +1,11 @@
 import type { GameEventType } from '@engine/domain/enums';
-import type { GameState, Resources, TriggerEntry } from '@engine/domain/types';
+import type {
+  ExpansionDeckEntry,
+  GameParameters,
+  GameState,
+  Resources,
+  TriggerEntry,
+} from '@engine/domain/types';
 
 export interface GameEvent {
   id: string;
@@ -86,4 +92,45 @@ export interface SkipTriggerEvent extends GameEvent {
 export interface TurnEndedEvent extends GameEvent {
   type: GameEventType.TURN_ENDED;
   endTurnTrigger: Record<string, TriggerEntry>;
+}
+
+export interface CampaignScoreSavedEvent extends GameEvent {
+  type: GameEventType.CAMPAIGN_SCORE_SAVED;
+  segment: string;
+  score: number;
+  openExpansionChoice: boolean;
+}
+
+export interface ExpansionSelectedEvent extends GameEvent {
+  type: GameEventType.EXPANSION_SELECTED;
+  expansionName: string;
+  deckEntries: ExpansionDeckEntry[];
+  purgeBatchSize: number;
+  purgePermanentCount: number;
+  purgePool: number[];
+  parameterOverrides?: Partial<GameParameters>;
+  onStartDiscoverIds: number[];
+}
+
+export interface PurgeCardSelectedEvent extends GameEvent {
+  type: GameEventType.PURGE_CARD_SELECTED;
+  instanceId: number;
+  batchStart: number;
+}
+
+export interface PurgePermanentSelectedEvent extends GameEvent {
+  type: GameEventType.PURGE_PERMANENT_SELECTED;
+  instanceId: number;
+}
+
+export interface PurgeOnTriggeredEvent extends GameEvent {
+  type: GameEventType.PURGE_ON_TRIGGERED;
+  triggers: Record<string, TriggerEntry>;
+}
+
+export interface PurgeFinalizedEvent extends GameEvent {
+  type: GameEventType.PURGE_FINALIZED;
+  purgedIds: number[];
+  glory: number;
+  onStartDiscoverIds: number[];
 }

@@ -1,4 +1,4 @@
-import { CardTag } from '@engine/domain/enums';
+import { CardTag, PassiveType } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const etherCrystal: CardDef = {
@@ -12,7 +12,12 @@ export const etherCrystal: CardDef = {
       tags: [CardTag.ARTIFACT],
       illustration: 'cards/92_1.jpg',
       glory: { amount: 10 },
-      description: true,
+      passives: [
+        {
+          id: '92-1-1',
+          type: PassiveType.CANT_BE_DESTROYED,
+        },
+      ],
     },
   ],
 };

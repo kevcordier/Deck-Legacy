@@ -4,8 +4,8 @@ import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameA
 import {
   cardIsBlocked,
   getActiveState,
-  getEffectiveProductions,
   getEffectiveUpgradeCost,
+  getProductionChoicesForAction,
 } from '@engine/application/cardHelpers';
 import { resolveCost } from '@engine/application/costResolver';
 import { createInstance } from '@engine/application/factory';
@@ -17,6 +17,8 @@ import { CostResolutionError } from '@engine/domain/errors/CostResolutionError';
 import {
   type CardAction,
   type CardDef,
+  type ExpansionConfig,
+  type ExpansionDeckEntry,
   type GameEvent,
   type GameState,
   type PendingChoice,
@@ -51,6 +53,14 @@ function makeAggregate(
   );
 }
 
+type DeckData = {
+  deck: ExpansionDeckEntry[];
+  expansions?: Record<string, ExpansionConfig>;
+};
+
+const DECK_CONFIG = deckData as DeckData;
+const EXPANSIONS = DECK_CONFIG.expansions ?? {};
+
 export function GameProvider({
   children,
   id,
@@ -74,9 +84,7 @@ export function GameProvider({
 
   const getTutorialState = useCallback(
     (aggRef: GameAggregate): GameState => {
-      const deckEntries = (deckData.deck as { id: number; cardId: number }[]).sort(
-        (a, b) => a.id - b.id,
-      );
+      const deckEntries = [...DECK_CONFIG.deck].sort((a, b) => a.id - b.id);
       const starterEntries = deckEntries.slice(0, 10);
       const discoveryEntries = deckEntries.filter(e => e.id > 10);
       const allInstances = [...starterEntries, ...discoveryEntries].map(entry =>
@@ -127,6 +135,19 @@ export function GameProvider({
     resolvedCost: ResolvedCost;
   } | null>(null);
   const [parameters, setParameters] = useState(agg.getParameters());
+  const [purgeCandidates, setPurgeCandidates] = useState<number[]>([]);
+  const [purgePermanentCandidates, setPurgePermanentCandidates] = useState<number[]>([]);
+  const [selectedPurgeIds, setSelectedPurgeIds] = useState<number[]>([]);
+  const [canSelectPermanentForPurge, setCanSelectPermanentForPurge] = useState<boolean>(false);
+  const [isPurgeSelectionComplete, setIsPurgeSelectionComplete] = useState<boolean>(false);
+
+  const availableExpansions = useMemo(
+    () =>
+      Object.keys(EXPANSIONS).filter(
+        name => !Object.prototype.hasOwnProperty.call(gameState.campaignScores, name),
+      ),
+    [gameState.campaignScores],
+  );
 
   const getParchmentCardDefFromPhase = (
     state: GameState,
@@ -148,6 +169,14 @@ export function GameProvider({
   const [triggerPile, setTriggerPile] = useState<Record<string, TriggerEntry> | null>(
     parchmentTextPending ? null : agg.getGameState().triggerPile,
   );
+
+  useEffect(() => {
+    setPurgeCandidates(aggRef.current.getPurgeCandidates());
+    setPurgePermanentCandidates(aggRef.current.getPurgePermanentCandidates());
+    setSelectedPurgeIds(aggRef.current.getSelectedPurgeIds());
+    setCanSelectPermanentForPurge(aggRef.current.canSelectPermanentForPurge());
+    setIsPurgeSelectionComplete(aggRef.current.isPurgeSelectionComplete());
+  }, [gameState]);
 
   // ─── Sync ───────────────────────────────────────────────────────────────
 
@@ -225,9 +254,7 @@ export function GameProvider({
   };
 
   const startGame = () => {
-    const deckEntries = (deckData.deck as { id: number; cardId: number }[]).sort(
-      (a, b) => a.id - b.id,
-    );
+    const deckEntries = [...DECK_CONFIG.deck].sort((a, b) => a.id - b.id);
     const starterEntries = deckEntries.slice(0, 10);
     const discoveryEntries = deckEntries.filter(e => e.id > 10);
 
@@ -265,6 +292,32 @@ export function GameProvider({
     sync(aggRef.current.turnStarted());
   };
 
+  const continueCampaign = () => {
+    if (gameState.phase !== Phase.GAME_OVER) {
+      return;
+    }
+
+    sync(aggRef.current.saveCampaignScore(availableExpansions.length > 0));
+  };
+
+  const selectExpansion = (expansionName: string) => {
+    const expansion = EXPANSIONS[expansionName];
+    if (!expansion) return;
+    sync(aggRef.current.selectExpansion(expansionName, expansion));
+  };
+
+  const selectPurgeCard = (instanceId: number) => {
+    sync(aggRef.current.selectPurgeCard(instanceId));
+  };
+
+  const selectPurgePermanent = (instanceId: number) => {
+    sync(aggRef.current.selectPurgePermanent(instanceId));
+  };
+
+  const finalizePurge = () => {
+    sync(aggRef.current.finalizePurge());
+  };
+
   // ── Persistance ───────────────────────────────────────────────────────────
 
   const deleteSaveCallback = () => {
@@ -295,14 +348,12 @@ export function GameProvider({
     const inst = gs.instances[instanceId];
     if (!inst || cardIsBlocked(instanceId, gs)) return;
 
-    const resourcesGained = getEffectiveProductions(
-      defs[inst.cardId].states.find(s => s.id === inst.stateId)?.productions?.[chosenResource] ??
-        {},
-      gs,
-      defs,
-      inst,
-      stickerDefs,
+    const baseProductions = defs[inst.cardId].states.find(s => s.id === inst.stateId)
+      ?.productions ?? [{}];
+    const productionChoices = baseProductions.flatMap(base =>
+      getProductionChoicesForAction(base, gs, defs, inst, stickerDefs),
     );
+    const resourcesGained = productionChoices[chosenResource] ?? {};
     triggerProduction(instanceId, resourcesGained);
   };
 
@@ -661,6 +712,18 @@ export function GameProvider({
         canRewind,
         rewindEvent,
         score,
+        campaignScores: gameState.campaignScores,
+        availableExpansions,
+        continueCampaign,
+        selectExpansion,
+        purgeCandidates,
+        purgePermanentCandidates,
+        selectedPurgeIds,
+        canSelectPermanentForPurge,
+        isPurgeSelectionComplete,
+        selectPurgeCard,
+        selectPurgePermanent,
+        finalizePurge,
         displayNewCards,
         setDisplayNewCards,
         getEvents: () => aggRef.current.getEvents(),

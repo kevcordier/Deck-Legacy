@@ -115,20 +115,7 @@ export const farField: CardDef = {
                   { [ResourceType.GOODS]: 1 },
                 ],
               },
-            },
-            {
-              id: 2,
-              type: ActionEffectType.ADD_RESOURCES,
-              resources: {
-                choice: [
-                  { [ResourceType.GOLD]: 1 },
-                  { [ResourceType.WOOD]: 1 },
-                  { [ResourceType.STONE]: 1 },
-                  { [ResourceType.IRON]: 1 },
-                  { [ResourceType.WEAPON]: 1 },
-                  { [ResourceType.GOODS]: 1 },
-                ],
-              },
+              repeat: 2,
             },
           ],
         },

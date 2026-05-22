@@ -14,6 +14,7 @@ import {
   getEffectiveUpgradeCost,
   getFirstAvailableTrackStep,
   getInstancesTriggerEffects,
+  getProductionChoicesForAction,
   getTotalProduction,
   getTotalResourceProduction,
   tagClass,
@@ -364,6 +365,99 @@ describe('getEffectiveProductions', () => {
     const gs = makeState({ instances: { 1: inst } });
     const result = getEffectiveProductions({ gold: 3, wood: 1 }, gs, defs, inst, {});
     expect(result).toEqual({ wood: 1 });
+  });
+
+  it('does not auto-replace production when REPLACE_RESOURCE_PRODUCTION is present', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defsWithReplacePassive: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [
+          {
+            id: 1,
+            name: 'S',
+            passives: [
+              {
+                id: 'replace-prod',
+                type: PassiveType.REPLACE_RESOURCE_PRODUCTION,
+                resources: { gold: 1, goods: 1 },
+              },
+            ],
+          },
+        ],
+      },
+    };
+    const gs = makeState({ instances: { 1: inst } });
+
+    const result = getEffectiveProductions(
+      { gold: 2, wood: 1 },
+      gs,
+      defsWithReplacePassive,
+      inst,
+      {},
+    );
+
+    expect(result).toEqual({ gold: 2, wood: 1 });
+  });
+
+  it('offers player both production choices when state passive REPLACE_RESOURCE_PRODUCTION is present', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defsWithReplacePassive: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [
+          {
+            id: 1,
+            name: 'S',
+            passives: [
+              {
+                id: 'replace-prod',
+                type: PassiveType.REPLACE_RESOURCE_PRODUCTION,
+                resources: { gold: 1, goods: 1 },
+              },
+            ],
+          },
+        ],
+      },
+    };
+    const gs = makeState({ instances: { 1: inst } });
+
+    const result = getProductionChoicesForAction(
+      { gold: 2, wood: 1 },
+      gs,
+      defsWithReplacePassive,
+      inst,
+      {},
+    );
+
+    expect(result).toEqual([
+      { gold: 2, wood: 1 },
+      { wood: 1, goods: 2 },
+    ]);
+  });
+
+  it('offers player both production choices when board effect REPLACE_RESOURCE_PRODUCTION targets the card', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      board: [2],
+      instances: { 2: inst },
+      boardEffects: {
+        1: [
+          {
+            id: 'replace-board',
+            type: PassiveType.REPLACE_RESOURCE_PRODUCTION,
+            resources: { gold: 1, goods: 1 },
+            cards: { ids: [2] },
+          },
+        ],
+      },
+    });
+
+    const result = getProductionChoicesForAction({ gold: 3 }, gs, defs, inst, {});
+
+    expect(result).toEqual([{ gold: 3 }, { goods: 3 }]);
   });
 });
 

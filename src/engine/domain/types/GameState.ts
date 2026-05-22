@@ -9,6 +9,36 @@ export type TriggerEntry = {
   sourceInstanceId: number;
 };
 
+export type ExpansionDeckEntry = {
+  id: number;
+  cardId: number;
+};
+
+export type ExpansionConfig = {
+  purge: {
+    permanent: number;
+    purge: number;
+  };
+  parameters?: Partial<GameParameters>;
+  deck: ExpansionDeckEntry[];
+  onStart?: {
+    discover?: {
+      ids: number[];
+    };
+  };
+};
+
+export type PurgeState = {
+  batchSize: number;
+  permanentToPurge: number;
+  shuffledPool: number[];
+  completedBatchStarts: number[];
+  selectedCardIds: number[];
+  selectedPermanentIds: number[];
+  onPurgeTriggered: boolean;
+  onStartDiscoverIds: number[];
+};
+
 export type GameState = {
   drawPile: number[];
   discoveryPile: number[];
@@ -28,6 +58,12 @@ export type GameState = {
   turn: number;
   phase: Phase;
   onGoingParchment?: number;
+  parameterOverrides: Partial<GameParameters>;
+  campaignScores: Record<string, number>;
+  activeExpansion?: string;
+  purgedCards: number[];
+  purgedGlory: number[];
+  purgeState?: PurgeState;
 };
 
 export type GameParameters = {

@@ -130,7 +130,7 @@ export const exportation: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_STICKER,
-                stickers: { ids: [2, 3, 4] },
+                stickers: { ids: [2, 3, 4, 5] },
                 cards: {
                   scope: [
                     TargetScope.FRIENDLY,

@@ -15,7 +15,7 @@ describe('ChooseStateEventStrategy', () => {
       cardInstanceId: 1,
       stateId: 2,
     };
-    const result = strategy.apply(gs, event as never);
+    const result = strategy.apply(gs, event);
     expect(result.instances[1].stateId).toBe(2);
   });
 });

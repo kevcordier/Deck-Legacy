@@ -19,6 +19,10 @@ export const EMPTY_STATE: GameState = {
   round: 0,
   turn: 0,
   phase: Phase.PRE_GAME,
+  parameterOverrides: {},
+  campaignScores: {},
+  purgedCards: [],
+  purgedGlory: [],
 };
 
 export function makeState(overrides?: Partial<GameState>): GameState {

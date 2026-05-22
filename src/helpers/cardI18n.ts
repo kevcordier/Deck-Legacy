@@ -86,12 +86,6 @@ export function tCardTrackAction(
   );
 }
 
-export function tCardDescription(t: TFunction, cardId = 0, stateId = 0, idx = 0): string {
-  return t(`descriptions.${cardId}-${stateId}-${idx}`, {
-    ns: 'cards',
-  });
-}
-
 export function tCardTag(t: TFunction, tag: string): string {
   return t(`tags.${tag}`, { ns: 'cards' });
 }

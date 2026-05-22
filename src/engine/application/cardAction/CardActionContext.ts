@@ -13,6 +13,7 @@ import { EndGameStrategy } from '@engine/application/cardAction/EndGameStrategy'
 import { PlaceCardInPileStrategy } from '@engine/application/cardAction/PlaceCardInDrawPileStrategy';
 import { PlayCardStrategy } from '@engine/application/cardAction/PlayCardStrategy';
 import { RemoveResourceOnCardStrategy } from '@engine/application/cardAction/RemoveResourceOnCardStrategy';
+import { SaveFromPurgeStrategy } from '@engine/application/cardAction/SaveFromPurgeStrategy';
 import { SetCumulatedStrategy } from '@engine/application/cardAction/SetCumulatedStrategy';
 import { ShuffleDeckStrategy } from '@engine/application/cardAction/ShuffleDeckStrategy';
 import { TrackAdvanceStrategy } from '@engine/application/cardAction/TrackAdvanceStrategy';
@@ -45,6 +46,7 @@ export class CardActionContext {
       [ActionEffectType.END_GAME]: new EndGameStrategy(),
       [ActionEffectType.SHUFFLE_DECK]: new ShuffleDeckStrategy(),
       [ActionEffectType.ADD_GLORY]: new AddGloryStrategy(cardDefs, stickerDefs),
+      [ActionEffectType.SAVE_FROM_PURGE]: new SaveFromPurgeStrategy(),
     };
   }
 

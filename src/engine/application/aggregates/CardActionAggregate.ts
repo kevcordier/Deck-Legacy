@@ -87,7 +87,18 @@ export class CardActionAggregate {
       [PendingChoiceType.CHOOSE_STEP]: new StepChoiceStrategy(cardDefs),
       [PendingChoiceType.CHOOSE_ACTION_EFFECT]: new ChooseActionEffectStrategy(),
     };
-    this.effects = this.action.actionEffects;
+    this.effects = this.action.actionEffects.reduce((acc, effect) => {
+      if (effect.repeat) {
+        const repeat =
+          typeof effect.repeat === 'number'
+            ? effect.repeat
+            : (this.gameState.instances[this.instance.id].cumulated ?? 0);
+
+        const repeatedEffects = Array(repeat).fill(effect);
+        return [...acc, ...repeatedEffects];
+      }
+      return [...acc, effect];
+    }, [] as ActionEffect[]);
     this.endTurn =
       !!this.action.endsTurn ||
       this.gameState.triggerPile[this.triggerId ?? '']?.effectDef.trigger === Trigger.END_OF_TURN;

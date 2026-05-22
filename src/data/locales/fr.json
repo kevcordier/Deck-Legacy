@@ -164,7 +164,19 @@
     "title": "Partie terminée",
     "glory": "Gloire",
     "rounds": "Manches",
-    "newGame": "↺ Nouvelle partie"
+    "newGame": "↺ Nouvelle partie",
+    "continueCampaign": "Continuer avec une extension",
+    "saveScore": "Enregistrer le score"
+  },
+  "campaign": {
+    "chooseExpansionTitle": "Choisissez une extension",
+    "chooseExpansionDescription": "Enregistrez le score de ce segment, choisissez une extension, puis effectuez la purge avant la prochaine manche.",
+    "purgeTitle": "Purge du royaume",
+    "purgeDescription": "Pour chaque lot de 12 cartes, choisissez 1 carte alliée à purger. Ensuite, purgez les permanentes alliées requises.",
+    "purgeBatchLabel": "Choisissez une carte alliée dans le lot courant",
+    "purgePermanentLabel": "Choisissez une carte permanente alliée à purger",
+    "purgeSelected": "Cartes sélectionnées pour la purge : {{count}}",
+    "finalizePurge": "Finaliser la purge"
   },
   "rules": {
     "title": "Règles",
@@ -183,6 +195,15 @@
     "theme_dark": "Sombre",
     "theme_system": "Système",
     "language": "Langue",
+    "saveData": "Données de sauvegarde",
+    "exportJson": "Exporter JSON",
+    "importJson": "Importer JSON",
+    "exportNoSave": "Aucune sauvegarde à exporter.",
+    "exportSuccess": "Sauvegarde exportée.",
+    "importSuccess": "Sauvegarde importée. Rechargement...",
+    "importInvalidFile": "Fichier invalide. Sélectionnez un fichier JSON.",
+    "importInvalidJson": "Fichier JSON invalide.",
+    "importInvalidSchema": "Format de sauvegarde invalide.",
     "en": "Anglais",
     "fr": "Français",
     "tutorial": "Activer le tutoriel",

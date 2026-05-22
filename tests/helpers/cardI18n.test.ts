@@ -1,7 +1,6 @@
 import {
   ICON_PASSTHROUGH,
   tCardActionLabel,
-  tCardDescription,
   tCardName,
   tCardPassiveLabel,
   tCardTag,
@@ -79,26 +78,6 @@ describe('tCardPassiveLabel', () => {
       ...ICON_PASSTHROUGH,
       ns: 'cards',
     });
-  });
-});
-
-// — tCardDescription —
-
-describe('tCardDescription', () => {
-  it('builds the correct key and returns the description', () => {
-    const t = makeT({ 'descriptions.7-1-2': 'Gain 2 gold.' });
-    expect(tCardDescription(t, 7, 1, 2)).toBe('Gain 2 gold.');
-  });
-
-  it('returns fallback when key is missing', () => {
-    const t = makeT();
-    expect(tCardDescription(t, 0, 0, 0)).toBe('descriptions.0-0-0');
-  });
-
-  it('does not pass ICON_PASSTHROUGH to t', () => {
-    const t = vi.fn().mockReturnValue('X') as unknown as TFunction;
-    tCardDescription(t, 1, 0, 0);
-    expect(t).toHaveBeenCalledWith('descriptions.1-0-0', { ns: 'cards' });
   });
 });
 

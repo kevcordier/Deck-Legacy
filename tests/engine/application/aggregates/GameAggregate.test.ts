@@ -10,7 +10,13 @@ import {
   Trigger,
 } from '@engine/domain/enums';
 import { ActionCancelledError } from '@engine/domain/errors/ActionCancelledError';
-import type { CardDef, GameEvent, PendingChoice, ResolvedActionEffect } from '@engine/domain/types';
+import type {
+  CardDef,
+  ExpansionConfig,
+  GameEvent,
+  PendingChoice,
+  ResolvedActionEffect,
+} from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -595,6 +601,42 @@ describe('GameAggregate.cardAction', () => {
     const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
     agg.cardAction(makeChooseEffectAction(), 1);
     expect(agg.getCurrentCardAction()?.getPendingChoices().length).toBeGreaterThan(0);
+  });
+
+  it('does not duplicate discovered ids in newDrawPile after parchment resolution', () => {
+    const parchmentSource = makeInstance({ id: 30, cardId: 3, stateId: 1 });
+    const discoveredA = makeInstance({ id: 31, cardId: 1, stateId: 1 });
+    const discoveredB = makeInstance({ id: 33, cardId: 1, stateId: 1 });
+
+    const state = makeState({
+      instances: { 30: parchmentSource, 31: discoveredA, 33: discoveredB },
+      discardPile: [31, 33],
+      lastAddedCards: [31, 33],
+      phase: Phase.PARCHMENT,
+      onGoingParchment: 30,
+      round: 8,
+    });
+
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 3: parchmentDef },
+      {},
+      [],
+    );
+
+    const gs = agg.cardAction(
+      {
+        id: 'p-discover',
+        actionEffects: [{ id: 0, type: ActionEffectType.ADD_RESOURCES, resources: { gold: 1 } }],
+      },
+      30,
+    );
+
+    expect(gs.phase).toBe(Phase.ROUND_START);
+    expect(gs.drawPile).toEqual(expect.arrayContaining([31, 33]));
+    expect(gs.drawPile.filter(id => id === 31)).toHaveLength(1);
+    expect(gs.drawPile.filter(id => id === 33)).toHaveLength(1);
   });
 });
 
@@ -1618,5 +1660,110 @@ describe('getScore', () => {
     const gs = makeState({ drawPile: [99] });
     const agg = new GameAggregate(crypto.randomUUID(), gs, {}, makeStickerDefs(), []);
     expect(agg.getScore()).toBe(0);
+  });
+});
+
+describe('GameAggregate campaign/purge', () => {
+  const friendlyDef: CardDef = {
+    id: 1,
+    name: 'Friendly',
+    states: [{ id: 1, name: 'Friendly', glory: { amount: 5 } }],
+  };
+  const enemyDef: CardDef = {
+    id: 2,
+    name: 'Enemy',
+    states: [{ id: 1, name: 'Enemy', negative: true }],
+  };
+  const protectedDef: CardDef = {
+    id: 3,
+    name: 'Protected',
+    states: [
+      {
+        id: 1,
+        name: 'Protected',
+        passives: [{ id: 'cant', type: PassiveType.CANT_BE_DESTROYED }],
+      },
+    ],
+  };
+  const expansionCardDef: CardDef = {
+    id: 120,
+    name: 'ExpansionCard',
+    states: [{ id: 1, name: 'ExpansionCard' }],
+  };
+
+  const expansion: ExpansionConfig = {
+    purge: { purge: 12, permanent: 0 },
+    parameters: { discoverPerRound: 0 },
+    deck: [{ id: 136, cardId: 120 }],
+    onStart: { discover: { ids: [136] } },
+  };
+
+  it('excludes enemy and protected cards from purge candidates', () => {
+    const instances = Object.fromEntries(
+      Array.from({ length: 12 }, (_, idx) => {
+        const id = idx + 1;
+        let cardId = 1;
+        if (id === 2) cardId = 2;
+        if (id === 3) cardId = 3;
+        return [id, makeInstance({ id, cardId, stateId: 1 })];
+      }),
+    );
+
+    const state = makeState({
+      phase: Phase.GAME_OVER,
+      drawPile: Array.from({ length: 12 }, (_, idx) => idx + 1),
+      instances,
+    });
+
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: friendlyDef, 2: enemyDef, 3: protectedDef, 120: expansionCardDef },
+      {},
+      [],
+    );
+
+    agg.selectExpansion('The Water Mill', expansion);
+    const candidates = agg.getPurgeCandidates();
+
+    expect(candidates).not.toContain(2);
+    expect(candidates).not.toContain(3);
+    expect(candidates.length).toBeGreaterThan(0);
+  });
+
+  it('finalizes purge, stores glory and keeps it in score', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    const instances = Object.fromEntries(
+      Array.from({ length: 12 }, (_, idx) => {
+        const id = idx + 1;
+        return [id, makeInstance({ id, cardId: 1, stateId: 1 })];
+      }),
+    );
+
+    const state = makeState({
+      phase: Phase.GAME_OVER,
+      drawPile: Array.from({ length: 12 }, (_, idx) => idx + 1),
+      instances,
+      round: 5,
+    });
+
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: friendlyDef, 120: expansionCardDef },
+      {},
+      [],
+    );
+
+    agg.selectExpansion('Prosperity', expansion);
+    const purgeId = agg.getPurgeCandidates()[0];
+    agg.selectPurgeCard(purgeId);
+    agg.finalizePurge();
+
+    const gs = agg.getGameState();
+    expect(gs.purgedCards).toContain(purgeId);
+    expect(gs.purgedGlory[0]).toBe(5);
+    expect(agg.getScore()).toBeGreaterThanOrEqual(5);
+    expect(gs.phase).toBe(Phase.PLAYING);
   });
 });

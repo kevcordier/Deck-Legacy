@@ -48,6 +48,18 @@ export type GameContextType = {
   setDisplayNewCards: (value: boolean) => void;
   getEvents: () => GameEvent[];
   parameters: GameParameters;
+  campaignScores: Record<string, number>;
+  availableExpansions: string[];
+  continueCampaign: () => void;
+  selectExpansion: (expansionName: string) => void;
+  purgeCandidates: number[];
+  purgePermanentCandidates: number[];
+  selectedPurgeIds: number[];
+  canSelectPermanentForPurge: boolean;
+  isPurgeSelectionComplete: boolean;
+  selectPurgeCard: (instanceId: number) => void;
+  selectPurgePermanent: (instanceId: number) => void;
+  finalizePurge: () => void;
 };
 
 export const GameContext = createContext<GameContextType>({} as GameContextType);

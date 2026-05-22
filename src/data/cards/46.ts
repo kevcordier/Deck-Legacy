@@ -151,6 +151,7 @@ export const lordAethan: CardDef = {
         {
           id: '46-2-1',
           endsTurn: true,
+          limitedTime: 1,
           actionEffects: [
             {
               id: 1,

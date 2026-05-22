@@ -6,9 +6,17 @@ type GameOverScreenProps = {
   readonly score: number;
   readonly round: number;
   readonly onStartNewGame: () => void;
+  readonly onContinueCampaign?: () => void;
+  readonly canContinueCampaign?: boolean;
 };
 
-export function GameOverScreen({ score, round, onStartNewGame }: GameOverScreenProps) {
+export function GameOverScreen({
+  score,
+  round,
+  onStartNewGame,
+  onContinueCampaign,
+  canContinueCampaign = false,
+}: GameOverScreenProps) {
   const { t } = useTranslation();
 
   return (
@@ -30,9 +38,17 @@ export function GameOverScreen({ score, round, onStartNewGame }: GameOverScreenP
           </div>
         </div>
 
-        <Button onClick={onStartNewGame} color="base-primary" size="lg">
-          {t('gameOver.newGame')}
-        </Button>
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {onContinueCampaign && (
+            <Button onClick={onContinueCampaign} color="primary" size="md">
+              {canContinueCampaign ? t('gameOver.continueCampaign') : t('gameOver.saveScore')}
+            </Button>
+          )}
+
+          <Button onClick={onStartNewGame} color="base-primary" size="md">
+            {t('gameOver.newGame')}
+          </Button>
+        </div>
       </div>
     </div>
   );

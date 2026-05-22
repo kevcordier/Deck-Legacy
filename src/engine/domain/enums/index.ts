@@ -23,6 +23,7 @@ export enum CardTag {
 }
 
 export enum Trigger {
+  START_OF_TURN = 'start_of_turn',
   END_OF_TURN = 'end_of_turn',
   ON_PLAY = 'on_play',
   END_OF_ROUND = 'end_of_round',
@@ -46,6 +47,12 @@ export enum GameEventType {
   SKIP_TRIGGER = 'SKIP_TRIGGER',
   CHOOSE_STATE = 'CHOOSE_STATE',
   PARCHMENT_CARD_DISCOVERED = 'PARCHMENT_CARD_DISCOVERED',
+  CAMPAIGN_SCORE_SAVED = 'CAMPAIGN_SCORE_SAVED',
+  EXPANSION_SELECTED = 'EXPANSION_SELECTED',
+  PURGE_CARD_SELECTED = 'PURGE_CARD_SELECTED',
+  PURGE_PERMANENT_SELECTED = 'PURGE_PERMANENT_SELECTED',
+  PURGE_ON_TRIGGERED = 'PURGE_ON_TRIGGERED',
+  PURGE_FINALIZED = 'PURGE_FINALIZED',
 }
 
 export enum ActionEffectType {
@@ -70,6 +77,7 @@ export enum ActionEffectType {
   END_GAME = 'END_GAME',
   SHUFFLE_DECK = 'SHUFFLE_DECK',
   ADD_GLORY = 'ADD_GLORY',
+  SAVE_FROM_PURGE = 'SAVE_FROM_PURGE',
 }
 
 export enum PassiveType {
@@ -82,6 +90,7 @@ export enum PassiveType {
   COUNT_AS_2 = 'COUNT_AS_2',
   ADJUST_ADD_RESOURCES = 'ADJUST_ADD_RESOURCES',
   ADJUST_UPDATE_COST = 'ADJUST_UPDATE_COST',
+  REPLACE_RESOURCE_PRODUCTION = 'REPLACE_RESOURCE_PRODUCTION',
   RESOURCE_EQUIVALENCE = 'RESOURCE_EQUIVALENCE',
   SET_GAME_PARAMETER = 'SET_GAME_PARAMETER',
   CANT_BE_DESTROYED = 'CANT_BE_DESTROYED',
@@ -124,6 +133,7 @@ export enum TargetScope {
   TRIGGER_SOURCE = 'trigger_source',
   UPGRADABLE = 'upgradable',
   WITH_TRACK = 'with_track',
+  PURGE_SELECTED = 'purge_selected',
 }
 
 export enum PendingChoiceType {

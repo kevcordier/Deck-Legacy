@@ -11,6 +11,7 @@ import type { Cost, GameParameters, Resources } from '@engine/domain/types';
 export type Condition =
   | { type: 'cardCount'; cards: CardSelector; min?: number; max?: number }
   | { type: 'production'; resourceType: ResourceType; min?: number; max?: number }
+  | { type: 'resource'; resourceType: ResourceType; min?: number; max?: number }
   | { type: 'and'; conditions: Condition[] }
   | { type: 'or'; conditions: Condition[] }
   | { type: 'not'; condition: Condition };
@@ -58,7 +59,6 @@ export type CardState = {
   upgrade?: UpgradeDef[];
   track?: TrackDef;
   illustration?: string;
-  description?: boolean; // if true, the card has a description text that needs to be displayed in the UI
 };
 
 export type UpgradeDef = {
@@ -109,6 +109,7 @@ export type ActionEffect = {
     pickMax?: number;
   };
   sourceStepId?: number;
+  repeat?: number | 'accumulation'; // number of times this action will be repeated
 };
 
 export type Passive = {
@@ -122,6 +123,7 @@ export type Passive = {
     type: Trigger;
     cards?: CardSelector;
     actions?: ActionEffect[];
+    having?: Having;
     optional?: boolean;
   };
   resources?: {

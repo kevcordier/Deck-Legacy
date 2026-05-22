@@ -1,4 +1,10 @@
-import { CardTag, ResourceType, Trigger } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  ResourceType,
+  TargetScope,
+  Trigger,
+} from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const aethanEstate: CardDef = {
@@ -35,7 +41,16 @@ export const aethanEstate: CardDef = {
           id: '68-2-1',
           trigger: Trigger.ON_PURGE,
           optional: true,
-          actionEffects: [],
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.SAVE_FROM_PURGE,
+              cards: {
+                scope: [TargetScope.PURGE_SELECTED, TargetScope.FRIENDLY],
+                pickNumber: 1,
+              },
+            },
+          ],
         },
       ],
       upgrade: [
@@ -62,7 +77,16 @@ export const aethanEstate: CardDef = {
           id: '68-3-1',
           trigger: Trigger.ON_PURGE,
           optional: true,
-          actionEffects: [],
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.SAVE_FROM_PURGE,
+              cards: {
+                scope: [TargetScope.PURGE_SELECTED, TargetScope.FRIENDLY],
+                pickNumber: 2,
+              },
+            },
+          ],
         },
       ],
       upgrade: [
@@ -90,7 +114,16 @@ export const aethanEstate: CardDef = {
           id: '68-4-1',
           trigger: Trigger.ON_PURGE,
           optional: true,
-          actionEffects: [],
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.SAVE_FROM_PURGE,
+              cards: {
+                scope: [TargetScope.PURGE_SELECTED, TargetScope.FRIENDLY],
+                pickNumber: 3,
+              },
+            },
+          ],
         },
       ],
     },

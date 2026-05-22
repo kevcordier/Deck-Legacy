@@ -164,7 +164,19 @@
     "title": "Game Over",
     "glory": "Glory",
     "rounds": "Rounds",
-    "newGame": "↺ New game"
+    "newGame": "↺ New game",
+    "continueCampaign": "Continue with expansion",
+    "saveScore": "Save score"
+  },
+  "campaign": {
+    "chooseExpansionTitle": "Choose an expansion",
+    "chooseExpansionDescription": "Save your score for this segment, choose one expansion, then complete the purge before the next round.",
+    "purgeTitle": "Purge your kingdom",
+    "purgeDescription": "For each batch of 12 cards, choose 1 allied card to purge. Then purge allied permanents if required.",
+    "purgeBatchLabel": "Choose one allied card from the current batch",
+    "purgePermanentLabel": "Choose one allied permanent card to purge",
+    "purgeSelected": "Cards selected for purge: {{count}}",
+    "finalizePurge": "Finalize purge"
   },
   "rules": {
     "title": "Rules",
@@ -183,6 +195,15 @@
     "theme_dark": "Dark",
     "theme_system": "System",
     "language": "Language",
+    "saveData": "Save data",
+    "exportJson": "Export JSON",
+    "importJson": "Import JSON",
+    "exportNoSave": "No save found to export.",
+    "exportSuccess": "Save exported.",
+    "importSuccess": "Save imported. Reloading...",
+    "importInvalidFile": "Invalid file. Please select a JSON file.",
+    "importInvalidJson": "Invalid JSON file.",
+    "importInvalidSchema": "Invalid save format.",
     "en": "English",
     "fr": "French",
     "tutorial": "Enable tutorial",

@@ -1,8 +1,14 @@
 import { AdvanceStrategy } from './AdvanceStrategy';
+import { CampaignScoreSavedStrategy } from './CampaignScoreSavedStrategy';
 import { CardActionEventStrategy } from './CardActionEventStrategy';
 import { CardProducedStrategy } from './CardProducedStrategy';
+import { ExpansionSelectedStrategy } from './ExpansionSelectedStrategy';
 import type { GameEventStrategy } from './GameEventStrategy';
 import { GameStartedStrategy } from './GameStartedStrategy';
+import { PurgeCardSelectedStrategy } from './PurgeCardSelectedStrategy';
+import { PurgeFinalizedStrategy } from './PurgeFinalizedStrategy';
+import { PurgeOnTriggeredStrategy } from './PurgeOnTriggeredStrategy';
+import { PurgePermanentSelectedStrategy } from './PurgePermanentSelectedStrategy';
 import { RoundStartedStrategy } from './RoundStartedStrategy';
 import { SkipTriggerStrategy } from './SkipTriggerStrategy';
 import { TurnEndedStrategy } from './TurnEndedStrategy';
@@ -31,6 +37,12 @@ export class GameEventContext {
       [GameEventType.TURN_ENDED]: new TurnEndedStrategy(cardDefs, stickerDefs),
       [GameEventType.CHOOSE_STATE]: new ChooseStateEventStrategy(),
       [GameEventType.PARCHMENT_CARD_DISCOVERED]: new ParchmentCardDiscoveredStrategy(),
+      [GameEventType.CAMPAIGN_SCORE_SAVED]: new CampaignScoreSavedStrategy(),
+      [GameEventType.EXPANSION_SELECTED]: new ExpansionSelectedStrategy(cardDefs),
+      [GameEventType.PURGE_CARD_SELECTED]: new PurgeCardSelectedStrategy(),
+      [GameEventType.PURGE_PERMANENT_SELECTED]: new PurgePermanentSelectedStrategy(),
+      [GameEventType.PURGE_ON_TRIGGERED]: new PurgeOnTriggeredStrategy(),
+      [GameEventType.PURGE_FINALIZED]: new PurgeFinalizedStrategy(cardDefs),
     };
   }
 

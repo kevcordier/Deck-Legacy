@@ -4,7 +4,7 @@ import {
   getPickNumbers,
   resolveActionEffect,
 } from '@engine/application/effectResolver';
-import { ActionEffectType, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, PassiveType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, RemovedResourceScope, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -156,6 +156,30 @@ describe('resolveActionEffect – DISCARD_CARD', () => {
     };
     const [resolved] = resolveActionEffect(effect, 99, makeState(), defs, stickerDefs);
     expect(resolved.instanceIds?.length).toBe(0);
+  });
+});
+
+describe('resolveActionEffect – DESTROY_CARD', () => {
+  it('excludes cards protected by CANT_BE_DESTROYED from selectable choices', () => {
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      board: [2, 3],
+      instances: { 2: inst2, 3: inst3 },
+      boardEffects: {
+        2: [{ id: 'cant-destroy', type: PassiveType.CANT_BE_DESTROYED }],
+      },
+    });
+    const effect = {
+      id: 1,
+      type: ActionEffectType.DESTROY_CARD,
+      cards: { scope: [TargetScope.BOARD] },
+    };
+
+    const [, pending] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe('choose_card');
+    expect(pending[0].choices).toEqual([3]);
   });
 });
 

@@ -55,48 +55,7 @@ export const finishingTouch: CardDef = {
                   { goods: 1 },
                 ],
               },
-            },
-            {
-              id: 1,
-              type: ActionEffectType.ADD_RESOURCES,
-              resources: {
-                choice: [
-                  { gold: 1 },
-                  { wood: 1 },
-                  { stone: 1 },
-                  { iron: 1 },
-                  { weapon: 1 },
-                  { goods: 1 },
-                ],
-              },
-            },
-            {
-              id: 1,
-              type: ActionEffectType.ADD_RESOURCES,
-              resources: {
-                choice: [
-                  { gold: 1 },
-                  { wood: 1 },
-                  { stone: 1 },
-                  { iron: 1 },
-                  { weapon: 1 },
-                  { goods: 1 },
-                ],
-              },
-            },
-            {
-              id: 1,
-              type: ActionEffectType.ADD_RESOURCES,
-              resources: {
-                choice: [
-                  { gold: 1 },
-                  { wood: 1 },
-                  { stone: 1 },
-                  { iron: 1 },
-                  { weapon: 1 },
-                  { goods: 1 },
-                ],
-              },
+              repeat: 4,
             },
           ],
         },

@@ -20,16 +20,23 @@ import {
 import { ActionCancelledError } from '@engine/domain/errors/ActionCancelledError';
 import type {
   AdvanceEvent,
+  CampaignScoreSavedEvent,
   CardAction,
   CardActionEvent,
   CardDef,
   CardProducedEvent,
   ChooseStateEvent,
+  ExpansionConfig,
+  ExpansionSelectedEvent,
   GameEvent,
   GameParameters,
   GameStartedEvent,
   GameState,
   ParchmentCardDiscoveredEvent,
+  PurgeCardSelectedEvent,
+  PurgeFinalizedEvent,
+  PurgeOnTriggeredEvent,
+  PurgePermanentSelectedEvent,
   ResolvedActionEffect,
   ResolvedCost,
   Resources,
@@ -62,6 +69,10 @@ export const EMPTY_STATE: GameState = {
   round: 0,
   turn: 0,
   phase: Phase.PRE_GAME,
+  parameterOverrides: {},
+  campaignScores: {},
+  purgedCards: [],
+  purgedGlory: [],
 };
 
 export class GameAggregate {
@@ -70,7 +81,7 @@ export class GameAggregate {
   private readonly gameEventContext: GameEventContext;
   private currentCardAction: CardActionAggregate | null = null;
 
-  private readonly parameters: GameParameters = {
+  private parameters: GameParameters = {
     displayedDrawDeckCards: 1,
     advanceCardDrawn: 2,
     turnCardDrawn: 4,
@@ -141,6 +152,244 @@ export class GameAggregate {
       if (!instance) return false;
       return getActiveState(instance, this.cardDefs)?.permanent !== true;
     });
+  }
+
+  private isPurgeEligible(instanceId: number, requirePermanent: boolean): boolean {
+    const instance = this.gameState.instances[instanceId];
+    if (!instance) return false;
+
+    const state = getActiveState(instance, this.cardDefs);
+    if (state.negative === true) return false;
+    if (requirePermanent && state.permanent !== true) return false;
+    if (!requirePermanent && state.permanent === true) return false;
+
+    // Règle de campagne: une carte portant CANT_BE_DESTROYED est toujours inéligible.
+    if (state.passives?.some(passive => passive.type === PassiveType.CANT_BE_DESTROYED)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private getCurrentBatchStartAndCandidates(): { batchStart: number; candidates: number[] } | null {
+    const purgeState = this.gameState.purgeState;
+    if (!purgeState) return null;
+
+    let batchStart = 0;
+    while (batchStart + purgeState.batchSize <= purgeState.shuffledPool.length) {
+      if (purgeState.completedBatchStarts.includes(batchStart)) {
+        batchStart += purgeState.batchSize;
+        continue;
+      }
+
+      const batch = purgeState.shuffledPool.slice(batchStart, batchStart + purgeState.batchSize);
+      const candidates = batch.filter(
+        id =>
+          !purgeState.selectedCardIds.includes(id) &&
+          this.isPurgeEligible(id, false) &&
+          !this.gameState.purgedCards.includes(id),
+      );
+
+      if (candidates.length > 0) {
+        return { batchStart, candidates };
+      }
+
+      batchStart += purgeState.batchSize;
+    }
+
+    return null;
+  }
+
+  public getPurgeCandidates(): number[] {
+    return this.getCurrentBatchStartAndCandidates()?.candidates ?? [];
+  }
+
+  public getPurgePermanentCandidates(): number[] {
+    const purgeState = this.gameState.purgeState;
+    if (!purgeState) return [];
+
+    return this.gameState.permanents.filter(
+      id =>
+        !purgeState.selectedPermanentIds.includes(id) &&
+        this.isPurgeEligible(id, true) &&
+        !this.gameState.purgedCards.includes(id),
+    );
+  }
+
+  public canSelectPermanentForPurge(): boolean {
+    const purgeState = this.gameState.purgeState;
+    if (!purgeState) return false;
+    return purgeState.selectedPermanentIds.length < purgeState.permanentToPurge;
+  }
+
+  public isPurgeSelectionComplete(): boolean {
+    const purgeState = this.gameState.purgeState;
+    if (!purgeState) return false;
+
+    const noMoreBatches = this.getCurrentBatchStartAndCandidates() === null;
+    const noMorePermanents =
+      !this.canSelectPermanentForPurge() || this.getPurgePermanentCandidates().length === 0;
+
+    return noMoreBatches && noMorePermanents;
+  }
+
+  public getSelectedPurgeIds(): number[] {
+    const purgeState = this.gameState.purgeState;
+    if (!purgeState) return [];
+    return [...purgeState.selectedCardIds, ...purgeState.selectedPermanentIds];
+  }
+
+  public saveCampaignScore(openExpansionChoice = true): GameState {
+    const segment = this.gameState.activeExpansion ?? 'base';
+    const event: CampaignScoreSavedEvent = {
+      id: crypto.randomUUID(),
+      type: GameEventType.CAMPAIGN_SCORE_SAVED,
+      timestamp: Date.now(),
+      segment,
+      score: this.getScore(),
+      openExpansionChoice,
+    };
+
+    this.apply(event);
+    this.events.push(event);
+
+    return this.gameState;
+  }
+
+  public selectExpansion(expansionName: string, expansion: ExpansionConfig): GameState {
+    const purgePool = this.shuffle([
+      ...this.gameState.drawPile,
+      ...this.gameState.discardPile,
+      ...this.gameState.board,
+    ]);
+
+    const event: ExpansionSelectedEvent = {
+      id: crypto.randomUUID(),
+      type: GameEventType.EXPANSION_SELECTED,
+      timestamp: Date.now(),
+      expansionName,
+      deckEntries: expansion.deck,
+      purgeBatchSize: expansion.purge.purge,
+      purgePermanentCount: expansion.purge.permanent,
+      purgePool,
+      parameterOverrides: expansion.parameters,
+      onStartDiscoverIds: expansion.onStart?.discover?.ids ?? [],
+    };
+
+    this.apply(event);
+    this.events.push(event);
+
+    return this.gameState;
+  }
+
+  public selectPurgeCard(instanceId: number): GameState {
+    const currentBatch = this.getCurrentBatchStartAndCandidates();
+    if (!currentBatch?.candidates.includes(instanceId)) {
+      return this.gameState;
+    }
+
+    const event: PurgeCardSelectedEvent = {
+      id: crypto.randomUUID(),
+      type: GameEventType.PURGE_CARD_SELECTED,
+      timestamp: Date.now(),
+      instanceId,
+      batchStart: currentBatch.batchStart,
+    };
+
+    this.apply(event);
+    this.events.push(event);
+    return this.gameState;
+  }
+
+  public selectPurgePermanent(instanceId: number): GameState {
+    if (!this.canSelectPermanentForPurge()) {
+      return this.gameState;
+    }
+
+    const candidates = this.getPurgePermanentCandidates();
+    if (!candidates.includes(instanceId)) {
+      return this.gameState;
+    }
+
+    const event: PurgePermanentSelectedEvent = {
+      id: crypto.randomUUID(),
+      type: GameEventType.PURGE_PERMANENT_SELECTED,
+      timestamp: Date.now(),
+      instanceId,
+    };
+
+    this.apply(event);
+    this.events.push(event);
+    return this.gameState;
+  }
+
+  public finalizePurge(): GameState {
+    const purgeState = this.gameState.purgeState;
+    if (!purgeState || !this.isPurgeSelectionComplete()) {
+      return this.gameState;
+    }
+
+    if (!purgeState.onPurgeTriggered) {
+      const selectedIds = this.getSelectedPurgeIds();
+      const triggers = getInstancesTriggerEffects(
+        selectedIds.map(id => this.gameState.instances[id]).filter(Boolean),
+        this.cardDefs,
+        this.stickerDefs,
+        Trigger.ON_PURGE,
+        this.gameState,
+      ).reduce(
+        (acc, { effectDef, sourceInstanceId }) => {
+          acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+          return acc;
+        },
+        {} as Record<string, TriggerEntry>,
+      );
+
+      const triggeredEvent: PurgeOnTriggeredEvent = {
+        id: crypto.randomUUID(),
+        type: GameEventType.PURGE_ON_TRIGGERED,
+        timestamp: Date.now(),
+        triggers,
+      };
+
+      this.apply(triggeredEvent);
+      this.events.push(triggeredEvent);
+
+      if (Object.keys(triggers).length > 0) {
+        return this.gameState;
+      }
+    }
+
+    if (Object.keys(this.gameState.triggerPile).length > 0) {
+      return this.gameState;
+    }
+
+    const purgedIds = this.getSelectedPurgeIds();
+    const glory = purgedIds.reduce((total, id) => {
+      const instance = this.gameState.instances[id];
+      if (!instance) return total;
+      const state = getActiveState(instance, this.cardDefs);
+      return (
+        total + getEffectiveGlory(state, this.gameState, this.cardDefs, instance, this.stickerDefs)
+      );
+    }, 0);
+
+    const finalizedEvent: PurgeFinalizedEvent = {
+      id: crypto.randomUUID(),
+      type: GameEventType.PURGE_FINALIZED,
+      timestamp: Date.now(),
+      purgedIds,
+      glory,
+      onStartDiscoverIds: purgeState.onStartDiscoverIds,
+    };
+
+    this.apply(finalizedEvent);
+    this.events.push(finalizedEvent);
+
+    this.roundStarted();
+    this.turnStarted();
+
+    return this.gameState;
   }
 
   public roundEnded(): GameState {
@@ -368,7 +617,7 @@ export class GameAggregate {
         (params, passive) => {
           return Object.assign(params, passive.parameters);
         },
-        { ...this.parameters },
+        { ...this.parameters, ...this.gameState.parameterOverrides },
       );
   }
 
@@ -570,7 +819,6 @@ export class GameAggregate {
           ...this.gameState.drawPile,
           ...this.gameState.discardPile,
           ...this.gameState.board,
-          ...this.filterNonPermanentCardIds(this.gameState.lastAddedCards),
         ]),
       };
       this.apply(event);
@@ -625,7 +873,7 @@ export class GameAggregate {
       ...this.gameState.board,
       ...this.gameState.permanents,
     ];
-    return allIds.reduce((total, id) => {
+    const boardScore = allIds.reduce((total, id) => {
       const instance = this.gameState.instances[id];
       if (!instance) return total;
       const cs = getActiveState(instance, this.cardDefs);
@@ -633,5 +881,9 @@ export class GameAggregate {
         total + getEffectiveGlory(cs, this.gameState, this.cardDefs, instance, this.stickerDefs)
       );
     }, 0);
+
+    const purgedScore = this.gameState.purgedGlory.reduce((sum, score) => sum + score, 0);
+
+    return boardScore + purgedScore;
   }
 }
