@@ -88,22 +88,27 @@ export class CardActionAggregate {
       [PendingChoiceType.CHOOSE_ACTION_EFFECT]: new ChooseActionEffectStrategy(),
     };
     this.effects = this.action.actionEffects.reduce((acc, effect) => {
-      if (effect.repeat) {
-        const repeat =
-          typeof effect.repeat === 'number'
-            ? effect.repeat
-            : (this.gameState.instances[this.instance.id].cumulated ?? 0);
-
-        const repeatedEffects = new Array(repeat).fill(effect);
-        return [...acc, ...repeatedEffects];
-      }
-      return [...acc, effect];
+      const effectiveEffects = this.getEffectiveActionEffects(effect);
+      return [...acc, ...effectiveEffects];
     }, [] as ActionEffect[]);
     this.endTurn =
       !!this.action.endsTurn ||
       this.gameState.triggerPile[this.triggerId ?? '']?.effectDef.trigger === Trigger.END_OF_TURN;
     this.endRound =
       this.gameState.triggerPile[this.triggerId ?? '']?.effectDef.trigger === Trigger.END_OF_ROUND;
+  }
+
+  private getEffectiveActionEffects(effect: ActionEffect): ActionEffect[] {
+    if (!effect.repeat) {
+      return [effect];
+    }
+
+    const repeat =
+      typeof effect.repeat === 'number'
+        ? effect.repeat
+        : (this.gameState.instances[this.instance.id].cumulated ?? 0);
+
+    return new Array(repeat).fill(effect);
   }
 
   // Apply an action effect to the game state
@@ -363,7 +368,10 @@ export class CardActionAggregate {
     index: number,
   ): 'wait' | 'next' {
     if (resolvedAction.newActionEffects) {
-      this.effects.splice(index + 1, 0, ...resolvedAction.newActionEffects);
+      const effectiveEffects = resolvedAction.newActionEffects.flatMap(effect =>
+        this.getEffectiveActionEffects(effect),
+      );
+      this.effects.splice(index + 1, 0, ...effectiveEffects);
     }
 
     const trackCostResolution = this.tryResolveTrackStepCost(resolvedAction, index);
@@ -406,11 +414,10 @@ export class CardActionAggregate {
     this.pendingChoices = nextPendingChoices;
 
     if (this.pendingResolvedAction.newActionEffects) {
-      this.effects.splice(
-        this.pendingEffectIndex + 1,
-        0,
-        ...this.pendingResolvedAction.newActionEffects,
+      const effectiveEffects = this.pendingResolvedAction.newActionEffects.flatMap(effect =>
+        this.getEffectiveActionEffects(effect),
       );
+      this.effects.splice(this.pendingEffectIndex + 1, 0, ...effectiveEffects);
     }
 
     if (this.pendingChoices.length > 0) {
