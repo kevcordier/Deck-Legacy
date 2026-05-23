@@ -459,6 +459,137 @@ describe('getEffectiveProductions', () => {
 
     expect(result).toEqual([{ gold: 3 }, { goods: 3 }]);
   });
+
+  it('uses default BOARD selector when replacement board effect has no cards field', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      board: [2],
+      instances: { 2: inst },
+      boardEffects: {
+        1: [
+          {
+            id: 'replace-board-default-target',
+            type: PassiveType.REPLACE_RESOURCE_PRODUCTION,
+            resources: { gold: 1, goods: 1 },
+          },
+        ],
+      },
+    });
+
+    const result = getProductionChoicesForAction({ gold: 1 }, gs, defs, inst, {});
+
+    expect(result).toEqual([{ gold: 1 }, { goods: 1 }]);
+  });
+
+  it('keeps production unchanged when replacement source resource amount is zero', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      board: [2],
+      instances: { 2: inst },
+      boardEffects: {
+        1: [
+          {
+            id: 'replace-board',
+            type: PassiveType.REPLACE_RESOURCE_PRODUCTION,
+            resources: { gold: 1, goods: 1 },
+            cards: { ids: [2] },
+          },
+        ],
+      },
+    });
+
+    const result = getProductionChoicesForAction({ wood: 1 }, gs, defs, inst, {});
+
+    expect(result).toEqual([{ wood: 1 }]);
+  });
+
+  it('ignores malformed replacement passives and non replacement board effects', () => {
+    const inst = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const defsWithMalformedReplace: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'C',
+        states: [
+          {
+            id: 1,
+            name: 'S',
+            passives: [
+              {
+                id: 'state-no-res',
+                type: PassiveType.REPLACE_RESOURCE_PRODUCTION,
+              },
+              {
+                id: 'state-one-resource',
+                type: PassiveType.REPLACE_RESOURCE_PRODUCTION,
+                resources: { gold: 1, goods: 0 },
+              },
+            ],
+          },
+        ],
+      },
+    };
+
+    const gs = makeState({
+      board: [2],
+      instances: { 2: inst },
+      boardEffects: {
+        1: [
+          {
+            id: 'not-replace',
+            type: PassiveType.BLOCK,
+            cards: { ids: [2] },
+          },
+        ],
+      },
+    });
+
+    const result = getProductionChoicesForAction(
+      { gold: 0, wood: 2 },
+      gs,
+      defsWithMalformedReplace,
+      inst,
+      {},
+    );
+
+    expect(result).toEqual([{ gold: 0, wood: 2 }]);
+  });
+
+  it('ignores undefined resource values while serializing production choices', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 1: inst } });
+
+    const result = getProductionChoicesForAction({ gold: undefined, wood: 1 }, gs, defs, inst, {});
+
+    expect(result).toEqual([{ gold: undefined, wood: 1 }]);
+  });
+});
+
+describe('evaluateCondition resource branch', () => {
+  it('uses zero as fallback for missing resource key', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 1: inst }, resources: {} });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+
+    const ok = evaluateCondition(
+      { type: 'resource', resourceType: ResourceType.GOLD, min: 0 },
+      gs,
+      1,
+      defs,
+      {},
+    );
+    const ko = evaluateCondition(
+      { type: 'resource', resourceType: ResourceType.GOLD, min: 1 },
+      gs,
+      1,
+      defs,
+      {},
+    );
+
+    expect(ok).toBe(true);
+    expect(ko).toBe(false);
+  });
 });
 
 describe('getEffectiveUpgradeCost', () => {
@@ -1264,6 +1395,19 @@ describe('evaluateCondition', () => {
         {},
       ),
     ).toBe(false);
+  });
+
+  it('resource returns true when resource amount is within bounds', () => {
+    const gs = makeState({ resources: { gold: 2 } });
+    expect(
+      evaluateCondition(
+        { type: 'resource', resourceType: ResourceType.GOLD, min: 1, max: 3 },
+        gs,
+        99,
+        defs,
+        {},
+      ),
+    ).toBe(true);
   });
 
   it('and returns true when all conditions pass', () => {

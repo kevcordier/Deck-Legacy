@@ -10,6 +10,18 @@ const permanentDef: CardDef = {
   name: 'Perm',
   states: [{ id: 1, name: 'S', permanent: true }],
 };
+const permanentWithPassiveDef: CardDef = {
+  id: 4,
+  name: 'PermPassive',
+  states: [
+    {
+      id: 1,
+      name: 'S',
+      permanent: true,
+      passives: [{ id: 'stay', type: 'STAY_IN_PLAY' as never }],
+    },
+  ],
+};
 const parchmentDef: CardDef = {
   id: 3,
   name: 'Parch',
@@ -48,6 +60,22 @@ describe('DiscoverCardStrategy', () => {
     expect(result.permanents).toContain(20);
     expect(result.lastAddedCards).toContain(20);
     expect(result.discoveryPile).not.toContain(20);
+  });
+
+  it('adds permanent passives to boardEffects', () => {
+    const defs = { 4: permanentWithPassiveDef };
+    const strategy = new DiscoverCardStrategy(defs);
+    const inst = makeInstance({ id: 40, cardId: 4, stateId: 1 });
+    const gs = makeState({ discoveryPile: [40], instances: { 40: inst } });
+
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.DISCOVER_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [40],
+    });
+
+    expect(result.boardEffects[40]).toEqual([{ id: 'stay', type: 'STAY_IN_PLAY' }]);
   });
 
   it('removes a parchment card from discoveryPile without adding to lastAddedIds', () => {

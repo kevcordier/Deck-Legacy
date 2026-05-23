@@ -6,7 +6,9 @@ import {
   discardCards,
   drawCards,
   mergeResources,
+  pickPermanentBoardEffects,
   spendResources,
+  syncInstancePassivesInBoardEffects,
 } from '@engine/application/gameStateHelper';
 import { Options, PassiveType } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
@@ -286,5 +288,41 @@ describe('canUseOptions', () => {
       },
     });
     expect(canUseOptions(gs, Options.ACTION)).toBe(true);
+  });
+});
+
+describe('syncInstancePassivesInBoardEffects', () => {
+  it('returns state unchanged when instance does not exist', () => {
+    const gs = makeState({ instances: {} });
+    const result = syncInstancePassivesInBoardEffects(gs, 999, makeDefs());
+    expect(result).toEqual(gs);
+  });
+
+  it('removes boardEffects entry when active state has no passives', () => {
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+    const gs = makeState({
+      instances: { 1: makeInstance({ id: 1, cardId: 1, stateId: 1 }) },
+      boardEffects: { 1: [{ id: 'x', type: PassiveType.BLOCK }] },
+    });
+
+    const result = syncInstancePassivesInBoardEffects(gs, 1, defs);
+
+    expect(result.boardEffects[1]).toBeUndefined();
+  });
+});
+
+describe('pickPermanentBoardEffects', () => {
+  it('keeps only board effects from permanent instance ids', () => {
+    const result = pickPermanentBoardEffects(
+      {
+        1: [{ id: 'a', type: PassiveType.BLOCK }],
+        2: [{ id: 'b', type: PassiveType.COUNT_AS_2 }],
+      },
+      [2, 3],
+    );
+
+    expect(result).toEqual({ 2: [{ id: 'b', type: PassiveType.COUNT_AS_2 }] });
   });
 });

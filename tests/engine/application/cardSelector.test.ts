@@ -139,6 +139,37 @@ describe('cardSelector – location scopes', () => {
     expect(result).toContain(10);
   });
 
+  it('PURGE_SELECTED scope returns selected purge card and permanent ids', () => {
+    const gs = makeState({
+      instances: { 10: instA, 20: instB },
+      purgeState: {
+        batchSize: 1,
+        permanentToPurge: 1,
+        shuffledPool: [10, 20],
+        completedBatchStarts: [],
+        selectedCardIds: [10],
+        selectedPermanentIds: [20],
+        onPurgeTriggered: false,
+        onStartDiscoverIds: [],
+      },
+    });
+
+    const result = cardSelector({ scope: [TargetScope.PURGE_SELECTED] }, 99, gs, defs, stickerDefs);
+
+    expect(result).toEqual([10, 20]);
+  });
+
+  it('PURGE_SELECTED scope returns empty array when purgeState is undefined', () => {
+    const gs = makeState({
+      instances: { 10: instA, 20: instB },
+      purgeState: undefined,
+    });
+
+    const result = cardSelector({ scope: [TargetScope.PURGE_SELECTED] }, 99, gs, defs, stickerDefs);
+
+    expect(result).toEqual([]);
+  });
+
   it('PERMANENTS scope returns permanents', () => {
     const gs = makeState({ permanents: [10], instances: { 10: instA } });
     const result = cardSelector({ scope: [TargetScope.PERMANENTS] }, 99, gs, defs, stickerDefs);
