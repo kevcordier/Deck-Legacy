@@ -1,5 +1,6 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { getActiveState } from '@engine/application/cardHelpers';
+import { syncInstancePassivesInBoardEffects } from '@engine/application/gameStateHelper';
 import type { CardDef, GameEvent, GameState, PurgeFinalizedEvent } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 
@@ -17,6 +18,7 @@ export class PurgeFinalizedStrategy implements GameEventStrategy {
     const newPermanents = [...gameState.permanents];
     const newDiscard = [...gameState.discardPile];
     const remainingDiscovery = [...gameState.discoveryPile];
+    let newBoardEffects = { ...gameState.boardEffects };
 
     for (const cardId of e.onStartDiscoverIds) {
       const idx = remainingDiscovery.indexOf(cardId);
@@ -31,6 +33,12 @@ export class PurgeFinalizedStrategy implements GameEventStrategy {
         if (!newPermanents.includes(cardId)) {
           newPermanents.push(cardId);
         }
+        const synced = syncInstancePassivesInBoardEffects(
+          { ...gameState, boardEffects: newBoardEffects },
+          cardId,
+          this.defs,
+        );
+        newBoardEffects = synced.boardEffects;
       } else if (!newDiscard.includes(cardId)) {
         newDiscard.push(cardId);
       }
@@ -48,6 +56,7 @@ export class PurgeFinalizedStrategy implements GameEventStrategy {
       purgeState: undefined,
       lastAddedCards: discoveredOnStart,
       phase: Phase.ROUND_END,
+      boardEffects: newBoardEffects,
     };
   }
 }

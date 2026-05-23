@@ -74,7 +74,7 @@ export function OptionsModal({ onClose, onReset }: OptionsModalProps) {
     }
 
     toast.success(t('options.importSuccess'));
-    window.location.reload();
+    globalThis.location.reload();
   }
 
   return (

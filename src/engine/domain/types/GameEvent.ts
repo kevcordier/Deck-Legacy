@@ -21,6 +21,10 @@ export interface GameStartedEvent extends GameEvent {
   discoveryPile: number[];
 }
 
+export interface GameEndedEvent extends GameEvent {
+  type: GameEventType.GAME_ENDED;
+}
+
 export interface RoundEndedEvent extends GameEvent {
   type: GameEventType.ROUND_ENDED;
   round: number;

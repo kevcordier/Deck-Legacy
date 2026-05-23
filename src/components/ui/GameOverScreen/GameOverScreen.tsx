@@ -21,7 +21,7 @@ export function GameOverScreen({
 
   return (
     <div className="bg-background bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center">
-      <div className="bg-card border-border animate-fade-in-scale flex flex-col items-center gap-6 rounded-lg border p-8">
+      <div className="bg-card border-border animate-fade-in-scale flex flex-col items-center gap-6 rounded-lg border p-8 max-w-xl">
         <div className="font-display text-base-primary text-3xl font-semibold tracking-tight">
           {t('gameOver.title')}
         </div>
@@ -38,16 +38,18 @@ export function GameOverScreen({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          {onContinueCampaign && (
-            <Button onClick={onContinueCampaign} color="primary" size="md">
-              {canContinueCampaign ? t('gameOver.continueCampaign') : t('gameOver.saveScore')}
-            </Button>
-          )}
+        <span className="text-base-ink">{t('gameOver.descriptionEndGame')}</span>
 
+        <div className="flex flex-col items-center justify-center gap-2">
           <Button onClick={onStartNewGame} color="base-primary" size="md">
             {t('gameOver.newGame')}
           </Button>
+
+          {onContinueCampaign && (
+            <Button onClick={onContinueCampaign} color="base-primary" size="md">
+              {canContinueCampaign ? t('gameOver.continueCampaign') : t('gameOver.saveScore')}
+            </Button>
+          )}
         </div>
       </div>
     </div>

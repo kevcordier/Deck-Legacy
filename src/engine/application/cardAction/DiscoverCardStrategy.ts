@@ -21,6 +21,15 @@ export class DiscoverCardStrategy implements CardActionStrategy {
 
         if (getActiveState(gameState.instances[instanceId], this.cardDefs)?.permanent) {
           gameState.permanents.push(instanceId);
+          const passives = getActiveState(gameState.instances[instanceId], this.cardDefs)?.passives;
+          if (passives) {
+            passives.forEach(passive => {
+              gameState.boardEffects[instanceId] = [
+                ...(gameState.boardEffects[instanceId] ?? []),
+                passive,
+              ];
+            });
+          }
         } else {
           gameState.discardPile = [...new Set([...gameState.discardPile, instanceId])];
         }

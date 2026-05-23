@@ -1,7 +1,7 @@
 export type ButtonProps = {
   readonly children: React.ReactNode;
   readonly onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  readonly variant?: 'text' | 'contained' | 'outlined';
+  readonly variant?: 'text' | 'contained' | 'outlined' | 'link';
   readonly color?: 'primary' | 'danger' | 'ink' | 'base-primary' | 'base-ink';
   readonly size?: 'xs' | 'sm' | 'md' | 'lg';
   readonly font?: 'display' | 'body';
@@ -30,6 +30,7 @@ export function Button({
     text: `bg-transparent text-[var(--color-btn-color)] hover:not-disabled:bg-[var(--color-btn-color)]/10 active:not-disabled:bg-[var(--color-btn-color)]/20`,
     contained: `bg-[var(--color-btn-color)]/20 text-[var(--color-btn-color)] border border-[var(--color-btn-color)] shadow-sm hover:not-disabled:bg-[var(--color-btn-color)]/30 active:not-disabled:bg-[var(--color-btn-color)]/40`,
     outlined: `bg-transparent border border-[var(--color-btn-color)] text-[var(--color-btn-color)] hover:not-disabled:bg-[var(--color-btn-color)]/10 active:not-disabled:bg-[var(--color-btn-color)]/10`,
+    link: `bg-transparent text-start text-[var(--color-btn-color)] underline hover:not-disabled:bg-[var(--color-btn-color)]/10 active:not-disabled:bg-[var(--color-btn-color)]/20 px-0! py-0!`,
   }[variant];
   const sizeClasses = {
     xs: 'px-2 py-1 text-xs',

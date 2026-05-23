@@ -57,6 +57,11 @@
     "title": "Round {{round}}",
     "end": "▶︎ End round"
   },
+  "lastRound": {
+    "title": "Last round completed",
+    "subtitle": "This game has reached its final round. End the game to record your score.",
+    "end": "▶︎ End game"
+  },
   "sections": {
     "permanents": "Permanents",
     "tableau": "Tableau",
@@ -166,7 +171,9 @@
     "rounds": "Rounds",
     "newGame": "↺ New game",
     "continueCampaign": "Continue with expansion",
-    "saveScore": "Save score"
+    "saveScore": "Save score",
+    "descriptionEndGame": "You have reached the end of your adventure. Record your glory to compare it with your friends. You can then start a new game to improve your performance, or continue with a campaign expansion to face new challenges while keeping part of your current kingdom.",
+    "descriptionExpansion": "Once you finish the base game, you may play up to 10 different expansions, one at a time. Expansions are new chapters of your kingdom story, providing more rounds of play. They often introduce new cards and concepts that you may continue to develop even after the expansion is over. Each kingdom may only play each expansion once."
   },
   "campaign": {
     "chooseExpansionTitle": "Choose an expansion",
@@ -176,7 +183,22 @@
     "purgeBatchLabel": "Choose one allied card from the current batch",
     "purgePermanentLabel": "Choose one allied permanent card to purge",
     "purgeSelected": "Cards selected for purge: {{count}}",
-    "finalizePurge": "Finalize purge"
+    "purge": "Purge",
+    "finalizePurge": "Finalize purge",
+    "expansions": {
+      "Prosperity": {
+        "title": "Prosperity",
+        "description": "This mini expansion introduces permanent card #136 (Prosperity). It guiding you through 4 additional game rounds. You will perform a purge 12 and purge 1 permanent card. In these expansions, you do NOT discover 2 new cards at the start of the round. When done, add the score of this segment to your previous score, then choose the next expansion."
+      },
+      "The Water Mill": {
+        "title": "The Water Mill",
+        "description": "This mini expansion introduces permanent card #137 (The Water Mill). It guiding you through 4 additional game rounds. You will perform a purge 12 and purge 1 permanent card. In these expansions, you do NOT discover 2 new cards at the start of the round. When done, add the score of this segment to your previous score, then choose the next expansion."
+      },
+      "Border Dispute": {
+        "title": "Border Dispute",
+        "description": "This mini expansion introduces permanent card #138 (Border Dispute). It guiding you through 4 additional game rounds. You will perform a purge 12 and purge 1 permanent card. In these expansions, you do NOT discover 2 new cards at the start of the round. When done, add the score of this segment to your previous score, then choose the next expansion."
+      }
+    }
   },
   "rules": {
     "title": "Rules",

@@ -18,6 +18,7 @@ export const EMPTY_STATE: GameState = {
   lastDiscardedCards: [],
   round: 0,
   turn: 0,
+  isLastRound: false,
   phase: Phase.PRE_GAME,
   parameterOverrides: {},
   campaignScores: {},

@@ -22,6 +22,7 @@ export const priest: CardDef = {
               cards: {
                 scope: [TargetScope.BOARD, TargetScope.UPGRADABLE],
                 pickNumber: 1,
+                pickMin: 1,
               },
             },
           ],
@@ -58,6 +59,7 @@ export const priest: CardDef = {
               cards: {
                 scope: [TargetScope.BOARD, TargetScope.UPGRADABLE],
                 pickNumber: 1,
+                pickMin: 1,
               },
             },
           ],

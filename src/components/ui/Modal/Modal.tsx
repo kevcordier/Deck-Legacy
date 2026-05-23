@@ -40,7 +40,7 @@ export function Modal({
   }, [onClose, onPeekToggle, peeking]);
 
   const contentClass = peeking
-    ? `bg-transparent z-120 border-transparent m-auto flex max-h-[90vh] w-[calc(100vw-1rem)] flex-col items-start justify-start gap-6 rounded-2xl border p-4 outline-none lg:max-h-[80vh] lg:w-fit lg:max-w-[80vw] lg:p-6 ${className}`
+    ? `bg-transparent z-120 border-transparent m-auto flex max-h-[90vh] w-[calc(100vw-1rem)] flex-col items-start justify-start gap-6 rounded-2xl border p-4 outline-none lg:max-h-[80vh] lg:w-fit lgd:max-w-[80vw] lg:p-6 ${className}`
     : `bg-background relative z-120 border-border m-auto text-ink flex max-h-[90vh] w-[calc(100vw-1rem)] flex-col items-start justify-start gap-6 rounded-2xl border p-4 outline-none lg:max-h-[80vh] lg:w-fit lg:max-w-[80vw] lg:p-6 ${className}`;
 
   const overlayClass = peeking

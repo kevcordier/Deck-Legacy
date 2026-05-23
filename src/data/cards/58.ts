@@ -1,4 +1,4 @@
-import { ActionEffectType, PassiveType, Trigger } from '@engine/domain/enums';
+import { ActionEffectType } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const stop6: CardDef = {
@@ -15,22 +15,7 @@ export const stop6: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionEffectType.ADD_BOARD_EFFECT,
-              effect: {
-                id: '58-1-1',
-                global: true,
-                type: PassiveType.ADD_TRIGGER,
-                trigger: {
-                  id: '58-1-1',
-                  type: Trigger.END_OF_ROUND,
-                  actions: [
-                    {
-                      id: 1,
-                      type: ActionEffectType.END_GAME,
-                    },
-                  ],
-                },
-              },
+              type: ActionEffectType.SET_LAST_ROUND,
             },
             {
               id: 2,

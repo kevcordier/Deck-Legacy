@@ -69,15 +69,4 @@ describe('AddBoardEffectStrategy', () => {
     expect(result.boardEffects[1]).toHaveLength(1);
     expect(result.boardEffects[1][0].cards?.ids).toEqual([2, 3]);
   });
-
-  it('marks board effect as global when global flag is set', () => {
-    const gs = makeState();
-    const result = strategy.apply(gs, {
-      id: 'x',
-      type: ActionEffectType.ADD_BOARD_EFFECT,
-      sourceInstanceId: 1,
-      effect: { ...passive, global: true },
-    });
-    expect(result.boardEffects[1][0].global).toBe(true);
-  });
 });

@@ -25,6 +25,7 @@ interface PhaseAction {
 
 function getPhaseAction(
   phase: Phase,
+  isLastRound: boolean,
   drawPileLength: number,
   t: ReturnType<typeof useTranslation>['t'],
   startTurn: () => void,
@@ -49,8 +50,8 @@ function getPhaseAction(
           };
     case Phase.ROUND_END:
       return {
-        label: t('roundpreview.start'),
-        onClick: startRound,
+        label: isLastRound ? t('lastRound.end') : t('roundpreview.start'),
+        onClick: isLastRound ? endRound : startRound,
       };
     default:
       return null;
@@ -164,6 +165,7 @@ export function GamePhaseActions({
 
   const action = getPhaseAction(
     gameState.phase,
+    gameState.isLastRound,
     gameState.drawPile.length,
     t,
     startTurn,

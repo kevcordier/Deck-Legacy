@@ -281,6 +281,10 @@ export function GameProvider({
   };
 
   const endRound = () => {
+    if (gameState.phase === Phase.ROUND_END && gameState.isLastRound) {
+      sync(aggRef.current.endGame());
+      return;
+    }
     sync(aggRef.current.roundEnded());
   };
 

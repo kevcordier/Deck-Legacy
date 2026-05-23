@@ -15,6 +15,7 @@ import { PlayCardStrategy } from '@engine/application/cardAction/PlayCardStrateg
 import { RemoveResourceOnCardStrategy } from '@engine/application/cardAction/RemoveResourceOnCardStrategy';
 import { SaveFromPurgeStrategy } from '@engine/application/cardAction/SaveFromPurgeStrategy';
 import { SetCumulatedStrategy } from '@engine/application/cardAction/SetCumulatedStrategy';
+import { SetLastRoundStrategy } from '@engine/application/cardAction/SetLastRoundStrategy';
 import { ShuffleDeckStrategy } from '@engine/application/cardAction/ShuffleDeckStrategy';
 import { TrackAdvanceStrategy } from '@engine/application/cardAction/TrackAdvanceStrategy';
 import { UpgradeCardStrategy } from '@engine/application/cardAction/UpgradeCardStrategy';
@@ -47,6 +48,7 @@ export class CardActionContext {
       [ActionEffectType.SHUFFLE_DECK]: new ShuffleDeckStrategy(),
       [ActionEffectType.ADD_GLORY]: new AddGloryStrategy(cardDefs, stickerDefs),
       [ActionEffectType.SAVE_FROM_PURGE]: new SaveFromPurgeStrategy(),
+      [ActionEffectType.SET_LAST_ROUND]: new SetLastRoundStrategy(),
     };
   }
 

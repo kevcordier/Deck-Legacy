@@ -2,17 +2,17 @@ import { getActiveState, getInstancesTriggerEffects } from '@engine/application/
 import { type Options, PassiveType, type ResourceType, Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState, Passive, Resources, Sticker } from '@engine/domain/types';
 
-export const pickGlobalBoardEffects = (
+export const pickPermanentBoardEffects = (
   boardEffects: Record<number, Passive[]>,
+  permanents: number[],
 ): Record<number, Passive[]> => {
-  const globalBoardEffects: Record<number, Passive[]> = {};
-  for (const [sourceId, effects] of Object.entries(boardEffects)) {
-    const globalEffects = effects.filter(effect => effect.global === true);
-    if (globalEffects.length > 0) {
-      globalBoardEffects[Number(sourceId)] = globalEffects;
+  const permanentBoardEffects: Record<number, Passive[]> = {};
+  for (const sourceId of permanents) {
+    if (boardEffects[sourceId]) {
+      permanentBoardEffects[sourceId] = boardEffects[sourceId];
     }
   }
-  return globalBoardEffects;
+  return permanentBoardEffects;
 };
 
 export const discardCards = (
@@ -40,14 +40,8 @@ export const discardCards = (
     gameState.board = gameState.board.filter(c => c !== cardId);
     gameState.drawPile = gameState.drawPile.filter(c => c !== cardId);
     gameState.discardPile = [...new Set([...gameState.discardPile, cardId])];
-    const effectsForCard = gameState.boardEffects[cardId] ?? [];
-    const globalEffects = effectsForCard.filter(effect => effect.global === true);
-    if (globalEffects.length > 0) {
-      gameState.boardEffects[cardId] = globalEffects;
-    } else {
-      const { [cardId]: _discarded, ...restDiscardEffects } = gameState.boardEffects;
-      gameState.boardEffects = restDiscardEffects;
-    }
+    const { [cardId]: _discarded, ...restDiscardEffects } = gameState.boardEffects;
+    gameState.boardEffects = restDiscardEffects;
   });
   return gameState;
 };
@@ -92,14 +86,8 @@ export const destroyCards = (_gameState: GameState, cardIds: number[]): GameStat
     gameState.drawPile = gameState.drawPile.filter(c => c !== cardId);
     gameState.discardPile = gameState.discardPile.filter(c => c !== cardId);
     gameState.destroyedPile = [...new Set([...gameState.destroyedPile, cardId])];
-    const effectsForCard = gameState.boardEffects[cardId] ?? [];
-    const globalEffects = effectsForCard.filter(effect => effect.global === true);
-    if (globalEffects.length > 0) {
-      gameState.boardEffects[cardId] = globalEffects;
-    } else {
-      const { [cardId]: _destroyed, ...restDestroyEffects } = gameState.boardEffects;
-      gameState.boardEffects = restDestroyEffects;
-    }
+    const { [cardId]: _destroyed, ...restDestroyEffects } = gameState.boardEffects;
+    gameState.boardEffects = restDestroyEffects;
   });
   return gameState;
 };
@@ -126,6 +114,28 @@ export function mergeResources(a: Resources, b?: Resources): Resources {
   }
   return result;
 }
+
+export const syncInstancePassivesInBoardEffects = (
+  _gameState: GameState,
+  instanceId: number,
+  cardDefs: Record<number, CardDef>,
+): GameState => {
+  const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
+  const instance = gameState.instances[instanceId];
+  if (!instance) {
+    return gameState;
+  }
+
+  const passives = getActiveState(instance, cardDefs)?.passives ?? [];
+  if (passives.length === 0) {
+    const { [instanceId]: _synced, ...restBoardEffects } = gameState.boardEffects;
+    gameState.boardEffects = restBoardEffects;
+    return gameState;
+  }
+
+  gameState.boardEffects[instanceId] = passives;
+  return gameState;
+};
 
 export function computeGameStateDiff(before: GameState, after: GameState): Partial<GameState> {
   return Object.fromEntries(

@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next';
 
 interface CardRowProps {
   readonly cardIds: number[];
-  readonly onReorder?: (newOrder: number[]) => void;
 }
 
 type EffectEntry = { sourceId: number; passive: Passive };

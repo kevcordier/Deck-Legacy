@@ -116,7 +116,6 @@ export type Passive = {
   id: string;
   type: PassiveType;
   amount?: number;
-  global?: boolean;
   cards?: CardSelector;
   trigger?: {
     id: string;

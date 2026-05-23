@@ -1,7 +1,7 @@
 import { makeDefs, makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { UpgradeCardStrategy } from '@engine/application/cardAction/UpgradeCardStrategy';
 import * as cardHelpers from '@engine/application/cardHelpers';
-import { ActionEffectType, Trigger } from '@engine/domain/enums';
+import { ActionEffectType, PassiveType, Trigger } from '@engine/domain/enums';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('UpgradeCardStrategy', () => {
@@ -112,6 +112,67 @@ describe('UpgradeCardStrategy', () => {
     expect(result.permanents).toContain(1);
     expect(result.board).not.toContain(1);
     expect(result.discardPile).not.toContain(1);
+  });
+
+  it('replaces boardEffects with passives from upgraded permanent state', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      permanents: [1],
+      instances: { 1: inst },
+      boardEffects: {
+        1: [
+          {
+            id: 'old-passive',
+            type: PassiveType.SET_GAME_PARAMETER,
+            parameters: { discoverPerRound: 1 },
+          },
+        ],
+      },
+    });
+
+    vi.spyOn(cardHelpers, 'getActiveState').mockImplementation(instance =>
+      instance.stateId === 1
+        ? {
+            id: 1,
+            name: 'S1',
+            permanent: true,
+            passives: [
+              {
+                id: 'old-passive',
+                type: PassiveType.SET_GAME_PARAMETER,
+                parameters: { discoverPerRound: 1 },
+              },
+            ],
+          }
+        : {
+            id: 2,
+            name: 'S2',
+            permanent: true,
+            passives: [
+              {
+                id: 'new-passive',
+                type: PassiveType.SET_GAME_PARAMETER,
+                parameters: { discoverPerRound: 3 },
+              },
+            ],
+          },
+    );
+
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.UPGRADE_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [1],
+      stateId: 2,
+    });
+
+    expect(result.boardEffects[1]).toEqual([
+      {
+        id: 'new-passive',
+        type: PassiveType.SET_GAME_PARAMETER,
+        parameters: { discoverPerRound: 3 },
+      },
+    ]);
   });
 
   it('removes card from permanents when upgraded to a non-permanent state', () => {

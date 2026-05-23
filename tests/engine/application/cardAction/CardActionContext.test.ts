@@ -85,6 +85,18 @@ describe('CardActionContext', () => {
     expect([...result.discardPile].sort((a, b) => a - b)).toEqual([1, 2, 3]);
   });
 
+  it('dispatches SET_LAST_ROUND', () => {
+    const ctx = new CardActionContext(makeDefs(), makeStickerDefs());
+    const gs = makeState({ isLastRound: false });
+    const result = ctx.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.SET_LAST_ROUND,
+      sourceInstanceId: 1,
+    });
+
+    expect(result.isLastRound).toBe(true);
+  });
+
   it('throws when no strategy is found for the action type', () => {
     const ctx = new CardActionContext(makeDefs(), makeStickerDefs());
     const gs = makeState();

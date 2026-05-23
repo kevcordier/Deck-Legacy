@@ -20,6 +20,8 @@ export const smallSchool: CardDef = {
               type: ActionEffectType.UPGRADE_CARD,
               cards: {
                 scope: [TargetScope.BOARD, TargetScope.UPGRADABLE],
+                pickNumber: 1,
+                pickMin: 1,
                 tags: [CardTag.PERSON],
               },
             },
@@ -50,6 +52,8 @@ export const smallSchool: CardDef = {
               type: ActionEffectType.UPGRADE_CARD,
               cards: {
                 scope: [TargetScope.BOARD, TargetScope.UPGRADABLE],
+                pickNumber: 1,
+                pickMin: 1,
                 tags: [CardTag.PERSON],
               },
             },

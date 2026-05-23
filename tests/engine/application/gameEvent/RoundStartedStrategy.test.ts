@@ -39,10 +39,11 @@ describe('RoundStartedStrategy', () => {
     expect(result.lastAddedCards).toEqual([]);
   });
 
-  it('keeps only global boardEffects', () => {
+  it('keeps only permanent-source boardEffects', () => {
     const gs = makeState({
+      permanents: [1],
       boardEffects: {
-        1: [{ id: 'global', type: PassiveType.BLOCK, global: true }],
+        1: [{ id: 'persistent', type: PassiveType.BLOCK }],
         2: [{ id: 'local', type: PassiveType.BLOCK }],
       },
     });
@@ -55,7 +56,7 @@ describe('RoundStartedStrategy', () => {
     };
     const result = strategy.apply(gs, event);
     expect(result.boardEffects).toEqual({
-      1: [{ id: 'global', type: PassiveType.BLOCK, global: true }],
+      1: [{ id: 'persistent', type: PassiveType.BLOCK }],
     });
   });
 });

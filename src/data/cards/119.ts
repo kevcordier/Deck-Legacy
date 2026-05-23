@@ -22,6 +22,7 @@ export const prosperity: CardDef = {
       id: 1,
       name: 'Prosperity',
       tags: [CardTag.EVENT],
+      illustration: 'cards/119_1.webp',
       permanent: true,
       passives: [
         {
@@ -40,17 +41,18 @@ export const prosperity: CardDef = {
             {
               id: 1,
               type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
               states: { ids: [2] },
             },
           ],
         },
       ],
-      illustration: '',
     },
     {
       id: 2,
       name: 'Hoarding',
       tags: [CardTag.EVENT],
+      illustration: 'cards/119_2.jpg',
       permanent: true,
       actions: [
         {
@@ -84,17 +86,18 @@ export const prosperity: CardDef = {
             {
               id: 1,
               type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
               states: { ids: [3] },
             },
           ],
         },
       ],
-      illustration: '',
     },
     {
       id: 3,
       name: 'Uprising',
       tags: [CardTag.EVENT],
+      illustration: 'cards/119_3.jpg',
       permanent: true,
       passives: [
         {
@@ -127,6 +130,7 @@ export const prosperity: CardDef = {
             {
               id: 1,
               type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
               states: { ids: [4] },
             },
           ],
@@ -145,12 +149,12 @@ export const prosperity: CardDef = {
         ],
         inOrder: true,
       },
-      illustration: '',
     },
     {
       id: 4,
       name: 'Royal Decree',
       tags: [CardTag.EVENT],
+      illustration: 'cards/119_4.webp',
       permanent: true,
       actions: [
         {
@@ -188,7 +192,6 @@ export const prosperity: CardDef = {
           ],
         },
       ],
-      illustration: '',
     },
   ],
 };

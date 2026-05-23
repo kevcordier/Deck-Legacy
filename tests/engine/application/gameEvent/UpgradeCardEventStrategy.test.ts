@@ -1,7 +1,7 @@
 import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import * as cardHelpers from '@engine/application/cardHelpers';
 import { UpgradeCardEventStrategy } from '@engine/application/gameEvent/UpgradeCardEventStrategy';
-import { ActionEffectType, GameEventType, Trigger } from '@engine/domain/enums';
+import { ActionEffectType, GameEventType, PassiveType, Trigger } from '@engine/domain/enums';
 import type { UpgradeCardEvent } from '@engine/domain/types';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -53,6 +53,69 @@ describe('UpgradeCardEventStrategy', () => {
     } as UpgradeCardEvent);
     expect(result.board).not.toContain(1);
     expect(result.permanents).toContain(1);
+  });
+
+  it('replaces boardEffects with passives from upgraded permanent state', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const gs = makeState({
+      permanents: [1],
+      instances: { 1: inst },
+      boardEffects: {
+        1: [
+          {
+            id: 'old-passive',
+            type: PassiveType.SET_GAME_PARAMETER,
+            parameters: { discoverPerRound: 1 },
+          },
+        ],
+      },
+    });
+
+    vi.spyOn(cardHelpers, 'getActiveState').mockImplementation(instance =>
+      instance.stateId === 1
+        ? {
+            id: 1,
+            name: 'S1',
+            permanent: true,
+            passives: [
+              {
+                id: 'old-passive',
+                type: PassiveType.SET_GAME_PARAMETER,
+                parameters: { discoverPerRound: 1 },
+              },
+            ],
+          }
+        : {
+            id: 2,
+            name: 'S2',
+            permanent: true,
+            passives: [
+              {
+                id: 'new-passive',
+                type: PassiveType.SET_GAME_PARAMETER,
+                parameters: { discoverPerRound: 3 },
+              },
+            ],
+          },
+    );
+
+    const result = strategy.apply(gs, {
+      id: 'e1',
+      type: GameEventType.UPGRADE_CARD,
+      timestamp: 0,
+      cardInstanceId: 1,
+      stateId: 2,
+      cost: {},
+      endTurnTrigger: {},
+    } as UpgradeCardEvent);
+
+    expect(result.boardEffects[1]).toEqual([
+      {
+        id: 'new-passive',
+        type: PassiveType.SET_GAME_PARAMETER,
+        parameters: { discoverPerRound: 3 },
+      },
+    ]);
   });
 
   it('applies discarded and destroyed card costs', () => {

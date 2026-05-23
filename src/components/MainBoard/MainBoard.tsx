@@ -142,12 +142,24 @@ export function MainBoard() {
         />
       )}
 
-      {gameState.phase === Phase.ROUND_END && (
+      {gameState.phase === Phase.ROUND_END && !gameState.isLastRound && (
         <EmptyState
           title={t('roundpreview.title', { round: gameState.round })}
           action={
             <Button onClick={startRound} color="primary" size="md">
               {t('roundpreview.start')}
+            </Button>
+          }
+        />
+      )}
+
+      {gameState.phase === Phase.ROUND_END && gameState.isLastRound && (
+        <EmptyState
+          title={t('lastRound.title', { round: gameState.round })}
+          subtitle={t('lastRound.subtitle')}
+          action={
+            <Button onClick={endRound} color="primary" size="md">
+              {t('lastRound.end')}
             </Button>
           }
         />

@@ -183,6 +183,27 @@ describe('GameAggregate.roundStarted', () => {
     expect(gs.phase).toBe(Phase.ROUND_START);
   });
 
+  it('uses discoverPerRound from parameterOverrides', () => {
+    const inst1 = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const inst2 = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const inst3 = makeInstance({ id: 3, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [],
+      discardPile: [],
+      board: [],
+      discoveryPile: [1, 2, 3],
+      instances: { 1: inst1, 2: inst2, 3: inst3 },
+      round: 1,
+      parameterOverrides: { discoverPerRound: 1 },
+    });
+
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: plainDef }, {}, []);
+    const gs = agg.roundStarted();
+
+    expect(gs.lastAddedCards).toHaveLength(1);
+    expect(gs.discoveryPile).toHaveLength(2);
+  });
+
   it('handles parchment card as first discovered card', () => {
     // Parchment card first: only 1 new card added, not 2.
     const inst1 = makeInstance({ id: 1, cardId: 3, stateId: 1 }); // parchment
@@ -1095,7 +1116,7 @@ describe('GameAggregate.turnEnded – hasAvailableUnlimitedAction', () => {
       round: 1,
       turn: 1,
       boardEffects: {
-        99: [{ id: 'da', type: 'DESACTIVATE_OPTION' as never, options: ['action'], global: true }],
+        1: [{ id: 'da', type: 'DESACTIVATE_OPTION' as never, options: ['action'] }],
       },
     });
     const agg = new GameAggregate(
@@ -1224,7 +1245,7 @@ describe('GameAggregate.turnEnded – hasAvailableUnlimitedAction', () => {
       round: 1,
       turn: 1,
       boardEffects: {
-        99: [{ id: 'block', type: 'BLOCK' as never, cards: { ids: [1] }, global: true }],
+        1: [{ id: 'block', type: 'BLOCK' as never, cards: { ids: [1] } }],
       },
     });
     const agg = new GameAggregate(
@@ -1669,22 +1690,6 @@ describe('GameAggregate campaign/purge', () => {
     name: 'Friendly',
     states: [{ id: 1, name: 'Friendly', glory: { amount: 5 } }],
   };
-  const enemyDef: CardDef = {
-    id: 2,
-    name: 'Enemy',
-    states: [{ id: 1, name: 'Enemy', negative: true }],
-  };
-  const protectedDef: CardDef = {
-    id: 3,
-    name: 'Protected',
-    states: [
-      {
-        id: 1,
-        name: 'Protected',
-        passives: [{ id: 'cant', type: PassiveType.CANT_BE_DESTROYED }],
-      },
-    ],
-  };
   const expansionCardDef: CardDef = {
     id: 120,
     name: 'ExpansionCard',
@@ -1697,39 +1702,6 @@ describe('GameAggregate campaign/purge', () => {
     deck: [{ id: 136, cardId: 120 }],
     onStart: { discover: { ids: [136] } },
   };
-
-  it('excludes enemy and protected cards from purge candidates', () => {
-    const instances = Object.fromEntries(
-      Array.from({ length: 12 }, (_, idx) => {
-        const id = idx + 1;
-        let cardId = 1;
-        if (id === 2) cardId = 2;
-        if (id === 3) cardId = 3;
-        return [id, makeInstance({ id, cardId, stateId: 1 })];
-      }),
-    );
-
-    const state = makeState({
-      phase: Phase.GAME_OVER,
-      drawPile: Array.from({ length: 12 }, (_, idx) => idx + 1),
-      instances,
-    });
-
-    const agg = new GameAggregate(
-      crypto.randomUUID(),
-      state,
-      { 1: friendlyDef, 2: enemyDef, 3: protectedDef, 120: expansionCardDef },
-      {},
-      [],
-    );
-
-    agg.selectExpansion('The Water Mill', expansion);
-    const candidates = agg.getPurgeCandidates();
-
-    expect(candidates).not.toContain(2);
-    expect(candidates).not.toContain(3);
-    expect(candidates.length).toBeGreaterThan(0);
-  });
 
   it('finalizes purge, stores glory and keeps it in score', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0);

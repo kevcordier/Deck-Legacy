@@ -57,7 +57,11 @@ const meta: Meta<GameCardContainerProps> = {
   }) => {
     const defs = loadCardDefs();
 
-    const validCardId = deckData.deck.find(({ id }) => id === instanceId)?.cardId ?? 1;
+    const validCardId =
+      [
+        ...deckData.deck,
+        ...Object.values(deckData.expansions).flatMap(expansion => expansion.deck),
+      ].find(({ id }) => id === instanceId)?.cardId ?? 1;
     const def = defs[validCardId];
     const instance = makeInstance({
       id: instanceId,

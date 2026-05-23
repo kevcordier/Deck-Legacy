@@ -15,6 +15,7 @@ import { TurnEndedStrategy } from './TurnEndedStrategy';
 import { TurnStartedStrategy } from './TurnStartedStrategy';
 import { UpgradeCardEventStrategy } from './UpgradeCardEventStrategy';
 import { ChooseStateEventStrategy } from '@engine/application/gameEvent/ChooseStateEventStrategy';
+import { GameEndedStrategy } from '@engine/application/gameEvent/GameEndedStrategy';
 import { ParchmentCardDiscoveredStrategy } from '@engine/application/gameEvent/ParchmentCardDiscoveredStrategy';
 import { RoundEndedStrategy } from '@engine/application/gameEvent/RoundEndedStrategy';
 import { GameEventType } from '@engine/domain/enums';
@@ -26,6 +27,7 @@ export class GameEventContext {
   constructor(cardDefs: Record<number, CardDef>, stickerDefs: Record<number, Sticker>) {
     this.strategies = {
       [GameEventType.GAME_STARTED]: new GameStartedStrategy(cardDefs),
+      [GameEventType.GAME_ENDED]: new GameEndedStrategy(),
       [GameEventType.ROUND_STARTED]: new RoundStartedStrategy(),
       [GameEventType.ROUND_ENDED]: new RoundEndedStrategy(),
       [GameEventType.TURN_STARTED]: new TurnStartedStrategy(cardDefs, stickerDefs),

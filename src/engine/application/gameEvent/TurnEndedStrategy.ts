@@ -39,8 +39,7 @@ export class TurnEndedStrategy implements GameEventStrategy {
     Object.keys(gameState.boardEffects).forEach((key: string) => {
       if (
         gameState.boardEffects[Number(key)] &&
-        (gameState.board.includes(Number(key)) ||
-          gameState.boardEffects[Number(key)].some(effect => effect.global === true))
+        (gameState.board.includes(Number(key)) || gameState.permanents.includes(Number(key)))
       )
         newBoardEffects[Number(key)] = gameState.boardEffects[Number(key)];
     });

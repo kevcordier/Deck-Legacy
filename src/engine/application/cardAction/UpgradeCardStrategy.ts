@@ -1,6 +1,9 @@
 import type { CardActionStrategy } from '@engine/application/cardAction/CardActionStrategy';
 import { getActiveState, getInstancesTriggerEffects } from '@engine/application/cardHelpers';
-import { discardCards } from '@engine/application/gameStateHelper';
+import {
+  discardCards,
+  syncInstancePassivesInBoardEffects,
+} from '@engine/application/gameStateHelper';
 import { Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '@engine/domain/types';
 
@@ -32,19 +35,20 @@ export class UpgradeCardStrategy implements CardActionStrategy {
       gs.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
     });
     gs.instances[instanceId].stateId = targetStateId;
+    const syncedState = syncInstancePassivesInBoardEffects(gs, instanceId, this.cardDefs);
     // if new state is permanent add it to permanents pile
-    if (getActiveState(gs.instances[instanceId], this.cardDefs)?.permanent) {
+    if (getActiveState(syncedState.instances[instanceId], this.cardDefs)?.permanent) {
       return {
-        ...gs,
-        permanents: [...new Set([...gs.permanents, instanceId])],
-        board: gs.board.filter(id => id !== instanceId),
+        ...syncedState,
+        permanents: [...new Set([...syncedState.permanents, instanceId])],
+        board: syncedState.board.filter(id => id !== instanceId),
       };
     }
 
     return {
-      ...gs,
-      ...discardCards(gs, [instanceId], this.cardDefs, this.stickerDefs),
-      permanents: gs.permanents.filter(id => id !== instanceId),
+      ...syncedState,
+      ...discardCards(syncedState, [instanceId], this.cardDefs, this.stickerDefs),
+      permanents: syncedState.permanents.filter(id => id !== instanceId),
     };
   }
 }

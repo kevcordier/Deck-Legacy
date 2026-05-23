@@ -36,6 +36,7 @@ export enum Trigger {
 
 export enum GameEventType {
   GAME_STARTED = 'GAME_STARTED',
+  GAME_ENDED = 'GAME_ENDED',
   ROUND_STARTED = 'ROUND_STARTED',
   ROUND_ENDED = 'ROUND_ENDED',
   TURN_STARTED = 'TURN_STARTED',
@@ -78,6 +79,7 @@ export enum ActionEffectType {
   SHUFFLE_DECK = 'SHUFFLE_DECK',
   ADD_GLORY = 'ADD_GLORY',
   SAVE_FROM_PURGE = 'SAVE_FROM_PURGE',
+  SET_LAST_ROUND = 'SET_LAST_ROUND',
 }
 
 export enum PassiveType {

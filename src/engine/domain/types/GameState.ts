@@ -56,6 +56,7 @@ export type GameState = {
   lastDiscardedCards: number[];
   round: number;
   turn: number;
+  isLastRound: boolean;
   phase: Phase;
   onGoingParchment?: number;
   parameterOverrides: Partial<GameParameters>;

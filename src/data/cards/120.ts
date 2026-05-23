@@ -17,6 +17,7 @@ export const waterMill: CardDef = {
       id: 1,
       name: 'The Water Mill',
       tags: [CardTag.INVENTION],
+      illustration: 'cards/120_1.jpg',
       permanent: true,
       actions: [
         {
@@ -38,17 +39,18 @@ export const waterMill: CardDef = {
             {
               id: 1,
               type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
               states: { ids: [2] },
             },
           ],
         },
       ],
-      illustration: '',
     },
     {
       id: 2,
       name: 'Efficient Farming',
       tags: [CardTag.EVENT],
+      illustration: 'cards/120_2.webp',
       permanent: true,
       actions: [
         {
@@ -73,17 +75,18 @@ export const waterMill: CardDef = {
             {
               id: 1,
               type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
               states: { ids: [3] },
             },
           ],
         },
       ],
-      illustration: '',
     },
     {
       id: 3,
       name: 'Surplus',
       tags: [CardTag.EVENT],
+      illustration: 'cards/120_3.jpg',
       permanent: true,
       passives: [
         {
@@ -97,24 +100,25 @@ export const waterMill: CardDef = {
       ],
       actions: [
         {
-          id: '120-3-2',
+          id: '120-3-1',
           trigger: Trigger.END_OF_ROUND,
           actionEffects: [
             {
               id: 1,
               type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
               states: { ids: [4] },
             },
           ],
         },
       ],
-      illustration: '',
     },
     {
       id: 4,
       name: 'Obsolete Farms',
       tags: [CardTag.EVENT],
       permanent: true,
+      illustration: 'cards/120_4.jpg',
       actions: [
         {
           id: '120-4-1',
@@ -140,7 +144,6 @@ export const waterMill: CardDef = {
           ],
         },
       ],
-      illustration: '',
     },
   ],
 };

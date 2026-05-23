@@ -98,7 +98,7 @@ export function GameCard({
     .join(' ');
 
   const cardActionsClass =
-    'font-body! bg-white/60 p-1! @3xs:px-3! @3xs:py-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md';
+    'font-body! bg-white/60 p-1! @3xs:p-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md';
 
   return (
     <div

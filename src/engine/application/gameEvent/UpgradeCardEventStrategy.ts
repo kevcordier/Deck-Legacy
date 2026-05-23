@@ -1,7 +1,12 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { getActiveState, getInstancesTriggerEffects } from '@engine/application/cardHelpers';
 import { TurnEndedStrategy } from '@engine/application/gameEvent/TurnEndedStrategy';
-import { destroyCards, discardCards, spendResources } from '@engine/application/gameStateHelper';
+import {
+  destroyCards,
+  discardCards,
+  spendResources,
+  syncInstancePassivesInBoardEffects,
+} from '@engine/application/gameStateHelper';
 import { GameEventType, Trigger } from '@engine/domain/enums';
 import type {
   CardDef,
@@ -48,7 +53,11 @@ export class UpgradeCardEventStrategy implements GameEventStrategy {
       ...triggerState.instances,
       [e.cardInstanceId]: { ...triggerState.instances[e.cardInstanceId], stateId: e.stateId },
     };
-    const upgradedState = { ...triggerState, instances: updatedInstances };
+    const upgradedState = syncInstancePassivesInBoardEffects(
+      { ...triggerState, instances: updatedInstances },
+      e.cardInstanceId,
+      this.cardDefs,
+    );
 
     let newState: GameState;
     if (getActiveState(upgradedState.instances[e.cardInstanceId], this.cardDefs)?.permanent) {

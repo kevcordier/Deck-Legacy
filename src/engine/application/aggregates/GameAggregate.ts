@@ -28,6 +28,7 @@ import type {
   ChooseStateEvent,
   ExpansionConfig,
   ExpansionSelectedEvent,
+  GameEndedEvent,
   GameEvent,
   GameParameters,
   GameStartedEvent,
@@ -68,6 +69,7 @@ export const EMPTY_STATE: GameState = {
   lastDiscardedCards: [],
   round: 0,
   turn: 0,
+  isLastRound: false,
   phase: Phase.PRE_GAME,
   parameterOverrides: {},
   campaignScores: {},
@@ -81,7 +83,7 @@ export class GameAggregate {
   private readonly gameEventContext: GameEventContext;
   private currentCardAction: CardActionAggregate | null = null;
 
-  private parameters: GameParameters = {
+  private readonly parameters: GameParameters = {
     displayedDrawDeckCards: 1,
     advanceCardDrawn: 2,
     turnCardDrawn: 4,
@@ -184,10 +186,7 @@ export class GameAggregate {
 
       const batch = purgeState.shuffledPool.slice(batchStart, batchStart + purgeState.batchSize);
       const candidates = batch.filter(
-        id =>
-          !purgeState.selectedCardIds.includes(id) &&
-          this.isPurgeEligible(id, false) &&
-          !this.gameState.purgedCards.includes(id),
+        id => !purgeState.selectedCardIds.includes(id) && !this.gameState.purgedCards.includes(id),
       );
 
       if (candidates.length > 0) {
@@ -430,7 +429,8 @@ export class GameAggregate {
     if (
       Object.keys(this.gameState.triggerPile).length === 0 &&
       this.gameState.phase === Phase.ROUND_END &&
-      hasCards
+      hasCards &&
+      !this.gameState.isLastRound
     ) {
       return this.roundStarted();
     }
@@ -438,9 +438,21 @@ export class GameAggregate {
     return this.gameState;
   }
 
-  public roundStarted(cardNumberToDiscover?: number): GameState {
+  public endGame(): GameState {
+    const event: GameEndedEvent = {
+      id: crypto.randomUUID(),
+      type: GameEventType.GAME_ENDED,
+      timestamp: Date.now(),
+    };
+
+    this.apply(event);
+    this.events.push(event);
+    return this.gameState;
+  }
+
+  public roundStarted(): GameState {
     const round = this.gameState.round + 1;
-    cardNumberToDiscover = cardNumberToDiscover ?? this.parameters.discoverPerRound;
+    const cardNumberToDiscover = this.getParameters().discoverPerRound;
     const lastAddedCards: number[] = [];
     if (round > 1) {
       const discoveredCard = this.gameState.discoveryPile.slice(0, cardNumberToDiscover);

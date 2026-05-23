@@ -18,6 +18,7 @@ export const borderDispute: CardDef = {
       id: 1,
       name: 'Border Dispute',
       tags: [CardTag.EVENT],
+      illustration: 'cards/121_1.webp',
       permanent: true,
       passives: [
         {
@@ -37,17 +38,18 @@ export const borderDispute: CardDef = {
             {
               id: 1,
               type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
               states: { ids: [2] },
             },
           ],
         },
       ],
-      illustration: '',
     },
     {
       id: 2,
       name: 'Espionage',
       tags: [CardTag.EVENT],
+      illustration: 'cards/121_2.webp',
       permanent: true,
       passives: [
         {
@@ -93,6 +95,7 @@ export const borderDispute: CardDef = {
             {
               id: 1,
               type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
               states: { ids: [3] },
             },
           ],
@@ -121,12 +124,12 @@ export const borderDispute: CardDef = {
           },
         ],
       },
-      illustration: '',
     },
     {
       id: 3,
       name: 'Attack',
       tags: [CardTag.EVENT],
+      illustration: 'cards/121_3.jpg',
       permanent: true,
       passives: [
         {
@@ -193,17 +196,18 @@ export const borderDispute: CardDef = {
             {
               id: 1,
               type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
               states: { ids: [4] },
             },
           ],
         },
       ],
-      illustration: '',
     },
     {
       id: 4,
       name: 'Resistance',
       tags: [CardTag.EVENT],
+      illustration: 'cards/121_4.png',
       permanent: true,
       actions: [
         {
@@ -250,7 +254,6 @@ export const borderDispute: CardDef = {
           ],
         },
       ],
-      illustration: '',
     },
   ],
 };

@@ -33,6 +33,7 @@ export class GameStartedStrategy implements GameEventStrategy {
       purgeState: undefined,
       round: 0,
       turn: 0,
+      isLastRound: false,
       phase: Phase.PRE_GAME,
     };
   }

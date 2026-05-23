@@ -79,16 +79,15 @@ describe('discardCards', () => {
     expect(result.boardEffects[2]).toBeUndefined();
   });
 
-  it('keeps global boardEffects for discarded card', () => {
+  it('removes boardEffects for discarded card', () => {
     const inst = makeInstance({ id: 12 });
     const gs = makeState({
       board: [12],
       instances: { 12: inst },
-      boardEffects: { 12: [{ id: 'g', type: PassiveType.BLOCK, global: true }] },
+      boardEffects: { 12: [{ id: 'g', type: PassiveType.BLOCK }] },
     });
     const result = discardCards(gs, [12], makeDefs(), makeStickerDefs());
-    expect(result.boardEffects[12]).toHaveLength(1);
-    expect(result.boardEffects[12][0].global).toBe(true);
+    expect(result.boardEffects[12]).toBeUndefined();
   });
 
   it('does not duplicate in discardPile', () => {
@@ -150,16 +149,15 @@ describe('destroyCards', () => {
     expect(result.boardEffects[11]).toBeUndefined();
   });
 
-  it('keeps global boardEffects for destroyed card', () => {
+  it('removes boardEffects for destroyed card', () => {
     const inst = makeInstance({ id: 13 });
     const gs = makeState({
       board: [13],
       instances: { 13: inst },
-      boardEffects: { 13: [{ id: 'g', type: PassiveType.BLOCK, global: true }] },
+      boardEffects: { 13: [{ id: 'g', type: PassiveType.BLOCK }] },
     });
     const result = destroyCards(gs, [13]);
-    expect(result.boardEffects[13]).toHaveLength(1);
-    expect(result.boardEffects[13][0].global).toBe(true);
+    expect(result.boardEffects[13]).toBeUndefined();
   });
 });
 

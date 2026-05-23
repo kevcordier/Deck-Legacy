@@ -57,6 +57,11 @@
     "title": "Manche {{round}}",
     "end": "▶︎ Terminer la manche"
   },
+  "lastRound": {
+    "title": "Derniere manche terminee",
+    "subtitle": "Cette partie touche a sa fin. Terminez la partie pour enregistrer votre score.",
+    "end": "▶︎ Terminer la partie"
+  },
   "sections": {
     "permanents": "Permanentes",
     "tableau": "Tableau",
@@ -166,7 +171,9 @@
     "rounds": "Manches",
     "newGame": "↺ Nouvelle partie",
     "continueCampaign": "Continuer avec une extension",
-    "saveScore": "Enregistrer le score"
+    "saveScore": "Enregistrer le score",
+    "descriptionEndGame": "Vous avez atteint la fin de votre aventure. Notez votre gloire pour le comparer à vos amis. Vous pouvez ensuite recommencer une nouvelle partie pour améliorer votre performance, ou continuer avec une extension de campagne pour affronter de nouveaux défis tout en conservant une partie de votre royaume actuel.",
+    "descriptionExpansion": "Une fois que vous avez terminé le jeu de base, vous pouvez jouer jusqu'à 10 extensions différentes, une à la fois. Les extensions sont de nouveaux chapitres de l'histoire de votre royaume, offrant plus de manches de jeu. Elles introduisent souvent de nouvelles cartes et concepts que vous pouvez continuer à développer même après la fin de l'extension. Chaque royaume ne peut jouer chaque extension qu'une seule fois."
   },
   "campaign": {
     "chooseExpansionTitle": "Choisissez une extension",
@@ -176,7 +183,22 @@
     "purgeBatchLabel": "Choisissez une carte alliée dans le lot courant",
     "purgePermanentLabel": "Choisissez une carte permanente alliée à purger",
     "purgeSelected": "Cartes sélectionnées pour la purge : {{count}}",
-    "finalizePurge": "Finaliser la purge"
+    "purge": "Purger",
+    "finalizePurge": "Finaliser la purge",
+    "expansions": {
+      "Prosperity": {
+        "title": "Prospérité",
+        "description": "Cette mini-extension introduit la carte permanente #136 (Prospérité). Elle vous guide à travers 4 manches de jeu supplémentaires. Vous effectuerez une purge de 12 cartes et une purge d'une carte permanente. Dans ces extensions, vous ne découvrez PAS 2 nouvelles cartes au début de la manche. Une fois terminé, ajoutez le score de ce segment à votre score précédent, puis choisissez la prochaine extension."
+      },
+      "The Water Mill": {
+        "title": "Le Moulin à Eau",
+        "description": "Cette mini-extension introduit la carte permanente #137 (Le Moulin à Eau). Elle vous guide à travers 4 manches de jeu supplémentaires. Vous effectuerez une purge de 12 cartes et une purge d'une carte permanente. Dans ces extensions, vous ne découvrez PAS 2 nouvelles cartes au début de la manche. Une fois terminé, ajoutez le score de ce segment à votre score précédent, puis choisissez la prochaine extension."
+      },
+      "Border Dispute": {
+        "title": "Conflit frontalier",
+        "description": "Cette mini-extension introduit la carte permanente #138 (Conflit frontalier). Elle vous guide à travers 4 manches de jeu supplémentaires. Vous effectuerez une purge de 12 cartes et une purge d'une carte permanente. Dans ces extensions, vous ne découvrez PAS 2 nouvelles cartes au début de la manche. Une fois terminé, ajoutez le score de ce segment à votre score précédent, puis choisissez la prochaine extension."
+      }
+    }
   },
   "rules": {
     "title": "Règles",

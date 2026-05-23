@@ -94,7 +94,7 @@ export class CardActionAggregate {
             ? effect.repeat
             : (this.gameState.instances[this.instance.id].cumulated ?? 0);
 
-        const repeatedEffects = Array(repeat).fill(effect);
+        const repeatedEffects = new Array(repeat).fill(effect);
         return [...acc, ...repeatedEffects];
       }
       return [...acc, effect];

@@ -25,6 +25,7 @@ describe('GameStartedStrategy', () => {
     expect(result.drawPile).toEqual([1]);
     expect(result.stickerStock).toEqual({ 1: 3 });
     expect(result.discoveryPile).toEqual([2]);
+    expect(result.isLastRound).toBe(false);
     expect(result.phase).toBe(Phase.PRE_GAME);
   });
 

@@ -35,8 +35,10 @@ function addLocationScopeParts(
   if (locationScopes.includes(TargetScope.PERMANENTS))
     parts.push(...Object.values(gameState.permanents));
   if (locationScopes.includes(TargetScope.PURGE_SELECTED)) {
-    parts.push(...(gameState.purgeState?.selectedCardIds ?? []));
-    parts.push(...(gameState.purgeState?.selectedPermanentIds ?? []));
+    parts.push(
+      ...(gameState.purgeState?.selectedCardIds ?? []),
+      ...(gameState.purgeState?.selectedPermanentIds ?? []),
+    );
   }
 }
 

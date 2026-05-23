@@ -22,10 +22,7 @@ export class ExpansionSelectedStrategy implements GameEventStrategy {
       instances: newInstances,
       discoveryPile: [...new Set([...gameState.discoveryPile, ...e.deckEntries.map(d => d.id)])],
       activeExpansion: e.expansionName,
-      parameterOverrides: {
-        ...gameState.parameterOverrides,
-        ...(e.parameterOverrides ?? {}),
-      },
+      parameterOverrides: e.parameterOverrides ?? {},
       purgeState: {
         batchSize: e.purgeBatchSize,
         permanentToPurge: e.purgePermanentCount,
@@ -36,6 +33,7 @@ export class ExpansionSelectedStrategy implements GameEventStrategy {
         onPurgeTriggered: false,
         onStartDiscoverIds: e.onStartDiscoverIds,
       },
+      isLastRound: false,
       phase: Phase.PURGE,
     };
   }

@@ -49,6 +49,16 @@ describe('GameEventContext', () => {
     expect(result.instances[1]).toBeDefined();
   });
 
+  it('dispatches GAME_ENDED', () => {
+    const ctx = new GameEventContext(defs, makeStickerDefs());
+    const result = ctx.apply(makeState(), {
+      id: 'e1',
+      type: GameEventType.GAME_ENDED,
+      timestamp: 0,
+    });
+    expect(result.phase).toBe(Phase.GAME_OVER);
+  });
+
   it('dispatches ROUND_STARTED', () => {
     const ctx = new GameEventContext(defs, makeStickerDefs());
     const result = ctx.apply(makeState(), {

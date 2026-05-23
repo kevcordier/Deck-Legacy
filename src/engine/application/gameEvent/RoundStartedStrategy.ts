@@ -1,5 +1,5 @@
 import type { GameEventStrategy } from './GameEventStrategy';
-import { pickGlobalBoardEffects } from '@engine/application/gameStateHelper';
+import { pickPermanentBoardEffects } from '@engine/application/gameStateHelper';
 import type { GameEvent, GameState, RoundStartedEvent } from '@engine/domain/types';
 import { Phase } from '@engine/domain/types/Phase';
 
@@ -15,7 +15,7 @@ export class RoundStartedStrategy implements GameEventStrategy {
       drawPile: e.newDrawPile,
       discoveryPile: gameState.discoveryPile.filter(id => !addedCards.includes(id)),
       lastAddedCards: addedCards,
-      boardEffects: pickGlobalBoardEffects(gameState.boardEffects),
+      boardEffects: pickPermanentBoardEffects(gameState.boardEffects, gameState.permanents),
       discardPile: [],
       board: [],
       phase: Phase.ROUND_START,

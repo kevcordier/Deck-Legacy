@@ -19,12 +19,13 @@ describe('TurnEndedStrategy', () => {
     expect(result.phase).toBe(Phase.TURN_END);
   });
 
-  it('keeps global board effects even when source card is not on board', () => {
+  it('keeps board effects for permanents even when source card is not on board', () => {
     const strategy = new TurnEndedStrategy({}, makeStickerDefs());
     const gs = makeState({
+      permanents: [99],
       board: [],
       boardEffects: {
-        99: [{ id: 'g', type: 'BLOCK' as never, global: true }],
+        99: [{ id: 'g', type: 'BLOCK' as never }],
         100: [{ id: 'l', type: 'BLOCK' as never }],
       },
     });
