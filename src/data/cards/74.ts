@@ -153,6 +153,9 @@ export const deepPit: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_CUMULATED,
+                cards: {
+                  scope: [TargetScope.SELF],
+                },
                 value: 1,
               },
             ],
@@ -163,6 +166,9 @@ export const deepPit: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_CUMULATED,
+                cards: {
+                  scope: [TargetScope.SELF],
+                },
                 value: 1,
               },
             ],
@@ -173,6 +179,9 @@ export const deepPit: CardDef = {
               {
                 id: 1,
                 type: ActionEffectType.ADD_CUMULATED,
+                cards: {
+                  scope: [TargetScope.SELF],
+                },
                 value: 1,
               },
             ],
@@ -190,6 +199,9 @@ export const deepPit: CardDef = {
               {
                 id: 2,
                 type: ActionEffectType.ADD_CUMULATED,
+                cards: {
+                  scope: [TargetScope.SELF],
+                },
                 value: 1,
               },
             ],
@@ -207,6 +219,9 @@ export const deepPit: CardDef = {
               {
                 id: 2,
                 type: ActionEffectType.ADD_CUMULATED,
+                cards: {
+                  scope: [TargetScope.SELF],
+                },
                 value: 1,
               },
             ],
@@ -224,6 +239,9 @@ export const deepPit: CardDef = {
               {
                 id: 2,
                 type: ActionEffectType.ADD_CUMULATED,
+                cards: {
+                  scope: [TargetScope.SELF],
+                },
                 value: 1,
               },
             ],
@@ -241,6 +259,9 @@ export const deepPit: CardDef = {
               {
                 id: 2,
                 type: ActionEffectType.ADD_CUMULATED,
+                cards: {
+                  scope: [TargetScope.SELF],
+                },
                 value: 1,
               },
             ],

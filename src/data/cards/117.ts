@@ -9,6 +9,9 @@ function makeStep(id: number, cost: Cost): StepDef {
       {
         id: 1,
         type: ActionEffectType.ADD_CUMULATED,
+        cards: {
+          scope: [TargetScope.SELF],
+        },
         value: 1,
       },
     ],
