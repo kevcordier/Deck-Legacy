@@ -145,6 +145,25 @@ describe('stateSelector', () => {
 
     expect(result).toEqual([2]);
   });
+
+  it('uses instance cardId (not instanceId) to evaluate glory constraints', () => {
+    const offIdInstance = makeInstance({
+      id: 99,
+      cardId: 1,
+      stateId: 1,
+    });
+    const gs = makeState({ instances: { 99: offIdInstance } });
+
+    const result = stateSelector(
+      { ids: [1, 2], having: { minGlory: 2 } },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
+
+    expect(result).toEqual([2]);
+  });
 });
 
 describe('matchHaving', () => {

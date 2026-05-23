@@ -16,18 +16,14 @@ interface StateCriteriaContext {
 
 function matchHavingGlory(id: number, stateId: number, ctx: StateCriteriaContext): boolean {
   const { gameState, defs, stickerDefs, selector } = ctx;
-  const activeState = defs[id].states.find(s => s.id === stateId);
+  const instance = gameState.instances[id];
+  if (!instance) return false;
+  const activeState = defs[instance.cardId]?.states.find(s => s.id === stateId);
   if (
     activeState &&
     (selector.having?.minGlory !== undefined || selector.having?.maxGlory !== undefined)
   ) {
-    const baseGlory = getEffectiveGlory(
-      activeState,
-      gameState,
-      defs,
-      gameState.instances[id],
-      stickerDefs,
-    );
+    const baseGlory = getEffectiveGlory(activeState, gameState, defs, instance, stickerDefs);
     if (selector.having.minGlory !== undefined && baseGlory < selector.having.minGlory)
       return false;
     if (selector.having.maxGlory !== undefined && baseGlory > selector.having.maxGlory)
@@ -38,7 +34,9 @@ function matchHavingGlory(id: number, stateId: number, ctx: StateCriteriaContext
 
 function matchHavingProduction(id: number, stateId: number, ctx: StateCriteriaContext): boolean {
   const { gameState, defs, stickerDefs, selector } = ctx;
-  const activeState = defs[id].states.find(s => s.id === stateId);
+  const instance = gameState.instances[id];
+  if (!instance) return false;
+  const activeState = defs[instance.cardId]?.states.find(s => s.id === stateId);
   if (
     activeState &&
     (selector.having?.minProduction !== undefined || selector.having?.maxProduction !== undefined)
@@ -48,7 +46,7 @@ function matchHavingProduction(id: number, stateId: number, ctx: StateCriteriaCo
         production,
         gameState,
         defs,
-        gameState.instances[id],
+        instance,
         stickerDefs,
         false,
       );
@@ -74,8 +72,10 @@ function matchHavingProduction(id: number, stateId: number, ctx: StateCriteriaCo
 
 function matchHavingSticker(id: number, stateId: number, ctx: StateCriteriaContext): boolean {
   const { gameState, selector } = ctx;
+  const instance = gameState.instances[id];
+  if (!instance) return false;
   if (selector.having?.minStickers !== undefined || selector.having?.maxStickers !== undefined) {
-    const stickers = gameState.instances[id].stickers[stateId] ?? [];
+    const stickers = instance.stickers[stateId] ?? [];
     if (selector.having.minStickers !== undefined && stickers.length < selector.having.minStickers)
       return false;
     if (selector.having.maxStickers !== undefined && stickers.length > selector.having.maxStickers)
