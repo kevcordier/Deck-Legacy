@@ -134,6 +134,9 @@ export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
         if (step.cost?.accumulated) {
           cost.push(step.cost.accumulated.toString());
         }
+        if (step.cost?.discard) {
+          cost.push(step.cost.discard[0].pickNumber?.toString() ?? '');
+        }
 
         if (track.inverse && isValidated) {
           cost = [<span key="validated">✓</span>];
