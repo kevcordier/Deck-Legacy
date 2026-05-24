@@ -525,8 +525,11 @@ export class GameAggregate {
   }
 
   public turnEnded(): GameState {
+    const allRoundInstances = [...this.gameState.permanents, ...this.gameState.board].map(
+      id => this.gameState.instances[id],
+    );
     const triggers = getInstancesTriggerEffects(
-      this.gameState.board.map(cardId => this.gameState.instances[cardId]),
+      allRoundInstances,
       this.cardDefs,
       this.stickerDefs,
       Trigger.END_OF_TURN,
@@ -671,10 +674,11 @@ export class GameAggregate {
       return this.gameState;
     }
 
+    const allRoundInstances = [...this.gameState.permanents, ...this.gameState.board].map(
+      id => this.gameState.instances[id],
+    );
     const triggers = getInstancesTriggerEffects(
-      this.gameState.board
-        .filter(cardId => cardId !== cardInstanceId)
-        .map(cardId => this.gameState.instances[cardId]),
+      allRoundInstances.filter(instance => instance.id !== cardInstanceId),
       this.cardDefs,
       this.stickerDefs,
       Trigger.END_OF_TURN,
@@ -794,8 +798,11 @@ export class GameAggregate {
     // Only generate triggers if this is a normal action with endsTurn flag
     // (not a trigger effect that was already handled by CardActionAggregate)
     if (currentCardAction.isEndTurn() && !currentCardAction.getTriggerId()) {
+      const allRoundInstances = [...newGameState.permanents, ...newGameState.board].map(
+        id => newGameState.instances[id],
+      );
       triggers = getInstancesTriggerEffects(
-        newGameState.board.map(cardId => newGameState.instances[cardId]),
+        allRoundInstances,
         this.cardDefs,
         this.stickerDefs,
         Trigger.END_OF_TURN,

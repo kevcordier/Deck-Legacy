@@ -192,6 +192,10 @@ GameState {
   round: number
   turn:  number
   phase: Phase  // PREGAME | START_ROUND | PLAYING | END_TURN | GAME_OVER
+
+  // Campaign / expansion tracking
+  activeExpansion?: string
+  expansionMaxRound?: number // if set, a round becomes last when round >= expansionMaxRound
 }
 
 CardInstance {
@@ -219,6 +223,9 @@ PREGAME → START_ROUND → PLAYING → END_TURN → START_ROUND → … → GAM
 - `PLAYING` — active turn: cards are drawn and resolved.
 - `END_TURN` — pending triggers resolved; board cleared.
 - `GAME_OVER` — all rounds completed.
+
+When selecting an expansion, the game resets `round` and `turn` to `0` before entering the purge flow.
+This lets expansion-specific round limits (`expansionMaxRound`) be evaluated from a fresh cycle.
 
 ### Strategy Pattern (Card Actions)
 
@@ -453,3 +460,5 @@ pnpm build-storybook # Static build
 - **Test coverage is for `src/engine/`** — UI components are not currently covered; do not rely on coverage numbers for component code.
 - **Do not create per-component CSS files.** Styling is done exclusively with Tailwind utility classes. The only CSS file is `src/styles/game.css`.
 - **Do not add unused i18n keys.** Both locale files must stay in sync and only contain keys actively used in the UI.
+- **Card costs (`discard`/`destroy`) are paid from cards in play (`board + permanents`)** — do not assume `board` only when evaluating affordability or building pending choices.
+- **`COUNT_AS_2` can affect selections outside `boardEffects`-only contexts** (e.g. discard-based selections): keep intrinsic passives and board effects aligned when filtering selectable cards.

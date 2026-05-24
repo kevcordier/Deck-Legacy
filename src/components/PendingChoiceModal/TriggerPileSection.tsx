@@ -35,7 +35,7 @@ export function TriggerPileSection({
 
         return (
           <div key={triggerId} className="flex flex-col items-center gap-2">
-            <div className="flex min-w-56 flex-1 items-start gap-3">
+            <div className="flex min-w-56 max-w-80 flex-1 items-start gap-3">
               <TriggerIcon
                 className="mt-1 size-8 shrink-0"
                 color={trigger.effectDef.optional ? 'yellow' : 'red'}
@@ -48,8 +48,8 @@ export function TriggerPileSection({
                 )}
                 <div className="font-display text-ink text-xs">{actionLabel}</div>
               </div>
-              <GameCard instance={inst} hideStatePreview />
             </div>
+            <GameCard instance={inst} hideStatePreview />
             <div className="flex flex-wrap items-end gap-2">
               <Button
                 size="sm"

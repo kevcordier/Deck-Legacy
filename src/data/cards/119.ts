@@ -62,13 +62,6 @@ export const prosperity: CardDef = {
           id: '119-2-1',
           trigger: Trigger.END_OF_TURN,
           optional: true,
-          cost: {
-            discard: [
-              {
-                scope: [TargetScope.SELF],
-              },
-            ],
-          },
           actionEffects: [
             {
               id: 1,
