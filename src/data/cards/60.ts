@@ -41,7 +41,7 @@ export const royalVisit: CardDef = {
     {
       id: 2,
       name: 'Inquisitor',
-      tags: [CardTag.EVENT],
+      tags: [CardTag.PERSON],
       illustration: 'cards/60_2.jpg',
       productions: [{ gold: 1 }],
       actions: [
