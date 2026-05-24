@@ -7,9 +7,10 @@ import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoice
 import { Button } from '@components/ui/Button/Button';
 import { DestroyIcon, DiscardIcon, DrawCardIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
+import { Phase } from '@engine/domain/types/Phase';
 import { useGame } from '@hooks/useGame';
 import { useTutorial } from '@hooks/useTutorial';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export function GameBoard() {
@@ -40,6 +41,13 @@ export function GameBoard() {
   const [destroyedModalOpen, setDestroyedModalOpen] = useState(false);
   const [pinnedLeft, setPinnedLeft] = useState(true);
   const [pinnedRight, setPinnedRight] = useState(false);
+  const centerScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (gameState.phase === Phase.TURN_END || gameState.phase === Phase.ROUND_END) {
+      centerScrollRef.current?.scrollTo({ top: 0 });
+    }
+  }, [gameState.phase]);
 
   const nextCards = drawPile
     .slice(0, parameters.displayedDrawDeckCards)
@@ -93,6 +101,7 @@ export function GameBoard() {
         </div>
 
         <div
+          ref={centerScrollRef}
           className={`${pinnedLeft ? '' : 'lg:ml-15'} ${pinnedRight ? '' : 'lg:mr-15'} flex-1 h-full relative scrollbar `}
         >
           <MainBoard />
