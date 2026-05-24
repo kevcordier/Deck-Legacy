@@ -32,7 +32,7 @@ export const prosperity: CardDef = {
           id: '119-1-1',
           type: PassiveType.ADJUST_PRODUCTION,
           amount: 1,
-          cards: { scope: [TargetScope.BOARD] },
+          cards: { scope: [TargetScope.BOARD, TargetScope.FRIENDLY] },
           resources: { gold: 1 },
         },
       ],
