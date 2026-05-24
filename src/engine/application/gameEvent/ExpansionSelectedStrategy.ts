@@ -19,9 +19,12 @@ export class ExpansionSelectedStrategy implements GameEventStrategy {
 
     return {
       ...gameState,
+      round: 0,
+      turn: 0,
       instances: newInstances,
       discoveryPile: [...new Set([...gameState.discoveryPile, ...e.deckEntries.map(d => d.id)])],
       activeExpansion: e.expansionName,
+      expansionMaxRound: e.expansionMaxRound,
       parameterOverrides: e.parameterOverrides ?? {},
       purgeState: {
         batchSize: e.purgeBatchSize,

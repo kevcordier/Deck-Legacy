@@ -256,6 +256,11 @@ export class GameAggregate {
   }
 
   public selectExpansion(expansionName: string, expansion: ExpansionConfig): GameState {
+    const expansionMaxRound =
+      expansion.expansionMaxRound && expansion.expansionMaxRound > 0
+        ? expansion.expansionMaxRound
+        : undefined;
+
     const purgePool = this.shuffle([
       ...this.gameState.drawPile,
       ...this.gameState.discardPile,
@@ -267,6 +272,7 @@ export class GameAggregate {
       type: GameEventType.EXPANSION_SELECTED,
       timestamp: Date.now(),
       expansionName,
+      expansionMaxRound,
       deckEntries: expansion.deck,
       purgeBatchSize: expansion.purge.purge,
       purgePermanentCount: expansion.purge.permanent,

@@ -137,10 +137,6 @@ export const waterMill: CardDef = {
               type: ActionEffectType.DESTROY_CARD,
               cards: { scope: [TargetScope.SELF] },
             },
-            {
-              id: 3,
-              type: ActionEffectType.END_GAME,
-            },
           ],
         },
       ],

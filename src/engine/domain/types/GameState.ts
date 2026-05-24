@@ -15,6 +15,7 @@ export type ExpansionDeckEntry = {
 };
 
 export type ExpansionConfig = {
+  expansionMaxRound?: number;
   purge: {
     permanent: number;
     purge: number;
@@ -62,6 +63,7 @@ export type GameState = {
   parameterOverrides: Partial<GameParameters>;
   campaignScores: Record<string, number>;
   activeExpansion?: string;
+  expansionMaxRound?: number;
   purgedCards: number[];
   purgedGlory: number[];
   purgeState?: PurgeState;

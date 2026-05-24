@@ -11,6 +11,9 @@ export class RoundStartedStrategy implements GameEventStrategy {
     return {
       ...gameState,
       round: e.round,
+      isLastRound:
+        gameState.isLastRound ||
+        (gameState.expansionMaxRound !== undefined && gameState.expansionMaxRound <= e.round),
       turn: 0,
       drawPile: e.newDrawPile,
       discoveryPile: gameState.discoveryPile.filter(id => !addedCards.includes(id)),

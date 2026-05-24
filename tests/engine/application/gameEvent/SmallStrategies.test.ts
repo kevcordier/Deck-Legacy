@@ -54,7 +54,7 @@ describe('Small game event strategies', () => {
     const strategy = new ExpansionSelectedStrategy({
       1: { id: 1, name: 'C', states: [{ id: 10, name: 'S' }] },
     });
-    const state = makeState({ discoveryPile: [5], instances: {} });
+    const state = makeState({ discoveryPile: [5], instances: {}, round: 7, turn: 3 });
 
     const result = strategy.apply(state, {
       id: 'e1',
@@ -72,8 +72,33 @@ describe('Small game event strategies', () => {
     } as ExpansionSelectedEvent);
 
     expect(result.parameterOverrides).toEqual({});
+    expect(result.expansionMaxRound).toBeUndefined();
+    expect(result.round).toBe(0);
+    expect(result.turn).toBe(0);
     expect(result.discoveryPile).toEqual([5, 6]);
     expect(result.phase).toBe(Phase.PURGE);
+  });
+
+  it('ExpansionSelectedStrategy stores expansionMaxRound when provided', () => {
+    const strategy = new ExpansionSelectedStrategy({
+      1: { id: 1, name: 'C', states: [{ id: 10, name: 'S' }] },
+    });
+    const state = makeState({ discoveryPile: [], instances: {} });
+
+    const result = strategy.apply(state, {
+      id: 'e2',
+      type: GameEventType.EXPANSION_SELECTED,
+      timestamp: 0,
+      expansionName: 'exp',
+      expansionMaxRound: 3,
+      deckEntries: [{ id: 5, cardId: 1 }],
+      purgeBatchSize: 2,
+      purgePermanentCount: 1,
+      purgePool: [5],
+      onStartDiscoverIds: [],
+    } as ExpansionSelectedEvent);
+
+    expect(result.expansionMaxRound).toBe(3);
   });
 
   it('PurgeCardSelectedStrategy returns original state when purgeState is missing', () => {

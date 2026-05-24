@@ -90,13 +90,22 @@ function matchesProductions(
 ): boolean {
   const { gameState, defs, stickerDefs } = ctx;
   if (!produces || produces.length === 0) return true;
-  if (!state.productions || state.productions.length === 0) return false;
+
+  // Evaluate at least one base production to account for sticker-added production.
+  const baseProductions = state.productions?.length ? state.productions : [{}];
+
   return produces.some(r =>
-    state.productions?.some(prod =>
-      Object.keys(
-        getEffectiveProductions(prod, gameState, defs, gameState.instances[id], stickerDefs, false),
-      ).includes(r),
-    ),
+    baseProductions.some(prod => {
+      const effectiveProduction = getEffectiveProductions(
+        prod,
+        gameState,
+        defs,
+        gameState.instances[id],
+        stickerDefs,
+        false,
+      );
+      return (effectiveProduction[r as keyof ReturnType<typeof getEffectiveProductions>] ?? 0) > 0;
+    }),
   );
 }
 
@@ -165,7 +174,7 @@ export function cardSelector(
     return selector.lastSelectedIds ?? [];
   }
   if (scope.includes(TargetScope.TOP_OF_DECK)) {
-    return [gameState.drawPile[0]].filter(Boolean);
+    return gameState.drawPile.slice(0, selector.pickNumber ?? 1);
   }
   if (scope.includes(TargetScope.TOP_OF_DISCARD)) {
     const topDiscard = gameState.discardPile[gameState.discardPile.length - 1];

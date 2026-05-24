@@ -59,4 +59,49 @@ describe('RoundStartedStrategy', () => {
       1: [{ id: 'persistent', type: PassiveType.BLOCK }],
     });
   });
+
+  it('keeps isLastRound to false when expansion max round is not reached', () => {
+    const gs = makeState({ isLastRound: false, expansionMaxRound: 3 });
+    const event: RoundStartedEvent = {
+      id: 'e2',
+      type: GameEventType.ROUND_STARTED,
+      timestamp: 0,
+      round: 2,
+      newDrawPile: [],
+    };
+
+    const result = strategy.apply(gs, event);
+
+    expect(result.isLastRound).toBe(false);
+  });
+
+  it('sets isLastRound to true when expansion max round is reached', () => {
+    const gs = makeState({ isLastRound: false, expansionMaxRound: 3 });
+    const event: RoundStartedEvent = {
+      id: 'e3',
+      type: GameEventType.ROUND_STARTED,
+      timestamp: 0,
+      round: 3,
+      newDrawPile: [],
+    };
+
+    const result = strategy.apply(gs, event);
+
+    expect(result.isLastRound).toBe(true);
+  });
+
+  it('keeps isLastRound true once already set', () => {
+    const gs = makeState({ isLastRound: true, expansionMaxRound: 99 });
+    const event: RoundStartedEvent = {
+      id: 'e4',
+      type: GameEventType.ROUND_STARTED,
+      timestamp: 0,
+      round: 1,
+      newDrawPile: [],
+    };
+
+    const result = strategy.apply(gs, event);
+
+    expect(result.isLastRound).toBe(true);
+  });
 });

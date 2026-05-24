@@ -543,6 +543,7 @@
   ],
   "expansions": {
     "Prosperity": {
+      "expansionMaxRound": 4,
       "purge": {
         "permanent": 1,
         "purge": 12
@@ -563,6 +564,7 @@
       }
     },
     "The Water Mill": {
+      "expansionMaxRound": 4,
       "purge": {
         "permanent": 1,
         "purge": 12
@@ -583,6 +585,7 @@
       }
     },
     "Border Dispute": {
+      "expansionMaxRound": 4,
       "purge": {
         "permanent": 1,
         "purge": 12

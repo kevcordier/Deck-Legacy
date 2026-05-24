@@ -345,4 +345,42 @@ describe('GameAggregate campaign score branch coverage', () => {
 
     expect(result.purgeState?.onStartDiscoverIds).toEqual([]);
   });
+
+  it('resets round and keeps positive expansionMaxRound on expansion selection', () => {
+    const state = makeState({
+      round: 7,
+      turn: 2,
+      drawPile: [1],
+      instances: { 1: makeInstance({ id: 1, cardId: 1, stateId: 1 }) },
+    });
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: makeDef({ id: 1 }) }, {}, []);
+    const expansion: ExpansionConfig = {
+      expansionMaxRound: 3,
+      deck: [{ id: 10, cardId: 1 }],
+      purge: { purge: 1, permanent: 0 },
+    };
+
+    const result = agg.selectExpansion('x', expansion);
+
+    expect(result.round).toBe(0);
+    expect(result.turn).toBe(0);
+    expect(result.expansionMaxRound).toBe(3);
+  });
+
+  it('drops non-positive expansionMaxRound values on expansion selection', () => {
+    const state = makeState({
+      drawPile: [1],
+      instances: { 1: makeInstance({ id: 1, cardId: 1, stateId: 1 }) },
+    });
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: makeDef({ id: 1 }) }, {}, []);
+    const expansion: ExpansionConfig = {
+      expansionMaxRound: 0,
+      deck: [{ id: 10, cardId: 1 }],
+      purge: { purge: 1, permanent: 0 },
+    };
+
+    const result = agg.selectExpansion('x', expansion);
+
+    expect(result.expansionMaxRound).toBeUndefined();
+  });
 });

@@ -108,6 +108,7 @@ export interface CampaignScoreSavedEvent extends GameEvent {
 export interface ExpansionSelectedEvent extends GameEvent {
   type: GameEventType.EXPANSION_SELECTED;
   expansionName: string;
+  expansionMaxRound?: number;
   deckEntries: ExpansionDeckEntry[];
   purgeBatchSize: number;
   purgePermanentCount: number;

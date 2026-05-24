@@ -374,6 +374,35 @@ describe('cardSelector – produces filter', () => {
     expect(result).toContain(30);
     expect(result).not.toContain(10);
   });
+
+  it('keeps cards that produce only through stickers', () => {
+    const stickerOnlyDef: CardDef = {
+      id: 4,
+      name: 'StickerOnly',
+      states: [{ id: 1, name: 'S4' }],
+    };
+    const stickerOnlyInst = makeInstance({
+      id: 40,
+      cardId: 4,
+      stateId: 1,
+      stickers: { 1: [1] },
+    });
+    const gs = makeState({
+      board: [10, 40],
+      instances: { 10: instA, 40: stickerOnlyInst },
+    });
+
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD], produces: ['gold' as never] },
+      99,
+      gs,
+      { ...defs, 4: stickerOnlyDef },
+      stickerDefs,
+    );
+
+    expect(result).toContain(40);
+    expect(result).not.toContain(10);
+  });
 });
 
 describe('cardSelector – ids filter', () => {

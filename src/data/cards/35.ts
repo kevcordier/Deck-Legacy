@@ -29,20 +29,7 @@ export const thunderstorm: CardDef = {
               type: ActionEffectType.DISCARD_CARD,
               cards: {
                 scope: [TargetScope.TOP_OF_DECK],
-              },
-            },
-            {
-              id: 2,
-              type: ActionEffectType.DISCARD_CARD,
-              cards: {
-                scope: [TargetScope.TOP_OF_DECK],
-              },
-            },
-            {
-              id: 3,
-              type: ActionEffectType.DISCARD_CARD,
-              cards: {
-                scope: [TargetScope.TOP_OF_DECK],
+                pickNumber: 3,
               },
             },
             {
