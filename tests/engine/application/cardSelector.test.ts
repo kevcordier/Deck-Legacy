@@ -327,6 +327,45 @@ describe('cardSelector – COUNT_AS_2 passive', () => {
     );
     expect(result).toEqual([20]);
   });
+
+  it('duplicates a selected card with intrinsic COUNT_AS_2 passive in DISCARD scope', () => {
+    const defCountAs2Person: CardDef = {
+      id: 61,
+      name: 'Miner',
+      states: [
+        {
+          id: 2,
+          name: 'Miners',
+          tags: [CardTag.PERSON],
+          passives: [{ id: '61-2-1', type: PassiveType.COUNT_AS_2 }],
+        },
+      ],
+    };
+    const miner = makeInstance({ id: 61, cardId: 61, stateId: 2 });
+    const otherPerson = makeInstance({ id: 62, cardId: 1, stateId: 1 });
+    const personDef: CardDef = {
+      id: 1,
+      name: 'Person',
+      states: [{ id: 1, name: 'P', tags: [CardTag.PERSON] }],
+    };
+
+    const gs = makeState({
+      discardPile: [61, 62],
+      instances: { 61: miner, 62: otherPerson },
+      boardEffects: {},
+    });
+
+    const result = cardSelector(
+      { scope: [TargetScope.DISCARD], tags: [CardTag.PERSON] },
+      99,
+      gs,
+      { ...defs, 1: personDef, 61: defCountAs2Person },
+      stickerDefs,
+    );
+
+    expect(result.filter(id => id === 61)).toHaveLength(2);
+    expect(result.filter(id => id === 62)).toHaveLength(1);
+  });
 });
 
 describe('cardSelector – alignment filters', () => {

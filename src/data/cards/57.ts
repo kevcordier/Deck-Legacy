@@ -1,13 +1,11 @@
 import {
   ActionEffectType,
   CardTag,
-  PassiveType,
   ResourceType,
   TargetScope,
   Trigger,
 } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
-import { CardPassives } from '@engine/domain/types/effects';
 
 export const sickness: CardDef = {
   id: 57,
@@ -66,7 +64,6 @@ export const sickness: CardDef = {
       illustration: 'cards/57_2.jpg',
       permanent: true,
       glory: { amount: -2 },
-      passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
     },
     {
       id: 3,

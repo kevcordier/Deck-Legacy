@@ -16,7 +16,10 @@ export function ChooseStateSection(props: Readonly<ChoiceSectionProps>) {
         const state = cardDef?.states.find(candidate => candidate.id === stateId);
         if (!cardDef || !state) return null;
         return (
-          <div key={stateId} className="flex flex-col items-stretch gap-2 p-2 @container min-w-60">
+          <div
+            key={stateId}
+            className="flex flex-col items-stretch gap-2 p-2 @container min-w-60 max-w-80"
+          >
             <GameCard
               instance={{
                 id: choice.sourceInstanceId,

@@ -33,7 +33,7 @@ function formatInstanceLabel(instanceId: number): string {
 function PurgeCardTile({ instance, instanceId, onSelect, disabled }: PurgeCardTileProps) {
   const { t } = useTranslation();
   return (
-    <div className="flex min-w-60 flex-col items-stretch gap-2 @container">
+    <div className="flex min-w-60 max-w-80 flex-col items-stretch gap-2 @container">
       <GameCard instance={instance} />
       {onSelect ? (
         <Button onClick={() => onSelect(instanceId)} color="danger" size="sm" disabled={disabled}>

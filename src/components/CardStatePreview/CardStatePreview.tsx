@@ -36,7 +36,7 @@ export function CardStatePreview({ instance, defs }: CardStatePreviewProps) {
   if (!def || def.states.length <= 1) return null;
 
   return (
-    <>
+    <div className="max-w-80">
       <Button
         onClick={e => {
           e.stopPropagation();
@@ -52,7 +52,7 @@ export function CardStatePreview({ instance, defs }: CardStatePreviewProps) {
       </Button>
 
       {open && <CardStatesModal instance={instance} def={def} onClose={() => setOpen(false)} />}
-    </>
+    </div>
   );
 }
 
@@ -80,7 +80,7 @@ function CardStatesModal({ instance, def, onClose }: CardStatesModalProps) {
             trackProgress: isCurrent ? instance.trackProgress : [],
           };
           return (
-            <div className={`@container min-w-60`} key={s.id}>
+            <div className={`@container min-w-60 max-w-80`} key={s.id}>
               <GameCard
                 instance={fakeInstance}
                 className={`${isCurrent ? 'ring-primary ring-3' : ''}`}

@@ -128,6 +128,19 @@ function hasAvailableTrackStep(state: CardState, trackProgress: number[]): boole
   return !!state.track && state.track.steps.some(step => !trackProgress.includes(step.id));
 }
 
+function hasIntrinsicCountAs2(
+  id: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+): boolean {
+  const inst = gameState.instances[id];
+  if (!inst) return false;
+  const state = defs[inst.cardId]?.states.find(s => s.id === inst.stateId);
+  if (!state?.passives?.length) return false;
+
+  return state.passives.some(passive => passive.type === PassiveType.COUNT_AS_2);
+}
+
 function passesScopeConstraints(id: number, ctx: CardCriteriaContext): boolean {
   if (!ctx.scope?.includes(TargetScope.SELF) && id === ctx.instanceId) return false;
   if (!ctx.hasBlocked && ctx.blockedInstanceIds.includes(id)) return false;
@@ -226,7 +239,8 @@ export function cardSelector(
   const extraIds: number[] = [];
   const seen = new Set<number>();
   selectedIds.forEach(id => {
-    if (!seen.has(id) && countAs2InstanceIds.has(id)) {
+    const countsAs2 = countAs2InstanceIds.has(id) || hasIntrinsicCountAs2(id, gameState, defs);
+    if (!seen.has(id) && countsAs2) {
       extraIds.push(id);
       seen.add(id);
     }
