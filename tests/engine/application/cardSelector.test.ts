@@ -82,6 +82,33 @@ describe('cardSelector – shortcuts', () => {
     expect(result).toEqual([30]);
   });
 
+  it('returns multiple cards from top of deck when pickNumber is provided', () => {
+    const gs = makeState({
+      drawPile: [30, 10, 20],
+      instances: { 10: instA, 20: instB, 30: instC },
+    });
+    const result = cardSelector(
+      { scope: [TargetScope.TOP_OF_DECK], pickNumber: 2 },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
+    expect(result).toEqual([30, 10]);
+  });
+
+  it('returns all available draw cards when TOP_OF_DECK pickNumber exceeds pile size', () => {
+    const gs = makeState({ drawPile: [30], instances: { 30: instC } });
+    const result = cardSelector(
+      { scope: [TargetScope.TOP_OF_DECK], pickNumber: 5 },
+      99,
+      gs,
+      defs,
+      stickerDefs,
+    );
+    expect(result).toEqual([30]);
+  });
+
   it('returns empty for TOP_OF_DECK when drawPile is empty', () => {
     const result = cardSelector(
       { scope: [TargetScope.TOP_OF_DECK] },

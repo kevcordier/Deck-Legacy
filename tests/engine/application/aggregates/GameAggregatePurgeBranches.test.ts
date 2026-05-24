@@ -346,6 +346,49 @@ describe('GameAggregate campaign score branch coverage', () => {
     expect(result.purgeState?.onStartDiscoverIds).toEqual([]);
   });
 
+  it('saveCampaignScore uses base segment by default and opens expansion choice', () => {
+    const scoringDef: CardDef = {
+      id: 1,
+      name: 'Scoring',
+      states: [{ id: 1, name: 'S', glory: { amount: 3 } }],
+    };
+    const state = makeState({
+      phase: Phase.GAME_OVER,
+      drawPile: [1],
+      instances: { 1: makeInstance({ id: 1, cardId: 1, stateId: 1 }) },
+      purgedGlory: [2],
+      activeExpansion: undefined,
+    });
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: scoringDef }, {}, []);
+
+    const result = agg.saveCampaignScore();
+    const lastEvent = agg.getEvents()[agg.getEvents().length - 1];
+
+    expect(lastEvent.type).toBe(GameEventType.CAMPAIGN_SCORE_SAVED);
+    expect(result.campaignScores.base).toBe(5);
+    expect(result.phase).toBe(Phase.EXPANSION_CHOICE);
+  });
+
+  it('saveCampaignScore uses active expansion segment and can keep current phase', () => {
+    const scoringDef: CardDef = {
+      id: 1,
+      name: 'Scoring',
+      states: [{ id: 1, name: 'S', glory: { amount: 1 } }],
+    };
+    const state = makeState({
+      phase: Phase.GAME_OVER,
+      drawPile: [1],
+      instances: { 1: makeInstance({ id: 1, cardId: 1, stateId: 1 }) },
+      activeExpansion: 'Prosperity',
+    });
+    const agg = new GameAggregate(crypto.randomUUID(), state, { 1: scoringDef }, {}, []);
+
+    const result = agg.saveCampaignScore(false);
+
+    expect(result.campaignScores.Prosperity).toBe(1);
+    expect(result.phase).toBe(Phase.GAME_OVER);
+  });
+
   it('resets round and keeps positive expansionMaxRound on expansion selection', () => {
     const state = makeState({
       round: 7,
