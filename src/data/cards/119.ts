@@ -158,7 +158,7 @@ export const prosperity: CardDef = {
       actions: [
         {
           id: '119-4-1',
-          trigger: Trigger.END_OF_TURN,
+          trigger: Trigger.END_OF_ROUND,
           actionEffects: [
             {
               id: 1,
