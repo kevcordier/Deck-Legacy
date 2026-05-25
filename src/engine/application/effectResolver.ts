@@ -440,6 +440,66 @@ function resolveStateTarget(
   return [resolverAction, pendingChoices];
 }
 
+function resolveUpgradeStateTarget(
+  resolverAction: ResolvedActionEffect,
+  pendingChoices: PendingChoice[],
+  ctx: ResolveContext,
+): [ResolvedActionEffect, PendingChoice[]] {
+  const { effectId, parentActionId, actionType, instanceId, isMandatory, gameState, defs } = ctx;
+
+  if (actionType !== ActionEffectType.UPGRADE_CARD) {
+    return [resolverAction, pendingChoices];
+  }
+
+  if (resolverAction.stateId !== undefined) {
+    return [resolverAction, pendingChoices];
+  }
+
+  const hasStateChoice = pendingChoices.some(
+    choice => choice.type === PendingChoiceType.CHOOSE_STATE,
+  );
+  if (hasStateChoice) {
+    return [resolverAction, pendingChoices];
+  }
+
+  const targetId = resolverAction.instanceIds?.[0];
+  if (targetId === undefined) {
+    return [resolverAction, pendingChoices];
+  }
+
+  const targetInstance = gameState.instances[targetId];
+  if (!targetInstance) {
+    return [resolverAction, pendingChoices];
+  }
+
+  const targetState = getActiveState(targetInstance, defs);
+  const choices = [...new Set((targetState.upgrade ?? []).map(upgrade => upgrade.upgradeTo))];
+
+  if (choices.length === 1) {
+    resolverAction.stateId = choices[0];
+    return [resolverAction, pendingChoices];
+  }
+
+  if (choices.length > 1) {
+    pendingChoices.push({
+      id: `${instanceId}-${effectId}`,
+      actionId: parentActionId,
+      effectId,
+      sourceStepId: ctx.sourceStepId,
+      kind: actionType,
+      type: PendingChoiceType.CHOOSE_STATE,
+      sourceInstanceId: instanceId,
+      targetInstanceId: targetId,
+      choices,
+      pickMin: 1,
+      pickMax: 1,
+      isMandatory,
+    });
+  }
+
+  return [resolverAction, pendingChoices];
+}
+
 /** Strips the `choice` and `cards` sub-fields from Action.resources to get plain Resources. */
 function extractResources(raw: NonNullable<ActionEffect['resources']>): Resources {
   const { choice: _choice, cards: _cards, ...rest } = raw;
@@ -577,6 +637,8 @@ export function resolveActionEffect(
       action.states,
     );
   }
+
+  [resolverAction, pendingChoices] = resolveUpgradeStateTarget(resolverAction, pendingChoices, ctx);
 
   if (action.resources) {
     [resolverAction, pendingChoices] = resolveResourceTarget(

@@ -457,6 +457,77 @@ describe('resolveActionEffect – UPGRADE_CARD selector enrichment', () => {
     expect(resolved.stateId).toBe(2);
     expect(pending).toHaveLength(0);
   });
+
+  it('auto-selects target state when upgrade has a single upgradeTo', () => {
+    const upgradableDef: CardDef = {
+      id: 2,
+      name: 'U',
+      states: [
+        { id: 1, name: 'Base', upgrade: [{ upgradeTo: 2, cost: {} }] },
+        { id: 2, name: 'Upgraded' },
+      ],
+    };
+    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst2 } });
+    const effect = {
+      id: 1,
+      type: ActionEffectType.UPGRADE_CARD,
+      cards: { scope: [TargetScope.SELF] },
+    };
+
+    const [resolved, pending] = resolveActionEffect(
+      effect,
+      2,
+      gs,
+      { ...defs, 2: upgradableDef },
+      stickerDefs,
+    );
+
+    expect(resolved.instanceIds).toEqual([2]);
+    expect(resolved.stateId).toBe(2);
+    expect(pending).toHaveLength(0);
+  });
+
+  it('creates choose_state pending choice when multiple upgradeTo are available', () => {
+    const upgradableDef: CardDef = {
+      id: 2,
+      name: 'U',
+      states: [
+        {
+          id: 1,
+          name: 'Base',
+          upgrade: [
+            { upgradeTo: 2, cost: {} },
+            { upgradeTo: 3, cost: {} },
+          ],
+        },
+        { id: 2, name: 'Upgraded A' },
+        { id: 3, name: 'Upgraded B' },
+      ],
+    };
+    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const gs = makeState({ board: [2], instances: { 2: inst2 } });
+    const effect = {
+      id: 1,
+      type: ActionEffectType.UPGRADE_CARD,
+      cards: { scope: [TargetScope.SELF] },
+    };
+
+    const [resolved, pending] = resolveActionEffect(
+      effect,
+      2,
+      gs,
+      { ...defs, 2: upgradableDef },
+      stickerDefs,
+    );
+
+    expect(resolved.instanceIds).toEqual([2]);
+    expect(resolved.stateId).toBeUndefined();
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe('choose_state');
+    expect(pending[0].choices).toEqual([2, 3]);
+    expect(pending[0].targetInstanceId).toBe(2);
+  });
 });
 
 // ─── ADD_STICKER – production cap ────────────────────────────────────────────

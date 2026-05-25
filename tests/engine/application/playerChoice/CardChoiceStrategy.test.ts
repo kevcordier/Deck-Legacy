@@ -238,4 +238,67 @@ describe('CardChoiceStrategy – other action types', () => {
     expect(merged).toBe(resolved);
     expect(remaining).toHaveLength(0);
   });
+
+  it('auto-selects stateId for UPGRADE_CARD when only one upgrade exists', () => {
+    const upgradableDef: CardDef = {
+      id: 8,
+      name: 'U',
+      states: [
+        { id: 1, name: 'Base', upgrade: [{ cost: {}, upgradeTo: 2 }] },
+        { id: 2, name: 'Upgraded' },
+      ],
+    };
+    const strategy = new CardChoiceStrategy({ 8: upgradableDef }, {});
+    const inst = makeInstance({ id: 8, cardId: 8, stateId: 1 });
+    const gs = makeState({ instances: { 8: inst } });
+    const choice = {
+      id: 'u1',
+      type: ActionEffectType.UPGRADE_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [8],
+    };
+    const resolved = { id: 'u1', type: ActionEffectType.UPGRADE_CARD, sourceInstanceId: 99 };
+    const [merged, remaining] = strategy.apply(choice, resolved, gs, [pending()]);
+
+    expect(merged.instanceIds).toEqual([8]);
+    expect(merged.stateId).toBe(2);
+    expect(remaining).toHaveLength(0);
+  });
+
+  it('adds CHOOSE_STATE pending choice for UPGRADE_CARD with multiple upgrades', () => {
+    const upgradableDef: CardDef = {
+      id: 9,
+      name: 'U2',
+      states: [
+        {
+          id: 1,
+          name: 'Base',
+          upgrade: [
+            { cost: {}, upgradeTo: 2 },
+            { cost: {}, upgradeTo: 3 },
+          ],
+        },
+        { id: 2, name: 'Upgraded A' },
+        { id: 3, name: 'Upgraded B' },
+      ],
+    };
+    const strategy = new CardChoiceStrategy({ 9: upgradableDef }, {});
+    const inst = makeInstance({ id: 9, cardId: 9, stateId: 1 });
+    const gs = makeState({ instances: { 9: inst } });
+    const choice = {
+      id: 'u2',
+      type: ActionEffectType.UPGRADE_CARD,
+      sourceInstanceId: 99,
+      instanceIds: [9],
+    };
+    const resolved = { id: 'u2', type: ActionEffectType.UPGRADE_CARD, sourceInstanceId: 99 };
+    const [merged, remaining] = strategy.apply(choice, resolved, gs, [pending()]);
+
+    expect(merged.instanceIds).toEqual([9]);
+    expect(merged.stateId).toBeUndefined();
+    expect(remaining).toHaveLength(1);
+    expect(remaining[0].type).toBe('choose_state');
+    expect(remaining[0].choices).toEqual([2, 3]);
+    expect(remaining[0].targetInstanceId).toBe(9);
+  });
 });
