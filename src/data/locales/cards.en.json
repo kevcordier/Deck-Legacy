@@ -260,6 +260,7 @@
     "119-2-1": "End of turn: You may make 1 card stay in play.",
     "119-2-2": "End of round: ⬆.",
     "119-3-1": "End of round: ⬆.",
+    "119-3-2": "You must mark 1 step each time a person is played when there is already a person in play.",
     "119-4-1": "End of turn: For each mark on Uprising, cross out 1 production on 1 card. Then destroy this and end the game.",
     "120-1-1": "Start of turn: gain {{gold}}{{gold}}{{gold}}.",
     "120-1-2": "End of turn: ⬆.",

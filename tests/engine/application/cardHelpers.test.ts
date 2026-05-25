@@ -1299,6 +1299,61 @@ describe('getInstancesTriggerEffects', () => {
     const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
     expect(result).toHaveLength(0);
   });
+
+  it('includes board effect trigger when passive condition is true', () => {
+    const gs = makeState({
+      resources: { gold: 2 },
+      boardEffects: {
+        1: [
+          {
+            id: 'trig',
+            type: PassiveType.ADD_TRIGGER,
+            condition: {
+              type: 'resource',
+              resourceType: ResourceType.GOLD,
+              min: 1,
+            },
+            trigger: {
+              id: 't1',
+              type: Trigger.END_OF_TURN,
+              actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
+            },
+          },
+        ],
+      },
+    });
+
+    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
+    expect(result).toHaveLength(1);
+    expect(result[0].sourceInstanceId).toBe(1);
+  });
+
+  it('skips board effect trigger when passive condition is false', () => {
+    const gs = makeState({
+      resources: {},
+      boardEffects: {
+        1: [
+          {
+            id: 'trig',
+            type: PassiveType.ADD_TRIGGER,
+            condition: {
+              type: 'resource',
+              resourceType: ResourceType.GOLD,
+              min: 1,
+            },
+            trigger: {
+              id: 't1',
+              type: Trigger.END_OF_TURN,
+              actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
+            },
+          },
+        ],
+      },
+    });
+
+    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
+    expect(result).toHaveLength(0);
+  });
 });
 
 // ─── evaluateCondition ────────────────────────────────────────────────────────

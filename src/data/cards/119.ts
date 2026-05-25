@@ -105,16 +105,19 @@ export const prosperity: CardDef = {
             min: 1,
           },
           trigger: {
-            id: '119-3-1',
+            id: '119-3-2',
             type: Trigger.ON_PLAY,
+            cards: {
+              scope: [TargetScope.DRAWN],
+              tags: [CardTag.PERSON],
+            },
             actions: [
               {
                 id: 1,
                 type: ActionEffectType.TRACK_ADVANCE,
-                cards: { scope: [TargetScope.SELF] },
+                cards: { scope: [TargetScope.TRIGGER_SOURCE] },
               },
             ],
-            cards: { tags: [CardTag.PERSON] },
           },
         },
       ],

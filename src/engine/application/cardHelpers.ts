@@ -529,18 +529,26 @@ export function canAffordTrackAdvanceCost(
   if (!hasTrackAdvance) return true;
 
   return payableTrackEffects.every(trackEffect => {
-    const firstTrackStep = getFirstAvailableTrackStep(
-      [trackEffect],
-      instance.id,
-      gameState,
-      defs,
-      stickerDefs,
-    );
+    if (defs[instance.cardId].states.find(s => s.id === instance.stateId)?.track?.inOrder) {
+      const firstTrackStep = getFirstAvailableTrackStep(
+        [trackEffect],
+        instance.id,
+        gameState,
+        defs,
+        stickerDefs,
+      );
 
-    return (
-      !!firstTrackStep &&
-      canAffordCost(firstTrackStep.cost, instance.id, gameState, defs, stickerDefs)
-    );
+      return (
+        !!firstTrackStep &&
+        canAffordCost(firstTrackStep.cost, instance.id, gameState, defs, stickerDefs)
+      );
+    }
+
+    const trackSteps = cs.track?.steps ?? [];
+    return trackSteps.some(step => {
+      if (instance.trackProgress.includes(step.id)) return false;
+      return canAffordCost(step.cost, instance.id, gameState, defs, stickerDefs);
+    });
   });
 }
 
@@ -556,7 +564,11 @@ function getBoardEffectTriggersAction(
     let instanceId = originalSourceId;
     passives
       .filter(
-        passive => passive.type === PassiveType.ADD_TRIGGER && passive.trigger?.type === trigger,
+        passive =>
+          passive.type === PassiveType.ADD_TRIGGER &&
+          passive.trigger?.type === trigger &&
+          (!passive.condition ||
+            evaluateCondition(passive.condition, gameState, originalSourceId, defs, stickerDefs)),
       )
       .forEach(passive => {
         if (passive.trigger?.cards) {
@@ -579,7 +591,7 @@ function getBoardEffectTriggersAction(
             return ae.cards?.scope?.includes(TargetScope.SELF) ? { ids: [instanceId] } : ae.cards;
           };
           cardActions.push({
-            id: passive.id,
+            id: passive.trigger.id,
             optional: passive.trigger?.optional,
             actionEffects: passive.trigger.actions.map(ae => ({
               ...ae,
