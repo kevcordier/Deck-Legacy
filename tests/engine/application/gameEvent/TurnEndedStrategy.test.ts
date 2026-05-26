@@ -1,8 +1,7 @@
 import { makeState, makeStickerDefs } from '../fixtures';
 import { TurnEndedStrategy } from '@engine/application/gameEvent/TurnEndedStrategy';
-import { GameEventType } from '@engine/domain/enums';
+import { GameEventType, Phase } from '@engine/domain/enums';
 import type { TurnEndedEvent } from '@engine/domain/types/GameEvent';
-import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
 describe('TurnEndedStrategy', () => {

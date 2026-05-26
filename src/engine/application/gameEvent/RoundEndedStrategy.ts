@@ -1,6 +1,6 @@
 import type { GameEventStrategy } from './GameEventStrategy';
+import { Phase } from '@engine/domain/enums';
 import type { GameEvent, GameState, RoundEndedEvent } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 
 export class RoundEndedStrategy implements GameEventStrategy {
   apply(gameState: GameState, event: GameEvent): GameState {

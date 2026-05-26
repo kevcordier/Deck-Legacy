@@ -1,5 +1,5 @@
+import { Phase } from '@engine/domain/enums';
 import type { CardDef, CardInstance, GameState, Sticker } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 
 export const EMPTY_STATE: GameState = {
   instances: {},

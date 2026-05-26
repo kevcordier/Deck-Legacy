@@ -1,8 +1,7 @@
 import { makeDefs, makeState } from '../fixtures';
 import { GameStartedStrategy } from '@engine/application/gameEvent/GameStartedStrategy';
-import { GameEventType } from '@engine/domain/enums';
+import { GameEventType, Phase } from '@engine/domain/enums';
 import type { GameStartedEvent } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
 describe('GameStartedStrategy', () => {

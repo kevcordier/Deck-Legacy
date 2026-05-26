@@ -76,7 +76,10 @@
     "noResources": "No resources",
     "deck": "Deck",
     "discard": "Discard",
-    "glory": "Glory"
+    "glory": "Glory",
+    "baseSegment": "Base game",
+    "gloryTooltipTitle": "Campaign scores",
+    "gloryTooltipEmpty": "No saved score"
   },
   "resources": {
     "gold": "Gold",
@@ -255,7 +258,8 @@
       "discardColumnMobile": "Click here to view your discard pile.",
       "destroyedButton": "This button opens your destroyed cards pile. On mobile, it appears in the same bottom action bar.",
       "header": "This header contains your main turn actions and utility buttons.",
-      "resourceBar": "This row shows round, turn, usable resources, deck/discard counters, and current glory."
+      "resourceBar": "This row shows round, turn, usable resources, deck/discard counters, and current glory.",
+      "stickerStock": "This button opens the available sticker stock."
     },
     "setup": {
       "uniqueNumber": "Every card has a unique serial number.",
@@ -269,6 +273,7 @@
       "production": "Produce: Discard a card to gain the resources it produces. Since you discard the card, you cannot use its effects or upgrade it this turn. Some cards don’t have production and cannot be discarded to produce. If a card is discarded by other effects, you do not get its production",
       "upgrade": "Upgrade: Most cards have several stages, and the boxes show the cost for upgrading to a new stage. You have to pay the upgrade cost to change the card stage. When you have performed the upgrade, your turn ends.",
       "cardActions": "Use card effect: Some cards offer additional effects. Many effects require you to discard the card, which means you cannot produce with it or upgrade it.",
+      "stickerCap": "You cannot add a sticker to a card that already produces 9 or more resources.",
       "progress": "Advance: Play 2 more cards from the top of your deck. This is useful when the cards in play are not enough to do what you want. Reminder: you may advance multiple times! You always see the top card of the deck, but not the second card.",
       "endTurnVoluntary": "Pass: If you have any End of Turn effects, they are performed now. Discard all cards in your play area, except cards that stay in play. Then start a new turn if there are any cards left in your deck, otherwise this is the end of the round."
     },
@@ -283,7 +288,7 @@
       "action": "Action. Trigger card effects from here. Effects are always preceded by an effect icon : - {{action}} : Activated effect: You may discard the card to carry out this effect. - {{time}} : Time effect: You may discard the card (unless it is permanent) and end your turn to carry out this effect. - {{passif}} : Passive effect: This effect always applies, or may be used repeatedly. - {{destroy}} : Destroy effect: You may destroy the card to carry out this effect. - {{optionalTrigger}} : Triggered Optional Effect: This effect may be used when it is triggered (specified by the effect, e.g. “End of Turn”). It doesn’t discard the card unless it says so. - {{trigger}}: Triggered Forced Effect: Same as above, but this effect is not optional, it must be performed.",
       "upgrade": "Upgrade. Upgrading evolves your card and usually ends the turn."
     },
-    "end": "This concludes the tutorial. You can replay it anytime on the home page. Good luck building your kingdom!"
+    "end": "This concludes the tutorial. You can replay it anytime on the home page. You can also click the rules button to review the full rules at any time. Good luck building your kingdom!"
   },
   "cheatPanel": {
     "title": "Cheat panel",

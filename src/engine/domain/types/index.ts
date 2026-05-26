@@ -4,6 +4,5 @@ export * from './Cost';
 export * from './GameEvent';
 export * from './GameState';
 export * from './PendingChoice';
-export * from './Phase';
 export * from './Resource';
 export * from './Sticker';

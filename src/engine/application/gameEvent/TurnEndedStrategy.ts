@@ -1,7 +1,7 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { cardShouldStayInPlay } from '@engine/application/cardHelpers';
 import { discardCards } from '@engine/application/gameStateHelper';
-import { PassiveType, TargetScope } from '@engine/domain/enums';
+import { PassiveType, Phase, TargetScope } from '@engine/domain/enums';
 import type {
   CardDef,
   GameEvent,
@@ -10,7 +10,6 @@ import type {
   Sticker,
   TurnEndedEvent,
 } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 
 export class TurnEndedStrategy implements GameEventStrategy {
   constructor(

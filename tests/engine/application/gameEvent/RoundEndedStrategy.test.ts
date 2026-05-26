@@ -1,6 +1,6 @@
 import { makeInstance, makeState } from '../fixtures';
 import { RoundEndedStrategy } from '@engine/application/gameEvent/RoundEndedStrategy';
-import { Phase } from '@engine/domain/types/Phase';
+import { Phase } from '@engine/domain/enums';
 import { describe, expect, it } from 'vitest';
 
 describe('RoundEndedStrategy', () => {

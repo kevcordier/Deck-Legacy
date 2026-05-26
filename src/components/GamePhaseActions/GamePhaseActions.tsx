@@ -1,8 +1,7 @@
 import { Button } from '@components/ui/Button/Button';
 import { canUseOptions } from '@engine/application/gameStateHelper';
-import { Options } from '@engine/domain/enums';
+import { Options, Phase } from '@engine/domain/enums';
 import type { GameState } from '@engine/domain/types/GameState';
-import { Phase } from '@engine/domain/types/Phase';
 import { useTranslation } from 'react-i18next';
 
 interface GamePhaseActionsProps {

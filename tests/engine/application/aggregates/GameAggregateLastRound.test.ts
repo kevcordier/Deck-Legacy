@@ -1,6 +1,6 @@
 import { makeDef, makeInstance, makeState } from '../fixtures';
 import { GameAggregate } from '@engine/application/aggregates/GameAggregate';
-import { Phase } from '@engine/domain/types/Phase';
+import { Phase } from '@engine/domain/enums';
 import { describe, expect, it } from 'vitest';
 
 describe('GameAggregate last round flow', () => {

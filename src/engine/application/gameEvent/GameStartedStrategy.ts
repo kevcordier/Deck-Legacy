@@ -1,7 +1,7 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { createInstance } from '@engine/application/factory';
+import { Phase } from '@engine/domain/enums';
 import type { CardDef, GameEvent, GameStartedEvent, GameState } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 
 export class GameStartedStrategy implements GameEventStrategy {
   constructor(private readonly defs: Record<number, CardDef>) {}

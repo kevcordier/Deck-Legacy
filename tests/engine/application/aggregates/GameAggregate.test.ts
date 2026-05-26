@@ -6,6 +6,7 @@ import {
   GameEventType,
   PassiveType,
   PendingChoiceType,
+  Phase,
   TargetScope,
   Trigger,
 } from '@engine/domain/enums';
@@ -17,7 +18,6 @@ import type {
   PendingChoice,
   ResolvedActionEffect,
 } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // ─── minimal card definitions ─────────────────────────────────────────────────

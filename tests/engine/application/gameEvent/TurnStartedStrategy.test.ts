@@ -1,8 +1,7 @@
 import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { TurnStartedStrategy } from '@engine/application/gameEvent/TurnStartedStrategy';
-import { GameEventType } from '@engine/domain/enums';
+import { GameEventType, Phase } from '@engine/domain/enums';
 import type { CardDef, TurnStartedEvent } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
 const defs: Record<number, CardDef> = {

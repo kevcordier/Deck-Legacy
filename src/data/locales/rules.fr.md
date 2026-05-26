@@ -44,13 +44,13 @@ Vous interagissez ensuite librement avec les cartes, dans l'ordre de votre choix
 | **›› Progresser**     | Piochez **2 cartes supplémentaires** sur le plateau (peut être fait plusieurs fois).                 |
 | **Fin de tour**       | Terminez votre tour volontairement sans améliorer.                                                   |
 
-À la fin de chaque tour, **toutes les ressources sont perdues** et les cartes restantes sur le plateau sont défaussées.
+À la fin de chaque tour, **les cartes restantes sur le plateau sont défaussées**.
 
 ---
 
 ## Ressources
 
-Les ressources sont produites par les cartes et dépensées pour payer les coûts d'actions ou d'améliorations. Elles sont **perdues à la fin du tour** — dépensez-les dans le même tour où vous les gagnez.
+Les ressources sont produites par les cartes et dépensées pour payer les coûts d'actions ou d'améliorations. **Toutes les ressources sont perdues dès qu'une nouvelle carte entre dans votre zone de jeu** — dépensez-les dans le même tour où vous les gagnez.
 
 |           | Ressource  |            | Ressource       |
 | --------- | ---------- | ---------- | --------------- |

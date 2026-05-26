@@ -1,8 +1,7 @@
 import { makeDef, makeInstance, makeState } from '../fixtures';
 import { GameAggregate } from '@engine/application/aggregates/GameAggregate';
-import { GameEventType, PassiveType, Trigger } from '@engine/domain/enums';
+import { GameEventType, PassiveType, Phase, Trigger } from '@engine/domain/enums';
 import type { CardDef, ExpansionConfig, TriggerEntry } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
 describe('GameAggregate purge branch coverage', () => {

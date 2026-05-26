@@ -12,9 +12,8 @@ import {
   getEffectiveActionCost,
 } from '@engine/application/cardHelpers';
 import { canUseOptions } from '@engine/application/gameStateHelper';
-import { Options, TargetScope } from '@engine/domain/enums';
+import { Options, Phase, TargetScope } from '@engine/domain/enums';
 import type { CardAction, CardInstance } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 import { useGame } from '@hooks/useGame';
 import type { ReactNode } from 'react';
 

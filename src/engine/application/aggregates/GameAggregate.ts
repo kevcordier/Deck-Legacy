@@ -15,6 +15,7 @@ import {
   Options,
   PassiveType,
   type PendingChoiceType,
+  Phase,
   Trigger,
 } from '@engine/domain/enums';
 import { ActionCancelledError } from '@engine/domain/errors/ActionCancelledError';
@@ -50,7 +51,6 @@ import type {
   TurnStartedEvent,
   UpgradeCardEvent,
 } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 
 export const EMPTY_STATE: GameState = {
   instances: {},

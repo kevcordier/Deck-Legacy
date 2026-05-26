@@ -1,7 +1,7 @@
 import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import * as cardHelpers from '@engine/application/cardHelpers';
 import { GameEventContext } from '@engine/application/gameEvent/GameEventContext';
-import { GameEventType } from '@engine/domain/enums';
+import { GameEventType, Phase } from '@engine/domain/enums';
 import type {
   AdvanceEvent,
   CardActionEvent,
@@ -13,7 +13,6 @@ import type {
   TurnStartedEvent,
   UpgradeCardEvent,
 } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it, vi } from 'vitest';
 
 const defs = {

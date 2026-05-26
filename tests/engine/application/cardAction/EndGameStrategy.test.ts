@@ -1,6 +1,6 @@
 import { makeState } from '../fixtures';
 import { EndGameStrategy } from '@engine/application/cardAction/EndGameStrategy';
-import { Phase } from '@engine/domain/types/Phase';
+import { Phase } from '@engine/domain/enums';
 import { describe, expect, it } from 'vitest';
 
 describe('EndGameStrategy', () => {

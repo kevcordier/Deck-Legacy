@@ -44,13 +44,13 @@ You then interact with the cards freely, in any order, until you choose to end y
 | **›› Progress** | Draw **2 more cards** onto the board (can be done multiple times, as long as cards remain). |
 | **End turn**    | End your turn voluntarily without upgrading.                                                |
 
-At the end of each turn, **all resources are lost** and all remaining board cards are discarded.
+At the end of each turn, **all remaining board cards are discarded**.
 
 ---
 
 ## Resources
 
-Resources are produced by cards and spent to pay action or upgrade costs. They are **lost at the end of the turn** — spend them in the same turn you gain them.
+Resources are produced by cards and spent to pay action or upgrade costs. **All resources are lost as soon as a new card enters your play area** — spend them in the same turn you gain them.
 
 |           | Resource  |            | Resource   |
 | --------- | --------- | ---------- | ---------- |

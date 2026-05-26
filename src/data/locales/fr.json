@@ -76,7 +76,10 @@
     "noResources": "Aucune ressource",
     "deck": "Pioche",
     "discard": "Défausse",
-    "glory": "Gloire"
+    "glory": "Gloire",
+    "baseSegment": "Jeu de base",
+    "gloryTooltipTitle": "Scores de campagne",
+    "gloryTooltipEmpty": "Aucun score enregistré"
   },
   "resources": {
     "gold": "Or",
@@ -255,7 +258,8 @@
       "discardColumnMobile": "Cliquez ici pour voir votre défausse.",
       "destroyedButton": "Ce bouton ouvre la pile des cartes détruites.",
       "header": "Ce header contient les actions principales de tour et les boutons utilitaires.",
-      "resourceBar": "Cette ligne affiche la manche, le tour, les ressources utilisables, les compteurs pioche/défausse et la gloire actuelle."
+      "resourceBar": "Cette ligne affiche la manche, le tour, les ressources utilisables, les compteurs pioche/défausse et la gloire actuelle.",
+      "stickerStock": "Ce bouton ouvre le stock des stickers disponibles."
     },
     "setup": {
       "uniqueNumber": "Chaque carte possède un numéro de série unique.",
@@ -269,6 +273,7 @@
       "production": "Produire : Défaussez une carte pour obtenir les ressources qu'elle produit. Comme vous défaussez la carte, vous ne pouvez pas utiliser ses effets ou l'améliorer ce tour-ci. Certaines cartes n'ont pas de production et ne peuvent pas être défaussées pour produire. Si une carte est défaussée par d'autres effets, vous ne recevez pas sa production.",
       "upgrade": "Améliorer : La plupart des cartes ont plusieurs étapes, et les cases montrent le coût pour passer à une nouvelle étape. Vous devez payer le coût d'amélioration pour changer l'état de la carte. Une fois l'amélioration effectuée, votre tour se termine.",
       "cardActions": "Utiliser l'effet de la carte : De nombreux effets nécessitent de défausser la carte, ce qui signifie que vous ne pouvez pas produire avec elle ou l'améliorer.",
+      "stickerCap": "Vous ne pouvez pas ajouter de sticker sur une carte qui produit déjà 9 ressources ou plus.",
       "progress": "Avancer : Jouez 2 cartes supplémentaires depuis le dessus de votre deck. Cela est utile lorsque les cartes en jeu ne suffisent pas à faire ce que vous voulez. Rappel : vous pouvez avancer plusieurs fois ! Vous voyez toujours la carte du dessus du deck, mais pas la deuxième carte.",
       "endTurnVoluntary": "Passer : Si vous avez des effets de fin de tour, ils sont exécutés maintenant. Défaussez toutes les cartes de votre zone de jeu, sauf celles qui restent en jeu. Ensuite, commencez un nouveau tour s'il reste des cartes dans votre deck, sinon c'est la fin de la manche."
     },
@@ -282,7 +287,7 @@
       "action": "Action. Déclenchez les effets de la carte depuis cette zone. Les effets sont toujours précédés d'une icône d'effet : - {{action}} : Effet activé : Vous pouvez défausser la carte pour réaliser cet effet. - {{time}} : Effet temporel : Vous pouvez défausser la carte (sauf si elle est permanente) et terminer votre tour pour réaliser cet effet. - {{passif}} : Effet passif : Cet effet s'applique toujours, ou peut être utilisé plusieurs fois. - {{destroy}} : Effet de destruction : Vous pouvez détruire la carte pour réaliser cet effet. - {{optionalTrigger}} : Effet optionnel déclenché : Cet effet peut être utilisé lorsqu'il est déclenché (spécifié par l'effet, par exemple \"Fin de tour\"). Il ne défausse pas la carte sauf indication contraire. - {{trigger}}: Effet obligatoire déclenché : Même chose que ci-dessus, mais cet effet n'est pas optionnel, il doit être réalisé.",
       "upgrade": "Amélioration. Améliorer fait évoluer votre carte et termine le tour."
     },
-    "end": "Ceci conclut le tutoriel. Vous pouvez le rejouer à tout moment depuis la page d'accueil. Bonne chance pour construire votre royaume !"
+    "end": "Ceci conclut le tutoriel. Vous pouvez le rejouer à tout moment depuis la page d'accueil. Cliquez aussi sur le bouton des règles pour relire les règles complètes à tout moment. Bonne chance pour construire votre royaume !"
   },
   "cheatPanel": {
     "title": "Panneau de triche",

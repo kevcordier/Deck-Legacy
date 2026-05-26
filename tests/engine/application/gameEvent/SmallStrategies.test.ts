@@ -4,7 +4,7 @@ import { ExpansionSelectedStrategy } from '@engine/application/gameEvent/Expansi
 import { PurgeCardSelectedStrategy } from '@engine/application/gameEvent/PurgeCardSelectedStrategy';
 import { PurgeOnTriggeredStrategy } from '@engine/application/gameEvent/PurgeOnTriggeredStrategy';
 import { PurgePermanentSelectedStrategy } from '@engine/application/gameEvent/PurgePermanentSelectedStrategy';
-import { GameEventType } from '@engine/domain/enums';
+import { GameEventType, Phase } from '@engine/domain/enums';
 import type {
   CampaignScoreSavedEvent,
   ExpansionSelectedEvent,
@@ -12,7 +12,6 @@ import type {
   PurgeOnTriggeredEvent,
   PurgePermanentSelectedEvent,
 } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
 describe('Small game event strategies', () => {

@@ -74,6 +74,7 @@ export const drawCards = (
 
   gameState.drawPile = gameState.drawPile.filter(id => !turnCards.includes(id));
   gameState.board = [...new Set([...gameState.board, ...turnCards])];
+  gameState.resources = {};
 
   return gameState;
 };

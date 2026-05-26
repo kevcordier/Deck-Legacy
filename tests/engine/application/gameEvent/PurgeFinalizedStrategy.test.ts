@@ -1,8 +1,7 @@
 import { makeInstance, makeState } from '../fixtures';
 import { PurgeFinalizedStrategy } from '@engine/application/gameEvent/PurgeFinalizedStrategy';
-import { GameEventType, PassiveType } from '@engine/domain/enums';
+import { GameEventType, PassiveType, Phase } from '@engine/domain/enums';
 import type { PurgeFinalizedEvent } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
 describe('PurgeFinalizedStrategy', () => {

@@ -5,6 +5,7 @@ import { GloryIcon } from '@components/ui/Icon/icon';
 import { IconColors } from '@components/ui/Icon/iconColors';
 import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Stat } from '@components/ui/Stat/Stat';
+import { Tooltip } from '@components/ui/Tooltip/Tooltip';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useTranslation } from 'react-i18next';
@@ -14,8 +15,17 @@ export function ResourceBar() {
   const { gameState, score } = useGame();
   const { setStickerStockOpen } = useGameUI();
 
-  const { resources, round, turn, drawPile, discardPile } = gameState;
+  const { resources, round, turn, drawPile, discardPile, campaignScores } = gameState;
   const entries = Object.entries(resources).filter(([, v]) => v > 0);
+  const segmentScores = Object.entries(campaignScores);
+
+  const getSegmentLabel = (segment: string): string => {
+    if (segment === 'base') return t('resourceBar.baseSegment');
+
+    const expansionTitleKey = `campaign.expansions.${segment}.title`;
+    const expansionTitle = t(expansionTitleKey);
+    return expansionTitle === expansionTitleKey ? segment : expansionTitle;
+  };
 
   return (
     <div
@@ -57,8 +67,29 @@ export function ResourceBar() {
 
         <div className="flex shrink-0 items-stretch gap-2">
           <Divider orientation="vertical" />
-          <div className="flex items-center gap-1">
-            <div className="relative">
+          <Tooltip
+            content={
+              <>
+                <p className="mb-1 font-semibold">{t('resourceBar.gloryTooltipTitle')}</p>
+                {segmentScores.length === 0 ? (
+                  <p className="text-ink/70 italic">{t('resourceBar.gloryTooltipEmpty')}</p>
+                ) : (
+                  <ul className="space-y-1">
+                    {segmentScores.map(([segment, segmentScore]) => (
+                      <li key={segment} className="flex items-center justify-between gap-3">
+                        <span className="text-ink/80">{getSegmentLabel(segment)}</span>
+                        <span className="font-display text-primary">{segmentScore}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            }
+            position="bottom"
+            className="items-center gap-1"
+            contentClassName="min-w-52 left-0 -translate-x-0"
+          >
+            <div className="relative" aria-label={t('resourceBar.gloryTooltipTitle')}>
               <GloryIcon color={IconColors.gold} className="size-9" />
               <span className="font-display text-primary absolute top-0 left-0 flex size-9 items-center justify-center text-xs font-bold">
                 {score}
@@ -67,13 +98,14 @@ export function ResourceBar() {
             <span className="text-primary hidden text-xs uppercase lg:inline">
               {t('resourceBar.glory')}
             </span>
-          </div>
+          </Tooltip>
           <Divider orientation="vertical" />
           <Button
             onClick={() => setStickerStockOpen(true)}
             variant="outlined"
             size="xs"
             title={t('stickerStock.open')}
+            data-tour="sticker-stock-button"
           >
             🏷
           </Button>

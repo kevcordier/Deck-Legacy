@@ -101,7 +101,13 @@ export function Header() {
             variant="desktop"
           />
         </div>
-        <Button onClick={() => setRulesOpen(true)} color="danger" size="xs" title={t('rules.open')}>
+        <Button
+          onClick={() => setRulesOpen(true)}
+          color="danger"
+          size="xs"
+          title={t('rules.open')}
+          data-tour="rules-button"
+        >
           ?
         </Button>
         <Button

@@ -1,8 +1,7 @@
 import { makeDefs, makeState, makeStickerDefs } from '../fixtures';
 import { SkipTriggerStrategy } from '@engine/application/gameEvent/SkipTriggerStrategy';
-import { GameEventType } from '@engine/domain/enums';
+import { GameEventType, Phase } from '@engine/domain/enums';
 import type { SkipTriggerEvent } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
 describe('SkipTriggerStrategy', () => {

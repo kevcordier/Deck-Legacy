@@ -2,7 +2,7 @@ import type { CardAction, Passive } from './Card';
 import type { CardInstance } from './CardInstance';
 import type { Resources } from './Resource';
 import type { StickerStock } from './Sticker';
-import type { Phase } from '@engine/domain/types/Phase';
+import type { Phase } from '@engine/domain/enums';
 
 export type TriggerEntry = {
   effectDef: CardAction;

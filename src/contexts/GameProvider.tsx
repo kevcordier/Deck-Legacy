@@ -10,7 +10,12 @@ import {
 import { resolveCost } from '@engine/application/costResolver';
 import { createInstance } from '@engine/application/factory';
 import { mergeResources } from '@engine/application/gameStateHelper';
-import { ActionEffectType, GameEventType, type PendingChoiceType } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  GameEventType,
+  type PendingChoiceType,
+  Phase,
+} from '@engine/domain/enums';
 import { ActionCancelledError } from '@engine/domain/errors/ActionCancelledError';
 import { CorruptedSaveError } from '@engine/domain/errors/CorruptedSaveError';
 import { CostResolutionError } from '@engine/domain/errors/CostResolutionError';
@@ -22,7 +27,6 @@ import {
   type GameEvent,
   type GameState,
   type PendingChoice,
-  Phase,
   type ResolvedActionEffect,
   type ResolvedCost,
   type Sticker,

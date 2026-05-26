@@ -10,7 +10,7 @@ import { Checkbox } from '@components/ui/Checkbox/Checkbox';
 import { EmptyState } from '@components/ui/EmptyState/EmptyState';
 import { GameOverScreen } from '@components/ui/GameOverScreen/GameOverScreen';
 import { TutorialProvider } from '@contexts/TutorialProvider';
-import { Phase } from '@engine/domain/types/Phase';
+import { Phase } from '@engine/domain/enums';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useTranslation } from 'react-i18next';

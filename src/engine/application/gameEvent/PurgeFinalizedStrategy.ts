@@ -1,8 +1,8 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { getActiveState } from '@engine/application/cardHelpers';
 import { syncInstancePassivesInBoardEffects } from '@engine/application/gameStateHelper';
+import { Phase } from '@engine/domain/enums';
 import type { CardDef, GameEvent, GameState, PurgeFinalizedEvent } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 
 function removeIds(values: number[], idsToRemove: number[]): number[] {
   return values.filter(id => !idsToRemove.includes(id));

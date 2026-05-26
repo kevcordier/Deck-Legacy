@@ -1,8 +1,7 @@
 import { makeInstance, makeState } from '../fixtures';
 import { ParchmentCardDiscoveredStrategy } from '@engine/application/gameEvent/ParchmentCardDiscoveredStrategy';
-import { GameEventType } from '@engine/domain/enums';
+import { GameEventType, Phase } from '@engine/domain/enums';
 import type { ParchmentCardDiscoveredEvent } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 import { describe, expect, it } from 'vitest';
 
 describe('ParchmentCardDiscoveredStrategy', () => {

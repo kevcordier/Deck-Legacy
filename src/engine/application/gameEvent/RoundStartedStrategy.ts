@@ -1,7 +1,7 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { pickPermanentBoardEffects } from '@engine/application/gameStateHelper';
+import { Phase } from '@engine/domain/enums';
 import type { GameEvent, GameState, RoundStartedEvent } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 
 export class RoundStartedStrategy implements GameEventStrategy {
   apply(gameState: GameState, event: GameEvent): GameState {

@@ -1,5 +1,6 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { drawCards } from '@engine/application/gameStateHelper';
+import { Phase } from '@engine/domain/enums';
 import type {
   CardDef,
   GameEvent,
@@ -7,7 +8,6 @@ import type {
   Sticker,
   TurnStartedEvent,
 } from '@engine/domain/types';
-import { Phase } from '@engine/domain/types/Phase';
 
 export class TurnStartedStrategy implements GameEventStrategy {
   constructor(

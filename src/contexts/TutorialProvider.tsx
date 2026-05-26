@@ -2,7 +2,7 @@ import { TutorialArrow } from '@components/Tutorial/TutorialArrow';
 import { TutorialBeacon } from '@components/Tutorial/TutorialBeacon';
 import { TutorialTooltip } from '@components/Tutorial/TutorialTooltip';
 import { TutorialContext } from '@contexts/TutorialContext';
-import { Phase } from '@engine/domain/types';
+import { Phase } from '@engine/domain/enums';
 import { renderTextWithIcons } from '@helpers/renderHelpers';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
@@ -79,6 +79,12 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         target: '[data-tour="resource-bar"]',
         content: t('tutorial.interface.resourceBar'),
         blockTargetInteraction: false,
+      },
+      {
+        target: '[data-tour="sticker-stock-button"]',
+        content: t('tutorial.interface.stickerStock'),
+        blockTargetInteraction: false,
+        placement: 'bottom',
       },
       {
         target: '[data-tour="main-board"] [data-tour="card-number"]',
@@ -168,6 +174,10 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         content: t('tutorial.gameplay.production'),
       },
       {
+        target: '[data-tour="main-board"] [data-tour="card-state-preview"]',
+        content: t('tutorial.gameplay.stickerCap'),
+      },
+      {
         target: '[data-tour="main-board"] [data-tour="card-upgrade"]',
         content: t('tutorial.gameplay.upgrade'),
       },
@@ -192,9 +202,10 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         content: t('tutorial.gameplay.endTurnVoluntary'),
       },
       {
-        target: '[data-tour="game"]',
+        target: '[data-tour="rules-button"]',
         content: t('tutorial.end'),
-        placement: 'center',
+        placement: 'left',
+        blockTargetInteraction: false,
       },
     ],
     [t],

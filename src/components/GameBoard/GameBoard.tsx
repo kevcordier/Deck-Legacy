@@ -7,7 +7,7 @@ import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoice
 import { Button } from '@components/ui/Button/Button';
 import { DestroyIcon, DiscardIcon, DrawCardIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
-import { Phase } from '@engine/domain/types/Phase';
+import { Phase } from '@engine/domain/enums';
 import { useGame } from '@hooks/useGame';
 import { useTutorial } from '@hooks/useTutorial';
 import { useEffect, useMemo, useRef, useState } from 'react';
