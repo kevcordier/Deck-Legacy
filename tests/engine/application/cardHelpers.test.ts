@@ -355,7 +355,7 @@ describe('getEffectiveProductions', () => {
     expect(result.stone).toBe(1);
   });
 
-  it('removes production resources configured in removedResourcesByState', () => {
+  it('reduces production resources by 1 when configured in removedResourcesByState', () => {
     const inst = makeInstance({
       id: 1,
       cardId: 1,
@@ -364,7 +364,7 @@ describe('getEffectiveProductions', () => {
     });
     const gs = makeState({ instances: { 1: inst } });
     const result = getEffectiveProductions({ gold: 3, wood: 1 }, gs, defs, inst, {});
-    expect(result).toEqual({ wood: 1 });
+    expect(result).toEqual({ gold: 2, wood: 1 });
   });
 
   it('does not auto-replace production when REPLACE_RESOURCE_PRODUCTION is present', () => {
@@ -692,7 +692,7 @@ describe('getEffectiveUpgradeCost', () => {
     expect(result.resources?.[0]).toEqual({});
   });
 
-  it('removes upgrade resources configured on card instance state', () => {
+  it('reduces upgrade resources by 1 when configured on card instance state', () => {
     const target = makeInstance({
       id: 2,
       cardId: 2,
@@ -712,7 +712,7 @@ describe('getEffectiveUpgradeCost', () => {
       2,
     );
 
-    expect(result.resources?.[0]).toEqual({ wood: 1 });
+    expect(result.resources?.[0]).toEqual({ gold: 1, wood: 1 });
   });
 
   it('ignores invalid adjusted resource values', () => {
@@ -755,7 +755,7 @@ describe('getEffectiveActionCost', () => {
     expect(getEffectiveActionCost(undefined, inst)).toEqual({});
   });
 
-  it('removes action cost resources configured on instance state', () => {
+  it('reduces action cost resources by 1 when configured on instance state', () => {
     const inst = makeInstance({
       id: 1,
       cardId: 1,
@@ -768,7 +768,7 @@ describe('getEffectiveActionCost', () => {
     });
 
     const effective = getEffectiveActionCost({ resources: [{ gold: 1, wood: 2 }] }, inst);
-    expect(effective.resources?.[0]).toEqual({ gold: 1 });
+    expect(effective.resources?.[0]).toEqual({ gold: 1, wood: 1 });
   });
 });
 

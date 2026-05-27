@@ -139,4 +139,31 @@ describe('RemoveResourceOnCardStrategy', () => {
 
     expect(result).toBe(gs);
   });
+
+  it('stacks removals when applied multiple times on the same scope', () => {
+    const target = makeInstance({ id: 2, cardId: 1, stateId: 1 });
+    const gs = makeState({ instances: { 2: target } });
+
+    const first = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      resources: { gold: 1 },
+      resourceScopes: ['production'],
+    });
+
+    const second = strategy.apply(first, {
+      id: 'y',
+      type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+      resources: { gold: 1 },
+      resourceScopes: ['production'],
+    });
+
+    expect(second.instances[2].removedResourcesByState?.[1]).toEqual({
+      production: ['gold', 'gold'],
+    });
+  });
 });
