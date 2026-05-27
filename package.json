@@ -25,7 +25,7 @@
     "@dnd-kit/react": "^0.4.0",
     "@tailwindcss/vite": "^4.3.0",
     "@types/react-modal": "^3.16.3",
-    "i18next": "^26.2.0",
+    "i18next": "^26.3.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-error-boundary": "^6.1.1",
