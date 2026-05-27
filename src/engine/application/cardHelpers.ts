@@ -77,7 +77,7 @@ export function getEffectiveUpgradeCost(
       p => p.type === PassiveType.ADJUST_UPDATE_COST && p.resources,
     )) {
       const affectedInstanceIds = cardSelector(
-        passive.cards ?? { scope: [TargetScope.BOARD] },
+        passive.cards ?? { scope: [TargetScope.ANY] },
         Number(passiveSourceId),
         gameState,
         defs,
@@ -234,7 +234,7 @@ function calculeBoardEffectsBonus(
         p =>
           p.type === PassiveType.ADJUST_PRODUCTION &&
           cardSelector(
-            p.cards ?? { scope: [TargetScope.BOARD] },
+            p.cards ?? { scope: [TargetScope.ANY] },
             Number(instanceSource),
             gameState,
             defs,
@@ -291,7 +291,7 @@ function getApplicableReplaceResourceProductionPassives(
       passives.filter(passive => {
         if (passive.type !== PassiveType.REPLACE_RESOURCE_PRODUCTION) return false;
         const selectedIds = cardSelector(
-          passive.cards ?? { scope: [TargetScope.BOARD] },
+          passive.cards ?? { scope: [TargetScope.ANY] },
           Number(sourceId),
           gameState,
           defs,

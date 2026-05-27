@@ -22,7 +22,7 @@ export class AddResourceStrategy implements CardActionStrategy {
         p => p.type === PassiveType.ADJUST_ADD_RESOURCES && p.resources,
       )) {
         const affectedInstanceIds = cardSelector(
-          passive.cards ?? { scope: [TargetScope.BOARD] },
+          passive.cards ?? { scope: [TargetScope.ANY] },
           Number(passiveSourceId),
           gameState,
           this.cardDefs,
