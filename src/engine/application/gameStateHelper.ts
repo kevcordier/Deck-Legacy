@@ -85,6 +85,7 @@ export const destroyCards = (_gameState: GameState, cardIds: number[]): GameStat
     gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== cardId);
     gameState.board = gameState.board.filter(c => c !== cardId);
     gameState.drawPile = gameState.drawPile.filter(c => c !== cardId);
+    gameState.permanents = gameState.permanents.filter(c => c !== cardId);
     gameState.discardPile = gameState.discardPile.filter(c => c !== cardId);
     gameState.destroyedPile = [...new Set([...gameState.destroyedPile, cardId])];
     const { [cardId]: _destroyed, ...restDestroyEffects } = gameState.boardEffects;
