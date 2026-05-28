@@ -43,6 +43,18 @@ const endOfTurnDef: CardDef = {
     { id: 1, name: 'S', actions: [{ id: 'et', actionEffects: [], trigger: Trigger.END_OF_TURN }] },
   ],
 };
+const startOfTurnDef: CardDef = {
+  id: 7,
+  name: 'StartTurn',
+  states: [
+    {
+      id: 1,
+      name: 'S',
+      permanent: true,
+      actions: [{ id: 'st', actionEffects: [], trigger: Trigger.START_OF_TURN }],
+    },
+  ],
+};
 const unlimitedPermanentDef: CardDef = {
   id: 8,
   name: 'UnlimitedPermanent',
@@ -263,6 +275,30 @@ describe('GameAggregate.turnStarted', () => {
     });
     const agg = new GameAggregate(crypto.randomUUID(), state, { 4: onPlayDef }, {}, []);
     const gs = agg.turnStarted();
+    expect(gs.phase).toBe(Phase.PLAYING);
+    expect(Object.keys(gs.triggerPile)).toHaveLength(1);
+  });
+
+  it('queues START_OF_TURN triggers from permanents', () => {
+    const permanent = makeInstance({ id: 10, cardId: 7, stateId: 1 });
+    const drawn = makeInstance({ id: 11, cardId: 1, stateId: 1 });
+    const state = makeState({
+      drawPile: [11],
+      instances: { 10: permanent, 11: drawn },
+      permanents: [10],
+      round: 1,
+      phase: Phase.ROUND_START,
+    });
+
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: plainDef, 7: startOfTurnDef },
+      {},
+      [],
+    );
+    const gs = agg.turnStarted();
+
     expect(gs.phase).toBe(Phase.PLAYING);
     expect(Object.keys(gs.triggerPile)).toHaveLength(1);
   });
