@@ -225,18 +225,30 @@ export function GameProvider({
   };
 
   const sync = (newState: GameState) => {
-    if (newState.lastAddedCards.some(id => !gameState.lastAddedCards.includes(id))) {
+    let syncedState = newState;
+    if (syncedState.phase === Phase.GAME_OVER) {
+      const segment = syncedState.activeExpansion ?? 'base';
+      const hasSavedScore = Object.prototype.hasOwnProperty.call(
+        syncedState.campaignScores,
+        segment,
+      );
+      if (!hasSavedScore) {
+        syncedState = aggRef.current.saveCampaignScore(false);
+      }
+    }
+
+    if (syncedState.lastAddedCards.some(id => !gameState.lastAddedCards.includes(id))) {
       setDisplayNewCards(true);
     }
 
-    setGameState(newState);
+    setGameState(syncedState);
     setParameters(aggRef.current.getParameters());
     setScore(aggRef.current.getScore());
     saveGame(aggRef.current.getId(), aggRef.current.getEvents());
 
-    const triggers = newState.triggerPile;
+    const triggers = syncedState.triggerPile;
 
-    const parchmentDef = getParchmentCardDefFromPhase(newState, defs);
+    const parchmentDef = getParchmentCardDefFromPhase(syncedState, defs);
     if (parchmentDef) {
       setParchmentTextPending(parchmentDef);
       setTriggerPile(null);

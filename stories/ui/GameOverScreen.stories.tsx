@@ -9,7 +9,6 @@ const meta: Meta<typeof GameOverScreen> = {
   },
   argTypes: {
     score: { control: { type: 'number', min: 0 } },
-    round: { control: { type: 'number', min: 1 } },
     onStartNewGame: { action: 'start new game' },
   },
 };
@@ -20,6 +19,5 @@ type Story = StoryObj<typeof GameOverScreen>;
 export const Default: Story = {
   args: {
     score: 42,
-    round: 8,
   },
 };

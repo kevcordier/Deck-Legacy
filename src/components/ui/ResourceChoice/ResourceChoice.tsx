@@ -18,7 +18,7 @@ export function ResourceChoice({
   pillClassName,
 }: ResourceChoiceProps) {
   return (
-    <div className={`flex items-center gap-1 justify-start w-fit ${className ?? ''}`}>
+    <div className={`flex flex-wrap items-center gap-1 justify-start w-fit ${className ?? ''}`}>
       {options.map((opt, i) => {
         const entries = Object.entries(opt);
         return (

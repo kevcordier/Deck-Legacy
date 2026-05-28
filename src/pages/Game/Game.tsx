@@ -110,7 +110,6 @@ export function Game() {
           {gameState.phase === Phase.GAME_OVER && (
             <GameOverScreen
               score={score}
-              round={gameState.round}
               onStartNewGame={startGame}
               canContinueCampaign={availableExpansions.length > 0}
               onContinueCampaign={continueCampaign}

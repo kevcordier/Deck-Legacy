@@ -126,7 +126,9 @@
       "ADD_BOARD_EFFECT": "Choisissez une carte pour ajouter un effet",
       "ADD_BOARD_EFFECT_other": "Choisissez {{count}} cartes pour ajouter un effet",
       "PLAY_CARD": "Choisissez une carte à jouer",
-      "PLAY_CARD_other": "Choisissez {{count}} cartes à jouer"
+      "PLAY_CARD_other": "Choisissez {{count}} cartes à jouer",
+      "PLACE_CARD_IN_PILE": "Choisissez une carte à placer dans la pile",
+      "REMOVE_RESOURCE_ON_CARD": "Choisissez une carte pour retirer une ressource"
     },
     "chooseActionEffect": "Choisissez un effet à résoudre",
     "chooseStep": "Choisir une étape",
@@ -171,7 +173,11 @@
   "gameOver": {
     "title": "Partie terminée",
     "glory": "Gloire",
+    "purgedGlory": "Gloire purgée",
     "rounds": "Manches",
+    "viewKingdom": "Visualiser le royaume",
+    "kingdomTitle": "Royaume final",
+    "kingdomEmpty": "Aucune carte dans le royaume",
     "newGame": "↺ Nouvelle partie",
     "continueCampaign": "Continuer avec une extension",
     "saveScore": "Enregistrer le score",

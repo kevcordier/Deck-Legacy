@@ -1,4 +1,5 @@
 import { StickerStockModal } from '@components/StickerStockModal/StickerStockModal';
+import ScoreTooltip from '@components/Tooltips/ScoreTooltip';
 import { Button } from '@components/ui/Button/Button';
 import { Divider } from '@components/ui/Divider/Divider';
 import { GloryIcon } from '@components/ui/Icon/icon';
@@ -15,17 +16,8 @@ export function ResourceBar() {
   const { gameState, score } = useGame();
   const { setStickerStockOpen } = useGameUI();
 
-  const { resources, round, turn, drawPile, discardPile, campaignScores } = gameState;
+  const { resources, round, turn, drawPile, discardPile } = gameState;
   const entries = Object.entries(resources).filter(([, v]) => v > 0);
-  const segmentScores = Object.entries(campaignScores);
-
-  const getSegmentLabel = (segment: string): string => {
-    if (segment === 'base') return t('resourceBar.baseSegment');
-
-    const expansionTitleKey = `campaign.expansions.${segment}.title`;
-    const expansionTitle = t(expansionTitleKey);
-    return expansionTitle === expansionTitleKey ? segment : expansionTitle;
-  };
 
   return (
     <div
@@ -68,23 +60,7 @@ export function ResourceBar() {
         <div className="flex shrink-0 items-stretch gap-2">
           <Divider orientation="vertical" />
           <Tooltip
-            content={
-              <>
-                <p className="mb-1 font-semibold">{t('resourceBar.gloryTooltipTitle')}</p>
-                {segmentScores.length === 0 ? (
-                  <p className="text-ink/70 italic">{t('resourceBar.gloryTooltipEmpty')}</p>
-                ) : (
-                  <ul className="space-y-1">
-                    {segmentScores.map(([segment, segmentScore]) => (
-                      <li key={segment} className="flex items-center justify-between gap-3">
-                        <span className="text-ink/80">{getSegmentLabel(segment)}</span>
-                        <span className="font-display text-primary">{segmentScore}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </>
-            }
+            content={<ScoreTooltip />}
             position="bottom"
             className="items-center gap-1"
             contentClassName="min-w-52 left-0 -translate-x-0"

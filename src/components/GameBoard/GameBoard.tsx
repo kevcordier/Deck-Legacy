@@ -33,7 +33,7 @@ export function GameBoard() {
     skipChoice,
     parameters,
   } = useGame();
-  const { drawPile, discardPile, destroyedPile, instances } = gameState;
+  const { drawPile, discardPile, destroyedPile, purgedCards, instances } = gameState;
 
   const { run, nextStep } = useTutorial();
 
@@ -66,8 +66,9 @@ export function GameBoard() {
   }, [discardPile, instances]);
 
   const destroyedDeck = useMemo(() => {
-    return [...destroyedPile].map(id => instances[id]).filter(Boolean);
-  }, [destroyedPile, instances]);
+    const allDestroyedIds = [...new Set([...destroyedPile, ...purgedCards])];
+    return allDestroyedIds.map(id => instances[id]).filter(Boolean);
+  }, [destroyedPile, purgedCards, instances]);
 
   const deckEmpty = drawPile.length === 0;
   const haveChoiceToDo =
@@ -127,7 +128,7 @@ export function GameBoard() {
             variant="right"
             displayedCards={discardDeck.length > 0 ? [discardDeck[discardDeck.length - 1]] : []}
             footer={
-              destroyedPile.length > 0 ? (
+              destroyedDeck.length > 0 ? (
                 <Button
                   onClick={() => setDestroyedModalOpen(true)}
                   variant="text"
@@ -138,7 +139,7 @@ export function GameBoard() {
                 >
                   <DestroyIcon className="size-4" />
                   <span className={`hidden @min-[10rem]/section:inline-flex`}>
-                    {t('deckViewer.destroyed')} ({destroyedPile.length})
+                    {t('deckViewer.destroyed')} ({destroyedDeck.length})
                   </span>
                 </Button>
               ) : null
@@ -189,7 +190,7 @@ export function GameBoard() {
           >
             <DiscardIcon className="size-4" alt={t('deckViewer.discard')} /> ({discardPile.length})
           </Button>
-          {destroyedPile.length > 0 && (
+          {destroyedDeck.length > 0 && (
             <Button
               onClick={() => setOpenSheet('destroyed')}
               variant="outlined"
@@ -198,7 +199,7 @@ export function GameBoard() {
               data-tour="destroyed-button-mobile"
             >
               <DestroyIcon className="size-4" alt={t('deckViewer.destroyed')} /> (
-              {destroyedPile.length})
+              {destroyedDeck.length})
             </Button>
           )}
         </div>

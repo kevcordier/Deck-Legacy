@@ -126,7 +126,9 @@
       "ADD_BOARD_EFFECT": "Choose a card to add the effect",
       "ADD_BOARD_EFFECT_other": "Choose {{count}} cards to add the effect",
       "PLAY_CARD": "Choose a card to play",
-      "PLAY_CARD_other": "Choose {{count}} cards to play"
+      "PLAY_CARD_other": "Choose {{count}} cards to play",
+      "PLACE_CARD_IN_PILE": "Choose a card to place in the pile",
+      "REMOVE_RESOURCE_ON_CARD": "Choose a card to remove a resource from"
     },
     "chooseActionEffect": "Choose an effect to resolve",
     "chooseStep": "Choose a track step",
@@ -171,7 +173,11 @@
   "gameOver": {
     "title": "Game Over",
     "glory": "Glory",
+    "purgedGlory": "Purged glory",
     "rounds": "Rounds",
+    "viewKingdom": "View kingdom",
+    "kingdomTitle": "Final kingdom",
+    "kingdomEmpty": "No cards in the kingdom",
     "newGame": "↺ New game",
     "continueCampaign": "Continue with expansion",
     "saveScore": "Save score",
