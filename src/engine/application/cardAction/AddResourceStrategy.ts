@@ -48,12 +48,14 @@ export class AddResourceStrategy implements CardActionStrategy {
       value?: number;
     },
   ): GameState {
-    const resources = Object.fromEntries(
-      Object.entries(payload.resources).map(([key, amount]) => [
-        key,
-        amount * (payload.value ?? 1),
-      ]),
-    );
+    const resources = payload.resources
+      ? Object.fromEntries(
+          Object.entries(payload.resources).map(([key, amount]) => [
+            key,
+            amount * (payload.value ?? 1),
+          ]),
+        )
+      : {};
     const adjustedResources = this.applyAdjustAddResourcesPassives(
       gameState,
       payload.sourceInstanceId,

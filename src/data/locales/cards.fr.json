@@ -341,7 +341,7 @@
     "92-1-1": "Cette carte ne peut pas être détruite. L'effet de cet artefact magique reste à découvrir.",
     "119-1-1": "Toutes les cartes alliées ont +1 {{gold}} de production.",
     "119-3-1": "Chaque fois qu'une Personne est jouée alors qu'il y a déjà une Personne en jeu, marquez 1.",
-    "120-3-1": "Les terres qui produisent {{gold}} peuvent produire {{goods}} à la place.",
+    "120-3-1": "Les terrains qui produisent {{gold}} peuvent produire {{goods}} à la place.",
     "121-1-1": "Les terrains restent en jeu.",
     "121-2-1": "Quand une personne est jouée : soit marquez 1 étape sur cette carte, soit défaussez 2 cartes alliées.",
     "121-3-1": "Fin de tour : si vous n'avez pas de production de {{weapon}}, rayez 1 production sur 1 carte en jeu."
