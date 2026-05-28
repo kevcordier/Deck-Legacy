@@ -24,7 +24,16 @@ export function GameOverScreen({
   const { t } = useTranslation();
   const { gameState } = useGame();
   const [kingdomOpen, setKingdomOpen] = useState(false);
-  const kingdomCards = Object.values(gameState.instances).sort((a, b) => a.id - b.id);
+  const kingdomCards = Object.values(gameState.instances)
+    .filter(({ id }) =>
+      [
+        ...gameState.discardPile,
+        ...gameState.permanents,
+        ...gameState.board,
+        ...gameState.drawPile,
+      ].includes(id),
+    )
+    .sort((a, b) => a.id - b.id);
 
   return (
     <>
