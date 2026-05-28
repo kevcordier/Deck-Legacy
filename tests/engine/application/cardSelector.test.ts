@@ -586,6 +586,27 @@ describe('cardSelector – having filter', () => {
     expect(result).not.toContain(7);
   });
 
+  it('includes card when minGlory is reached only via sticker glory', () => {
+    const defNoGlory: CardDef = {
+      id: 9,
+      name: 'StickerOnly',
+      states: [{ id: 1, name: 'S' }],
+    };
+    const instSticker = makeInstance({ id: 9, cardId: 9, stateId: 1, stickers: { 1: [99] } });
+    const gs = makeState({ board: [9], instances: { 9: instSticker } });
+    const localStickerDefs = { ...stickerDefs, 99: { id: 99, glory: 2 } };
+
+    const result = cardSelector(
+      { scope: [TargetScope.BOARD, TargetScope.SELF], having: { minGlory: 2 } },
+      9,
+      gs,
+      { 9: defNoGlory },
+      localStickerDefs,
+    );
+
+    expect(result).toContain(9);
+  });
+
   it('includes card when glory meets maxGlory', () => {
     const gs = makeState({ board: [7], instances: { 7: instG } });
     const result = cardSelector(

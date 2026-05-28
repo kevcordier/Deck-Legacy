@@ -122,7 +122,7 @@ export const waterMill: CardDef = {
       actions: [
         {
           id: '120-4-1',
-          trigger: Trigger.END_OF_TURN,
+          trigger: Trigger.END_OF_ROUND,
           actionEffects: [
             {
               id: 1,

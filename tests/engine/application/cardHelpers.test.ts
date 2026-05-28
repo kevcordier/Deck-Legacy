@@ -1836,6 +1836,13 @@ describe('getEffectiveGlory sticker bonus', () => {
     expect(getEffectiveGlory(state, makeState(), {}, inst, stickerDefs)).toBe(4);
   });
 
+  it('counts sticker glory even when state has no intrinsic glory', () => {
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1, stickers: { 1: [5] } });
+    const stickerDefs: Record<number, Sticker> = { 5: { id: 5, glory: 2 } };
+    const state = { id: 1, name: 'S' };
+    expect(getEffectiveGlory(state, makeState(), {}, inst, stickerDefs)).toBe(2);
+  });
+
   it('uses 0 when glory.amount is undefined', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     // glory object present but no amount property
