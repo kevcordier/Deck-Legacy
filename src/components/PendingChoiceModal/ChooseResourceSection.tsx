@@ -29,11 +29,26 @@ export function ChooseResourceSection(props: Readonly<ChoiceSectionProps>) {
     );
   };
 
+  const selectedChoices = (choice.selectedChoices ?? []).filter(Boolean);
+
   return (
-    <ResourceChoice
-      options={resourceChoices}
-      pillClassName="size-7"
-      onSelect={handleResourceSelect}
-    />
+    <div className="flex flex-col gap-3">
+      {selectedChoices.length > 0 && (
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-ink/80">{props.t('pendingChoice.alreadySelected')}</span>
+          <ResourceChoice
+            options={selectedChoices}
+            pillClassName="size-7"
+            disabled
+            onSelect={() => undefined}
+          />
+        </div>
+      )}
+      <ResourceChoice
+        options={resourceChoices}
+        pillClassName="size-7"
+        onSelect={handleResourceSelect}
+      />
+    </div>
   );
 }

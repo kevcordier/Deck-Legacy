@@ -1,7 +1,7 @@
 import type { GameEventStrategy } from './GameEventStrategy';
 import { cardShouldStayInPlay } from '@engine/application/cardHelpers';
 import { discardCards } from '@engine/application/gameStateHelper';
-import { PassiveType, Phase, TargetScope } from '@engine/domain/enums';
+import { PassiveType, Phase } from '@engine/domain/enums';
 import type {
   CardDef,
   GameEvent,
@@ -43,9 +43,7 @@ export class TurnEndedStrategy implements GameEventStrategy {
       ) {
         // Only keep non-stay in play effects, or stay in play effects that target self to avoid stay in play or permanent card to let card stay in play indefinitely.
         newBoardEffects[Number(key)] = gameState.boardEffects[Number(key)].filter(
-          effect =>
-            effect.type !== PassiveType.STAY_IN_PLAY ||
-            effect.cards?.scope?.[0] === TargetScope.SELF,
+          effect => effect.type !== PassiveType.STAY_IN_PLAY || !!effect.cards?.scope,
         );
       }
     });

@@ -11,7 +11,12 @@ export function StickerStockModal() {
 
   if (!stickerStockOpen) return null;
 
-  const entries = Object.values(stickerDefs).sort((a, b) => a.id - b.id);
+  const entries = Object.values(stickerDefs)
+    .filter(
+      sticker =>
+        !(sticker.additionalGlory && !sticker.production && !sticker.glory && !sticker.effectId),
+    )
+    .sort((a, b) => a.id - b.id);
 
   return (
     <Modal title={t('stickerStock.title')} onClose={() => setStickerStockOpen(false)}>

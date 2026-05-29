@@ -1,10 +1,4 @@
-import {
-  ActionEffectType,
-  CardTag,
-  ResourceType,
-  TargetScope,
-  Trigger,
-} from '@engine/domain/enums';
+import { ActionEffectType, CardTag, TargetScope, Trigger } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 
 export const youngPrincess: CardDef = {
@@ -126,14 +120,7 @@ export const youngPrincess: CardDef = {
               id: 1,
               type: ActionEffectType.ADD_RESOURCES,
               resources: {
-                choice: [
-                  { [ResourceType.GOLD]: 1 },
-                  { [ResourceType.WOOD]: 1 },
-                  { [ResourceType.STONE]: 1 },
-                  { [ResourceType.IRON]: 1 },
-                  { [ResourceType.WEAPON]: 1 },
-                  { [ResourceType.GOODS]: 1 },
-                ],
+                choice: [{ any: 1 }],
               },
             },
           ],

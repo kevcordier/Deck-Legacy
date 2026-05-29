@@ -93,6 +93,7 @@
     "blocked": "Blocked",
     "increaseGlory": "Glory bonus",
     "adjustProduction": "Adjusted production",
+    "stayInPlay": "Stays in play",
     "resourceEquivalence": "Wood and goods are interchangeable",
     "state": "State {{id}}",
     "cost": {
@@ -134,6 +135,7 @@
     "chooseStep": "Choose a track step",
     "chooseState": "Choose a state",
     "chooseResource": "Choose a resource",
+    "alreadySelected": "Already selected resources",
     "chooseSticker": "Choose a sticker",
     "choices": "Choose {{total}}",
     "choices-between": "Choose between {{min}} and {{max}}",

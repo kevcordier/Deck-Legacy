@@ -1,4 +1,11 @@
-import { ActionEffectType, CardTag, PassiveType, TargetScope, Trigger } from '@engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+  Trigger,
+} from '@engine/domain/enums';
 import type { CardDef, StepDef } from '@engine/domain/types';
 import { CardPassives } from '@engine/domain/types/effects';
 
@@ -166,16 +173,17 @@ export const prosperity: CardDef = {
               resourceScopes: ['production'],
               cards: {
                 scope: [TargetScope.BOARD, TargetScope.DECK, TargetScope.DISCARD],
+                produces: [
+                  ResourceType.GOLD,
+                  ResourceType.WOOD,
+                  ResourceType.STONE,
+                  ResourceType.IRON,
+                  ResourceType.WEAPON,
+                  ResourceType.GOODS,
+                ],
               },
               resources: {
-                choice: [
-                  { gold: 1 },
-                  { wood: 1 },
-                  { stone: 1 },
-                  { iron: 1 },
-                  { weapon: 1 },
-                  { goods: 1 },
-                ],
+                choice: [{ any: 1 }],
               },
               repeat: 'accumulation',
             },

@@ -9,7 +9,7 @@ export function ChooseActionEffectSection(props: Readonly<ChoiceSectionProps>) {
   const sourceInstance = instances[choice.sourceInstanceId];
   const sourceDef = sourceInstance ? defs[sourceInstance.cardId] : undefined;
   const sourceState = sourceDef?.states.find(s => s.id === sourceInstance?.stateId);
-  const action = sourceState?.actions?.find(a =>
+  const fallbackAction = sourceState?.actions?.find(a =>
     a.actionEffects.some(ae => ae.type === ActionEffectType.CHOOSE_EFFECT),
   );
 
@@ -18,6 +18,8 @@ export function ChooseActionEffectSection(props: Readonly<ChoiceSectionProps>) {
       {choice.choices.map((actionEffect, index) => {
         // Find the action that contains this effect
         const effectId = (actionEffect as ActionEffect).id;
+        let actionLabelId = `${choice.actionId}-${effectId}`;
+        if (fallbackAction) actionLabelId = `${fallbackAction.id}-${effectId}`;
 
         return (
           <div
@@ -26,8 +28,7 @@ export function ChooseActionEffectSection(props: Readonly<ChoiceSectionProps>) {
           >
             <div className="flex-1">
               <div className="font-display text-base-primary mb-1 text-sm font-semibold">
-                {action &&
-                  tCardActionLabel(t, action.id + '-' + effectId, sourceInstance?.cumulated)}
+                {actionLabelId && tCardActionLabel(t, actionLabelId, sourceInstance?.cumulated)}
               </div>
             </div>
             <div className="flex items-end gap-2">

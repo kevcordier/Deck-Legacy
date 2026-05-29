@@ -93,6 +93,7 @@
     "blocked": "Bloquée",
     "increaseGlory": "Bonus de gloire",
     "adjustProduction": "Production ajustée",
+    "stayInPlay": "Reste en jeu",
     "resourceEquivalence": "Le bois et les marchandises sont interchangeables",
     "state": "État {{id}}",
     "cost": {
@@ -134,6 +135,7 @@
     "chooseStep": "Choisir une étape",
     "chooseState": "Choisir un état",
     "chooseResource": "Choisir une ressource",
+    "alreadySelected": "Ressources déjà sélectionnées",
     "chooseSticker": "Choisir un autocollant",
     "choices": "Choisissez {{total}}",
     "choices-between": "Choisissez entre {{min}} et {{max}}",

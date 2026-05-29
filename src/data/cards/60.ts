@@ -20,17 +20,10 @@ export const royalVisit: CardDef = {
               id: 1,
               type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
               cards: {
-                scope: [TargetScope.BOARD],
+                scope: [TargetScope.BOARD, TargetScope.UPGRADABLE],
               },
               resources: {
-                choice: [
-                  { gold: 1 },
-                  { wood: 1 },
-                  { stone: 1 },
-                  { iron: 1 },
-                  { weapon: 1 },
-                  { goods: 1 },
-                ],
+                choice: [{ any: 1 }],
               },
               resourceScopes: ['upgradeCost'],
             },

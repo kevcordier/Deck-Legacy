@@ -269,9 +269,10 @@
     "120-3-1": "Fin du tour : ⬆.",
     "120-4-1": "Fin du tour : Détruisez ceci et 1 carte avec production de {{gold}}, puis terminez la partie.",
     "121-1-2": "Fin de manche : ⬆.",
+    "121-2-1-1": "Marquez 1 étape sur ceci.",
+    "121-2-1-2": "Défaussez 2 cartes alliées.",
     "121-2-2": "Fin de manche : ⬆.",
-    "121-3-2": "Fin de manche : ajoutez 1 autocollant de ressource au choix sur 1 carte alliée.",
-    "121-3-3": "Fin de manche : ⬆.",
+    "121-3-2": "Fin de manche : ajoutez 1 autocollant de ressource au choix sur 1 carte alliée. Puis ⬆.",
     "121-4-1": "Dépensez {{weapon}} pour ajouter 1 accumulation sur cette carte. ({{accumulated}})",
     "121-4-2": "Fin de manche : ajoutez {{accumulated}} en {{glory}} sur 1 terrain, puis détruisez cette carte et terminez la partie."
   },

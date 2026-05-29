@@ -1,5 +1,5 @@
 import type { ActionEffectType, PendingChoiceType } from '@engine/domain/enums';
-import type { ActionEffect } from '@engine/domain/types/Card';
+import type { ActionEffect, RemovedResourceScope } from '@engine/domain/types/Card';
 import type { Resources } from '@engine/domain/types/Resource';
 
 export type PendingChoice = {
@@ -12,6 +12,8 @@ export type PendingChoice = {
   sourceInstanceId: number;
   targetInstanceId?: number;
   choices: (number | string | Resources | ActionEffect)[];
+  selectedChoices?: Resources[];
+  resourceScopes?: RemovedResourceScope[];
   pickMin: number;
   pickMax: number;
   isMandatory: boolean;

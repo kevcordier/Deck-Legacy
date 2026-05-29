@@ -41,7 +41,7 @@ export class CardActionContext {
       [ActionEffectType.BOOST_CARD]: new AddStickerStrategy(),
       [ActionEffectType.ADD_STICKER]: new AddStickerStrategy(),
       [ActionEffectType.CHOOSE_STATE]: new ChoseStateStrategy(),
-      [ActionEffectType.TRACK_ADVANCE]: new TrackAdvanceStrategy(cardDefs),
+      [ActionEffectType.TRACK_ADVANCE]: new TrackAdvanceStrategy(cardDefs, stickerDefs),
       [ActionEffectType.SET_CUMULATED]: new SetCumulatedStrategy(),
       [ActionEffectType.ADD_CUMULATED]: new AddCumulatedStrategy(),
       [ActionEffectType.END_GAME]: new EndGameStrategy(),

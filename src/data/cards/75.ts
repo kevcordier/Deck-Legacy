@@ -5,7 +5,14 @@ const makeStep = (id: number, iron: number, cumulated: number): StepDef => ({
   id,
   cost: { resources: [{ iron }] },
   icon: 'glory',
-  effects: [{ id: 1, type: ActionEffectType.SET_CUMULATED, value: cumulated }],
+  effects: [
+    {
+      id: 1,
+      type: ActionEffectType.SET_CUMULATED,
+      cards: { scope: [TargetScope.SELF] },
+      value: cumulated,
+    },
+  ],
 });
 
 export const jewellery: CardDef = {

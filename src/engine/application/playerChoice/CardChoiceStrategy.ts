@@ -1,11 +1,18 @@
-import { getActiveState, getEffectiveProductions } from '@engine/application/cardHelpers';
+import {
+  getActiveState,
+  getEffectiveActionCost,
+  getEffectiveProductions,
+  getEffectiveUpgradeCost,
+} from '@engine/application/cardHelpers';
 import { mergeResources } from '@engine/application/gameStateHelper';
 import type { PlayerChoiceStrategy } from '@engine/application/playerChoice/PlayerChoiceStrategy';
 import { ActionEffectType, PendingChoiceType } from '@engine/domain/enums';
 import type {
   CardDef,
+  Cost,
   GameState,
   PendingChoice,
+  RemovedResourceScope,
   ResolvedActionEffect,
   Resources,
   Sticker,
@@ -16,6 +23,150 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
     private readonly defs: Record<number, CardDef>,
     private readonly stickerDefs: Record<number, Sticker>,
   ) {}
+
+  private getEffectiveProductionResourceKeys(instanceId: number, gs: GameState): Set<string> {
+    const instance = gs.instances[instanceId];
+    if (!instance) return new Set();
+    const state = getActiveState(instance, this.defs);
+    const keys = (state?.productions ?? []).flatMap(prod =>
+      Object.entries(getEffectiveProductions(prod, gs, this.defs, instance, this.stickerDefs))
+        .filter(([, value]) => (value ?? 0) > 0)
+        .map(([resourceKey]) => resourceKey),
+    );
+    return new Set(keys);
+  }
+
+  private getCostResourceKeys(cost: Cost | undefined): Set<string> {
+    if (!cost?.resources?.length) return new Set();
+
+    const keys = cost.resources.flatMap(resourceCost =>
+      Object.entries(resourceCost)
+        .filter(([, value]) => (value ?? 0) > 0)
+        .map(([resourceKey]) => resourceKey),
+    );
+
+    return new Set(keys);
+  }
+
+  private getActionCostResourceKeys(instanceId: number, gs: GameState): Set<string> {
+    const instance = gs.instances[instanceId];
+    if (!instance) return new Set();
+    const state = getActiveState(instance, this.defs);
+    if (!state.actions?.length) return new Set();
+
+    const keys = state.actions.flatMap(action => [
+      ...this.getCostResourceKeys(getEffectiveActionCost(action.cost, instance)),
+    ]);
+
+    return new Set(keys);
+  }
+
+  private getUpgradeCostResourceKeys(instanceId: number, gs: GameState): Set<string> {
+    const instance = gs.instances[instanceId];
+    if (!instance) return new Set();
+    const state = getActiveState(instance, this.defs);
+    if (!state.upgrade?.length) return new Set();
+
+    const keys = state.upgrade.flatMap(upgrade => [
+      ...this.getCostResourceKeys(
+        getEffectiveUpgradeCost(upgrade.cost, gs, this.defs, this.stickerDefs, instanceId),
+      ),
+    ]);
+
+    return new Set(keys);
+  }
+
+  private getCandidateResourceKeys(
+    instanceId: number,
+    resourceScopes: RemovedResourceScope[] | undefined,
+    gs: GameState,
+  ): Set<string> {
+    const scopes = resourceScopes?.length
+      ? resourceScopes
+      : (['production', 'actionCost', 'upgradeCost'] as RemovedResourceScope[]);
+
+    return scopes.reduce((acc, scope) => {
+      let keys = new Set<string>();
+      if (scope === 'production') {
+        keys = this.getEffectiveProductionResourceKeys(instanceId, gs);
+      } else if (scope === 'actionCost') {
+        keys = this.getActionCostResourceKeys(instanceId, gs);
+      } else if (scope === 'upgradeCost') {
+        keys = this.getUpgradeCostResourceKeys(instanceId, gs);
+      }
+
+      keys.forEach(key => acc.add(key));
+      return acc;
+    }, new Set<string>());
+  }
+
+  private filterRemoveResourceChoicesByEffectiveProduction(
+    choice: ResolvedActionEffect,
+    resolvedAction: ResolvedActionEffect,
+    pendingChoices: PendingChoice[],
+    gs: GameState,
+  ): [ResolvedActionEffect, PendingChoice[]] {
+    const remainingPendingChoices = pendingChoices.slice(1);
+    const targetInstanceId = choice.instanceIds?.[0];
+
+    const targetIndex = remainingPendingChoices.findIndex(
+      pendingChoice =>
+        pendingChoice.type === PendingChoiceType.CHOOSE_RESOURCE &&
+        pendingChoice.kind === ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+    );
+
+    const nextResolvedAction: ResolvedActionEffect = {
+      ...resolvedAction,
+      instanceIds: choice.instanceIds,
+    };
+
+    if (targetIndex === -1) {
+      return [nextResolvedAction, remainingPendingChoices];
+    }
+
+    const targetChoice = remainingPendingChoices[targetIndex];
+    const candidateResourceKeys =
+      targetInstanceId === undefined
+        ? new Set<string>()
+        : this.getCandidateResourceKeys(targetInstanceId, targetChoice.resourceScopes, gs);
+    const filteredChoices = targetChoice.choices
+      .filter((option): option is Resources => typeof option === 'object' && !Array.isArray(option))
+      .filter(option => {
+        const resourceEntries = Object.entries(option).filter(([, value]) => (value ?? 0) > 0);
+        if (resourceEntries.length === 0) {
+          return false;
+        }
+
+        return resourceEntries.every(([resourceKey]) => candidateResourceKeys.has(resourceKey));
+      });
+
+    if (filteredChoices.length === 0) {
+      return [
+        nextResolvedAction,
+        remainingPendingChoices.filter((_, index) => index !== targetIndex),
+      ];
+    }
+
+    if (filteredChoices.length === 1) {
+      return [
+        {
+          ...nextResolvedAction,
+          resources: mergeResources(nextResolvedAction.resources ?? {}, filteredChoices[0]),
+        },
+        remainingPendingChoices.filter((_, index) => index !== targetIndex),
+      ];
+    }
+
+    const nextPendingChoices = [...remainingPendingChoices];
+    nextPendingChoices[targetIndex] = {
+      ...targetChoice,
+      choices: filteredChoices,
+      pickMax: Math.min(targetChoice.pickMax, filteredChoices.length),
+      pickMin: Math.min(targetChoice.pickMin, filteredChoices.length),
+    };
+
+    return [nextResolvedAction, nextPendingChoices];
+  }
 
   private addResourceFromCardChoice(
     productions: Resources[] | undefined,
@@ -243,6 +394,13 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
       );
     } else if (choice.type === ActionEffectType.UPGRADE_CARD) {
       return this.setUpgradeStateFromCardChoice(choice, resolvedAction, gs, pendingChoices);
+    } else if (choice.type === ActionEffectType.REMOVE_RESOURCE_ON_CARD) {
+      return this.filterRemoveResourceChoicesByEffectiveProduction(
+        choice,
+        resolvedAction,
+        pendingChoices,
+        gs,
+      );
     } else {
       return [
         {

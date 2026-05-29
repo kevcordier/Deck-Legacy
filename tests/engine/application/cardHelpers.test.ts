@@ -21,6 +21,7 @@ import {
 } from '@engine/application/cardHelpers';
 import {
   ActionEffectType,
+  CardTag,
   PassiveType,
   ResourceType,
   TargetScope,
@@ -1024,6 +1025,31 @@ describe('cardShouldStayInPlay', () => {
       },
     });
     expect(cardShouldStayInPlay(2, gs, defs)).toBe(true);
+  });
+
+  it('returns true when board STAY_IN_PLAY targets card via selector (LAND on BOARD)', () => {
+    const land = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const other = makeInstance({ id: 3, cardId: 3, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      2: { id: 2, name: 'LandCard', states: [{ id: 1, name: 'L', tags: [CardTag.LAND] }] },
+      3: { id: 3, name: 'OtherCard', states: [{ id: 1, name: 'O', tags: [CardTag.BUILDING] }] },
+    };
+    const gs = makeState({
+      board: [2, 3],
+      instances: { 2: land, 3: other },
+      boardEffects: {
+        121: [
+          {
+            id: '121-1-1',
+            type: PassiveType.STAY_IN_PLAY,
+            cards: { scope: [TargetScope.BOARD], tags: [CardTag.LAND] },
+          },
+        ],
+      },
+    });
+
+    expect(cardShouldStayInPlay(2, gs, defs)).toBe(true);
+    expect(cardShouldStayInPlay(3, gs, defs)).toBe(false);
   });
 
   it('returns true when card has STAYS_IN_PLAY sticker (id 7)', () => {

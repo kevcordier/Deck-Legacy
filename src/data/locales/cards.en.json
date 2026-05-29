@@ -269,9 +269,10 @@
     "120-3-1": "End of turn: ⬆.",
     "120-4-1": "End of turn: Destroy this and 1 card with {{gold}} production, then end the game.",
     "121-1-2": "End of round: ⬆.",
+    "121-2-1-1": "Mark 1 step on this.",
+    "121-2-1-2": "Discard 2 friendly cards.",
     "121-2-2": "End of round: ⬆.",
-    "121-3-2": "End of round: Add any 1 resource sticker to 1 friendly card.",
-    "121-3-3": "End of round: ⬆.",
+    "121-3-2": "End of round: Add any 1 resource sticker to 1 friendly card. Then ⬆.",
     "121-4-1": "Spend {{weapon}} to add 1 accumulation on this. ({{accumulated}})",
     "121-4-2": "End of round: Add {{accumulated}} as {{glory}} on 1 land, then destroy this and end the game."
   },

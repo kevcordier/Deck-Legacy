@@ -4,7 +4,7 @@ import {
   getPickNumbers,
   resolveActionEffect,
 } from '@engine/application/effectResolver';
-import { ActionEffectType, PassiveType, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, PassiveType, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, RemovedResourceScope, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -62,6 +62,38 @@ describe('resolveActionEffect – ADD_RESOURCES', () => {
     const [, pending] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
     expect(pending).toHaveLength(1);
     expect(pending[0].type).toBe('choose_resource');
+  });
+
+  it('expands choice.any into concrete resource options', () => {
+    const effect = {
+      id: 1,
+      type: ActionEffectType.ADD_RESOURCES,
+      resources: { choice: [{ any: 1 }] },
+    };
+    const [, pending] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
+
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe('choose_resource');
+    expect(pending[0].choices).toContainEqual({ gold: 1 });
+    expect(pending[0].choices).toContainEqual({ wood: 1 });
+    expect(pending[0].choices).toContainEqual({ stone: 1 });
+    expect(pending[0].choices).toContainEqual({ iron: 1 });
+    expect(pending[0].choices).toContainEqual({ weapon: 1 });
+    expect(pending[0].choices).toContainEqual({ goods: 1 });
+  });
+
+  it('expands choice.any while preserving fixed resources', () => {
+    const effect = {
+      id: 1,
+      type: ActionEffectType.ADD_RESOURCES,
+      resources: { choice: [{ gold: 1, any: 2 }] },
+    };
+    const [, pending] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
+
+    expect(pending).toHaveLength(1);
+    expect(pending[0].type).toBe('choose_resource');
+    expect(pending[0].choices).toContainEqual({ gold: 3 });
+    expect(pending[0].choices).toContainEqual({ gold: 1, wood: 2 });
   });
 
   it('resolves resource from single card selection', () => {
@@ -602,6 +634,115 @@ describe('resolveActionEffect – REMOVE_RESOURCE_ON_CARD', () => {
     };
     const [resolved] = resolveActionEffect(effect, 1, makeState(), defs, stickerDefs);
     expect(resolved.resourceScopes).toEqual(['production']);
+  });
+
+  it('filters CHOOSE_CARD choices to cards with effective production', () => {
+    const noProdDef: CardDef = {
+      id: 10,
+      name: 'NoProd',
+      states: [{ id: 1, name: 'S' }],
+    };
+    const goldProdDef: CardDef = {
+      id: 11,
+      name: 'GoldProd',
+      states: [{ id: 1, name: 'S', productions: [{ gold: 1 }] }],
+    };
+    const sourceDef: CardDef = {
+      id: 12,
+      name: 'Source',
+      states: [{ id: 1, name: 'S' }],
+    };
+
+    const noProd = makeInstance({ id: 100, cardId: 10, stateId: 1 });
+    const goldProd = makeInstance({ id: 110, cardId: 11, stateId: 1 });
+    const source = makeInstance({ id: 120, cardId: 12, stateId: 1 });
+
+    const gs = makeState({
+      board: [100, 110, 120],
+      instances: { 100: noProd, 110: goldProd, 120: source },
+    });
+
+    const effect = {
+      id: 1,
+      type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+      cards: {
+        scope: [TargetScope.BOARD],
+        produces: [
+          ResourceType.GOLD,
+          ResourceType.WOOD,
+          ResourceType.STONE,
+          ResourceType.IRON,
+          ResourceType.WEAPON,
+          ResourceType.GOODS,
+        ],
+        pickNumber: 1,
+      },
+      resources: {
+        choice: [{ any: 1 }],
+      },
+    };
+
+    const [, pending] = resolveActionEffect(
+      effect,
+      120,
+      gs,
+      { 10: noProdDef, 11: goldProdDef, 12: sourceDef },
+      stickerDefs,
+    );
+
+    const chooseCard = pending.find(choice => choice.type === 'choose_card');
+    expect(chooseCard?.choices).toEqual([110]);
+  });
+
+  it('keeps cards with upgrade costs even without production when scope is upgradeCost', () => {
+    const noProdUpgradableDef: CardDef = {
+      id: 20,
+      name: 'UpgradableNoProd',
+      states: [
+        {
+          id: 1,
+          name: 'S',
+          upgrade: [{ cost: { resources: [{ gold: 1 }] }, upgradeTo: 2 }],
+        },
+        { id: 2, name: 'S2' },
+      ],
+    };
+    const sourceDef: CardDef = {
+      id: 21,
+      name: 'Source',
+      states: [{ id: 1, name: 'S' }],
+    };
+
+    const target = makeInstance({ id: 200, cardId: 20, stateId: 1 });
+    const source = makeInstance({ id: 210, cardId: 21, stateId: 1 });
+
+    const gs = makeState({
+      board: [200, 210],
+      instances: { 200: target, 210: source },
+    });
+
+    const effect = {
+      id: 1,
+      type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+      cards: {
+        scope: [TargetScope.BOARD, TargetScope.UPGRADABLE],
+      },
+      resources: {
+        choice: [{ any: 1 }],
+      },
+      resourceScopes: ['upgradeCost'] as RemovedResourceScope[],
+    };
+
+    const [, pending] = resolveActionEffect(
+      effect,
+      210,
+      gs,
+      { 20: noProdUpgradableDef, 21: sourceDef },
+      stickerDefs,
+    );
+
+    const chooseCard = pending.find(choice => choice.type === 'choose_card');
+    expect(chooseCard?.choices).toEqual([200]);
   });
 });
 

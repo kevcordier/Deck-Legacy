@@ -179,6 +179,7 @@ export type ResourceSelector = {
     iron?: number;
     weapon?: number;
     goods?: number;
+    any?: number;
   }[];
   cards?: CardSelector;
   pickNumber?: number;

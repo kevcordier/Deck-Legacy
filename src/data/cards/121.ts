@@ -153,17 +153,18 @@ export const borderDispute: CardDef = {
                 resourceScopes: ['production'],
                 cards: {
                   scope: [TargetScope.BOARD],
+                  produces: [
+                    ResourceType.GOLD,
+                    ResourceType.WOOD,
+                    ResourceType.STONE,
+                    ResourceType.IRON,
+                    ResourceType.WEAPON,
+                    ResourceType.GOODS,
+                  ],
                   pickNumber: 1,
                 },
                 resources: {
-                  choice: [
-                    { gold: 1 },
-                    { wood: 1 },
-                    { stone: 1 },
-                    { iron: 1 },
-                    { weapon: 1 },
-                    { goods: 1 },
-                  ],
+                  choice: [{ any: 1 }],
                 },
               },
             ],
@@ -179,7 +180,7 @@ export const borderDispute: CardDef = {
               id: 1,
               type: ActionEffectType.ADD_STICKER,
               cards: {
-                scope: [TargetScope.BOARD, TargetScope.FRIENDLY],
+                scope: [TargetScope.BOARD, TargetScope.DISCARD, TargetScope.FRIENDLY],
                 pickNumber: 1,
               },
               stickers: {
@@ -187,14 +188,8 @@ export const borderDispute: CardDef = {
                 pickNumber: 1,
               },
             },
-          ],
-        },
-        {
-          id: '121-3-3',
-          trigger: Trigger.END_OF_ROUND,
-          actionEffects: [
             {
-              id: 1,
+              id: 2,
               type: ActionEffectType.UPGRADE_CARD,
               cards: { scope: [TargetScope.SELF] },
               states: { ids: [4] },
@@ -231,11 +226,21 @@ export const borderDispute: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionEffectType.ADD_GLORY,
+              type: ActionEffectType.ADD_STICKER,
               cards: {
-                scope: [TargetScope.BOARD, TargetScope.FRIENDLY],
+                scope: [TargetScope.BOARD, TargetScope.DISCARD, TargetScope.FRIENDLY],
                 tags: [CardTag.LAND],
                 pickNumber: 1,
+              },
+              stickers: {
+                ids: [16],
+              },
+            },
+            {
+              id: 1,
+              type: ActionEffectType.ADD_GLORY,
+              cards: {
+                scope: [TargetScope.LAST_SELECTED],
               },
               valuePerElement: {
                 amount: 1,

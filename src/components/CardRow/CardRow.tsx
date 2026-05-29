@@ -53,11 +53,12 @@ function Card({ id, index, blockingMap, sortableGroup }: CardProps) {
   const blockedInsts = blockedCardIds.map(bid => gameState.instances[bid]);
 
   const effects = effectsOnCard(gameState, id, defs, stickerDefs);
-  const effectLabel = (type: PassiveType): string | null => {
+  const effectLabel = (type: PassiveType, sourceId: number): string | null => {
     if (type === PassiveType.BLOCK) return t('card.blocked');
     if (type === PassiveType.ADJUST_GLORY) return t('card.increaseGlory');
     if (type === PassiveType.RESOURCE_EQUIVALENCE) return t('card.resourceEquivalence');
     if (type === PassiveType.ADJUST_PRODUCTION) return t('card.adjustProduction');
+    if (type === PassiveType.STAY_IN_PLAY && sourceId !== id) return t('card.stayInPlay');
     return null;
   };
 
@@ -85,13 +86,13 @@ function Card({ id, index, blockingMap, sortableGroup }: CardProps) {
         <div className="flex flex-col justify-stretch">
           {effects.map(
             ({ sourceId, passive: be }) =>
-              effectLabel(be.type) && (
+              effectLabel(be.type, sourceId) && (
                 <span
                   key={`${sourceId}-${be.id}`}
                   className="font-body! flex items-center gap-1 last-of-type:rounded-b-md border px-3 py-2 text-xs text-base-ink backdrop-blur-sm border-black/40 bg-gray"
                 >
                   <PassifIcon className="size-3" />
-                  {effectLabel(be.type)}
+                  {effectLabel(be.type, sourceId)}
                 </span>
               ),
           )}

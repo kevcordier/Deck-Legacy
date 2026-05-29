@@ -31,6 +31,7 @@ import type {
   PendingChoice,
   ResolvedActionEffect,
   ResolvedCost,
+  Resources,
   Sticker,
 } from '@engine/domain/types';
 
@@ -61,6 +62,7 @@ export class CardActionAggregate {
     effectIndex: number;
   } | null = null;
   private lastSelectedIds: number[] = [];
+  private readonly selectedResourcesByChoiceKey: Record<string, Resources[]> = {};
   private readonly action: CardAction;
   private readonly endTurn: boolean;
   private readonly endRound: boolean;
@@ -123,6 +125,46 @@ export class CardActionAggregate {
     if (resolvedAction.instanceIds && resolvedAction.instanceIds.length > 0) {
       this.lastSelectedIds = resolvedAction.instanceIds;
     }
+  }
+
+  private getPendingChoiceKey(choice: PendingChoice): string {
+    return [
+      choice.kind,
+      choice.sourceInstanceId,
+      choice.actionId ?? '',
+      choice.effectId ?? '',
+      choice.sourceStepId ?? '',
+    ].join(':');
+  }
+
+  private decoratePendingChoices(pendingChoices: PendingChoice[]): PendingChoice[] {
+    return pendingChoices.map(choice => {
+      if (choice.type !== PendingChoiceType.CHOOSE_RESOURCE) {
+        return choice;
+      }
+
+      const selectedChoices = this.selectedResourcesByChoiceKey[this.getPendingChoiceKey(choice)];
+      if (!selectedChoices || selectedChoices.length === 0) {
+        return choice;
+      }
+
+      return {
+        ...choice,
+        selectedChoices,
+      };
+    });
+  }
+
+  private recordSelectedResourceChoice(choice: PendingChoice, resources?: Resources) {
+    if (choice.type !== PendingChoiceType.CHOOSE_RESOURCE || !resources) {
+      return;
+    }
+
+    const key = this.getPendingChoiceKey(choice);
+    this.selectedResourcesByChoiceKey[key] = [
+      ...(this.selectedResourcesByChoiceKey[key] ?? []),
+      resources,
+    ];
   }
 
   private tryResolveUpgradeCost(
@@ -323,7 +365,7 @@ export class CardActionAggregate {
       if (choices.length > 0) {
         this.pendingEffectIndex = index;
         this.pendingResolvedAction = resolvedAction;
-        this.pendingChoices = choices;
+        this.pendingChoices = this.decoratePendingChoices(choices);
         return;
       }
 
@@ -402,6 +444,11 @@ export class CardActionAggregate {
     const currentChoiceType = choiceType ?? this.pendingChoices[0]?.type;
 
     const strategy = this.playerChoiceStrategies[currentChoiceType];
+    const activePendingChoice = this.pendingChoices[0];
+
+    if (activePendingChoice) {
+      this.recordSelectedResourceChoice(activePendingChoice, choice.resources);
+    }
 
     const [mergedResolvedAction, nextPendingChoices] = strategy.apply(
       choice,
@@ -411,7 +458,7 @@ export class CardActionAggregate {
     );
 
     this.pendingResolvedAction = mergedResolvedAction;
-    this.pendingChoices = nextPendingChoices;
+    this.pendingChoices = this.decoratePendingChoices(nextPendingChoices);
 
     if (this.pendingResolvedAction.newActionEffects) {
       const effectiveEffects = this.pendingResolvedAction.newActionEffects.flatMap(effect =>

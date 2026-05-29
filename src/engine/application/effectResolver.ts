@@ -2,7 +2,9 @@ import {
   canAffordCost,
   getActiveState,
   getAffectedCardsByBoardEffects,
+  getEffectiveActionCost,
   getEffectiveProductions,
+  getEffectiveUpgradeCost,
   getTotalProduction,
   getTotalResourceProduction,
 } from '@engine/application/cardHelpers';
@@ -20,8 +22,10 @@ import type {
   ActionEffect,
   CardDef,
   CardSelector,
+  Cost,
   GameState,
   PendingChoice,
+  RemovedResourceScope,
   ResolvedActionEffect,
   ResourceSelector,
   Resources,
@@ -50,6 +54,7 @@ interface ResolveContext {
   defs: Record<number, CardDef>;
   stickerDefs: Record<number, Sticker>;
   lastSelectedIds?: number[];
+  resourceScopes?: RemovedResourceScope[];
 }
 
 export function getPickNumbers(
@@ -287,9 +292,15 @@ function resolveResourceTarget(
     lastSelectedIds,
   } = ctx;
 
-  const picks = getPickNumbers(resources, resources.choice?.length);
+  if (resources.choice && resources.choice.length > 0) {
+    const expandedChoices = expandResourceChoiceOptions(resources.choice);
+    const picks = getPickNumbers(resources, expandedChoices.length);
 
-  if (resources.choice && resources.choice.length > 1) {
+    if (expandedChoices.length <= 1) {
+      resolverAction.resources = expandedChoices[0] ?? {};
+      return [resolverAction, pendingChoices];
+    }
+
     pendingChoices.push({
       id: `${instanceId}-${effectId}`,
       actionId: parentActionId,
@@ -298,12 +309,16 @@ function resolveResourceTarget(
       kind: actionType,
       type: PendingChoiceType.CHOOSE_RESOURCE,
       sourceInstanceId: instanceId,
-      choices: resources.choice,
+      choices: expandedChoices,
+      resourceScopes: ctx.resourceScopes,
       ...picks,
       isMandatory,
     });
     return [resolverAction, pendingChoices];
   }
+
+  const picks = getPickNumbers(resources, resources.choice?.length);
+
   if (resources.cards) {
     const choices = cardSelector(
       { ...resources.cards, lastSelectedIds },
@@ -334,6 +349,7 @@ function resolveResourceTarget(
               stickerDefs,
             ),
           ),
+          resourceScopes: ctx.resourceScopes,
           ...picks,
           isMandatory,
         });
@@ -368,6 +384,249 @@ function resolveResourceTarget(
   }
   resolverAction.resources = extractResources(resources);
   return [resolverAction, pendingChoices];
+}
+
+function getEffectiveProductionKeys(
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): Set<string> {
+  const instance = gameState.instances[instanceId];
+  if (!instance) return new Set();
+
+  const state = getActiveState(instance, defs);
+  const baseProductions = state.productions?.length ? state.productions : [{}];
+
+  const keys = baseProductions.flatMap(prod =>
+    Object.entries(getEffectiveProductions(prod, gameState, defs, instance, stickerDefs, false))
+      .filter(([, value]) => (value ?? 0) > 0)
+      .map(([resourceKey]) => resourceKey),
+  );
+
+  return new Set(keys);
+}
+
+function getCostResourceKeys(cost: Cost | undefined): Set<string> {
+  if (!cost?.resources?.length) return new Set();
+
+  const keys = cost.resources.flatMap(resourceCost =>
+    Object.entries(resourceCost)
+      .filter(([, value]) => (value ?? 0) > 0)
+      .map(([resourceKey]) => resourceKey),
+  );
+
+  return new Set(keys);
+}
+
+function getActionCostKeys(
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+): Set<string> {
+  const instance = gameState.instances[instanceId];
+  if (!instance) return new Set();
+  const state = getActiveState(instance, defs);
+  if (!state.actions?.length) return new Set();
+
+  const keys = state.actions.flatMap(action => [
+    ...getCostResourceKeys(getEffectiveActionCost(action.cost, instance)),
+  ]);
+
+  return new Set(keys);
+}
+
+function getUpgradeCostKeys(
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): Set<string> {
+  const instance = gameState.instances[instanceId];
+  if (!instance) return new Set();
+  const state = getActiveState(instance, defs);
+  if (!state.upgrade?.length) return new Set();
+
+  const keys = state.upgrade.flatMap(upgrade => [
+    ...getCostResourceKeys(
+      getEffectiveUpgradeCost(upgrade.cost, gameState, defs, stickerDefs, instanceId),
+    ),
+  ]);
+
+  return new Set(keys);
+}
+
+function getResourceKeysForScope(
+  scope: RemovedResourceScope,
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): Set<string> {
+  switch (scope) {
+    case 'production':
+      return getEffectiveProductionKeys(instanceId, gameState, defs, stickerDefs);
+    case 'actionCost':
+      return getActionCostKeys(instanceId, gameState, defs);
+    case 'upgradeCost':
+      return getUpgradeCostKeys(instanceId, gameState, defs, stickerDefs);
+  }
+}
+
+function getCandidateResourceKeys(
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+  resourceScopes: RemovedResourceScope[] | undefined,
+): Set<string> {
+  const scopes = resourceScopes?.length
+    ? resourceScopes
+    : (['production', 'actionCost', 'upgradeCost'] as RemovedResourceScope[]);
+
+  return scopes.reduce((acc, scope) => {
+    getResourceKeysForScope(scope, instanceId, gameState, defs, stickerDefs).forEach(key =>
+      acc.add(key),
+    );
+    return acc;
+  }, new Set<string>());
+}
+
+function getAllowedResourceKeys(resources: ResourceSelector | undefined): Set<string> {
+  if (!resources) return new Set();
+
+  if (resources.choice?.length) {
+    const options = expandResourceChoiceOptions(resources.choice);
+    const keys = options.flatMap(option =>
+      Object.entries(option)
+        .filter(([, value]) => (value ?? 0) > 0)
+        .map(([resourceKey]) => resourceKey),
+    );
+    return new Set(keys);
+  }
+
+  const keys = Object.entries(extractResources(resources))
+    .filter(([, value]) => (value ?? 0) > 0)
+    .map(([resourceKey]) => resourceKey);
+  return new Set(keys);
+}
+
+function filterRemoveResourceCardChoices(
+  resolverAction: ResolvedActionEffect,
+  pendingChoices: PendingChoice[],
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+  resources: ResourceSelector | undefined,
+  resourceScopes: RemovedResourceScope[] | undefined,
+): [ResolvedActionEffect, PendingChoice[]] {
+  const allowedResourceKeys = getAllowedResourceKeys(resources);
+  if (allowedResourceKeys.size === 0) return [resolverAction, pendingChoices];
+
+  const targetChoiceIndex = pendingChoices.findIndex(
+    choice =>
+      choice.type === PendingChoiceType.CHOOSE_CARD &&
+      choice.kind === ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+  );
+
+  if (targetChoiceIndex === -1) return [resolverAction, pendingChoices];
+
+  const targetChoice = pendingChoices[targetChoiceIndex];
+  const filteredIds = targetChoice.choices.filter((option): option is number => {
+    if (typeof option !== 'number') return false;
+    const candidateKeys = getCandidateResourceKeys(
+      option,
+      gameState,
+      defs,
+      stickerDefs,
+      resourceScopes,
+    );
+    return [...candidateKeys].some(resourceKey => allowedResourceKeys.has(resourceKey));
+  });
+
+  if (filteredIds.length === 0) {
+    return [{ ...resolverAction, unresolvable: true }, []];
+  }
+
+  const nextPendingChoices = [...pendingChoices];
+  nextPendingChoices[targetChoiceIndex] = {
+    ...targetChoice,
+    choices: filteredIds,
+    pickMin: Math.min(targetChoice.pickMin, filteredIds.length),
+    pickMax: Math.min(targetChoice.pickMax, filteredIds.length),
+  };
+
+  return [resolverAction, nextPendingChoices];
+}
+
+function resolveResourcesForAction(
+  action: ActionEffect,
+  resolverAction: ResolvedActionEffect,
+  pendingChoices: PendingChoice[],
+  ctx: ResolveContext,
+): [ResolvedActionEffect, PendingChoice[]] {
+  if (!action.resources) return [resolverAction, pendingChoices];
+
+  let nextResolvedAction = resolverAction;
+  let nextPendingChoices = pendingChoices;
+
+  [nextResolvedAction, nextPendingChoices] = resolveResourceTarget(
+    nextResolvedAction,
+    nextPendingChoices,
+    ctx,
+    action.resources,
+  );
+
+  if (action.type !== ActionEffectType.REMOVE_RESOURCE_ON_CARD) {
+    return [nextResolvedAction, nextPendingChoices];
+  }
+
+  return filterRemoveResourceCardChoices(
+    nextResolvedAction,
+    nextPendingChoices,
+    ctx.gameState,
+    ctx.defs,
+    ctx.stickerDefs,
+    action.resources,
+    action.resourceScopes,
+  );
+}
+
+function buildResolveContext(params: {
+  action: ActionEffect;
+  instanceId: number;
+  gameState: GameState;
+  defs: Record<number, CardDef>;
+  stickerDefs: Record<number, Sticker>;
+  isMandatory: boolean;
+  parentActionId?: string;
+  lastSelectedIds?: number[];
+}): ResolveContext {
+  const {
+    action,
+    instanceId,
+    gameState,
+    defs,
+    stickerDefs,
+    isMandatory,
+    parentActionId,
+    lastSelectedIds,
+  } = params;
+
+  return {
+    effectId: action.id,
+    parentActionId,
+    sourceStepId: action.sourceStepId,
+    actionType: action.type,
+    instanceId,
+    isMandatory,
+    gameState,
+    defs,
+    stickerDefs,
+    lastSelectedIds,
+    resourceScopes:
+      action.type === ActionEffectType.REMOVE_RESOURCE_ON_CARD ? action.resourceScopes : undefined,
+  };
 }
 
 function resolveStickerTarget(
@@ -506,11 +765,30 @@ function extractResources(raw: NonNullable<ActionEffect['resources']>): Resource
   return rest;
 }
 
+function expandResourceChoiceOptions(
+  choices: NonNullable<NonNullable<ActionEffect['resources']>['choice']>,
+): Resources[] {
+  return choices.flatMap(choice => {
+    const { any, ...fixedResources } = choice;
+    const base = fixedResources as Resources;
+    const anyAmount = any ?? 0;
+
+    if (anyAmount <= 0) {
+      return [base];
+    }
+
+    return Object.values(ResourceType).map(resourceType => ({
+      ...base,
+      [resourceType]: (base[resourceType] ?? 0) + anyAmount,
+    }));
+  });
+}
+
 function applyActionMetadata(resolverAction: ResolvedActionEffect, action: ActionEffect): void {
   if (action.payingCost !== undefined) resolverAction.payingCost = action.payingCost;
   if (action.value !== undefined) resolverAction.value = action.value;
   if (action.position !== undefined) resolverAction.position = action.position;
-  if (action.type === ActionEffectType.SHUFFLE_DECK && action.deck) {
+  if (action.deck) {
     resolverAction.deck = action.deck;
   }
   if (action.type === ActionEffectType.REMOVE_RESOURCE_ON_CARD && action.resourceScopes) {
@@ -557,18 +835,16 @@ export function resolveActionEffect(
   let pendingChoices: PendingChoice[] = [];
   const enrichedCards = getEnrichedCardSelector(action, lastSelectedIds);
 
-  const ctx: ResolveContext = {
-    effectId: action.id,
-    parentActionId,
-    sourceStepId: action.sourceStepId,
-    actionType: action.type,
+  const ctx = buildResolveContext({
+    action,
     instanceId,
-    isMandatory,
     gameState,
     defs,
     stickerDefs,
+    isMandatory,
+    parentActionId,
     lastSelectedIds,
-  };
+  });
 
   if (action.type === ActionEffectType.TRACK_ADVANCE && action.cards) {
     resolverAction.payingCost = action.payingCost ?? resolverAction.payingCost;
@@ -640,13 +916,14 @@ export function resolveActionEffect(
 
   [resolverAction, pendingChoices] = resolveUpgradeStateTarget(resolverAction, pendingChoices, ctx);
 
-  if (action.resources) {
-    [resolverAction, pendingChoices] = resolveResourceTarget(
-      resolverAction,
-      pendingChoices,
-      ctx,
-      action.resources,
-    );
+  [resolverAction, pendingChoices] = resolveResourcesForAction(
+    action,
+    resolverAction,
+    pendingChoices,
+    ctx,
+  );
+  if (resolverAction.unresolvable) {
+    return [resolverAction, pendingChoices];
   }
 
   if (action.stickers) {

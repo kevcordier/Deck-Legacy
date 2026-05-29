@@ -15,6 +15,11 @@ export const StickerDisplay = ({ sticker, className }: StickerProps) => {
   const stickerClass = 'rounded-md bg-white/70 border-2 border-danger p-1';
   const iconClass = `${stickerClass} ${className ?? 'size-10'}`;
 
+  // emptyValues stickers are gameplay-only and intentionally hidden in UI.
+  if (sticker.additionalGlory && !sticker.production && !sticker.glory && !sticker.effectId) {
+    return null;
+  }
+
   if (sticker.production) {
     return <ResourcePill resource={sticker.production} className={iconClass} />;
   } else if (sticker.glory) {

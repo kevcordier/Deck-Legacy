@@ -651,6 +651,22 @@ export function cardShouldStayInPlay(
   if (getActiveState(instance, cardDefs)?.permanent) return true;
   const state = def?.states.find(s => s.id === instance.stateId);
   if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
+
+  const stayInPlayTargets = new Set<number>(
+    Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) =>
+      passives
+        .filter(passive => passive.type === PassiveType.STAY_IN_PLAY)
+        .flatMap(passive => {
+          if (!passive.cards) {
+            return [Number(sourceId)];
+          }
+          return cardSelector(passive.cards, Number(sourceId), gameState, cardDefs, {});
+        }),
+    ),
+  );
+
+  if (stayInPlayTargets.has(instanceId)) return true;
+
   if (
     Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))
       .flat()
@@ -661,6 +677,9 @@ export function cardShouldStayInPlay(
   const blockerCard = Object.entries(
     getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK),
   ).find(([_, ids]) => ids.includes(instanceId))?.[0];
+  if (blockerCard && stayInPlayTargets.has(Number(blockerCard))) {
+    return true;
+  }
   if (
     blockerCard &&
     Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))

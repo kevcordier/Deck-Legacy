@@ -20,26 +20,7 @@ export const smallHillTown: CardDef = {
               id: 1,
               type: ActionEffectType.ADD_RESOURCES,
               resources: {
-                choice: [
-                  {
-                    gold: 1,
-                  },
-                  {
-                    wood: 1,
-                  },
-                  {
-                    stone: 1,
-                  },
-                  {
-                    weapon: 1,
-                  },
-                  {
-                    iron: 1,
-                  },
-                  {
-                    goods: 1,
-                  },
-                ],
+                choice: [{ any: 1 }],
               },
             },
           ],
@@ -67,26 +48,7 @@ export const smallHillTown: CardDef = {
               id: 1,
               type: ActionEffectType.ADD_RESOURCES,
               resources: {
-                choice: [
-                  {
-                    gold: 1,
-                  },
-                  {
-                    wood: 1,
-                  },
-                  {
-                    stone: 1,
-                  },
-                  {
-                    weapon: 1,
-                  },
-                  {
-                    iron: 1,
-                  },
-                  {
-                    goods: 1,
-                  },
-                ],
+                choice: [{ any: 1 }],
               },
             },
           ],
@@ -135,26 +97,7 @@ export const smallHillTown: CardDef = {
               id: 1,
               type: ActionEffectType.ADD_RESOURCES,
               resources: {
-                choice: [
-                  {
-                    gold: 1,
-                  },
-                  {
-                    wood: 1,
-                  },
-                  {
-                    stone: 1,
-                  },
-                  {
-                    weapon: 1,
-                  },
-                  {
-                    iron: 1,
-                  },
-                  {
-                    goods: 1,
-                  },
-                ],
+                choice: [{ any: 1 }],
               },
             },
           ],
@@ -176,24 +119,31 @@ export const smallHillTown: CardDef = {
       actions: [
         {
           id: '90-4-1',
-          cost: { resources: [{ gold: 2 }] },
           limitedTime: 1,
           actionEffects: [
             {
               id: 1,
+              type: ActionEffectType.DISCOVER_CARD,
+              cards: {
+                ids: [106],
+              },
+            },
+            {
+              id: 2,
+              type: ActionEffectType.UPGRADE_CARD,
+              cards: {
+                scope: [TargetScope.SELF],
+              },
+              states: { ids: [1] },
+            },
+            {
+              id: 3,
               type: ActionEffectType.PLACE_CARD_IN_PILE,
               cards: {
                 scope: [TargetScope.SELF],
               },
               position: 'bottom',
               deck: 'discovery',
-            },
-            {
-              id: 2,
-              type: ActionEffectType.DISCOVER_CARD,
-              cards: {
-                ids: [106],
-              },
             },
           ],
         },
@@ -204,26 +154,7 @@ export const smallHillTown: CardDef = {
               id: 1,
               type: ActionEffectType.ADD_RESOURCES,
               resources: {
-                choice: [
-                  {
-                    gold: 1,
-                  },
-                  {
-                    wood: 1,
-                  },
-                  {
-                    stone: 1,
-                  },
-                  {
-                    weapon: 1,
-                  },
-                  {
-                    iron: 1,
-                  },
-                  {
-                    goods: 1,
-                  },
-                ],
+                choice: [{ any: 1 }],
               },
             },
           ],
