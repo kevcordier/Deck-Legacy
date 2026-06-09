@@ -521,7 +521,7 @@ describe('CardActionAggregate.resolveAction', () => {
           id: 0,
           type: ActionEffectType.UPGRADE_CARD,
           payingCost: true,
-          cards: { scope: [TargetScope.DISCOVERY] },
+          cards: { scope: [TargetScope.DISCOVERY], pickMin: 1 },
         },
         { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 2 } },
       ],

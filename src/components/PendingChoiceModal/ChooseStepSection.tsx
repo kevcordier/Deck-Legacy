@@ -1,19 +1,11 @@
 import type { ChoiceSectionProps } from './shared';
-import { CardTrackContent } from '@components/CardTrack/CardTrack';
+import { CardTrackStep } from '@components/CardTrack/CardTrack';
 import { ActionEffectType } from '@engine/domain/enums';
 import type { StepDef } from '@engine/domain/types';
 
 export function ChooseStepSection(props: Readonly<ChoiceSectionProps>) {
-  const {
-    choice,
-    instances,
-    defs,
-    selectedIds,
-    onToggleId,
-    isMultiSelect,
-    resolvePlayerChoice,
-    t,
-  } = props;
+  const { choice, instances, defs, selectedIds, onToggleId, isMultiSelect, resolvePlayerChoice } =
+    props;
 
   const targetInst = choice.targetInstanceId ? instances[choice.targetInstanceId] : undefined;
   const targetDef = targetInst ? defs[targetInst.cardId] : undefined;
@@ -48,16 +40,10 @@ export function ChooseStepSection(props: Readonly<ChoiceSectionProps>) {
           <button
             key={step.id}
             onClick={() => handleStepClick(step.id)}
-            className={`flex min-w-16 flex-col items-center gap-1 rounded-md border-2 border-base-ink bg-card p-3 hover:bg-base-ink/10 ${isSelected ? ' ring-primary rounded-xl ring-2' : ''}`}
+            className={`flex min-w-8 aspect-square flex-col items-center gap-1 rounded-md border-2 border-base-ink bg-card p-3 hover:bg-base-ink/10 ${isSelected ? ' ring-primary rounded-xl ring-2' : ''}`}
           >
             {track && targetInst && (
-              <CardTrackContent
-                t={t}
-                instance={targetInst}
-                track={track}
-                step={step}
-                isValidated={false}
-              />
+              <CardTrackStep instance={targetInst} track={track} step={step} isValidated={false} />
             )}
           </button>
         );

@@ -236,12 +236,13 @@ function resolveCardTarget(
   );
 
   const picks = getPickNumbers(cards, choices.length);
-  if (choices.length === 0 || (cards.pickMin && choices.length < cards.pickMin)) {
+  if (cards.pickMin && choices.length < cards.pickMin) {
     resolverAction.unresolvable = true;
     return [resolverAction, pendingChoices];
   }
 
   if (
+    choices.length === 0 ||
     choices.length < picks.pickMin ||
     (picks.pickMax === picks.pickMin &&
       actionType === ActionEffectType.DISCOVER_CARD &&

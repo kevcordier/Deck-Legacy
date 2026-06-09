@@ -66,7 +66,7 @@ export function CardTrackContent({
       const resKeys =
         Object.entries(action.resources).filter(([k]) => !['choice', 'cards'].includes(k)) ?? [];
       return (
-        <div key={action.id}>
+        <div className="flex flex-wrap gap-0 justify-center" key={action.id}>
           {resKeys.map(([k, v]) => getResourceContent(k, Number(v), action.id))}
         </div>
       );
@@ -106,64 +106,78 @@ export function CardTrackContent({
   return contents;
 }
 
-export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
+interface CardTrackContentProps {
+  readonly instance: CardInstance;
+  readonly track: TrackDef;
+  readonly step: StepDef;
+  readonly isValidated: boolean;
+}
+export function CardTrackStep({ step, track, instance, isValidated }: CardTrackContentProps) {
   const { t } = useTranslation();
+  // Determine step button content
+  const contents = CardTrackContent({ t, instance, track, step, isValidated });
+  let cost: React.ReactNode[] = [];
+
+  if (step.cost?.resources) {
+    const costEntry = step.cost?.resources?.[0];
+    cost = Object.entries(costEntry).map(([k, v]) => {
+      const meta = getResMeta(k);
+      return (
+        <React.Fragment key={k}>
+          {v}
+          {meta.icon && <meta.icon className="size-4" color={meta.color} alt={k} />}
+        </React.Fragment>
+      );
+    });
+  }
+  if (step.cost?.accumulated) {
+    cost.push(step.cost.accumulated.toString());
+  }
+  if (step.cost?.discard) {
+    cost.push(step.cost.discard[0].pickNumber?.toString() ?? '');
+  }
+
+  if (track.inverse && isValidated) {
+    cost = [<span key="validated">✓</span>];
+  }
+
+  return (
+    <div
+      key={step.id}
+      className={`flex ${track.vertical ? 'flex-row-reverse justify-end' : 'flex-col justify-center'} items-center gap-0.5`}
+    >
+      {cost && (
+        <div className={`flex items-center gap-0.5 text-base-ink text-xs @2xs:text-sm`}>
+          {track.inverse ? contents : cost}
+        </div>
+      )}
+      <div
+        className={[
+          `${track.vertical ? 'size-5 @3xs:size-6' : 'size-8'} shrink-0 flex flex-col items-center justify-center border-2 font-bold rounded-md text-base-ink bg-card border-base-ink font-body text-xs @2xs:text-sm`,
+          isValidated ? 'border-success bg-success/20! text-success' : '',
+        ].join(' ')}
+        title={isValidated ? '✓' : undefined}
+      >
+        {track.inverse ? cost : contents}
+      </div>
+    </div>
+  );
+}
+
+export function CardTrack({ instance, track, validatedSteps }: CardTrackProps) {
   return (
     <div
       className={`flex ${track.vertical ? 'flex-col gap-0.5' : 'flex-row gap-0 @3xs:gap-1'} justify-center flex-wrap`}
     >
-      {track.steps.map(step => {
-        const isValidated = validatedSteps.includes(step.id);
-
-        // Determine step button content
-        const contents = CardTrackContent({ t, instance, track, step, isValidated });
-        let cost: React.ReactNode[] = [];
-
-        if (step.cost?.resources) {
-          const costEntry = step.cost?.resources?.[0];
-          cost = Object.entries(costEntry).map(([k, v]) => {
-            const meta = getResMeta(k);
-            return (
-              <React.Fragment key={k}>
-                {v}
-                {meta.icon && <meta.icon className="size-4" color={meta.color} alt={k} />}
-              </React.Fragment>
-            );
-          });
-        }
-        if (step.cost?.accumulated) {
-          cost.push(step.cost.accumulated.toString());
-        }
-        if (step.cost?.discard) {
-          cost.push(step.cost.discard[0].pickNumber?.toString() ?? '');
-        }
-
-        if (track.inverse && isValidated) {
-          cost = [<span key="validated">✓</span>];
-        }
-
-        return (
-          <div
-            key={step.id}
-            className={`flex ${track.vertical ? 'flex-row-reverse justify-end' : 'flex-col justify-center'} items-center gap-0.5`}
-          >
-            {cost && (
-              <div className={`flex items-center gap-0.5 text-base-ink text-xs @2xs:text-sm`}>
-                {track.inverse ? contents : cost}
-              </div>
-            )}
-            <div
-              className={[
-                `${track.vertical ? 'size-5 @3xs:size-6' : 'size-8'} shrink-0 flex flex-col items-center justify-center border-2 font-bold rounded-md text-base-ink bg-card border-base-ink font-body text-xs @2xs:text-sm`,
-                isValidated ? 'border-success bg-success/20! text-success' : '',
-              ].join(' ')}
-              title={isValidated ? '✓' : undefined}
-            >
-              {track.inverse ? cost : contents}
-            </div>
-          </div>
-        );
-      })}
+      {track.steps.map(step => (
+        <CardTrackStep
+          key={step.id}
+          step={step}
+          track={track}
+          instance={instance}
+          isValidated={validatedSteps.includes(step.id)}
+        />
+      ))}
     </div>
   );
 }

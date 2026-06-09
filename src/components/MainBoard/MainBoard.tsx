@@ -199,7 +199,7 @@ export function MainBoard() {
         </Section>
       )}
 
-      {[Phase.PLAYING, Phase.TURN_END].includes(gameState.phase) &&
+      {[Phase.PLAYING, Phase.TURN_END, Phase.ROUND_END].includes(gameState.phase) &&
         Object.keys(gameState.triggerPile).length === 0 &&
         gameState.lastAddedCards.length > 0 &&
         displayNewCards && (
