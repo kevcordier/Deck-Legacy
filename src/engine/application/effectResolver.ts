@@ -236,7 +236,7 @@ function resolveCardTarget(
   );
 
   const picks = getPickNumbers(cards, choices.length);
-  if (cards.pickMin && choices.length < cards.pickMin) {
+  if (choices.length === 0 || (cards.pickMin && choices.length < cards.pickMin)) {
     resolverAction.unresolvable = true;
     return [resolverAction, pendingChoices];
   }

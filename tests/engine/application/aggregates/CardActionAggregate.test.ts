@@ -511,7 +511,7 @@ describe('CardActionAggregate.resolveAction', () => {
     expect(agg.getGameState().resources.gold).toBe(1);
   });
 
-  it('continues when UPGRADE_CARD resolves without target', () => {
+  it('skip other action when UPGRADE_CARD resolves without target', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], discoveryPile: [], instances: { 1: inst } });
     const action: CardAction = {
@@ -530,7 +530,7 @@ describe('CardActionAggregate.resolveAction', () => {
     const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
     agg.resolveAction();
 
-    expect(agg.getGameState().resources.wood).toBe(2);
+    expect(agg.getGameState().resources.wood).toBe(undefined);
   });
 
   it('pays upgrade cost immediately when there is no pending cost choice', () => {

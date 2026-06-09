@@ -40,7 +40,7 @@ export function GameBoard() {
   const [openSheet, setOpenSheet] = useState<'draw' | 'discard' | 'destroyed' | null>(null);
   const [destroyedModalOpen, setDestroyedModalOpen] = useState(false);
   const [pinnedLeft, setPinnedLeft] = useState(true);
-  const [pinnedRight, setPinnedRight] = useState(false);
+  const [pinnedRight, setPinnedRight] = useState(true);
   const centerScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

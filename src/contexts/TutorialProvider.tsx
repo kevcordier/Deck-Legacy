@@ -45,14 +45,6 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       },
       {
         target: '[data-tour="discard-column"]',
-        spotlightTarget: '[data-tour="discard-viewer-pin"]',
-        content: t('tutorial.interface.discardColumn'),
-        buttons: ['skip'],
-        blockTargetInteraction: false,
-        placement: 'left',
-      },
-      {
-        target: '[data-tour="discard-column"]',
         content: t('tutorial.interface.discardColumn'),
         placement: 'left',
       },
