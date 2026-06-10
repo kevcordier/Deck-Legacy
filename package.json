@@ -38,7 +38,7 @@
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
-    "@eslint-react/eslint-plugin": "^5.8.16",
+    "@eslint-react/eslint-plugin": "^5.8.17",
     "@eslint/js": "^10.0.1",
     "@storybook/addon-a11y": "^10.4.3",
     "@storybook/addon-docs": "^10.4.3",
