@@ -39,7 +39,7 @@ export const eastCliffs: CardDef = {
               {
                 [ResourceType.STONE]: 1,
                 [ResourceType.WOOD]: 1,
-                [ResourceType.GOLD]: 2,
+                [ResourceType.IRON]: 2,
               },
             ],
           },
