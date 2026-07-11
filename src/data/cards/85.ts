@@ -70,7 +70,6 @@ export const sawMill: CardDef = {
       glory: { amount: 6 },
       productions: [{ [ResourceType.WOOD]: 2 }, { [ResourceType.GOODS]: 2 }],
       passives: [
-        CardPassives[PassiveType.STAY_IN_PLAY],
         {
           id: '85-4-1',
           type: PassiveType.RESOURCE_EQUIVALENCE,
