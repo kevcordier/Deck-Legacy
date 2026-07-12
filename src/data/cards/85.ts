@@ -1,6 +1,5 @@
 import { ActionEffectType, CardTag, PassiveType, ResourceType } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
-import { CardPassives } from '@engine/domain/types/effects';
 
 export const sawMill: CardDef = {
   id: 85,

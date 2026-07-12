@@ -27,7 +27,7 @@ export const handsomeRival: CardDef = {
       name: 'Handsome Rival',
       illustration: 'cards/117_1.jpg',
       tags: [CardTag.PERSON],
-      glory: { amount: 20, valuePerElement: { accumulation: true, amount: -5 } },
+      glory: { amount: -20, valuePerElement: { accumulation: true, amount: 5 } },
       passives: [
         {
           id: '117-1-1',
