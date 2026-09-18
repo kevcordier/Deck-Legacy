@@ -45,28 +45,14 @@ describe('renderTextWithIcons', () => {
     expect(React.isValidElement(renderTextWithIcons(''))).toBe(true);
   });
 
-  it('returns a React element when the text contains a single token', () => {
-    const result = renderTextWithIcons('{{gold}}');
-    expect(React.isValidElement(result)).toBe(true);
-  });
-
-  it('returns a React fragment when text has mixed content and tokens', () => {
-    const result = renderTextWithIcons('Gain {{wood}} now');
-    expect(React.isValidElement(result)).toBe(true);
-  });
-
-  it('handles a token at the start of the string', () => {
-    const result = renderTextWithIcons('{{stone}} mined');
-    expect(React.isValidElement(result)).toBe(true);
-  });
-
-  it('handles a token at the end of the string', () => {
-    const result = renderTextWithIcons('Earn {{iron}}');
-    expect(React.isValidElement(result)).toBe(true);
-  });
-
-  it('handles multiple tokens in the same string', () => {
-    const result = renderTextWithIcons('{{gold}} and {{wood}}');
+  it.each([
+    ['returns a React element when the text contains a single token', '{{gold}}'],
+    ['returns a React fragment when text has mixed content and tokens', 'Gain {{wood}} now'],
+    ['handles a token at the start of the string', '{{stone}} mined'],
+    ['handles a token at the end of the string', 'Earn {{iron}}'],
+    ['handles multiple tokens in the same string', '{{gold}} and {{wood}}'],
+  ])('%s', (_description, text) => {
+    const result = renderTextWithIcons(text);
     expect(React.isValidElement(result)).toBe(true);
   });
 

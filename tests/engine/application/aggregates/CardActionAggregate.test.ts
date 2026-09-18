@@ -530,7 +530,7 @@ describe('CardActionAggregate.resolveAction', () => {
     const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
     agg.resolveAction();
 
-    expect(agg.getGameState().resources.wood).toBe(undefined);
+    expect(agg.getGameState().resources.wood).toBeUndefined();
   });
 
   it('pays upgrade cost immediately when there is no pending cost choice', () => {

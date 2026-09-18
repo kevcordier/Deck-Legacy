@@ -1667,7 +1667,7 @@ describe('GameAggregate.cardAction – unresolvable effect', () => {
     // Trigger END_OF_TURN which generates 2 triggers
     agg.turnEnded();
 
-    expect(Object.keys(agg.getGameState().triggerPile).length).toBe(2);
+    expect(Object.keys(agg.getGameState().triggerPile)).toHaveLength(2);
     const triggerIds = Object.keys(agg.getGameState().triggerPile);
 
     // Process first trigger
@@ -1676,7 +1676,7 @@ describe('GameAggregate.cardAction – unresolvable effect', () => {
     agg.cardAction(action, 1, triggerIds[0]);
 
     // After processing first trigger, only 1 should remain (not 2)
-    expect(Object.keys(agg.getGameState().triggerPile).length).toBe(1);
+    expect(Object.keys(agg.getGameState().triggerPile)).toHaveLength(1);
     expect(agg.getGameState().triggerPile[triggerIds[0]]).toBeUndefined();
     expect(agg.getGameState().triggerPile[triggerIds[1]]).toBeDefined();
     // Phase should remain PLAYING because there's still a trigger pending

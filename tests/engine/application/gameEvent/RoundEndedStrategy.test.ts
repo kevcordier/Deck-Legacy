@@ -45,7 +45,7 @@ describe('RoundEndedStrategy', () => {
     });
     const event = { id: 'e4', timestamp: 0, endRoundTriggers: {}, type: 'ROUND_ENDED' };
     const result = strat.apply(gs, event);
-    expect(Object.keys(result.triggerPile).length).toBe(0);
+    expect(Object.keys(result.triggerPile)).toHaveLength(0);
   });
 
   it('stays in current phase if triggers remain in triggerPile', () => {
