@@ -101,6 +101,10 @@
     "resourceEquivalence": "Le bois et les marchandises sont interchangeables",
     "state": "État {{id}}",
     "upgradeAvailable": "Amélioration disponible",
+    "hasPassive": "Possède un effet passif",
+    "hasTrigger": "Possède un effet déclenché",
+    "destroyActionAvailable": "Action de destruction disponible",
+    "actionAvailable": "Action disponible",
     "cost": {
       "discard": "Défaussez {{count}} {{type}}",
       "destroy": "Détruisez {{count}} {{type}}",

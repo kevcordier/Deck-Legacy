@@ -101,6 +101,10 @@
     "resourceEquivalence": "Wood and goods are interchangeable",
     "state": "State {{id}}",
     "upgradeAvailable": "Upgrade available",
+    "hasPassive": "Has a passive effect",
+    "hasTrigger": "Has a triggered effect",
+    "destroyActionAvailable": "Destroy action available",
+    "actionAvailable": "Action available",
     "cost": {
       "discard": "Discard {{count}} {{type}}",
       "destroy": "Destroy {{count}} {{type}}",

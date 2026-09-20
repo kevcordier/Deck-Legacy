@@ -8,7 +8,7 @@ export interface IconProps {
   readonly alt?: string;
 }
 
-export function ActivatedIcon({ className, style, alt }: IconProps) {
+export function ActivatedIcon({ color = 'green', className, style, alt }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -19,7 +19,7 @@ export function ActivatedIcon({ className, style, alt }: IconProps) {
       aria-label={alt}
     >
       <path
-        fill="green"
+        fill={color}
         d="M1.25 7.25C1.25 3.93629 3.93629 1.25 7.25 1.25H16.75C20.0637 1.25 22.75 3.93629 22.75 7.25V16.75C22.75 20.0637 20.0637 22.75 16.75 22.75H7.25C3.93629 22.75 1.25 20.0637 1.25 16.75V7.25Z"
       />
       <path
@@ -53,7 +53,7 @@ export function CrownIcon({ color = 'currentColor', className, style, alt }: Ico
   );
 }
 
-export function DestroyIcon({ className, style, alt }: IconProps) {
+export function DestroyIcon({ color = 'red', className, style, alt }: IconProps) {
   return (
     <svg
       viewBox="-0.5 0 19 19"
@@ -63,7 +63,7 @@ export function DestroyIcon({ className, style, alt }: IconProps) {
       aria-label={alt}
     >
       <path
-        fill="red"
+        fill={color}
         d="M4.91666667,14.8888889 C4.91666667,15.3571429 5.60416667,16 6.0625,16 L12.9375,16 C13.3958333,16 14.0833333,15.3571429 14.0833333,14.8888889 L14.0833333,6 L4.91666667,6 L4.91666667,14.8888889 L4.91666667,14.8888889 L4.91666667,14.8888889 Z M15,3.46500003 L12.5555556,3.46500003 L11.3333333,2 L7.66666667,2 L6.44444444,3.46500003 L4,3.46500003 L4,4.93000007 L15,4.93000007 L15,3.46500003 L15,3.46500003 L15,3.46500003 Z"
       />
     </svg>
