@@ -7,6 +7,7 @@ import {
   PassifIcon,
   StoneIcon,
   TimeIcon,
+  UpgradeIcon,
   WeaponIcon,
   WoodIcon,
 } from '@components/ui/Icon/icon';
@@ -25,11 +26,12 @@ const ICON_MAP: Record<string, React.ComponentType> = {
   glory: GloryIcon,
   time: TimeIcon,
   passif: PassifIcon,
+  upgrade: UpgradeIcon,
 };
 
 function injectIcons(content: string): string {
   return content.replace(
-    /\{\{(gold|wood|stone|iron|weapon|goods|glory|time|passif)\}\}/g,
+    /\{\{(gold|wood|stone|iron|weapon|goods|glory|time|passif|upgrade)\}\}/g,
     (_, key: string) => `![${key}](./${key}.svg)`,
   );
 }

@@ -3,7 +3,7 @@ import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview'
 import { CardTrack } from '@components/CardTrack/CardTrack';
 import { Button } from '@components/ui/Button/Button';
 import { Glory } from '@components/ui/Glory/Glory';
-import { PassifIcon } from '@components/ui/Icon/icon';
+import { PassifIcon, UpgradeIcon } from '@components/ui/Icon/icon';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { StickerDisplay } from '@components/ui/StickerDisplay/StickerDisplay';
 import { Tag } from '@components/ui/Tag/Tag';
@@ -352,7 +352,7 @@ export function GameCard({
                   className={cardActionsClass}
                   data-tour="card-upgrade"
                 >
-                  ⬆{' '}
+                  <UpgradeIcon className="size-4" />{' '}
                   {targetState
                     ? tCardName(t, targetState.name || '')
                     : t('card.state', { id: upg.upgradeTo })}

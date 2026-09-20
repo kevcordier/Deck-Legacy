@@ -1,4 +1,5 @@
 import { Glory } from '@components/ui/Glory/Glory';
+import { UpgradeIcon } from '@components/ui/Icon/icon';
 import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Tag } from '@components/ui/Tag/Tag';
 import {
@@ -134,7 +135,7 @@ export function MiniGameCard({ instance, isOnBoard = false, className = '' }: Mi
               className={`absolute bottom-1 right-1 text-sm rounded-full border border-border bg-card px-2 py-1 shadow-sm text-base-ink ${!hasAvailableUpgrade && 'text-gray'}`}
               aria-label={t('card.upgradeAvailable')}
             >
-              ⬆
+              <UpgradeIcon className="size-3" />
             </span>
           )}
           {!isBlocked && cs.track && (

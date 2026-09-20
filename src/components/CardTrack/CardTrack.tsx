@@ -1,4 +1,5 @@
 import { Glory } from '@components/ui/Glory/Glory';
+import { UpgradeIcon } from '@components/ui/Icon/icon';
 import { ActionEffectType } from '@engine/domain/enums';
 import type { ActionEffect, CardInstance, StepDef, TrackDef } from '@engine/domain/types';
 import { tCardTrackAction } from '@helpers/cardI18n';
@@ -57,7 +58,7 @@ export function CardTrackContent({
     if (action.type === ActionEffectType.UPGRADE_CARD) {
       return (
         <span className="text-xs" key={action.id}>
-          ⬆
+          <UpgradeIcon className="size-3" />
         </span>
       );
     }
