@@ -18,6 +18,7 @@ import {
   getTotalProduction,
   getTotalResourceProduction,
   tagClass,
+  tagTextClass,
 } from '@engine/application/cardHelpers';
 import {
   ActionEffectType,
@@ -1678,6 +1679,38 @@ describe('tagClass additional branches', () => {
 
   it('returns default tag class for unknown tag', () => {
     expect(tagClass('unknown', false)).toContain('border-tag-tag');
+  });
+});
+
+// ─── tagTextClass branches ─────────────────────────────────────────────────────
+
+describe('tagTextClass additional branches', () => {
+  it('returns enemy text class when isEnemy is true', () => {
+    expect(tagTextClass('land', true)).toBe('text-tag-enemy');
+  });
+
+  it('returns building text class', () => {
+    expect(tagTextClass('building', false)).toBe('text-tag-building');
+  });
+
+  it('returns person text class', () => {
+    expect(tagTextClass('person', false)).toBe('text-tag-person');
+  });
+
+  it('returns seafaring text class', () => {
+    expect(tagTextClass('seafaring', false)).toBe('text-tag-seafaring');
+  });
+
+  it('returns land text class', () => {
+    expect(tagTextClass('land', false)).toBe('text-tag-land');
+  });
+
+  it('returns livestock text class', () => {
+    expect(tagTextClass('livestock', false)).toBe('text-tag-livestock');
+  });
+
+  it('returns default tag text class for unknown tag', () => {
+    expect(tagTextClass('unknown', false)).toBe('text-tag-tag');
   });
 });
 

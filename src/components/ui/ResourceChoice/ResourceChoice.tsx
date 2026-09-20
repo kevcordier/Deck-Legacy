@@ -28,7 +28,7 @@ export function ResourceChoice({
             variant="text"
             color="base-ink"
             disabled={disabled}
-            className="bg-card! transition-transform hover:not-disabled:bg-transparent! hover:not-disabled:scale-[1.02] rounded-full! p-2! flex gap-1 not-disabled:backdrop-blur-xl"
+            className="bg-card! shadow-sm transition-transform hover:not-disabled:bg-transparent! hover:not-disabled:scale-[1.02] rounded-full! p-2! flex gap-1 not-disabled:backdrop-blur-xl"
           >
             {entries.map(([key, val]) =>
               val > 2 ? (

@@ -1,20 +1,34 @@
+import { CardViewerModal } from '@components/CardViewerModal/CardViewerModal';
 import { GameCard } from '@components/GameCard/GameCard';
+import { MiniGameCard } from '@components/MiniGameCard/MiniGameCard';
 import { PassifIcon } from '@components/ui/Icon/icon';
 import { DragDropProvider } from '@dnd-kit/react';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { cardSelector } from '@engine/application/cardSelector';
 import { PassiveType } from '@engine/domain/enums';
-import type { CardDef, GameState, Passive, Sticker } from '@engine/domain/types';
+import type { CardDef, CardInstance, GameState, Passive, Sticker } from '@engine/domain/types';
+import { isInteractiveElementClick } from '@helpers/domHelpers';
 import { useGame } from '@hooks/useGame';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+export type BoardZoomLevel = 0 | 1 | 2;
 
 interface CardRowProps {
   readonly cardIds: number[];
+  readonly zoom?: BoardZoomLevel;
 }
 
 type EffectEntry = { sourceId: number; passive: Passive };
 
 const STACK_OFFSET_PX = 36;
+const MINI_STACK_OFFSET_PX = 14;
+
+const GRID_CLASS_BY_ZOOM: Record<BoardZoomLevel, string> = {
+  0: 'lg:@md/main:grid-cols-1 lg:@lg/main:grid-cols-2 lg:@3xl/main:grid-cols-3 lg:@6xl/main:grid-cols-4 lg:@7xl/main:grid-cols-5 lg:@8xl/main:grid-cols-6',
+  1: 'lg:@md/main:grid-cols-2 lg:@lg/main:grid-cols-3 lg:@3xl/main:grid-cols-4 lg:@6xl/main:grid-cols-5 lg:@7xl/main:grid-cols-6 lg:@8xl/main:grid-cols-7',
+  2: 'lg:@md/main:grid-cols-3 lg:@lg/main:grid-cols-4 lg:@3xl/main:grid-cols-5 lg:@6xl/main:grid-cols-6 lg:@7xl/main:grid-cols-7 lg:@8xl/main:grid-cols-8',
+};
 
 function effectsOnCard(
   gameState: GameState,
@@ -35,17 +49,72 @@ function effectsOnCard(
   );
 }
 
+type CardStackProps = {
+  readonly inst: CardInstance;
+  readonly blockedInsts: CardInstance[];
+  readonly visibilityClass: string;
+  readonly stackOffsetPx: number;
+  readonly Visual: typeof GameCard | typeof MiniGameCard;
+  readonly openViewerIfNotInteractive: (cardId: number) => (event: React.MouseEvent) => void;
+  readonly openViewerOnKeyDown: (cardId: number) => (event: React.KeyboardEvent) => void;
+};
+
+function CardStack({
+  inst,
+  blockedInsts,
+  visibilityClass,
+  stackOffsetPx,
+  Visual,
+  openViewerIfNotInteractive,
+  openViewerOnKeyDown,
+}: CardStackProps) {
+  return (
+    <div
+      className={`relative transition-transform duration-200 ease-out ${visibilityClass}`}
+      style={{ paddingTop: `${blockedInsts.length * stackOffsetPx}px` }}
+    >
+      {blockedInsts.map((blockedInst, i) => (
+        <div
+          key={blockedInst.id}
+          role="button"
+          tabIndex={0}
+          className="absolute inset-x-0 z-0 cursor-pointer"
+          style={{ top: `${i * stackOffsetPx}px` }}
+          onClick={openViewerIfNotInteractive(blockedInst.id)}
+          onKeyDown={openViewerOnKeyDown(blockedInst.id)}
+        >
+          <Visual instance={blockedInst} isOnBoard allowTilt />
+        </div>
+      ))}
+      <div
+        role="button"
+        tabIndex={0}
+        className="relative z-10 cursor-pointer"
+        onClick={openViewerIfNotInteractive(inst.id)}
+        onKeyDown={openViewerOnKeyDown(inst.id)}
+      >
+        <Visual instance={inst} isOnBoard allowTilt />
+      </div>
+    </div>
+  );
+}
+
 type CardProps = {
   readonly id: number;
   readonly index: number;
   readonly blockingMap: Record<number, number[]>;
   readonly sortableGroup: string;
+  readonly onOpenViewer: (id: number) => void;
 };
 
-function Card({ id, index, blockingMap, sortableGroup }: CardProps) {
+function Card({ id, index, blockingMap, sortableGroup, onOpenViewer }: CardProps) {
   const { gameState, defs, stickerDefs } = useGame();
   const { t } = useTranslation();
-  const { ref } = useSortable({ id, index, group: sortableGroup });
+  const { ref } = useSortable({
+    id,
+    index,
+    group: sortableGroup,
+  });
   const inst = gameState.instances[id];
   if (!inst) return null;
 
@@ -62,28 +131,41 @@ function Card({ id, index, blockingMap, sortableGroup }: CardProps) {
     return null;
   };
 
+  const openViewerIfNotInteractive = (cardId: number) => (event: React.MouseEvent) => {
+    if (isInteractiveElementClick(event)) return;
+    onOpenViewer(cardId);
+  };
+  const openViewerOnKeyDown = (cardId: number) => (event: React.KeyboardEvent) => {
+    if (isInteractiveElementClick(event)) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onOpenViewer(cardId);
+    }
+  };
+
   return (
     <div key={id} className={`@container shrink-0`} ref={ref}>
-      <div
-        className="relative"
-        style={{ paddingTop: `${blockedInsts.length * STACK_OFFSET_PX}px` }}
-      >
-        {blockedInsts.map((blockedInst, i) => (
-          <div
-            key={blockedInst.id}
-            className="absolute inset-x-0 z-0"
-            style={{ top: `${i * STACK_OFFSET_PX}px` }}
-          >
-            <GameCard instance={blockedInst} isOnBoard />
-          </div>
-        ))}
-        <div className="relative z-10">
-          <GameCard instance={inst} isOnBoard />
-        </div>
-      </div>
+      <CardStack
+        inst={inst}
+        blockedInsts={blockedInsts}
+        visibilityClass={`hidden lg:block`}
+        stackOffsetPx={STACK_OFFSET_PX}
+        Visual={GameCard}
+        openViewerIfNotInteractive={openViewerIfNotInteractive}
+        openViewerOnKeyDown={openViewerOnKeyDown}
+      />
+      <CardStack
+        inst={inst}
+        blockedInsts={blockedInsts}
+        visibilityClass={`lg:hidden`}
+        stackOffsetPx={MINI_STACK_OFFSET_PX}
+        Visual={MiniGameCard}
+        openViewerIfNotInteractive={openViewerIfNotInteractive}
+        openViewerOnKeyDown={openViewerOnKeyDown}
+      />
 
       {effects.length > 0 && (
-        <div className="flex flex-col justify-stretch">
+        <div className="hidden flex-col justify-stretch lg:flex">
           {effects.map(
             ({ sourceId, passive: be }) =>
               effectLabel(be.type, sourceId) && (
@@ -102,8 +184,9 @@ function Card({ id, index, blockingMap, sortableGroup }: CardProps) {
   );
 }
 
-export function CardRow({ cardIds }: CardRowProps) {
+export function CardRow({ cardIds, zoom = 1 }: CardRowProps) {
   const { gameState, defs, stickerDefs } = useGame();
+  const [viewerCardId, setViewerCardId] = useState<number | null>(null);
 
   const blockingMap: Record<number, number[]> = {};
   Object.entries(gameState.boardEffects).forEach(([sourceId, passives]) => {
@@ -128,9 +211,7 @@ export function CardRow({ cardIds }: CardRowProps) {
   return (
     <DragDropProvider>
       <div
-        className={
-          'grid grid-cols-1 gap-2 @xs/main:gap-3 @xs/main:grid-cols-2 @3xl/main:grid-cols-3 @5xl/main:grid-cols-4 @7xl/main:grid-cols-5 @8xl/main:grid-cols-6'
-        }
+        className={`grid grid-cols-2 gap-2 lg:gap-3 @lg/main:grid-cols-3 @3xl/main:grid-cols-4 ${GRID_CLASS_BY_ZOOM[zoom]}`}
       >
         {visibleCardIds.map((id, index) => (
           <Card
@@ -139,9 +220,18 @@ export function CardRow({ cardIds }: CardRowProps) {
             index={index}
             blockingMap={blockingMap}
             sortableGroup={sortableGroup}
+            onOpenViewer={setViewerCardId}
           />
         ))}
       </div>
+
+      {viewerCardId !== null && (
+        <CardViewerModal
+          cardIds={cardIds}
+          initialId={viewerCardId}
+          onClose={() => setViewerCardId(null)}
+        />
+      )}
     </DragDropProvider>
   );
 }

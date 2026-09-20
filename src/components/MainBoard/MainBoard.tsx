@@ -1,4 +1,4 @@
-import { CardRow } from '@components/CardRow/CardRow';
+import { type BoardZoomLevel, CardRow } from '@components/CardRow/CardRow';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
 import { EmptyState } from '@components/ui/EmptyState/EmptyState';
@@ -9,7 +9,11 @@ import { getActiveState } from '@engine/application/cardHelpers';
 import { CardTag, Phase } from '@engine/domain/enums';
 import { tCardName, tCardParchmentText } from '@helpers/cardI18n';
 import { useGame } from '@hooks/useGame';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const MIN_ZOOM: BoardZoomLevel = 0;
+const MAX_ZOOM: BoardZoomLevel = 2;
 
 function NewCardSelection({
   cardIds,
@@ -86,11 +90,40 @@ export function MainBoard() {
     dismissParchmentText,
   } = useGame();
   const { t } = useTranslation();
+  const [zoom, setZoom] = useState<BoardZoomLevel>(1);
 
   const goals = gameState.permanents.filter(
     c => getActiveState(gameState.instances[c], defs)?.tags?.includes(CardTag.GOAL) ?? false,
   );
   const permanents = gameState.permanents.filter(c => !goals.includes(c));
+
+  const zoomControls = (
+    <div className="hidden lg:block">
+      <Button
+        variant="text"
+        color="ink"
+        size="xs"
+        onClick={() => setZoom(z => (z < MAX_ZOOM ? ((z + 1) as BoardZoomLevel) : z))}
+        disabled={zoom >= MAX_ZOOM}
+        aria-label={t('board.zoomOut')}
+        data-tour="board-zoom-out"
+      >
+        −
+      </Button>
+      <Button
+        variant="text"
+        color="ink"
+        size="xs"
+        onClick={() => setZoom(z => (z > MIN_ZOOM ? ((z - 1) as BoardZoomLevel) : z))}
+        disabled={zoom <= MIN_ZOOM}
+        aria-label={t('board.zoomIn')}
+        data-tour="board-zoom-in"
+      >
+        +
+      </Button>
+    </div>
+  );
+
   return (
     <main className="@container/main flex flex-1 flex-col gap-6 p-2 lg:p-4" data-tour="main-board">
       {parchmentTextPending && (
@@ -168,8 +201,9 @@ export function MainBoard() {
         <Section
           title={t('sections.tableau')}
           subtitle={`${t('cardCount', { count: gameState.board.length })}`}
+          action={zoomControls}
         >
-          <CardRow cardIds={gameState.board} />
+          <CardRow cardIds={gameState.board} zoom={zoom} />
         </Section>
       )}
 
@@ -189,13 +223,13 @@ export function MainBoard() {
           title={t('sections.permanents')}
           subtitle={t('cardCount', { count: permanents.length })}
         >
-          <CardRow cardIds={permanents} />
+          <CardRow cardIds={permanents} zoom={zoom} />
         </Section>
       )}
 
       {[Phase.PLAYING, Phase.TURN_END].includes(gameState.phase) && goals.length > 0 && (
         <Section title={t('sections.goals')} subtitle={t('cardCount', { count: goals.length })}>
-          <CardRow cardIds={goals} />
+          <CardRow cardIds={goals} zoom={zoom} />
         </Section>
       )}
 

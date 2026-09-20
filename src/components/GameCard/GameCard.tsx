@@ -29,21 +29,60 @@ import {
 } from '@helpers/cardI18n';
 import { getResMeta } from '@helpers/renderHelpers';
 import { useGame } from '@hooks/useGame';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Tilt, { type OnMoveParams } from 'react-parallax-tilt';
 
 interface GameCardProps {
   readonly instance: CardInstance;
   readonly hideStatePreview?: boolean;
   readonly isOnBoard?: boolean;
+  readonly allowTilt?: boolean;
   readonly className?: string;
+  readonly size?: 'md' | 'lg';
+}
+
+const CARD_TILT_MAX_DEG = 5;
+const CARD_TILT_PERSPECTIVE = 800;
+const ILLUSTRATION_SCALE = 1.1;
+const ILLUSTRATION_PARALLAX_STRENGTH = 4;
+
+function getSizeClasses(size: 'md' | 'lg') {
+  if (size === 'lg') {
+    return {
+      cardActionsClass:
+        'font-body! bg-white/60 p-2! rounded-md text-base! text-base-ink backdrop-blur-sm',
+      headerPaddingClass: 'p-3! gap-2!',
+      nameTextClass: 'text-lg!',
+      bodyPaddingClass: 'p-3!',
+      pillSizeClass: 'size-8!',
+      glorySizeClass: 'size-14! text-base!',
+      passifIconClass: 'size-6!',
+      resourceIconClass: 'size-6!',
+      tagSizeClass: 'px-2! py-1! text-base!',
+    };
+  }
+  return {
+    cardActionsClass:
+      'font-body! bg-white/60 p-1! @3xs:p-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md',
+    headerPaddingClass: 'p-1 @3xs:px-3 @3xs:py-2 gap-1 @3xs:gap-2',
+    nameTextClass: 'text-xs leading-tight @3xs:text-base',
+    bodyPaddingClass: 'p-1 @3xs:p-2',
+    pillSizeClass: 'size-4 @3xs:size-6',
+    glorySizeClass: 'size-8! text-xs @3xs:size-10! @3xs:text-md',
+    passifIconClass: 'size-3 @3xs:size-6',
+    resourceIconClass: 'size-4',
+    tagSizeClass: '',
+  };
 }
 
 export function GameCard({
   instance,
   hideStatePreview = false,
   isOnBoard = false,
+  allowTilt = false,
   className = '',
+  size = 'md',
 }: GameCardProps) {
   const { t } = useTranslation();
   const {
@@ -80,6 +119,24 @@ export function GameCard({
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
   const [name, setName] = useState(() => getCardName(instance.id));
 
+  const illustrationRef = useRef<HTMLDivElement | null>(null);
+
+  const handleIllustrationTiltMove = ({
+    tiltAngleXPercentage,
+    tiltAngleYPercentage,
+  }: OnMoveParams) => {
+    if (!illustrationRef.current) return;
+    const parallaxX = (tiltAngleYPercentage / 100) * ILLUSTRATION_PARALLAX_STRENGTH;
+    const parallaxY = (tiltAngleXPercentage / 100) * ILLUSTRATION_PARALLAX_STRENGTH;
+    illustrationRef.current.style.transform = `scale(${ILLUSTRATION_SCALE}) translate(${parallaxX}%, ${parallaxY}%)`;
+  };
+
+  const resetIllustrationTilt = () => {
+    if (illustrationRef.current) {
+      illustrationRef.current.style.transform = `scale(${ILLUSTRATION_SCALE})`;
+    }
+  };
+
   const emptyGloryBlock =
     (cs.glory?.emptyValues ?? 0) +
     (currentStateStickers?.reduce(
@@ -97,21 +154,26 @@ export function GameCard({
     .filter(Boolean)
     .join(' ');
 
-  const cardActionsClass =
-    'font-body! bg-white/60 p-1! @3xs:p-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md';
+  const {
+    cardActionsClass,
+    headerPaddingClass,
+    nameTextClass,
+    bodyPaddingClass,
+    pillSizeClass,
+    glorySizeClass,
+    passifIconClass,
+    resourceIconClass,
+    tagSizeClass,
+  } = getSizeClasses(size);
 
-  return (
+  const content = (
     <div
       className={`${cardClass} ${className} ${isPermanent ? 'border-t-5 border-permanent' : ''}`}
       data-tour="card-root"
     >
-      <div
-        className={`border-b border-black/10 bg-black/5 p-1 @3xs:px-3 @3xs:py-2 gap-1 @3xs:gap-2`}
-      >
+      <div className={`border-b border-black/10 bg-black/5 ${headerPaddingClass}`}>
         <div className="flex items-start justify-between gap-2">
-          <span
-            className={`text-base-ink flex min-w-0 items-center gap-1 text-xs leading-tight @3xs:text-base`}
-          >
+          <span className={`text-base-ink flex min-w-0 items-center gap-1 ${nameTextClass}`}>
             {instance.id !== 0 && (
               <span className={`mr-1 rounded bg-black/6 px-1 font-bold`} data-tour="card-number">
                 #{instance.id}
@@ -144,44 +206,48 @@ export function GameCard({
 
         <div className="flex flex-wrap items-center gap-1" data-tour="card-tags">
           {(cs.tags ?? []).map(tag => (
-            <Tag key={tag} label={tCardTag(t, tag)} className={tagClass(tag, isEnemy)} />
+            <Tag
+              key={tag}
+              label={tCardTag(t, tag)}
+              className={`${tagClass(tag, isEnemy)} ${tagSizeClass}`}
+            />
           ))}
         </div>
       </div>
 
-      <div className="relative flex flex-1 flex-col overflow-hidden">
+      <div className="relative flex flex-1 flex-col overflow-hidden shadow-[inset_0_0_2rem_0.5rem_rgba(0,0,0,0.6)]">
         {cs.illustration && (
           <>
             <div
-              className="absolute inset-0 z-0 bg-cover bg-bottom opacity-60"
-              style={{ backgroundImage: `url(${cs.illustration})` }}
+              ref={illustrationRef}
+              className="absolute inset-0 z-0 bg-cover bg-bottom transition-transform duration-150 ease-out"
+              style={{
+                backgroundImage: `url(${cs.illustration})`,
+                transform: `scale(${ILLUSTRATION_SCALE})`,
+              }}
             />
             <div className="absolute inset-x-0 bottom-0 z-0 h-2/3 bg-linear-to-t from-card via-card/70 to-transparent" />
           </>
         )}
 
-        <div className={`relative z-10 flex flex-1 flex-col items-start gap-1 p-1 @3xs:p-2`}>
+        <div className={`relative z-10 flex flex-1 flex-col items-start gap-1 ${bodyPaddingClass}`}>
           {hasProductions && productions && (
             <div data-tour="card-production">
               <ResourceChoice
                 onSelect={choosenOption => resolveProduction(instance.id, choosenOption)}
                 options={productions}
                 disabled={!canActivate || !isOnBoard || isBlocked}
-                pillClassName="size-4 @3xs:size-6"
+                pillClassName={pillSizeClass}
               />
             </div>
           )}
 
           <div className="flex flex-wrap gap-1">
             {cs.glory !== undefined && (cs.glory.amount !== 0 || cs.glory.valuePerElement) && (
-              <Glory glory={glory} className="size-8! text-xs @3xs:size-10! @3xs:text-md" />
+              <Glory glory={glory} className={glorySizeClass} />
             )}
             {emptyValues.map((value, i) => (
-              <Glory
-                key={`empty-${i.toString()}`}
-                glory={value}
-                className="size-8! text-xs @3xs:size-10! @3xs:text-md"
-              />
+              <Glory key={`empty-${i.toString()}`} glory={value} className={glorySizeClass} />
             ))}
           </div>
 
@@ -198,15 +264,15 @@ export function GameCard({
           )}
         </div>
 
-        <div className={`relative z-10 flex flex-col items-center gap-1 p-1 @3xs:p-2`}>
+        <div className={`relative z-10 flex flex-col items-center gap-1 ${bodyPaddingClass}`}>
           {(cs.glory?.condition ?? cs.glory?.valuePerElement) && (
             <span className={cardActionsClass}>
-              <PassifIcon className="size-3 @3xs:size-6" /> {tCardGloryLabel(t, def.id, cs.id)}
+              <PassifIcon className={passifIconClass} /> {tCardGloryLabel(t, def.id, cs.id)}
             </span>
           )}
           {(cs.passives ?? []).map(passive => (
             <span key={passive.id} className={cardActionsClass} data-tour="card-passive">
-              <PassifIcon className="size-3 @3xs:size-6" />{' '}
+              <PassifIcon className={passifIconClass} />{' '}
               {tCardPassiveLabel(t, passive.id, instance.cumulated)}
             </span>
           ))}
@@ -222,6 +288,7 @@ export function GameCard({
                   action={action}
                   actionLabel={actionLabel}
                   disabled={!canActivate}
+                  size={size}
                 />
               );
             })}
@@ -302,7 +369,7 @@ export function GameCard({
                               {v}
                               {meta.icon && (
                                 <meta.icon
-                                  className="size-4 align-middle"
+                                  className={`${resourceIconClass} align-middle`}
                                   color={meta.color}
                                   alt={k}
                                 />
@@ -321,5 +388,23 @@ export function GameCard({
         </div>
       </div>
     </div>
+  );
+
+  if (!allowTilt) return content;
+
+  return (
+    <Tilt
+      className="flex h-full w-full flex-col"
+      tiltMaxAngleX={CARD_TILT_MAX_DEG}
+      tiltMaxAngleY={CARD_TILT_MAX_DEG}
+      perspective={CARD_TILT_PERSPECTIVE}
+      scale={1.04}
+      transitionSpeed={400}
+      glareEnable={false}
+      onMove={handleIllustrationTiltMove}
+      onLeave={resetIllustrationTilt}
+    >
+      {content}
+    </Tilt>
   );
 }

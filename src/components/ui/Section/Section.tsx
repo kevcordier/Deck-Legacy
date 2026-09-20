@@ -5,11 +5,12 @@ import type { ReactNode } from 'react';
 interface SectionProps {
   readonly title: string;
   readonly subtitle?: string;
+  readonly action?: ReactNode;
   readonly children: ReactNode;
   readonly className?: string;
 }
 
-export function Section({ title, subtitle, children, className = '' }: SectionProps) {
+export function Section({ title, subtitle, action, children, className = '' }: SectionProps) {
   return (
     <div className={`flex flex-col gap-3 ${className}`}>
       <div className="flex items-baseline gap-2 text-center">
@@ -18,6 +19,7 @@ export function Section({ title, subtitle, children, className = '' }: SectionPr
         </Title>
         {subtitle && <span className="shrink-0 text-xs italic">{subtitle}</span>}
         <Divider orientation="horizontal" className="relative -top-px" />
+        {action && <div className="flex shrink-0 items-center gap-1">{action}</div>}
       </div>
       {children}
     </div>

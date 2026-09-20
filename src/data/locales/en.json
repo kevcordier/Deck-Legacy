@@ -68,6 +68,10 @@
     "events": "Events",
     "goals": "Goals"
   },
+  "board": {
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
+  },
   "cardCount": "{{count}} card",
   "cardCount_other": "{{count}} cards",
   "resourceBar": {
@@ -96,6 +100,7 @@
     "stayInPlay": "Stays in play",
     "resourceEquivalence": "Wood and goods are interchangeable",
     "state": "State {{id}}",
+    "upgradeAvailable": "Upgrade available",
     "cost": {
       "discard": "Discard {{count}} {{type}}",
       "destroy": "Destroy {{count}} {{type}}",
@@ -105,6 +110,11 @@
   "cardPreview": {
     "viewAllStates": "View all states",
     "statesMeta": "{{count}} states · #{{id}}"
+  },
+  "cardViewer": {
+    "previous": "Previous card",
+    "next": "Next card",
+    "position": "{{index}} / {{total}}"
   },
   "pendingChoice": {
     "chooseCard": {

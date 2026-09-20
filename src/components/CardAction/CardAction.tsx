@@ -22,27 +22,43 @@ type CardActionProps = {
   readonly action: CardAction;
   readonly disabled?: boolean;
   readonly actionLabel: ReactNode;
+  readonly size?: 'md' | 'lg';
 };
 
-function getActionIcon(action: CardAction, hasDestroyItselfCost: boolean): ReactNode {
-  if (hasDestroyItselfCost) return <DestroyIcon color="red" className="size-3 @3xs:size-6" />;
-  if (action.endsTurn) return <TimeIcon className="size-3 @3xs:size-6" />;
-  if (action.unlimited) return <PassifIcon className="size-3 @3xs:size-6" />;
-  return <ActivatedIcon className="size-3 @3xs:size-6" />;
+function getActionIcon(
+  action: CardAction,
+  hasDestroyItselfCost: boolean,
+  iconClass: string,
+): ReactNode {
+  if (hasDestroyItselfCost) return <DestroyIcon color="red" className={iconClass} />;
+  if (action.endsTurn) return <TimeIcon className={iconClass} />;
+  if (action.unlimited) return <PassifIcon className={iconClass} />;
+  return <ActivatedIcon className={iconClass} />;
 }
 
-function getTriggerIcon(action: CardAction): ReactNode {
-  if (action.unlimited) return <PassifIcon className="size-3 @3xs:size-6" />;
+function getTriggerIcon(action: CardAction, iconClass: string): ReactNode {
+  if (action.unlimited) return <PassifIcon className={iconClass} />;
 
   return action.optional ? (
-    <TriggerIcon color="yellow" className="size-3 @3xs:size-6" />
+    <TriggerIcon color="yellow" className={iconClass} />
   ) : (
-    <TriggerIcon color="red" className="size-3 @3xs:size-6" />
+    <TriggerIcon color="red" className={iconClass} />
   );
 }
 
-export function CardAction({ instance, disabled, action, actionLabel }: CardActionProps) {
+export function CardAction({
+  instance,
+  disabled,
+  action,
+  actionLabel,
+  size = 'md',
+}: CardActionProps) {
   const { gameState, defs, stickerDefs, resolveAction } = useGame();
+  const isLarge = size === 'lg';
+  const iconClass = isLarge ? 'size-6!' : 'size-3 @3xs:size-6';
+  const actionClass = isLarge
+    ? 'font-body! bg-white/60 p-2! rounded-md text-base! text-base-ink backdrop-blur-sm'
+    : 'font-body! bg-white/60 p-1! @3xs:p-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md';
   const effectiveActionCost = getEffectiveActionCost(action.cost, instance);
   const optionDisabled = !canUseOptions(
     gameState,
@@ -58,11 +74,8 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
   const haveTrigger = !!action.trigger;
   if (haveTrigger) {
     return (
-      <div
-        className={`font-body! bg-white/60 p-1! @3xs:p-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md`}
-        data-tour="card-trigger"
-      >
-        {getTriggerIcon(action)} {actionLabel}
+      <div className={actionClass} data-tour="card-trigger">
+        {getTriggerIcon(action, iconClass)} {actionLabel}
       </div>
     );
   }
@@ -82,10 +95,10 @@ export function CardAction({ instance, disabled, action, actionLabel }: CardActi
       }
       variant="text"
       color="base-ink"
-      className={`font-body! bg-white/60 p-1! @3xs:p-2! rounded-md text-xs text-base-ink backdrop-blur-sm @3xs:text-md`}
+      className={actionClass}
       data-tour={dataTour}
     >
-      {getActionIcon(action, hasDestroyItselfCost)} {actionLabel}
+      {getActionIcon(action, hasDestroyItselfCost, iconClass)} {actionLabel}
     </Button>
   );
 }

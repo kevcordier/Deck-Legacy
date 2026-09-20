@@ -235,7 +235,7 @@ export function GameBoard() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {destroyedDeck.map(inst => (
                 <div className={`@container min-w-60`} key={inst.id}>
-                  <GameCard instance={inst} />
+                  <GameCard instance={inst} size="lg" />
                 </div>
               ))}
             </div>
