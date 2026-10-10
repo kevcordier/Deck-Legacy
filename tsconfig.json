@@ -1,43 +1,5 @@
 {
-  "compilerOptions": {
-    "paths": {
-      "@engine/*": ["./src/engine/*"],
-      "@data/*": ["./src/data/*"],
-      "@components/*": ["./src/components/*"],
-      "@pages/*": ["./src/pages/*"],
-      "@helpers/*": ["./src/helpers/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@contexts/*": ["./src/contexts/*"],
-      "@styles/*": ["./src/styles/*"],
-      "@stories/*": ["./src/stories/*"]
-    },
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "strictNullChecks": true,
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true
-  },
-  "include": [
-    "src/**/*",
-    "tests/**/*",
-    ".storybook/**/*",
-    "vite.config.ts",
-    "eslint.config.ts",
-    "tailwind.config.js",
-    "stories/**/*"
-  ],
-  "exclude": ["node_modules", "dist", "build", "coverage"]
+  "//": "Each workspace has its own tsconfig (apps/*, packages/*); shared options are in tsconfig.base.json.",
+  "extends": "./tsconfig.base.json",
+  "files": []
 }

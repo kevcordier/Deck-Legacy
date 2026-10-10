@@ -1,0 +1,22 @@
+{
+  "name": "@deck-legacy/game-data",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Deck-Legacy game definitions (cards, stickers, decks), bundled in the client for offline play and used by the server to validate games.",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run"
+  },
+  "dependencies": {
+    "@deck-legacy/engine": "workspace:*"
+  }
+}

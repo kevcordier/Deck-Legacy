@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Deck Legacy",
+    "slug": "deck-legacy",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon-512x512.png",
+    "scheme": "decklegacy",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#fff2e0",
+    "splash": {
+      "image": "./assets/icon-512x512.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f0e4be"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.decklegacy.app"
+    },
+    "android": {
+      "package": "com.decklegacy.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon-512x512.png",
+        "backgroundColor": "#f0e4be"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/icon-192x192.png",
+      "name": "Deck Legacy",
+      "shortName": "Deck Legacy",
+      "description": "A Digital version of a well known legacy deck game",
+      "themeColor": "#f0e4be",
+      "backgroundColor": "#f0e4be"
+    },
+    "experiments": {
+      "baseUrl": "/Deck-Legacy"
+    },
+    "plugins": [
+      "expo-font",
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Deck Legacy uses the device motion to add a parallax effect to the cards."
+        }
+      ],
+      "expo-router"
+    ]
+  }
+}

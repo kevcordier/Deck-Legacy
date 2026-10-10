@@ -1,0 +1,410 @@
+{
+  "errors": {
+    "unknown": "An unexpected error occurred.",
+    "boundary": {
+      "title": "Something went wrong",
+      "subtitle": "The game hit an unexpected error and could not continue.",
+      "corruptedSave": "Your saved game could not be loaded. Clear the save and reload to continue.",
+      "clearSave": "Clear save and reload",
+      "reload": "Reload page"
+    },
+    "actionCancelled": "This action cannot be resolved: no valid target available.",
+    "cost": {
+      "notEnoughResources": "Not enough resources to pay this cost.",
+      "notEnoughCardsToDiscard": "Not enough cards available to discard.",
+      "notEnoughCardsToDestroy": "Not enough cards available to destroy."
+    },
+    "network": "Cannot reach the game server.",
+    "accountDeletionUnavailable": "Account deletion is not available right now.",
+    "accountDeletionFailed": "The account could not be deleted. Please try again later."
+  },
+  "parchmentCard": {
+    "continue": "Continue"
+  },
+  "game": {
+    "title": "Deck Legacy"
+  },
+  "header": {
+    "newGame": "New game",
+    "start": "Start",
+    "newRound": "New round",
+    "progress": "Progress",
+    "endTurn": "End turn",
+    "undoTitle": "Undo last action",
+    "options": "Options"
+  },
+  "pregame": {
+    "readyToPlay": "Ready to play",
+    "deckShuffled": "Deck of {{count}} shuffled cards",
+    "startGame": "▶︎ Start game",
+    "viewRules": "View rules",
+    "tutorial": "Enable tutorial"
+  },
+  "preround": {
+    "roundEnded": "Round {{round}} ended",
+    "newRound": "▶︎ New round"
+  },
+  "roundpreview": {
+    "title": "Round {{round}}",
+    "subtitle": "Here are the new cards discovered for this round.",
+    "start": "▶︎ Start round",
+    "switchState": "Change side"
+  },
+  "endturn": {
+    "title": "Turn {{turn}}",
+    "start": "▶︎ Start turn"
+  },
+  "endround": {
+    "title": "Round {{round}}",
+    "end": "▶︎ End round"
+  },
+  "lastRound": {
+    "title": "Last round completed",
+    "subtitle": "This game has reached its final round. End the game to record your score.",
+    "end": "▶︎ End game"
+  },
+  "sections": {
+    "permanents": "Permanents",
+    "tableau": "Tableau",
+    "events": "Events",
+    "goals": "Goals"
+  },
+  "board": {
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
+  },
+  "cardCount": "{{count}} card",
+  "cardCount_other": "{{count}} cards",
+  "resourceBar": {
+    "round": "Round",
+    "turn": "Turn",
+    "noResources": "No resources",
+    "deck": "Deck",
+    "discard": "Discard",
+    "glory": "Glory",
+    "baseSegment": "Base game",
+    "gloryTooltipTitle": "Campaign scores",
+    "gloryTooltipEmpty": "No saved score"
+  },
+  "resources": {
+    "gold": "Gold",
+    "wood": "Wood",
+    "stone": "Stone",
+    "iron": "Iron",
+    "weapon": "Weapon",
+    "goods": "Goods"
+  },
+  "card": {
+    "blocked": "Blocked",
+    "increaseGlory": "Glory bonus",
+    "adjustProduction": "Adjusted production",
+    "stayInPlay": "Stays in play",
+    "resourceEquivalence": "Wood and goods are interchangeable",
+    "state": "State {{id}}",
+    "upgradeAvailable": "Upgrade available",
+    "hasPassive": "Has a passive effect",
+    "hasTrigger": "Has a triggered effect",
+    "destroyActionAvailable": "Destroy action available",
+    "actionAvailable": "Action available",
+    "cost": {
+      "discard": "Discard {{count}} {{type}}",
+      "destroy": "Destroy {{count}} {{type}}",
+      "cards": "cards"
+    }
+  },
+  "cardPreview": {
+    "viewAllStates": "View all states",
+    "statesMeta": "{{count}} states · #{{id}}"
+  },
+  "cardViewer": {
+    "previous": "Previous card",
+    "next": "Next card",
+    "position": "{{index}} / {{total}}"
+  },
+  "pendingChoice": {
+    "chooseCard": {
+      "DISCARD_CARD": "Choose a card to discard",
+      "DISCARD_CARD_other": "Choose {{count}} cards to discard",
+      "DISCOVER_CARD": "Choose a card to discover",
+      "DISCOVER_CARD_other": "Choose {{count}} cards to discover",
+      "DESTROY_CARD": "Choose a card to destroy",
+      "DESTROY_CARD_other": "Choose {{count}} cards to destroy",
+      "COST": "Choose a card to pay the cost",
+      "COST_other": "Choose {{count}} cards to pay the cost",
+      "BLOCK_CARD": "Choose a card to block",
+      "BLOCK_CARD_other": "Choose {{count}} cards to block",
+      "ADD_RESOURCES": "Copy the resources from a card",
+      "ADD_RESOURCES_other": "Copy the resources from {{count}} cards",
+      "ADD_STICKER": "Choose a card to add the sticker on it",
+      "ADD_STICKER_other": "Choose {{count}} cards to add the sticker on them",
+      "BOOST_CARD": "Choose a card to boost",
+      "BOOST_CARD_other": "Choose {{count}} cards to boost",
+      "ADD_BOARD_EFFECT": "Choose a card to add the effect",
+      "ADD_BOARD_EFFECT_other": "Choose {{count}} cards to add the effect",
+      "PLAY_CARD": "Choose a card to play",
+      "PLAY_CARD_other": "Choose {{count}} cards to play",
+      "PLACE_CARD_IN_PILE": "Choose a card to place in the pile",
+      "REMOVE_RESOURCE_ON_CARD": "Choose a card to remove a resource from"
+    },
+    "chooseActionEffect": "Choose an effect to resolve",
+    "chooseStep": "Choose a track step",
+    "chooseState": "Choose a state",
+    "chooseResource": "Choose a resource",
+    "alreadySelected": "Already selected resources",
+    "chooseSticker": "Choose a sticker",
+    "choices": "Choose {{total}}",
+    "choices-between": "Choose between {{min}} and {{max}}",
+    "cancel": "Cancel",
+    "confirm": "Confirm ({{selected}})",
+    "select": "Select"
+  },
+  "triggerPile": {
+    "title": "Pending effects",
+    "subtitle": "Choose resolution order",
+    "resolve": "Resolve",
+    "skip": "Skip"
+  },
+  "deckViewer": {
+    "title": "Cards list",
+    "draw": "Deck",
+    "discard": "Discard",
+    "destroyed": "Destroyed",
+    "viewAll": "⊞ View all",
+    "empty": "Empty",
+    "modalSubtitle": "{{count}} card",
+    "modalSubtitle_other": "{{count}} cards",
+    "emptyDeck": "The deck is empty",
+    "remainingCards": "Other cards",
+    "pinPanel": "Pin the panel",
+    "unpinPanel": "Unpin the panel"
+  },
+  "cardList": {
+    "noCards": "No cards",
+    "searchPlaceholder": "Search by name",
+    "allTags": "All tags"
+  },
+  "cardUpgraded": {
+    "title": "Card upgraded"
+  },
+  "cardAdded": {
+    "title": "New card discovered",
+    "title_other": "New cards discovered"
+  },
+  "gameOver": {
+    "title": "Game Over",
+    "glory": "Glory",
+    "purgedGlory": "Purged glory",
+    "rounds": "Rounds",
+    "viewKingdom": "View kingdom",
+    "kingdomTitle": "Final kingdom",
+    "kingdomEmpty": "No cards in the kingdom",
+    "continueCampaign": "Continue with expansion",
+    "saveScore": "Save score",
+    "descriptionEndGame": "You have reached the end of your adventure. Record your glory to compare it with your friends. You can then start a new game to improve your performance, or continue with a campaign expansion to face new challenges while keeping part of your current kingdom.",
+    "descriptionExpansion": "Once you finish the base game, you may play up to 10 different expansions, one at a time. Expansions are new chapters of your kingdom story, providing more rounds of play. They often introduce new cards and concepts that you may continue to develop even after the expansion is over. Each kingdom may only play each expansion once."
+  },
+  "campaign": {
+    "chooseExpansionTitle": "Choose an expansion",
+    "chooseExpansionDescription": "Save your score for this segment, choose one expansion, then complete the purge before the next round.",
+    "purgeTitle": "Purge your kingdom",
+    "purgeDescription": "For each batch of 12 cards, choose 1 allied card to purge. Then purge allied permanents if required.",
+    "purgeBatchLabel": "Choose one allied card from the current batch",
+    "purgePermanentLabel": "Choose one allied permanent card to purge",
+    "purgeSelected": "Cards selected for purge: {{count}}",
+    "purge": "Purge",
+    "finalizePurge": "Finalize purge",
+    "expansions": {
+      "Prosperity": {
+        "title": "Prosperity",
+        "description": "This mini expansion introduces permanent card #136 (Prosperity). It guiding you through 4 additional game rounds. You will perform a purge 12 and purge 1 permanent card. In these expansions, you do NOT discover 2 new cards at the start of the round. When done, add the score of this segment to your previous score, then choose the next expansion."
+      },
+      "The Water Mill": {
+        "title": "The Water Mill",
+        "description": "This mini expansion introduces permanent card #137 (The Water Mill). It guiding you through 4 additional game rounds. You will perform a purge 12 and purge 1 permanent card. In these expansions, you do NOT discover 2 new cards at the start of the round. When done, add the score of this segment to your previous score, then choose the next expansion."
+      },
+      "Border Dispute": {
+        "title": "Border Dispute",
+        "description": "This mini expansion introduces permanent card #138 (Border Dispute). It guiding you through 4 additional game rounds. You will perform a purge 12 and purge 1 permanent card. In these expansions, you do NOT discover 2 new cards at the start of the round. When done, add the score of this segment to your previous score, then choose the next expansion."
+      }
+    }
+  },
+  "rules": {
+    "title": "Rules",
+    "open": "Rules"
+  },
+  "stickerStock": {
+    "title": "Sticker stock",
+    "open": "Sticker stock",
+    "count": "×{{count}}",
+    "outOfStock": "Out of stock"
+  },
+  "options": {
+    "title": "Options",
+    "general": "General",
+    "theme": "Theme",
+    "theme_light": "Light",
+    "theme_dark": "Dark",
+    "theme_system": "System",
+    "language": "Language",
+    "en": "English",
+    "fr": "French",
+    "tutorial": "Enable tutorial",
+    "backHome": "Back to my kingdoms"
+  },
+  "tutorial": {
+    "pinRightColumn": "Click the pin button to show the right column. You must pin it to continue.",
+    "tooltip": {
+      "badge": "Tutorial",
+      "close": "Close",
+      "skip": "Skip",
+      "back": "Back",
+      "next": "Next",
+      "finish": "Finish"
+    },
+    "welcome": "Welcome to Deck Legacy.",
+    "goal": "Your goal is to build the strongest kingdom possible and score as much glory as you can.",
+    "interface": {
+      "board": "This is your board. Your cards in play, permanents, and goals appear here.",
+      "drawColumn": "This is your draw pile column. It shows the top card of your deck.",
+      "drawColumnMobile": "Click here to view your draw pile.",
+      "discardColumn": "This is your discard column. It shows the top card of your discard pile.",
+      "discardColumnMobile": "Click here to view your discard pile.",
+      "destroyedButton": "This button opens your destroyed cards pile. On mobile, it appears in the same bottom action bar.",
+      "header": "This header contains your main turn actions and utility buttons.",
+      "resourceBar": "This row shows round, turn, usable resources, deck/discard counters, and current glory.",
+      "stickerStock": "This button opens the available sticker stock."
+    },
+    "setup": {
+      "uniqueNumber": "Every card has a unique serial number.",
+      "startingDeck": "Your kingdom starts with cards #1 to #10. Open the deck viewer to inspect your starting set.",
+      "startingDeck2": "Here is your starting deck, it is identical for each player.",
+      "startingDeck3": "You can now close the deck viewer."
+    },
+    "gameplay": {
+      "roundFlow": "Each round consists of turns. Each turn, you play cards from the top of your deck into your play area. A turn ends when you upgrade one of your cards. When you cannot take more turns because your deck has run out of cards, the round is over. At the start of each new round (except round 1), discover the next 2 cards in serial order from the discover pile, then shuffle all your cards to form a new draw deck. Continue until you discover card #70: this is your final round. After that, count your glory for your final score. Cards above #70 can only be discovered through card effects.",
+      "availableActions": "At the start of each turn, play the top 4 cards of your deck into your play area (or all remaining cards if 1-3 are left). Then continue taking actions until the end of the turn:",
+      "production": "Produce: Discard a card to gain the resources it produces. Since you discard the card, you cannot use its effects or upgrade it this turn. Some cards don’t have production and cannot be discarded to produce. If a card is discarded by other effects, you do not get its production",
+      "upgrade": "Upgrade: Most cards have several stages, and the boxes show the cost for upgrading to a new stage. You have to pay the upgrade cost to change the card stage. When you have performed the upgrade, your turn ends.",
+      "cardActions": "Use card effect: Some cards offer additional effects. Many effects require you to discard the card, which means you cannot produce with it or upgrade it.",
+      "stickerCap": "You cannot add a sticker to a card that already produces 9 or more resources.",
+      "progress": "Advance: Play 2 more cards from the top of your deck. This is useful when the cards in play are not enough to do what you want. Reminder: you may advance multiple times! You always see the top card of the deck, but not the second card.",
+      "endTurnVoluntary": "Pass: If you have any End of Turn effects, they are performed now. Discard all cards in your play area, except cards that stay in play. Then start a new turn if there are any cards left in your deck, otherwise this is the end of the round."
+    },
+    "cardAnatomy": {
+      "overview": "This is a card. Each card has several distinct effect zones.",
+      "number": "Number. This unique number identifies the card.",
+      "name": "Name. This is the card's title.",
+      "statePreview": "State preview. These icons show the different states of the card and their upgrade costs.",
+      "tags": "Tags. Tags define traits and synergies.",
+      "production": "Production. Use it to gain resources.",
+      "passive": "Passive. Passive effects apply continuously when relevant.",
+      "action": "Action. Trigger card effects from here. Effects are always preceded by an effect icon : - {{action}} : Activated effect: You may discard the card to carry out this effect. - {{time}} : Time effect: You may discard the card (unless it is permanent) and end your turn to carry out this effect. - {{passif}} : Passive effect: This effect always applies, or may be used repeatedly. - {{destroy}} : Destroy effect: You may destroy the card to carry out this effect. - {{optionalTrigger}} : Triggered Optional Effect: This effect may be used when it is triggered (specified by the effect, e.g. “End of Turn”). It doesn’t discard the card unless it says so. - {{trigger}}: Triggered Forced Effect: Same as above, but this effect is not optional, it must be performed.",
+      "upgrade": "Upgrade. Upgrading evolves your card and usually ends the turn."
+    },
+    "end": "This concludes the tutorial. You can replay it anytime on the home page. You can also click the rules button to review the full rules at any time. Good luck building your kingdom!"
+  },
+  "cheatPanel": {
+    "title": "Cheat panel",
+    "gameStarted": "Game started",
+    "roundStarted": "Round {{round}} started",
+    "turnStarted": "Turn {{turn}} — {{count}} card drawn",
+    "turnStarted_other": "Turn {{turn}} — {{count}} cards drawn",
+    "turnEnded": "Turn ended",
+    "cardProduced": "{{card}} produced",
+    "advance": "Advance — {{count}} card",
+    "advance_other": "Advance — {{count}} cards",
+    "upgradeCard": "{{card}} upgraded",
+    "cardAction": "{{card}} action",
+    "skipTrigger": "Trigger skipped",
+    "chooseState": "State chosen",
+    "roundEnded": "Round {{round}} ended"
+  },
+  "account": {
+    "title": "Account",
+    "guestStatus": "You are playing as a guest.",
+    "signedInAs": "Signed in as {{email}}.",
+    "displayName": "Display name (shown on the leaderboard)",
+    "displayNamePlaceholder": "Your name",
+    "save": "Save",
+    "saved": "Saved.",
+    "keepProgressHint": "Create an account to keep your kingdoms on every device and appear on the leaderboard.",
+    "email": "Email",
+    "accountCreated": "Account created.",
+    "signInHint": "Signing in switches to that account: games played as a guest stay on the guest account.",
+    "password": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "signIn": "Sign in",
+    "createAccount": "Create an account",
+    "signOut": "Sign out",
+    "unavailable": "Accounts are not available in this version: games are saved on this device.",
+    "offline": "No connection: your game is saved on this device. Your account will be available once you are back online.",
+    "changePassword": "Change password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm the new password",
+    "passwordMismatch": "The passwords do not match.",
+    "passwordStrength": {
+      "label": "Password strength",
+      "summary": "Strength: {{strength}}",
+      "empty": "None",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
+    },
+    "passwordRules": {
+      "length": "At least {{min}} characters",
+      "lowercase": "A lowercase letter",
+      "uppercase": "An uppercase letter",
+      "digit": "A digit"
+    },
+    "passwordChanged": "Password changed.",
+    "deleteTitle": "Delete my account",
+    "deleteHint": "Your account, your kingdoms and your scores are deleted for good.",
+    "deleteButton": "Delete my account",
+    "deleteConfirm": "Delete the account {{email}}? Your kingdoms and scores will be deleted on every device. This cannot be undone.",
+    "deleteConfirmButton": "Delete for good",
+    "deleted": "Your account has been deleted."
+  },
+  "sync": {
+    "signedOut": "Games are saved on this device only.",
+    "syncing": "Saving online…",
+    "synced": "Your game is saved online.",
+    "pending": "Changes waiting to be saved online.",
+    "offline": "Offline: your game is saved on this device and will be saved online later.",
+    "rejected": "The server could not validate this game: it is only saved on this device.",
+    "limited": "Kingdom limit reached: this kingdom is only saved on this device."
+  },
+  "home": {
+    "welcomeTitle": "Welcome",
+    "welcomeText": "Sign in to keep up to 10 kingdoms on every device and appear on the leaderboard, or play on this device only.",
+    "playOffline": "Play without an account",
+    "playOfflineHint": "Without an account you can keep one kingdom, saved on this device. You can sign in later.",
+    "kingdoms": "My kingdoms",
+    "kingdomCount": "{{count}} / {{max}} kingdoms",
+    "limitReached": "You have reached the maximum of 10 kingdoms. Delete one to found a new kingdom.",
+    "limitReachedGuest": "Without an account you can keep one kingdom. Sign in to found up to 10 kingdoms.",
+    "empty": "You have no kingdom yet. Found your first kingdom to start playing.",
+    "table": {
+      "name": "Kingdom",
+      "total": "Total",
+      "base": "Base game",
+      "expansion": "Expansion {{number}}"
+    }
+  },
+  "kingdom": {
+    "defaultName": "My kingdom",
+    "new": "+ New kingdom",
+    "newTitle": "Found a new kingdom",
+    "nameLabel": "Name of the kingdom",
+    "namePlaceholder": "e.g. Avalon",
+    "rulesHint": "New to the game? Read the rules before you start.",
+    "validate": "Found the kingdom",
+    "cancel": "Cancel",
+    "open": "Play {{name}}",
+    "delete": "Delete {{name}}",
+    "deleteTitle": "Delete the kingdom",
+    "deleteConfirm": "Delete “{{name}}”? Its game will be deleted on every device.",
+    "deleteConfirmButton": "Delete"
+  }
+}

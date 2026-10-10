@@ -1,0 +1,43 @@
+import { Button } from '@components/ui/Button/Button';
+import { EmptyState } from '@components/ui/EmptyState/EmptyState';
+import type { Meta, StoryObj } from '@storybook/react-native';
+
+const meta: Meta<typeof EmptyState> = {
+  title: 'UI/EmptyState',
+  component: EmptyState,
+  parameters: {
+    layout: 'centered',
+  },
+  argTypes: {
+    title: { control: 'text' },
+    subtitle: { control: 'text' },
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof EmptyState>;
+
+export const Default: Story = {
+  args: {
+    title: 'Aucune carte',
+  },
+};
+
+export const WithSubtitle: Story = {
+  args: {
+    title: 'Défausse vide',
+    subtitle: "Vous n'avez pas encore défaussé de cartes.",
+  },
+};
+
+export const WithAction: Story = {
+  args: {
+    title: 'Deck vide',
+    subtitle: 'Votre deck est épuisé. Commencez une nouvelle partie ?',
+    action: (
+      <Button color="primary" onPress={() => {}}>
+        Nouvelle partie
+      </Button>
+    ),
+  },
+};

@@ -1,0 +1,75 @@
+import { ButtonGroup } from '@components/ui/ButtonGroup/ButtonGroup';
+import type { Meta, StoryObj } from '@storybook/react-native';
+import { View } from 'react-native';
+
+const meta: Meta<typeof ButtonGroup> = {
+  title: 'UI/ButtonGroup',
+  component: ButtonGroup,
+  parameters: {
+    layout: 'centered',
+  },
+  argTypes: {
+    font: {
+      control: 'inline-radio',
+      options: ['display', 'body'],
+    },
+    onChange: { action: 'changed' },
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof ButtonGroup>;
+
+export const Default: Story = {
+  args: {
+    label: 'Langue',
+    value: 'fr',
+    options: [
+      { value: 'fr', children: 'FR' },
+      { value: 'en', children: 'EN' },
+    ],
+  },
+};
+
+export const ThreeOptions: Story = {
+  args: {
+    label: 'Thème',
+    value: 'dark',
+    options: [
+      { value: 'light', children: 'Clair' },
+      { value: 'dark', children: 'Sombre' },
+      { value: 'auto', children: 'Auto' },
+    ],
+  },
+};
+
+export const SmallSize: Story = {
+  args: {
+    label: 'Taille',
+    value: 'sm',
+    options: [
+      { value: 'sm', children: 'SM' },
+      { value: 'md', children: 'MD' },
+      { value: 'lg', children: 'LG' },
+    ],
+  },
+};
+
+export const AllSizes: Story = {
+  render: () => (
+    <View className="gap-6">
+      {(['xs', 'sm', 'md', 'lg'] as const).map(size => (
+        <ButtonGroup
+          key={size}
+          size={size}
+          label={`Taille : ${size}`}
+          value="a"
+          options={[
+            { value: 'a', children: 'Option A' },
+            { value: 'b', children: 'Option B' },
+          ]}
+        />
+      ))}
+    </View>
+  ),
+};

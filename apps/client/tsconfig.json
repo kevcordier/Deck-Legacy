@@ -1,0 +1,28 @@
+{
+  "extends": ["expo/tsconfig.base", "../../tsconfig.base.json"],
+  "compilerOptions": {
+    "customConditions": ["react-native", "source"],
+    "types": ["node"],
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@contexts/*": ["./src/contexts/*"],
+      "@data/*": ["./src/data/*"],
+      "@helpers/*": ["./src/helpers/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@services/*": ["./src/services/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@assets/*": ["./assets/*"]
+    }
+  },
+  "include": [
+    "index.ts",
+    "nativewind-env.d.ts",
+    "src/**/*",
+    "tests/**/*",
+    "stories/**/*",
+    ".rnstorybook/**/*",
+    "vitest.config.mts"
+  ],
+  "exclude": ["node_modules", "dist", "coverage", "android", "ios"]
+}

@@ -1,0 +1,99 @@
+import {
+  ActionEffectType,
+  CardTag,
+  ResourceType,
+  TargetScope,
+  Trigger,
+} from '@deck-legacy/engine/domain/enums';
+import type { CardDef } from '@deck-legacy/engine/domain/types';
+
+export const skilledBandit2: CardDef = {
+  id: 54,
+  name: 'Skilled Bandit',
+  states: [
+    {
+      id: 1,
+      name: 'Skilled Bandit',
+      tags: [CardTag.ENEMY, CardTag.BANDIT],
+      negative: true,
+      glory: { amount: -2 },
+      illustration: 'cards/54_1.jpg',
+      actions: [
+        {
+          id: '54-1-1',
+          trigger: Trigger.ON_PLAY,
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.BLOCK_CARD,
+              cards: {
+                scope: [TargetScope.BOARD],
+                produces: [
+                  ResourceType.GOLD,
+                  ResourceType.WOOD,
+                  ResourceType.STONE,
+                  ResourceType.IRON,
+                  ResourceType.WEAPON,
+                  ResourceType.GOODS,
+                ],
+                pickNumber: 3,
+              },
+            },
+          ],
+        },
+        {
+          id: '54-1-2',
+          cost: {
+            resources: [
+              {
+                [ResourceType.WEAPON]: 3,
+              },
+            ],
+            destroy: { scope: [TargetScope.SELF] },
+          },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.ADD_RESOURCES,
+              resources: {
+                choice: [{ any: 1 }],
+              },
+              repeat: 3,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Worker',
+      tags: [CardTag.PERSON],
+      illustration: 'cards/54_2.jpg',
+      actions: [
+        {
+          id: '54-2-1',
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.ADD_RESOURCES,
+              resources: {
+                cards: {
+                  scope: [TargetScope.BOARD],
+                  tags: [CardTag.LAND],
+                  produces: [
+                    ResourceType.GOLD,
+                    ResourceType.WOOD,
+                    ResourceType.STONE,
+                    ResourceType.IRON,
+                    ResourceType.WEAPON,
+                    ResourceType.GOODS,
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};

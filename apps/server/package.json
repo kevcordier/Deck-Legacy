@@ -1,0 +1,44 @@
+{
+  "name": "@deck-legacy/server",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Deck-Legacy API: accounts, game sync (event logs replayed for validation), scores and leaderboard.",
+  "scripts": {
+    "build": "pnpm prisma:generate && nest build -p tsconfig.build.json",
+    "dev": "pnpm --filter \"@deck-legacy/server^...\" build && pnpm prisma:generate && nest start --watch -p tsconfig.build.json",
+    "start": "node dist/main.js",
+    "typecheck": "pnpm prisma:generate && tsc --noEmit",
+    "test": "pnpm prisma:generate && vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "pnpm prisma:generate && vitest run --coverage",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy"
+  },
+  "dependencies": {
+    "@deck-legacy/api-contract": "workspace:*",
+    "@deck-legacy/engine": "workspace:*",
+    "@deck-legacy/game-data": "workspace:*",
+    "@nestjs/common": "^11.2.7",
+    "@nestjs/core": "^11.2.7",
+    "@nestjs/platform-express": "^11.2.7",
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "dotenv": "^17.2.3",
+    "jose": "^6.2.12",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.24",
+    "@nestjs/schematics": "^11.1.0",
+    "@nestjs/testing": "^11.2.7",
+    "@swc/core": "^1.16.13",
+    "@types/express": "^5.0.6",
+    "@types/supertest": "^7.2.1",
+    "prisma": "^7.10.0",
+    "supertest": "^7.3.1",
+    "unplugin-swc": "^2.0.0"
+  }
+}

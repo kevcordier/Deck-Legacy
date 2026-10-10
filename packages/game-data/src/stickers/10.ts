@@ -1,0 +1,7 @@
+import type { Sticker } from '@deck-legacy/engine/domain/types';
+
+export const glory5: Sticker = {
+  id: 10,
+  label: '+5 Glory',
+  glory: 5,
+};

@@ -1,0 +1,6 @@
+# Code owners — https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Every merge into `main` requires the maintainer's review and approval (EDR-037).
+# Enforced when the `main` branch protection rule enables "Require review from Code Owners".
+
+* @kevcordier

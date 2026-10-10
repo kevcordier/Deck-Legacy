@@ -2,22 +2,47 @@
 /** @type {import('dependency-cruiser').IConfiguration} */
 module.exports = {
   forbidden: [
-    // ── Domain must be self-contained ────────────────────────────────────────
+    // ── Engine: Clean Architecture layers ────────────────────────────────────
     {
       name: 'domain-self-contained',
-      comment: 'Domain layer must not import from Other layers',
+      comment: 'Domain layer must not import from other layers',
       severity: 'error',
-      from: { path: '^src/engine/domain' },
-      to: { pathNot: '^src/engine/domain' },
+      from: { path: '^packages/engine/src/domain' },
+      to: { pathNot: '^packages/engine/src/domain' },
+    },
+    {
+      name: 'application-only-domain',
+      comment: 'Application layer may only import itself and the domain',
+      severity: 'error',
+      from: { path: '^packages/engine/src/application' },
+      to: { pathNot: '^packages/engine/src/(application|domain)' },
     },
 
-    // ── Application must not reach into Infrastructure ────────────────────────
+    // ── Packages never depend on apps ────────────────────────────────────────
     {
-      name: 'application-no-import-from-other-than-domain',
-      comment: 'Application layer must not import from Other layers except domain',
+      name: 'packages-not-apps',
+      comment: 'Shared packages must not import application code',
       severity: 'error',
-      from: { path: '^src/engine/application', pathNot: '__tests__' },
-      to: { pathNot: '^src/engine/(application|domain)' },
+      from: { path: '^packages/' },
+      to: { path: '^apps/' },
+    },
+
+    // ── Game data only describes cards ───────────────────────────────────────
+    {
+      name: 'game-data-only-domain',
+      comment: 'Card definitions may only use engine domain types and enums',
+      severity: 'error',
+      from: { path: '^packages/game-data/src' },
+      to: { pathNot: '^packages/(game-data|engine/src/domain)/' },
+    },
+
+    // ── Apps share code only through packages ────────────────────────────────
+    {
+      name: 'apps-isolated',
+      comment: 'Client and server only communicate over HTTP (shared code lives in packages/)',
+      severity: 'error',
+      from: { path: '^apps/(client|server)/' },
+      to: { path: '^apps/(client|server)/', pathNot: '^apps/$1/' },
     },
   ],
 
@@ -25,12 +50,17 @@ module.exports = {
     doNotFollow: {
       path: 'node_modules',
     },
+    exclude: {
+      path: ['node_modules', '/dist/', 'apps/server/src/generated'],
+    },
+    tsPreCompilationDeps: true,
     tsConfig: {
-      fileName: 'tsconfig.json',
+      fileName: 'tsconfig.depcruise.json',
     },
     enhancedResolveOptions: {
       exportsFields: ['exports'],
-      conditionNames: ['import', 'require', 'node', 'default'],
+      conditionNames: ['source', 'import', 'require', 'node', 'default'],
+      extensions: ['.ts', '.tsx', '.js', '.mjs', '.cjs', '.json'],
     },
     reporterOptions: {
       text: {

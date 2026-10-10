@@ -1,0 +1,23 @@
+{
+  "//": "Path aliases of every workspace, used by dependency-cruiser to resolve imports.",
+  "compilerOptions": {
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "customConditions": ["source"],
+    "allowJs": true,
+    "noEmit": true,
+    "paths": {
+      "@components/*": ["./apps/client/src/components/*"],
+      "@contexts/*": ["./apps/client/src/contexts/*"],
+      "@data/*": ["./apps/client/src/data/*"],
+      "@helpers/*": ["./apps/client/src/helpers/*"],
+      "@hooks/*": ["./apps/client/src/hooks/*"],
+      "@pages/*": ["./apps/client/src/pages/*"],
+      "@services/*": ["./apps/client/src/services/*"],
+      "@styles/*": ["./apps/client/src/styles/*"],
+      "@assets/*": ["./apps/client/assets/*"],
+      "@engine/*": ["./packages/engine/src/*"]
+    }
+  },
+  "include": ["apps/*/src/**/*", "packages/*/src/**/*"]
+}

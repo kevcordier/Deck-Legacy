@@ -34,27 +34,85 @@ jobs:
         uses: actions/checkout@v4
       - name: 🏗️ Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version-file: .nvmrc
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Build
-        run: pnpm build
+      - name: Build web client
+        run: pnpm build:client
+        env:
+          EXPO_PUBLIC_API_URL: ${{ vars.API_URL }}
+          EXPO_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          EXPO_PUBLIC_SUPABASE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          # Upload dist folder
-          path: './dist'
+          # Upload the Expo web export
+          path: './apps/client/dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  deploy-api:
+    name: Deploy API
+    needs: ci
+    # Required reviewers on this environment = maintainer approval before prisma:deploy (rule 9).
+    environment: production
+    permissions:
+      contents: read
+      id-token: write # Workload Identity Federation, no Google key stored in GitHub
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/deck-legacy/api:${{ github.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: 🏗️ Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'pnpm'
+      - name: Install server dependencies
+        run: pnpm install --frozen-lockfile --filter @deck-legacy/server
+      # Migrations run before the new revision, so it never starts on an older schema.
+      - name: Apply database migrations (Supabase)
+        run: pnpm --filter @deck-legacy/server prisma:deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v3
+      - name: Build and push image
+        run: |
+          gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev --quiet
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v3
+        with:
+          service: deck-legacy-api
+          region: ${{ vars.GCP_REGION }}
+          image: ${{ env.IMAGE }}
+          # max-instances=1: the sync lock is in memory (EDR-029, EDR-035).
+          flags: --max-instances=1 --min-instances=0 --allow-unauthenticated
+          env_vars: |
+            NODE_ENV=production
+            SUPABASE_URL=${{ vars.SUPABASE_URL }}
+            CORS_ORIGINS=https://kevcordier.github.io
+          secrets: |
+            DATABASE_URL=deck-legacy-database-url:latest
+            SUPABASE_SERVICE_ROLE_KEY=deck-legacy-supabase-service-role-key:latest
 
   sonarqube:
     name: SonarQube
@@ -64,12 +122,10 @@ jobs:
         uses: actions/checkout@v4
       - name: 🏗️ Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version-file: .nvmrc
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
