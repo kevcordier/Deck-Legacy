@@ -200,8 +200,8 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1(eslint@10.11.0(jiti@1.21.7)(supports-color@8.1.1))
       eslint-plugin-storybook:
-        specifier: 10.3.6
-        version: 10.3.6(eslint@10.11.0(jiti@1.21.7)(supports-color@8.1.1))(storybook@10.6.0(@types/react@19.2.18)(prettier@3.9.8)(react@19.2.3))(supports-color@8.1.1)(typescript@6.0.3)
+        specifier: 10.6.1
+        version: 10.6.1(eslint@10.11.0(jiti@1.21.7)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
       globals:
         specifier: ^17.12.0
         version: 17.12.0
@@ -4138,11 +4138,10 @@ packages:
     peerDependencies:
       eslint: ^8.0.0 || ^9.0.0 || ^10.0.0
 
-  eslint-plugin-storybook@10.3.6:
-    resolution: {integrity: sha512-8udrL+Rmp5LFaZvgRe4J226X1MYls25bWCyHuzR5X8s2qbFTryX+wKC+o/0Ato4A1AvwnDg8OOMPc6yWJ9JpcA==}
+  eslint-plugin-storybook@10.6.1:
+    resolution: {integrity: sha512-XBmXuQcI0wzxMYc0rWKIiydvUxgS+GzLesO1YK1adnj97LhMqqsnlalbM+nXfQo1JoH2F2CI12sAH9/dAC99Dw==}
     peerDependencies:
       eslint: '>=8'
-      storybook: ^10.3.6
 
   eslint-scope@5.1.1:
     resolution: {integrity: sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw==}
@@ -11446,11 +11445,11 @@ snapshots:
       typescript: 6.0.3
       yaml: 2.9.1
 
-  eslint-plugin-storybook@10.3.6(eslint@10.11.0(jiti@1.21.7)(supports-color@8.1.1))(storybook@10.6.0(@types/react@19.2.18)(prettier@3.9.8)(react@19.2.3))(supports-color@8.1.1)(typescript@6.0.3):
+  eslint-plugin-storybook@10.6.1(eslint@10.11.0(jiti@1.21.7)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3):
     dependencies:
+      '@typescript-eslint/types': 8.70.0
       '@typescript-eslint/utils': 8.70.0(eslint@10.11.0(jiti@1.21.7)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
       eslint: 10.11.0(jiti@1.21.7)(supports-color@8.1.1)
-      storybook: 10.6.0(@types/react@19.2.18)(prettier@3.9.8)(react@19.2.3)
     transitivePeerDependencies:
       - supports-color
       - typescript
