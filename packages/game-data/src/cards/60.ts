@@ -1,0 +1,59 @@
+import { ActionEffectType, CardTag, TargetScope } from '@deck-legacy/engine/domain/enums';
+import type { CardDef } from '@deck-legacy/engine/domain/types';
+
+export const royalVisit: CardDef = {
+  id: 60,
+  name: 'Royal Visit',
+  chooseState: [1, 2],
+  states: [
+    {
+      id: 1,
+      name: 'Royal Visit',
+      tags: [CardTag.EVENT],
+      illustration: 'cards/60_1.jpg',
+      glory: { amount: 2 },
+      actions: [
+        {
+          id: '60-1-1',
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+              cards: {
+                scope: [TargetScope.BOARD, TargetScope.UPGRADABLE],
+              },
+              resources: {
+                choice: [{ any: 1 }],
+              },
+              resourceScopes: ['upgradeCost'],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Inquisitor',
+      tags: [CardTag.PERSON],
+      illustration: 'cards/60_2.jpg',
+      productions: [{ gold: 1 }],
+      actions: [
+        {
+          id: '60-2-1',
+          cost: {
+            destroy: { scope: [TargetScope.SELF] },
+          },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.DESTROY_CARD,
+              cards: {
+                scope: [TargetScope.ENEMY, TargetScope.BOARD],
+              },
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};

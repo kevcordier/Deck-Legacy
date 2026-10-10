@@ -3,7 +3,7 @@
 [![Code quality checks and tests](https://github.com/kevcordier/Deck-Legacy/actions/workflows/ci.yml/badge.svg)](https://github.com/kevcordier/Deck-Legacy/actions/workflows/ci.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kevcordier_Deck-Legacy&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=kevcordier_Deck-Legacy)
 
-A browser-based single-player deck-building card game with a medieval theme. Build and evolve your deck across multiple rounds, manage resources, and maximize your Glory score.
+A single-player deck-building card game for web, iOS and Android, with a medieval theme. Build and evolve your deck across multiple rounds, manage resources, and maximize your Glory score.
 
 **[Play now](https://kevcordier.github.io/Deck-Legacy/)**
 
@@ -33,76 +33,90 @@ Maximize **Glory** points across all rounds by discovering, upgrading, and chain
 
 ## Getting Started
 
-**Requirements:** Node.js v20 (see `.nvmrc`)
+**Requirements:** Node.js v24 (see `.nvmrc`), pnpm (version pinned in `package.json`), Docker for the local database, and a [Supabase](https://supabase.com) project for authentication (anonymous sign-ins enabled).
 
 ```bash
-# Install dependencies
+# Install dependencies for every workspace
 pnpm install
 
-# Start the development server (hot reload)
+# Start PostgreSQL and create the schema
+pnpm db:up
+cp apps/server/.env.example apps/server/.env   # then fill SUPABASE_URL
+pnpm db:migrate
+
+# Configure the client
+cp apps/client/.env.example apps/client/.env   # API URL + Supabase URL and publishable key
+
+# Start the API (port 3000) and the Expo dev server together
 pnpm dev
 ```
 
-Open [http://localhost:5173/Deck-Legacy/](http://localhost:5173/Deck-Legacy/) in your browser.
+In the Expo terminal, press `w` for the web version ([http://localhost:8081/Deck-Legacy/](http://localhost:8081/Deck-Legacy/)), `i` for the iOS simulator or `a` for Android. If port 8081 is busy, `pnpm dev` picks the next free one (or set `EXPO_PORT`).
 
 ### Available Scripts
 
-| Command              | Description                          |
-| -------------------- | ------------------------------------ |
-| `pnpm dev`           | Development server with hot reload   |
-| `pnpm build`         | Production build (`dist/`)           |
-| `pnpm test`          | Run unit tests once                  |
-| `pnpm test:watch`    | Run tests in watch mode              |
-| `pnpm test:coverage` | Coverage report for the engine layer |
-| `pnpm lint`          | ESLint (zero-warning policy)         |
-| `pnpm lint:fix`      | Auto-fix ESLint violations           |
-| `pnpm typecheck`     | TypeScript check without emit        |
-| `pnpm format`        | Prettier format `src/`               |
-| `pnpm storybook`     | Component explorer on port 6008      |
+Run from the repository root:
+
+| Command               | Description                                           |
+| --------------------- | ----------------------------------------------------- |
+| `pnpm dev`            | API server and Expo dev server, with hot reload       |
+| `pnpm dev:server`     | API server only                                       |
+| `pnpm dev:client`     | Expo dev server only                                  |
+| `pnpm db:up` / `down` | Start / stop the local PostgreSQL container           |
+| `pnpm db:migrate`     | Apply Prisma migrations (development)                 |
+| `pnpm build`          | Build every workspace (packages, server, web export)  |
+| `pnpm test`           | Run all unit tests                                    |
+| `pnpm test:coverage`  | Tests with coverage (engine and server thresholds)    |
+| `pnpm lint`           | ESLint (zero-warning policy)                          |
+| `pnpm typecheck`      | TypeScript check of every workspace                   |
+| `pnpm format`         | Prettier                                              |
+| `pnpm depcruise`      | Architecture rules (dependency-cruiser)               |
+| `pnpm verify`         | Format, lint, typecheck, architecture rules and tests |
+
+Storybook runs from the client: `pnpm --filter @deck-legacy/client storybook`.
+
+The game is playable without the API or Supabase (offline, saved on the device); they are only needed for accounts, cross-device sync and the leaderboard.
 
 ---
 
 ## Tech Stack
 
-- **React 19** — UI framework
-- **TypeScript 5** — Strict mode throughout
-- **Vite 6** — Build tool
-- **Vitest** — Unit testing with v8 coverage
-- **i18next** — Internationalization (English & French)
-- **Storybook 8** — Component documentation
-- **ESLint + Prettier** — Code quality
-
-No backend. All game logic runs client-side; save data is stored in `localStorage`.
+- **pnpm workspaces** — one repository, two apps and two shared packages
+- **React Native 0.86 + Expo SDK 57** — iOS, Android and web (react-native-web) from one codebase
+- **NativeWind 4** — Tailwind CSS classes for React Native
+- **NestJS 11** — API server: accounts, game sync (validated by replaying the engine), scores
+- **PostgreSQL + Prisma 7** — users, game event logs and scores
+- **Supabase Auth** — guest (anonymous) sessions, upgradable to email accounts
+- **TypeScript** — strict mode throughout
+- **Vitest** — unit and end-to-end tests with v8 coverage
+- **i18next** — internationalization (English & French)
+- **Storybook for React Native 10** — on-device component explorer
 
 ---
 
 ## Architecture
 
-The codebase follows Clean Architecture / Domain-Driven Design with three explicit layers:
-
 ```text
-src/
-├── engine/
-│   ├── domain/          # Pure types, enums, interfaces — zero logic
-│   ├── application/     # Use cases, business logic, event sourcing
-│   └── infrastructure/  # localStorage persistence, data loaders
-├── components/          # React UI components (feature folders)
-├── contexts/            # React contexts (GameContext, GameUIContext, providers)
-├── hooks/               # Custom React hooks (useGame integration point)
-├── data/
-│   ├── cards/           # One file per card + index.ts
-│   ├── stickers/        # One file per sticker + index.ts
-│   ├── deck.json        # Initial deck composition
-│   ├── stickerStock.json# Initial sticker stock
-│   └── locales/         # EN/FR locale files
-└── styles/              # Global CSS
-stories/                 # Storybook stories (top-level)
-tests/                   # Unit tests (top-level)
+apps/
+├── client/              # Expo app: game provider, local save + sync, components, stories, locales
+│   └── assets/cards/    # Card illustrations (bundled for offline play)
+└── server/              # NestJS API
+    ├── src/games/       # Game sync: validation by replay, event store
+    ├── src/auth/        # Supabase token verification (global guard)
+    ├── src/users/       # Player profiles
+    ├── src/scores/      # Final scores and leaderboard
+    └── prisma/          # Database schema and migrations
+packages/
+├── engine/              # Game engine: domain + application layers, GameSession (event sourcing)
+├── game-data/           # Card, sticker and deck definitions
+└── api-contract/        # HTTP contract: zod schemas and DTO types
 ```
 
-**Event Sourcing** — The entire game state is derived by replaying an ordered list of `GameEvent` objects. Nothing is mutated directly; the undo feature comes for free.
+**Local-first** — The engine runs on the device: every action is executed locally and the event log is saved on the device, so the game works offline. When online, the log is synced to the server (`PUT /games/:id`), which replays it with the same engine to validate it, stores it in PostgreSQL and records final scores. A game can be resumed on another device signed in to the same account.
 
-**Strategy Pattern** — Each card action type (AddResource, Upgrade, Destroy, etc.) is an independent strategy, making new mechanics easy to add.
+**Event Sourcing** — The game state is derived by replaying an ordered list of `GameEvent` objects. Nothing is mutated directly; undo pops the last event.
+
+**Accounts** — Players start as Supabase guests (as soon as a connection is available). Linking an email keeps their games across devices and ranks their final scores on the leaderboard.
 
 For full architectural details, see [CLAUDE.md](./CLAUDE.md).
 
@@ -112,8 +126,8 @@ For full architectural details, see [CLAUDE.md](./CLAUDE.md).
 
 The full game rules are available in both languages:
 
-- [Rules (English)](src/data/locales/rules.en.md)
-- [Règles (Français)](src/data/locales/rules.fr.md)
+- [Rules (English)](apps/client/src/data/locales/rules.en.md)
+- [Règles (Français)](apps/client/src/data/locales/rules.fr.md)
 
 In-game, click the **Rules** button in the header to open the rules modal at any time.
 
@@ -121,17 +135,19 @@ In-game, click the **Rules** button in the header to open the rules modal at any
 
 ## Localization
 
-The UI is fully localized in **English** and **French**. Language preference is saved to `localStorage`. Locale files are in `src/data/locales/`.
+The UI is fully localized in **English** and **French**. Language preference is saved in the app storage. Locale files are in `apps/client/src/data/locales/`.
 
 ---
 
 ## Deployment
 
-The game is deployed to **GitHub Pages** via a CI/CD pipeline that runs on every push to `main`:
+The web client is deployed to **GitHub Pages** via a CI/CD pipeline that runs on every push to `main`:
 
-1. Lint → Typecheck → Format check → Tests
-2. `vite build` → `dist/`
+1. Lint → Typecheck → Format check → Architecture rules → Tests → Server build
+2. `expo export --platform web` → `apps/client/dist/`, using the `API_URL`, `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` repository variables
 3. Deploy to `https://kevcordier.github.io/Deck-Legacy/`
+
+The API server is not deployed by the pipeline yet: build it with `pnpm build:server`, run `pnpm --filter @deck-legacy/server prisma:deploy`, then `node apps/server/dist/main.js` with the variables of `apps/server/.env.example`.
 
 ---
 

@@ -10,8 +10,7 @@
   "endOfLine": "lf",
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
-  "plugins": [
-    "prettier-plugin-tailwindcss",
-    "@trivago/prettier-plugin-sort-imports"
-  ]
+  "plugins": ["prettier-plugin-tailwindcss", "@trivago/prettier-plugin-sort-imports"],
+  "tailwindConfig": "./apps/client/tailwind.config.js",
+  "importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy"]
 }

@@ -1,0 +1,244 @@
+import type { Prisma } from '../generated/prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
+import type { CampaignSegmentScore, GameSummary } from '@deck-legacy/api-contract';
+import type { GameEvent } from '@deck-legacy/engine/domain/types';
+import { ConflictException, Injectable } from '@nestjs/common';
+
+export type GameMeta = {
+  userId: string;
+  version: number;
+};
+
+export type StoredGame = {
+  id: string;
+  userId: string;
+  name: string;
+  cardNames: Record<string, string>;
+  events: GameEvent[];
+  updatedAt: Date;
+};
+
+export type GameSnapshot = {
+  name: string;
+  cardNames: Record<string, string>;
+  score: number;
+  segments: CampaignSegmentScore[];
+  finished: boolean;
+  events: GameEvent[];
+};
+
+export type Transaction = Prisma.TransactionClient;
+
+type GameRow = {
+  id: string;
+  name: string;
+  version: number;
+  score: number;
+  segments: Prisma.JsonValue;
+  status: string;
+  updatedAt: Date;
+  _count: { events: number };
+};
+
+function toCardNames(value: Prisma.JsonValue): Record<string, string> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return {};
+  const names: Record<string, string> = {};
+  for (const [key, name] of Object.entries(value)) {
+    if (typeof name === 'string') names[key] = name;
+  }
+  return names;
+}
+
+function toSegments(value: Prisma.JsonValue): CampaignSegmentScore[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap(item => {
+    if (typeof item !== 'object' || item === null || Array.isArray(item)) return [];
+    const { segment, score } = item;
+    return typeof segment === 'string' && typeof score === 'number' ? [{ segment, score }] : [];
+  });
+}
+
+function eventRows(gameId: string, events: GameEvent[], fromSeq: number) {
+  return events.slice(fromSeq).map((event, index) => ({
+    gameId,
+    seq: fromSeq + index,
+    eventId: event.id,
+    type: event.type,
+    payload: event as unknown as Prisma.InputJsonValue,
+  }));
+}
+
+function toSummary(row: GameRow): GameSummary {
+  return {
+    id: row.id,
+    name: row.name,
+    version: row.version,
+    eventCount: row._count.events,
+    score: row.score,
+    segments: toSegments(row.segments),
+    finished: row.status === 'FINISHED',
+    updatedAt: row.updatedAt.toISOString(),
+  };
+}
+
+/** Refuses a new (or revived) kingdom once the player has `limit` non-abandoned games. */
+async function assertBelowLimit(tx: Transaction, userId: string, limit: number): Promise<void> {
+  const kingdoms = await tx.game.count({
+    where: { userId, status: { in: ['ACTIVE', 'FINISHED'] } },
+  });
+  if (kingdoms >= limit) {
+    throw new ConflictException({ code: 'KINGDOM_LIMIT', message: 'errors.kingdomLimit' });
+  }
+}
+
+const SUMMARY_SELECT = {
+  id: true,
+  name: true,
+  version: true,
+  score: true,
+  segments: true,
+  status: true,
+  updatedAt: true,
+  _count: { select: { events: true } },
+} as const;
+
+@Injectable()
+export class GamesRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
+  /** Latest non-abandoned game of a player. */
+  async findCurrent(userId: string): Promise<GameSummary | null> {
+    const row = await this.prisma.game.findFirst({
+      where: { userId, status: { in: ['ACTIVE', 'FINISHED'] } },
+      orderBy: { updatedAt: 'desc' },
+      select: SUMMARY_SELECT,
+    });
+    return row ? toSummary(row) : null;
+  }
+
+  /** Non-abandoned games (kingdoms) of a player, most recently synced first. */
+  async list(userId: string): Promise<GameSummary[]> {
+    const rows = await this.prisma.game.findMany({
+      where: { userId, status: { in: ['ACTIVE', 'FINISHED'] } },
+      orderBy: { updatedAt: 'desc' },
+      select: SUMMARY_SELECT,
+    });
+    return rows.map(toSummary);
+  }
+
+  async getSummary(gameId: string): Promise<GameSummary> {
+    return toSummary(
+      await this.prisma.game.findUniqueOrThrow({ where: { id: gameId }, select: SUMMARY_SELECT }),
+    );
+  }
+
+  /** Owner and version of a game, whatever its status. */
+  async getMeta(gameId: string): Promise<GameMeta | null> {
+    return this.prisma.game.findUnique({
+      where: { id: gameId },
+      select: { userId: true, version: true },
+    });
+  }
+
+  async getEventIds(gameId: string): Promise<string[]> {
+    const rows = await this.prisma.gameEvent.findMany({
+      where: { gameId },
+      orderBy: { seq: 'asc' },
+      select: { eventId: true },
+    });
+    return rows.map(row => row.eventId);
+  }
+
+  /** Full game for export; abandoned games are hidden. */
+  async load(gameId: string): Promise<StoredGame | null> {
+    const game = await this.prisma.game.findUnique({
+      where: { id: gameId },
+      include: { events: { orderBy: { seq: 'asc' }, select: { payload: true } } },
+    });
+    if (!game || game.status === 'ABANDONED') return null;
+    return {
+      id: game.id,
+      userId: game.userId,
+      name: game.name,
+      cardNames: toCardNames(game.cardNames),
+      events: game.events.map(row => row.payload as unknown as GameEvent),
+      updatedAt: game.updatedAt,
+    };
+  }
+
+  /**
+   * Creates a game (a new kingdom). Refused with `KINGDOM_LIMIT` when the player already has
+   * `limit` non-abandoned games.
+   */
+  async create(
+    gameId: string,
+    userId: string,
+    limit: number,
+    snapshot: GameSnapshot,
+    afterWrite?: (tx: Transaction) => Promise<void>,
+  ): Promise<void> {
+    await this.prisma.$transaction(async tx => {
+      await assertBelowLimit(tx, userId, limit);
+      await tx.game.create({
+        data: {
+          id: gameId,
+          userId,
+          version: 1,
+          name: snapshot.name,
+          cardNames: snapshot.cardNames,
+          score: snapshot.score,
+          segments: snapshot.segments,
+          status: snapshot.finished ? 'FINISHED' : 'ACTIVE',
+        },
+      });
+      await tx.gameEvent.createMany({ data: eventRows(gameId, snapshot.events, 0) });
+      if (afterWrite) await afterWrite(tx);
+    });
+  }
+
+  /**
+   * Replaces the event log from `fromSeq` (the first event that differs from the stored log)
+   * and bumps the version. A previously abandoned game becomes active again, within the
+   * player's kingdom limit.
+   */
+  async save(
+    gameId: string,
+    userId: string,
+    limit: number,
+    fromSeq: number,
+    snapshot: GameSnapshot,
+    afterWrite?: (tx: Transaction) => Promise<void>,
+  ): Promise<void> {
+    await this.prisma.$transaction(async tx => {
+      const current = await tx.game.findUniqueOrThrow({
+        where: { id: gameId },
+        select: { status: true },
+      });
+      if (current.status === 'ABANDONED') await assertBelowLimit(tx, userId, limit);
+      await tx.game.update({
+        where: { id: gameId },
+        data: {
+          version: { increment: 1 },
+          name: snapshot.name,
+          cardNames: snapshot.cardNames,
+          score: snapshot.score,
+          segments: snapshot.segments,
+          status: snapshot.finished ? 'FINISHED' : 'ACTIVE',
+        },
+      });
+      await tx.gameEvent.deleteMany({ where: { gameId, seq: { gte: fromSeq } } });
+      if (snapshot.events.length > fromSeq) {
+        await tx.gameEvent.createMany({ data: eventRows(gameId, snapshot.events, fromSeq) });
+      }
+      if (afterWrite) await afterWrite(tx);
+    });
+  }
+
+  async abandon(gameId: string, userId: string): Promise<boolean> {
+    const result = await this.prisma.game.updateMany({
+      where: { id: gameId, userId },
+      data: { status: 'ABANDONED' },
+    });
+    return result.count > 0;
+  }
+}

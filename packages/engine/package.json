@@ -1,0 +1,40 @@
+{
+  "name": "@deck-legacy/engine",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Deck-Legacy game engine: domain types and the event-sourced application layer.",
+  "exports": {
+    "./domain/types": {
+      "source": "./src/domain/types/index.ts",
+      "types": "./dist/domain/types/index.d.ts",
+      "default": "./dist/domain/types/index.js"
+    },
+    "./domain/enums": {
+      "source": "./src/domain/enums/index.ts",
+      "types": "./dist/domain/enums/index.d.ts",
+      "default": "./dist/domain/enums/index.js"
+    },
+    "./application/cardAction": {
+      "source": "./src/application/cardAction/index.ts",
+      "types": "./dist/application/cardAction/index.d.ts",
+      "default": "./dist/application/cardAction/index.js"
+    },
+    "./application/gameEvent": {
+      "source": "./src/application/gameEvent/index.ts",
+      "types": "./dist/application/gameEvent/index.d.ts",
+      "default": "./dist/application/gameEvent/index.js"
+    },
+    "./*": {
+      "source": "./src/*.ts",
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  }
+}

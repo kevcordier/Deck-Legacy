@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Themed tokens, stored as "R G B" so Tailwind opacity modifiers (e.g. `bg-primary/20`) work. */
+:root {
+  --color-background: 255 242 224;
+  --color-ink: 102 74 38;
+  --color-border: 189 168 135;
+  --color-primary: 199 146 51;
+}
+
+.dark:root {
+  --color-background: 59 52 42;
+  --color-ink: 255 242 224;
+  --color-border: 101 85 60;
+  --color-primary: 255 208 124;
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "noEmit": true,
+    "paths": {
+      "@engine/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*", "tests/**/*", "vitest.config.mts"]
+}

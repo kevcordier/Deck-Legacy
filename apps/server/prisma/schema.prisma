@@ -1,0 +1,81 @@
+// Deck-Legacy database schema.
+// Users come from Supabase Auth: `User.id` is the Supabase user id (JWT `sub`).
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String   @id @db.Uuid
+  email       String?
+  displayName String?
+  isAnonymous Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  games       Game[]
+  scores      Score[]
+}
+
+enum GameStatus {
+  ACTIVE
+  FINISHED
+  ABANDONED
+}
+
+model Game {
+  id         String      @id @db.Uuid
+  userId     String      @db.Uuid
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status     GameStatus  @default(ACTIVE)
+  /// Incremented on every command; used for optimistic concurrency.
+  version    Int         @default(0)
+  /// Custom card names chosen by the player, keyed by instance id.
+  cardNames  Json        @default("{}")
+  /// Latest total score (sum of glory), refreshed after each command.
+  score      Int         @default(0)
+  /// Kingdom name chosen by the player (metadata, not part of the event log).
+  name       String      @default("")
+  /// Campaign segment scores in the order they were played: [{ segment, score }].
+  segments   Json        @default("[]")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  events     GameEvent[]
+  scores     Score[]
+
+  @@index([userId, status, updatedAt])
+}
+
+/// Event log of a game, replayed by the engine to rebuild its state.
+model GameEvent {
+  gameId    String   @db.Uuid
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  seq       Int
+  eventId   String
+  type      String
+  payload   Json
+  createdAt DateTime @default(now())
+
+  @@id([gameId, seq])
+}
+
+/// Final score of a campaign segment ("base" or an expansion name) for a game.
+model Score {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameId    String   @db.Uuid
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  segment   String
+  score     Int
+  createdAt DateTime @default(now())
+
+  @@unique([gameId, segment])
+  @@index([segment, score(sort: Desc)])
+  @@index([userId, createdAt])
+}

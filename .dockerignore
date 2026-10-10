@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+**/coverage
+**/.env
+**/.env.*
+.git
+.github
+.claude
+apps/client
+!apps/client/package.json
