@@ -1,6 +1,9 @@
 import { StoryProviders } from './StoryProviders';
 import { makeInstance } from './storyCatalog';
-import { CardUpgradeReveal } from '@components/CardUpgradeReveal/CardUpgradeReveal';
+import {
+  CardUpgradeFlip,
+  CardUpgradeReveal,
+} from '@components/CardUpgradeReveal/CardUpgradeReveal';
 import type { Meta, StoryObj } from '@storybook/react-native';
 import { useState } from 'react';
 
@@ -29,6 +32,19 @@ export const WildGrassToPlains: Story = {
   render: () => (
     <StoryProviders>
       <Replayable />
+    </StoryProviders>
+  ),
+};
+
+/** Inline flip, as shown in the turn transition panel after an upgrade ends the turn. */
+export const InTurnTransition: Story = {
+  render: () => (
+    <StoryProviders>
+      <CardUpgradeFlip
+        before={makeInstance({ id: 1, cardId: 1, stateId: 1 })}
+        after={makeInstance({ id: 1, cardId: 1, stateId: 2 })}
+        width={240}
+      />
     </StoryProviders>
   ),
 };

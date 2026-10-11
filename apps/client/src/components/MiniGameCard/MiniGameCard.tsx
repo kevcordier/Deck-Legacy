@@ -245,7 +245,8 @@ export function MiniGameCard({
           <View className="w-full flex-row justify-center">
             <Tag
               label={displayName}
-              className={`border bg-black/60 ${titleBorderClass}`}
+              // Shrinks to the card width so long names wrap instead of overflowing.
+              className={`max-w-full shrink border bg-black/60 ${titleBorderClass}`}
               textClassName="text-center text-sm text-white"
             />
           </View>

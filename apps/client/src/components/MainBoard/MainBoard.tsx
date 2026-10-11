@@ -1,6 +1,11 @@
 import { type BoardZoomLevel, CardRow } from '@components/CardRow/CardRow';
-import { CardUpgradeReveal } from '@components/CardUpgradeReveal/CardUpgradeReveal';
+import {
+  CardUpgradeFlip,
+  CardUpgradeReveal,
+} from '@components/CardUpgradeReveal/CardUpgradeReveal';
+import { CardViewerModal } from '@components/CardViewerModal/CardViewerModal';
 import { GameCard } from '@components/GameCard/GameCard';
+import { MiniGameCard } from '@components/MiniGameCard/MiniGameCard';
 import { Button } from '@components/ui/Button/Button';
 import { EmptyState } from '@components/ui/EmptyState/EmptyState';
 import { ZoomInIcon, ZoomOutIcon } from '@components/ui/Icon/icon';
@@ -9,12 +14,14 @@ import { Modal } from '@components/ui/Modal/Modal';
 import { Section } from '@components/ui/Section/Section';
 import { getActiveState } from '@deck-legacy/engine/application/cardHelpers';
 import { CardTag, Phase } from '@deck-legacy/engine/domain/enums';
+import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import { tCardName, tCardParchmentText } from '@helpers/cardI18n';
+import type { UpgradeReveal } from '@helpers/upgradeReveal';
 import { useGame } from '@hooks/useGame';
 import { useIsDesktop } from '@hooks/useIsDesktop';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 
 const MIN_ZOOM: BoardZoomLevel = 0;
 const MAX_ZOOM: BoardZoomLevel = 2;
@@ -29,8 +36,15 @@ function NewCardSelection({
   const { gameState, defs } = useGame();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
-  // Two cards per row on mobile, three on desktop (former `basis-[calc(50%…)]` classes).
-  const itemClass = isDesktop ? 'w-[31%] max-w-80' : 'w-[48%] max-w-80';
+  const [viewerCardId, setViewerCardId] = useState<number | null>(null);
+  // Three cards per row on desktop; two mini cards on phones, where a tap opens the card in large.
+  const itemClass = isDesktop ? 'w-[31%] max-w-80' : 'w-[48%] max-w-56';
+  const card = (inst: CardInstance) =>
+    isDesktop ? (
+      <GameCard instance={inst} />
+    ) : (
+      <MiniGameCard instance={inst} onPress={() => setViewerCardId(inst.id)} />
+    );
 
   return (
     <View className="w-full flex-row flex-wrap items-end justify-center gap-2 lg:gap-4">
@@ -60,20 +74,32 @@ function NewCardSelection({
                   );
                 })}
               </View>
-              <GameCard instance={inst} />
+              {card(inst)}
             </View>
           );
         }
 
         return (
           <View key={id} className={itemClass}>
-            <GameCard instance={inst} />
+            {card(inst)}
           </View>
         );
       })}
+      {viewerCardId !== null && (
+        <CardViewerModal
+          cardIds={cardIds}
+          initialId={viewerCardId}
+          onClose={() => setViewerCardId(null)}
+        />
+      )}
     </View>
   );
 }
+
+/** Width of the upgraded card shown in the turn transition panel (mini card on phones). */
+const TURN_END_CARD_WIDTH = 240;
+/** Horizontal room around the card on phones: page and panel paddings. */
+const TURN_END_PHONE_MARGINS = 72;
 
 export function MainBoard() {
   const {
@@ -93,7 +119,24 @@ export function MainBoard() {
   } = useGame();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+  const { width: windowWidth } = useWindowDimensions();
   const [zoom, setZoom] = useState<BoardZoomLevel>(1);
+  // The reveal whose card is open in large: a new upgrade never reopens the viewer.
+  const [viewedUpgrade, setViewedUpgrade] = useState<UpgradeReveal | null>(null);
+
+  // An upgrade ends the turn: its card turns over inside the turn transition panel, where the
+  // end of turn can still be undone, instead of in a modal on top of it.
+  const isTurnEnd = gameState.phase === Phase.TURN_END;
+  const turnEndUpgrade = isTurnEnd && upgradeReveal && (
+    <CardUpgradeFlip
+      key={`${upgradeReveal.after.id}-${upgradeReveal.after.stateId}`}
+      before={upgradeReveal.before}
+      after={upgradeReveal.after}
+      width={Math.min(TURN_END_CARD_WIDTH, windowWidth - TURN_END_PHONE_MARGINS)}
+      mini={!isDesktop}
+      onPress={isDesktop ? undefined : () => setViewedUpgrade(upgradeReveal)}
+    />
+  );
 
   const goals = gameState.permanents.filter(
     c => getActiveState(gameState.instances[c], defs)?.tags?.includes(CardTag.GOAL) ?? false,
@@ -141,6 +184,7 @@ export function MainBoard() {
       )}
       {gameState.phase === Phase.ROUND_START && (
         <EmptyState
+          wide
           title={t('roundpreview.title', { round: gameState.round })}
           subtitle={t('roundpreview.subtitle')}
           action={
@@ -163,7 +207,9 @@ export function MainBoard() {
               {t('endturn.start')}
             </Button>
           }
-        />
+        >
+          {turnEndUpgrade}
+        </EmptyState>
       )}
 
       {gameState.phase === Phase.TURN_END && gameState.drawPile.length === 0 && (
@@ -174,7 +220,9 @@ export function MainBoard() {
               {t('endround.end')}
             </Button>
           }
-        />
+        >
+          {turnEndUpgrade}
+        </EmptyState>
       )}
 
       {gameState.phase === Phase.ROUND_END && !gameState.isLastRound && (
@@ -248,7 +296,15 @@ export function MainBoard() {
           </Modal>
         )}
 
-      {upgradeReveal && (
+      {turnEndUpgrade && upgradeReveal && viewedUpgrade === upgradeReveal && (
+        <CardViewerModal
+          cardIds={[upgradeReveal.after.id]}
+          initialId={upgradeReveal.after.id}
+          onClose={() => setViewedUpgrade(null)}
+        />
+      )}
+
+      {upgradeReveal && !isTurnEnd && (
         <CardUpgradeReveal
           key={`${upgradeReveal.after.id}-${upgradeReveal.after.stateId}`}
           before={upgradeReveal.before}
