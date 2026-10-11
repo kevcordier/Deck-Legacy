@@ -48,8 +48,7 @@ export const workshopCard: CardDef = {
 };
 
 /**
- * Minimal catalog: ten starting cards and two to discover. The tutorial board is fixed to
- * instances 1, 5, 9 and 10, where 9 and 10 are workshops.
+ * Minimal catalog: ten starting cards and two to discover. Instances 9 and 10 are workshops.
  */
 export function makeCatalog(): GameCatalog {
   return {

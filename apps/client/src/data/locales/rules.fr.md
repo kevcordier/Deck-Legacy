@@ -16,7 +16,7 @@ Votre royaume de départ est constitué des cartes **1 à 10**, mélangées en u
 
 ### Nouvelle partie
 
-Chaque partie est un **royaume**. Sur la page d'accueil, cliquez sur **Nouveau royaume**, nommez-le, choisissez de jouer d'abord le tutoriel ou non, puis fondez-le : la partie démarre avec votre deck de départ mélangé. Vos royaumes sont listés sur la page d'accueil avec leur score total, le score du jeu de base et le score après chaque extension, dans l'ordre où vous les avez jouées. Vous pouvez conserver **un royaume** sans compte et jusqu'à **10 royaumes** avec un compte. Supprimer un royaume supprime sa partie.
+Chaque partie est un **royaume**. Sur la page d'accueil, cliquez sur **Nouveau royaume**, nommez-le, choisissez de jouer d'abord le tutoriel ou non, puis fondez-le : la partie démarre avec votre deck de départ mélangé. Le tutoriel vous guide pendant une première manche ; à la fin, vous pouvez garder cette partie ou en recommencer une. Vos royaumes sont listés sur la page d'accueil avec leur score total, le score du jeu de base et le score après chaque extension, dans l'ordre où vous les avez jouées. Vous pouvez conserver **un royaume** sans compte et jusqu'à **10 royaumes** avec un compte. Supprimer un royaume supprime sa partie.
 
 ### Entre les manches
 

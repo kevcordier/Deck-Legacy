@@ -10,7 +10,7 @@ import { Modal } from '@components/ui/Modal/Modal';
 import { Text, TextStyle } from '@components/ui/Text/Text';
 import { Title } from '@components/ui/Title/Title';
 import { kingdomPath, maxKingdoms } from '@helpers/kingdom';
-import { PAGE_BACKGROUND } from '@helpers/pageBackground';
+import { FULL_SIZE, PAGE_BACKGROUND } from '@helpers/pageBackground';
 import { useAuth } from '@hooks/useAuth';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useKingdoms } from '@hooks/useKingdoms';
@@ -94,7 +94,12 @@ export function Home() {
   };
 
   return (
-    <ImageBackground source={PAGE_BACKGROUND} resizeMode="cover" className="flex-1">
+    <ImageBackground
+      source={PAGE_BACKGROUND}
+      resizeMode="cover"
+      className="flex-1"
+      imageStyle={FULL_SIZE}
+    >
       <SafeAreaView className="bg-background/80 flex-1">
         <Header
           onOpenRules={() => setRulesOpen(true)}

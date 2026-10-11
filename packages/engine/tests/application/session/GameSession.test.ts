@@ -33,14 +33,36 @@ describe('GameSession.start', () => {
     expect(session.getEvents()[0].type).toBe(GameEventType.GAME_STARTED);
   });
 
-  it('builds the hand-crafted tutorial board', () => {
-    const session = GameSession.start('tuto', makeCatalog(), DEFAULT_OPTIONS, 'tutorial');
+  it('draws the tutorial round in the given order and replays it', () => {
+    const order = [5, 1, 2, 7, 6, 3, 10, 8, 4, 9];
+    const session = GameSession.start('tuto', makeCatalog(), DEFAULT_OPTIONS, 'tutorial', order);
     const view = session.toView();
 
     expect(view.tutorial).toBe(true);
-    expect(view.gameState.board).toEqual([1, 5, 9, 10]);
-    expect(view.gameState.resources.gold).toBe(5);
     expect(view.canRewind).toBe(false);
+    expect(view.gameState.board).toEqual([5, 1, 2, 7]);
+    expect(view.gameState.drawPile).toEqual([6, 3, 10, 8, 4, 9]);
+
+    const replayed = GameSession.restore(
+      'kingdom',
+      session.getEvents(),
+      makeCatalog(),
+      DEFAULT_OPTIONS,
+    );
+    expect(replayed.getState()).toEqual(session.getState());
+    expect(replayed.toView().tutorial).toBe(false);
+  });
+
+  it('rejects a first draw pile that is not the starting deck', () => {
+    for (const order of [
+      [1, 2, 3],
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 11],
+      [1, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    ]) {
+      expect(() =>
+        GameSession.start('tuto', makeCatalog(), DEFAULT_OPTIONS, 'tutorial', order),
+      ).toThrow('starting deck');
+    }
   });
 });
 

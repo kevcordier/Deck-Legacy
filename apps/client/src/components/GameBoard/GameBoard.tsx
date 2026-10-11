@@ -73,7 +73,6 @@ export function GameBoard() {
   } = useGame();
   const { drawPile, discardPile, destroyedPile, purgedCards, instances } = gameState;
 
-  const { run, nextStep } = useTutorial();
   const isDesktop = useIsDesktop();
 
   const [openSheet, setOpenSheet] = useState<SheetName | null>(null);
@@ -81,6 +80,15 @@ export function GameBoard() {
   const [pinnedLeft, setPinnedLeft] = useState(true);
   const [pinnedRight, setPinnedRight] = useState(true);
   const centerScrollRef = useRef<ScrollView>(null);
+  const centerScrollYRef = useRef(0);
+  const { registerScroller } = useTutorial();
+  useEffect(
+    () =>
+      registerScroller(dy =>
+        centerScrollRef.current?.scrollTo({ y: Math.max(0, centerScrollYRef.current + dy) }),
+      ),
+    [registerScroller],
+  );
 
   useEffect(() => {
     if (gameState.phase === Phase.TURN_END || gameState.phase === Phase.ROUND_END) {
@@ -114,12 +122,7 @@ export function GameBoard() {
     (!!pendingChoices && pendingChoices.length > 0) ||
     (!!triggerPile && Object.keys(triggerPile).length > 0);
 
-  const openDraw = () => {
-    setOpenSheet('draw');
-    if (run) {
-      nextStep();
-    }
-  };
+  const openDraw = () => setOpenSheet('draw');
   const openDiscard = () => setOpenSheet('discard');
 
   const lastDiscarded = discardDeck.length > 0 ? [discardDeck[discardDeck.length - 1]] : [];
@@ -177,7 +180,15 @@ export function GameBoard() {
           </TutorialTarget>
         )}
 
-        <ScrollView ref={centerScrollRef} className="flex-1" contentContainerClassName="grow">
+        <ScrollView
+          ref={centerScrollRef}
+          onScroll={event => {
+            centerScrollYRef.current = event.nativeEvent.contentOffset.y;
+          }}
+          scrollEventThrottle={16}
+          className="flex-1"
+          contentContainerClassName="grow"
+        >
           <MainBoard />
         </ScrollView>
 
@@ -196,12 +207,7 @@ export function GameBoard() {
               icon={<DiscardIcon className="size-4" />}
               deck={discardDeck}
               pinned={pinnedRight}
-              onTogglePinned={() => {
-                if (run) {
-                  nextStep();
-                }
-                setPinnedRight(p => !p);
-              }}
+              onTogglePinned={() => setPinnedRight(p => !p)}
               variant="right"
               displayedCards={lastDiscarded}
               stackCount={discardPile.length - 1}
@@ -324,12 +330,7 @@ export function GameBoard() {
 
       {openSheet !== null && (
         <Modal
-          onClose={() => {
-            if (run) {
-              nextStep();
-            }
-            setOpenSheet(null);
-          }}
+          onClose={() => setOpenSheet(null)}
           label="mobile-deck-viewer"
           side={openSheet === 'draw' ? 'left' : 'right'}
         >

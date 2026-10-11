@@ -15,7 +15,7 @@ The game state is derived by replaying an ordered list of `GameEvent` objects. `
 - **Never mutate `GameState` directly.** Always dispatch a new event.
 - `GameSession` (`packages/engine/src/application/session/GameSession.ts`) wraps the aggregate and turns player commands (`GameCommand`) into events: guards (unknown or blocked cards are ignored), multi-step cost payment, parchment cards, automatic campaign score at game over, rewind, development cheats. It returns a `GameView` for the UI and a translatable `CommandError` for rule errors. Mid-action state (pending choices, pending upgrade) lives only in memory, never in the event log.
 - The client runs `GameSession` to play; the server uses `GameSession.restore()` to validate synced logs and compute scores.
-- Tutorial games mutate the state outside events, so they are never saved or synced.
+- Tutorial games are real games whose first draw order is imposed (`GameSession.start(…, 'tutorial', firstDrawPile)`); the order is stored in `ROUND_STARTED` like a shuffle. They are not saved until the player keeps them (EDR-040).
 - Undo (`rewind` command) pops the last event and replays the remainder.
 - To add a player action: add it to `GameCommand` (`domain/types/GameSession.ts`), handle it in `GameSession.dispatch`, test it, then expose it in the client `GameProvider`.
 

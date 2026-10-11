@@ -62,7 +62,7 @@ apps/client/
 `src/hooks/useGame.ts` reads `GameContext`, provided by `GameProvider` (`src/contexts/GameProvider.tsx`). The provider owns a `GameSession` from the engine: each action runs a `GameCommand` synchronously, publishes the new `GameView`, saves the event log locally when it changed and schedules a sync. Rule errors (`CommandError`) are shown as toasts.
 
 ```typescript
-isTutorial  startGame()  endRound()  startRound()  startTurn()
+isTutorial  startGame()  continueGame()  endRound()  startRound()  startTurn()
 resolveProduction(instanceId, choiceIndex)
 resolveAction(instanceId, actionId, triggerId?)
 resolveUpgrade(instanceId, upgradeTo?)
@@ -75,7 +75,7 @@ setCardName(instanceId, name)  getCardName(instanceId)
 ```
 
 - Card definitions come from `catalog` (`src/helpers/catalog.ts`, bundled from `@deck-legacy/game-data`).
-- The tutorial session is never saved or synced. `GameProvider kingdomId` gives the game its id; `startGame()` starts the kingdom's game when the tutorial ends.
+- The tutorial plays a scripted first round (`TUTORIAL_DRAW_ORDER`, steps in `TutorialProvider`, cards shown in large by `TutorialStage`). Its session is not saved until the end: `continueGame()` keeps it as the kingdom's game (replayed as a standard session), `startGame()` starts a new one.
 - `GameProvider initialState={…}` renders a static board without a session (Storybook).
 - Development builds (`__DEV__`) allow unrestricted rewind and the cheat panel (`globalThis.__cheat`). The server refuses cheated games unless it runs with `ALLOW_CHEATS=true`.
 

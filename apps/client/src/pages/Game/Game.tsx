@@ -5,12 +5,13 @@ import { PurgeModal } from '@components/PurgeModal/PurgeModal';
 import { ResourceBar } from '@components/ResourceBar/ResourceBar';
 import { RulesModal } from '@components/RulesModal/RulesModal';
 import { TutorialOverlay } from '@components/Tutorial/TutorialOverlay';
+import { TutorialStage } from '@components/Tutorial/TutorialStage';
 import { Button } from '@components/ui/Button/Button';
 import { GameOverScreen } from '@components/ui/GameOverScreen/GameOverScreen';
 import { Text } from '@components/ui/Text/Text';
 import { TutorialProvider } from '@contexts/TutorialProvider';
 import { Phase } from '@deck-legacy/engine/domain/enums';
-import { PAGE_BACKGROUND } from '@helpers/pageBackground';
+import { FULL_SIZE, PAGE_BACKGROUND } from '@helpers/pageBackground';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { syncNow } from '@services/sync';
@@ -55,7 +56,12 @@ export function Game() {
 
   return (
     <TutorialProvider key={id}>
-      <ImageBackground source={PAGE_BACKGROUND} resizeMode="cover" className="flex-1">
+      <ImageBackground
+        source={PAGE_BACKGROUND}
+        resizeMode="cover"
+        className="flex-1"
+        imageStyle={FULL_SIZE}
+      >
         <SafeAreaView className="bg-background/80 flex-1">
           <GameHeader />
           {isGamePlaying && <ResourceBar />}
@@ -120,6 +126,7 @@ export function Game() {
 
           {optionsOpen && <OptionsModal onClose={() => setOptionsOpen(false)} onGoHome={goHome} />}
         </SafeAreaView>
+        <TutorialStage />
         <TutorialOverlay />
       </ImageBackground>
     </TutorialProvider>

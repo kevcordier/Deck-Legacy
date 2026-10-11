@@ -1,5 +1,4 @@
 import { CardIllustration } from '@components/CardTilt/CardIllustration';
-import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Glory } from '@components/ui/Glory/Glory';
 import {
   ActivatedIcon,
@@ -37,7 +36,6 @@ type MiniGameCardProps = {
   readonly instance: CardInstance;
   readonly isOnBoard?: boolean;
   readonly className?: string;
-  readonly tourTarget?: boolean;
   readonly onPress?: () => void;
 };
 
@@ -150,7 +148,6 @@ export function MiniGameCard({
   instance,
   isOnBoard = false,
   className = '',
-  tourTarget = false,
   onPress,
 }: MiniGameCardProps) {
   const { t } = useTranslation();
@@ -224,7 +221,7 @@ export function MiniGameCard({
   const hasAvailableAction = canActivateAction && regularActions.some(isActionAffordable);
 
   return (
-    <TutorialTarget id={tourTarget ? 'card-root' : undefined} className={`w-full ${className}`}>
+    <View className={`w-full ${className}`}>
       <Pressable
         onPress={onPress}
         disabled={!onPress}
@@ -252,14 +249,12 @@ export function MiniGameCard({
           </View>
 
           {hasProductions && productions && (
-            <TutorialTarget id={tourTarget ? 'card-production' : undefined}>
-              <ResourceChoice
-                onSelect={choosenOption => resolveProduction(instance.id, choosenOption)}
-                options={productions}
-                disabled={!canActivate}
-                pillClassName="size-5"
-              />
-            </TutorialTarget>
+            <ResourceChoice
+              onSelect={choosenOption => resolveProduction(instance.id, choosenOption)}
+              options={productions}
+              disabled={!canActivate}
+              pillClassName="size-5"
+            />
           )}
           {hasGlory && <Glory glory={glory} className="size-8" textClassName="text-xs" />}
 
@@ -278,6 +273,6 @@ export function MiniGameCard({
           )}
         </View>
       </Pressable>
-    </TutorialTarget>
+    </View>
   );
 }
