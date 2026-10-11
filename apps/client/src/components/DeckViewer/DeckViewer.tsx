@@ -1,5 +1,5 @@
 import { CardViewerModal } from '@components/CardViewerModal/CardViewerModal';
-import { GameCard } from '@components/GameCard/GameCard';
+import { GameCard, WIDE_CARD_MIN_WIDTH } from '@components/GameCard/GameCard';
 import { MiniGameCard } from '@components/MiniGameCard/MiniGameCard';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
@@ -37,7 +37,54 @@ type DeckViewerProps = {
   readonly onTogglePinned?: () => void;
   readonly footer?: ReactNode;
   readonly deckName?: 'draw' | 'discard' | 'destroyed';
+  /** Cards of the pile under the displayed ones, drawn as a stack under the last card. */
+  readonly stackCount?: number;
 };
+
+/** One stacked card shows under the top card per this many cards in the pile. */
+const CARDS_PER_STACK_LAYER = 4;
+const MAX_STACK_LAYERS = 10;
+/** Offset between two stacked cards (px). */
+const STACK_LAYER_VERTICAL_OFFSET = 3;
+const STACK_LAYER_HORIZONTAL_OFFSET = 1;
+
+/** A card with the rest of its pile peeking out underneath: thicker as the pile grows. */
+function StackedCard({
+  instance,
+  stackCount,
+}: {
+  readonly instance: CardInstance;
+  readonly stackCount: number;
+}) {
+  const [width, setWidth] = useState(0);
+  const layers = Math.min(MAX_STACK_LAYERS, Math.ceil(stackCount / CARDS_PER_STACK_LAYER));
+  // Same corners as the card on top, which rounds more once wide.
+  const rounded = width >= WIDE_CARD_MIN_WIDTH ? 'rounded-xl' : 'rounded-md';
+  return (
+    <View
+      className="w-full max-w-80"
+      style={{
+        paddingBottom: layers * STACK_LAYER_VERTICAL_OFFSET,
+        paddingRight: layers * STACK_LAYER_HORIZONTAL_OFFSET,
+      }}
+      onLayout={event => setWidth(event.nativeEvent.layout.width)}
+    >
+      {Array.from({ length: layers }, (_, i) => layers - i).map(depth => (
+        <View
+          key={depth}
+          className={`bg-card border-border absolute inset-x-0 border ${rounded}`}
+          style={{
+            top: depth * STACK_LAYER_VERTICAL_OFFSET,
+            bottom: (layers - depth) * STACK_LAYER_VERTICAL_OFFSET,
+            left: depth * STACK_LAYER_HORIZONTAL_OFFSET,
+            right: (layers - depth) * STACK_LAYER_HORIZONTAL_OFFSET,
+          }}
+        />
+      ))}
+      <GameCard instance={instance} />
+    </View>
+  );
+}
 
 const TOUR_IDS = {
   draw: 'draw-viewer-open',
@@ -45,28 +92,29 @@ const TOUR_IDS = {
   destroyed: 'destroyed-viewer-open',
 } as const;
 
-/** Cards of the full list. Phone: mini cards, at least two per row; a tap opens the card in large. */
-function DeckCardGrid({ cards }: { readonly cards: CardInstance[] }) {
+/**
+ * Cards of the full list (side sheets). Desktop: up to four columns; phone: mini cards, at least two per
+ * row. A tap opens the card in large; the viewer steps through the list in its order.
+ */
+export function DeckCardGrid({ cards }: { readonly cards: CardInstance[] }) {
   const isDesktop = useIsDesktop();
   const [viewerCardId, setViewerCardId] = useState<number | null>(null);
 
-  if (isDesktop) {
-    return (
-      <Grid minItemWidth={240} maxColumns={4}>
-        {cards.map(inst => (
-          <GameCard key={inst.id} instance={inst} size="lg" />
-        ))}
-      </Grid>
-    );
-  }
-
   return (
     <>
-      <Grid minItemWidth={140} maxColumns={4} gap={8}>
-        {cards.map(inst => (
-          <MiniGameCard key={inst.id} instance={inst} onPress={() => setViewerCardId(inst.id)} />
-        ))}
-      </Grid>
+      {isDesktop ? (
+        <Grid minItemWidth={200} maxColumns={4}>
+          {cards.map(inst => (
+            <GameCard key={inst.id} instance={inst} onPress={() => setViewerCardId(inst.id)} />
+          ))}
+        </Grid>
+      ) : (
+        <Grid minItemWidth={140} maxColumns={4} gap={8}>
+          {cards.map(inst => (
+            <MiniGameCard key={inst.id} instance={inst} onPress={() => setViewerCardId(inst.id)} />
+          ))}
+        </Grid>
+      )}
       {viewerCardId !== null && (
         <CardViewerModal
           cardIds={cards.map(inst => inst.id)}
@@ -89,6 +137,7 @@ export function DeckViewer({
   onTogglePinned,
   footer,
   deckName,
+  stackCount = 0,
 }: DeckViewerProps) {
   const { defs } = useGame();
   const { t } = useTranslation();
@@ -178,9 +227,17 @@ export function DeckViewer({
           ? displayedCards &&
             displayedCards.length > 0 && (
               <View className="items-center gap-2 p-2">
-                {displayedCards.map(displayedCard => (
-                  <GameCard key={displayedCard.id} instance={displayedCard} />
-                ))}
+                {displayedCards.map((displayedCard, index) =>
+                  index === displayedCards.length - 1 ? (
+                    <StackedCard
+                      key={displayedCard.id}
+                      instance={displayedCard}
+                      stackCount={stackCount}
+                    />
+                  ) : (
+                    <GameCard key={displayedCard.id} instance={displayedCard} />
+                  ),
+                )}
               </View>
             )
           : emptyText && (

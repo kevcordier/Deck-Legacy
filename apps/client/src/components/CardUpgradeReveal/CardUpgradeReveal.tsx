@@ -2,10 +2,8 @@ import { TILT_PERSPECTIVE } from '@components/CardTilt/CardTiltContext';
 import { useViewerCardWidth } from '@components/CardViewerModal/CardViewerModal';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Modal } from '@components/ui/Modal/Modal';
-import { Text } from '@components/ui/Text/Text';
 import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import Animated, {
   Easing,
@@ -33,7 +31,6 @@ type CardUpgradeRevealProps = {
  * A tap anywhere closes it (also during the animation).
  */
 export function CardUpgradeReveal({ before, after, onClose }: CardUpgradeRevealProps) {
-  const { t } = useTranslation();
   const cardWidth = useViewerCardWidth();
   const reducedMotion = useReducedMotion();
   // 0: former state facing the player, 1: new state facing the player.
@@ -66,7 +63,6 @@ export function CardUpgradeReveal({ before, after, onClose }: CardUpgradeRevealP
 
   return (
     <Modal onClose={onClose} label="card-upgraded" bare>
-      <Text className="font-body-bold uppercase text-white">{t('cardUpgraded.title')}</Text>
       <View className="items-center">
         <View style={{ width: cardWidth }}>
           <Animated.View className="rounded-xl shadow-2xl" style={afterStyle}>

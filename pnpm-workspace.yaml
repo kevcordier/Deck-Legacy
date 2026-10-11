@@ -10,3 +10,6 @@ allowBuilds:
   prisma: true
 
 nodeLinker: hoisted
+
+patchedDependencies:
+  react-native-reanimated-dnd@2.0.0: patches/react-native-reanimated-dnd@2.0.0.patch

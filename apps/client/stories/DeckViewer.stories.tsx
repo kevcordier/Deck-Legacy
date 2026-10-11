@@ -52,3 +52,11 @@ export const Empty: Story = {
     emptyText: 'No cards in deck',
   },
 };
+
+export const ThickPile: Story = {
+  parameters: {
+    title: 'Player Deck',
+    deck: [2, 1, 3],
+    stackCount: 20,
+  },
+};

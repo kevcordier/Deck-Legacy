@@ -17,8 +17,8 @@ import {
   getProductionChoicesForAction,
   getTotalProduction,
   getTotalResourceProduction,
+  tagBorderClass,
   tagClass,
-  tagTextClass,
 } from '@engine/application/cardHelpers';
 import {
   ActionEffectType,
@@ -1682,35 +1682,35 @@ describe('tagClass additional branches', () => {
   });
 });
 
-// ─── tagTextClass branches ─────────────────────────────────────────────────────
+// ─── tagBorderClass branches ────────────────────────────────────────────────────
 
-describe('tagTextClass additional branches', () => {
-  it('returns enemy text class when isEnemy is true', () => {
-    expect(tagTextClass('land', true)).toBe('text-tag-enemy');
+describe('tagBorderClass additional branches', () => {
+  it('returns enemy border class when isEnemy is true', () => {
+    expect(tagBorderClass('land', true)).toBe('border-tag-enemy');
   });
 
-  it('returns building text class', () => {
-    expect(tagTextClass('building', false)).toBe('text-tag-building');
+  it('returns building border class', () => {
+    expect(tagBorderClass('building', false)).toBe('border-tag-building');
   });
 
-  it('returns person text class', () => {
-    expect(tagTextClass('person', false)).toBe('text-tag-person');
+  it('returns person border class', () => {
+    expect(tagBorderClass('person', false)).toBe('border-tag-person');
   });
 
-  it('returns seafaring text class', () => {
-    expect(tagTextClass('seafaring', false)).toBe('text-tag-seafaring');
+  it('returns seafaring border class', () => {
+    expect(tagBorderClass('seafaring', false)).toBe('border-tag-seafaring');
   });
 
-  it('returns land text class', () => {
-    expect(tagTextClass('land', false)).toBe('text-tag-land');
+  it('returns land border class', () => {
+    expect(tagBorderClass('land', false)).toBe('border-tag-land');
   });
 
-  it('returns livestock text class', () => {
-    expect(tagTextClass('livestock', false)).toBe('text-tag-livestock');
+  it('returns livestock border class', () => {
+    expect(tagBorderClass('livestock', false)).toBe('border-tag-livestock');
   });
 
-  it('returns default tag text class for unknown tag', () => {
-    expect(tagTextClass('unknown', false)).toBe('text-tag-tag');
+  it('returns default tag border class for unknown tag', () => {
+    expect(tagBorderClass('unknown', false)).toBe('border-tag-tag');
   });
 });
 

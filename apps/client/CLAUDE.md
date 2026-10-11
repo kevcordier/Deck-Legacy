@@ -177,7 +177,7 @@ Supabase stores its session in AsyncStorage as well.
 ## Deployment
 
 - **Web:** GitHub Pages at `https://[user].github.io/Deck-Legacy/`, built with `pnpm build` (illustrations generation + `expo export --platform web`) into `dist/`, using the repository variables `API_URL`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`.
-- **Base path:** `/Deck-Legacy` (`expo.experiments.baseUrl` in `app.json`). Do not change it without updating the GitHub Actions workflow.
+- **Base path:** `/Deck-Legacy` (`expo.experiments.baseUrl` in `app.json`). Do not change it without updating the GitHub Actions workflow and the favicon link of `public/index.html` (the web HTML template: Metro's single output ignores `web.favicon`).
 - **Deep links:** the build copies `dist/index.html` to `dist/404.html` (`scripts/spa-fallback.mjs`), so GitHub Pages serves the app for `/Deck-Legacy/game/…` and expo-router opens the route.
 - **Mobile:** iOS/Android binaries are built with EAS or `npx expo run:ios|android` from `apps/client` (native folders are generated, not committed). The URL scheme is `decklegacy`.
 
@@ -208,4 +208,5 @@ Storybook for React Native (v10) runs inside the client app: `pnpm --filter @dec
 - **Do not add unused i18n keys.** Both locale files must stay in sync and only contain keys actively used in the UI.
 - **Card images are bundled**: add the file to `assets/cards/`, run `generate:illustrations`, and resolve it with `getIllustrationSource(path)`.
 - **Never block the game on the network**: the save is local first; anything online (accounts, sync, scores) must degrade gracefully.
+- **`react-native-reanimated-dnd` is patched** (`patches/`, `patchedDependencies` in `pnpm-workspace.yaml`): a dragged card takes the cell under its centre, not under its top-left corner. Check the patch still applies (or is still needed) when upgrading the library; restart Metro with `--clear` after changing it.
 - **Do not write `GameState` from components**: send a `GameCommand` through `useGame()`.

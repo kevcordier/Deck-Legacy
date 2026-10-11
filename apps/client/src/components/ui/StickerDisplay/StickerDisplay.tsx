@@ -4,6 +4,7 @@ import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Tag } from '@components/ui/Tag/Tag';
 import { Text } from '@components/ui/Text/Text';
 import type { Sticker } from '@deck-legacy/engine/domain/types';
+import { tCardTag } from '@helpers/cardI18n';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
@@ -50,7 +51,7 @@ export const StickerDisplay = ({ sticker, className = 'size-10', large = false }
     );
   }
   if (sticker.tags) {
-    return <Tag label={sticker.tags[0]} className={STICKER_CLASS} />;
+    return <Tag label={tCardTag(t, sticker.tags[0])} className={STICKER_CLASS} />;
   }
   return (
     <View className={STICKER_CLASS}>

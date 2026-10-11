@@ -59,7 +59,7 @@ interface GameCardProps {
 }
 
 /** Card width (px) from which a medium card uses its roomier layout (former `@3xs` container query). */
-const WIDE_CARD_MIN_WIDTH = 256;
+export const WIDE_CARD_MIN_WIDTH = 256;
 const CARD_COLOR = '#f0e4be';
 
 function getSizeClasses(size: GameCardSize, wide: boolean) {
@@ -207,7 +207,7 @@ export function GameCard({
         disabled={!onPress}
         onLayout={event => setWidth(event.nativeEvent.layout.width)}
         style={{ aspectRatio: 3 / 5 }}
-        className={`border-border bg-card relative w-full justify-between overflow-hidden border shadow-lg ${size === 'lg' || width >= WIDE_CARD_MIN_WIDTH ? 'rounded-xl' : 'rounded-md'} ${isPermanent ? 'border-permanent border-t-4' : ''}`}
+        className={`bg-card relative w-full justify-between overflow-hidden border-[3px] shadow-lg ${size === 'lg' || width >= WIDE_CARD_MIN_WIDTH ? 'rounded-xl' : 'rounded-md'} ${isPermanent ? 'border-permanent border-t-4' : 'border-black/5'}`}
       >
         <TextStyle className="text-base-ink font-body">
           <View className={`border-b border-black/10 bg-black/5 ${sizes.header}`}>

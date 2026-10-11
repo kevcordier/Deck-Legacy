@@ -22,6 +22,7 @@ import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } fro
 import { useTranslation } from 'react-i18next';
 import { type LayoutChangeEvent, View } from 'react-native';
 import Animated, {
+  Easing,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
@@ -51,6 +52,8 @@ const CARD_ASPECT_RATIO = 5 / 3;
 const HOVERED_CELL_STYLE = { zIndex: 10 };
 /** Drawn cards fly from the draw pile to their cell, one after the other: kept short, it runs every turn. */
 const DRAW_DURATION_MS = 350;
+// CSS `ease-in`.
+const DRAW_EASING = Easing.bezier(0.42, 0, 1, 1);
 const DRAW_STAGGER_MS = 80;
 
 function effectsOnCard(
@@ -216,7 +219,7 @@ function DrawnCardMotion({ motion, onLayout, children }: DrawnCardMotionProps) {
   useEffect(() => {
     if (!start) return;
     const move = (to: number) =>
-      withDelay(start.delay, withTiming(to, { duration: DRAW_DURATION_MS }));
+      withDelay(start.delay, withTiming(to, { duration: DRAW_DURATION_MS, easing: DRAW_EASING }));
     x.set(move(0));
     y.set(move(0));
   }, [start, x, y]);

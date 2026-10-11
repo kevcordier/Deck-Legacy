@@ -66,7 +66,10 @@ export default function RootLayout() {
         <WithAuth>
           <GameUIProvider>
             <AccountSync />
-            <Stack screenOptions={{ headerShown: false }} />
+            <Stack screenOptions={{ headerShown: false }}>
+              {/* The left edge swipe opens the draw pile there, not the iOS back gesture. */}
+              <Stack.Screen name="game/[kingdom]" options={{ gestureEnabled: false }} />
+            </Stack>
           </GameUIProvider>
         </WithAuth>
       </ErrorBoundary>

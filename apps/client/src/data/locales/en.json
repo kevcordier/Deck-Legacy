@@ -183,9 +183,6 @@
     "searchPlaceholder": "Search by name",
     "allTags": "All tags"
   },
-  "cardUpgraded": {
-    "title": "Card upgraded"
-  },
   "cardAdded": {
     "title": "New card discovered",
     "title_other": "New cards discovered"

@@ -68,7 +68,7 @@ export function CardAction({
   const isLarge = size === 'lg';
   const iconClass = isLarge || wide ? 'size-6' : 'size-3';
   const boxClass = `bg-white/60 rounded-md ${isLarge || wide ? 'p-2' : 'p-1'}`;
-  const textClass = isLarge ? 'text-base' : 'text-xs';
+  const textClass = isLarge ? 'text-base text-center' : 'text-xs text-center';
   const effectiveActionCost = getEffectiveActionCost(action.cost, instance);
   const optionDisabled = !canUseOptions(
     gameState,

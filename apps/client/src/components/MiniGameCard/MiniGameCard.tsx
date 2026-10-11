@@ -20,7 +20,7 @@ import {
   getEffectiveGlory,
   getEffectiveUpgradeCost,
   getProductionChoicesForAction,
-  tagTextClass,
+  tagBorderClass,
 } from '@deck-legacy/engine/application/cardHelpers';
 import { canUseOptions } from '@deck-legacy/engine/application/gameStateHelper';
 import { Options, TargetScope } from '@deck-legacy/engine/domain/enums';
@@ -55,7 +55,7 @@ function Badge({
   return (
     <View
       accessibilityLabel={label}
-      className={`bg-card rounded-full border p-1.5 shadow-sm ${highlighted ? 'border-base-primary' : 'border-border'}`}
+      className={`bg-card rounded-full border-2 p-1.5 shadow-sm ${highlighted ? 'border-card' : 'border-border'}`}
     >
       {children}
     </View>
@@ -158,7 +158,7 @@ export function MiniGameCard({
   const isBlocked = isOnBoard && cardIsBlocked(instance.id, gameState);
   const cs = getActiveState(instance, defs);
   const isEnemy = cs.negative === true;
-  const titleColorClass = tagTextClass(cs.tags?.[0] ?? '', isEnemy);
+  const titleBorderClass = tagBorderClass(cs.tags?.[0] ?? '', isEnemy);
   const rawCardName = tCardName(t, cs.name || '');
   const canChooseName = cs.chooseName === true && rawCardName.includes('_____');
   const displayName = canChooseName
@@ -229,7 +229,7 @@ export function MiniGameCard({
         onPress={onPress}
         disabled={!onPress}
         style={{ aspectRatio: 3 / 5 }}
-        className="border-border bg-card relative w-full min-w-16 shrink-0 overflow-hidden rounded-md border shadow-md"
+        className="bg-card relative w-full min-w-16 shrink-0 overflow-hidden rounded-md border border-black/60 shadow-md"
       >
         {illustration && (
           <>
@@ -242,7 +242,13 @@ export function MiniGameCard({
         )}
 
         <View className="absolute inset-0 items-start gap-1 p-1 pt-2">
-          <Tag label={displayName} className="bg-black/60" textClassName={titleColorClass} />
+          <View className="w-full flex-row justify-center">
+            <Tag
+              label={displayName}
+              className={`border bg-black/60 ${titleBorderClass}`}
+              textClassName="text-center text-sm text-white"
+            />
+          </View>
 
           {hasProductions && productions && (
             <TutorialTarget id={tourTarget ? 'card-production' : undefined}>

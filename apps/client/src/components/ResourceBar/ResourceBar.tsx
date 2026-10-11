@@ -3,7 +3,7 @@ import ScoreTooltip from '@components/Tooltips/ScoreTooltip';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
 import { Divider } from '@components/ui/Divider/Divider';
-import { GloryIcon } from '@components/ui/Icon/icon';
+import { GloryIcon, StickerIcon } from '@components/ui/Icon/icon';
 import { IconColors } from '@components/ui/Icon/iconColors';
 import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Stat } from '@components/ui/Stat/Stat';
@@ -14,12 +14,21 @@ import { useGameUI } from '@hooks/useGameInterface';
 import { useIsDesktop } from '@hooks/useIsDesktop';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
+import Animated, { type CSSAnimationKeyframes, useReducedMotion } from 'react-native-reanimated';
+
+// Pop played when a resource appears or its amount changes.
+const RESOURCE_POP: CSSAnimationKeyframes = {
+  from: { transform: [{ scale: 1 }] },
+  '40%': { transform: [{ scale: 1.25 }] },
+  to: { transform: [{ scale: 1 }] },
+};
 
 export function ResourceBar() {
   const { t } = useTranslation();
   const { gameState, score } = useGame();
   const { setStickerStockOpen } = useGameUI();
   const isDesktop = useIsDesktop();
+  const reduceMotion = useReducedMotion();
 
   const { resources, round, turn, drawPile, discardPile } = gameState;
   const entries = Object.entries(resources).filter(([, v]) => v > 0);
@@ -45,13 +54,19 @@ export function ResourceBar() {
             </Text>
           ) : (
             entries.map(([k, v]) => (
-              <View
-                key={k}
+              // Keyed by amount: a new value remounts the badge, which replays the animation.
+              <Animated.View
+                key={`${k}-${v}`}
+                style={
+                  reduceMotion
+                    ? undefined
+                    : { animationName: RESOURCE_POP, animationDuration: '400ms' }
+                }
                 className="border-border flex-row items-center gap-1 rounded border px-2 py-1"
               >
                 <Text className="font-display">{v}</Text>
                 <ResourcePill resource={k} className="size-5" />
-              </View>
+              </Animated.View>
             ))
           )}
         </View>
@@ -91,7 +106,7 @@ export function ResourceBar() {
                 size="xs"
                 title={t('stickerStock.open')}
               >
-                🏷
+                <StickerIcon />
               </Button>
             </TutorialTarget>
           </View>

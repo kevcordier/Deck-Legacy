@@ -445,16 +445,16 @@ export function tagClass(tag: string, isEnemy: boolean): string {
   return tagClass + ' bg-tag-tag/10 border-tag-tag';
 }
 
-/** Retourne la classe Tailwind de couleur de texte associée à un tag (même palette que tagClass). */
-export function tagTextClass(tag: string, isEnemy: boolean): string {
+/** Retourne la classe Tailwind de couleur de bordure associée à un tag (même palette que tagClass). */
+export function tagBorderClass(tag: string, isEnemy: boolean): string {
   const t = tag.toLowerCase();
-  if (isEnemy) return 'text-tag-enemy';
-  if (t === 'building') return 'text-tag-building';
-  if (t === 'person') return 'text-tag-person';
-  if (t === 'seafaring') return 'text-tag-seafaring';
-  if (t === 'land') return 'text-tag-land';
-  if (t === 'livestock') return 'text-tag-livestock';
-  return 'text-tag-tag';
+  if (isEnemy) return 'border-tag-enemy';
+  if (t === 'building') return 'border-tag-building';
+  if (t === 'person') return 'border-tag-person';
+  if (t === 'seafaring') return 'border-tag-seafaring';
+  if (t === 'land') return 'border-tag-land';
+  if (t === 'livestock') return 'border-tag-livestock';
+  return 'border-tag-tag';
 }
 
 /** Retourne l'état actif d'une instance (lève une erreur si la définition ou l'état est introuvable). */

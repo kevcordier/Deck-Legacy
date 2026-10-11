@@ -1,12 +1,10 @@
 import { CheatPanel } from '@components/CheatPanel/CheatPanel';
-import { DeckViewer } from '@components/DeckViewer/DeckViewer';
-import { GameCard } from '@components/GameCard/GameCard';
+import { DeckCardGrid, DeckViewer } from '@components/DeckViewer/DeckViewer';
 import { GamePhaseActions } from '@components/GamePhaseActions/GamePhaseActions';
 import { MainBoard } from '@components/MainBoard/MainBoard';
 import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
-import { Grid } from '@components/ui/Grid/Grid';
 import { DestroyIcon, DiscardIcon, DrawCardIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
@@ -17,8 +15,41 @@ import { useTutorial } from '@hooks/useTutorial';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
+import {
+  Directions,
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
 
 type SheetName = 'draw' | 'discard' | 'destroyed';
+
+/** Width of the screen edges where a swipe opens the side sheets (px). */
+const EDGE_SWIPE_WIDTH = 20;
+
+/** Phone: a swipe from the screen edge towards the centre opens that side's sheet. */
+function EdgeSwipe({
+  side,
+  onSwipe,
+}: {
+  readonly side: 'left' | 'right';
+  readonly onSwipe: () => void;
+}) {
+  const fling = Gesture.Fling()
+    .direction(side === 'left' ? Directions.RIGHT : Directions.LEFT)
+    .runOnJS(true)
+    .onEnd(onSwipe);
+  return (
+    <GestureHandlerRootView
+      style={{ position: 'absolute', top: 0, bottom: 0, width: EDGE_SWIPE_WIDTH, [side]: 0 }}
+    >
+      {/* Web: a vertical swipe on the edge still scrolls the board. */}
+      <GestureDetector gesture={fling} touchAction="pan-y">
+        <View className="flex-1" />
+      </GestureDetector>
+    </GestureHandlerRootView>
+  );
+}
 
 export function GameBoard() {
   const { t } = useTranslation();
@@ -83,24 +114,40 @@ export function GameBoard() {
     (!!pendingChoices && pendingChoices.length > 0) ||
     (!!triggerPile && Object.keys(triggerPile).length > 0);
 
+  const openDraw = () => {
+    setOpenSheet('draw');
+    if (run) {
+      nextStep();
+    }
+  };
+  const openDiscard = () => setOpenSheet('discard');
+
   const lastDiscarded = discardDeck.length > 0 ? [discardDeck[discardDeck.length - 1]] : [];
   const lastDestroyed = destroyedDeck.length > 0 ? [destroyedDeck[destroyedDeck.length - 1]] : [];
 
   const sheets: Record<
     SheetName,
-    { title: string; icon: React.ReactNode; deck: typeof drawDeck; displayed: typeof drawDeck }
+    {
+      title: string;
+      icon: React.ReactNode;
+      deck: typeof drawDeck;
+      displayed: typeof drawDeck;
+      stackCount?: number;
+    }
   > = {
     draw: {
       title: t('deckViewer.draw'),
       icon: <DrawCardIcon className="size-4" />,
       deck: drawDeck,
       displayed: nextCards,
+      stackCount: drawPile.length - nextCards.length,
     },
     discard: {
       title: t('deckViewer.discard'),
       icon: <DiscardIcon className="size-4" />,
       deck: discardDeck,
       displayed: lastDiscarded,
+      stackCount: discardPile.length - 1,
     },
     destroyed: {
       title: t('deckViewer.destroyed'),
@@ -125,6 +172,7 @@ export function GameBoard() {
               deck={drawDeck}
               variant="left"
               displayedCards={nextCards}
+              stackCount={drawPile.length - nextCards.length}
             />
           </TutorialTarget>
         )}
@@ -132,6 +180,13 @@ export function GameBoard() {
         <ScrollView ref={centerScrollRef} className="flex-1" contentContainerClassName="grow">
           <MainBoard />
         </ScrollView>
+
+        {!isDesktop && (
+          <>
+            <EdgeSwipe side="left" onSwipe={openDraw} />
+            <EdgeSwipe side="right" onSwipe={openDiscard} />
+          </>
+        )}
 
         {isDesktop && (
           <TutorialTarget id="discard-column" className={pinnedRight ? 'w-64' : 'w-[60px]'}>
@@ -149,6 +204,7 @@ export function GameBoard() {
               }}
               variant="right"
               displayedCards={lastDiscarded}
+              stackCount={discardPile.length - 1}
               footer={
                 destroyedDeck.length > 0 ? (
                   <TutorialTarget id="destroyed-button-desktop">
@@ -175,15 +231,11 @@ export function GameBoard() {
       {__DEV__ && <CheatPanel />}
 
       {!isDesktop && (
-        <View className="bg-background border-t-border z-10 flex-row items-center justify-between gap-1 border-t p-2">
+        <View className="bg-background border-t-border z-10 flex-row items-center justify-between gap-1 border-t py-2">
           <TutorialTarget id="draw-mobile-button">
             <Button
-              onPress={() => {
-                setOpenSheet('draw');
-                if (run) {
-                  nextStep();
-                }
-              }}
+              onPress={openDraw}
+              edge="left"
               variant="outlined"
               color="ink"
               size="sm"
@@ -209,19 +261,6 @@ export function GameBoard() {
           />
 
           <View className="flex-row items-center gap-1">
-            <TutorialTarget id="discard-mobile-button">
-              <Button
-                onPress={() => setOpenSheet('discard')}
-                variant="outlined"
-                color="ink"
-                size="sm"
-                accessibilityLabel={t('deckViewer.discard')}
-              >
-                <Text>
-                  <DiscardIcon className="size-4" /> ({discardPile.length})
-                </Text>
-              </Button>
-            </TutorialTarget>
             {destroyedDeck.length > 0 && (
               <TutorialTarget id="destroyed-button-mobile">
                 <Button
@@ -237,6 +276,20 @@ export function GameBoard() {
                 </Button>
               </TutorialTarget>
             )}
+            <TutorialTarget id="discard-mobile-button">
+              <Button
+                onPress={openDiscard}
+                edge="right"
+                variant="outlined"
+                color="ink"
+                size="sm"
+                accessibilityLabel={t('deckViewer.discard')}
+              >
+                <Text>
+                  <DiscardIcon className="size-4" /> ({discardPile.length})
+                </Text>
+              </Button>
+            </TutorialTarget>
           </View>
         </View>
       )}
@@ -265,11 +318,7 @@ export function GameBoard() {
           onClose={() => setDestroyedModalOpen(false)}
           side="right"
         >
-          <Grid minItemWidth={240} maxColumns={4}>
-            {destroyedDeck.map(inst => (
-              <GameCard key={inst.id} instance={inst} size="lg" />
-            ))}
-          </Grid>
+          <DeckCardGrid cards={destroyedDeck} />
         </Modal>
       )}
 
@@ -292,6 +341,7 @@ export function GameBoard() {
             emptyText={t('deckViewer.empty')}
             deck={sheets[openSheet].deck}
             displayedCards={sheets[openSheet].displayed}
+            stackCount={sheets[openSheet].stackCount}
           />
         </Modal>
       )}

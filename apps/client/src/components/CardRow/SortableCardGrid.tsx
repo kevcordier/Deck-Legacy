@@ -1,15 +1,16 @@
 import { type ReactNode, useEffect, useMemo } from 'react';
 import { type StyleProp, View, type ViewStyle } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useSharedValue } from 'react-native-reanimated';
+import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import Animated, { useSharedValue } from 'react-native-reanimated';
 import {
   type GridDimensions,
   GridOrientation,
   type GridPositions,
   GridScrollDirection,
-  SortableGridItem,
+  type UseGridSortableOptions,
   calculateGridContentDimensions,
   listToGridObject,
+  useGridSortable,
 } from 'react-native-reanimated-dnd';
 
 type SortableCardGridProps = {
@@ -30,8 +31,28 @@ const NO_AUTO_SCROLL_SIZE = 1_000_000;
 
 const toItems = (ids: string[]) => ids.map(id => ({ id }));
 
+type CardGridItemProps = UseGridSortableOptions<unknown> & {
+  readonly animatedStyle?: StyleProp<ViewStyle>;
+  readonly children: ReactNode;
+};
+
 /**
- * Sortable grid built from `SortableGridItem` without `SortableGrid`, whose scroll view clips
+ * `SortableGridItem` without its default `touch-action: none` on web, which stopped a swipe over
+ * a card from scrolling the board on mobile browsers.
+ */
+function CardGridItem({ animatedStyle, children, ...options }: CardGridItemProps) {
+  const { animatedStyle: positionStyle, panGestureHandler } = useGridSortable(options);
+  return (
+    <Animated.View style={[positionStyle, animatedStyle]}>
+      <GestureDetector gesture={panGestureHandler} touchAction="manipulation">
+        <Animated.View style={{ flex: 1 }}>{children}</Animated.View>
+      </GestureDetector>
+    </Animated.View>
+  );
+}
+
+/**
+ * Sortable grid built from `useGridSortable` without `SortableGrid`, whose scroll view clips
  * the cards' hover zoom and shadows. Items keep their own position while dragged; the order is
  * reported on drop.
  *
@@ -78,10 +99,9 @@ export function SortableCardGrid({
     <GestureHandlerRootView style={{ width: size.width, height: size.height }}>
       <View style={{ width: size.width, height: size.height }}>
         {ids.map((id, index) => (
-          <SortableGridItem
+          <CardGridItem
             key={id}
             id={id}
-            data={{ id }}
             positions={positions}
             scrollX={scrollX}
             scrollY={scrollY}
@@ -96,7 +116,7 @@ export function SortableCardGrid({
             onDrop={handleDrop}
           >
             {renderItem(id, index)}
-          </SortableGridItem>
+          </CardGridItem>
         ))}
       </View>
     </GestureHandlerRootView>

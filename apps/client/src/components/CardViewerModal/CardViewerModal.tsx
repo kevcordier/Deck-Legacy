@@ -4,9 +4,15 @@ import { Text } from '@components/ui/Text/Text';
 import { useGame } from '@hooks/useGame';
 import { useIsDesktop } from '@hooks/useIsDesktop';
 import { useWebKeyDown } from '@hooks/useWebKeyDown';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View, useWindowDimensions } from 'react-native';
+import {
+  Directions,
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const CARD_ASPECT_RATIO = 3 / 5;
@@ -73,6 +79,16 @@ export function CardViewerModal({ cardIds, initialId, onClose }: CardViewerModal
   );
   useWebKeyDown(handleKey);
 
+  // Phone: swiping the card left shows the next one, right the previous one.
+  const swipe = useMemo(
+    () =>
+      Gesture.Race(
+        Gesture.Fling().direction(Directions.LEFT).runOnJS(true).onEnd(goNext),
+        Gesture.Fling().direction(Directions.RIGHT).runOnJS(true).onEnd(goPrev),
+      ),
+    [goNext, goPrev],
+  );
+
   const instance = gameState.instances[currentId];
   if (!instance) return null;
 
@@ -117,7 +133,13 @@ export function CardViewerModal({ cardIds, initialId, onClose }: CardViewerModal
   if (!isDesktop) {
     return (
       <Modal onClose={onClose} label="card-viewer" bare>
-        {card}
+        {hasNav ? (
+          <GestureHandlerRootView>
+            <GestureDetector gesture={swipe}>{card}</GestureDetector>
+          </GestureHandlerRootView>
+        ) : (
+          card
+        )}
         {hasNav && (
           <View className="flex-row items-center gap-4">
             {navButton('previous')}

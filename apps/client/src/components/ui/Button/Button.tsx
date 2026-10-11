@@ -18,6 +18,8 @@ export type ButtonProps = Omit<PressableProps, 'children' | 'style'> & {
   readonly textClassName?: string;
   /** Web tooltip / accessibility label. */
   readonly title?: string;
+  /** Stuck to this screen edge, like the side sheet it opens: square and borderless on that side. */
+  readonly edge?: 'left' | 'right';
 };
 
 // Literal class strings (NativeWind only generates classes it can find in the sources).
@@ -61,6 +63,12 @@ const SIZE: Record<ButtonSize, { box: string; text: string }> = {
   lg: { box: 'px-4 py-2', text: 'text-lg' },
 };
 
+const EDGE: Record<'left' | 'right' | 'none', string> = {
+  left: 'rounded-r border-l-0',
+  right: 'rounded-l border-r-0',
+  none: 'rounded',
+};
+
 function variantClasses(variant: ButtonVariant, color: ButtonColor): string {
   switch (variant) {
     case 'contained':
@@ -85,6 +93,7 @@ export function Button({
   disabled,
   title,
   accessibilityLabel,
+  edge,
   ...rest
 }: ButtonProps) {
   const sizeClasses = SIZE[size];
@@ -99,7 +108,7 @@ export function Button({
       accessibilityLabel={accessibilityLabel ?? title}
       accessibilityState={{ disabled: !!disabled }}
       disabled={disabled}
-      className={`flex-row items-center justify-center gap-1 rounded ${boxClasses} ${variantClasses(variant, color)} ${disabled ? 'opacity-50' : ''} ${className}`}
+      className={`flex-row items-center justify-center gap-1 ${EDGE[edge ?? 'none']} ${boxClasses} ${variantClasses(variant, color)} ${disabled ? 'opacity-50' : ''} ${className}`}
       {...rest}
     >
       <TextStyle className={labelClasses}>

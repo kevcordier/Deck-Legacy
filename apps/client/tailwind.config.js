@@ -7,7 +7,7 @@
 module.exports = {
   content: [
     './src/**/*.{ts,tsx}',
-    // Tag colour classes are built by the engine (`tagClass`, `tagTextClass`).
+    // Tag colour classes are built by the engine (`tagClass`, `tagBorderClass`).
     '../../packages/engine/src/application/cardHelpers.ts',
     './stories/**/*.{ts,tsx}',
     './.rnstorybook/**/*.{ts,tsx}',
