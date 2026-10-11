@@ -96,6 +96,7 @@ export const engineer: CardDef = {
       actions: [
         {
           id: '25-2-1',
+          defeat: true,
           cost: {
             destroy: {
               scope: [TargetScope.SELF],

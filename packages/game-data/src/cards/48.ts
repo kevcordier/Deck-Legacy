@@ -53,6 +53,7 @@ export const assassin: CardDef = {
       actions: [
         {
           id: '48-1-1',
+          defeat: true,
           cost: {
             resources: [
               {
@@ -113,6 +114,7 @@ export const assassin: CardDef = {
         },
         {
           id: '48-2-3',
+          defeat: true,
           cost: {
             resources: [
               {

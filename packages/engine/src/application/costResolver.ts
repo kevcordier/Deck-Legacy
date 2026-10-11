@@ -9,6 +9,7 @@ import type {
   Resources,
   Sticker,
 } from '../domain/types';
+import { getSpendableResources } from './cardHelpers';
 import { cardSelector } from './cardSelector';
 import { getPickNumbers } from './effectResolver';
 import {
@@ -36,6 +37,7 @@ function getPayableResourceCosts(
   stickerDefs: Record<number, Sticker>,
 ): Resources[] {
   if (!cost.resources) return [];
+  const available = getSpendableResources(gameState, cost.forUpgrade);
 
   const equivalence = getSourceResourceEquivalence(
     equivalenceSourceInstanceId,
@@ -47,12 +49,12 @@ function getPayableResourceCosts(
   if (!equivalence) {
     return cost.resources
       .map(resourceCost => fixResources(resourceCost))
-      .filter(resourceCost => canAffordResourceCost(gameState.resources, resourceCost));
+      .filter(resourceCost => canAffordResourceCost(available, resourceCost));
   }
 
   return dedupeResourceOptions(
     cost.resources.flatMap(resourceCost =>
-      getPayableResourceCostVariants(fixResources(resourceCost), gameState.resources, equivalence),
+      getPayableResourceCostVariants(fixResources(resourceCost), available, equivalence),
     ),
   );
 }

@@ -4,7 +4,7 @@ import { ExpansionSelectedStrategy } from '@engine/application/gameEvent/Expansi
 import { PurgeCardSelectedStrategy } from '@engine/application/gameEvent/PurgeCardSelectedStrategy';
 import { PurgeOnTriggeredStrategy } from '@engine/application/gameEvent/PurgeOnTriggeredStrategy';
 import { PurgePermanentSelectedStrategy } from '@engine/application/gameEvent/PurgePermanentSelectedStrategy';
-import { GameEventType, Phase } from '@engine/domain/enums';
+import { GameEventType, Phase, ResourceType } from '@engine/domain/enums';
 import type {
   CampaignScoreSavedEvent,
   ExpansionSelectedEvent,
@@ -76,6 +76,36 @@ describe('Small game event strategies', () => {
     expect(result.turn).toBe(0);
     expect(result.discoveryPile).toEqual([5, 6]);
     expect(result.phase).toBe(Phase.PURGE);
+  });
+
+  it('ExpansionSelectedStrategy adds the expansion stickers to the stock', () => {
+    const strategy = new ExpansionSelectedStrategy({});
+    const state = makeState({ stickerStock: { 10: 5, 16: 5 } });
+
+    const event = {
+      id: 'e3',
+      type: GameEventType.EXPANSION_SELECTED,
+      timestamp: 0,
+      expansionName: 'exp',
+      deckEntries: [],
+      purgeBatchSize: 1,
+      purgePermanentCount: 0,
+      purgePool: [],
+      onStartDiscoverIds: [],
+    } as ExpansionSelectedEvent;
+
+    const withStickers: ExpansionSelectedEvent = { ...event, addedStickers: { 10: 6, 3: 2 } };
+    expect(strategy.apply(state, withStickers).stickerStock).toEqual({ 3: 2, 10: 11, 16: 5 });
+    const withFocus: ExpansionSelectedEvent = {
+      ...event,
+      purgeFocus: { resource: ResourceType.WOOD, count: 2 },
+    };
+    expect(strategy.apply(state, withFocus).purgeState?.focus).toEqual({
+      resource: ResourceType.WOOD,
+      count: 2,
+    });
+    // Events saved before expansions could add stickers keep the stock unchanged
+    expect(strategy.apply(state, event).stickerStock).toEqual({ 10: 5, 16: 5 });
   });
 
   it('ExpansionSelectedStrategy stores expansionMaxRound when provided', () => {

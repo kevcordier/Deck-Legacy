@@ -350,6 +350,11 @@ export function evaluateCondition(
       );
     case 'not':
       return !evaluateCondition(condition.condition, gameState, instanceId, defs, stickers);
+    case 'expansionActive':
+      return (
+        gameState.activeExpansion === condition.name &&
+        !Object.hasOwn(gameState.campaignScores, condition.name)
+      );
   }
 }
 

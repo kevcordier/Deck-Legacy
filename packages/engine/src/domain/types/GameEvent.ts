@@ -1,5 +1,13 @@
 import type { GameEventType } from '../enums';
-import type { ExpansionDeckEntry, GameParameters, GameState, Resources, TriggerEntry } from './';
+import type {
+  ExpansionDeckEntry,
+  GameParameters,
+  GameState,
+  PurgeFocus,
+  Resources,
+  StickerStock,
+  TriggerEntry,
+} from './';
 
 export interface GameEvent {
   id: string;
@@ -117,6 +125,8 @@ export interface ExpansionSelectedEvent extends GameEvent {
   purgePool: number[];
   parameterOverrides?: Partial<GameParameters>;
   onStartDiscoverIds: number[];
+  addedStickers?: StickerStock;
+  purgeFocus?: PurgeFocus;
 }
 
 export interface PurgeCardSelectedEvent extends GameEvent {

@@ -230,6 +230,10 @@
       "Border Dispute": {
         "title": "Conflit frontalier",
         "description": "Cette mini-extension introduit la carte permanente #138 (Conflit frontalier). Elle vous guide à travers 4 manches de jeu supplémentaires. Vous effectuerez une purge de 12 cartes et une purge d'une carte permanente. Dans ces extensions, vous ne découvrez PAS 2 nouvelles cartes au début de la manche. Une fois terminé, ajoutez le score de ce segment à votre score précédent, puis choisissez la prochaine extension."
+      },
+      "Ridding the Woods": {
+        "title": "Débarrasser les bois",
+        "description": "Des brigands se sont installés dans les bois autour de votre royaume. Vous effectuerez une purge 8 (focus 2 bois : tant que moins de 2 cartes purgées produisent du bois, choisissez une carte qui en produit quand le lot en contient) et purgerez 2 cartes permanentes, puis jouerez 5 manches supplémentaires. Au début de chaque manche, découvrez 5 cartes de cette extension au lieu de 2. Vainquez les ennemis et enfermez les prisonniers. Ajoutez 6 autocollants « +5 Gloire » et 2 autocollants « Gloire vide » à votre réserve. À la fin, ajoutez le score de ce segment à votre score précédent, puis choisissez l'extension suivante."
       }
     }
   },

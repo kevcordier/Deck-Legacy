@@ -481,3 +481,24 @@ Action
 
 - Mesurer la vue qui n'a pas de padding (le padding va sur une vue extérieure), comme `Grid` le fait maintenant.
 - Pour un clignotement d'interface, compter les rendus avant de chercher dans les styles.
+
+---
+
+ID : INS-022
+Date : 2026-10-11
+Titre : Un coût d'action ne se paie qu'une fois
+Statut : Valide
+
+Découverte
+Une action avec un coût en ressources et un `TRACK_ADVANCE` faisait payer son coût deux fois : `CardActionAggregate.resolvePayCost` additionnait le coût de l'action, déjà payé, au coût de l'étape et repayait le tout. `spendResources` plafonne à 0, donc le bug passait inaperçu quand le joueur avait juste assez. Cartes touchées : 27-1-1, 80-1-1, 89-1-1, 108-4-2, 111-4-1.
+
+Source
+Scénario de test du Robbin' Leader (carte 123) : 3 épées dépensées deux fois.
+
+Impact
+Le rejeu ne change pas (les événements `CARD_ACTION` stockent l'état obtenu), mais les nouvelles actions de ces cartes coûtent désormais le prix imprimé.
+
+Action
+
+- `resolvePayCost(cost)` paie seulement le coût passé ; sans argument, il paie le coût de l'action et défausse la carte jouée.
+- Tester le solde de ressources après une action à coût, pas seulement l'effet.

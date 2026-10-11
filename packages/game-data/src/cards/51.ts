@@ -43,6 +43,7 @@ export const skilledBandit: CardDef = {
         },
         {
           id: '51-1-2',
+          defeat: true,
           cost: {
             resources: [
               {

@@ -113,10 +113,12 @@ function resolveTrackAdvanceEffect(
 
   if (track.inOrder) {
     const sortedSteps = [...availableSteps].sort((a, b) => a.id - b.id);
-    resolverAction.stepIds = [sortedSteps[0].id];
-    const stepId = resolverAction.stepIds[0];
-    resolverAction.newActionEffects = (track.steps.find(s => s.id === stepId)?.effects ?? []).map(
-      e => ({ ...e, sourceStepId: stepId }),
+    resolverAction.stepIds = sortedSteps.slice(0, steps.pickNumber ?? 1).map(s => s.id);
+    resolverAction.newActionEffects = resolverAction.stepIds.flatMap(stepId =>
+      (track.steps.find(s => s.id === stepId)?.effects ?? []).map(e => ({
+        ...e,
+        sourceStepId: stepId,
+      })),
     );
     return [resolverAction, pendingChoices];
   } else {

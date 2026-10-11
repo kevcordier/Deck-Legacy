@@ -1,4 +1,4 @@
-import type { Phase } from '../enums';
+import type { Phase, ResourceType } from '../enums';
 import type { CardAction, Passive } from './Card';
 import type { CardInstance } from './CardInstance';
 import type { Resources } from './Resource';
@@ -19,14 +19,22 @@ export type ExpansionConfig = {
   purge: {
     permanent: number;
     purge: number;
+    focus?: PurgeFocus;
   };
   parameters?: Partial<GameParameters>;
   deck: ExpansionDeckEntry[];
+  stickers?: StickerStock; // stickers added to the stock when the expansion starts
   onStart?: {
     discover?: {
       ids: number[];
     };
   };
+};
+
+/** "Focus N resource": while fewer than `count` selected cards produce `resource`, pick one of them when the batch has any. */
+export type PurgeFocus = {
+  resource: ResourceType;
+  count: number;
 };
 
 export type PurgeState = {
@@ -38,6 +46,7 @@ export type PurgeState = {
   selectedPermanentIds: number[];
   onPurgeTriggered: boolean;
   onStartDiscoverIds: number[];
+  focus?: PurgeFocus;
 };
 
 export type GameState = {

@@ -1363,3 +1363,32 @@ describe('CardActionAggregate.resolveCostChoice – pendingTrackCost', () => {
     expect(agg.getGameState().instances[1].trackProgress).toEqual([]);
   });
 });
+
+describe('CardActionAggregate — action cost with a track step', () => {
+  it('pays the action cost once', () => {
+    const defs: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'Treasury',
+        states: [{ id: 1, name: 'S', track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }] } }],
+      },
+    };
+    const gs = makeState({
+      board: [1],
+      resources: { gold: 5 },
+      instances: { 1: makeInstance({ id: 1, cardId: 1 }) },
+    });
+    const agg = new CardActionAggregate(defs, {}, gs, gs.instances[1], {
+      id: '1-1-1',
+      cost: { resources: [{ gold: 2 }] },
+      actionEffects: [
+        { id: 1, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
+      ],
+    });
+
+    agg.resolveAction();
+
+    expect(agg.getGameState().resources).toEqual({ gold: 3 });
+    expect(agg.getGameState().instances[1].trackProgress).toEqual([1]);
+  });
+});

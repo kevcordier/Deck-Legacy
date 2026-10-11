@@ -1123,3 +1123,29 @@ Conséquences
 - Les anciens clients (sans `baseVersion` ni `fromSeq`) fonctionnent toujours et écrasent comme avant.
 - Le téléchargement d'un royaume (`GET /games/:id/export`) reste complet.
 - Chaque client connecté appelle `GET /games` chaque minute.
+
+---
+
+ID : EDR-042
+Date : 2026-10-11
+Titre : Un dossier par extension dans game-data
+Statut : Active
+
+Contexte
+Les extensions déjà jouables (Prosperity, The Water Mill, Border Dispute) n'ont qu'une carte chacune, rangée dans `cards/` avec une entrée dans `deck.json`. Ridding the Woods en aura 29, avec ses propres mécaniques.
+
+Problème
+Où ranger les cartes et la configuration d'une grande extension sans noyer `cards/` et `deck.json` ?
+
+Décision
+Une extension a son dossier `packages/game-data/src/expansions/<nom>/` : `cards/<id>.ts`, un `deck.json` (`name` + la configuration `ExpansionConfig`) et un `index.ts` qui exporte un `ExpansionPack`. `expansions/index.ts` liste ces dossiers et `loadGameCatalog()` fusionne leurs cartes et leur configuration dans le catalogue. Les ids de cartes et d'instances restent globaux et uniques (vérifié par `catalog.test.ts`).
+
+Alternatives rejetées
+
+- Tout garder dans `cards/` et `deck.json` : les cartes d'une extension se perdent parmi celles du jeu de base.
+- Déplacer aussi les trois mini-extensions : aucun gain pour une carte chacune.
+
+Conséquences
+
+- Le catalogue (donc le client et le serveur) ne change pas de forme : `GameCatalog.expansions` reste indexé par nom.
+- Ajouter une extension rangée ainsi impose de l'ajouter à `expansionPacks`.

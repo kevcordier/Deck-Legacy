@@ -5,6 +5,7 @@ import { AddCumulatedStrategy } from './AddCumulatedStrategy';
 import { AddGloryStrategy } from './AddGloryStrategy';
 import { AddResourceStrategy } from './AddResourceStrategy';
 import { AddStickerStrategy } from './AddStickerStrategy';
+import { AddToPurgeStrategy } from './AddToPurgeStrategy';
 import { BlockCardStrategy } from './BlockCardStrategy';
 import type { CardActionStrategy } from './CardActionStrategy';
 import { ChoseStateStrategy } from './ChoseStateStrategy';
@@ -49,6 +50,7 @@ export class CardActionContext {
       [ActionEffectType.ADD_GLORY]: new AddGloryStrategy(cardDefs, stickerDefs),
       [ActionEffectType.SAVE_FROM_PURGE]: new SaveFromPurgeStrategy(),
       [ActionEffectType.SET_LAST_ROUND]: new SetLastRoundStrategy(),
+      [ActionEffectType.ADD_TO_PURGE]: new AddToPurgeStrategy(),
     };
   }
 

@@ -61,7 +61,7 @@ Conventions (from existing cards — follow these, not older docs):
 - Illustrations are referenced as `cards/<id>_<stateId>.<ext>` and the files live in `apps/client/assets/cards/` (bundled for offline play). After adding an image, run `pnpm --filter @deck-legacy/client generate:illustrations` (Metro only bundles images listed in `apps/client/src/data/illustrations.ts`). If the image does not exist yet, still set the path and tell the user which files to add.
 - Use `import type` for types only; no `any`.
 
-## 4. Register in `packages/game-data/src/cards/index.ts`
+## 4. Register in `packages/game-data/src/cards/index.ts` (or the expansion's `index.ts`)
 
 Add `import { camelCaseName } from './<id>';` after the last import and append
 `camelCaseName,` at the end of the `cardsData` array.
@@ -95,9 +95,13 @@ instance `id` (across `deck` and every `expansions.*.deck`) + 1.
 - **Initial deck**: add `{ "id": <instanceId>, "cardId": <id> }` to `deck`.
 - **Discovered later** (by another card's `DISCOVER_CARD`): still needs an instance in
   `deck`; update the discovering card's effect and its locale text if needed.
-- **Expansion**: add an entry under `expansions` modelled on existing ones
-  (`expansionMaxRound`, `purge`, `parameters`, `deck`, `onStart.discover.ids`) and a
-  translated expansion name if the UI needs one.
+- **Expansion** (EDR-041): the card lives in `src/expansions/<name>/cards/<id>.ts`, is listed
+  in `src/expansions/<name>/index.ts`, and its instance goes in `src/expansions/<name>/deck.json`
+  (`name`, `expansionMaxRound`, `purge` (with an optional `focus: { resource, count }`), `parameters`, `stickers` added to the stock,
+  `deck`, `onStart.discover.ids`).
+  A new expansion folder is added to `expansionPacks` in `src/expansions/index.ts`, with a
+  translated title in `campaign.expansions.<name>` (en/fr). Card ids and instance ids stay global.
+  Prosperity, The Water Mill and Border Dispute predate this and stay in `cards/` and `deck.json`.
 
 ## 7. Engine support
 

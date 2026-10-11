@@ -26,7 +26,7 @@ Deck-Legacy turns an existing solo legacy deck-building board game into a free d
 apps/client/          @deck-legacy/client — Expo / React Native app (runs the engine, saves locally, syncs)
 apps/server/          @deck-legacy/server — NestJS API (validates synced games by replay, stores them, scores)
 packages/engine/      @deck-legacy/engine — pure game engine (domain = types, application = logic)
-packages/game-data/   @deck-legacy/game-data — card definitions, stickers, deck.json
+packages/game-data/   @deck-legacy/game-data — card definitions, stickers, deck.json, expansions/<name>/ (cards + deck.json)
 packages/api-contract/ @deck-legacy/api-contract — HTTP DTOs + zod schemas
 .claude/              agents, contracts.md, memory/EDR.md (decisions), memory/INSIGHTS.md (lessons), rules, skills
 scripts/dev.mjs       `pnpm dev` launcher; docker-compose.yml = local PostgreSQL
@@ -37,6 +37,7 @@ scripts/dev.mjs       `pnpm dev` launcher; docker-compose.yml = local PostgreSQL
 | To change…         | Edit…                                                                                            |
 | ------------------ | ------------------------------------------------------------------------------------------------ |
 | A card             | `packages/game-data/src/cards/<id>.ts` + `cards.{en,fr}.json` (skill `add-card`)                 |
+| An expansion card  | `packages/game-data/src/expansions/<name>/cards/<id>.ts` + its `deck.json` (EDR-041)             |
 | A card effect type | new strategy in `packages/engine/src/application/cardAction/`, registered in `CardActionContext` |
 | A player action    | `GameCommand` → `GameSession.dispatch` → tests → client `GameProvider`                           |
 | The UI             | `apps/client/src/components/<Component>/` + Storybook story                                      |

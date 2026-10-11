@@ -18,6 +18,7 @@ import {
   getActiveState,
   getEffectiveActionCost,
   getEffectiveUpgradeCost,
+  getInstancesTriggerEffects,
 } from '../cardHelpers';
 import { resolveCost } from '../costResolver';
 import { resolveActionEffect } from '../effectResolver';
@@ -399,6 +400,10 @@ export class CardActionAggregate {
       this.gameState.instances[this.instance.id].usedActionIds.push(this.action.id);
     }
 
+    if (this.action.defeat) {
+      this.queueDefeatTriggers();
+    }
+
     if (this.def.parchmentCard) {
       this.gameState = {
         ...this.gameState,
@@ -410,6 +415,21 @@ export class CardActionAggregate {
       const { [this.triggerId]: _used, ...restTriggers } = this.gameState.triggerPile;
       this.gameState.triggerPile = restTriggers;
     }
+  }
+
+  private queueDefeatTriggers() {
+    const inPlay = [...new Set([...this.gameState.board, ...this.gameState.permanents])]
+      .map(id => this.gameState.instances[id])
+      .filter(Boolean);
+    getInstancesTriggerEffects(
+      inPlay,
+      this.cardDefs,
+      this.stickerDefs,
+      Trigger.ON_DEFEAT,
+      this.gameState,
+    ).forEach(entry => {
+      this.gameState.triggerPile[crypto.randomUUID()] = entry;
+    });
   }
 
   private processResolvedAction(
@@ -601,7 +621,28 @@ export class CardActionAggregate {
     this.resolveEffectsFrom(0);
   }
 
+  private payCost(cost: ResolvedCost) {
+    this.gameState = destroyCards(
+      discardCards(
+        spendResources(this.gameState, cost.resources),
+        cost.discardedCardIds,
+        this.cardDefs,
+        this.stickerDefs,
+      ),
+      cost.destroyedCardIds,
+    );
+  }
+
+  /**
+   * Without argument, pays the action cost (and discards the played card). With a step or
+   * upgrade cost, pays only that cost: the action cost was already paid.
+   */
   resolvePayCost(resolvedCost?: ResolvedCost) {
+    if (resolvedCost) {
+      this.payCost(resolvedCost);
+      return;
+    }
+
     if (
       !this.triggerId &&
       !this.action.unlimited &&
@@ -616,27 +657,7 @@ export class CardActionAggregate {
       );
     }
 
-    this.resolvedCost = {
-      resources: mergeResources(this.resolvedCost.resources, resolvedCost?.resources),
-      discardedCardIds: [
-        ...this.resolvedCost.discardedCardIds,
-        ...(resolvedCost?.discardedCardIds ?? []),
-      ],
-      destroyedCardIds: [
-        ...this.resolvedCost.destroyedCardIds,
-        ...(resolvedCost?.destroyedCardIds ?? []),
-      ],
-    };
-
-    this.gameState = destroyCards(
-      discardCards(
-        spendResources(this.gameState, this.resolvedCost.resources),
-        this.resolvedCost.discardedCardIds,
-        this.cardDefs,
-        this.stickerDefs,
-      ),
-      this.resolvedCost.destroyedCardIds,
-    );
+    this.payCost(this.resolvedCost);
   }
 
   isCancelled(): boolean {

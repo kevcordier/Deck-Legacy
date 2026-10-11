@@ -32,6 +32,8 @@ export enum Trigger {
   ON_PRODUCE = 'on_produce',
   ON_UPGRADE = 'on_upgrade',
   ON_TRACK_END = 'on_track_end',
+  ON_DEFEAT = 'on_defeat',
+  ON_PURGE_SELECTION = 'on_purge_selection',
 }
 
 export enum GameEventType {
@@ -80,6 +82,7 @@ export enum ActionEffectType {
   ADD_GLORY = 'ADD_GLORY',
   SAVE_FROM_PURGE = 'SAVE_FROM_PURGE',
   SET_LAST_ROUND = 'SET_LAST_ROUND',
+  ADD_TO_PURGE = 'ADD_TO_PURGE',
 }
 
 export enum PassiveType {
@@ -96,6 +99,8 @@ export enum PassiveType {
   RESOURCE_EQUIVALENCE = 'RESOURCE_EQUIVALENCE',
   SET_GAME_PARAMETER = 'SET_GAME_PARAMETER',
   CANT_BE_DESTROYED = 'CANT_BE_DESTROYED',
+  RESTRICT_GAIN = 'RESTRICT_GAIN',
+  RESTRICT_SPEND = 'RESTRICT_SPEND',
 }
 
 export enum Options {

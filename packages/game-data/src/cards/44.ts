@@ -15,6 +15,7 @@ export const witch: CardDef = {
       actions: [
         {
           id: '44-1-1',
+          defeat: true,
           cost: {
             resources: [
               {
@@ -87,6 +88,7 @@ export const witch: CardDef = {
       actions: [
         {
           id: '44-2-1',
+          defeat: true,
           cost: {
             resources: [
               {

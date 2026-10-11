@@ -1,5 +1,6 @@
 import { cardsData } from './cards';
 import deckData from './deck.json';
+import { expansionPacks } from './expansions';
 import stickerStockData from './stickerStock.json';
 import { stickerData } from './stickers';
 import type {
@@ -27,10 +28,13 @@ export function indexById<T extends { id: number }>(items: readonly T[]): Record
 export function loadGameCatalog(): GameCatalog {
   const deck = deckData as DeckData;
   return {
-    cards: indexById(cardsData),
+    cards: indexById([...cardsData, ...expansionPacks.flatMap(pack => pack.cards)]),
     stickers: indexById(stickerData),
     deck: deck.deck,
-    expansions: deck.expansions ?? {},
+    expansions: {
+      ...deck.expansions,
+      ...Object.fromEntries(expansionPacks.map(({ deck: { name, ...config } }) => [name, config])),
+    },
     stickerStock: stickerStockData,
   };
 }

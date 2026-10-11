@@ -6,6 +6,7 @@ import type {
   CardInstance,
   Cost,
   GameState,
+  Passive,
   Resources,
   StepDef,
   Sticker,
@@ -62,7 +63,7 @@ export function getEffectiveUpgradeCost(
   stickerDefs: Record<number, Sticker>,
   instanceId: number,
 ): Cost {
-  const adjustedCost = JSON.parse(JSON.stringify(baseCost)) as Cost;
+  const adjustedCost = { ...(JSON.parse(JSON.stringify(baseCost)) as Cost), forUpgrade: true };
   const sourceInstance = gameState.instances[instanceId];
 
   for (const [passiveSourceId, passives] of Object.entries(gameState.boardEffects)) {
@@ -110,6 +111,35 @@ export function getEffectiveActionCost(
     ? { ...baseCost, resources: baseCost.resources.map(r => fixResources(r, amount)) }
     : baseCost;
   return removeResourceKeysFromCost(fixedCost, removedKeys);
+}
+
+function passivesInPlay(gameState: GameState, type: PassiveType): Passive[] {
+  return Object.values(gameState.boardEffects)
+    .flat()
+    .filter(p => p.type === type);
+}
+
+/** Drops the resources that a RESTRICT_GAIN passive in play does not allow. */
+export function keepGainableResources(resources: Resources, gameState: GameState): Resources {
+  const restrictions = passivesInPlay(gameState, PassiveType.RESTRICT_GAIN);
+  return Object.fromEntries(
+    Object.entries(resources).filter(([key]) =>
+      restrictions.every(p => p.resources?.[key as keyof Resources]),
+    ),
+  );
+}
+
+/** Resources that can pay a cost: RESTRICT_SPEND keeps its resources for upgrade costs only. */
+export function getSpendableResources(gameState: GameState, forUpgrade = false): Resources {
+  if (forUpgrade) return gameState.resources;
+  const reserved = new Set(
+    passivesInPlay(gameState, PassiveType.RESTRICT_SPEND).flatMap(p =>
+      Object.keys(p.resources ?? {}),
+    ),
+  );
+  return Object.fromEntries(
+    Object.entries(gameState.resources).filter(([key]) => !reserved.has(key)),
+  );
 }
 
 export function getTotalProduction(
@@ -219,7 +249,7 @@ export function getProductionChoicesForAction(
     unique.set(serialize(choice), choice);
   });
 
-  return [...unique.values()];
+  return [...unique.values()].map(choice => keepGainableResources(choice, gameState));
 }
 
 export function tagClass(tag: string, isEnemy: boolean): string {
@@ -266,6 +296,7 @@ export function canAffordCost(
   equivalenceSourceInstanceId = instanceId,
 ): boolean {
   if (cost?.resources) {
+    const available = getSpendableResources(gameState, cost.forUpgrade);
     const equivalence = getSourceResourceEquivalence(
       equivalenceSourceInstanceId,
       gameState,
@@ -276,14 +307,11 @@ export function canAffordCost(
     const canAffordResourceCostOption = equivalence
       ? cost.resources.some(
           resourceCost =>
-            getPayableResourceCostVariants(
-              fixResources(resourceCost),
-              gameState.resources,
-              equivalence,
-            ).length > 0,
+            getPayableResourceCostVariants(fixResources(resourceCost), available, equivalence)
+              .length > 0,
         )
       : canAffordResources(
-          gameState.resources,
+          available,
           cost.resources.map(r => fixResources(r)),
         );
 
@@ -418,6 +446,8 @@ export function getInstancesTriggerEffects(
       state.actions?.filter(ce => {
         return (
           ce.trigger === effect &&
+          (!ce.condition ||
+            evaluateCondition(ce.condition, gameState, instance.id, defs, stickerDefs)) &&
           canAffordCost(ce.cost, instance.id, gameState, defs, stickerDefs) &&
           canAffordTrackAdvanceCost(ce, instance, gameState, defs, stickerDefs) &&
           !instance.usedActionIds?.includes(ce.id)

@@ -1,0 +1,61 @@
+{
+  "name": "Ridding the Woods",
+  "expansionMaxRound": 5,
+  "purge": {
+    "permanent": 2,
+    "purge": 8,
+    "focus": {
+      "resource": "wood",
+      "count": 2
+    }
+  },
+  "parameters": {
+    "discoverPerRound": 5
+  },
+  "stickers": {
+    "10": 6,
+    "16": 2
+  },
+  "deck": [
+    {
+      "id": 139,
+      "cardId": 122
+    },
+    {
+      "id": 140,
+      "cardId": 123
+    },
+    {
+      "id": 141,
+      "cardId": 124
+    },
+    {
+      "id": 142,
+      "cardId": 125
+    },
+    {
+      "id": 143,
+      "cardId": 126
+    },
+    {
+      "id": 144,
+      "cardId": 127
+    },
+    {
+      "id": 145,
+      "cardId": 128
+    },
+    {
+      "id": 146,
+      "cardId": 129
+    },
+    {
+      "id": 147,
+      "cardId": 130
+    },
+    {
+      "id": 148,
+      "cardId": 131
+    }
+  ]
+}

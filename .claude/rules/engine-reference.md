@@ -74,6 +74,9 @@ CardAction {
   endsTurn?: boolean        // if true then ends turn after this action resolution
   trigger?: Trigger         // fired automatically on the given trigger
   optional?: boolean        // only for trigger effects — allows skipping the trigger
+  condition?: Condition     // triggered actions only: the trigger fires only if it holds
+                            // (cardCount | production | resource | and | or | not | expansionActive)
+  defeat?: boolean          // the action defeats an enemy: queues the ON_DEFEAT triggers in play
 }
 
 ActionEffect {
@@ -82,7 +85,8 @@ ActionEffect {
                                 // DISCOVER_CARD | DESTROY_CARD | UPGRADE_CARD | PLACE_CARD_IN_PILE |
                                 // BLOCK_CARD | PLAY_CARD | ADD_STICKER | CHOOSE_STATE | BOOST_CARD |
                                 // COST | ADD_CUMULATED | SET_CUMULATED | TRACK_ADVANCE |
-                                // ADD_BOARD_EFFECT | CHOOSE_EFFECT | END_GAME | SHUFFLE_DECK | ADD_GLORY
+                                // ADD_BOARD_EFFECT | CHOOSE_EFFECT | END_GAME | SHUFFLE_DECK | ADD_GLORY |
+                                // SAVE_FROM_PURGE | SET_LAST_ROUND | ADD_TO_PURGE
   cards?: CardSelector          // target card filter (scope, tags, ids…)
   resources?: ResourceSelector  // target resource filter
   states?: StateSelector        // state ids choice
@@ -96,7 +100,8 @@ ActionEffect {
 
 TrackDef {
   steps: StepDef[]        // ordered list of steps
-  inOrder: boolean        // must be accessed sequentially
+  inOrder: boolean        // must be accessed sequentially; TRACK_ADVANCE marks 1 step, or
+                          // steps.pickNumber / valuePerElement steps in order (0 marks none)
   vertical?: boolean      // display flag
   inverse?: boolean       // progress from last to first
 }
@@ -176,11 +181,21 @@ This lets expansion-specific round limits (`expansionMaxRound`) be evaluated fro
 
 ## Strategy Pattern (Card Actions)
 
-`packages/engine/src/application/cardAction/` contains one strategy per `ActionEffectType` implementing `CardActionStrategy` (AddResource, AddSticker, AddBoardEffect, AddCumulated, AddGlory, BlockCard, ChoseState, DestroyCard, DiscardCard, DiscoverCard, EndGame, PlaceCardInDrawPile, PlayCard, RemoveResourceOnCard, SaveFromPurge, SetCumulated, SetLastRound, ShuffleDeck, TrackAdvance, UpgradeCard), registered in `CardActionContext`.
+`packages/engine/src/application/cardAction/` contains one strategy per `ActionEffectType` implementing `CardActionStrategy` (AddResource, AddSticker, AddBoardEffect, AddCumulated, AddGlory, AddToPurge, BlockCard, ChoseState, DestroyCard, DiscardCard, DiscoverCard, EndGame, PlaceCardInDrawPile, PlayCard, RemoveResourceOnCard, SaveFromPurge, SetCumulated, SetLastRound, ShuffleDeck, TrackAdvance, UpgradeCard), registered in `CardActionContext`.
 
 When adding new action types, add a new strategy file and register it in `CardActionContext`.
 
 ---
+
+## Triggers and passives added for Ridding the Woods
+
+- `Trigger.ON_DEFEAT`: fired on the cards in play (board + permanents) after an action with `defeat: true`.
+- `Trigger.ON_PURGE_SELECTION`: fired by the unselected cards of the purge pool when the purge is finalised; identical copies (same `actionEffects`) fire once. Used with `ADD_TO_PURGE` (adds cards to `purgeState.selectedCardIds`).
+- Negative cards are never purge candidates (batches and permanents).
+- `ExpansionConfig.purge.focus` (`{ resource, count }`, copied into `EXPANSION_SELECTED.purgeFocus` then `purgeState.focus`): while fewer than `count` selected cards produce `resource`, the batch candidates are limited to those producers when the batch has any.
+- `ExpansionConfig.stickers` (`{ stickerId: count }`) is copied into `EXPANSION_SELECTED.addedStickers` and added to `stickerStock` when the expansion starts.
+- `PassiveType.RESTRICT_GAIN` (`resources` = allowed types): other resources are dropped from production choices and `ADD_RESOURCES`.
+- `PassiveType.RESTRICT_SPEND` (`resources` = reserved types): they pay only upgrade costs (`Cost.forUpgrade`, set by `getEffectiveUpgradeCost`), never action, step or discover costs.
 
 ## Engine pitfalls
 

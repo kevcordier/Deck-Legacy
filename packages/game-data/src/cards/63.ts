@@ -38,6 +38,7 @@ export const pirate: CardDef = {
       actions: [
         {
           id: '63-1-1',
+          defeat: true,
           cost: {
             resources: [
               {

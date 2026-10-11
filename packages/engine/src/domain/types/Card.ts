@@ -14,7 +14,9 @@ export type Condition =
   | { type: 'resource'; resourceType: ResourceType; min?: number; max?: number }
   | { type: 'and'; conditions: Condition[] }
   | { type: 'or'; conditions: Condition[] }
-  | { type: 'not'; condition: Condition };
+  | { type: 'not'; condition: Condition }
+  // true while this expansion is played (selected and its score not saved yet)
+  | { type: 'expansionActive'; name: string };
 
 export type CardDef = {
   id: number;
@@ -75,6 +77,8 @@ export type CardAction = {
   trigger?: Trigger;
   optional?: boolean;
   limitedTime?: number; // max number of uses for this action
+  condition?: Condition; // triggered actions only: checked when the trigger fires
+  defeat?: boolean; // the action defeats an enemy: fires ON_DEFEAT triggers once resolved
 };
 
 export type ValuePerElement = {

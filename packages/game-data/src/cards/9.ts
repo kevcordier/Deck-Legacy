@@ -35,6 +35,7 @@ export const bandit: CardDef = {
         },
         {
           id: '9-1-2',
+          defeat: true,
           cost: {
             resources: [
               {

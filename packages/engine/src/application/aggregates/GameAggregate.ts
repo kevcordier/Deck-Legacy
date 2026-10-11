@@ -4,6 +4,7 @@ import {
   PassiveType,
   type PendingChoiceType,
   Phase,
+  TargetScope,
   Trigger,
 } from '../../domain/enums';
 import { ActionCancelledError } from '../../domain/errors/ActionCancelledError';
@@ -48,6 +49,7 @@ import {
   getEffectiveGlory,
   getInstancesTriggerEffects,
 } from '../cardHelpers';
+import { cardSelector } from '../cardSelector';
 import { DEFAULT_PARAMETERS } from '../emptyState';
 import { GameEventContext } from '../gameEvent/GameEventContext';
 import { canUseOptions, computeGameStateDiff } from '../gameStateHelper';
@@ -175,6 +177,56 @@ export class GameAggregate {
     return true;
   }
 
+  private isNegative(instanceId: number): boolean {
+    const instance = this.gameState.instances[instanceId];
+    return !!instance && getActiveState(instance, this.cardDefs).negative === true;
+  }
+
+  /** ON_PURGE_SELECTION triggers of the unselected cards; identical copies trigger once. */
+  private getPurgeSelectionTriggers(selectedIds: number[]): TriggerEntry[] {
+    const purgeState = this.gameState.purgeState;
+    if (!purgeState) return [];
+    const unselected = purgeState.shuffledPool
+      .filter(id => !selectedIds.includes(id))
+      .map(id => this.gameState.instances[id])
+      .filter(Boolean);
+    const seen = new Set<string>();
+    return getInstancesTriggerEffects(
+      unselected,
+      this.cardDefs,
+      this.stickerDefs,
+      Trigger.ON_PURGE_SELECTION,
+      this.gameState,
+    ).filter(({ effectDef }) => {
+      const key = JSON.stringify(effectDef.actionEffects);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  /** Keeps only the focused cards while the focus is not reached and the batch has some. */
+  private applyPurgeFocus(candidates: number[]): number[] {
+    const focus = this.gameState.purgeState?.focus;
+    if (!focus) return candidates;
+    const producers = new Set(
+      cardSelector(
+        {
+          scope: [TargetScope.DECK, TargetScope.DISCARD, TargetScope.BOARD],
+          produces: [focus.resource],
+        },
+        -1,
+        this.gameState,
+        this.cardDefs,
+        this.stickerDefs,
+      ),
+    );
+    const selected = this.gameState.purgeState?.selectedCardIds ?? [];
+    if (selected.filter(id => producers.has(id)).length >= focus.count) return candidates;
+    const focused = candidates.filter(id => producers.has(id));
+    return focused.length > 0 ? focused : candidates;
+  }
+
   private getCurrentBatchStartAndCandidates(): { batchStart: number; candidates: number[] } | null {
     const purgeState = this.gameState.purgeState;
     if (!purgeState) return null;
@@ -188,11 +240,14 @@ export class GameAggregate {
 
       const batch = purgeState.shuffledPool.slice(batchStart, batchStart + purgeState.batchSize);
       const candidates = batch.filter(
-        id => !purgeState.selectedCardIds.includes(id) && !this.gameState.purgedCards.includes(id),
+        id =>
+          !purgeState.selectedCardIds.includes(id) &&
+          !this.gameState.purgedCards.includes(id) &&
+          !this.isNegative(id),
       );
 
       if (candidates.length > 0) {
-        return { batchStart, candidates };
+        return { batchStart, candidates: this.applyPurgeFocus(candidates) };
       }
 
       batchStart += purgeState.batchSize;
@@ -281,6 +336,8 @@ export class GameAggregate {
       purgePool,
       parameterOverrides: expansion.parameters,
       onStartDiscoverIds: expansion.onStart?.discover?.ids ?? [],
+      addedStickers: expansion.stickers,
+      purgeFocus: expansion.purge.focus,
     };
 
     this.apply(event);
@@ -338,13 +395,16 @@ export class GameAggregate {
 
     if (!purgeState.onPurgeTriggered) {
       const selectedIds = this.getSelectedPurgeIds();
-      const triggers = getInstancesTriggerEffects(
-        selectedIds.map(id => this.gameState.instances[id]).filter(Boolean),
-        this.cardDefs,
-        this.stickerDefs,
-        Trigger.ON_PURGE,
-        this.gameState,
-      ).reduce(
+      const triggers = [
+        ...getInstancesTriggerEffects(
+          selectedIds.map(id => this.gameState.instances[id]).filter(Boolean),
+          this.cardDefs,
+          this.stickerDefs,
+          Trigger.ON_PURGE,
+          this.gameState,
+        ),
+        ...this.getPurgeSelectionTriggers(selectedIds),
+      ].reduce(
         (acc, { effectDef, sourceInstanceId }) => {
           acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
           return acc;

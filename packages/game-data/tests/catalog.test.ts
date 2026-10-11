@@ -1,5 +1,6 @@
 import { indexById, loadGameCatalog } from '../src';
 import { cardsData } from '../src/cards';
+import { expansionPacks } from '../src/expansions';
 import { stickerData } from '../src/stickers';
 import { describe, expect, it } from 'vitest';
 
@@ -7,7 +8,8 @@ describe('loadGameCatalog', () => {
   it('indexes every card and sticker by id', () => {
     const catalog = loadGameCatalog();
 
-    expect(Object.keys(catalog.cards)).toHaveLength(cardsData.length);
+    const packCards = expansionPacks.flatMap(pack => pack.cards);
+    expect(Object.keys(catalog.cards)).toHaveLength(cardsData.length + packCards.length);
     expect(Object.keys(catalog.stickers)).toHaveLength(stickerData.length);
     expect(catalog.deck.length).toBeGreaterThan(10);
   });
@@ -18,6 +20,24 @@ describe('loadGameCatalog', () => {
 
     for (const entry of decks.flat()) {
       expect(catalog.cards[entry.cardId]).toBeDefined();
+    }
+  });
+
+  it('registers every expansion folder under its name', () => {
+    const catalog = loadGameCatalog();
+
+    for (const { deck } of expansionPacks) {
+      expect(catalog.expansions[deck.name]?.deck).toEqual(deck.deck);
+    }
+  });
+
+  it('only adds known stickers with expansions', () => {
+    const catalog = loadGameCatalog();
+
+    for (const { stickers = {} } of Object.values(catalog.expansions)) {
+      for (const id of Object.keys(stickers)) {
+        expect(catalog.stickers[Number(id)]).toBeDefined();
+      }
     }
   });
 
