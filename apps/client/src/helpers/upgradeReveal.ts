@@ -15,9 +15,9 @@ export function findUpgradeReveal(
   next: GameState,
   newEvents: GameEvent[],
 ): UpgradeReveal | null {
-  const upgrade = newEvents
-    .filter((event): event is UpgradeCardEvent => event.type === GameEventType.UPGRADE_CARD)
-    .at(-1);
+  const upgrade = newEvents.findLast(
+    (event): event is UpgradeCardEvent => event.type === GameEventType.UPGRADE_CARD,
+  );
   if (!upgrade) return null;
   const before = previous.instances[upgrade.cardInstanceId];
   const after = next.instances[upgrade.cardInstanceId];

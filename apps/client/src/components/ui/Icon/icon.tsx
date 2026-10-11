@@ -7,8 +7,6 @@ import Svg, { Circle, G, Line, Path, Polygon } from 'react-native-svg';
 
 export interface IconProps {
   readonly color?: string;
-  /** Inner fill (only used by outline icons such as `GloryIcon`). */
-  readonly fill?: string;
   readonly className?: string;
   readonly style?: StyleProp<ViewStyle>;
   readonly alt?: string;
@@ -22,7 +20,7 @@ const WEB_INLINE_STYLE = {
   verticalAlign: 'middle',
 } as unknown as ViewStyle;
 
-type SvgIconProps = IconProps & {
+type SvgIconProps = Omit<IconProps, 'color'> & {
   readonly viewBox: string;
   readonly fill?: string;
   readonly children: ReactNode;
@@ -120,7 +118,10 @@ export function GloryIcon({
   className,
   style,
   alt,
-}: IconProps) {
+}: IconProps & {
+  /** Inner fill of the outline. */
+  readonly fill?: string;
+}) {
   return (
     <SvgIcon viewBox="2 2 20 20" fill={fill} className={className} style={style} alt={alt}>
       <Path

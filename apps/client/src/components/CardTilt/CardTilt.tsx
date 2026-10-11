@@ -14,7 +14,13 @@ type CardTiltProps = {
 };
 
 /** iOS / Android: tilts the card and moves its illustration with the device orientation. */
-export function CardTilt({ children, enabled = true, className }: CardTiltProps) {
+// onHoverChange is web-only (CardTilt.web.tsx).
+export function CardTilt({
+  children,
+  enabled = true,
+  className,
+  onHoverChange: _onHoverChange,
+}: CardTiltProps) {
   const reducedMotion = useReducedMotion();
   const active = enabled && !reducedMotion;
   const deviceTilt = useDeviceTilt(active);

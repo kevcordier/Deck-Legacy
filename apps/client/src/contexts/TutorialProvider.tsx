@@ -150,10 +150,12 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const skipStep = useCallback(() => moveForward(false), [moveForward]);
   const prevStep = useCallback(() => {
     const past = historyRef.current;
-    if (past.length > 0) goToStep(past[past.length - 1], past.slice(0, -1));
+    const last = past.at(-1);
+    if (last !== undefined) goToStep(last, past.slice(0, -1));
   }, [goToStep]);
   // An action already done cannot be undone (no rewind in the tutorial): no way back past it.
-  const previousStep = history.length > 0 ? steps[history[history.length - 1]] : undefined;
+  const lastIndex = history.at(-1);
+  const previousStep = lastIndex === undefined ? undefined : steps[lastIndex];
   const canGoBack = previousStep !== undefined && previousStep.done === undefined;
   const skip = useCallback(() => finishRef.current(false), []);
   const finish = useCallback((keepGame: boolean) => finishRef.current(keepGame), []);

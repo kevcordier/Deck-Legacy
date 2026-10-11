@@ -187,8 +187,7 @@ export function cardSelector(
     return gameState.drawPile.slice(0, selector.pickNumber ?? 1);
   }
   if (scope.includes(TargetScope.TOP_OF_DISCARD)) {
-    const topDiscard = gameState.discardPile[gameState.discardPile.length - 1];
-    return [topDiscard].filter(Boolean);
+    return gameState.discardPile.slice(-1);
   }
   if (scope.includes(TargetScope.TOP_OF_DISCOVERY)) {
     return gameState.discoveryPile.slice(0, selector.pickNumber ?? 1);

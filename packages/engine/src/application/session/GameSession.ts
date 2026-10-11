@@ -315,7 +315,7 @@ export class GameSession {
     const state = this.agg.getGameState();
     if (state.phase === Phase.GAME_OVER) {
       const segment = state.activeExpansion ?? 'base';
-      if (!Object.prototype.hasOwnProperty.call(state.campaignScores, segment)) {
+      if (!Object.hasOwn(state.campaignScores, segment)) {
         this.agg.saveCampaignScore(false);
       }
     }
@@ -370,7 +370,7 @@ export class GameSession {
     const gs = this.agg.getGameState();
     if (gs.phase !== Phase.GAME_OVER) return;
     const available = Object.keys(this.catalog.expansions).filter(
-      name => !Object.prototype.hasOwnProperty.call(gs.campaignScores, name),
+      name => !Object.hasOwn(gs.campaignScores, name),
     );
     this.sync(this.agg.saveCampaignScore(available.length > 0));
   }
@@ -528,15 +528,15 @@ export class GameSession {
     }
     if (event.type !== GameEventType.CARD_ACTION) return false;
     const changes = (event as { gameStateChanges?: Partial<GameState> }).gameStateChanges;
-    return !changes || Object.prototype.hasOwnProperty.call(changes, 'drawPile');
+    return !changes || Object.hasOwn(changes, 'drawPile');
   }
 
   canRewind(): boolean {
     if (this.tutorial) return false;
-    const events = this.agg.getEvents();
-    if (events.length === 0) return false;
+    const lastEvent = this.agg.getEvents().at(-1);
+    if (!lastEvent) return false;
     if (this.options.unrestrictedRewind) return true;
-    return !GameSession.lastEventDrewCards(events[events.length - 1]);
+    return !GameSession.lastEventDrewCards(lastEvent);
   }
 
   private rewind(): void {

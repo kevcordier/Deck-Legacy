@@ -16,8 +16,8 @@ export function createInstance(
 ): CardInstance {
   const def = defs[cardId];
   if (!def) throw new Error(`Card def not found: ${cardId}`);
-  const state = def.states.find(s => s.id === stateId);
-  if (!state) throw new Error(`State ${stateId} not found on card ${cardId}`);
+  if (!def.states.some(s => s.id === stateId))
+    throw new Error(`State ${stateId} not found on card ${cardId}`);
   return {
     id,
     cardId,

@@ -18,6 +18,14 @@ function explicitCode(raw: string | object): ApiErrorCode | undefined {
   return EXPLICIT_CODES.has(code as ApiErrorCode) ? (code as ApiErrorCode) : undefined;
 }
 
+/** Message of the thrown exception; Nest validation errors carry an array of messages. */
+export function errorMessage(raw: string | object, fallback: string): string {
+  if (typeof raw === 'string') return raw;
+  const message = (raw as { message?: unknown }).message;
+  if (Array.isArray(message)) return message.join(',');
+  return typeof message === 'string' ? message : fallback;
+}
+
 const CODES: Partial<Record<number, ApiErrorCode>> = {
   [HttpStatus.BAD_REQUEST]: 'VALIDATION',
   [HttpStatus.UNAUTHORIZED]: 'UNAUTHORIZED',
@@ -37,10 +45,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       const statusCode = exception.getStatus();
       const raw = exception.getResponse();
-      const message =
-        typeof raw === 'string'
-          ? raw
-          : String((raw as { message?: unknown }).message ?? exception.message);
+      const message = errorMessage(raw, exception.message);
       const body: ApiErrorBody = {
         statusCode,
         code: explicitCode(raw) ?? CODES[statusCode] ?? 'SERVER_ERROR',

@@ -10,7 +10,7 @@ import { initReactI18next } from 'react-i18next';
 export function initI18n(): typeof i18n {
   if (i18n.isInitialized) return i18n;
 
-  i18n.use(initReactI18next).init({
+  void i18n.use(initReactI18next).init({
     resources: {
       en: { translation: en, cards: cardsEn },
       fr: { translation: fr, cards: cardsFr },

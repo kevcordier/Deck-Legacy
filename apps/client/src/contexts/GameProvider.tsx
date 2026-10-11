@@ -230,10 +230,7 @@ export function GameProvider({
   const parchmentTextPending = useMemo(() => parchmentCardDef(gameState, defs), [gameState, defs]);
 
   const availableExpansions = useMemo(
-    () =>
-      Object.keys(expansions).filter(
-        name => !Object.prototype.hasOwnProperty.call(gameState.campaignScores, name),
-      ),
+    () => Object.keys(expansions).filter(name => !Object.hasOwn(gameState.campaignScores, name)),
     [expansions, gameState.campaignScores],
   );
 

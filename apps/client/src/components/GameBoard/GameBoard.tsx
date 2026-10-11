@@ -137,8 +137,8 @@ export function GameBoard() {
   const openDraw = () => setOpenSheet('draw');
   const openDiscard = () => setOpenSheet('discard');
 
-  const lastDiscarded = discardDeck.length > 0 ? [discardDeck[discardDeck.length - 1]] : [];
-  const lastDestroyed = destroyedDeck.length > 0 ? [destroyedDeck[destroyedDeck.length - 1]] : [];
+  const lastDiscarded = discardDeck.slice(-1);
+  const lastDestroyed = destroyedDeck.slice(-1);
 
   const sheets: Record<
     SheetName,
