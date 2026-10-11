@@ -95,17 +95,19 @@ export class GameSession {
 
   // ─── Factories ────────────────────────────────────────────────────────────
 
+  /**
+   * `firstDrawPile` replaces the first shuffle (the tutorial's scripted round): it must hold
+   * exactly the starting deck. It is stored in the events, so the game replays like any other.
+   */
   static start(
     id: string,
     catalog: GameCatalog,
     options: GameSessionOptions,
     mode: 'standard' | 'tutorial' = 'standard',
+    firstDrawPile?: number[],
   ): GameSession {
     const session = new GameSession(id, mode === 'tutorial', catalog, options, {}, 0);
-    const state = session.startNewGame();
-    if (mode === 'tutorial') {
-      session.applyTutorialSetup(state);
-    }
+    session.startNewGame(firstDrawPile);
     session.finalize();
     return session;
   }
@@ -260,7 +262,7 @@ export class GameSession {
     );
   }
 
-  private startNewGame(): GameState {
+  private startNewGame(firstDrawPile?: number[]): GameState {
     const deckEntries = [...this.catalog.deck].sort((a, b) => a.id - b.id);
     const starterEntries = deckEntries.slice(0, 10);
     const discoveryEntries = deckEntries.filter(e => e.id > 10);
@@ -277,24 +279,21 @@ export class GameSession {
       (_, i) => allInstances[starterEntries.length + i].id,
     );
 
+    if (
+      firstDrawPile &&
+      (firstDrawPile.length !== initialDeck.length ||
+        [...firstDrawPile].sort((a, b) => a - b).some((id, i) => id !== initialDeck[i]))
+    ) {
+      throw new Error('The first draw pile must hold exactly the starting deck');
+    }
+
     return this.agg.gameStarted(
       initialDeck,
       deckEntries,
       { ...this.catalog.stickerStock },
       discoveryPile,
+      firstDrawPile,
     );
-  }
-
-  /**
-   * The tutorial shows a hand-crafted board. It mutates the aggregate state directly, so
-   * tutorial sessions are never persisted: their events would not reproduce this setup.
-   */
-  private applyTutorialSetup(state: GameState): void {
-    state.discardPile = [3];
-    state.destroyedPile = [4];
-    state.drawPile = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    state.board = [1, 5, 9, 10];
-    state.resources = { gold: 5, wood: 3, stone: 2, iron: 3, weapon: 4, goods: 2 };
   }
 
   // ─── Sync helpers ─────────────────────────────────────────────────────────

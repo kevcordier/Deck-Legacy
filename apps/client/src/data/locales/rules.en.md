@@ -16,7 +16,7 @@ Your starting kingdom is cards **1–10**, shuffled into a face-up draw deck. Th
 
 ### New Game
 
-Each game is a **kingdom**. On the home page, click **New kingdom**, name it, choose whether to play the tutorial first, then found it: the game starts with your starting deck shuffled. Your kingdoms are listed on the home page with their total score, the base game score and the score after each expansion, in the order you played them. You can keep **one kingdom** without an account and up to **10 kingdoms** with an account. Deleting a kingdom deletes its game.
+Each game is a **kingdom**. On the home page, click **New kingdom**, name it, choose whether to play the tutorial first, then found it: the game starts with your starting deck shuffled. The tutorial guides you through a first round; at its end, you can keep that game or start a new one. Your kingdoms are listed on the home page with their total score, the base game score and the score after each expansion, in the order you played them. You can keep **one kingdom** without an account and up to **10 kingdoms** with an account. Deleting a kingdom deletes its game.
 
 ### Between Rounds
 

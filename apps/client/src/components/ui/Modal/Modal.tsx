@@ -5,7 +5,7 @@ import { EyeIcon, EyeOffIcon } from '@components/ui/Icon/icon';
 import { Text } from '@components/ui/Text/Text';
 import { ModalDepthContext, TutorialContext } from '@contexts/TutorialContext';
 import { useWebKeyDown } from '@hooks/useWebKeyDown';
-import { type ReactNode, use, useCallback, useEffect } from 'react';
+import { type ReactNode, use, useCallback, useEffect, useRef } from 'react';
 import { Pressable, Modal as RNModal, ScrollView, View } from 'react-native';
 import Animated, { SlideInLeft, SlideInRight } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -22,7 +22,7 @@ export type ModalProps = {
   readonly footer?: ReactNode;
   readonly peeking?: boolean;
   readonly onPeekToggle?: () => void;
-  /** Used to build the tutorial target ids `modal-<label>-close` / `modal-<label>-content`. */
+  /** Used to build the tutorial target ids `modal-<label>-panel` / `-close` / `-content`. */
   readonly label?: string;
   /** No panel: the content floats over a light backdrop (e.g. a card shown in large). A tap outside closes it. */
   readonly bare?: boolean;
@@ -90,6 +90,17 @@ export function Modal({
 
   useEffect(() => registerModal?.(depth), [registerModal, depth]);
 
+  // The panel is positioned by its parent: a `TutorialTarget` wrapper would break its layout.
+  const panelRef = useRef<View>(null);
+  const panelId = label ? `modal-${label}-panel` : undefined;
+  const registerTarget = tutorial?.registerTarget;
+  const unregisterTarget = tutorial?.unregisterTarget;
+  useEffect(() => {
+    if (!panelId || !registerTarget || !unregisterTarget) return;
+    registerTarget(panelId, panelRef);
+    return () => unregisterTarget(panelId, panelRef);
+  }, [panelId, registerTarget, unregisterTarget]);
+
   const handleKey = useCallback(
     (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
@@ -135,6 +146,8 @@ export function Modal({
             </View>
           ) : (
             <Animated.View
+              ref={panelRef}
+              collapsable={false}
               entering={side ? SLIDE_IN[side] : undefined}
               style={[
                 { pointerEvents: peeking ? 'none' : 'auto' },

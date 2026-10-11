@@ -118,7 +118,7 @@ Major decisions already taken (details and rejected alternatives in `.claude/mem
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
 | Play model    | Local-first: the client runs `GameSession` and saves on the device; online, it syncs the full event log                                                                   | 024                |
 | Validation    | The server replays each log with `GameSession.restore()` and the same game data; it never runs player commands                                                            | 024, 030           |
-| Game state    | Event sourcing; mid-action state (pending choices) lives in memory; tutorial games bypass events and are never saved                                                      | 003, 017           |
+| Game state    | Event sourcing; mid-action state (pending choices) lives in memory; the tutorial is a real game with a scripted first draw, saved only if the player keeps it             | 003, 040           |
 | Cards         | Declarative `CardDef` data interpreted by a generic engine; one strategy per `ActionEffectType`                                                                           | 004, 007           |
 | Compatibility | Started games keep their rules: versioned rules/data (mechanism still to build before the first breaking change)                                                          | 025, 036           |
 | Layers        | Domain imports nothing; application imports domain only; packages never import apps; game-data imports only engine domain types and enums; enforced by dependency-cruiser | 014                |

@@ -1,4 +1,5 @@
 import { GameContext, type GameContextType } from '@contexts/GameContext';
+import { TUTORIAL_DRAW_ORDER } from '@contexts/TutorialContext';
 import { DEFAULT_PARAMETERS, EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
 import {
   CorruptedGameError,
@@ -52,15 +53,23 @@ function signatureOf(session: GameSession): string {
 }
 
 /**
- * Rebuilds the session of a saved game, opens the tutorial (never saved) or starts the
- * kingdom's first game.
+ * Rebuilds the session of a saved game, opens the tutorial (a scripted first round, saved only
+ * when the player keeps it) or starts the kingdom's first game.
  */
 function initialSession(
   kingdomId: string | undefined,
   save: SaveData | null | undefined,
   tutorial: boolean,
 ): GameSession | null {
-  if (tutorial) return GameSession.start(randomUUID(), catalog, SESSION_OPTIONS, 'tutorial');
+  if (tutorial) {
+    return GameSession.start(
+      kingdomId ?? randomUUID(),
+      catalog,
+      SESSION_OPTIONS,
+      'tutorial',
+      TUTORIAL_DRAW_ORDER,
+    );
+  }
   if (!save) {
     return kingdomId ? GameSession.start(kingdomId, catalog, SESSION_OPTIONS, 'standard') : null;
   }
@@ -179,6 +188,21 @@ export function GameProvider({
     publish(session);
   }, [kingdomId, publish]);
 
+  /** Keeps the tutorial game: replayed as a standard session, so it is saved and synced. */
+  const continueGame = useCallback(() => {
+    const tutorial = sessionRef.current;
+    if (!kingdomId || !tutorial) return;
+    const session = GameSession.restore(
+      kingdomId,
+      tutorial.getEvents(),
+      catalog,
+      SESSION_OPTIONS,
+      tutorial.getCardNames(),
+    );
+    sessionRef.current = session;
+    publish(session);
+  }, [kingdomId, publish]);
+
   // ─── Development tools ────────────────────────────────────────────────────
 
   useEffect(() => {
@@ -225,6 +249,7 @@ export function GameProvider({
       triggerPile: parchmentTextPending ? null : gameState.triggerPile,
       isTutorial: view?.tutorial ?? false,
       startGame,
+      continueGame,
       endRound: () => send({ type: 'endRound' }),
       startRound: () => send({ type: 'startRound' }),
       startTurn: () => send({ type: 'startTurn' }),
@@ -283,6 +308,7 @@ export function GameProvider({
     displayNewCards,
     send,
     startGame,
+    continueGame,
   ]);
 
   return <GameContext value={value}>{children}</GameContext>;

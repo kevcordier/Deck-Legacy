@@ -20,10 +20,12 @@ export type GameContextType = {
   stickerDefs: Record<number, Sticker>;
   pendingChoices: PendingChoice[] | null;
   triggerPile: Record<string, TriggerEntry> | null;
-  /** The tutorial board is shown (never saved). */
+  /** The tutorial round is being played (not saved until the player keeps it). */
   isTutorial: boolean;
-  /** Starts the kingdom's game (end of the tutorial). */
+  /** Starts a new game for the kingdom (end of the tutorial). */
   startGame: () => void;
+  /** Keeps the tutorial game as the kingdom's game (end of the tutorial). */
+  continueGame: () => void;
   endRound: () => void;
   startRound: () => void;
   startTurn: () => void;

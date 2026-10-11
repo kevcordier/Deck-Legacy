@@ -94,6 +94,7 @@ export class GameAggregate {
     deck: { id: number; cardId: number }[],
     stickerStock: Record<string, number>,
     discoveryPile: number[],
+    firstDrawPile?: number[],
   ): GameState {
     const event: GameStartedEvent = {
       id: crypto.randomUUID(),
@@ -106,7 +107,7 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
-    this.roundStarted();
+    this.roundStarted(firstDrawPile);
     this.turnStarted();
     return this.gameState;
   }
@@ -429,7 +430,8 @@ export class GameAggregate {
     return this.gameState;
   }
 
-  public roundStarted(): GameState {
+  /** `drawPile` replaces the shuffle (tutorial order); it is stored in the event like a shuffle. */
+  public roundStarted(drawPile?: number[]): GameState {
     const round = this.gameState.round + 1;
     const cardNumberToDiscover = this.getParameters().discoverPerRound;
     const lastAddedCards: number[] = [];
@@ -462,12 +464,14 @@ export class GameAggregate {
       timestamp: Date.now(),
       round,
       lastAddedCards,
-      newDrawPile: this.shuffle([
-        ...this.gameState.drawPile,
-        ...this.gameState.discardPile,
-        ...this.gameState.board,
-        ...this.filterNonPermanentCardIds(lastAddedCards),
-      ]),
+      newDrawPile:
+        drawPile ??
+        this.shuffle([
+          ...this.gameState.drawPile,
+          ...this.gameState.discardPile,
+          ...this.gameState.board,
+          ...this.filterNonPermanentCardIds(lastAddedCards),
+        ]),
     };
     this.apply(event);
     this.events.push(event);

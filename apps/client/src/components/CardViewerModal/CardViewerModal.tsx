@@ -1,4 +1,5 @@
 import { GameCard } from '@components/GameCard/GameCard';
+import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
 import { useGame } from '@hooks/useGame';
@@ -47,6 +48,7 @@ type CardViewerModalProps = {
   readonly onClose: () => void;
 };
 
+/** The card shown is the tutorial target `viewer-card-<id>`, and its parts `card-number`… */
 export function CardViewerModal({ cardIds, initialId, onClose }: CardViewerModalProps) {
   const { gameState } = useGame();
   const { t } = useTranslation();
@@ -117,16 +119,21 @@ export function CardViewerModal({ cardIds, initialId, onClose }: CardViewerModal
   );
 
   const card = (
-    <View className="rounded-xl shadow-2xl" style={{ width: cardWidth }}>
+    <TutorialTarget
+      id={`viewer-card-${currentId}`}
+      className="rounded-xl shadow-2xl"
+      style={{ width: cardWidth }}
+    >
       {/* Selecting an action closes the viewer so the result is visible on the board. */}
       <GameCard
         instance={instance}
         unconstrained
         size="lg"
         isOnBoard={isOnBoard}
+        tourTarget
         onActionTriggered={onClose}
       />
-    </View>
+    </TutorialTarget>
   );
 
   // Phone: the buttons go under the card, around the position, so the card keeps the full width.

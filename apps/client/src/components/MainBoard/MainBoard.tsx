@@ -6,6 +6,7 @@ import {
 import { CardViewerModal } from '@components/CardViewerModal/CardViewerModal';
 import { GameCard } from '@components/GameCard/GameCard';
 import { MiniGameCard } from '@components/MiniGameCard/MiniGameCard';
+import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
 import { EmptyState } from '@components/ui/EmptyState/EmptyState';
 import { ZoomInIcon, ZoomOutIcon } from '@components/ui/Icon/icon';
@@ -183,29 +184,33 @@ export function MainBoard() {
         </View>
       )}
       {gameState.phase === Phase.ROUND_START && (
-        <EmptyState
-          wide
-          title={t('roundpreview.title', { round: gameState.round })}
-          subtitle={t('roundpreview.subtitle')}
-          action={
-            <Button onPress={startTurn} color="primary" size="md">
-              {t('roundpreview.start')}
-            </Button>
-          }
-        >
-          {gameState.lastAddedCards.length > 0 && (
-            <NewCardSelection cardIds={gameState.lastAddedCards} chooseState={chooseState} />
-          )}
-        </EmptyState>
+        <TutorialTarget id="round-preview">
+          <EmptyState
+            wide
+            title={t('roundpreview.title', { round: gameState.round })}
+            subtitle={t('roundpreview.subtitle')}
+            action={
+              <Button onPress={startTurn} color="primary" size="md">
+                {t('roundpreview.start')}
+              </Button>
+            }
+          >
+            {gameState.lastAddedCards.length > 0 && (
+              <NewCardSelection cardIds={gameState.lastAddedCards} chooseState={chooseState} />
+            )}
+          </EmptyState>
+        </TutorialTarget>
       )}
 
       {gameState.phase === Phase.TURN_END && gameState.drawPile.length > 0 && (
         <EmptyState
           title={t('endturn.title', { turn: gameState.turn + 1 })}
           action={
-            <Button onPress={startTurn} color="primary" size="md">
-              {t('endturn.start')}
-            </Button>
+            <TutorialTarget id="phase-action">
+              <Button onPress={startTurn} color="primary" size="md">
+                {t('endturn.start')}
+              </Button>
+            </TutorialTarget>
           }
         >
           {turnEndUpgrade}
@@ -216,9 +221,11 @@ export function MainBoard() {
         <EmptyState
           title={t('endround.title', { round: gameState.round })}
           action={
-            <Button onPress={endRound} color="primary" size="md">
-              {t('endround.end')}
-            </Button>
+            <TutorialTarget id="phase-action">
+              <Button onPress={endRound} color="primary" size="md">
+                {t('endround.end')}
+              </Button>
+            </TutorialTarget>
           }
         >
           {turnEndUpgrade}
@@ -249,13 +256,15 @@ export function MainBoard() {
       )}
 
       {gameState.phase === Phase.PLAYING && gameState.board.length > 0 && (
-        <Section
-          title={t('sections.tableau')}
-          subtitle={`${t('cardCount', { count: gameState.board.length })}`}
-          action={zoomControls}
-        >
-          <CardRow cardIds={gameState.board} zoom={zoom} tourTarget />
-        </Section>
+        <TutorialTarget id="board">
+          <Section
+            title={t('sections.tableau')}
+            subtitle={`${t('cardCount', { count: gameState.board.length })}`}
+            action={zoomControls}
+          >
+            <CardRow cardIds={gameState.board} zoom={zoom} />
+          </Section>
+        </TutorialTarget>
       )}
 
       {gameState.phase === Phase.PLAYING && gameState.board.length === 0 && (

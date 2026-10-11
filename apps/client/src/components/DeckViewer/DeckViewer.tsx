@@ -1,7 +1,6 @@
 import { CardViewerModal } from '@components/CardViewerModal/CardViewerModal';
 import { GameCard, WIDE_CARD_MIN_WIDTH } from '@components/GameCard/GameCard';
 import { MiniGameCard } from '@components/MiniGameCard/MiniGameCard';
-import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
 import { Divider } from '@components/ui/Divider/Divider';
 import { Grid } from '@components/ui/Grid/Grid';
@@ -16,7 +15,6 @@ import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import { tCardTag } from '@helpers/cardI18n';
 import { useGame } from '@hooks/useGame';
 import { useIsDesktop } from '@hooks/useIsDesktop';
-import { useTutorial } from '@hooks/useTutorial';
 import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, View } from 'react-native';
@@ -86,12 +84,6 @@ function StackedCard({
   );
 }
 
-const TOUR_IDS = {
-  draw: 'draw-viewer-open',
-  discard: 'discard-viewer-open',
-  destroyed: 'destroyed-viewer-open',
-} as const;
-
 /**
  * Cards of the full list (side sheets). Desktop: up to four columns; phone: mini cards, at least two per
  * row. A tap opens the card in large; the viewer steps through the list in its order.
@@ -141,7 +133,6 @@ export function DeckViewer({
 }: DeckViewerProps) {
   const { defs } = useGame();
   const { t } = useTranslation();
-  const { run, nextStep } = useTutorial();
   const [modalOpen, setModalOpen] = useState(false);
   const [cardFilter, setCardFilter] = useState<CardListFilter>({ search: '', tag: '' });
   const isLeft = variant === 'left';
@@ -203,21 +194,9 @@ export function DeckViewer({
             {expanded && ` ${title} (${deck.length})`}
           </Title>
           {expanded && deck.length > 1 && (
-            <TutorialTarget id={deckName ? TOUR_IDS[deckName] : undefined}>
-              <Button
-                onPress={() => {
-                  if (run) {
-                    nextStep();
-                  }
-                  setModalOpen(true);
-                }}
-                size="xs"
-                variant="text"
-                color="ink"
-              >
-                {t('deckViewer.viewAll')}
-              </Button>
-            </TutorialTarget>
+            <Button onPress={() => setModalOpen(true)} size="xs" variant="text" color="ink">
+              {t('deckViewer.viewAll')}
+            </Button>
           )}
         </View>
       </View>
@@ -260,31 +239,26 @@ export function DeckViewer({
           onClose={() => {
             setModalOpen(false);
             setCardFilter({ search: '', tag: '' });
-            if (run) {
-              nextStep();
-            }
           }}
           label={deckName}
           // The draw pile slides in from the left, the discard (and destroyed) piles from the right.
           side={deckName === 'draw' ? 'left' : 'right'}
         >
-          <TutorialTarget id="deck-viewer">
-            <View className="gap-4 py-4 sm:flex-row sm:items-center">
-              <TextInput
-                value={cardFilter.search}
-                onChangeText={search => setCardFilter({ ...cardFilter, search })}
-                placeholder={t('cardList.searchPlaceholder')}
-                className="sm:flex-1"
-              />
-              <SelectInput
-                value={cardFilter.tag}
-                onChange={tag => setCardFilter({ ...cardFilter, tag })}
-                options={tagOptions}
-                className="sm:w-56"
-              />
-            </View>
-            <Divider color="gradient" orientation="horizontal" className="my-4" />
-          </TutorialTarget>
+          <View className="gap-4 py-4 sm:flex-row sm:items-center">
+            <TextInput
+              value={cardFilter.search}
+              onChangeText={search => setCardFilter({ ...cardFilter, search })}
+              placeholder={t('cardList.searchPlaceholder')}
+              className="sm:flex-1"
+            />
+            <SelectInput
+              value={cardFilter.tag}
+              onChange={tag => setCardFilter({ ...cardFilter, tag })}
+              options={tagOptions}
+              className="sm:w-56"
+            />
+          </View>
+          <Divider color="gradient" orientation="horizontal" className="my-4" />
           {deck.length === 0 ? (
             <Text className="text-ink/50 font-body-italic p-2 text-center text-sm">
               {t('deckViewer.emptyDeck')}

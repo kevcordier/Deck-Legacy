@@ -6,8 +6,15 @@ import { describe, expect, it } from 'vitest';
 
 const WORKSHOP = 9;
 
+/** Board 1, 5, 9 and 10 (9 and 10 are workshops), no resources. */
 function tutorial(options = DEFAULT_OPTIONS) {
-  return GameSession.start('tuto', makeCatalog(), options, 'tutorial');
+  return GameSession.start(
+    'tuto',
+    makeCatalog(),
+    options,
+    'tutorial',
+    [1, 5, 9, 10, 2, 3, 4, 6, 7, 8],
+  );
 }
 
 describe('card actions', () => {
@@ -21,7 +28,7 @@ describe('card actions', () => {
     });
 
     expect(error).toBeUndefined();
-    expect(session.getState().resources.wood).toBe(4);
+    expect(session.getState().resources.wood).toBe(1);
     expect(session.toView().pendingChoices).toBeNull();
   });
 

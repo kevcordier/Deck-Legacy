@@ -30,7 +30,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-014 | 2026-04-10 | Couches imposées par dependency-cruiser     | Active                                  |
 | EDR-015 | 2026-04-12 | Analyse qualité continue SonarCloud         | Active                                  |
 | EDR-016 | 2026-05-01 | Dépendances suivies par Dependabot          | Active                                  |
-| EDR-017 | 2026-05-13 | Tutoriel hors du journal d'événements       | Active                                  |
+| EDR-017 | 2026-05-13 | Tutoriel hors du journal d'événements       | Dépréciée par EDR-040                   |
 | EDR-018 | 2026-05-17 | Versions bêta en semver                     | Active                                  |
 | EDR-019 | 2026-05-19 | Illustrations hébergées dans le dépôt       | Active                                  |
 | EDR-020 | 2026-10-10 | Client Expo / React Native multiplateforme  | Active                                  |
@@ -53,6 +53,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-037 | 2026-10-10 | Fusion soumise à la relecture du mainteneur | Active                                  |
 | EDR-038 | 2026-10-10 | Plusieurs royaumes par joueur               | Active                                  |
 | EDR-039 | 2026-10-11 | Déploiement déclenché par un tag de version | Active                                  |
+| EDR-040 | 2026-10-11 | Tutoriel joué comme une vraie partie        | Active                                  |
 
 ---
 
@@ -462,7 +463,7 @@ Conséquences
 ID : EDR-017
 Date : 2026-05-13
 Titre : Tutoriel hors du journal d'événements
-Statut : Active
+Statut : Dépréciée par EDR-040
 
 Contexte
 Le tutoriel doit mettre le joueur dans des situations scénarisées que les règles normales ne produisent pas.
@@ -1065,3 +1066,30 @@ Conséquences
 
 - Les environnements `github-pages` et `production` doivent autoriser les tags `v*` dans leurs règles de déploiement.
 - Le client et l'API d'une même version sont construits depuis le même commit, avec le même moteur et les mêmes données de jeu (EDR-022).
+
+---
+
+ID : EDR-040
+Date : 2026-10-11
+Titre : Tutoriel joué comme une vraie partie
+Statut : Active
+Remplace : EDR-017
+
+Contexte
+Le tutoriel d'EDR-017 montrait un plateau figé, posé hors événements : le joueur lisait une visite guidée sans jouer, et la partie ne pouvait pas être gardée.
+
+Problème
+Comment guider une vraie première manche, puis laisser le joueur garder sa partie ?
+
+Décision
+Le tutoriel est une partie normale dont le premier mélange est remplacé par un ordre fixe (`GameSession.start(…, 'tutorial', firstDrawPile)`, ordre dans `TUTORIAL_DRAW_ORDER` côté client). L'ordre est stocké dans `ROUND_STARTED.newDrawPile`, comme un mélange : le journal se rejoue et se valide sans changement. La session reste marquée `tutorial` (ni sauvegarde, ni annulation) jusqu'au choix final : « Continuer » la rejoue en session standard (`GameSession.restore`), qui est alors sauvegardée et synchronisée ; « Recommencer » démarre une partie mélangée. Les étapes avec `done` attendent l'action du joueur et bloquent les autres pressions.
+
+Alternatives rejetées
+
+- Garder le plateau figé hors événements : la partie du tutoriel ne peut pas être gardée.
+- Mettre l'ordre du tutoriel dans les données de jeu : seul le script client en dépend.
+
+Conséquences
+
+- Une partie gardée après le tutoriel a une première manche non mélangée ; le serveur ne peut pas distinguer un mélange d'un ordre imposé (c'était déjà le cas, l'ordre vient du client).
+- Le script dépend des cartes 1 à 10 de `deck.json` : changer ces cartes impose de revoir les étapes de `TutorialProvider`.

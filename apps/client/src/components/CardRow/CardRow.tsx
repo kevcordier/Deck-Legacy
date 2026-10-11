@@ -4,8 +4,10 @@ import { CardTilt } from '@components/CardTilt/CardTilt';
 import { CardViewerModal } from '@components/CardViewerModal/CardViewerModal';
 import { GameCard } from '@components/GameCard/GameCard';
 import { MiniGameCard } from '@components/MiniGameCard/MiniGameCard';
+import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { PassifIcon } from '@components/ui/Icon/icon';
 import { Text } from '@components/ui/Text/Text';
+import { TutorialContext } from '@contexts/TutorialContext';
 import { cardSelector } from '@deck-legacy/engine/application/cardSelector';
 import { PassiveType } from '@deck-legacy/engine/domain/enums';
 import type {
@@ -18,7 +20,7 @@ import type {
 import { mergeOrder } from '@helpers/mergeOrder';
 import { useGame } from '@hooks/useGame';
 import { useIsDesktop } from '@hooks/useIsDesktop';
-import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type ReactNode, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type LayoutChangeEvent, View } from 'react-native';
 import Animated, {
@@ -36,8 +38,6 @@ export type BoardZoomLevel = 0 | 1 | 2;
 interface CardRowProps {
   readonly cardIds: number[];
   readonly zoom?: BoardZoomLevel;
-  /** Registers the first card as the tutorial card. */
-  readonly tourTarget?: boolean;
 }
 
 type EffectEntry = { sourceId: number; passive: Passive };
@@ -79,7 +79,6 @@ type CardStackProps = {
   readonly inst: CardInstance;
   readonly blockedInsts: CardInstance[];
   readonly isDesktop: boolean;
-  readonly tourTarget: boolean;
   readonly onOpenViewer: (cardId: number) => void;
   readonly onHoverChange: (hovered: boolean) => void;
   readonly tiltEnabled: boolean;
@@ -89,18 +88,19 @@ function CardStack({
   inst,
   blockedInsts,
   isDesktop,
-  tourTarget,
   onOpenViewer,
   onHoverChange,
   tiltEnabled,
 }: CardStackProps) {
   const stackOffsetPx = isDesktop ? STACK_OFFSET_PX : MINI_STACK_OFFSET_PX;
   // The card states stay visible in the card viewer, not on the board.
-  const renderCard = (instance: CardInstance, onPress: () => void, tour = false) =>
+  // Tutorial: the board cards only open the card in large, where the guided action is done.
+  const isOnBoard = !use(TutorialContext)?.run;
+  const renderCard = (instance: CardInstance, onPress: () => void) =>
     isDesktop ? (
-      <GameCard instance={instance} isOnBoard tourTarget={tour} onPress={onPress} />
+      <GameCard instance={instance} isOnBoard={isOnBoard} onPress={onPress} />
     ) : (
-      <MiniGameCard instance={instance} isOnBoard tourTarget={tour} onPress={onPress} />
+      <MiniGameCard instance={instance} isOnBoard={isOnBoard} onPress={onPress} />
     );
 
   return (
@@ -117,7 +117,7 @@ function CardStack({
         </View>
       ))}
       <CardTilt className="relative z-10" enabled={tiltEnabled} onHoverChange={onHoverChange}>
-        {renderCard(inst, () => onOpenViewer(inst.id), tourTarget)}
+        {renderCard(inst, () => onOpenViewer(inst.id))}
       </CardTilt>
     </View>
   );
@@ -127,21 +127,12 @@ type CardProps = {
   readonly id: number;
   readonly blockingMap: Record<number, number[]>;
   readonly isDesktop: boolean;
-  readonly tourTarget: boolean;
   readonly onOpenViewer: (id: number) => void;
   readonly onHoverChange: (hovered: boolean) => void;
   readonly tiltEnabled: boolean;
 };
 
-function Card({
-  id,
-  blockingMap,
-  isDesktop,
-  tourTarget,
-  onOpenViewer,
-  onHoverChange,
-  tiltEnabled,
-}: CardProps) {
+function Card({ id, blockingMap, isDesktop, onOpenViewer, onHoverChange, tiltEnabled }: CardProps) {
   const { gameState, defs, stickerDefs } = useGame();
   const { t } = useTranslation();
   const inst = gameState.instances[id];
@@ -168,12 +159,11 @@ function Card({
     .filter(effect => effect.label !== null);
 
   return (
-    <View>
+    <TutorialTarget id={`card-${id}`}>
       <CardStack
         inst={inst}
         blockedInsts={blockedInsts}
         isDesktop={isDesktop}
-        tourTarget={tourTarget}
         onOpenViewer={onOpenViewer}
         onHoverChange={onHoverChange}
         tiltEnabled={tiltEnabled}
@@ -192,7 +182,7 @@ function Card({
           ))}
         </View>
       )}
-    </View>
+    </TutorialTarget>
   );
 }
 
@@ -235,10 +225,12 @@ function DrawnCardMotion({ motion, onLayout, children }: DrawnCardMotionProps) {
   );
 }
 
-export function CardRow({ cardIds, zoom = 1, tourTarget = false }: CardRowProps) {
+export function CardRow({ cardIds, zoom = 1 }: CardRowProps) {
   const { gameState, defs, stickerDefs, drawnCardIds } = useGame();
   const isDesktop = useIsDesktop();
   const [viewerCardId, setViewerCardId] = useState<number | null>(null);
+  // Tutorial: the opened card has no neighbours, so the guided card cannot be left.
+  const tutorialRun = use(TutorialContext)?.run ?? false;
   const [order, setOrder] = useState<number[]>([]);
   const [width, setWidth] = useState(0);
   const [heights, setHeights] = useState<Record<number, number>>({});
@@ -329,7 +321,6 @@ export function CardRow({ cardIds, zoom = 1, tourTarget = false }: CardRowProps)
           id={cardId}
           blockingMap={blockingMap}
           isDesktop={isDesktop}
-          tourTarget={tourTarget && index === 0}
           onOpenViewer={setViewerCardId}
           onHoverChange={hoverFor(cardId)}
           // The dragged card stays flat: the library already lifts it.
@@ -358,7 +349,7 @@ export function CardRow({ cardIds, zoom = 1, tourTarget = false }: CardRowProps)
 
       {viewerCardId !== null && (
         <CardViewerModal
-          cardIds={cardIds}
+          cardIds={tutorialRun ? [viewerCardId] : cardIds}
           initialId={viewerCardId}
           onClose={() => setViewerCardId(null)}
         />

@@ -10,19 +10,29 @@ type TutorialTooltipProps = {
   readonly isLastStep: boolean;
   readonly onNext: () => void;
   readonly onSkip: () => void;
+  /** Shows the back button when defined. */
+  readonly onBack?: () => void;
+  readonly onFinish: (keepGame: boolean) => void;
 };
 
-export function TutorialTooltip({ step, isLastStep, onNext, onSkip }: TutorialTooltipProps) {
+export function TutorialTooltip({
+  step,
+  isLastStep,
+  onNext,
+  onSkip,
+  onBack,
+  onFinish,
+}: TutorialTooltipProps) {
   const { t } = useTranslation();
-  const buttons = step.buttons ?? ['skip', 'primary'];
+  const buttons = step.buttons ?? (step.done ? ['skip'] : ['skip', 'primary']);
   const showSkip = !isLastStep && buttons.includes('skip');
   const showPrimary = buttons.includes('primary');
 
   return (
-    <FadeInScale className="border-primary/70 bg-card overflow-hidden rounded-2xl border-2 shadow-lg">
+    <FadeInScale className="border-base-primary bg-card overflow-hidden rounded-2xl border-2 shadow-lg">
       <ScrollView className="max-h-[36rem]" contentContainerClassName="p-4 sm:p-6">
-        <View className="bg-primary/10 border-primary/30 self-start rounded-full border px-2.5 py-1">
-          <Text className="font-display text-primary text-xs uppercase tracking-widest">
+        <View className="bg-base-ink self-start rounded-full px-2.5 py-1">
+          <Text className="font-display text-xs text-card uppercase tracking-widest">
             {t('tutorial.tooltip.badge')}
           </Text>
         </View>
@@ -45,11 +55,38 @@ export function TutorialTooltip({ step, isLastStep, onNext, onSkip }: TutorialTo
               </Button>
             )}
           </View>
-          {showPrimary && (
-            <Button variant="contained" color="base-primary" size="sm" onPress={onNext}>
-              {isLastStep ? t('tutorial.tooltip.finish') : t('tutorial.tooltip.next')}
-            </Button>
-          )}
+          <View className="min-w-0 shrink flex-row flex-wrap items-center justify-end gap-3">
+            {onBack && (
+              <Button variant="outlined" color="base-ink" size="sm" onPress={onBack}>
+                {t('tutorial.tooltip.back')}
+              </Button>
+            )}
+            {isLastStep && (
+              <>
+                <Button
+                  variant="outlined"
+                  color="base-primary"
+                  size="sm"
+                  onPress={() => onFinish(false)}
+                >
+                  {t('tutorial.tooltip.restart')}
+                </Button>
+                <Button
+                  variant="contained"
+                  color="base-primary"
+                  size="sm"
+                  onPress={() => onFinish(true)}
+                >
+                  {t('tutorial.tooltip.continue')}
+                </Button>
+              </>
+            )}
+            {showPrimary && (
+              <Button variant="contained" color="base-primary" size="sm" onPress={onNext}>
+                {t('tutorial.tooltip.next')}
+              </Button>
+            )}
+          </View>
         </View>
       </ScrollView>
     </FadeInScale>
