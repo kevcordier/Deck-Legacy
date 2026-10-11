@@ -34,6 +34,7 @@ Ce que le projet a découvert en avançant, pour ne jamais réapprendre deux foi
 | INS-018 | 2026-10-10 | Les bugs se découvrent en jouant                  | Process      |
 | INS-019 | 2026-10-10 | Le ressenti de jeu améliore la lisibilité         | Interface    |
 | INS-020 | 2026-10-10 | Parties courtes : marge pour les animations       | Game design  |
+| INS-021 | 2026-10-11 | Mesurer sans padding dans un parent ajusté        | Interface    |
 
 ---
 
@@ -459,3 +460,24 @@ Action
 - Mesurer la durée de jeu active à partir des `timestamp` des événements, en ignorant les pauses (par exemple les écarts de plus de 5 minutes entre deux événements). Relever cette durée avant et après chaque ajout d'animations.
 - Réserver les animations longues aux moments rares (découverte, amélioration, fin de manche, fin de partie) ; les actions répétitives gardent des animations brèves.
 - Rendre les animations longues interruptibles par un toucher.
+
+---
+
+ID : INS-021
+Date : 2026-10-11
+Titre : Mesurer sans padding dans un parent ajusté
+Statut : Valide
+
+Découverte
+La modale de choix de carte clignotait sur desktop : environ 60 rendus par seconde, la grille alternant entre 1 et 2 colonnes et la carte entre ses mises en page large et compacte. `Grid` mesurait (`onLayout`) une vue qui portait aussi son padding, puis donnait cette largeur à ses cellules : elles débordaient de la place réelle. La modale desktop prend la largeur de son contenu (`lg:w-auto`), donc ce débordement l'élargissait, ce qui changeait la mesure, et ainsi de suite.
+
+Source
+Reproduit dans Chrome headless avec une route temporaire (compteur de rendus `Profiler`, largeurs relevées par CDP) : 600 rendus en 10 s avant correction, 6 après, à 375, 1024 et 1310 px.
+
+Impact
+Toute vue qui se dimensionne d'après sa propre mesure peut boucler dans un parent qui s'ajuste à son contenu (modale desktop, `items-center`, `self-start`).
+
+Action
+
+- Mesurer la vue qui n'a pas de padding (le padding va sur une vue extérieure), comme `Grid` le fait maintenant.
+- Pour un clignotement d'interface, compter les rendus avant de chercher dans les styles.

@@ -56,7 +56,7 @@ export function Game() {
   return (
     <TutorialProvider key={id}>
       <ImageBackground source={PAGE_BACKGROUND} resizeMode="cover" className="flex-1">
-        <SafeAreaView className="bg-background/90 flex-1">
+        <SafeAreaView className="bg-background/80 flex-1">
           <GameHeader />
           {isGamePlaying && <ResourceBar />}
           {isGamePlaying && <GameBoard />}

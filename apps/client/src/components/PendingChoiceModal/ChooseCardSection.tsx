@@ -47,7 +47,10 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
         if (!def || !inst) return null;
         const isSelected = isMultiSelect && selectedIds.includes(id);
         return (
-          <View key={`${id}-${index.toString()}`} className="items-stretch gap-2 p-2">
+          <View
+            key={`${id}-${index.toString()}`}
+            className="w-full max-w-80 items-stretch gap-2 self-center p-2"
+          >
             <View
               className={`rounded-xl border-2 ${isSelected ? 'border-primary' : 'border-transparent'}`}
             >

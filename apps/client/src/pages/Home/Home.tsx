@@ -95,7 +95,7 @@ export function Home() {
 
   return (
     <ImageBackground source={PAGE_BACKGROUND} resizeMode="cover" className="flex-1">
-      <SafeAreaView className="bg-background/90 flex-1">
+      <SafeAreaView className="bg-background/80 flex-1">
         <Header
           onOpenRules={() => setRulesOpen(true)}
           onOpenOptions={() => setOptionsTab('general')}
