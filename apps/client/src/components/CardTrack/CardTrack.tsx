@@ -81,7 +81,9 @@ export function CardTrackContent({
     }
 
     if (action.value && step.icon === 'glory') {
-      return <Glory key={action.id} glory={action.value} />;
+      return (
+        <Glory key={action.id} glory={action.value} className="size-5" textClassName="text-xs" />
+      );
     }
 
     if (step.icon === '*') {
