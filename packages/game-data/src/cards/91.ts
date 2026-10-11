@@ -1,4 +1,10 @@
-import { ActionEffectType, CardTag, TargetScope, Trigger } from '@deck-legacy/engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  PassiveType,
+  TargetScope,
+  Trigger,
+} from '@deck-legacy/engine/domain/enums';
 import type { CardDef, StepDef } from '@deck-legacy/engine/domain/types';
 
 function makeStep(id: number): StepDef {
@@ -66,18 +72,24 @@ export const camelot: CardDef = {
       tags: [CardTag.BUILDING],
       illustration: 'cards/91_4.jpg',
       glory: { amount: 40, valuePerElement: { accumulation: true, amount: 5 } },
-      actions: [
+      passives: [
         {
           id: '91-4-1',
-          trigger: Trigger.END_OF_ROUND,
-          optional: true,
-          actionEffects: [
-            {
-              id: 1,
-              type: ActionEffectType.TRACK_ADVANCE,
-              cards: { scope: [TargetScope.SELF] },
-            },
-          ],
+          type: PassiveType.ADD_TRIGGER,
+          // Only when the deck is empty: the last turn of the round.
+          condition: { type: 'cardCount', cards: { scope: [TargetScope.DECK] }, max: 0 },
+          trigger: {
+            id: '91-4-1',
+            type: Trigger.END_OF_TURN,
+            optional: true,
+            actions: [
+              {
+                id: 1,
+                type: ActionEffectType.TRACK_ADVANCE,
+                cards: { scope: [TargetScope.SELF] },
+              },
+            ],
+          },
         },
       ],
       track: {

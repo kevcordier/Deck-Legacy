@@ -143,6 +143,7 @@ export const shrine: CardDef = {
               {
                 [ResourceType.GOLD]: 2,
                 [ResourceType.WOOD]: 2,
+                [ResourceType.STONE]: 2,
               },
             ],
           },

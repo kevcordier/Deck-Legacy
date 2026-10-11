@@ -67,6 +67,7 @@ export const volcanicEruption: CardDef = {
       name: 'Young Forest',
       tags: [CardTag.LAND],
       illustration: 'cards/20_3.jpg',
+      glory: { amount: 1 },
       actions: [
         {
           id: '20-3-1',

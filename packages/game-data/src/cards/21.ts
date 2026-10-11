@@ -58,7 +58,7 @@ export const opportunist: CardDef = {
     },
     {
       id: 4,
-      name: 'Pretend Nobel',
+      name: 'Pretend Noble',
       illustration: 'cards/21_4.jpg',
       tags: [CardTag.PERSON],
       glory: { amount: 4 },

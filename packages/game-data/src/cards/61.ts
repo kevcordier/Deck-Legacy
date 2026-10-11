@@ -78,7 +78,7 @@ export const westCanyon: CardDef = {
     },
     {
       id: 3,
-      name: 'Forced Labor',
+      name: 'Forced Labour',
       tags: [CardTag.STATE],
       illustration: 'cards/61_3.jpg',
       glory: { amount: -3 },

@@ -1381,6 +1381,37 @@ describe('getInstancesTriggerEffects', () => {
     const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
     expect(result).toHaveLength(0);
   });
+
+  it('fires an end of turn board trigger only when the deck is empty', () => {
+    const deckEmpty = {
+      id: 'trig',
+      type: PassiveType.ADD_TRIGGER,
+      condition: { type: 'cardCount' as const, cards: { scope: [TargetScope.DECK] }, max: 0 },
+      trigger: {
+        id: 't1',
+        type: Trigger.END_OF_TURN,
+        optional: true,
+        actions: [
+          { id: 1, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
+        ],
+      },
+    };
+    const defs: Record<number, CardDef> = {
+      5: { id: 5, name: 'C', states: [{ id: 1, name: 'S' }] },
+    };
+    const withDeck = makeState({
+      drawPile: [5],
+      instances: { 5: makeInstance({ id: 5, cardId: 5, stateId: 1 }) },
+      boardEffects: { 1: [deckEmpty] },
+    });
+    const emptyDeck = makeState({ drawPile: [], boardEffects: { 1: [deckEmpty] } });
+
+    expect(getInstancesTriggerEffects([], defs, {}, Trigger.END_OF_TURN, withDeck)).toHaveLength(0);
+    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, emptyDeck);
+    expect(result).toHaveLength(1);
+    expect(result[0].effectDef.optional).toBe(true);
+    expect(result[0].effectDef.actionEffects[0].cards).toEqual({ ids: [1] });
+  });
 });
 
 // ─── evaluateCondition ────────────────────────────────────────────────────────

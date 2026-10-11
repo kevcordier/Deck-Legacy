@@ -33,7 +33,7 @@ export const darkPrince: CardDef = {
           cost: {
             resources: [
               {
-                [ResourceType.WEAPON]: 4,
+                [ResourceType.WEAPON]: 5,
               },
             ],
           },

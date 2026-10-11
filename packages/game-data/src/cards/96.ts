@@ -119,6 +119,7 @@ export const stable: CardDef = {
         {
           id: '96-4-1',
           trigger: Trigger.ON_PLAY,
+          optional: true,
           actionEffects: [
             {
               id: 1,

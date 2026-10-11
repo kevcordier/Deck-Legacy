@@ -46,6 +46,7 @@ export const kingAlahar: CardDef = {
           accumulation: true,
         },
       },
+      productions: [{ [ResourceType.GOLD]: 1 }],
       actions: [
         {
           id: '104-2-1',

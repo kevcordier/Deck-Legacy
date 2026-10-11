@@ -62,6 +62,7 @@ export const cityFire: CardDef = {
       name: 'Young Forest',
       tags: [CardTag.LAND],
       illustration: 'cards/49_3.jpg',
+      glory: { amount: 1 },
       actions: [
         {
           id: '49-3-1',

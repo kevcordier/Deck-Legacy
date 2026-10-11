@@ -57,7 +57,7 @@ export const waterMill: CardDef = {
           id: '120-2-1',
           endsTurn: true,
           cost: {
-            discard: [{ scope: [TargetScope.BOARD], tags: [CardTag.BUILDING] }],
+            discard: [{ scope: [TargetScope.BOARD], tags: [CardTag.BUILDING], pickNumber: 2 }],
           },
           actionEffects: [
             {

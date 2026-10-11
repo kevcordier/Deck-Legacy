@@ -3,12 +3,12 @@ import type { CardDef } from '@deck-legacy/engine/domain/types';
 
 export const boulder: CardDef = {
   id: 110,
-  name: 'Boulder',
+  name: 'Boulders',
   chooseState: [1, 3],
   states: [
     {
       id: 1,
-      name: 'Boulder',
+      name: 'Boulders',
       tags: [CardTag.LAND],
       illustration: 'cards/110_1.jpg',
       productions: [{ stone: 1 }],
