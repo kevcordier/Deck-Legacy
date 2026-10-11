@@ -15,12 +15,18 @@ function getInitialTutorial(): boolean {
   return storage.getItem(STORAGE_KEYS.tutorial) !== 'false';
 }
 
+function getInitialResourceWarning(): boolean {
+  return storage.getItem(STORAGE_KEYS.resourceWarning) !== 'false';
+}
+
 export function GameUIProvider({ children }: { readonly children: ReactNode }) {
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [rulesOpen, setRulesOpen] = useState(false);
   const [stickerStockOpen, setStickerStockOpen] = useState(false);
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
   const [tutorialEnabled, setTutorialEnabled] = useState<boolean>(getInitialTutorial);
+  const [resourceWarningEnabled, setResourceWarningEnabled] =
+    useState<boolean>(getInitialResourceWarning);
 
   function applyTheme(newTheme: Theme) {
     storage.setItem(STORAGE_KEYS.theme, newTheme);
@@ -37,6 +43,11 @@ export function GameUIProvider({ children }: { readonly children: ReactNode }) {
     setTutorialEnabled(enabled);
   };
 
+  const handleResourceWarningChange = (enabled: boolean) => {
+    storage.setItem(STORAGE_KEYS.resourceWarning, String(enabled));
+    setResourceWarningEnabled(enabled);
+  };
+
   return (
     <GameUIContext
       value={{
@@ -50,6 +61,8 @@ export function GameUIProvider({ children }: { readonly children: ReactNode }) {
         applyTheme,
         tutorialEnabled,
         setTutorialEnabled: handleTutorialChange,
+        resourceWarningEnabled,
+        setResourceWarningEnabled: handleResourceWarningChange,
       }}
     >
       {children}

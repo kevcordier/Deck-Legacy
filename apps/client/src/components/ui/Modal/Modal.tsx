@@ -44,10 +44,6 @@ function panelClass(side?: 'left' | 'right'): string {
   return 'bg-background border-border max-h-[90%] w-[95%] gap-6 rounded-2xl border p-4 lg:max-h-[80%] lg:w-auto lg:min-w-[32rem] lg:max-w-[80%] lg:p-6';
 }
 
-function backdropClass(bare: boolean): string {
-  return bare ? 'bg-black/40' : 'bg-black/60';
-}
-
 type ModalHeaderProps = Pick<ModalProps, 'title' | 'subtitle' | 'onClose' | 'label'>;
 
 function ModalHeader({ title, subtitle, onClose, label }: ModalHeaderProps) {
@@ -67,6 +63,25 @@ function ModalHeader({ title, subtitle, onClose, label }: ModalHeaderProps) {
         </TutorialTarget>
       )}
     </View>
+  );
+}
+
+function PeekButton({
+  peeking,
+  onPress,
+}: {
+  readonly peeking: boolean;
+  readonly onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      className="bg-background border-border absolute right-4 top-12 z-50 size-10 items-center justify-center rounded-full border shadow-md active:opacity-80"
+      accessibilityRole="button"
+      accessibilityLabel={peeking ? 'Afficher la modale' : 'Masquer la modale'}
+    >
+      {peeking ? <EyeOffIcon className="size-5" /> : <EyeIcon className="size-5" />}
+    </Pressable>
   );
 }
 
@@ -112,7 +127,12 @@ export function Modal({
   );
   useWebKeyDown(handleKey);
 
-  const hiddenClass = peeking ? 'opacity-0' : '';
+  const peekButton = onPeekToggle && <PeekButton peeking={peeking} onPress={onPeekToggle} />;
+
+  // Peeking: no native modal (it would capture every touch), so the page behind stays scrollable.
+  // Only the button is rendered, without a full-screen wrapper: react-native-web drops an inline
+  // `pointerEvents: 'box-none'`, so such a wrapper would block the page.
+  if (peeking) return peekButton;
 
   return (
     <RNModal
@@ -121,16 +141,14 @@ export function Modal({
       animationType="fade"
       statusBarTranslucent
       navigationBarTranslucent
-      onRequestClose={() => (peeking ? onPeekToggle?.() : onClose?.())}
+      onRequestClose={onClose}
     >
       <ModalDepthContext value={depth}>
-        <View
-          className={`flex-1 items-center justify-center ${peeking ? '' : backdropClass(bare)}`}
-        >
+        <View className="flex-1 items-center justify-center bg-black/60">
           <Pressable
             className="absolute inset-0"
             onPress={onClose}
-            disabled={!onClose || peeking}
+            disabled={!onClose}
             // Without a panel, the backdrop is the only close control.
             accessibilityRole={bare ? 'button' : 'none'}
             accessibilityLabel={bare ? 'Close' : undefined}
@@ -140,7 +158,7 @@ export function Modal({
           {bare ? (
             <View
               style={{ pointerEvents: 'box-none' }}
-              className={`items-center gap-3 ${hiddenClass} ${className}`}
+              className={`items-center gap-3 ${className}`}
             >
               {children}
             </View>
@@ -150,11 +168,10 @@ export function Modal({
               collapsable={false}
               entering={side ? SLIDE_IN[side] : undefined}
               style={[
-                { pointerEvents: peeking ? 'none' : 'auto' },
                 // The side panel runs under the status and navigation bars.
                 side && { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 16 },
               ]}
-              className={`${panelClass(side)} ${hiddenClass} ${className}`}
+              className={`${panelClass(side)} ${className}`}
             >
               <ModalHeader title={title} subtitle={subtitle} onClose={onClose} label={label} />
 
@@ -168,16 +185,7 @@ export function Modal({
             </Animated.View>
           )}
 
-          {onPeekToggle && (
-            <Pressable
-              onPress={onPeekToggle}
-              className="bg-background border-border absolute right-4 top-12 size-10 items-center justify-center rounded-full border shadow-md active:opacity-80"
-              accessibilityRole="button"
-              accessibilityLabel={peeking ? 'Afficher la modale' : 'Masquer la modale'}
-            >
-              {peeking ? <EyeOffIcon className="size-5" /> : <EyeIcon className="size-5" />}
-            </Pressable>
-          )}
+          {peekButton}
 
           <TutorialOverlay />
         </View>

@@ -1,8 +1,13 @@
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
+import { Checkbox } from '@components/ui/Checkbox/Checkbox';
+import { Modal } from '@components/ui/Modal/Modal';
+import { Text } from '@components/ui/Text/Text';
+import { GameUIContext } from '@contexts/GameUIContext';
 import { canUseOptions } from '@deck-legacy/engine/application/gameStateHelper';
 import { Options, Phase } from '@deck-legacy/engine/domain/enums';
 import type { GameState } from '@deck-legacy/engine/domain/types/GameState';
+import { use, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
@@ -72,6 +77,24 @@ export function GamePhaseActions({
   variant = 'desktop',
 }: GamePhaseActionsProps) {
   const { t } = useTranslation();
+  const { resourceWarningEnabled, setResourceWarningEnabled } = use(GameUIContext);
+  const [confirmingProgress, setConfirmingProgress] = useState(false);
+  const [dontRemind, setDontRemind] = useState(false);
+
+  // Drawing a card empties the resources: warn first, unless the player turned the warning off.
+  const hasResources = Object.values(gameState.resources).some(v => v > 0);
+  const handleProgress = () => {
+    if (hasResources && resourceWarningEnabled) setConfirmingProgress(true);
+    else progress();
+  };
+  const closeWarning = () => {
+    if (dontRemind) setResourceWarningEnabled(false);
+    setConfirmingProgress(false);
+  };
+  const confirmProgress = () => {
+    closeWarning();
+    progress();
+  };
 
   const isDesktop = variant === 'desktop';
   const gapClass = isDesktop ? 'gap-2' : 'gap-1';
@@ -90,7 +113,7 @@ export function GamePhaseActions({
       <View className={`flex-row items-center ${gapClass}`}>
         <TutorialTarget id={isDesktop ? 'progress' : 'progress-mobile'}>
           <Button
-            onPress={progress}
+            onPress={handleProgress}
             disabled={deckEmpty || haveChoiceToDo || cantAdvance}
             variant="outlined"
             size={size}
@@ -98,6 +121,29 @@ export function GamePhaseActions({
             {progressLabel}
           </Button>
         </TutorialTarget>
+        {confirmingProgress && (
+          <Modal
+            title={t('progressWarning.title')}
+            onClose={closeWarning}
+            footer={
+              <View className="flex-row justify-end gap-2">
+                <Button variant="outlined" size="sm" onPress={closeWarning}>
+                  {t('progressWarning.cancel')}
+                </Button>
+                <Button color="primary" size="sm" onPress={confirmProgress}>
+                  {t('progressWarning.confirm')}
+                </Button>
+              </View>
+            }
+          >
+            <Text>{t('progressWarning.message')}</Text>
+            <Checkbox
+              label={t('progressWarning.dontRemind')}
+              checked={dontRemind}
+              onChange={setDontRemind}
+            />
+          </Modal>
+        )}
         <TutorialTarget id={isDesktop ? 'end-turn-voluntary' : 'end-turn-voluntary-mobile'}>
           <Button
             onPress={endTurnVoluntary}

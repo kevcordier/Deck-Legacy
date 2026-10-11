@@ -26,15 +26,19 @@ const DESKTOP_CHROME_WIDTH = 130;
 const PHONE_CHROME_HEIGHT = 90;
 /** Phone: side margins only, the buttons are under the card (px). */
 const PHONE_CHROME_WIDTH = 16;
+/** Title line above the card and its gap (px). */
+const TITLE_HEIGHT = 40;
 
 /** Largest card width whose full height fits in the modal (mirrors the Modal max sizes). */
-export function useViewerCardWidth(): number {
+export function useViewerCardWidth(withTitle = false): number {
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const isDesktop = useIsDesktop();
   const maxModalHeight = height * (isDesktop ? 0.8 : 0.9) - insets.top - insets.bottom;
   const availableHeight =
-    maxModalHeight - (isDesktop ? DESKTOP_CHROME_HEIGHT : PHONE_CHROME_HEIGHT);
+    maxModalHeight -
+    (isDesktop ? DESKTOP_CHROME_HEIGHT : PHONE_CHROME_HEIGHT) -
+    (withTitle ? TITLE_HEIGHT : 0);
   const availableWidth = width * 0.95 - (isDesktop ? DESKTOP_CHROME_WIDTH : PHONE_CHROME_WIDTH);
   return Math.max(
     0,
@@ -46,15 +50,17 @@ type CardViewerModalProps = {
   readonly cardIds: number[];
   readonly initialId: number;
   readonly onClose: () => void;
+  /** Text shown above the card (e.g. "New card discovered"). */
+  readonly title?: string;
 };
 
 /** The card shown is the tutorial target `viewer-card-<id>`, and its parts `card-number`… */
-export function CardViewerModal({ cardIds, initialId, onClose }: CardViewerModalProps) {
+export function CardViewerModal({ cardIds, initialId, onClose, title }: CardViewerModalProps) {
   const { gameState } = useGame();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
   const [currentId, setCurrentId] = useState(initialId);
-  const cardWidth = useViewerCardWidth();
+  const cardWidth = useViewerCardWidth(!!title);
 
   const currentIndex = cardIds.indexOf(currentId);
   const hasNav = cardIds.length > 1;
@@ -118,6 +124,10 @@ export function CardViewerModal({ cardIds, initialId, onClose }: CardViewerModal
     </Text>
   );
 
+  const heading = title && (
+    <Text className="text-card font-body-bold text-center uppercase">{title}</Text>
+  );
+
   const card = (
     <TutorialTarget
       id={`viewer-card-${currentId}`}
@@ -140,6 +150,7 @@ export function CardViewerModal({ cardIds, initialId, onClose }: CardViewerModal
   if (!isDesktop) {
     return (
       <Modal onClose={onClose} label="card-viewer" bare>
+        {heading}
         {hasNav ? (
           <GestureHandlerRootView>
             <GestureDetector gesture={swipe}>{card}</GestureDetector>
@@ -160,6 +171,7 @@ export function CardViewerModal({ cardIds, initialId, onClose }: CardViewerModal
 
   return (
     <Modal onClose={onClose} label="card-viewer" bare>
+      {heading}
       <View className="flex-row items-center justify-center gap-4">
         {hasNav && navButton('previous')}
         {card}

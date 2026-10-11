@@ -246,7 +246,15 @@
     "en": "Anglais",
     "fr": "Français",
     "tutorial": "Activer le tutoriel",
-    "backHome": "Retour à mes royaumes"
+    "backHome": "Retour à mes royaumes",
+    "resourceWarning": "Prévenir avant d'avancer avec des ressources en jeu"
+  },
+  "progressWarning": {
+    "title": "Des ressources vont être perdues",
+    "message": "Avancer pioche une carte, et toutes vos ressources sont perdues dès qu'une nouvelle carte entre en jeu. Dépensez-les d'abord si vous le pouvez.",
+    "dontRemind": "Ne plus me le rappeler",
+    "cancel": "Annuler",
+    "confirm": "Avancer quand même"
   },
   "tutorial": {
     "tooltip": {

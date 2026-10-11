@@ -1,6 +1,7 @@
 import { AccountPanel } from '@components/AccountPanel/AccountPanel';
 import { Button } from '@components/ui/Button/Button';
 import { ButtonGroup } from '@components/ui/ButtonGroup/ButtonGroup';
+import { Checkbox } from '@components/ui/Checkbox/Checkbox';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Tabs } from '@components/ui/Tabs/Tabs';
 import { GameUIContext } from '@contexts/GameUIContext';
@@ -50,7 +51,8 @@ export function OptionsModal({ onClose, onGoHome, initialTab = 'general' }: Opti
 
 function GeneralOptions({ onGoHome }: { readonly onGoHome?: () => void }) {
   const { t, i18n } = useTranslation();
-  const { theme, applyTheme } = use(GameUIContext);
+  const { theme, applyTheme, resourceWarningEnabled, setResourceWarningEnabled } =
+    use(GameUIContext);
 
   return (
     <>
@@ -77,6 +79,12 @@ function GeneralOptions({ onGoHome }: { readonly onGoHome?: () => void }) {
           { children: t('options.en'), value: 'en' },
           { children: t('options.fr'), value: 'fr' },
         ]}
+      />
+
+      <Checkbox
+        label={t('options.resourceWarning')}
+        checked={resourceWarningEnabled}
+        onChange={setResourceWarningEnabled}
       />
 
       {onGoHome && (

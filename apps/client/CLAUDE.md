@@ -157,16 +157,17 @@ The client uses **NativeWind 4** (Tailwind CSS **v3** syntax for React Native). 
 
 AsyncStorage (`localStorage` on web), keys declared in `STORAGE_KEYS` (`src/services/storage.ts`):
 
-| Key                            | Contents                                          |
-| ------------------------------ | ------------------------------------------------- |
-| `deck_legacy_kingdoms`         | Kingdom index: id, name, creation date, scores    |
-| `deck_legacy_save_<id>`        | A kingdom's game: event log, card names, sync     |
-| `deck_legacy_save`             | Single save of older versions (migrated, removed) |
-| `deck_legacy_offline`          | The player chose to play without an account       |
-| `deck_legacy_pending_abandons` | Server games to abandon at the next sync          |
-| `deck_legacy_lang`             | Language code (`en` or `fr`)                      |
-| `deck_legacy_theme`            | `light`, `dark` or `system`                       |
-| `deck_legacy_tutorial`         | Tutorial enabled (`true`/`false`)                 |
+| Key                            | Contents                                               |
+| ------------------------------ | ------------------------------------------------------ |
+| `deck_legacy_kingdoms`         | Kingdom index: id, name, creation date, scores         |
+| `deck_legacy_save_<id>`        | A kingdom's game: event log, card names, sync          |
+| `deck_legacy_save`             | Single save of older versions (migrated, removed)      |
+| `deck_legacy_offline`          | The player chose to play without an account            |
+| `deck_legacy_pending_abandons` | Server games to abandon at the next sync               |
+| `deck_legacy_lang`             | Language code (`en` or `fr`)                           |
+| `deck_legacy_theme`            | `light`, `dark` or `system`                            |
+| `deck_legacy_tutorial`         | Tutorial enabled (`true`/`false`)                      |
+| `deck_legacy_resource_warning` | Warn before progressing with resources (`false` = off) |
 
 Supabase stores its session in AsyncStorage as well.
 

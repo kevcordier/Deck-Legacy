@@ -29,6 +29,9 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 interface PendingChoiceModalProps {
+  /** Modal hidden to look at the board; owned by the parent, which locks the board meanwhile. */
+  readonly peeking: boolean;
+  readonly onPeekToggle: () => void;
   readonly choice?: PendingChoice;
   readonly triggerPile?: Record<string, TriggerEntry> | null;
   readonly defs: Record<number, CardDef>;
@@ -141,6 +144,8 @@ function getChoiceSection(props: ChoiceSectionProps): ChoiceSection {
 }
 
 export function PendingChoiceModal({
+  peeking,
+  onPeekToggle,
   choice,
   triggerPile,
   defs,
@@ -154,7 +159,6 @@ export function PendingChoiceModal({
 }: PendingChoiceModalProps) {
   const { t } = useTranslation();
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [peeking, setPeeking] = useState(false);
 
   const minSelect = choice?.pickMin ?? 1;
   const maxSelect = choice?.pickMax ?? 1;
@@ -249,7 +253,7 @@ export function PendingChoiceModal({
       subtitle={subtitle}
       footer={footer}
       peeking={peeking}
-      onPeekToggle={() => setPeeking(p => !p)}
+      onPeekToggle={onPeekToggle}
     >
       {content}
     </Modal>

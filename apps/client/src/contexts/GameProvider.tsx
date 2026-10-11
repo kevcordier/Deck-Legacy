@@ -164,8 +164,7 @@ export function GameProvider({
         session.getState(),
         session.getEvents().slice(eventCount),
       );
-      // Reset by every command: the reveal shown at the end of the turn goes away with it.
-      setUpgradeReveal(reveal);
+      if (reveal) setUpgradeReveal(reveal);
       // Reset by every command: a later re-render of the board must not replay the draw.
       const drawn = findDrawnCards(previousState, session.getState());
       setDrawnCardIds(current => (drawn.length === 0 && current.length === 0 ? current : drawn));

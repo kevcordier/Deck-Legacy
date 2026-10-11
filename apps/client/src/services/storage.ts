@@ -23,6 +23,8 @@ export const STORAGE_KEYS = {
   lang: 'deck_legacy_lang',
   theme: 'deck_legacy_theme',
   tutorial: 'deck_legacy_tutorial',
+  /** Warn before progressing while resources are in play (`false` = disabled). */
+  resourceWarning: 'deck_legacy_resource_warning',
 } as const;
 
 /** Storage key of a kingdom's save. */

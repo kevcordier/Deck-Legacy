@@ -1,3 +1,4 @@
+import { CardUpgradeReveal } from '@components/CardUpgradeReveal/CardUpgradeReveal';
 import { CheatPanel } from '@components/CheatPanel/CheatPanel';
 import { DeckCardGrid, DeckViewer } from '@components/DeckViewer/DeckViewer';
 import { GamePhaseActions } from '@components/GamePhaseActions/GamePhaseActions';
@@ -70,6 +71,8 @@ export function GameBoard() {
     skipTrigger,
     skipChoice,
     parameters,
+    upgradeReveal,
+    dismissUpgradeReveal,
   } = useGame();
   const { drawPile, discardPile, destroyedPile, purgedCards, instances } = gameState;
 
@@ -77,6 +80,15 @@ export function GameBoard() {
 
   const [openSheet, setOpenSheet] = useState<SheetName | null>(null);
   const [destroyedModalOpen, setDestroyedModalOpen] = useState(false);
+  // Pending choice modal hidden to look at the board: scrolling stays, card actions are locked.
+  const choiceKey = pendingChoices?.[0]?.id ?? 'trigger';
+  const [peekedKey, setPeekedKey] = useState<string | null>(null);
+  const choiceOpen =
+    (pendingChoices !== null && pendingChoices.length > 0) ||
+    (!!triggerPile && Object.keys(triggerPile).length > 0);
+  // Tied to the choice: a new choice (or none) is never shown hidden.
+  const peeking = choiceOpen && peekedKey === choiceKey;
+  const lockedPointer = { pointerEvents: peeking ? 'none' : 'auto' } as const;
   const [pinnedLeft, setPinnedLeft] = useState(true);
   const [pinnedRight, setPinnedRight] = useState(true);
   const centerScrollRef = useRef<ScrollView>(null);
@@ -164,7 +176,11 @@ export function GameBoard() {
     <View className="flex-1 overflow-hidden">
       <View className="flex-1 flex-row items-stretch gap-1 overflow-hidden">
         {isDesktop && (
-          <TutorialTarget id="draw-column" className={pinnedLeft ? 'w-64' : 'w-[60px]'}>
+          <TutorialTarget
+            id="draw-column"
+            className={pinnedLeft ? 'w-64' : 'w-[60px]'}
+            style={lockedPointer}
+          >
             <DeckViewer
               title={t('deckViewer.draw')}
               deckName="draw"
@@ -189,7 +205,9 @@ export function GameBoard() {
           className="flex-1"
           contentContainerClassName="grow"
         >
-          <MainBoard />
+          <View className="flex-1" style={lockedPointer}>
+            <MainBoard />
+          </View>
         </ScrollView>
 
         {!isDesktop && (
@@ -200,7 +218,11 @@ export function GameBoard() {
         )}
 
         {isDesktop && (
-          <TutorialTarget id="discard-column" className={pinnedRight ? 'w-64' : 'w-[60px]'}>
+          <TutorialTarget
+            id="discard-column"
+            className={pinnedRight ? 'w-64' : 'w-[60px]'}
+            style={lockedPointer}
+          >
             <DeckViewer
               title={t('deckViewer.discard')}
               deckName="discard"
@@ -237,7 +259,10 @@ export function GameBoard() {
       {__DEV__ && <CheatPanel />}
 
       {!isDesktop && (
-        <View className="bg-background border-t-border z-10 flex-row items-center justify-between gap-1 border-t py-2">
+        <View
+          style={lockedPointer}
+          className="bg-background border-t-border z-10 flex-row items-center justify-between gap-1 border-t py-2"
+        >
           <TutorialTarget id="draw-mobile-button">
             <Button
               onPress={openDraw}
@@ -300,10 +325,11 @@ export function GameBoard() {
         </View>
       )}
 
-      {((pendingChoices !== null && pendingChoices.length > 0) ||
-        (triggerPile && Object.keys(triggerPile).length > 0)) && (
+      {choiceOpen && (
         <PendingChoiceModal
-          key={pendingChoices?.[0]?.id}
+          key={choiceKey}
+          peeking={peeking}
+          onPeekToggle={() => setPeekedKey(k => (k === choiceKey ? null : choiceKey))}
           choice={pendingChoices?.[0]}
           triggerPile={triggerPile}
           defs={defs}
@@ -314,6 +340,16 @@ export function GameBoard() {
           onResolveTrigger={resolveAction}
           onSkipTrigger={skipTrigger}
           onSkipChoice={skipChoice}
+        />
+      )}
+
+      {/* Mounted after the other game modals so it stays on top of the triggers and the turn end. */}
+      {upgradeReveal && (
+        <CardUpgradeReveal
+          key={`${upgradeReveal.after.id}-${upgradeReveal.after.stateId}`}
+          before={upgradeReveal.before}
+          after={upgradeReveal.after}
+          onClose={dismissUpgradeReveal}
         />
       )}
 
