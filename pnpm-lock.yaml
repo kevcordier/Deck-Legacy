@@ -163,7 +163,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  react-native-reanimated-dnd@2.0.0: 4f39d8f77caeb3d83ef717832f7b948c205928d11134d6c66bd28e4c44574a3b
+  react-native-reanimated-dnd@2.0.0: f9b1d661636caae843b2969dc31dc1243991588cc3ecb302781974df3e75203b
 
 importers:
 
@@ -315,7 +315,7 @@ importers:
         version: 4.5.1(react-native-worklets@0.10.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(react-native@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1))(react@19.2.3)(supports-color@8.1.1))(react-native@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1))(react@19.2.3)
       react-native-reanimated-dnd:
         specifier: 2.0.0
-        version: 2.0.0(patch_hash=4f39d8f77caeb3d83ef717832f7b948c205928d11134d6c66bd28e4c44574a3b)(f17c88832e12c74ef580e638fd7e63c1)
+        version: 2.0.0(patch_hash=f9b1d661636caae843b2969dc31dc1243991588cc3ecb302781974df3e75203b)(f17c88832e12c74ef580e638fd7e63c1)
       react-native-safe-area-context:
         specifier: ~5.7.0
         version: 5.7.0(react-native@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1))(react@19.2.3)
@@ -13730,7 +13730,7 @@ snapshots:
       prop-types: 15.8.1
       react-native: 0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
-  react-native-reanimated-dnd@2.0.0(patch_hash=4f39d8f77caeb3d83ef717832f7b948c205928d11134d6c66bd28e4c44574a3b)(f17c88832e12c74ef580e638fd7e63c1):
+  react-native-reanimated-dnd@2.0.0(patch_hash=f9b1d661636caae843b2969dc31dc1243991588cc3ecb302781974df3e75203b)(f17c88832e12c74ef580e638fd7e63c1):
     dependencies:
       react: 19.2.3
       react-native: 0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)

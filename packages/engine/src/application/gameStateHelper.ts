@@ -2,6 +2,8 @@ import { type Options, PassiveType, type ResourceType, Trigger } from '../domain
 import type { CardDef, GameState, Passive, Resources, Sticker } from '../domain/types';
 import { getActiveState, getInstancesTriggerEffects } from './cardHelpers';
 
+export { mergeResources } from './resources';
+
 export const pickPermanentBoardEffects = (
   boardEffects: Record<number, Passive[]>,
   permanents: number[],
@@ -108,14 +110,6 @@ export const spendResources = (_gameState: GameState, resources: Resources): Gam
   }
   return gameState;
 };
-
-export function mergeResources(a: Resources, b?: Resources): Resources {
-  const result = JSON.parse(JSON.stringify(a)) as Resources;
-  for (const [k, v] of Object.entries(b ?? {})) {
-    result[k as keyof Resources] = (result[k as keyof Resources] ?? 0) + v;
-  }
-  return result;
-}
 
 export const syncInstancePassivesInBoardEffects = (
   _gameState: GameState,

@@ -1,17 +1,9 @@
-import {
-  ActionEffectType,
-  PassiveType,
-  type ResourceType,
-  TargetScope,
-  type Trigger,
-} from '../domain/enums';
+import { ActionEffectType, PassiveType, TargetScope, type Trigger } from '../domain/enums';
 import type {
   ActionEffect,
   CardAction,
   CardDef,
   CardInstance,
-  CardState,
-  Condition,
   Cost,
   GameState,
   Resources,
@@ -19,45 +11,35 @@ import type {
   Sticker,
   TriggerEntry,
 } from '../domain/types';
-import { cardSelector } from './cardSelector';
-import { countValuePerElement } from './effectResolver';
-import { mergeResources } from './gameStateHelper';
+import {
+  cardSelector,
+  evaluateCondition,
+  getActiveState,
+  getAffectedCardsByBoardEffects,
+  getEffectiveProductions,
+  getRemovedResourcesForState,
+  removeResourceKeys,
+} from './cardSelector';
 import {
   getPayableResourceCostVariants,
   getSourceResourceEquivalence,
 } from './resourceEquivalence';
+import { mergeResources } from './resources';
+
+export {
+  evaluateCondition,
+  getActiveState,
+  getAffectedCardsByBoardEffects,
+  getEffectiveGlory,
+  getEffectiveProductions,
+  getTotalResourceProduction,
+} from './cardSelector';
 
 function sanitizeResources(resources: Resources): Resources {
   return Object.entries(resources).reduce<Resources>((acc, [key, value]) => {
     const clampedValue = Math.max(0, Number(value) || 0);
     if (clampedValue > 0) {
       acc[key as keyof Resources] = clampedValue;
-    }
-    return acc;
-  }, {});
-}
-
-function getRemovedResourcesForState(
-  instance: CardInstance,
-  stateId: number,
-  scope: 'production' | 'actionCost' | 'upgradeCost',
-): (keyof Resources)[] {
-  return instance.removedResourcesByState?.[stateId]?.[scope] ?? [];
-}
-
-function removeResourceKeys(resources: Resources, keys: (keyof Resources)[]): Resources {
-  if (keys.length === 0) return resources;
-
-  const removedCounts = keys.reduce<Record<string, number>>((acc, key) => {
-    acc[key] = (acc[key] ?? 0) + 1;
-    return acc;
-  }, {});
-
-  return Object.entries(resources).reduce<Resources>((acc, [key, value]) => {
-    const removed = removedCounts[key] ?? 0;
-    const nextValue = Math.max(0, (value ?? 0) - removed);
-    if (nextValue > 0) {
-      acc[key as keyof Resources] = nextValue;
     }
     return acc;
   }, {});
@@ -120,34 +102,6 @@ export function getEffectiveActionCost(baseCost: Cost | undefined, instance: Car
   return removeResourceKeysFromCost(baseCost, removedKeys);
 }
 
-export function getTotalResourceProduction(
-  instanceId: number,
-  resourceType: ResourceType,
-  gameState: GameState,
-  defs: Record<number, CardDef>,
-  stickerDefs: Record<number, Sticker>,
-): number {
-  return cardSelector(
-    { scope: [TargetScope.ANY], produces: [resourceType] },
-    instanceId,
-    gameState,
-    defs,
-    stickerDefs,
-  ).reduce((total, id) => {
-    const state = getActiveState(gameState.instances[id], defs);
-    const prodKeyCount = ((state.productions as Resources[]) || [{}])
-      .map(p => {
-        return (
-          getEffectiveProductions(p, gameState, defs, gameState.instances[id], stickerDefs, false)[
-            resourceType
-          ] ?? 0
-        );
-      })
-      .reduce((a, b) => Math.max(a, b), -Infinity);
-    return total + prodKeyCount;
-  }, 0);
-}
-
 export function getTotalProduction(
   instanceId: number,
   gameState: GameState,
@@ -163,113 +117,6 @@ export function getTotalProduction(
     const total = Object.values(effective).reduce<number>((sum, v) => sum + (v ?? 0), 0);
     return Math.max(maxTotal, total);
   }, 0);
-}
-
-function isWithinBounds(value: number, min?: number, max?: number): boolean {
-  if (min !== undefined && value < min) return false;
-  if (max !== undefined && value > max) return false;
-  return true;
-}
-
-export function evaluateCondition(
-  condition: Condition,
-  gameState: GameState,
-  instanceId: number,
-  defs: Record<number, CardDef>,
-  stickers: Record<number, Sticker>,
-): boolean {
-  switch (condition.type) {
-    case 'cardCount': {
-      const count = cardSelector(condition.cards, instanceId, gameState, defs, stickers).length;
-      return isWithinBounds(count, condition.min, condition.max);
-    }
-    case 'production': {
-      const total = getTotalResourceProduction(
-        instanceId,
-        condition.resourceType,
-        gameState,
-        defs,
-        stickers,
-      );
-      return isWithinBounds(total, condition.min, condition.max);
-    }
-    case 'resource': {
-      const total = gameState.resources[condition.resourceType] ?? 0;
-      return isWithinBounds(total, condition.min, condition.max);
-    }
-    case 'and':
-      return condition.conditions.every(c =>
-        evaluateCondition(c, gameState, instanceId, defs, stickers),
-      );
-    case 'or':
-      return condition.conditions.some(c =>
-        evaluateCondition(c, gameState, instanceId, defs, stickers),
-      );
-    case 'not':
-      return !evaluateCondition(condition.condition, gameState, instanceId, defs, stickers);
-  }
-}
-
-export function getAffectedCardsByBoardEffects(
-  gameState: GameState,
-  passiveType: PassiveType,
-): Record<number, number[]> {
-  const affectedInstanceIds: Record<number, number[]> = {};
-  Object.entries(gameState.boardEffects).forEach(([sourceId, effects]) =>
-    effects
-      .filter(be => be.type === passiveType)
-      .forEach(be => {
-        const ids = be.cards?.ids ?? [Number(sourceId)];
-        affectedInstanceIds[Number(sourceId)] = [
-          ...(affectedInstanceIds[Number(sourceId)] ?? []),
-          ...ids,
-        ];
-      }),
-  );
-
-  return affectedInstanceIds;
-}
-
-function calculeBoardEffectsBonus(
-  instance: CardInstance,
-  gameState: GameState,
-  defs: Record<number, CardDef>,
-  stickerDefs: Record<number, Sticker>,
-): Resources {
-  let bonus: Resources = {};
-  for (const [instanceSource, passives] of Object.entries(gameState.boardEffects)) {
-    passives
-      .filter(
-        p =>
-          p.type === PassiveType.ADJUST_PRODUCTION &&
-          cardSelector(
-            p.cards ?? { scope: [TargetScope.ANY] },
-            Number(instanceSource),
-            gameState,
-            defs,
-            stickerDefs,
-          ).includes(instance.id) &&
-          p.resources,
-      )
-      .forEach(passive => {
-        if (passive.valuePerElement && passive.resources) {
-          const count = countValuePerElement(
-            passive.valuePerElement,
-            gameState,
-            instance.id,
-            defs,
-            stickerDefs,
-          );
-          bonus = mergeResources(
-            bonus,
-            Object.fromEntries(Object.entries(passive.resources).map(([k, v]) => [k, v * count])),
-          );
-        } else {
-          bonus = mergeResources(bonus, passive.resources);
-        }
-      });
-  }
-  return bonus;
 }
 
 function applyReplacementOnProduction(
@@ -326,40 +173,6 @@ function getApplicableReplaceResourceProductionPassives(
     });
 }
 
-export function getEffectiveProductions(
-  base: Resources,
-  gameState: GameState,
-  defs: Record<number, CardDef>,
-  instance: CardInstance,
-  stickerDefs: Record<number, Sticker>,
-  includeBoardEffects = true,
-): Resources {
-  const stickerBonus = (instance.stickers[instance.stateId] ?? []).reduce<Resources>(
-    (acc, stickerId) => {
-      const sticker = stickerDefs[stickerId];
-      if (!sticker) return acc;
-      if (sticker.production) {
-        return {
-          ...acc,
-          [sticker.production as keyof Resources]:
-            (acc[sticker.production as keyof Resources] ?? 0) + 1,
-        };
-      }
-      return acc;
-    },
-    {},
-  );
-
-  const boardEffectsBonus = includeBoardEffects
-    ? calculeBoardEffectsBonus(instance, gameState, defs, stickerDefs)
-    : {};
-
-  const mergedProduction = mergeResources(mergeResources(base, stickerBonus), boardEffectsBonus);
-
-  const removedKeys = getRemovedResourcesForState(instance, instance.stateId, 'production');
-  return removeResourceKeys(mergedProduction, removedKeys);
-}
-
 export function getProductionChoicesForAction(
   base: Resources,
   gameState: GameState,
@@ -399,40 +212,6 @@ export function getProductionChoicesForAction(
   return [...unique.values()];
 }
 
-export function getEffectiveGlory(
-  activeState: CardState,
-  gameState: GameState,
-  defs: Record<number, CardDef>,
-  instance: CardInstance,
-  stickerDefs: Record<number, Sticker> = {},
-): number {
-  const conditionPasses =
-    !activeState.glory?.condition ||
-    evaluateCondition(activeState.glory.condition, gameState, instance.id, defs, stickerDefs);
-
-  const baseGlory = activeState.glory && conditionPasses ? activeState.glory.amount : 0;
-  const stickerGlory = (instance.stickers[instance.stateId] ?? []).reduce(
-    (acc, stickerId) => acc + (stickerDefs[stickerId]?.glory ?? 0),
-    0,
-  );
-  const additionalGlory = instance.glories.reduce((acc, glory) => acc + glory, 0);
-
-  let passiveGlory = 0;
-
-  if (activeState.glory?.valuePerElement && conditionPasses) {
-    const count = countValuePerElement(
-      activeState.glory.valuePerElement,
-      gameState,
-      instance.id,
-      defs,
-      stickerDefs,
-    );
-    passiveGlory = activeState.glory.valuePerElement.amount * count;
-  }
-
-  return baseGlory + stickerGlory + passiveGlory + additionalGlory;
-}
-
 export function tagClass(tag: string, isEnemy: boolean): string {
   const t = tag.toLowerCase();
   const tagClass = 'border';
@@ -456,18 +235,6 @@ export function tagBorderClass(tag: string, isEnemy: boolean): string {
   if (t === 'livestock') return 'border-tag-livestock';
   return 'border-tag-tag';
 }
-
-/** Retourne l'état actif d'une instance (lève une erreur si la définition ou l'état est introuvable). */
-export const getActiveState = (
-  instance: CardInstance,
-  defs: Record<number, CardDef>,
-): CardState => {
-  const def = defs[instance.cardId];
-  if (!def) throw new Error(`Card def not found: ${instance.cardId}`);
-  const state = def.states.find(s => s.id === instance.stateId);
-  if (!state) throw new Error(`State ${instance.stateId} not found on card ${instance.cardId}`);
-  return state;
-};
 
 /** Vérifie si les ressources disponibles suffisent pour payer un coût. */
 export function canAffordResources(available: Resources, resources: Resources[]): boolean {
