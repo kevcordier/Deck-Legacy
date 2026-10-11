@@ -16,6 +16,7 @@ import {
   getEffectiveUpgradeCost,
 } from '../cardHelpers';
 import { mergeResources } from '../gameStateHelper';
+import { fixResources } from '../resources';
 import type { PlayerChoiceStrategy } from './PlayerChoiceStrategy';
 
 export class CardChoiceStrategy implements PlayerChoiceStrategy {
@@ -40,7 +41,7 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
     if (!cost?.resources?.length) return new Set();
 
     const keys = cost.resources.flatMap(resourceCost =>
-      Object.entries(resourceCost)
+      Object.entries(fixResources(resourceCost))
         .filter(([, value]) => (value ?? 0) > 0)
         .map(([resourceKey]) => resourceKey),
     );

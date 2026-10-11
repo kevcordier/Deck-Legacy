@@ -29,6 +29,7 @@ import { ResourceChoiceStrategy } from '../playerChoice/ResourceChoiceStrategy';
 import { StateChoiceStrategy } from '../playerChoice/StateChoiceStrategy';
 import { StepChoiceStrategy } from '../playerChoice/StepChoiceStrategy';
 import { StickerChoiceStrategy } from '../playerChoice/StickerChoiceStrategy';
+import { hasAnyAmountCost } from '../resources';
 
 export class CardActionAggregate {
   readonly def: CardDef;
@@ -61,6 +62,8 @@ export class CardActionAggregate {
   private readonly action: CardAction;
   private readonly endTurn: boolean;
   private readonly endRound: boolean;
+  /** Amount paid for an `'any'` resource cost: the action's effects apply once per unit. */
+  private readonly amount: number;
 
   // triger Action
   constructor(
@@ -70,6 +73,7 @@ export class CardActionAggregate {
     readonly instance: CardInstance,
     readonly _action: CardAction,
     readonly triggerId?: string,
+    amount = 1,
   ) {
     this.def = cardDefs[this.instance.cardId];
     this.gameState = JSON.parse(JSON.stringify(initGameState)) as GameState;
@@ -84,10 +88,12 @@ export class CardActionAggregate {
       [PendingChoiceType.CHOOSE_STEP]: new StepChoiceStrategy(cardDefs),
       [PendingChoiceType.CHOOSE_ACTION_EFFECT]: new ChooseActionEffectStrategy(),
     };
-    this.effects = this.action.actionEffects.reduce((acc, effect) => {
+    this.amount = hasAnyAmountCost(this.action.cost) ? amount : 1;
+    const effects = this.action.actionEffects.reduce((acc, effect) => {
       const effectiveEffects = this.getEffectiveActionEffects(effect);
       return [...acc, ...effectiveEffects];
     }, [] as ActionEffect[]);
+    this.effects = Array.from({ length: Math.max(0, this.amount) }, () => effects).flat();
     this.endTurn =
       !!this.action.endsTurn ||
       this.gameState.triggerPile[this.triggerId ?? '']?.effectDef.trigger === Trigger.END_OF_TURN;
@@ -302,8 +308,14 @@ export class CardActionAggregate {
       if (currentUsageCount >= this.action.limitedTime) return;
     }
 
+    if (!Number.isInteger(this.amount) || this.amount < 1) return;
+
     const currentInstance = this.gameState.instances[this.instance.id];
-    const effectiveActionCost = getEffectiveActionCost(this.action.cost, currentInstance);
+    const effectiveActionCost = getEffectiveActionCost(
+      this.action.cost,
+      currentInstance,
+      this.amount,
+    );
 
     if (
       !canAffordTrackAdvanceCost(

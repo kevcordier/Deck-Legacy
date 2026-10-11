@@ -219,7 +219,12 @@ export class GameSession {
       case 'resolveProduction':
         return this.resolveProduction(command.instanceId, command.choiceIndex);
       case 'resolveAction':
-        return this.resolveAction(command.instanceId, command.actionId, command.triggerId);
+        return this.resolveAction(
+          command.instanceId,
+          command.actionId,
+          command.triggerId,
+          command.amount,
+        );
       case 'resolveUpgrade':
         return this.resolveUpgrade(command.instanceId, command.upgradeTo);
       case 'resolvePlayerChoice':
@@ -400,7 +405,12 @@ export class GameSession {
     this.sync(this.agg.cardProduced(instanceId, resourcesGained));
   }
 
-  private resolveAction(instanceId: number, actionId: string, triggerId?: string): void {
+  private resolveAction(
+    instanceId: number,
+    actionId: string,
+    triggerId?: string,
+    amount?: number,
+  ): void {
     if (!this.isPlayable(instanceId)) return;
     const gs = this.agg.getGameState();
     const cs = getActiveState(gs.instances[instanceId], this.catalog.cards);
@@ -412,7 +422,7 @@ export class GameSession {
       cs.actions?.find(ce => ce.id === actionId);
     if (!action) return;
 
-    const newState = this.agg.cardAction(action, instanceId, triggerId);
+    const newState = this.agg.cardAction(action, instanceId, triggerId, amount);
     if (this.syncAggregatePending()) return;
     this.sync(newState);
   }

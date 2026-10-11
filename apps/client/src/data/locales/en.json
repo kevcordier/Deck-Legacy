@@ -110,6 +110,12 @@
       "discard": "Discard {{count}} {{type}}",
       "destroy": "Destroy {{count}} {{type}}",
       "cards": "cards"
+    },
+    "deposit": {
+      "title": "How many to deposit?",
+      "confirm": "Deposit {{count}}",
+      "less": "Deposit one less",
+      "more": "Deposit one more"
     }
   },
   "cardPreview": {

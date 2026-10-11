@@ -22,7 +22,14 @@ export type GameCommand =
   | { type: 'endTurn' }
   | { type: 'chooseState'; instanceId: number; stateId: number }
   | { type: 'resolveProduction'; instanceId: number; choiceIndex: number }
-  | { type: 'resolveAction'; instanceId: number; actionId: string; triggerId?: string }
+  | {
+      type: 'resolveAction';
+      instanceId: number;
+      actionId: string;
+      triggerId?: string;
+      /** Amount paid for an `'any'` resource cost (e.g. goods deposited on Export). */
+      amount?: number;
+    }
   | { type: 'resolveUpgrade'; instanceId: number; upgradeTo: number }
   | { type: 'resolvePlayerChoice'; choice: ResolvedActionEffect; choiceType: string }
   | { type: 'resolvePayCost'; resolved: ResolvedCost }

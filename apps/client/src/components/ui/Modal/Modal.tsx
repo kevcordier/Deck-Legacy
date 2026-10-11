@@ -5,8 +5,8 @@ import { EyeIcon, EyeOffIcon } from '@components/ui/Icon/icon';
 import { Text } from '@components/ui/Text/Text';
 import { ModalDepthContext, TutorialContext } from '@contexts/TutorialContext';
 import { useWebKeyDown } from '@hooks/useWebKeyDown';
-import { type ReactNode, use, useCallback, useEffect, useRef } from 'react';
-import { Pressable, Modal as RNModal, ScrollView, View } from 'react-native';
+import { type ReactNode, use, useCallback, useEffect, useRef, useState } from 'react';
+import { Pressable, Modal as RNModal, ScrollView, View, type ViewStyle } from 'react-native';
 import Animated, { SlideInLeft, SlideInRight } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -29,6 +29,8 @@ export type ModalProps = {
   /** Full-height side panel sliding in from this edge, instead of a centred panel. */
   readonly side?: 'left' | 'right';
 };
+
+const PEEK_BUTTON_CLASS = 'absolute right-4 top-12 size-10';
 
 const SLIDE_DURATION_MS = 250;
 const SLIDE_IN = {
@@ -69,13 +71,16 @@ function ModalHeader({ title, subtitle, onClose, label }: ModalHeaderProps) {
 function PeekButton({
   peeking,
   onPress,
+  style,
 }: {
   readonly peeking: boolean;
   readonly onPress: () => void;
+  readonly style?: ViewStyle;
 }) {
   return (
     <Pressable
       onPress={onPress}
+      style={style}
       className="bg-background border-border absolute right-4 top-12 z-50 size-10 items-center justify-center rounded-full border shadow-md active:opacity-80"
       accessibilityRole="button"
       accessibilityLabel={peeking ? 'Afficher la modale' : 'Masquer la modale'}
@@ -127,6 +132,13 @@ export function Modal({
   );
   useWebKeyDown(handleKey);
 
+  // The native modal covers the whole screen while the hidden state renders in the page: the
+  // modal's button is placed where the page's one would be, so it does not jump on toggle.
+  const peekAnchorRef = useRef<View>(null);
+  const [peekPos, setPeekPos] = useState<ViewStyle | null>(null);
+  const measurePeekAnchor = () =>
+    peekAnchorRef.current?.measureInWindow((left, top) => setPeekPos({ top, left, right: 'auto' }));
+
   const peekButton = onPeekToggle && <PeekButton peeking={peeking} onPress={onPeekToggle} />;
 
   // Peeking: no native modal (it would capture every touch), so the page behind stays scrollable.
@@ -135,63 +147,79 @@ export function Modal({
   if (peeking) return peekButton;
 
   return (
-    <RNModal
-      visible
-      transparent
-      animationType="fade"
-      statusBarTranslucent
-      navigationBarTranslucent
-      onRequestClose={onClose}
-    >
-      <ModalDepthContext value={depth}>
-        <View className="flex-1 items-center justify-center bg-black/60">
-          <Pressable
-            className="absolute inset-0"
-            onPress={onClose}
-            disabled={!onClose}
-            // Without a panel, the backdrop is the only close control.
-            accessibilityRole={bare ? 'button' : 'none'}
-            accessibilityLabel={bare ? 'Close' : undefined}
-            accessible={bare}
-          />
+    <>
+      {onPeekToggle && (
+        <View
+          ref={peekAnchorRef}
+          collapsable={false}
+          onLayout={measurePeekAnchor}
+          style={{ pointerEvents: 'none' }}
+          className={PEEK_BUTTON_CLASS}
+        />
+      )}
+      <RNModal
+        visible
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        navigationBarTranslucent
+        onRequestClose={onClose}
+      >
+        <ModalDepthContext value={depth}>
+          <View className="flex-1 items-center justify-center bg-black/60">
+            <Pressable
+              className="absolute inset-0"
+              onPress={onClose}
+              disabled={!onClose}
+              // Without a panel, the backdrop is the only close control.
+              accessibilityRole={bare ? 'button' : 'none'}
+              accessibilityLabel={bare ? 'Close' : undefined}
+              accessible={bare}
+            />
 
-          {bare ? (
-            <View
-              style={{ pointerEvents: 'box-none' }}
-              className={`items-center gap-3 ${className}`}
-            >
-              {children}
-            </View>
-          ) : (
-            <Animated.View
-              ref={panelRef}
-              collapsable={false}
-              entering={side ? SLIDE_IN[side] : undefined}
-              style={[
-                // The side panel runs under the status and navigation bars.
-                side && { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 16 },
-              ]}
-              className={`${panelClass(side)} ${className}`}
-            >
-              <ModalHeader title={title} subtitle={subtitle} onClose={onClose} label={label} />
+            {bare ? (
+              <View
+                style={{ pointerEvents: 'box-none' }}
+                className={`items-center gap-3 ${className}`}
+              >
+                {children}
+              </View>
+            ) : (
+              <Animated.View
+                ref={panelRef}
+                collapsable={false}
+                entering={side ? SLIDE_IN[side] : undefined}
+                style={[
+                  // The side panel runs under the status and navigation bars.
+                  side && { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 16 },
+                ]}
+                className={`${panelClass(side)} ${className}`}
+              >
+                <ModalHeader title={title} subtitle={subtitle} onClose={onClose} label={label} />
 
-              <ScrollView className="w-full shrink" contentContainerClassName="gap-6 p-1">
-                <TutorialTarget id={label ? `modal-${label}-content` : undefined} className="gap-6">
-                  {children}
-                </TutorialTarget>
-              </ScrollView>
+                <ScrollView className="w-full shrink" contentContainerClassName="gap-6 p-1">
+                  <TutorialTarget
+                    id={label ? `modal-${label}-content` : undefined}
+                    className="gap-6"
+                  >
+                    {children}
+                  </TutorialTarget>
+                </ScrollView>
 
-              {footer}
-            </Animated.View>
-          )}
+                {footer}
+              </Animated.View>
+            )}
 
-          {peekButton}
+            {onPeekToggle && peekPos && (
+              <PeekButton peeking={false} onPress={onPeekToggle} style={peekPos} />
+            )}
 
-          <TutorialOverlay />
-        </View>
-        {/* Toasts must be rendered inside the native modal to appear above it. */}
-        <Toast />
-      </ModalDepthContext>
-    </RNModal>
+            <TutorialOverlay />
+          </View>
+          {/* Toasts must be rendered inside the native modal to appear above it. */}
+          <Toast />
+        </ModalDepthContext>
+      </RNModal>
+    </>
   );
 }

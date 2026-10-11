@@ -33,7 +33,7 @@ export const exportation: CardDef = {
           cost: {
             resources: [
               {
-                [ResourceType.GOODS]: 1,
+                [ResourceType.GOODS]: 'any',
               },
             ],
           },
@@ -213,7 +213,7 @@ export const exportation: CardDef = {
           cost: {
             resources: [
               {
-                [ResourceType.GOODS]: 1,
+                [ResourceType.GOODS]: 'any',
               },
             ],
           },

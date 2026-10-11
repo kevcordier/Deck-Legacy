@@ -1,20 +1,21 @@
-import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
 import { Grid } from '@components/ui/Grid/Grid';
 import { EyeIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
 import type { CardDef, CardInstance } from '@deck-legacy/engine/domain/types';
 import { tCardName } from '@helpers/cardI18n';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 interface CardStatePreviewProps {
   readonly instance: CardInstance;
   readonly defs: Record<number, CardDef>;
+  /** Injected by GameCard to avoid a GameCard <-> CardStatePreview import cycle. */
+  readonly renderCard: (instance: CardInstance) => ReactNode;
 }
 
-export function CardStatePreview({ instance, defs }: CardStatePreviewProps) {
+export function CardStatePreview({ instance, defs, renderCard }: CardStatePreviewProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const def = defs[instance.cardId];
@@ -32,7 +33,14 @@ export function CardStatePreview({ instance, defs }: CardStatePreviewProps) {
         <EyeIcon className="text-base-ink size-4" />
       </Button>
 
-      {open && <CardStatesModal instance={instance} def={def} onClose={() => setOpen(false)} />}
+      {open && (
+        <CardStatesModal
+          instance={instance}
+          def={def}
+          renderCard={renderCard}
+          onClose={() => setOpen(false)}
+        />
+      )}
     </View>
   );
 }
@@ -40,10 +48,11 @@ export function CardStatePreview({ instance, defs }: CardStatePreviewProps) {
 type CardStatesModalProps = {
   readonly instance: CardInstance;
   readonly def: CardDef;
+  readonly renderCard: (instance: CardInstance) => ReactNode;
   readonly onClose: () => void;
 };
 
-function CardStatesModal({ instance, def, onClose }: CardStatesModalProps) {
+function CardStatesModal({ instance, def, renderCard, onClose }: CardStatesModalProps) {
   const { t } = useTranslation();
 
   return (
@@ -65,7 +74,7 @@ function CardStatesModal({ instance, def, onClose }: CardStatesModalProps) {
               key={s.id}
               className={`max-w-80 rounded-xl ${isCurrent ? 'border-primary border-4' : ''}`}
             >
-              <GameCard instance={fakeInstance} hideStatePreview />
+              {renderCard(fakeInstance)}
             </View>
           );
         })}

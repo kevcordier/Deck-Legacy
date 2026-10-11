@@ -19,7 +19,6 @@ import type {
   StateSelector,
   Sticker,
   StickerSelector,
-  ValuePerElement,
 } from '../domain/types';
 import {
   canAffordCost,
@@ -29,11 +28,13 @@ import {
   getEffectiveProductions,
   getEffectiveUpgradeCost,
   getTotalProduction,
-  getTotalResourceProduction,
 } from './cardHelpers';
-import { cardSelector } from './cardSelector';
+import { cardSelector, countValuePerElement } from './cardSelector';
 import { CardChoiceStrategy } from './playerChoice/CardChoiceStrategy';
+import { fixResources } from './resources';
 import { stateSelector } from './stateSelector';
+
+export { countValuePerElement } from './cardSelector';
 
 const STICKER_PRODUCTION_CAP = 9;
 
@@ -144,36 +145,6 @@ function resolveTrackAdvanceEffect(
   }
 
   return [resolverAction, pendingChoices];
-}
-
-export function countValuePerElement(
-  valuePerElement: ValuePerElement,
-  gameState: GameState,
-  instanceId: number,
-  defs: Record<number, CardDef>,
-  stickerDefs: Record<number, Sticker>,
-  lastSelectedIds?: number[],
-): number {
-  let count = 0;
-  if (valuePerElement.cards) {
-    count = cardSelector(
-      { ...valuePerElement.cards, lastSelectedIds },
-      instanceId,
-      gameState,
-      defs,
-      stickerDefs,
-    ).length;
-  } else if (valuePerElement.accumulation && gameState.instances[instanceId].cumulated >= 1) {
-    count = gameState.instances[instanceId].cumulated;
-  } else if (valuePerElement.productionTotal) {
-    const prodKey = valuePerElement.productionTotal;
-    count = getTotalResourceProduction(instanceId, prodKey, gameState, defs, stickerDefs);
-  }
-
-  if (valuePerElement.deficitTarget !== undefined) {
-    return Math.max(0, valuePerElement.deficitTarget - count);
-  }
-  return count;
 }
 
 function resolveChooseActionEffect(
@@ -412,7 +383,7 @@ function getCostResourceKeys(cost: Cost | undefined): Set<string> {
   if (!cost?.resources?.length) return new Set();
 
   const keys = cost.resources.flatMap(resourceCost =>
-    Object.entries(resourceCost)
+    Object.entries(fixResources(resourceCost))
       .filter(([, value]) => (value ?? 0) > 0)
       .map(([resourceKey]) => resourceKey),
   );

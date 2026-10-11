@@ -699,7 +699,12 @@ export class GameAggregate {
     return this.gameState;
   }
 
-  public cardAction(action: CardAction, instanceId: number, triggerId?: string): GameState {
+  public cardAction(
+    action: CardAction,
+    instanceId: number,
+    triggerId?: string,
+    amount?: number,
+  ): GameState {
     if (
       !canUseOptions(this.gameState, action.endsTurn ? Options.END_TURN_ACTION : Options.ACTION)
     ) {
@@ -713,6 +718,7 @@ export class GameAggregate {
       this.gameState.instances[instanceId],
       action,
       triggerId,
+      amount,
     );
     this.currentCardAction.resolveAction();
 

@@ -31,7 +31,12 @@ export type GameContextType = {
   startTurn: () => void;
   chooseState: (instanceId: number, stateId: number) => void;
   resolveProduction: (instanceId: number, chosenResource: number) => void;
-  resolveAction: (instanceId: number, actionId: string, triggerId?: string) => void;
+  resolveAction: (
+    instanceId: number,
+    actionId: string,
+    triggerId?: string,
+    amount?: number,
+  ) => void;
   resolveUpgrade: (instanceId: number, chosenUpgradeTo?: number) => void;
   setCardName: (instanceId: number, chosenName: string) => void;
   getCardName: (instanceId: number) => string | undefined;

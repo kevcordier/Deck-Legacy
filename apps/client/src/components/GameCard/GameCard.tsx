@@ -252,7 +252,11 @@ export function GameCard({
               </View>
               {!hideStatePreview && (
                 <TutorialTarget id={tourId('card-state-preview')}>
-                  <CardStatePreview instance={instance} defs={defs} />
+                  <CardStatePreview
+                    instance={instance}
+                    defs={defs}
+                    renderCard={i => <GameCard instance={i} hideStatePreview />}
+                  />
                 </TutorialTarget>
               )}
             </View>

@@ -252,8 +252,8 @@ export function GameProvider({
       chooseState: (instanceId, stateId) => send({ type: 'chooseState', instanceId, stateId }),
       resolveProduction: (instanceId, choiceIndex) =>
         send({ type: 'resolveProduction', instanceId, choiceIndex }),
-      resolveAction: (instanceId, actionId, triggerId) =>
-        send({ type: 'resolveAction', instanceId, actionId, triggerId }),
+      resolveAction: (instanceId, actionId, triggerId, amount) =>
+        send({ type: 'resolveAction', instanceId, actionId, triggerId, amount }),
       resolveUpgrade: (instanceId, upgradeTo) => {
         if (upgradeTo === undefined) return;
         send({ type: 'resolveUpgrade', instanceId, upgradeTo });

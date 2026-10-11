@@ -110,6 +110,12 @@
       "discard": "Défaussez {{count}} {{type}}",
       "destroy": "Détruisez {{count}} {{type}}",
       "cards": "cartes"
+    },
+    "deposit": {
+      "title": "Combien en déposer ?",
+      "confirm": "Déposer {{count}}",
+      "less": "Déposer un de moins",
+      "more": "Déposer un de plus"
     }
   },
   "cardPreview": {

@@ -69,7 +69,8 @@ CardAction {
   actionEffects: ActionEffect[]  // list of atomic effects to resolve
   unlimited?: boolean       // action can be used any number of times per turn
   limitedTime?: number      // max number of uses for this action
-  cost?: Cost               // resource or card cost to pay
+  cost?: Cost               // resource or card cost to pay; a resource amount `'any'` (e.g. Export's
+                            // goods) lets the player pay 1..stock, and the effects apply once per unit
   endsTurn?: boolean        // if true then ends turn after this action resolution
   trigger?: Trigger         // fired automatically on the given trigger
   optional?: boolean        // only for trigger effects — allows skipping the trigger

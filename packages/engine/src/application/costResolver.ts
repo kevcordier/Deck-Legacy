@@ -16,6 +16,7 @@ import {
   getPayableResourceCostVariants,
   getSourceResourceEquivalence,
 } from './resourceEquivalence';
+import { fixResources } from './resources';
 
 function canAffordResourceCost(
   availableResources: GameState['resources'],
@@ -44,14 +45,14 @@ function getPayableResourceCosts(
   );
 
   if (!equivalence) {
-    return cost.resources.filter(resourceCost =>
-      canAffordResourceCost(gameState.resources, resourceCost),
-    );
+    return cost.resources
+      .map(resourceCost => fixResources(resourceCost))
+      .filter(resourceCost => canAffordResourceCost(gameState.resources, resourceCost));
   }
 
   return dedupeResourceOptions(
     cost.resources.flatMap(resourceCost =>
-      getPayableResourceCostVariants(resourceCost, gameState.resources, equivalence),
+      getPayableResourceCostVariants(fixResources(resourceCost), gameState.resources, equivalence),
     ),
   );
 }

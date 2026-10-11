@@ -5,6 +5,7 @@ import { Grid } from '@components/ui/Grid/Grid';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { Text } from '@components/ui/Text/Text';
 import { getPickNumbers } from '@deck-legacy/engine/application/effectResolver';
+import { fixResources } from '@deck-legacy/engine/application/resources';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
@@ -56,7 +57,7 @@ export function ChooseStateSection(props: Readonly<ChoiceSectionProps>) {
               <View className="flex-row flex-wrap items-center justify-center gap-1">
                 {!!upgrade?.cost.resources?.length && (
                   <ResourceChoice
-                    options={upgrade.cost.resources}
+                    options={upgrade.cost.resources.map(r => fixResources(r))}
                     disabled
                     onSelect={() => undefined}
                     pillClassName="size-5"
