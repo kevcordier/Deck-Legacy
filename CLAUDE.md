@@ -59,7 +59,7 @@ pnpm --filter <workspace> <script>   # one workspace: @deck-legacy/{client,serve
 
 **Git workflow.**
 
-- Branch from `main` (`feat/…`, `fix/…`, `chore/…`) and open a PR to `main`. **Every merge requires the review and approval of the maintainer (@kevcordier)** and a green CI. Merging deploys the web client. `master` is stale: never target it.
+- Branch from `main` (`feat/…`, `fix/…`, `chore/…`) and open a PR to `main`. **Every merge requires the review and approval of the maintainer (@kevcordier)** and a green CI. Pushing a `v*` tag deploys the web client and the API (maintainer only). `master` is stale: never target it.
 - One fix per commit. Conventional Commits with a scope: `fix(card-119): trigger at end of round`, `feat(engine): …`, `fix(client): …`, `chore(deps): …`.
 - The pre-commit hook runs lint-staged, typecheck, depcruise and tests; `pnpm verify` also checks coverage.
 

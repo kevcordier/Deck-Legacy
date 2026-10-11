@@ -130,7 +130,7 @@ Change the schema, then `pnpm db:migrate` to create a migration (commit it). Nev
 
 ## Deployment
 
-Google Cloud Run + Supabase (EDR-035). On every push to `main`, the `deploy-api` job of `.github/workflows/deploy.yml` (after CI, behind the `production` environment's required reviewer) runs `prisma:deploy` against Supabase, builds the root `Dockerfile`, pushes it to Artifact Registry (`deck-legacy` repository) and deploys the `deck-legacy-api` service with `--max-instances=1` (in-memory locks).
+Google Cloud Run + Supabase (EDR-035). When a `v*` tag is pushed, the `deploy-api` job of `.github/workflows/deploy.yml` (after CI, behind the `production` environment's required reviewer) runs `prisma:deploy` against Supabase, builds the root `Dockerfile`, pushes it to Artifact Registry (`deck-legacy` repository) and deploys the `deck-legacy-api` service with `--max-instances=1` (in-memory locks).
 
 - GitHub variables: `GCP_PROJECT_ID`, `GCP_REGION`, `GCP_WIF_PROVIDER`, `GCP_DEPLOY_SERVICE_ACCOUNT`, `SUPABASE_URL`, `API_URL` (Cloud Run URL, used by the web build). GitHub secret: `DATABASE_URL` (migrations only).
 - Runtime secrets live in Google Secret Manager: `deck-legacy-database-url`, `deck-legacy-supabase-service-role-key`.

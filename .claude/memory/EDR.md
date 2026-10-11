@@ -24,7 +24,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-008 | 2026-04-02 | Tests Vitest, couverture moteur 80 %        | Active                                  |
 | EDR-009 | 2026-04-02 | Storybook comme catalogue de composants     | Active                                  |
 | EDR-010 | 2026-04-02 | Documentation dédiée aux assistants IA      | Active                                  |
-| EDR-011 | 2026-04-02 | Client web hébergé sur GitHub Pages         | Active                                  |
+| EDR-011 | 2026-04-02 | Client web hébergé sur GitHub Pages         | Active, en partie remplacée par EDR-039 |
 | EDR-012 | 2026-04-05 | Hook pre-commit bloquant (Husky)            | Active                                  |
 | EDR-013 | 2026-04-09 | Styles Tailwind CSS v4                      | Dépréciée par EDR-021                   |
 | EDR-014 | 2026-04-10 | Couches imposées par dependency-cruiser     | Active                                  |
@@ -52,6 +52,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-036 | 2026-10-10 | Anciennes règles pour parties commencées    | Active                                  |
 | EDR-037 | 2026-10-10 | Fusion soumise à la relecture du mainteneur | Active                                  |
 | EDR-038 | 2026-10-10 | Plusieurs royaumes par joueur               | Active                                  |
+| EDR-039 | 2026-10-11 | Déploiement déclenché par un tag de version | Active                                  |
 
 ---
 
@@ -1037,3 +1038,30 @@ Conséquences
 - Se connecter à un autre compte retire de l'appareil les royaumes synchronisés avec le compte précédent (règle d'EDR-029 inchangée).
 - Un bug trouvé en jouant n'est plus exporté par le menu : on le reproduit par un scénario `GameSession` ou à partir du journal stocké sur le serveur (`GET /games/:id/export`).
 - GitHub Pages sert `404.html`, copie de `index.html` produite par le build, pour que les liens `/game/…` fonctionnent.
+
+---
+
+ID : EDR-039
+Date : 2026-10-11
+Titre : Déploiement déclenché par un tag de version
+Statut : Active
+Remplace : EDR-011 (point « publié à chaque push sur `main` » uniquement)
+
+Contexte
+Le client web (EDR-011) et l'API (EDR-035) étaient déployés à chaque fusion sur `main`. Le mainteneur veut choisir le moment d'une mise en production, et livrer ensemble client, API et migrations d'une même version.
+
+Problème
+Quand déployer le client web et l'API ?
+
+Décision
+`deploy.yml` déploie GitHub Pages et Cloud Run uniquement sur un tag `v*` (format semver d'EDR-018, par exemple `v1.0.0-beta.4`). Un push sur `main` exécute seulement la CI et l'analyse SonarCloud.
+
+Alternatives rejetées
+
+- Déployer à chaque fusion sur `main` : chaque PR part en production, sans choix du moment.
+- Déployer sur une GitHub Release : une étape manuelle de plus pour le même résultat.
+
+Conséquences
+
+- Les environnements `github-pages` et `production` doivent autoriser les tags `v*` dans leurs règles de déploiement.
+- Le client et l'API d'une même version sont construits depuis le même commit, avec le même moteur et les mêmes données de jeu (EDR-022).

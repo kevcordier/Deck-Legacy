@@ -141,13 +141,13 @@ The UI is fully localized in **English** and **French**. Language preference is 
 
 ## Deployment
 
-The web client is deployed to **GitHub Pages** via a CI/CD pipeline that runs on every push to `main`:
+Pushing a version tag (`git tag v1.0.0-beta.4 && git push origin v1.0.0-beta.4`) deploys the web client to **GitHub Pages** and the API to **Google Cloud Run** (`.github/workflows/deploy.yml`). A push to `main` only runs the CI and SonarCloud.
 
 1. Lint → Typecheck → Format check → Architecture rules → Tests → Server build
 2. `expo export --platform web` → `apps/client/dist/`, using the `API_URL`, `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` repository variables
 3. Deploy to `https://kevcordier.github.io/Deck-Legacy/`
 
-The API server is not deployed by the pipeline yet: build it with `pnpm build:server`, run `pnpm --filter @deck-legacy/server prisma:deploy`, then `node apps/server/dist/main.js` with the variables of `apps/server/.env.example`.
+The API job applies the Prisma migrations to Supabase, builds the root `Dockerfile` and deploys it to Cloud Run (details in `apps/server/CLAUDE.md`).
 
 ---
 

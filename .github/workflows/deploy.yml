@@ -1,9 +1,12 @@
 name: Deploy static content to Pages
 
 on:
+  # main: CI + Sonar only. A version tag (v1.0.0, v1.0.0-beta.4…) deploys the web client and the API.
   push:
     branches:
       - main
+    tags:
+      - 'v*'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -23,7 +26,7 @@ jobs:
       contents: read
       pages: write
       id-token: write
-    if: github.event_name != 'pull_request'
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: ci
     environment:
       name: github-pages
@@ -60,6 +63,7 @@ jobs:
 
   deploy-api:
     name: Deploy API
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: ci
     # Required reviewers on this environment = maintainer approval before prisma:deploy (rule 9).
     environment: production
@@ -116,6 +120,7 @@ jobs:
 
   sonarqube:
     name: SonarQube
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
