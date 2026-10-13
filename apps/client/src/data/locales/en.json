@@ -384,7 +384,13 @@
     "pending": "Changes waiting to be saved online.",
     "offline": "Offline: your game is saved on this device and will be saved online later.",
     "rejected": "The server could not validate this game: it is only saved on this device.",
-    "limited": "Kingdom limit reached: this kingdom is only saved on this device."
+    "limited": "Kingdom limit reached: this kingdom is only saved on this device.",
+    "conflict": "This kingdom was also played on another device: choose the version to keep.",
+    "conflictTitle": "Kingdom played on another device",
+    "conflictBody": "This kingdom was saved online from another device while you were playing here. Keep the online version (your recent moves on this device are lost) or overwrite it with this device's game.",
+    "keepServer": "Keep the online version",
+    "keepMine": "Overwrite with this device",
+    "updatedElsewhere": "Kingdom updated from another device."
   },
   "home": {
     "welcomeTitle": "Welcome",

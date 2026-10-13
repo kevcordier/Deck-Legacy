@@ -5,7 +5,7 @@ import { bootstrapStorage } from '@helpers/bootstrap';
 import { useAppFonts } from '@helpers/fonts';
 import { useAuth } from '@hooks/useAuth';
 import { isAuthConfigured } from '@services/config';
-import { reconcile, setSyncUser, syncNow } from '@services/sync';
+import { reconcile, setSyncUser } from '@services/sync';
 import '@styles/global.css';
 import '@styles/interop';
 import { Stack } from 'expo-router';
@@ -28,12 +28,13 @@ function AccountSync() {
     if (userId) void reconcile(userId);
   }, [userId]);
 
+  // Back on the app: push local changes and pick up what other devices synced.
   useEffect(() => {
     const subscription = AppState.addEventListener('change', state => {
-      if (state === 'active') void syncNow();
+      if (state === 'active' && userId) void reconcile(userId);
     });
     return () => subscription.remove();
-  }, []);
+  }, [userId]);
 
   return null;
 }

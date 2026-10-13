@@ -22,6 +22,10 @@ export type SyncInfo = {
   rejected?: boolean;
   /** The server refused a new kingdom (kingdom limit reached); retried after the next change. */
   limited?: boolean;
+  /** Number of leading events the server already has: only the events after them are pushed. */
+  syncedUpTo?: number;
+  /** Another device synced this kingdom meanwhile: the player chooses which version to keep. */
+  conflict?: boolean;
 };
 
 export type SaveData = {
@@ -79,7 +83,16 @@ function toSyncInfo(value: unknown): SyncInfo {
     serverVersion: typeof value.serverVersion === 'number' ? value.serverVersion : undefined,
     ...(value.rejected === true ? { rejected: true } : {}),
     ...(value.limited === true ? { limited: true } : {}),
+    ...(typeof value.syncedUpTo === 'number' ? { syncedUpTo: value.syncedUpTo } : {}),
+    ...(value.conflict === true ? { conflict: true } : {}),
   };
+}
+
+/** Number of leading events two logs share (compared by id, as the server does). */
+export function commonPrefix(a: GameEvent[], b: GameEvent[]): number {
+  let index = 0;
+  while (index < a.length && index < b.length && a[index].id === b[index].id) index += 1;
+  return index;
 }
 
 function toSegments(value: unknown): CampaignSegmentScore[] {
@@ -226,6 +239,10 @@ export function saveGame(
   summary: KingdomSummary,
 ): void {
   const previous = loadSave(id);
+  // A rewind followed by a new move changes events the server already has.
+  const syncedUpTo = previous
+    ? Math.min(previous.sync.syncedUpTo ?? 0, commonPrefix(previous.events, events))
+    : 0;
   writeSave({
     id,
     events,
@@ -235,6 +252,8 @@ export function saveGame(
       dirty: true,
       userId: previous?.sync.userId,
       serverVersion: previous?.sync.serverVersion,
+      ...(syncedUpTo > 0 ? { syncedUpTo } : {}),
+      ...(previous?.sync.conflict ? { conflict: true } : {}),
     },
   });
   const kingdom = getKingdom(id);
@@ -246,6 +265,23 @@ export function updateSyncInfo(id: string, savedAt: number, sync: SyncInfo): voi
   const current = loadSave(id);
   if (current?.savedAt !== savedAt) return;
   writeSave({ ...current, sync });
+}
+
+/**
+ * Records a sync accepted by the server. The server version is kept even when the player kept
+ * playing meanwhile, so the next push builds on it; the save then stays dirty.
+ */
+export function recordAcceptedSync(
+  id: string,
+  pushed: Pick<SaveData, 'events' | 'savedAt'>,
+  userId: string,
+  serverVersion: number,
+): void {
+  const current = loadSave(id);
+  if (!current) return;
+  const syncedUpTo = commonPrefix(pushed.events, current.events);
+  const changed = current.savedAt !== pushed.savedAt || syncedUpTo < current.events.length;
+  writeSave({ ...current, sync: { dirty: changed, userId, serverVersion, syncedUpTo } });
 }
 
 // ─── Games abandoned while offline ───────────────────────────────────────────

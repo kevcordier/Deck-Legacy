@@ -149,6 +149,16 @@ export class GamesRepository {
     return rows.map(row => row.eventId);
   }
 
+  /** Stored events before `seq` `before`, in order (the part of the log a delta sync keeps). */
+  async getEventPayloads(gameId: string, before: number): Promise<GameEvent[]> {
+    const rows = await this.prisma.gameEvent.findMany({
+      where: { gameId, seq: { lt: before } },
+      orderBy: { seq: 'asc' },
+      select: { payload: true },
+    });
+    return rows.map(row => row.payload as unknown as GameEvent);
+  }
+
   /** Full game for export; abandoned games are hidden. */
   async load(gameId: string): Promise<StoredGame | null> {
     const game = await this.prisma.game.findUnique({

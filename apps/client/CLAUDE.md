@@ -51,10 +51,10 @@ apps/client/
 
 ### Startup and routes (`src/app/`, expo-router)
 
-`_layout.tsx` hydrates the storage and the kingdom saves (`helpers/bootstrap.ts`, which also migrates the single save of older versions into a kingdom), loads fonts and i18n, then renders the pages **immediately**, whatever the network. In parallel, `AuthProvider` opens a Supabase session when it can; once a user is known, `reconcile()` aligns the local kingdoms with the server. The app also syncs when it comes back to the foreground.
+`_layout.tsx` hydrates the storage and the kingdom saves (`helpers/bootstrap.ts`, which also migrates the single save of older versions into a kingdom), loads fonts and i18n, then renders the pages **immediately**, whatever the network. In parallel, `AuthProvider` opens a Supabase session when it can; once a user is known, `reconcile()` aligns the local kingdoms with the server. It runs again when the app comes back to the foreground and every minute, so a kingdom played on another device is picked up.
 
 - `/` — `pages/Home/Home.tsx`: without an account, a welcome screen (sign in, or play without an account, remembered in `deck_legacy_offline`); then the **kingdoms** table (`KingdomTable`: name, total, base game, each expansion played in order with its logo and cumulative score, delete) and "New kingdom" (`NewKingdomModal`: name, tutorial, rules). A kingdom is one save (EDR-038): up to 10 with an account, 1 without (`maxKingdoms`).
-- `/game/{slug}-{id}` — `app/game/[kingdom].tsx`: opens the kingdom's save (only the trailing id of the URL counts, `kingdomIdFromParam`). A new kingdom starts its first game, or the tutorial when it was chosen. The page remounts when the sync downloads a newer version of the kingdom. Unknown kingdoms redirect to `/`.
+- `/game/{slug}-{id}` — `app/game/[kingdom].tsx`: opens the kingdom's save (only the trailing id of the URL counts, `kingdomIdFromParam`). A new kingdom starts its first game, or the tutorial when it was chosen. The page remounts with an info toast when the sync downloads a newer version of the kingdom, and shows a conflict modal (keep the online version or overwrite it) when both devices changed it. Unknown kingdoms redirect to `/`.
 - Navigation uses the static `router` from `expo-router` (works outside a navigator, e.g. Storybook). Build paths with `kingdomPath()`.
 
 ### useGame Hook
@@ -81,13 +81,13 @@ setCardName(instanceId, name)  getCardName(instanceId)
 
 ### Local save and sync
 
-- `services/persistence.ts` — the kingdom index (`deck_legacy_kingdoms`: `{id, name, createdAt, summary}`, read with `useKingdoms()`) and one save per kingdom (`deck_legacy_save_<id>`: `{id, events, cardNames, savedAt, sync}`). The summary (score, ordered segments, finished) is computed on the device for the home page; server scores stay authoritative. `sync.dirty` marks changes the server has not accepted; `sync.userId` the account it was synced with; `sync.rejected` a save the server refused and `sync.limited` a kingdom refused by the kingdom limit (both retried after the next change). Saves of older versions load as dirty and are uploaded.
-- `services/sync.ts` — `scheduleSync()` (debounced push of every changed kingdom), `syncNow()`, a retry loop while offline, and `reconcile(userId)`:
+- `services/persistence.ts` — the kingdom index (`deck_legacy_kingdoms`: `{id, name, createdAt, summary}`, read with `useKingdoms()`) and one save per kingdom (`deck_legacy_save_<id>`: `{id, events, cardNames, savedAt, sync}`). The summary (score, ordered segments, finished) is computed on the device for the home page; server scores stay authoritative. `sync.dirty` marks changes the server has not accepted; `sync.userId` the account it was synced with; `sync.serverVersion` the server version it builds on; `sync.syncedUpTo` how many leading events the server already has (only the rest is pushed; a rewind lowers it); `sync.rejected` a save the server refused and `sync.limited` a kingdom refused by the kingdom limit (both retried after the next change); `sync.conflict` a push refused because another device synced first (not pushed until `resolveConflict`). Saves of older versions load as dirty and are uploaded.
+- `services/sync.ts` — `scheduleSync()` (debounced push of every changed kingdom: the events after `syncedUpTo`, with `fromSeq` and `baseVersion`), `syncNow()`, `resolveConflict(id, 'server' | 'mine')`, and `reconcile(userId)` (single-flight, every minute and on foreground):
   - kingdoms synced with another account are removed from the device (their unsynced changes are lost);
-  - unsynced local changes win and are pushed;
+  - unsynced local changes are pushed; if another device synced first (`409 STALE_VERSION`) the kingdom is in `conflict` and the player chooses;
   - the account's other kingdoms are downloaded (continue on another device), unless the player started playing during the download; synced kingdoms the server no longer has are removed.
 - Deleting a kingdom removes it locally and records it in `deck_legacy_pending_abandons`, abandoned on the server at the next sync.
-- `useSyncStatus()` exposes `signedOut | syncing | synced | pending | offline | rejected | limited` (shown in the account tab of `OptionsModal`).
+- `useSyncStatus()` exposes `signedOut | syncing | synced | pending | offline | rejected | limited | conflict` (shown in the account tab of `OptionsModal`).
 - There is no JSON export/import any more (EDR-038).
 
 ### Authentication
