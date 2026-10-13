@@ -1,12 +1,14 @@
 import { GamePhaseActions } from '@components/GamePhaseActions/GamePhaseActions';
 import { Header } from '@components/Header/Header';
+import { HistoryDrawer } from '@components/HistoryDrawer/HistoryDrawer';
 import { Button } from '@components/ui/Button/Button';
+import { HistoryIcon } from '@components/ui/Icon/icon';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useIsDesktop } from '@hooks/useIsDesktop';
 import { useTutorial } from '@hooks/useTutorial';
 import { useWebKeyDown } from '@hooks/useWebKeyDown';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /** Game page header: the shared `Header` with undo (button and Ctrl/Cmd+Z) and the phase actions. */
@@ -28,6 +30,7 @@ export function GameHeader() {
   const { setOptionsOpen, setRulesOpen } = useGameUI();
   const { run } = useTutorial();
   const isDesktop = useIsDesktop();
+  const [historyOpen, setHistoryOpen] = useState(false);
   const deckEmpty = gameState.drawPile.length === 0;
 
   const haveChoiceToDo =
@@ -73,6 +76,15 @@ export function GameHeader() {
           ↩︎
         </Button>
       )}
+      <Button
+        onPress={() => setHistoryOpen(true)}
+        title={t('history.title')}
+        color="danger"
+        size="xs"
+      >
+        <HistoryIcon />
+      </Button>
+      {historyOpen && <HistoryDrawer onClose={() => setHistoryOpen(false)} />}
       {isDesktop && (
         <GamePhaseActions
           gameState={gameState}

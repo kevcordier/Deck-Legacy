@@ -315,7 +315,10 @@
     "end": "You have played your first round! Keep playing this game, or start a new one from scratch? You can reread the rules at any time."
   },
   "cheatPanel": {
-    "title": "Cheat panel",
+    "title": "Cheat panel"
+  },
+  "history": {
+    "title": "History",
     "gameStarted": "Game started",
     "roundStarted": "Round {{round}} started",
     "turnStarted": "Turn {{turn}} — {{count}} card drawn",
