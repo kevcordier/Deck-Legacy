@@ -7,6 +7,14 @@
     <title>Deck Legacy</title>
     <!-- Without this link the browser asks for /favicon.ico at the domain root, outside the /Deck-Legacy base path. -->
     <link rel="icon" href="/Deck-Legacy/favicon.ico" />
+    <!-- Home screen install: iOS reads the apple-* tags (not the manifest icons), Android the manifest. -->
+    <link rel="manifest" href="/Deck-Legacy/manifest.json" />
+    <link rel="apple-touch-icon" href="/Deck-Legacy/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Deck Legacy" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="theme-color" content="#f0e4be" />
     <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
     <style id="expo-reset">
       /* These styles make the body full-height */
