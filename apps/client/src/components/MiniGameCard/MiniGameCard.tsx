@@ -4,6 +4,7 @@ import {
   ActivatedIcon,
   DestroyIcon,
   PassifIcon,
+  TimeIcon,
   TriggerIcon,
   UpgradeIcon,
 } from '@components/ui/Icon/icon';
@@ -65,6 +66,7 @@ type ActionBadgesProps = {
   readonly hasTrigger: boolean;
   readonly hasDestroyAction: boolean;
   readonly hasAction: boolean;
+  readonly actionIcon: 'time' | 'unlimited' | 'activated';
   readonly hasUpgrade: boolean;
   readonly hasAvailableDestroyAction: boolean;
   readonly hasAvailableAction: boolean;
@@ -76,6 +78,7 @@ function ActionBadges({
   hasTrigger,
   hasDestroyAction,
   hasAction,
+  actionIcon,
   hasUpgrade,
   hasAvailableDestroyAction,
   hasAvailableAction,
@@ -86,7 +89,7 @@ function ActionBadges({
 
   // Row-reverse keeps the original visual order (passive … upgrade) anchored to the right.
   return (
-    <View className="absolute bottom-1 right-1 flex-row-reverse flex-wrap-reverse items-end justify-start gap-1">
+    <View className="flex-row-reverse flex-wrap-reverse items-end justify-start gap-1 self-end">
       {hasUpgrade && (
         <Badge label={t('card.upgradeAvailable')} highlighted={hasAvailableUpgrade}>
           <UpgradeIcon
@@ -96,7 +99,15 @@ function ActionBadges({
       )}
       {hasAction && (
         <Badge label={t('card.actionAvailable')} highlighted={hasAvailableAction}>
-          <ActivatedIcon className="size-5" color={hasAvailableAction ? 'green' : 'gray'} />
+          {actionIcon === 'time' && (
+            <TimeIcon className="size-5" color={hasAvailableAction ? 'green' : 'gray'} />
+          )}
+          {actionIcon === 'unlimited' && (
+            <PassifIcon className="size-5" color={hasAvailableAction ? 'green' : 'gray'} />
+          )}
+          {actionIcon === 'activated' && (
+            <ActivatedIcon className="size-5" color={hasAvailableAction ? 'green' : 'gray'} />
+          )}
         </Badge>
       )}
       {hasDestroyAction && (
@@ -126,7 +137,7 @@ function MiniTrack({
   readonly validatedSteps: number[];
 }) {
   return (
-    <View className="absolute inset-x-0 bottom-1 flex-row flex-wrap items-center justify-center gap-0.5 px-1">
+    <View className="flex-row flex-wrap items-center justify-center gap-0.5">
       {steps.map(step => {
         const isValidated = validatedSteps.includes(step.id);
         return (
@@ -215,6 +226,10 @@ export function MiniGameCard({
   const hasTrigger = triggerActions.length > 0;
   const hasDestroyAction = destroyActions.length > 0;
   const hasAction = regularActions.length > 0;
+  // Same precedence as CardAction's icon: ends turn (hourglass), then unlimited, then activated.
+  let actionIcon: ActionBadgesProps['actionIcon'] = 'activated';
+  if (hasAction && regularActions.every(action => action.endsTurn)) actionIcon = 'time';
+  else if (hasAction && regularActions.every(action => action.unlimited)) actionIcon = 'unlimited';
 
   const canActivateAction = isOnBoard && !isBlocked;
   const hasAvailableDestroyAction = canActivateAction && destroyActions.some(isActionAffordable);
@@ -258,19 +273,23 @@ export function MiniGameCard({
           )}
           {hasGlory && <Glory glory={glory} className="size-8" textClassName="text-xs" />}
 
-          <ActionBadges
-            hasPassive={hasPassive}
-            hasTrigger={hasTrigger}
-            hasDestroyAction={hasDestroyAction}
-            hasAction={hasAction}
-            hasUpgrade={hasUpgrade}
-            hasAvailableDestroyAction={hasAvailableDestroyAction}
-            hasAvailableAction={hasAvailableAction}
-            hasAvailableUpgrade={hasAvailableUpgrade}
-          />
-          {!isBlocked && cs.track && (
-            <MiniTrack steps={cs.track.steps} validatedSteps={instance.trackProgress} />
-          )}
+          {/* Badges stack above the track so they never overlap. */}
+          <View className="absolute inset-x-1 bottom-1 gap-1">
+            <ActionBadges
+              hasPassive={hasPassive}
+              hasTrigger={hasTrigger}
+              hasDestroyAction={hasDestroyAction}
+              hasAction={hasAction}
+              actionIcon={actionIcon}
+              hasUpgrade={hasUpgrade}
+              hasAvailableDestroyAction={hasAvailableDestroyAction}
+              hasAvailableAction={hasAvailableAction}
+              hasAvailableUpgrade={hasAvailableUpgrade}
+            />
+            {!isBlocked && cs.track && (
+              <MiniTrack steps={cs.track.steps} validatedSteps={instance.trackProgress} />
+            )}
+          </View>
         </View>
       </Pressable>
     </View>
