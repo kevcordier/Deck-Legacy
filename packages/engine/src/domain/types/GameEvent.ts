@@ -5,6 +5,8 @@ export interface GameEvent {
   id: string;
   type: string;
   timestamp: number;
+  /** Produced by a development cheat command: the server refuses such games. */
+  cheat?: true;
 }
 
 export interface GameStartedEvent extends GameEvent {
@@ -83,6 +85,12 @@ export interface CardActionEvent extends GameEvent {
 export interface SkipTriggerEvent extends GameEvent {
   type: GameEventType.SKIP_TRIGGER;
   triggerId: string;
+  /**
+   * Identify the skipped trigger on replay: trigger keys are regenerated when events are
+   * applied, so `triggerId` only matches during the live game. Absent in older events.
+   */
+  sourceInstanceId?: number;
+  actionId?: string;
   endTurn?: boolean;
   endRound?: boolean;
 }

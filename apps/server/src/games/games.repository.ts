@@ -13,6 +13,7 @@ export type StoredGame = {
   id: string;
   userId: string;
   name: string;
+  version: number;
   cardNames: Record<string, string>;
   events: GameEvent[];
   updatedAt: Date;
@@ -170,6 +171,7 @@ export class GamesRepository {
       id: game.id,
       userId: game.userId,
       name: game.name,
+      version: game.version,
       cardNames: toCardNames(game.cardNames),
       events: game.events.map(row => row.payload as unknown as GameEvent),
       updatedAt: game.updatedAt,

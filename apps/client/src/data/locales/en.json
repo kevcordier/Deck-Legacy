@@ -16,7 +16,8 @@
     },
     "network": "Cannot reach the game server.",
     "accountDeletionUnavailable": "Account deletion is not available right now.",
-    "accountDeletionFailed": "The account could not be deleted. Please try again later."
+    "accountDeletionFailed": "The account could not be deleted. Please try again later.",
+    "storageWrite": "Your progress could not be saved on this device (storage full?). Delete a kingdom or sign in to keep it online."
   },
   "parchmentCard": {
     "continue": "Continue"

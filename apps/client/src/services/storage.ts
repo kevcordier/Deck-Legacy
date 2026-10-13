@@ -11,7 +11,9 @@
  * server in the background. Their save keys are dynamic (`saveKey(id)`): they are loaded by
  * `hydrateKeys()` once the kingdom index is read.
  */
+import { toast } from '@helpers/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from 'i18next';
 
 export const STORAGE_KEYS = {
   /** Single save of versions older than the kingdoms; migrated at startup. */
@@ -57,7 +59,11 @@ export const storage = {
   },
   setItem(key: string, value: string): void {
     cache.set(key, value);
-    AsyncStorage.setItem(key, value).catch((e: unknown) => console.warn('Unable to write', key, e));
+    AsyncStorage.setItem(key, value).catch((e: unknown) => {
+      // Usually the storage is full: the change only lives in memory and is lost on reload.
+      console.warn('Unable to write', key, e);
+      toast.error(i18n.t('errors.storageWrite'));
+    });
   },
   removeItem(key: string): void {
     cache.delete(key);

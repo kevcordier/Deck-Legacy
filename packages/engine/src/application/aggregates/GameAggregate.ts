@@ -55,11 +55,23 @@ import { CardActionAggregate } from './CardActionAggregate';
 
 export { EMPTY_STATE } from '../emptyState';
 
+/** Events that revealed cards: a normal rewind cannot go back past them. */
+export function eventDrewCards(event: GameEvent): boolean {
+  if (event.type === GameEventType.TURN_STARTED || event.type === GameEventType.ADVANCE) {
+    return true;
+  }
+  if (event.type !== GameEventType.CARD_ACTION) return false;
+  const changes = (event as { gameStateChanges?: Partial<GameState> }).gameStateChanges;
+  return !changes || Object.hasOwn(changes, 'drawPile');
+}
+
 export class GameAggregate {
   private events: GameEvent[];
   private gameState: GameState;
   private readonly gameEventContext: GameEventContext;
   private currentCardAction: CardActionAggregate | null = null;
+  /** State before each event since the last one that drew cards: rewinds without a replay. */
+  private undoStates: GameState[] = [];
 
   private readonly parameters: GameParameters = { ...DEFAULT_PARAMETERS };
 
@@ -76,11 +88,27 @@ export class GameAggregate {
   }
 
   private apply(event: GameEvent) {
+    const before = this.gameState;
     this.gameState = this.gameEventContext.apply(
-      JSON.parse(JSON.stringify(this.gameState)) as GameState,
+      JSON.parse(JSON.stringify(before)) as GameState,
       event,
     );
     this.currentCardAction = null;
+    if (eventDrewCards(event)) this.undoStates = [];
+    else this.undoStates.push(before);
+  }
+
+  /**
+   * Removes the last event, restoring the state kept before it. Returns false when no state was
+   * kept (the event drew cards): the caller then replays the remaining events.
+   */
+  public undoLastEvent(): boolean {
+    const previous = this.undoStates.pop();
+    if (!previous) return false;
+    this.gameState = previous;
+    this.events = this.events.slice(0, -1);
+    this.currentCardAction = null;
+    return true;
   }
 
   public loadFromHistory(events: GameEvent[]): GameState {
@@ -837,7 +865,8 @@ export class GameAggregate {
   }
 
   public skipTrigger(triggerId: string): GameState {
-    if (!this.gameState.triggerPile[triggerId]) {
+    const entry = this.gameState.triggerPile[triggerId];
+    if (!entry) {
       throw new Error(`Trigger with id ${triggerId} not found in trigger pile`);
     }
     const event: SkipTriggerEvent = {
@@ -845,8 +874,10 @@ export class GameAggregate {
       type: GameEventType.SKIP_TRIGGER,
       timestamp: Date.now(),
       triggerId,
-      endTurn: this.gameState.triggerPile[triggerId]?.effectDef?.trigger === Trigger.END_OF_TURN,
-      endRound: this.gameState.triggerPile[triggerId]?.effectDef?.trigger === Trigger.END_OF_ROUND,
+      sourceInstanceId: entry.sourceInstanceId,
+      actionId: entry.effectDef.id,
+      endTurn: entry.effectDef.trigger === Trigger.END_OF_TURN,
+      endRound: entry.effectDef.trigger === Trigger.END_OF_ROUND,
     };
     this.apply(event);
     this.events.push(event);

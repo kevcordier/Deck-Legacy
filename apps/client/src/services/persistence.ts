@@ -223,8 +223,16 @@ export function migrateLegacySave(name: string): SaveData | null {
 
 // ─── Saves ───────────────────────────────────────────────────────────────────
 
+const parsedSaves = new Map<string, { raw: string | null; save: SaveData | null }>();
+
+/** A kingdom's save, parsed once per stored version (read-only: write with `writeSave`). */
 export function loadSave(id: string): SaveData | null {
-  return parseSave(parseJson(storage.getItem(saveKey(id))));
+  const raw = storage.getItem(saveKey(id));
+  const cached = parsedSaves.get(id);
+  if (cached?.raw === raw) return cached.save;
+  const save = parseSave(parseJson(raw));
+  parsedSaves.set(id, { raw, save });
+  return save;
 }
 
 export function writeSave(save: SaveData): void {

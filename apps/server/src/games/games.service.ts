@@ -23,12 +23,16 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 
-/** Events produced by the development cheat panel (`GameSession` cheat commands). */
+/**
+ * Events produced by the development cheat panel (`GameSession` cheat commands): tagged
+ * `cheat`, or, before the tag existed, card actions named `cheat_…`.
+ */
 function usesCheats(events: GameEvent[]): boolean {
   return events.some(
     event =>
-      event.type === GameEventType.CARD_ACTION &&
-      (event as CardActionEvent).actionId.startsWith('cheat_'),
+      event.cheat === true ||
+      (event.type === GameEventType.CARD_ACTION &&
+        (event as CardActionEvent).actionId.startsWith('cheat_')),
   );
 }
 
@@ -88,6 +92,7 @@ export class GamesService {
     return {
       id: game.id,
       name: game.name,
+      version: game.version,
       events: game.events,
       cardNames: game.cardNames,
       savedAt: game.updatedAt.getTime(),

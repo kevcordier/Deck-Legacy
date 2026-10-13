@@ -1,4 +1,4 @@
-import { ActionEffectType, GameEventType, PendingChoiceType, Phase } from '../../domain/enums';
+import { ActionEffectType, PendingChoiceType, Phase } from '../../domain/enums';
 import { ActionCancelledError } from '../../domain/errors/ActionCancelledError';
 import { CostResolutionError } from '../../domain/errors/CostResolutionError';
 import type {
@@ -15,7 +15,7 @@ import type {
   ResolvedActionEffect,
   ResolvedCost,
 } from '../../domain/types';
-import { GameAggregate } from '../aggregates/GameAggregate';
+import { GameAggregate, eventDrewCards } from '../aggregates/GameAggregate';
 import { type CampaignSegment, getCampaignSegments } from '../campaignSegments';
 import {
   cardIsBlocked,
@@ -78,7 +78,6 @@ export class GameSession {
   private pendingUpgrade: PendingUpgrade | null = null;
   private pendingChoices: PendingChoice[] | null = null;
   private cardNames: Record<string, string>;
-  private version: number;
 
   private constructor(
     readonly id: string,
@@ -86,11 +85,9 @@ export class GameSession {
     private readonly catalog: GameCatalog,
     private readonly options: GameSessionOptions,
     cardNames: Record<string, string>,
-    version: number,
   ) {
     this.agg = this.makeAggregate();
     this.cardNames = { ...cardNames };
-    this.version = version;
   }
 
   // ─── Factories ────────────────────────────────────────────────────────────
@@ -106,7 +103,7 @@ export class GameSession {
     mode: 'standard' | 'tutorial' = 'standard',
     firstDrawPile?: number[],
   ): GameSession {
-    const session = new GameSession(id, mode === 'tutorial', catalog, options, {}, 0);
+    const session = new GameSession(id, mode === 'tutorial', catalog, options, {});
     session.startNewGame(firstDrawPile);
     session.finalize();
     return session;
@@ -118,9 +115,8 @@ export class GameSession {
     catalog: GameCatalog,
     options: GameSessionOptions,
     cardNames: Record<string, string> = {},
-    version = 0,
   ): GameSession {
-    const session = new GameSession(id, false, catalog, options, cardNames, version);
+    const session = new GameSession(id, false, catalog, options, cardNames);
     try {
       session.agg.loadFromHistory([...events]);
     } catch (error) {
@@ -144,10 +140,6 @@ export class GameSession {
     return { ...this.cardNames };
   }
 
-  getVersion(): number {
-    return this.version;
-  }
-
   getScore(): number {
     return this.agg.getScore();
   }
@@ -161,7 +153,6 @@ export class GameSession {
     const gameState = this.agg.getGameState();
     return {
       id: this.id,
-      version: this.version,
       tutorial: this.tutorial,
       gameState,
       pendingChoices: this.pendingChoices,
@@ -184,8 +175,7 @@ export class GameSession {
 
   /**
    * Executes a command. Engine rule errors (cancelled action, unpayable cost…) cancel the
-   * pending action and are returned so the client can display them; the version is bumped
-   * in every case because the in-memory state may have changed.
+   * pending action and are returned so the client can display them.
    */
   execute(command: GameCommand): CommandError | undefined {
     if (command.type === 'cheat' && !this.options.allowCheats) {
@@ -197,8 +187,6 @@ export class GameSession {
     } catch (error) {
       if (error instanceof ForbiddenCommandError) throw error;
       return this.handleActionError(error);
-    } finally {
-      this.version += 1;
     }
   }
 
@@ -532,29 +520,22 @@ export class GameSession {
 
   // ─── Rewind ───────────────────────────────────────────────────────────────
 
-  private static lastEventDrewCards(event: GameEvent): boolean {
-    if (event.type === GameEventType.TURN_STARTED || event.type === GameEventType.ADVANCE) {
-      return true;
-    }
-    if (event.type !== GameEventType.CARD_ACTION) return false;
-    const changes = (event as { gameStateChanges?: Partial<GameState> }).gameStateChanges;
-    return !changes || Object.hasOwn(changes, 'drawPile');
-  }
-
   canRewind(): boolean {
     if (this.tutorial) return false;
     const lastEvent = this.agg.getEvents().at(-1);
     if (!lastEvent) return false;
     if (this.options.unrestrictedRewind) return true;
-    return !GameSession.lastEventDrewCards(lastEvent);
+    return !eventDrewCards(lastEvent);
   }
 
   private rewind(): void {
     if (!this.canRewind()) return;
-    const events = this.agg.getEvents();
-    const agg = this.makeAggregate();
-    agg.loadFromHistory(events.slice(0, -1));
-    this.agg = agg;
+    if (!this.agg.undoLastEvent()) {
+      // Only an unrestricted (development) rewind goes back past a draw: replay the log.
+      const agg = this.makeAggregate();
+      agg.loadFromHistory(this.agg.getEvents().slice(0, -1));
+      this.agg = agg;
+    }
     this.pendingUpgrade = null;
     this.pendingChoices = null;
     this.finalize();
@@ -563,6 +544,12 @@ export class GameSession {
   // ─── Development cheats ───────────────────────────────────────────────────
 
   private cheat(command: CheatCommand): void {
+    const from = this.agg.getEvents().length;
+    this.runCheat(command);
+    for (const event of this.agg.getEvents().slice(from)) event.cheat = true;
+  }
+
+  private runCheat(command: CheatCommand): void {
     switch (command.op) {
       case 'addResources':
         return this.sync(this.agg.cardProduced(1, command.resources));

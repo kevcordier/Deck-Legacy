@@ -16,7 +16,8 @@
     },
     "network": "Impossible de joindre le serveur de jeu.",
     "accountDeletionUnavailable": "La suppression de compte n’est pas disponible pour le moment.",
-    "accountDeletionFailed": "Le compte n’a pas pu être supprimé. Réessayez plus tard."
+    "accountDeletionFailed": "Le compte n’a pas pu être supprimé. Réessayez plus tard.",
+    "storageWrite": "Votre progression n’a pas pu être enregistrée sur cet appareil (stockage plein ?). Supprimez un royaume ou connectez-vous pour la garder en ligne."
   },
   "parchmentCard": {
     "continue": "Continuer"
