@@ -91,6 +91,10 @@ class InMemoryGamesRepository {
     return (this.games.get(gameId)?.events ?? []).map(e => e.id);
   }
 
+  async getEventPayloads(gameId: string, before: number): Promise<GameEvent[]> {
+    return structuredClone((this.games.get(gameId)?.events ?? []).slice(0, before));
+  }
+
   async load(gameId: string) {
     const row = this.games.get(gameId);
     return row && row.status !== 'ABANDONED' ? structuredClone(row) : null;
@@ -258,6 +262,62 @@ describe('Games sync API (e2e, in-memory storage)', () => {
       .set(as(aliceToken))
       .expect(200);
     expect(current.body.id).toBe(session.id);
+  });
+
+  it('accepts a delta built on the stored version and replays the full log', async () => {
+    const session = playedGame(0);
+    const first = [...session.getEvents()];
+    await put(aliceToken, session.id, { events: first }).expect(200);
+    session.execute({
+      type: 'resolveProduction',
+      instanceId: session.getState().board[0],
+      choiceIndex: 0,
+    });
+
+    const updated = await put(aliceToken, session.id, {
+      events: session.getEvents().slice(first.length),
+      fromSeq: first.length,
+      baseVersion: 1,
+    }).expect(200);
+
+    expect(updated.body).toMatchObject({ version: 2, eventCount: session.getEvents().length });
+    expect(updated.body.score).toBe(session.getScore());
+    expect(repository.games.get(session.id)?.events).toEqual(session.getEvents());
+  });
+
+  it('refuses a sync built on another version, unless it has no base version', async () => {
+    const session = playedGame();
+    await put(aliceToken, session.id, { events: session.getEvents() }).expect(200);
+    await put(aliceToken, session.id, { events: session.getEvents() }).expect(200);
+
+    const stale = await put(aliceToken, session.id, {
+      events: session.getEvents(),
+      baseVersion: 1,
+    }).expect(409);
+    expect(stale.body.code).toBe('STALE_VERSION');
+    // Clients older than the delta sync send no base version: the last writer wins.
+    await put(aliceToken, session.id, { events: session.getEvents() }).expect(200);
+  });
+
+  it('refuses a delta starting after the stored log', async () => {
+    const session = playedGame();
+    const events = session.getEvents();
+    const unknown = await put(aliceToken, randomUUID(), { events, fromSeq: 1 }).expect(409);
+    expect(unknown.body.code).toBe('STALE_VERSION');
+
+    await put(aliceToken, session.id, { events: events.slice(0, 1) }).expect(200);
+    await put(aliceToken, session.id, { events, fromSeq: 2, baseVersion: 1 }).expect(409);
+  });
+
+  it('rejects a delta that makes the log impossible to replay', async () => {
+    const session = playedGame();
+    await put(aliceToken, session.id, { events: session.getEvents() }).expect(200);
+    const response = await put(aliceToken, session.id, {
+      events: [{ id: 'x', type: 'cardProduced', timestamp: 0 }],
+      fromSeq: session.getEvents().length,
+      baseVersion: 1,
+    }).expect(422);
+    expect(response.body.code).toBe('INVALID_GAME');
   });
 
   it('exports what was synced', async () => {

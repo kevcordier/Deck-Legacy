@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 
-const EXPLICIT_CODES = new Set<ApiErrorCode>(['KINGDOM_LIMIT']);
+const EXPLICIT_CODES = new Set<ApiErrorCode>(['KINGDOM_LIMIT', 'STALE_VERSION']);
 
 /** Code given by the thrown exception (`new ConflictException({ code, message })`). */
 function explicitCode(raw: string | object): ApiErrorCode | undefined {

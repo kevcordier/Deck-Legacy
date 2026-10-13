@@ -42,7 +42,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-026 | 2026-10-10 | API NestJS 11 en CommonJS                   | Active                                  |
 | EDR-027 | 2026-10-10 | PostgreSQL et Prisma pour la persistance    | Active                                  |
 | EDR-028 | 2026-10-10 | Supabase Auth avec invités anonymes         | Active                                  |
-| EDR-029 | 2026-10-10 | Synchronisation : dernier écrivain gagne    | Active, en partie remplacée par EDR-038 |
+| EDR-029 | 2026-10-10 | Synchronisation : dernier écrivain gagne    | En partie remplacée par EDR-038, 041    |
 | EDR-030 | 2026-10-10 | Scores issus du rejeu, classement inscrits  | Active                                  |
 | EDR-031 | 2026-10-10 | Code et documentation du dépôt en anglais   | Active                                  |
 | EDR-032 | 2026-10-10 | Système d'agents spécialisés et contrats    | Active                                  |
@@ -54,6 +54,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-038 | 2026-10-10 | Plusieurs royaumes par joueur               | Active                                  |
 | EDR-039 | 2026-10-11 | Déploiement déclenché par un tag de version | Active                                  |
 | EDR-040 | 2026-10-11 | Tutoriel joué comme une vraie partie        | Active                                  |
+| EDR-041 | 2026-10-13 | Synchronisation incrémentale et versionnée  | Active                                  |
 
 ---
 
@@ -767,7 +768,7 @@ Conséquences
 ID : EDR-029
 Date : 2026-10-10
 Titre : Synchronisation : dernier écrivain gagne
-Statut : Active ; le point « une seule partie en cours par joueur » est remplacé par EDR-038
+Statut : Active ; le point « une seule partie en cours par joueur » est remplacé par EDR-038, le « dernier écrivain gagne » par EDR-041 (sauf pour les anciens clients)
 
 Contexte
 Un joueur peut jouer sur plusieurs appareils, hors ligne, puis se reconnecter.
@@ -1093,3 +1094,32 @@ Conséquences
 
 - Une partie gardée après le tutoriel a une première manche non mélangée ; le serveur ne peut pas distinguer un mélange d'un ordre imposé (c'était déjà le cas, l'ordre vient du client).
 - Le script dépend des cartes 1 à 10 de `deck.json` : changer ces cartes impose de revoir les étapes de `TutorialProvider`.
+
+---
+
+ID : EDR-041
+Date : 2026-10-13
+Titre : Synchronisation incrémentale et versionnée
+Statut : Active
+Remplace : EDR-029 (en partie : dernier écrivain gagne)
+
+Contexte
+Chaque sauvegarde envoyait tout le journal d'événements (jusqu'à 20 000). Un royaume joué sur deux appareils était écrasé sans prévenir par le dernier qui synchronisait, et un appareil ne voyait les parties des autres qu'au démarrage.
+
+Problème
+Comment n'envoyer que ce qui change, et suivre un même royaume sur plusieurs appareils sans perdre de coups en silence ?
+
+Décision
+`PUT /games/:id` reçoit les événements à partir de `fromSeq` ; le serveur garde les événements stockés avant `fromSeq` et rejoue le journal complet (la validation par rejeu d'EDR-024 ne change pas). Le client mémorise `syncedUpTo` (préfixe connu du serveur, abaissé par une annulation) et `serverVersion`, envoyé comme `baseVersion` : si la version stockée diffère, le serveur répond `409 STALE_VERSION` et le royaume passe en `conflict`. Le joueur choisit alors de garder la version en ligne (ses coups locaux non envoyés sont perdus) ou de l'écraser (envoi complet sans `baseVersion`). Sans modification locale, un appareil en retard télécharge la nouvelle version et l'annonce par un message. `reconcile()` tourne au démarrage, au retour au premier plan et chaque minute.
+
+Alternatives rejetées
+
+- Temps réel (Supabase Realtime, SSE) : infrastructure en plus pour un jeu solo ; une vérification par minute suffit.
+- Fusion automatique des deux journaux : deux suites de coups divergentes ne se fusionnent pas sans inventer de règle.
+- Garder le dernier écrivain gagne avec un simple avertissement : la perte de coups resterait silencieuse.
+
+Conséquences
+
+- Les anciens clients (sans `baseVersion` ni `fromSeq`) fonctionnent toujours et écrasent comme avant.
+- Le téléchargement d'un royaume (`GET /games/:id/export`) reste complet.
+- Chaque client connecté appelle `GET /games` chaque minute.

@@ -384,7 +384,13 @@
     "pending": "Modifications en attente de sauvegarde en ligne.",
     "offline": "Hors ligne : votre partie est enregistrée sur cet appareil et sera sauvegardée en ligne plus tard.",
     "rejected": "Le serveur n'a pas pu valider cette partie : elle est enregistrée sur cet appareil uniquement.",
-    "limited": "Limite de royaumes atteinte : ce royaume est enregistré sur cet appareil uniquement."
+    "limited": "Limite de royaumes atteinte : ce royaume est enregistré sur cet appareil uniquement.",
+    "conflict": "Ce royaume a aussi été joué sur un autre appareil : choisissez la version à garder.",
+    "conflictTitle": "Royaume joué sur un autre appareil",
+    "conflictBody": "Ce royaume a été sauvegardé en ligne depuis un autre appareil pendant que vous jouiez ici. Gardez la version en ligne (vos derniers coups sur cet appareil sont perdus) ou écrasez-la avec la partie de cet appareil.",
+    "keepServer": "Garder la version en ligne",
+    "keepMine": "Écraser avec cet appareil",
+    "updatedElsewhere": "Royaume mis à jour depuis un autre appareil."
   },
   "home": {
     "welcomeTitle": "Bienvenue",

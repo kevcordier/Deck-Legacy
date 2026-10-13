@@ -15,6 +15,7 @@ import {
 import {
   getSyncStatus,
   reconcile,
+  resolveConflict,
   setSyncUser,
   subscribeSaveReplaced,
   syncNow,
@@ -86,8 +87,18 @@ describe('syncNow', () => {
     await syncNow();
 
     expect(api.syncGame).toHaveBeenCalledOnce();
-    expect(api.syncGame).toHaveBeenCalledWith('g1', { events, cardNames: {}, name: 'Avalon' });
-    expect(loadSave('g1')?.sync).toEqual({ dirty: false, userId: 'u1', serverVersion: 4 });
+    expect(api.syncGame).toHaveBeenCalledWith('g1', {
+      events,
+      fromSeq: 0,
+      cardNames: {},
+      name: 'Avalon',
+    });
+    expect(loadSave('g1')?.sync).toEqual({
+      dirty: false,
+      userId: 'u1',
+      serverVersion: 4,
+      syncedUpTo: 1,
+    });
     expect(getSyncStatus()).toBe('synced');
   });
 
@@ -146,6 +157,125 @@ describe('syncNow', () => {
     expect(api.abandonGame).toHaveBeenCalledTimes(3);
     expect(getPendingAbandons()).toEqual(['later']);
     expect(getSyncStatus()).toBe('offline');
+  });
+});
+
+describe('delta sync', () => {
+  const more = [...events, { id: 'e2', type: 'cardProduced', timestamp: 2 }] as never[];
+
+  it('pushes only the events the server lacks, built on its version', async () => {
+    kingdom('g1');
+    api.syncGame.mockResolvedValue(summary);
+    await syncNow();
+    saveGame('g1', more, {}, EMPTY_SUMMARY);
+    api.syncGame.mockResolvedValue({ ...summary, version: 5 });
+
+    await syncNow();
+
+    expect(api.syncGame).toHaveBeenLastCalledWith('g1', {
+      events: more.slice(1),
+      fromSeq: 1,
+      baseVersion: 4,
+      cardNames: {},
+      name: 'Avalon',
+    });
+    expect(loadSave('g1')?.sync).toMatchObject({ serverVersion: 5, syncedUpTo: 2 });
+  });
+
+  it('resends the events changed by a rewind', async () => {
+    kingdom('g1');
+    saveGame('g1', more, {}, EMPTY_SUMMARY);
+    markSynced('g1');
+    updateSyncInfo('g1', loadSave('g1')?.savedAt ?? 0, {
+      ...(loadSave('g1')?.sync ?? { dirty: false }),
+      syncedUpTo: 2,
+    });
+    saveGame('g1', events, {}, EMPTY_SUMMARY);
+    saveGame('g1', [...events, { id: 'e3' }] as never[], {}, EMPTY_SUMMARY);
+
+    expect(loadSave('g1')?.sync.syncedUpTo).toBe(1);
+  });
+
+  it('keeps the new server version when the player played during the push', async () => {
+    kingdom('g1');
+    api.syncGame.mockImplementation(async () => {
+      saveGame('g1', more, {}, EMPTY_SUMMARY);
+      return summary;
+    });
+
+    await syncNow();
+
+    expect(loadSave('g1')?.sync).toEqual({
+      dirty: true,
+      userId: 'u1',
+      serverVersion: 4,
+      syncedUpTo: 1,
+    });
+  });
+
+  it('flags a conflict when another device synced first, until the player chooses', async () => {
+    kingdom('g1');
+    markSynced('g1');
+    saveGame('g1', more, {}, EMPTY_SUMMARY);
+    api.syncGame.mockRejectedValue(
+      new ApiError(409, { statusCode: 409, code: 'STALE_VERSION', message: '' }),
+    );
+
+    await syncNow();
+    expect(getSyncStatus()).toBe('conflict');
+    saveGame('g1', [...more, { id: 'e3' }] as never[], {}, EMPTY_SUMMARY);
+    await syncNow();
+    expect(api.syncGame).toHaveBeenCalledOnce();
+    expect(loadSave('g1')?.sync.conflict).toBe(true);
+  });
+
+  it('overwrites the server with the whole local game when the player keeps theirs', async () => {
+    kingdom('g1');
+    updateSyncInfo('g1', loadSave('g1')?.savedAt ?? 0, {
+      dirty: true,
+      userId: 'u1',
+      serverVersion: 4,
+      syncedUpTo: 1,
+      conflict: true,
+    });
+    api.syncGame.mockResolvedValue({ ...summary, version: 6 });
+
+    await resolveConflict('g1', 'mine');
+
+    expect(api.syncGame).toHaveBeenCalledWith('g1', {
+      events,
+      fromSeq: 0,
+      cardNames: {},
+      name: 'Avalon',
+    });
+    expect(getSyncStatus()).toBe('synced');
+  });
+
+  it('downloads the server version when the player keeps it', async () => {
+    kingdom('g1');
+    updateSyncInfo('g1', loadSave('g1')?.savedAt ?? 0, {
+      dirty: true,
+      userId: 'u1',
+      serverVersion: 4,
+      conflict: true,
+    });
+    api.listGames.mockResolvedValue([{ ...summary, version: 6, eventCount: 2 }]);
+    api.exportGame.mockResolvedValue({
+      id: 'g1',
+      name: 'Avalon',
+      events: more,
+      cardNames: {},
+      savedAt: 0,
+    });
+
+    await resolveConflict('g1', 'server');
+
+    expect(api.syncGame).not.toHaveBeenCalled();
+    expect(loadSave('g1')).toMatchObject({
+      events: more,
+      sync: { dirty: false, serverVersion: 6, syncedUpTo: 2 },
+    });
+    expect(getSyncStatus()).toBe('synced');
   });
 });
 

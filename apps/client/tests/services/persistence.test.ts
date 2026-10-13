@@ -47,7 +47,15 @@ describe('parseSave', () => {
     const save = parseSave({
       id: 'g1',
       events,
-      sync: { dirty: false, userId: 'u1', serverVersion: 3, rejected: true, limited: true },
+      sync: {
+        dirty: false,
+        userId: 'u1',
+        serverVersion: 3,
+        rejected: true,
+        limited: true,
+        syncedUpTo: 4,
+        conflict: true,
+      },
     });
 
     expect(save?.sync).toEqual({
@@ -56,6 +64,8 @@ describe('parseSave', () => {
       serverVersion: 3,
       rejected: true,
       limited: true,
+      syncedUpTo: 4,
+      conflict: true,
     });
   });
 });

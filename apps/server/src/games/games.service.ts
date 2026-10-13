@@ -16,6 +16,7 @@ import { GameEventType, Phase } from '@deck-legacy/engine/domain/enums';
 import type { CardActionEvent, GameCatalog, GameEvent } from '@deck-legacy/engine/domain/types';
 import { loadGameCatalog } from '@deck-legacy/game-data';
 import {
+  ConflictException,
   Inject,
   Injectable,
   NotFoundException,
@@ -44,12 +45,18 @@ export function firstDifference(storedIds: string[], events: GameEvent[]): numbe
   return index;
 }
 
+function staleVersion(): ConflictException {
+  return new ConflictException({ code: 'STALE_VERSION', message: 'errors.staleVersion' });
+}
+
 /**
  * Stores games played on devices.
  *
- * Each sync sends the full event log; the server replays it with the engine to check it is a
- * consistent game, computes the score and mirrors campaign scores for the leaderboard. The
- * last sync wins. Replaying proves consistency, not fairness: events are produced by the
+ * Each sync sends the events from `fromSeq` on; the server rebuilds the full log with the stored
+ * events before `fromSeq`, replays it with the engine to check it is a
+ * consistent game, computes the score and mirrors campaign scores for the leaderboard. A sync
+ * with a `baseVersion` other than the stored version is refused (another device synced first);
+ * without one, the last sync wins. Replaying proves consistency, not fairness: events are produced by the
  * client, so a modified client could forge them.
  */
 @Injectable()
@@ -91,15 +98,21 @@ export class GamesService {
     const userId = user.id;
     const limit = kingdomLimit(user.isAnonymous);
     return this.withLock(gameId, async () => {
-      const snapshot = this.validate(body);
       const meta = await this.repository.getMeta(gameId);
       if (meta && meta.userId !== userId) throw new NotFoundException('Game not found');
+      if (meta && body.baseVersion !== undefined && body.baseVersion !== meta.version) {
+        throw staleVersion();
+      }
+      const storedIds = meta ? await this.repository.getEventIds(gameId) : [];
+      if (body.fromSeq > storedIds.length) throw staleVersion();
+      const kept =
+        body.fromSeq > 0 ? await this.repository.getEventPayloads(gameId, body.fromSeq) : [];
+      const snapshot = this.validate({ ...body, events: [...kept, ...body.events] });
 
       const mirrorScores = (tx: Parameters<ScoresService['syncGameScores']>[0]) =>
         this.scores.syncGameScores(tx, userId, gameId, snapshot.campaignScores);
 
       if (meta) {
-        const storedIds = await this.repository.getEventIds(gameId);
         await this.repository.save(
           gameId,
           userId,

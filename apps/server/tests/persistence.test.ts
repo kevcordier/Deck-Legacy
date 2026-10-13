@@ -244,6 +244,17 @@ describe('GamesRepository reads and creation', () => {
     await expect(repository.getEventIds(GAME)).resolves.toEqual(['e0', 'e1']);
   });
 
+  it('reads the stored events before a sequence number', async () => {
+    const { prisma, tx } = fakePrisma();
+    const repository = new GamesRepository(prisma);
+    tx.gameEvent.findMany.mockResolvedValueOnce([{ payload: { id: 'e0' } }]);
+
+    await expect(repository.getEventPayloads(GAME, 1)).resolves.toEqual([{ id: 'e0' }]);
+    expect(tx.gameEvent.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { gameId: GAME, seq: { lt: 1 } } }),
+    );
+  });
+
   it('reports whether a game was abandoned', async () => {
     const { prisma, tx } = fakePrisma();
     const repository = new GamesRepository(prisma);
