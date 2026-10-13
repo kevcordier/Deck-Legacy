@@ -13,6 +13,7 @@ import { ApiError, api } from '@services/api';
 import {
   type KingdomMeta,
   type SaveData,
+  commonPrefix,
   deleteKingdom,
   getKingdom,
   getPendingAbandons,
@@ -111,7 +112,22 @@ async function processPendingAbandons(): Promise<void> {
   if (remaining.length > 0) throw new ApiError(0, null);
 }
 
-async function pushKingdom(account: string, kingdom: KingdomMeta): Promise<void> {
+/**
+ * After `STALE_VERSION`: when the server log only holds events this device already has (a
+ * sync whose response was lost), there is no conflict. Builds on the server version instead.
+ */
+async function catchUpWithServer(save: SaveData): Promise<boolean> {
+  const remote = await api.exportGame(save.id);
+  if (commonPrefix(remote.events, save.events) < remote.events.length) return false;
+  updateSyncInfo(save.id, save.savedAt, {
+    ...save.sync,
+    serverVersion: remote.version,
+    syncedUpTo: remote.events.length,
+  });
+  return true;
+}
+
+async function pushKingdom(account: string, kingdom: KingdomMeta, retry = true): Promise<void> {
   const save = loadSave(kingdom.id);
   if (!save?.sync.dirty || save.sync.rejected || save.sync.limited || save.sync.conflict) return;
   // A save last synced with another account is removed by `reconcile`, never pushed here.
@@ -130,19 +146,24 @@ async function pushKingdom(account: string, kingdom: KingdomMeta): Promise<void>
     });
     recordAcceptedSync(save.id, save, account, summary.version);
   } catch (error) {
-    if (error instanceof ApiError && error.code === 'STALE_VERSION') {
-      updateSyncInfo(save.id, save.savedAt, { ...save.sync, conflict: true });
-      return;
+    if (!(error instanceof ApiError)) throw error;
+    if (error.code === 'STALE_VERSION' && retry && (await catchUpWithServer(save))) {
+      return pushKingdom(account, kingdom, false);
     }
-    if (error instanceof ApiError && error.status === 422) {
-      console.warn('The server refused a local save', error.message);
-      updateSyncInfo(save.id, save.savedAt, { ...save.sync, rejected: true });
-      return;
-    }
-    if (error instanceof ApiError && error.code === 'KINGDOM_LIMIT') {
-      updateSyncInfo(save.id, save.savedAt, { ...save.sync, limited: true });
-      return;
-    }
+    recordRefusal(save, error);
+  }
+}
+
+/** Marks a save the server refused; rethrows errors worth retrying later (network…). */
+function recordRefusal(save: SaveData, error: ApiError): void {
+  if (error.code === 'STALE_VERSION') {
+    updateSyncInfo(save.id, save.savedAt, { ...save.sync, conflict: true });
+  } else if (error.status === 422) {
+    console.warn('The server refused a local save', error.message);
+    updateSyncInfo(save.id, save.savedAt, { ...save.sync, rejected: true });
+  } else if (error.code === 'KINGDOM_LIMIT') {
+    updateSyncInfo(save.id, save.savedAt, { ...save.sync, limited: true });
+  } else {
     throw error;
   }
 }

@@ -1,6 +1,6 @@
 import { DEFAULT_OPTIONS, makeCatalog } from './fixtures';
 import { GameSession } from '@engine/application/session/GameSession';
-import { PendingChoiceType, Phase } from '@engine/domain/enums';
+import { ActionEffectType, PendingChoiceType, Phase, Trigger } from '@engine/domain/enums';
 import type { ResolvedActionEffect } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -102,7 +102,6 @@ describe('turn flow', () => {
     session.execute({ type: 'startTurn' });
 
     expect(session.getState().turn).toBeGreaterThan(turn);
-    expect(session.getVersion()).toBe(2);
   });
 
   it('advances by drawing cards', () => {
@@ -163,6 +162,19 @@ describe('development cheats', () => {
     expect(Object.values(session.getState().instances[1].stickers).flat()).toContain(1);
   });
 
+  it('tags every event a cheat produced', () => {
+    const session = tutorial(cheats);
+    const before = session.getEvents().length;
+
+    session.execute({ type: 'cheat', cheat: { op: 'addResources', resources: { gold: 9 } } });
+    session.execute({ type: 'cheat', cheat: { op: 'chooseState', instanceId: 1, stateId: 2 } });
+
+    const added = session.getEvents().slice(before);
+    expect(added).toHaveLength(2);
+    expect(added.every(event => event.cheat)).toBe(true);
+    expect(session.getEvents()[0].cheat).toBeUndefined();
+  });
+
   it('draws and discovers cards', () => {
     const session = GameSession.start('g', makeCatalog(), cheats);
     const [drawable] = session.getState().drawPile;
@@ -172,5 +184,50 @@ describe('development cheats', () => {
 
     expect(session.getState().board).toContain(drawable);
     expect(session.getState().discoveryPile).not.toContain(11);
+  });
+});
+
+describe('triggers', () => {
+  /** Fields (card 1) get an optional on-play trigger. */
+  function catalogWithTrigger() {
+    const catalog = makeCatalog();
+    const [field, farm] = catalog.cards[1].states;
+    catalog.cards[1] = {
+      ...catalog.cards[1],
+      states: [
+        {
+          ...field,
+          actions: [
+            {
+              id: '1-1-1',
+              trigger: Trigger.ON_PLAY,
+              optional: true,
+              actionEffects: [
+                { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 1 } },
+              ],
+            },
+          ],
+        },
+        farm,
+      ],
+    };
+    return catalog;
+  }
+
+  it('replays a skipped trigger (trigger keys change on replay)', () => {
+    const session = GameSession.start('g', catalogWithTrigger(), DEFAULT_OPTIONS);
+    const [triggerId] = Object.keys(session.getState().triggerPile);
+
+    session.execute({ type: 'skipTrigger', triggerId });
+    const restored = GameSession.restore(
+      'g',
+      session.getEvents(),
+      catalogWithTrigger(),
+      DEFAULT_OPTIONS,
+    );
+
+    expect(Object.keys(restored.getState().triggerPile)).toHaveLength(
+      Object.keys(session.getState().triggerPile).length,
+    );
   });
 });

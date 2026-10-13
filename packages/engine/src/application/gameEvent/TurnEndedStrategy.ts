@@ -18,7 +18,9 @@ export class TurnEndedStrategy implements GameEventStrategy {
   ) {}
   apply(_gameState: GameState, event: GameEvent): GameState {
     const e = event as TurnEndedEvent;
-    const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
+    // Shallow copy is enough: only top-level fields are reassigned below, and `GameAggregate.apply`
+    // already hands every event a private deep copy.
+    const gameState = { ..._gameState };
 
     if (Object.keys(e.endTurnTrigger).length > 0) {
       gameState.triggerPile = { ...gameState.triggerPile, ...e.endTurnTrigger };

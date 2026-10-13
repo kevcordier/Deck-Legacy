@@ -28,7 +28,6 @@ describe('GameSession.start', () => {
     expect(view.gameState.phase).toBe(Phase.PLAYING);
     expect(view.gameState.board.length).toBeGreaterThan(0);
     expect(view.gameState.discoveryPile).toEqual([11, 12]);
-    expect(view.version).toBe(0);
     expect(view.tutorial).toBe(false);
     expect(session.getEvents()[0].type).toBe(GameEventType.GAME_STARTED);
   });
@@ -67,7 +66,7 @@ describe('GameSession.start', () => {
 });
 
 describe('GameSession commands', () => {
-  it('produces resources and bumps the version', () => {
+  it('produces resources', () => {
     const session = startGame();
     const gold = session.getState().resources.gold ?? 0;
 
@@ -79,7 +78,6 @@ describe('GameSession commands', () => {
 
     expect(error).toBeUndefined();
     expect(session.getState().resources.gold).toBe(gold + 1);
-    expect(session.getVersion()).toBe(1);
   });
 
   it('pays the upgrade cost from produced resources', () => {
@@ -176,10 +174,41 @@ describe('GameSession rewind', () => {
     expect(session.canRewind()).toBe(false);
   });
 
-  it('allows any rewind when unrestricted', () => {
+  it('rewinds several events to the state a replay of the remaining log gives', () => {
+    const played = startGame();
+    const field = boardCard(played);
+    played.execute({ type: 'resolveProduction', instanceId: field, choiceIndex: 0 });
+    // A restored session rewinds too, from the states kept while replaying.
+    const session = GameSession.restore(
+      'game-1',
+      played.getEvents(),
+      makeCatalog(),
+      DEFAULT_OPTIONS,
+    );
+    session.execute({ type: 'resolveProduction', instanceId: boardCard(session), choiceIndex: 0 });
+
+    session.execute({ type: 'rewind' });
+    session.execute({ type: 'rewind' });
+
+    const replayed = GameSession.restore(
+      'game-1',
+      session.getEvents(),
+      makeCatalog(),
+      DEFAULT_OPTIONS,
+    );
+    expect(session.getState()).toEqual(replayed.getState());
+    expect(session.canRewind()).toBe(false);
+  });
+
+  it('allows any rewind when unrestricted, replaying the log past a draw', () => {
     const session = startGame({ ...DEFAULT_OPTIONS, unrestrictedRewind: true });
+    const count = session.getEvents().length;
 
     expect(session.canRewind()).toBe(true);
+    session.execute({ type: 'rewind' });
+
+    expect(session.getEvents()).toHaveLength(count - 1);
+    expect(session.getState().board).toEqual([]);
   });
 });
 
@@ -213,11 +242,9 @@ describe('GameSession.restore', () => {
       makeCatalog(),
       DEFAULT_OPTIONS,
       { '1': 'Named' },
-      7,
     );
 
     expect(restored.getState()).toEqual(session.getState());
-    expect(restored.getVersion()).toBe(7);
     expect(restored.getCardNames()).toEqual({ '1': 'Named' });
   });
 

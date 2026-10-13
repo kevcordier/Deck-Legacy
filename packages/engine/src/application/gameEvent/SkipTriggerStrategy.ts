@@ -11,7 +11,17 @@ export class SkipTriggerStrategy implements GameEventStrategy {
   ) {}
   apply(gameState: GameState, event: GameEvent): GameState {
     const e = event as SkipTriggerEvent;
-    const { [e.triggerId]: _skipped, ...restTriggers } = gameState.triggerPile;
+    const pile = gameState.triggerPile;
+    // On replay the key differs: find the trigger by its source and action.
+    const key =
+      e.triggerId in pile || e.sourceInstanceId === undefined
+        ? e.triggerId
+        : (Object.keys(pile).find(
+            k =>
+              pile[k].sourceInstanceId === e.sourceInstanceId &&
+              pile[k].effectDef.id === e.actionId,
+          ) ?? e.triggerId);
+    const { [key]: _skipped, ...restTriggers } = pile;
     const newGameState = { ...gameState, triggerPile: restTriggers };
 
     if (e.endTurn) {

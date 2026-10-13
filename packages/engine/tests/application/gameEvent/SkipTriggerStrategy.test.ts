@@ -24,6 +24,27 @@ describe('SkipTriggerStrategy', () => {
     expect(result.triggerPile['trigger-2']).toBeDefined();
   });
 
+  it('finds the trigger by source and action when its key changed (replay)', () => {
+    const gs = makeState({
+      triggerPile: {
+        'new-1': { effectDef: { id: 'a', actionEffects: [] }, sourceInstanceId: 1 },
+        'new-2': { effectDef: { id: 'b', actionEffects: [] }, sourceInstanceId: 2 },
+      },
+    });
+    const skip = (sourceInstanceId: number, actionId: string) =>
+      strategy.apply(gs, {
+        id: 'e1',
+        type: GameEventType.SKIP_TRIGGER,
+        timestamp: 0,
+        triggerId: 'old-key',
+        sourceInstanceId,
+        actionId,
+      } as SkipTriggerEvent).triggerPile;
+
+    expect(Object.keys(skip(2, 'b'))).toEqual(['new-1']);
+    expect(Object.keys(skip(3, 'b'))).toEqual(['new-1', 'new-2']);
+  });
+
   it('preserves other state fields', () => {
     const gs = makeState({
       resources: { gold: 5 },

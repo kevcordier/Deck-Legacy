@@ -331,6 +331,7 @@ describe('Games sync API (e2e, in-memory storage)', () => {
 
     expect(exported.body.events).toEqual(session.getEvents());
     expect(exported.body.cardNames).toEqual({ '1': 'Bessie' });
+    expect(exported.body.version).toBe(1);
   });
 
   it("hides and protects other players' games", async () => {
@@ -359,14 +360,23 @@ describe('Games sync API (e2e, in-memory storage)', () => {
   });
 
   it('rejects games that used development cheats', async () => {
+    // Added resources produce an ordinary CARD_PRODUCED event: only the cheat tag reveals it.
     const session = playedGame(0);
     session.execute({ type: 'cheat', cheat: { op: 'addResources', resources: { gold: 1 } } });
+
+    const response = await put(aliceToken, session.id, { events: session.getEvents() }).expect(422);
+    expect(response.body.message).toMatch(/cheats/);
+  });
+
+  it('rejects cheat card actions logged before the cheat tag existed', async () => {
+    const session = playedGame(0);
     session.execute({
       type: 'cheat',
       cheat: { op: 'discardCard', instanceIds: [session.getState().board[0]] },
     });
+    const events = session.getEvents().map(({ cheat: _cheat, ...event }) => event);
 
-    const response = await put(aliceToken, session.id, { events: session.getEvents() }).expect(422);
+    const response = await put(aliceToken, session.id, { events }).expect(422);
     expect(response.body.message).toMatch(/cheats/);
   });
 

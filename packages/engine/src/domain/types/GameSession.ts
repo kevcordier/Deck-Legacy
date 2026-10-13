@@ -57,7 +57,6 @@ export type CommandError = {
 /** Everything the UI needs to render a game, recomputed after each command. */
 export type GameView = {
   id: string;
-  version: number;
   tutorial: boolean;
   gameState: GameState;
   pendingChoices: PendingChoice[] | null;

@@ -76,6 +76,8 @@ export type GameSummary = {
 export type GameExport = {
   id: string;
   name: string;
+  /** Server version of this log (as in `GameSummary.version`). */
+  version: number;
   events: GameEvent[];
   cardNames: Record<string, string>;
   savedAt: number;

@@ -208,3 +208,17 @@ describe('pending abandons', () => {
     expect(getPendingAbandons()).toEqual(['g1']);
   });
 });
+
+describe('loadSave cache', () => {
+  it('parses a save once per stored version', () => {
+    createKingdom('g1', 'Avalon');
+    saveGame('g1', [], {}, EMPTY_SUMMARY);
+
+    const first = loadSave('g1');
+    expect(loadSave('g1')).toBe(first);
+
+    saveGame('g1', [{ id: 'e1' }] as never[], {}, EMPTY_SUMMARY);
+    expect(loadSave('g1')).not.toBe(first);
+    expect(loadSave('g1')?.events).toHaveLength(1);
+  });
+});

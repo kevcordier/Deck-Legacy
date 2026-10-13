@@ -220,6 +220,14 @@ describe('delta sync', () => {
     api.syncGame.mockRejectedValue(
       new ApiError(409, { statusCode: 409, code: 'STALE_VERSION', message: '' }),
     );
+    // The other device added an event this one does not have.
+    api.exportGame.mockResolvedValue({
+      ...summary,
+      version: 5,
+      events: [...events, { id: 'other' }],
+      cardNames: {},
+      savedAt: 0,
+    });
 
     await syncNow();
     expect(getSyncStatus()).toBe('conflict');
@@ -227,6 +235,37 @@ describe('delta sync', () => {
     await syncNow();
     expect(api.syncGame).toHaveBeenCalledOnce();
     expect(loadSave('g1')?.sync.conflict).toBe(true);
+  });
+
+  it('builds on the server version when only the response of an accepted push was lost', async () => {
+    kingdom('g1');
+    markSynced('g1');
+    saveGame('g1', more, {}, EMPTY_SUMMARY);
+    // The server stored `more` (version 5) but the device never got the answer.
+    api.syncGame
+      .mockRejectedValueOnce(
+        new ApiError(409, { statusCode: 409, code: 'STALE_VERSION', message: '' }),
+      )
+      .mockResolvedValueOnce({ ...summary, version: 6, eventCount: 2 });
+    api.exportGame.mockResolvedValue({
+      ...summary,
+      version: 5,
+      events: more,
+      cardNames: {},
+      savedAt: 0,
+    });
+
+    await syncNow();
+
+    expect(api.syncGame).toHaveBeenLastCalledWith('g1', {
+      events: [],
+      fromSeq: 2,
+      baseVersion: 5,
+      cardNames: {},
+      name: 'Avalon',
+    });
+    expect(loadSave('g1')?.sync).toMatchObject({ dirty: false, serverVersion: 6 });
+    expect(getSyncStatus()).toBe('synced');
   });
 
   it('overwrites the server with the whole local game when the player keeps theirs', async () => {
