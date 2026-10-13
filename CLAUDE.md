@@ -104,7 +104,7 @@ Never:
 6. **Use browser APIs in `packages/`** or DOM elements in the client; never import client ↔ server or `packages` → `apps`.
 7. **Invent a game rule** or interpret an ambiguous card text: ask.
 8. **Bypass a quality gate:** no `--no-verify`, no lowered coverage threshold, no disabled lint rule, no remaining warning.
-9. **Merge into `main` without the maintainer's review and approval**, push directly to `main`, rewrite shared history, or deploy / run `prisma:deploy` without the maintainer's approval.
+9. **Merge into `main` without the maintainer's review and approval**, push directly to `main` (except the maintainer's release commit and tag, via the `release` skill), rewrite shared history, or deploy / run `prisma:deploy` without the maintainer's approval.
 10. **Edit an applied Prisma migration**; add a new one.
 11. **Commit secrets** (`.env`) or assets without clear rights: illustrations are AI-generated or royalty-free only.
 12. **Monetise the game or publish it to an app store** without a new decision (the rules are adapted from an existing game).
