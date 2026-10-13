@@ -316,7 +316,10 @@
     "end": "Vous avez joué votre première manche ! Continuer cette partie, ou en recommencer une de zéro ? Vous pouvez relire les règles à tout moment."
   },
   "cheatPanel": {
-    "title": "Panneau de triche",
+    "title": "Panneau de triche"
+  },
+  "history": {
+    "title": "Historique",
     "gameStarted": "Partie démarrée",
     "roundStarted": "Manche {{round}} démarrée",
     "turnStarted": "Tour {{turn}} — {{count}} carte piochée",
