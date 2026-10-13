@@ -179,6 +179,7 @@ Supabase stores its session in AsyncStorage as well.
 
 - **Web:** GitHub Pages at `https://[user].github.io/Deck-Legacy/`, built with `pnpm build` (illustrations generation + `expo export --platform web`) into `dist/`, using the repository variables `API_URL`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`.
 - **Base path:** `/Deck-Legacy` (`expo.experiments.baseUrl` in `app.json`). Do not change it without updating the GitHub Actions workflow and the favicon link of `public/index.html` (the web HTML template: Metro's single output ignores `web.favicon`).
+- **Home screen install:** `public/manifest.json` (standalone display, icons in `public/icons/`) and the `apple-*` tags of `public/index.html` (iOS ignores the manifest icons and uses `public/apple-touch-icon.png`, opaque because iOS fills transparency with black). Metro's single output generates none of them; keep their paths under the base path.
 - **Deep links:** the build copies `dist/index.html` to `dist/404.html` (`scripts/spa-fallback.mjs`), so GitHub Pages serves the app for `/Deck-Legacy/game/…` and expo-router opens the route.
 - **Mobile:** iOS/Android binaries are built with EAS or `npx expo run:ios|android` from `apps/client` (native folders are generated, not committed). The URL scheme is `decklegacy`.
 
