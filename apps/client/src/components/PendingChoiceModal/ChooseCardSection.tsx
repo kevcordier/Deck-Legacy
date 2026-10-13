@@ -1,7 +1,6 @@
 import { type ChoiceSectionProps, buildCardCostResolution } from './shared';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
-import { Grid } from '@components/ui/Grid/Grid';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
@@ -39,7 +38,8 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
   };
 
   return (
-    <Grid minItemWidth={240} maxColumns={4} className="p-2">
+    // Fixed card width: a grid sizes its cells from the modal, which itself shrinks to few cards.
+    <View className="flex-row flex-wrap justify-center gap-4 p-2">
       {choice.choices.map((id, index) => {
         if (typeof id !== 'number') return null;
         const inst = instances[id];
@@ -49,7 +49,7 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
         return (
           <View
             key={`${id}-${index.toString()}`}
-            className="w-full max-w-80 items-stretch gap-2 self-center p-2"
+            className="w-72 max-w-full items-stretch gap-2 p-2"
           >
             <View
               className={`rounded-xl border-2 ${isSelected ? 'border-primary' : 'border-transparent'}`}
@@ -60,6 +60,6 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
           </View>
         );
       })}
-    </Grid>
+    </View>
   );
 }

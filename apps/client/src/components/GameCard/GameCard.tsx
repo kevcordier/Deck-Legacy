@@ -1,11 +1,16 @@
 import { CardAction } from '@components/CardAction/CardAction';
 import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview';
+import {
+  CardStateTooltip,
+  upgradeIconTooltip,
+} from '@components/CardStateTooltip/CardStateTooltip';
 import { CardIllustration } from '@components/CardTilt/CardIllustration';
 import { CardTrack } from '@components/CardTrack/CardTrack';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Glory } from '@components/ui/Glory/Glory';
 import { HoverPressable } from '@components/ui/HoverPressable/HoverPressable';
 import { PassifIcon, UpgradeIcon } from '@components/ui/Icon/icon';
+import { MarkdownText } from '@components/ui/MarkdownText/MarckdownText';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { StickerDisplay } from '@components/ui/StickerDisplay/StickerDisplay';
 import { Tag } from '@components/ui/Tag/Tag';
@@ -27,6 +32,7 @@ import {
   tCardActionLabel,
   tCardGloryLabel,
   tCardName,
+  tCardParchmentText,
   tCardPassiveLabel,
   tCardTag,
 } from '@helpers/cardI18n';
@@ -177,6 +183,7 @@ export function GameCard({
   const illustration = getIllustrationSource(cs.illustration);
   const expansion = expansionOfInstance(instance.id, catalog.expansions);
   const tourId = (id: string) => (tourTarget ? id : undefined);
+  const renderPreview = (i: CardInstance) => <GameCard instance={i} hideStatePreview />;
 
   const emptyGloryBlock =
     (cs.glory?.emptyValues ?? 0) +
@@ -252,11 +259,7 @@ export function GameCard({
               </View>
               {!hideStatePreview && (
                 <TutorialTarget id={tourId('card-state-preview')}>
-                  <CardStatePreview
-                    instance={instance}
-                    defs={defs}
-                    renderCard={i => <GameCard instance={i} hideStatePreview />}
-                  />
+                  <CardStatePreview instance={instance} defs={defs} renderCard={renderPreview} />
                 </TutorialTarget>
               )}
             </View>
@@ -324,6 +327,11 @@ export function GameCard({
             </View>
 
             <View className={`relative z-10 items-center gap-1 ${sizes.body}`}>
+              {isParchment && def && (
+                <View className="w-full">
+                  <MarkdownText text={tCardParchmentText(t, def.id)} ink compact />
+                </View>
+              )}
               {(cs.glory?.condition ?? cs.glory?.valuePerElement) && (
                 <View className={sizes.actionBox}>
                   <Text className={sizes.actionText}>
@@ -347,7 +355,13 @@ export function GameCard({
                     key={action.id}
                     instance={instance}
                     action={action}
-                    actionLabel={tCardActionLabel(t, action.id, instance.cumulated)}
+                    actionLabel={tCardActionLabel(
+                      t,
+                      action.id,
+                      instance.cumulated,
+                      // Inside the action button: a tap keeps triggering the action.
+                      upgradeIconTooltip(instance.id, action.actionEffects, renderPreview, false),
+                    )}
                     disabled={!canActivate}
                     size={size}
                     wide={width >= WIDE_CARD_MIN_WIDTH}
@@ -361,6 +375,7 @@ export function GameCard({
                   instance={instance}
                   track={cs.track}
                   validatedSteps={instance.trackProgress}
+                  renderCard={renderPreview}
                   wide={size === 'lg' || width >= WIDE_CARD_MIN_WIDTH}
                 />
               )}
@@ -420,10 +435,24 @@ export function GameCard({
                         className={`${sizes.actionBox} active:bg-base-ink/20 ${disabled ? 'opacity-50' : ''}`}
                       >
                         <Text className={sizes.actionText}>
-                          <UpgradeIcon className="size-4" />{' '}
-                          {targetState
-                            ? tCardName(t, targetState.name || '')
-                            : t('card.state', { id: upg.upgradeTo })}
+                          <CardStateTooltip
+                            instanceId={instance.id}
+                            stateId={upg.upgradeTo}
+                            renderCard={renderPreview}
+                            openOnTap={false}
+                            onTriggerPress={
+                              disabled
+                                ? undefined
+                                : withCallback(() => resolveUpgrade(instance.id, upg.upgradeTo))
+                            }
+                          >
+                            <Text className={sizes.actionText}>
+                              <UpgradeIcon className="size-4" />{' '}
+                              {targetState
+                                ? tCardName(t, targetState.name || '')
+                                : t('card.state', { id: upg.upgradeTo })}
+                            </Text>
+                          </CardStateTooltip>
                           {Boolean(
                             effectiveUpgradeCost.resources?.[0] ?? discardLabel ?? destroyLabel,
                           ) && (

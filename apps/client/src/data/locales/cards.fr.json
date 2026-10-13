@@ -30,7 +30,6 @@
     "14-4-1": "Défausser la carte au sommet de votre pioche.",
     "15-1-1": "Stop",
     "16-1-1": "Ajouter un autocollant {{gold}} à un terrain",
-    "16-1-2": "Booster la production d'un bâtiment",
     "17-1-1": "Dépensez l'{{weapon}} correspondant pour avancer d'une case.",
     "17-2-1": "Dépensez l'{{weapon}} correspondant pour avancer d'une case.",
     "18-1-1": "Dépensez l'{{gold}} correspondant pour avancer d'une case.",
@@ -255,7 +254,6 @@
     "118-3-2": "Quand amélioré, écrivez \"20\" dans un {{glory}} vide de cette étape.",
     "118-4-1": "Réinitialisez cette carte.",
     "119-1-1": "Fin de manche : {{upgrade}}.",
-    "119-1-2": "Fin de manche : {{upgrade}}.",
     "119-2-1": "Fin de tour : Vous pouvez faire rester 1 carte en jeu.",
     "119-2-2": "Fin de manche : {{upgrade}}.",
     "119-3-1": "Fin de manche : {{upgrade}}.",
@@ -301,6 +299,7 @@
     "117-1": "* Vaut -5 {{glory}} pour chaque étape non marquée."
   },
   "effect": {
+    "16-1-1_2": "Booster la production d'un bâtiment",
     "19-1-2_1": "Fin de la manche : Vous pouvez marquer 1 étape.",
     "19-2-2_1": "Fin de la manche : Vous pouvez marquer 1 étape.",
     "22-1-1_1": "Sélectionnez 2 cartes parmi les 4 prochaines cartes à découvrir. Détruisez les 2 autres cartes.",

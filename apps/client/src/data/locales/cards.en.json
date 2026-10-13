@@ -30,7 +30,6 @@
     "14-4-1": "Discard the top card of your deck.",
     "15-1-1": "Stop",
     "16-1-1": "Add a {{gold}} sticker to a land",
-    "16-1-2": "Boost a building's production",
     "17-1-1": "Spend the corresponding {{weapon}} to advance 1 track.",
     "17-2-1": "Spend the corresponding {{weapon}} to advance 1 track.",
     "18-1-1": "Spend the corresponding {{gold}} to advance 1 track.",
@@ -255,7 +254,6 @@
     "118-3-2": "When upgraded, write \"20\" in an empty {{glory}} on that stage.",
     "118-4-1": "Reset this card.",
     "119-1-1": "End of round: {{upgrade}}.",
-    "119-1-2": "End of round: {{upgrade}}.",
     "119-2-1": "End of turn: You may make 1 card stay in play.",
     "119-2-2": "End of round: {{upgrade}}.",
     "119-3-1": "End of round: {{upgrade}}.",
@@ -301,6 +299,7 @@
     "117-1": "* Worth -5 {{glory}} for each unmarked step."
   },
   "effect": {
+    "16-1-1_2": "Boost a building's production",
     "19-1-2_1": "End of round: You may mark 1 step.",
     "19-2-2_1": "End of round: You may mark 1 step.",
     "22-1-1_1": "Select 2 cards from the next 4 cards to discover. Destroy the other 2 cards.",

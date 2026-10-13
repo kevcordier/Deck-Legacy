@@ -54,8 +54,12 @@ export function getResMeta(key: string) {
  * Replaces {{resource}} tokens in a text with the corresponding SVG icon.
  * Example: "Gain 3 {{wood}}, then upgrade." → "Gain 3 [wood icon], then upgrade."
  * The result must be rendered inside a `Text` (icons are inline views).
+ * `wrapIcon` can wrap an icon, e.g. in a tooltip.
  */
-export function renderTextWithIcons(text: string): React.ReactNode {
+export function renderTextWithIcons(
+  text: string,
+  wrapIcon?: (key: string, icon: React.ReactNode) => React.ReactNode,
+): React.ReactNode {
   const parts: React.ReactNode[] = [];
   let last = 0;
   let match: RegExpExecArray | null;
@@ -65,12 +69,9 @@ export function renderTextWithIcons(text: string): React.ReactNode {
     if (match.index > last) parts.push(text.slice(last, match.index));
     const key = match[1];
     const meta = getResMeta(key);
+    const icon = meta.icon ? <meta.icon color={meta.color} className="size-4" alt={key} /> : key;
     parts.push(
-      meta.icon ? (
-        <meta.icon key={match.index} color={meta.color} className="size-4" alt={key} />
-      ) : (
-        key
-      ),
+      <React.Fragment key={match.index}>{wrapIcon ? wrapIcon(key, icon) : icon}</React.Fragment>,
     );
     last = match.index + match[0].length;
   }

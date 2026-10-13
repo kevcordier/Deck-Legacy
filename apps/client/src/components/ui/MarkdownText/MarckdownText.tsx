@@ -78,39 +78,42 @@ type MarkdownTextProps = {
   readonly text: string;
   /** Forces the (light) card ink color, for text displayed on a card background. */
   readonly ink?: boolean;
+  /** Much smaller text and spacing (e.g. a parchment text on a card). */
+  readonly compact?: boolean;
 };
 
-export function MarkdownText({ text, ink }: MarkdownTextProps) {
+export function MarkdownText({ text, ink, compact = false }: MarkdownTextProps) {
   const colors = useThemeColors();
   const textColor = ink ? IconColors.baseInk : colors.ink;
   const titleColor = ink ? IconColors.baseInk : colors.primary;
+  const k = compact ? 0.65 : 1;
 
   const styles = useMemo<MarkedStyles>(
     () => ({
-      text: { fontFamily: 'EBGaramond_400Regular', fontSize: 16, color: textColor },
-      paragraph: { marginTop: 8 },
+      text: { fontFamily: 'EBGaramond_400Regular', fontSize: 16 * k, color: textColor },
+      paragraph: { marginTop: 8 * k },
       strong: { fontFamily: 'EBGaramond_700Bold', color: textColor },
       em: { fontFamily: 'EBGaramond_400Regular_Italic', color: textColor },
       h2: {
         fontFamily: 'CinzelDecorative_700Bold',
-        fontSize: 20,
-        letterSpacing: 2,
+        fontSize: 20 * k,
+        letterSpacing: 2 * k,
         color: titleColor,
-        marginTop: 12,
-        marginBottom: 4,
+        marginTop: 12 * k,
+        marginBottom: 4 * k,
       },
       h3: {
         fontFamily: 'EBGaramond_700Bold',
-        fontSize: 18,
+        fontSize: 18 * k,
         color: titleColor,
-        marginTop: 12,
-        marginBottom: 4,
+        marginTop: 12 * k,
+        marginBottom: 4 * k,
       },
-      li: { fontFamily: 'EBGaramond_400Regular', fontSize: 16, color: textColor },
+      li: { fontFamily: 'EBGaramond_400Regular', fontSize: 16 * k, color: textColor },
       table: { borderColor: colors.border, borderWidth: 1, marginTop: 8 },
-      tableCell: { padding: 8 },
+      tableCell: { padding: 8 * k },
     }),
-    [colors.border, textColor, titleColor],
+    [colors.border, textColor, titleColor, k],
   );
 
   const renderer = useMemo(() => new GameRenderer({ selectable: false }), []);
