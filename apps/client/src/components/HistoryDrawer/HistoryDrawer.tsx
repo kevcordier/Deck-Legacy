@@ -1,3 +1,5 @@
+import { CardStateTooltip } from '@components/CardStateTooltip/CardStateTooltip';
+import { GameCard } from '@components/GameCard/GameCard';
 import { Divider } from '@components/ui/Divider/Divider';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
@@ -9,6 +11,7 @@ import type {
   CardActionEvent,
   CardProducedEvent,
   GameEvent,
+  ParchmentCardDiscoveredEvent,
   RoundEndedEvent,
   RoundStartedEvent,
   TurnStartedEvent,
@@ -17,8 +20,27 @@ import type {
 import { tCardName } from '@helpers/cardI18n';
 import { useGame } from '@hooks/useGame';
 import type React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { View } from 'react-native';
+
+type CardNameProps = {
+  readonly instanceId: number;
+  readonly stateId?: number;
+  /** The translated card name, injected by `Trans`. */
+  readonly children?: React.ReactNode;
+};
+
+function CardName({ instanceId, stateId, children }: CardNameProps) {
+  return (
+    <CardStateTooltip
+      instanceId={instanceId}
+      stateId={stateId}
+      renderCard={i => <GameCard instance={i} hideStatePreview />}
+    >
+      <Text className="text-xs underline">{children}</Text>
+    </CardStateTooltip>
+  );
+}
 
 type EventRowProps = {
   readonly event: GameEvent;
@@ -29,10 +51,18 @@ type EventRowProps = {
 function EventRow({ event, gameState, defs }: EventRowProps) {
   const { t } = useTranslation();
 
-  const cardName = (instanceId: number): React.ReactNode => {
+  /** `key` wraps the card name in `<card>`, which previews the card on hover / tap. */
+  const cardLabel = (key: string, instanceId: number, stateId?: number): React.ReactNode => {
     const inst = gameState.instances[instanceId];
-    const cs = getActiveState(inst, defs);
-    return tCardName(t, cs.name || '');
+    const name = inst ? tCardName(t, getActiveState(inst, defs).name || '') : '';
+    return (
+      <Trans
+        t={t}
+        i18nKey={key}
+        values={{ card: name }}
+        components={{ card: <CardName instanceId={instanceId} stateId={stateId} /> }}
+      />
+    );
   };
 
   const time = new Date(event.timestamp).toLocaleTimeString([], {
@@ -84,9 +114,7 @@ function EventRow({ event, gameState, defs }: EventRowProps) {
       break;
     case GameEventType.CARD_PRODUCED: {
       const e = event as CardProducedEvent;
-      label = t('history.cardProduced', {
-        card: e.cardInstanceId ? cardName(e.cardInstanceId) : '',
-      });
+      label = cardLabel('history.cardProduced', e.cardInstanceId);
       break;
     }
     case GameEventType.ADVANCE: {
@@ -96,17 +124,19 @@ function EventRow({ event, gameState, defs }: EventRowProps) {
     }
     case GameEventType.UPGRADE_CARD: {
       const e = event as UpgradeCardEvent;
-      label = t('history.upgradeCard', {
-        card: e.cardInstanceId ? cardName(e.cardInstanceId) : '',
-      });
+      label = cardLabel('history.upgradeCard', e.cardInstanceId, e.stateId);
       color = 'text-base-primary';
       break;
     }
     case GameEventType.CARD_ACTION: {
       const e = event as CardActionEvent;
-      label = t('history.cardAction', {
-        card: e.sourceInstanceId ? cardName(e.sourceInstanceId) : '',
-      });
+      label = cardLabel('history.cardAction', e.sourceInstanceId);
+      break;
+    }
+    case GameEventType.PARCHMENT_CARD_DISCOVERED: {
+      const e = event as ParchmentCardDiscoveredEvent;
+      label = cardLabel('history.parchmentCardDiscovered', e.cardInstanceId);
+      color = 'text-base-primary';
       break;
     }
     case GameEventType.SKIP_TRIGGER:

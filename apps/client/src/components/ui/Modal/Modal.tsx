@@ -166,7 +166,12 @@ export function Modal({
         onRequestClose={onClose}
       >
         <ModalDepthContext value={depth}>
-          <View className="flex-1 items-center justify-center bg-black/60">
+          <View
+            className="flex-1 items-center justify-center bg-black/60"
+            // On web, the anchor's onLayout only fires on a size change: it moves without resizing
+            // when the window does, while this full-screen view resizes.
+            onLayout={onPeekToggle ? measurePeekAnchor : undefined}
+          >
             <Pressable
               className="absolute inset-0"
               onPress={onClose}

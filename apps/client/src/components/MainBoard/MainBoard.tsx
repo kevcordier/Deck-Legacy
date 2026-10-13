@@ -1,4 +1,4 @@
-import { type BoardZoomLevel, CardRow } from '@components/CardRow/CardRow';
+import { type BoardZoomLevel, CardRow, RaiseOnDrag } from '@components/CardRow/CardRow';
 import { CardViewerModal } from '@components/CardViewerModal/CardViewerModal';
 import { GameCard } from '@components/GameCard/GameCard';
 import { MiniGameCard } from '@components/MiniGameCard/MiniGameCard';
@@ -228,15 +228,17 @@ export function MainBoard() {
       )}
 
       {gameState.phase === Phase.PLAYING && gameState.board.length > 0 && (
-        <TutorialTarget id="board">
-          <Section
-            title={t('sections.tableau')}
-            subtitle={`${t('cardCount', { count: gameState.board.length })}`}
-            action={zoomControls}
-          >
-            <CardRow cardIds={gameState.board} zoom={zoom} />
-          </Section>
-        </TutorialTarget>
+        <RaiseOnDrag>
+          <TutorialTarget id="board">
+            <Section
+              title={t('sections.tableau')}
+              subtitle={`${t('cardCount', { count: gameState.board.length })}`}
+              action={zoomControls}
+            >
+              <CardRow cardIds={gameState.board} zoom={zoom} />
+            </Section>
+          </TutorialTarget>
+        </RaiseOnDrag>
       )}
 
       {gameState.phase === Phase.PLAYING && gameState.board.length === 0 && (
@@ -251,18 +253,22 @@ export function MainBoard() {
       )}
 
       {isBoardPhase && permanents.length > 0 && (
-        <Section
-          title={t('sections.permanents')}
-          subtitle={t('cardCount', { count: permanents.length })}
-        >
-          <CardRow cardIds={permanents} zoom={zoom} />
-        </Section>
+        <RaiseOnDrag>
+          <Section
+            title={t('sections.permanents')}
+            subtitle={t('cardCount', { count: permanents.length })}
+          >
+            <CardRow cardIds={permanents} zoom={zoom} />
+          </Section>
+        </RaiseOnDrag>
       )}
 
       {isBoardPhase && goals.length > 0 && (
-        <Section title={t('sections.goals')} subtitle={t('cardCount', { count: goals.length })}>
-          <CardRow cardIds={goals} zoom={zoom} />
-        </Section>
+        <RaiseOnDrag>
+          <Section title={t('sections.goals')} subtitle={t('cardCount', { count: goals.length })}>
+            <CardRow cardIds={goals} zoom={zoom} />
+          </Section>
+        </RaiseOnDrag>
       )}
 
       {[Phase.PLAYING, Phase.TURN_END, Phase.ROUND_END].includes(gameState.phase) &&

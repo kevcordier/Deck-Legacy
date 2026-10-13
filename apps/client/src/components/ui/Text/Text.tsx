@@ -37,6 +37,18 @@ export function TextStyle({ children, className = '' }: TextStyleProps) {
   return <TextDefaultsContext value={value}>{children}</TextDefaultsContext>;
 }
 
+/**
+ * Restarts text inheritance from the app defaults, for content rendered away from its React
+ * parent (e.g. a tooltip panel opened from inside a `Text`).
+ */
+export function TextRoot({ children }: { readonly children: ReactNode }) {
+  return (
+    <TextDefaultsContext value={ROOT_DEFAULTS}>
+      <InsideTextContext value={false}>{children}</InsideTextContext>
+    </TextDefaultsContext>
+  );
+}
+
 export type TextProps = RNTextProps & {
   readonly className?: string;
 };

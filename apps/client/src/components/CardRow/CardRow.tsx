@@ -20,7 +20,16 @@ import type {
 import { mergeOrder } from '@helpers/mergeOrder';
 import { useGame } from '@hooks/useGame';
 import { useIsDesktop } from '@hooks/useIsDesktop';
-import { type ReactNode, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type ReactNode,
+  createContext,
+  use,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { type LayoutChangeEvent, View } from 'react-native';
 import Animated, {
@@ -50,6 +59,23 @@ const MIN_MINI_CARD_WIDTH = 160;
 /** Height / width of a card. */
 const CARD_ASPECT_RATIO = 5 / 3;
 const HOVERED_CELL_STYLE = { zIndex: 10 };
+const RAISED_STYLE = { zIndex: 50 };
+
+const RaiseContext = createContext<(raised: boolean) => void>(() => {});
+
+/**
+ * Keeps its content above the next sections while one of its cards is dragged: every view is a
+ * stacking context (react-native-web gives views `zIndex: 0`), so the dragged card's own z-index
+ * only counts inside its grid.
+ */
+export function RaiseOnDrag({ children }: { readonly children: ReactNode }) {
+  const [raised, setRaised] = useState(false);
+  return (
+    <RaiseContext value={setRaised}>
+      <View style={raised ? RAISED_STYLE : undefined}>{children}</View>
+    </RaiseContext>
+  );
+}
 /** Drawn cards fly from the draw pile to their cell, one after the other: kept short, it runs every turn. */
 const DRAW_DURATION_MS = 350;
 // CSS `ease-in`.
@@ -270,21 +296,30 @@ export function CardRow({ cardIds, zoom = 1 }: CardRowProps) {
     [columns, itemWidth, itemHeight, gap],
   );
 
+  const raise = use(RaiseContext);
   const releaseClickRef = useRef<(() => void) | null>(null);
-  const handleDragStart = useCallback((id: string) => {
-    setDraggedId(Number(id));
-    // The dragged card is lifted by the library: its hover no longer raises its cell.
-    setHoveredId(null);
-    releaseClickRef.current = suppressDropClick();
-  }, []);
-  const handleDrop = useCallback((orderedIds: string[]) => {
-    // Gesture Handler also finalizes a plain tap, which never started a drag.
-    if (!releaseClickRef.current) return;
-    setDraggedId(null);
-    releaseClickRef.current?.();
-    releaseClickRef.current = null;
-    setOrder(orderedIds.map(Number));
-  }, []);
+  const handleDragStart = useCallback(
+    (id: string) => {
+      setDraggedId(Number(id));
+      raise(true);
+      // The dragged card is lifted by the library: its hover no longer raises its cell.
+      setHoveredId(null);
+      releaseClickRef.current = suppressDropClick();
+    },
+    [raise],
+  );
+  const handleDrop = useCallback(
+    (orderedIds: string[]) => {
+      // Gesture Handler also finalizes a plain tap, which never started a drag.
+      if (!releaseClickRef.current) return;
+      setDraggedId(null);
+      raise(false);
+      releaseClickRef.current?.();
+      releaseClickRef.current = null;
+      setOrder(orderedIds.map(Number));
+    },
+    [raise],
+  );
 
   // Leaving a card must not clear the hover a neighbour has just taken.
   const hoverFor = (cardId: number) => (hovered: boolean) =>

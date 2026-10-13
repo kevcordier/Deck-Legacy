@@ -1,3 +1,8 @@
+import {
+  CardStateTooltip,
+  selfUpgradeStateId,
+  upgradeIconTooltip,
+} from '@components/CardStateTooltip/CardStateTooltip';
 import { Glory } from '@components/ui/Glory/Glory';
 import { UpgradeIcon } from '@components/ui/Icon/icon';
 import { Text } from '@components/ui/Text/Text';
@@ -21,6 +26,8 @@ interface CardTrackProps {
   readonly validatedSteps: number[];
   /** Roomier layout (large or wide cards). */
   readonly wide?: boolean;
+  /** Renders the card previewed by the upgrade / discovery tooltips (none without it). */
+  readonly renderCard?: (instance: CardInstance) => React.ReactNode;
 }
 
 export function CardTrackContent({
@@ -30,6 +37,7 @@ export function CardTrackContent({
   step,
   isValidated,
   wide = false,
+  renderCard,
 }: {
   t: TFunction;
   instance: CardInstance;
@@ -37,6 +45,7 @@ export function CardTrackContent({
   step: StepDef;
   isValidated: boolean;
   wide?: boolean;
+  renderCard?: (instance: CardInstance) => React.ReactNode;
 }): React.ReactNode[] {
   const contents: React.ReactNode[] = [];
   const actions = step.effects ?? [];
@@ -59,15 +68,32 @@ export function CardTrackContent({
 
   const getActionContent = (action: ActionEffect): JSX.Element | null => {
     if (action.type === ActionEffectType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
-      return (
-        <Text className="text-xs" key={action.id}>
-          #{action.cards.ids[0]}
-        </Text>
+      const discoveredId = action.cards.ids[0];
+      const label = <Text className="text-xs">#{discoveredId}</Text>;
+      return renderCard ? (
+        <CardStateTooltip key={action.id} instanceId={discoveredId} renderCard={renderCard}>
+          {label}
+        </CardStateTooltip>
+      ) : (
+        <React.Fragment key={action.id}>{label}</React.Fragment>
       );
     }
 
     if (action.type === ActionEffectType.UPGRADE_CARD) {
-      return <UpgradeIcon key={action.id} className="size-3" />;
+      const icon = <UpgradeIcon className="size-3" />;
+      const targetStateId = selfUpgradeStateId([action]);
+      return renderCard && targetStateId !== undefined ? (
+        <CardStateTooltip
+          key={action.id}
+          instanceId={instance.id}
+          stateId={targetStateId}
+          renderCard={renderCard}
+        >
+          {icon}
+        </CardStateTooltip>
+      ) : (
+        <React.Fragment key={action.id}>{icon}</React.Fragment>
+      );
     }
 
     if (action.resources) {
@@ -107,7 +133,13 @@ export function CardTrackContent({
         key={step.id}
         className={`font-body-bold leading-none ${wide ? 'text-sm' : 'text-[9px]'}`}
       >
-        {tCardTrackAction(t, instance.cardId, instance.stateId, step.id)}
+        {tCardTrackAction(
+          t,
+          instance.cardId,
+          instance.stateId,
+          step.id,
+          renderCard && upgradeIconTooltip(instance.id, step.effects, renderCard),
+        )}
       </Text>,
     );
   } else {
@@ -125,6 +157,7 @@ interface CardTrackContentProps {
   readonly step: StepDef;
   readonly isValidated: boolean;
   readonly wide?: boolean;
+  readonly renderCard?: (instance: CardInstance) => React.ReactNode;
 }
 
 export function CardTrackStep({
@@ -133,9 +166,10 @@ export function CardTrackStep({
   instance,
   isValidated,
   wide = false,
+  renderCard,
 }: CardTrackContentProps) {
   const { t } = useTranslation();
-  const contents = CardTrackContent({ t, instance, track, step, isValidated, wide });
+  const contents = CardTrackContent({ t, instance, track, step, isValidated, wide, renderCard });
   let cost: React.ReactNode[] = [];
 
   if (step.cost?.resources) {
@@ -184,7 +218,13 @@ export function CardTrackStep({
   );
 }
 
-export function CardTrack({ instance, track, validatedSteps, wide = false }: CardTrackProps) {
+export function CardTrack({
+  instance,
+  track,
+  validatedSteps,
+  wide = false,
+  renderCard,
+}: CardTrackProps) {
   let layoutClass = 'gap-0.5';
   if (!track.vertical) layoutClass = wide ? 'flex-row gap-1' : 'flex-row gap-0';
 
@@ -198,6 +238,7 @@ export function CardTrack({ instance, track, validatedSteps, wide = false }: Car
           instance={instance}
           wide={wide}
           isValidated={validatedSteps.includes(step.id)}
+          renderCard={renderCard}
         />
       ))}
     </View>

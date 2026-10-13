@@ -1,7 +1,6 @@
 import { type ChoiceSectionProps } from './shared';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
-import { Grid } from '@components/ui/Grid/Grid';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { Text } from '@components/ui/Text/Text';
 import { getPickNumbers } from '@deck-legacy/engine/application/effectResolver';
@@ -24,7 +23,8 @@ export function ChooseStateSection(props: Readonly<ChoiceSectionProps>) {
   };
 
   return (
-    <Grid minItemWidth={240} maxColumns={4} className="p-2">
+    // Same fixed card width as ChooseCardSection.
+    <View className="flex-row flex-wrap justify-center gap-4 p-2">
       {choice.choices.map(stateId => {
         if (typeof stateId !== 'number') return null;
         const state = cardDef?.states.find(candidate => candidate.id === stateId);
@@ -52,7 +52,7 @@ export function ChooseStateSection(props: Readonly<ChoiceSectionProps>) {
           destroyLabel.length > 0;
         if (!cardDef || !state) return null;
         return (
-          <View key={stateId} className="max-w-80 items-stretch gap-2 p-2">
+          <View key={stateId} className="w-72 max-w-full items-stretch gap-2 p-2">
             {hasCost && (
               <View className="flex-row flex-wrap items-center justify-center gap-1">
                 {!!upgrade?.cost.resources?.length && (
@@ -98,6 +98,6 @@ export function ChooseStateSection(props: Readonly<ChoiceSectionProps>) {
           </View>
         );
       })}
-    </Grid>
+    </View>
   );
 }

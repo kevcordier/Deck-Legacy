@@ -26,6 +26,7 @@ export function tCardActionLabel(
   t: TFunction,
   actionId: string,
   accumulated?: number,
+  wrapIcon?: Parameters<typeof renderTextWithIcons>[1],
 ): React.ReactNode {
   return renderTextWithIcons(
     t(`actions.${actionId}`, {
@@ -33,6 +34,7 @@ export function tCardActionLabel(
       accumulated,
       ...ICON_PASSTHROUGH,
     }),
+    wrapIcon,
   );
 }
 
@@ -78,11 +80,13 @@ export function tCardTrackAction(
   cardId = 0,
   stateId = 0,
   idx: string | number = '0',
+  wrapIcon?: Parameters<typeof renderTextWithIcons>[1],
 ): React.ReactNode {
   return renderTextWithIcons(
     t(`tracks.${cardId}-${stateId}-${idx}`, {
       ns: 'cards',
     }),
+    wrapIcon,
   );
 }
 
