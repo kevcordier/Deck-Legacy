@@ -37,7 +37,13 @@ export class ExpansionSelectedStrategy implements GameEventStrategy {
       turn: 0,
       instances: newInstances,
       stickerStock: addStickers(gameState.stickerStock, e.addedStickers),
-      discoveryPile: [...new Set([...gameState.discoveryPile, ...e.deckEntries.map(d => d.id)])],
+      discoveryPile: [
+        ...new Set(
+          e.expansionDiscoveryFirst
+            ? [...e.deckEntries.map(d => d.id), ...gameState.discoveryPile]
+            : [...gameState.discoveryPile, ...e.deckEntries.map(d => d.id)],
+        ),
+      ],
       activeExpansion: e.expansionName,
       expansionMaxRound: e.expansionMaxRound,
       parameterOverrides: e.parameterOverrides ?? {},

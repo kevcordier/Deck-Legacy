@@ -28,11 +28,13 @@ import {
 import { fixResources, mergeResources } from './resources';
 
 export {
+  cardShouldStayInPlay,
   evaluateCondition,
   getActiveState,
   getAffectedCardsByBoardEffects,
   getEffectiveGlory,
   getEffectiveProductions,
+  getTotalProduction,
   getTotalResourceProduction,
 } from './cardSelector';
 
@@ -140,23 +142,6 @@ export function getSpendableResources(gameState: GameState, forUpgrade = false):
   return Object.fromEntries(
     Object.entries(gameState.resources).filter(([key]) => !reserved.has(key)),
   );
-}
-
-export function getTotalProduction(
-  instanceId: number,
-  gameState: GameState,
-  defs: Record<number, CardDef>,
-  stickerDefs: Record<number, Sticker>,
-): number {
-  const instance = gameState.instances[instanceId];
-  if (!instance) return 0;
-  const state = getActiveState(instance, defs);
-  const productions = (state.productions as Resources[]) ?? [{}];
-  return productions.reduce((maxTotal, base) => {
-    const effective = getEffectiveProductions(base, gameState, defs, instance, stickerDefs, false);
-    const total = Object.values(effective).reduce<number>((sum, v) => sum + (v ?? 0), 0);
-    return Math.max(maxTotal, total);
-  }, 0);
 }
 
 function applyReplacementOnProduction(
@@ -460,61 +445,6 @@ export function getInstancesTriggerEffects(
   effects.push(...getBoardEffectTriggersAction(gameState, defs, stickerDefs, effect));
 
   return effects;
-}
-
-// Sticker ID for the 'stays_in_play' effect (see src/data/stickers.ts)
-const STAYS_IN_PLAY_STICKER_ID = 7;
-
-export function cardShouldStayInPlay(
-  instanceId: number,
-  gameState: GameState,
-  cardDefs: Record<number, CardDef>,
-): boolean {
-  const instance = gameState.instances[instanceId];
-  if (!instance) return false;
-  const def = cardDefs[instance.cardId];
-  if (getActiveState(instance, cardDefs)?.permanent) return true;
-  const state = def?.states.find(s => s.id === instance.stateId);
-  if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
-
-  const stayInPlayTargets = new Set<number>(
-    Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) =>
-      passives
-        .filter(passive => passive.type === PassiveType.STAY_IN_PLAY)
-        .flatMap(passive => {
-          if (!passive.cards) {
-            return [Number(sourceId)];
-          }
-          return cardSelector(passive.cards, Number(sourceId), gameState, cardDefs, {});
-        }),
-    ),
-  );
-
-  if (stayInPlayTargets.has(instanceId)) return true;
-
-  if (
-    Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))
-      .flat()
-      .includes(instanceId)
-  )
-    return true;
-  // If the card is blocked by a card that also has STAY_IN_PLAY, it should stay in play
-  const blockerCard = Object.entries(
-    getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK),
-  ).find(([_, ids]) => ids.includes(instanceId))?.[0];
-  if (blockerCard && stayInPlayTargets.has(Number(blockerCard))) {
-    return true;
-  }
-  if (
-    blockerCard &&
-    Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))
-      .flat()
-      .includes(Number(blockerCard))
-  ) {
-    return true;
-  }
-  const stickers = instance.stickers[instance.stateId] ?? [];
-  return stickers.includes(STAYS_IN_PLAY_STICKER_ID);
 }
 
 export function cardIsBlocked(instanceId: number, gameState: GameState): boolean {

@@ -338,6 +338,7 @@ export class GameAggregate {
       onStartDiscoverIds: expansion.onStart?.discover?.ids ?? [],
       addedStickers: expansion.stickers,
       purgeFocus: expansion.purge.focus,
+      expansionDiscoveryFirst: true,
     };
 
     this.apply(event);

@@ -2,6 +2,8 @@ import { makeInstance, makeState } from './fixtures';
 import { CardActionAggregate } from '@engine/application/aggregates/CardActionAggregate';
 import { GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import { AddResourceStrategy } from '@engine/application/cardAction/AddResourceStrategy';
+import { AddStickerStrategy } from '@engine/application/cardAction/AddStickerStrategy';
+import { RemoveResourceOnCardStrategy } from '@engine/application/cardAction/RemoveResourceOnCardStrategy';
 import {
   canAffordCost,
   evaluateCondition,
@@ -11,11 +13,14 @@ import {
   getSpendableResources,
   keepGainableResources,
 } from '@engine/application/cardHelpers';
+import { cardSelector } from '@engine/application/cardSelector';
 import { resolveCost } from '@engine/application/costResolver';
-import { resolveActionEffect } from '@engine/application/effectResolver';
+import { countValuePerElement, resolveActionEffect } from '@engine/application/effectResolver';
+import { ExpansionSelectedStrategy } from '@engine/application/gameEvent/ExpansionSelectedStrategy';
 import {
   ActionEffectType,
   CardTag,
+  GameEventType,
   PassiveType,
   Phase,
   ResourceType,
@@ -23,7 +28,14 @@ import {
   Trigger,
 } from '@engine/domain/enums';
 import { CostResolutionError } from '@engine/domain/errors/CostResolutionError';
-import type { CardAction, CardDef, GameState, Passive } from '@engine/domain/types';
+import type {
+  CardAction,
+  CardDef,
+  ExpansionSelectedEvent,
+  GameState,
+  Passive,
+} from '@engine/domain/types';
+import { CardPassives } from '@engine/domain/types/effects';
 import { describe, expect, it } from 'vitest';
 
 const onlyWeapons: Passive = {
@@ -375,5 +387,179 @@ describe('purge focus', () => {
   it('offers every card when the batch has no focused card', () => {
     const agg = makeAggregate([1, 2, 4, 5], 2);
     expect(agg.getPurgeCandidates()).toEqual([1, 2]);
+  });
+});
+
+// ─── Ridding the Woods, cards 11-29 ───────────────────────────────────────────
+
+describe('accumulation condition', () => {
+  it('compares the accumulation of the card', () => {
+    const gs = makeState({ instances: { 1: makeInstance({ cumulated: 2 }) } });
+    expect(evaluateCondition({ type: 'accumulation', min: 2 }, gs, 1, {}, {})).toBe(true);
+    expect(evaluateCondition({ type: 'accumulation', max: 1 }, gs, 1, {}, {})).toBe(false);
+    expect(evaluateCondition({ type: 'accumulation', max: 0 }, makeState(), 9, {}, {})).toBe(true);
+  });
+});
+
+describe('ownProduction count', () => {
+  it('counts the production of the card itself', () => {
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'Wagon', states: [{ id: 1, name: 'Wagon', productions: [{ gold: 9 }] }] },
+    };
+    const gs = makeState({
+      instances: {
+        1: makeInstance({
+          removedResourcesByState: { 1: { production: [ResourceType.GOLD, ResourceType.GOLD] } },
+        }),
+      },
+    });
+    expect(countValuePerElement({ amount: 5, ownProduction: true }, gs, 1, defs, {})).toBe(7);
+  });
+});
+
+describe('STAYING scope', () => {
+  it('selects the cards in play that stay in play', () => {
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'Plain', states: [{ id: 1, name: 'Plain' }] },
+      2: {
+        id: 2,
+        name: 'Staying',
+        states: [{ id: 1, name: 'Staying', passives: [CardPassives[PassiveType.STAY_IN_PLAY]] }],
+      },
+    };
+    const gs = makeState({
+      board: [1, 2],
+      instances: { 1: makeInstance({ id: 1 }), 2: makeInstance({ id: 2, cardId: 2 }) },
+    });
+    expect(
+      cardSelector({ scope: [TargetScope.BOARD, TargetScope.STAYING] }, 9, gs, defs, {}),
+    ).toEqual([2]);
+  });
+});
+
+describe('effects on several cards', () => {
+  it('adds a sticker to each chosen card', () => {
+    const gs = makeState({
+      stickerStock: { 6: 3 },
+      instances: { 1: makeInstance({ id: 1 }), 2: makeInstance({ id: 2 }) },
+    });
+    const result = new AddStickerStrategy().apply(gs, {
+      id: '9-1',
+      type: ActionEffectType.ADD_STICKER,
+      sourceInstanceId: 9,
+      instanceIds: [1, 2],
+      stickerIds: [6],
+    });
+    expect(result.instances[1].stickers[1]).toEqual([6]);
+    expect(result.instances[2].stickers[1]).toEqual([6]);
+    expect(result.stickerStock[6]).toBe(1);
+  });
+
+  it('crosses out a production value times', () => {
+    const gs = makeState({ instances: { 1: makeInstance() } });
+    const result = new RemoveResourceOnCardStrategy().apply(gs, {
+      id: '1-1',
+      type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+      sourceInstanceId: 1,
+      instanceIds: [1],
+      resources: { gold: 1 },
+      resourceScopes: ['production'],
+      value: 2,
+    });
+    expect(result.instances[1].removedResourcesByState?.[1]?.production).toEqual(['gold', 'gold']);
+  });
+});
+
+describe('condition on a regular action', () => {
+  const defs: Record<number, CardDef> = {
+    1: { id: 1, name: 'Trap', states: [{ id: 1, name: 'Trap' }] },
+    2: { id: 2, name: 'Lady', states: [{ id: 1, name: 'Lady', tags: [CardTag.LADY] }] },
+  };
+  const action: CardAction = {
+    id: '1-1-1',
+    condition: {
+      type: 'cardCount',
+      cards: { scope: [TargetScope.BOARD], tags: [CardTag.LADY] },
+      min: 1,
+    },
+    actionEffects: [{ id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { weapon: 2 } }],
+  };
+  const run = (board: number[]) => {
+    const gs = makeState({
+      board,
+      instances: { 1: makeInstance({ id: 1 }), 2: makeInstance({ id: 2, cardId: 2 }) },
+    });
+    const agg = new CardActionAggregate(defs, {}, gs, gs.instances[1], action);
+    agg.resolveAction();
+    return agg;
+  };
+
+  it('is cancelled when the condition fails', () => {
+    expect(run([1]).isCancelled()).toBe(true);
+    expect(run([1, 2]).getGameState().resources).toEqual({ weapon: 2 });
+  });
+});
+
+describe('REQUIRES_IN_PLAY', () => {
+  it('discards the card once no enemy is left in play', () => {
+    const defs: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'Guard',
+        states: [
+          {
+            id: 1,
+            name: 'Guard',
+            passives: [
+              {
+                id: 'g',
+                type: PassiveType.REQUIRES_IN_PLAY,
+                cards: { scope: [TargetScope.BOARD], tags: [CardTag.ENEMY] },
+              },
+            ],
+          },
+        ],
+      },
+      2: { id: 2, name: 'Bandit', states: [{ id: 1, name: 'Bandit', tags: [CardTag.ENEMY] }] },
+    };
+    const gs = makeState({
+      board: [1, 2],
+      boardEffects: { 1: defs[1].states[0].passives ?? [] },
+      instances: { 1: makeInstance({ id: 1 }), 2: makeInstance({ id: 2, cardId: 2 }) },
+    });
+    const discardEnemy: CardAction = {
+      id: '2-1-1',
+      actionEffects: [],
+    };
+    const agg = new CardActionAggregate(defs, {}, gs, gs.instances[2], discardEnemy);
+    agg.resolveAction();
+    expect(agg.getGameState().discardPile).toEqual([2, 1]);
+  });
+});
+
+describe('expansion discovery order', () => {
+  it('puts the expansion cards before the remaining base cards', () => {
+    const strategy = new ExpansionSelectedStrategy({
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
+    });
+    const event = {
+      id: 'e',
+      type: GameEventType.EXPANSION_SELECTED,
+      timestamp: 0,
+      expansionName: 'exp',
+      deckEntries: [{ id: 5, cardId: 1 }],
+      purgeBatchSize: 1,
+      purgePermanentCount: 0,
+      purgePool: [],
+      onStartDiscoverIds: [],
+    } as ExpansionSelectedEvent;
+    const state = makeState({ discoveryPile: [3] });
+
+    expect(
+      strategy.apply(state, { ...event, expansionDiscoveryFirst: true } as ExpansionSelectedEvent)
+        .discoveryPile,
+    ).toEqual([5, 3]);
+    // Events saved before this flag keep the old order
+    expect(strategy.apply(state, event).discoveryPile).toEqual([3, 5]);
   });
 });

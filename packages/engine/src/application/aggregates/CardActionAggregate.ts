@@ -15,6 +15,7 @@ import { CardActionContext } from '../cardAction';
 import {
   canAffordTrackAdvanceCost,
   cardIsBlocked,
+  evaluateCondition,
   getActiveState,
   getEffectiveActionCost,
   getEffectiveUpgradeCost,
@@ -22,7 +23,13 @@ import {
 } from '../cardHelpers';
 import { resolveCost } from '../costResolver';
 import { resolveActionEffect } from '../effectResolver';
-import { destroyCards, discardCards, mergeResources, spendResources } from '../gameStateHelper';
+import {
+  destroyCards,
+  discardCards,
+  discardCardsMissingRequirement,
+  mergeResources,
+  spendResources,
+} from '../gameStateHelper';
 import { CardChoiceStrategy } from '../playerChoice/CardChoiceStrategy';
 import { ChooseActionEffectStrategy } from '../playerChoice/ChooseActionEffectStrategy';
 import type { PlayerChoiceStrategy } from '../playerChoice/PlayerChoiceStrategy';
@@ -332,6 +339,21 @@ export class CardActionAggregate {
 
     if (cardIsBlocked(this.instance.id, this.gameState)) return;
 
+    if (
+      !this.triggerId &&
+      this.action.condition &&
+      !evaluateCondition(
+        this.action.condition,
+        this.gameState,
+        this.instance.id,
+        this.cardDefs,
+        this.stickerDefs,
+      )
+    ) {
+      this.cancelled = true;
+      return;
+    }
+
     const [resolvedCost, costPendingChoices] = resolveCost(
       effectiveActionCost,
       this.instance.id,
@@ -403,6 +425,11 @@ export class CardActionAggregate {
     if (this.action.defeat) {
       this.queueDefeatTriggers();
     }
+    this.gameState = discardCardsMissingRequirement(
+      this.gameState,
+      this.cardDefs,
+      this.stickerDefs,
+    );
 
     if (this.def.parchmentCard) {
       this.gameState = {

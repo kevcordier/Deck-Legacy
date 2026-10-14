@@ -14,6 +14,7 @@ import { Text } from '@components/ui/Text/Text';
 import {
   canAffordCost,
   canAffordTrackAdvanceCost,
+  evaluateCondition,
   getEffectiveActionCost,
 } from '@deck-legacy/engine/application/cardHelpers';
 import { canUseOptions } from '@deck-legacy/engine/application/gameStateHelper';
@@ -150,6 +151,8 @@ export function CardAction({
   );
   const isActionInPlay = (action.unlimited ?? false) || gameState.phase === Phase.PLAYING;
   const affordable =
+    (!action.condition ||
+      evaluateCondition(action.condition, gameState, instance.id, defs, stickerDefs)) &&
     canAffordCost(effectiveActionCost, instance.id, gameState, defs, stickerDefs) &&
     canAffordTrackAdvanceCost(action, instance, gameState, defs, stickerDefs);
 

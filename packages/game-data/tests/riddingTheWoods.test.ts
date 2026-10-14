@@ -262,3 +262,167 @@ describe('starting Ridding the Woods', () => {
     expect(gs.stickerStock).toEqual({ 10: 11, 16: 7 });
   });
 });
+
+// Instance ids of Ridding the Woods cards 11-29
+const ROBBER_VETERAN = 149;
+const GUARD = 151;
+const WAGON = 152;
+const DRUID_CAMP = 162;
+const ARCHERY = 150;
+const HILLTOP = 163;
+const KEEPER = 164;
+const TOWN = 143;
+const FORT = 147;
+
+const actionOf = (cardId: number, actionId: string) =>
+  found(catalog.cards[cardId].states.flatMap(s => s.actions ?? []).find(a => a.id === actionId));
+
+describe('Lousy Guard', () => {
+  it('is discarded when played without an enemy', () => {
+    const alone = makeGame({ drawPile: [GUARD, WILD_GRASS] });
+    alone.turnStarted();
+    expect(alone.getGameState().discardPile).toContain(GUARD);
+
+    const guarded = makeGame({ drawPile: [GUARD, ROBBER_VETERAN] });
+    guarded.turnStarted();
+    expect(guarded.getGameState().board).toContain(GUARD);
+  });
+
+  it('is discarded as soon as the last enemy leaves play', () => {
+    const agg = makeGame({ drawPile: [GUARD, ROBBER_VETERAN] });
+    agg.turnStarted();
+    agg.getGameState().resources = { weapon: 5 };
+    agg.cardAction(actionOf(132, '132-1-2'), ROBBER_VETERAN);
+    expect(agg.getGameState().discardPile).toEqual(expect.arrayContaining([GUARD, ROBBER_VETERAN]));
+  });
+});
+
+describe('Treasure Wagon', () => {
+  it('loses 1 production per enemy and is worth 5 glory per production left when purged', () => {
+    const agg = makeGame({ drawPile: [WAGON, ROBBER_VETERAN, BANDIT, BANDIT_2] });
+    agg.turnStarted();
+    resolveTrigger(agg, '135-1-1');
+    agg.getGameState().drawPile = [BANDIT, BANDIT_2];
+    agg.getGameState().board = [WAGON];
+    agg.getGameState().boardEffects = passivesOf(WAGON);
+    agg.advance();
+    resolveTrigger(agg, '135-1-2');
+    const gs = agg.getGameState();
+    expect(
+      getProductionChoicesForAction({ gold: 9 }, gs, catalog.cards, gs.instances[WAGON], {}),
+    ).toEqual([{ gold: 6 }]);
+
+    agg.getGameState().phase = Phase.PURGE;
+    agg.getGameState().purgeState = {
+      batchSize: 8,
+      permanentToPurge: 0,
+      shuffledPool: [],
+      completedBatchStarts: [],
+      selectedCardIds: [WAGON],
+      selectedPermanentIds: [],
+      onPurgeTriggered: false,
+      onStartDiscoverIds: [],
+    };
+    agg.finalizePurge();
+    resolveTrigger(agg, '135-1-3');
+    expect(agg.getGameState().instances[WAGON].glories).toEqual([30]);
+  });
+});
+
+describe('Druid Camp', () => {
+  it('discards the cards that stay in play', () => {
+    const agg = makeGame({ board: [FOREST, WILD_GRASS], drawPile: [DRUID_CAMP] }, { [FOREST]: 4 });
+    agg.turnStarted();
+    resolveTrigger(agg, '145-1-1');
+    expect(agg.getGameState().discardPile).toEqual([FOREST]);
+  });
+});
+
+describe('Bait and Trap', () => {
+  it('can only be used with a lady in play', () => {
+    const baitAndTrap = actionOf(133, '133-2-1');
+    const alone = makeGame({ board: [ARCHERY], discardPile: [BANDIT] }, { [ARCHERY]: 2 });
+    expect(() => alone.cardAction(baitAndTrap, ARCHERY)).toThrow();
+
+    const withLady = makeGame({ board: [ARCHERY, LADY], discardPile: [BANDIT] }, { [ARCHERY]: 2 });
+    withLady.cardAction(baitAndTrap, ARCHERY);
+    withLady.resolveCardActionChoice(
+      {
+        id: `${ARCHERY}-1`,
+        type: ActionEffectType.PLAY_CARD,
+        sourceInstanceId: ARCHERY,
+        instanceIds: [BANDIT],
+      },
+      PendingChoiceType.CHOOSE_CARD,
+    );
+    expect(withLady.getGameState().board).toContain(BANDIT);
+    expect(withLady.getGameState().resources).toEqual({ weapon: 2 });
+  });
+});
+
+describe('Keeper of Secrets', () => {
+  it('clears the board, turns into The Chase and is destroyed by its red track', () => {
+    const agg = makeGame({ board: [WILD_GRASS], drawPile: [KEEPER] });
+    agg.turnStarted();
+    resolveTrigger(agg, '147-1-1');
+    expect(stateOf(agg, KEEPER)).toBe('The Chase');
+    expect(agg.getGameState().discardPile).toEqual(expect.arrayContaining([WILD_GRASS, KEEPER]));
+
+    const chase = makeGame({ board: [KEEPER], drawPile: [WILD_GRASS] }, { [KEEPER]: 2 });
+    chase.turnEnded();
+    expect(triggerIds(chase)).toEqual(['147-2-3']);
+    chase.getGameState().instances[KEEPER].cumulated = 2;
+    expect(
+      getActiveState(chase.getGameState().instances[KEEPER], catalog.cards).actions?.length,
+    ).toBe(4);
+  });
+});
+
+describe('Ceremony', () => {
+  it('adds sticker 10 to one of the 5 discarded cards, then turns back', () => {
+    const friendly = [WILD_GRASS, TOWN, FORT, TAX_COLLECTOR, CAMP];
+    const agg = makeGame(
+      { board: [HILLTOP, ...friendly], stickerStock: { 10: 1 } },
+      { [HILLTOP]: 4, [CAMP]: 3 },
+    );
+    agg.cardAction(actionOf(146, '146-4-1'), HILLTOP);
+    agg.resolveCardActionChoice(
+      {
+        id: `${HILLTOP}-1`,
+        type: ActionEffectType.DISCARD_CARD,
+        sourceInstanceId: HILLTOP,
+        instanceIds: friendly,
+      },
+      PendingChoiceType.CHOOSE_CARD,
+    );
+    agg.resolveCardActionChoice(
+      {
+        id: `${HILLTOP}-2`,
+        type: ActionEffectType.ADD_STICKER,
+        sourceInstanceId: HILLTOP,
+        instanceIds: [TOWN],
+      },
+      PendingChoiceType.CHOOSE_CARD,
+    );
+    const gs = agg.getGameState();
+    expect(gs.instances[TOWN].stickers[1]).toEqual([10]);
+    expect(friendly.filter(id => id !== TOWN).every(id => !gs.instances[id].stickers[1])).toBe(
+      true,
+    );
+    expect(stateOf(agg, HILLTOP)).toBe('Hill Megalith');
+  });
+});
+
+describe('expansion discovery', () => {
+  it('discovers the first 5 cards at the start, then the expansion cards before the base ones', () => {
+    const agg = makeGame({ drawPile: [WILD_GRASS], discoveryPile: [2] });
+    agg.selectExpansion(EXPANSION, catalog.expansions[EXPANSION]);
+    agg.finalizePurge();
+    const gs = agg.getGameState();
+    const kingdom = [...gs.drawPile, ...gs.board, ...gs.discardPile];
+    expect(kingdom).toEqual(expect.arrayContaining([139, 140, 141, 142, 143]));
+    expect(kingdom).not.toContain(144);
+    expect(gs.discoveryPile.slice(0, 2)).toEqual([144, 145]);
+    expect(gs.discoveryPile.at(-1)).toBe(2);
+  });
+});

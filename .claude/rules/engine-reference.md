@@ -52,7 +52,7 @@ CardState {
   chooseName?: boolean        // if true, the player can choose a name on the card
   tags?: CardTag[]            // ARTIFACT | LAND | BUILDING | PERSON | EVENT | ENEMY | SEAFARING |
                               // GOAL | KNIGHT | ELDER | WALL | STATE | SHIP | ITEM | INVENTION |
-                              // POTION | LOOT | LIVESTOCK | HORSE | LADY
+                              // POTION | LOOT | LIVESTOCK | HORSE | LADY | WAGON
   negative?: boolean          // define if a card is an enemy
   productions?: Resources[]   // resources generated on production action
   glory?: GloryDef            // glory point definition (amount, condition, valuePerElement…)
@@ -74,8 +74,8 @@ CardAction {
   endsTurn?: boolean        // if true then ends turn after this action resolution
   trigger?: Trigger         // fired automatically on the given trigger
   optional?: boolean        // only for trigger effects — allows skipping the trigger
-  condition?: Condition     // triggered actions only: the trigger fires only if it holds
-                            // (cardCount | production | resource | and | or | not | expansionActive)
+  condition?: Condition     // a trigger fires only if it holds; a regular action can only be used if it holds
+                            // (cardCount | production | resource | and | or | not | expansionActive | accumulation)
   defeat?: boolean          // the action defeats an enemy: queues the ON_DEFEAT triggers in play
 }
 
@@ -195,6 +195,11 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - `ExpansionConfig.purge.focus` (`{ resource, count }`, copied into `EXPANSION_SELECTED.purgeFocus` then `purgeState.focus`): while fewer than `count` selected cards produce `resource`, the batch candidates are limited to those producers when the batch has any.
 - `ExpansionConfig.stickers` (`{ stickerId: count }`) is copied into `EXPANSION_SELECTED.addedStickers` and added to `stickerStock` when the expansion starts.
 - `PassiveType.RESTRICT_GAIN` (`resources` = allowed types): other resources are dropped from production choices and `ADD_RESOURCES`.
+- `PassiveType.REQUIRES_IN_PLAY` (`cards` selector): the card is discarded as soon as no card matches, checked when cards are drawn and after every card action.
+- `TargetScope.STAYING`: keeps the selected cards that stay in play (use with `BOARD`).
+- `ValuePerElement.ownProduction`: counts the total production of the card itself. For effects other than `TRACK_ADVANCE`, `value` = (`value` ?? 1) × `amount` × count (`REMOVE_RESOURCE_ON_CARD` crosses out `value` times; `ADD_STICKER` stickers every chosen card).
+- `LAST_SELECTED` alone picks all last selected cards, unless `pickNumber`/`pickMax` asks the player to choose among them.
+- `EXPANSION_SELECTED.expansionDiscoveryFirst` (always set by new events): expansion cards go before the remaining base cards in the discovery pile; `onStart.discover.ids` gives the first round its discoveries.
 - `PassiveType.RESTRICT_SPEND` (`resources` = reserved types): they pay only upgrade costs (`Cost.forUpgrade`, set by `getEffectiveUpgradeCost`), never action, step or discover costs.
 
 ## Engine pitfalls

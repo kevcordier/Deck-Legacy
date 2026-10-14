@@ -20,6 +20,7 @@ export enum CardTag {
   LIVESTOCK = 'livestock',
   HORSE = 'horse',
   LADY = 'lady',
+  WAGON = 'wagon',
 }
 
 export enum Trigger {
@@ -101,6 +102,7 @@ export enum PassiveType {
   CANT_BE_DESTROYED = 'CANT_BE_DESTROYED',
   RESTRICT_GAIN = 'RESTRICT_GAIN',
   RESTRICT_SPEND = 'RESTRICT_SPEND',
+  REQUIRES_IN_PLAY = 'REQUIRES_IN_PLAY',
 }
 
 export enum Options {
@@ -141,6 +143,7 @@ export enum TargetScope {
   UPGRADABLE = 'upgradable',
   WITH_TRACK = 'with_track',
   PURGE_SELECTED = 'purge_selected',
+  STAYING = 'staying',
 }
 
 export enum PendingChoiceType {

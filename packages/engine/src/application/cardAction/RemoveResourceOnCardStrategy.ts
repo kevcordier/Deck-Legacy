@@ -32,7 +32,11 @@ export class RemoveResourceOnCardStrategy implements CardActionStrategy {
       const byScope = target.removedResourcesByState[targetStateId];
       scopes.forEach(scope => {
         const current = byScope[scope] ?? [];
-        byScope[scope] = [...current, ...removedKeys];
+        // value (e.g. from valuePerElement) crosses out the resources several times
+        byScope[scope] = [
+          ...current,
+          ...Array.from({ length: payload.value ?? 1 }, () => removedKeys).flat(),
+        ];
       });
     });
 

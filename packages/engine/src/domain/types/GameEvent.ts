@@ -127,6 +127,7 @@ export interface ExpansionSelectedEvent extends GameEvent {
   onStartDiscoverIds: number[];
   addedStickers?: StickerStock;
   purgeFocus?: PurgeFocus;
+  expansionDiscoveryFirst?: boolean; // expansion cards go before the remaining base cards
 }
 
 export interface PurgeCardSelectedEvent extends GameEvent {

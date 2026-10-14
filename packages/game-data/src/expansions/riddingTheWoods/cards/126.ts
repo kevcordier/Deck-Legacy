@@ -27,8 +27,6 @@ const discardOnEnemyPlayed = (id: string, count: number): Passive => ({
 
 const weapons = (amount: number) => ({ resources: [{ [ResourceType.WEAPON]: amount }] });
 
-// shortcut: Guarded Town (discover Outpost, RtW 29) and the named town (discover Sheriff,
-// RtW 27) lack their discover actions until those cards exist.
 export const terrifiedTown: CardDef = {
   id: 126,
   name: 'Terrified Town',
@@ -58,6 +56,14 @@ export const terrifiedTown: CardDef = {
       illustration: 'cards/126_3.jpg',
       productions: [{ [ResourceType.WEAPON]: 2 }],
       glory: { amount: 3 },
+      actions: [
+        {
+          id: '126-3-1',
+          cost: { resources: [{ [ResourceType.WOOD]: 4 }] },
+          // Outpost Construction (Ridding the Woods 29)
+          actionEffects: [{ id: 1, type: ActionEffectType.DISCOVER_CARD, cards: { ids: [167] } }],
+        },
+      ],
       upgrade: [{ cost: weapons(6), upgradeTo: 4 }],
     },
     {
@@ -68,6 +74,14 @@ export const terrifiedTown: CardDef = {
       illustration: 'cards/126_4.jpg',
       productions: [{ [ResourceType.WEAPON]: 2 }],
       glory: { amount: 7 },
+      actions: [
+        {
+          id: '126-4-1',
+          endsTurn: true,
+          // Sheriff (Ridding the Woods 27)
+          actionEffects: [{ id: 1, type: ActionEffectType.DISCOVER_CARD, cards: { ids: [165] } }],
+        },
+      ],
     },
   ],
 };

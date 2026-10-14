@@ -223,7 +223,7 @@ function resolveCardTarget(
     (cards.scope?.length === 1 &&
       (cards.scope.includes(TargetScope.SELF) ||
         cards.scope.includes(TargetScope.TRIGGER_SOURCE) ||
-        cards.scope.includes(TargetScope.LAST_SELECTED) ||
+        (cards.scope.includes(TargetScope.LAST_SELECTED) && !cards.pickNumber && !cards.pickMax) ||
         cards.scope.includes(TargetScope.TOP_OF_DECK) ||
         cards.scope.includes(TargetScope.TOP_OF_DISCARD))) ||
     cards.ids?.length === 1 ||
@@ -857,6 +857,7 @@ export function resolveActionEffect(
   if (action.valuePerElement) {
     resolverAction.value =
       (resolverAction.value ?? 1) *
+      action.valuePerElement.amount *
       countValuePerElement(
         action.valuePerElement,
         gameState,

@@ -16,7 +16,9 @@ export type Condition =
   | { type: 'or'; conditions: Condition[] }
   | { type: 'not'; condition: Condition }
   // true while this expansion is played (selected and its score not saved yet)
-  | { type: 'expansionActive'; name: string };
+  | { type: 'expansionActive'; name: string }
+  // accumulation (`cumulated`) of the card owning the condition
+  | { type: 'accumulation'; min?: number; max?: number };
 
 export type CardDef = {
   id: number;
@@ -77,7 +79,7 @@ export type CardAction = {
   trigger?: Trigger;
   optional?: boolean;
   limitedTime?: number; // max number of uses for this action
-  condition?: Condition; // triggered actions only: checked when the trigger fires
+  condition?: Condition; // checked when the trigger fires, or before the action is used
   defeat?: boolean; // the action defeats an enemy: fires ON_DEFEAT triggers once resolved
 };
 
@@ -86,6 +88,7 @@ export type ValuePerElement = {
   cards?: CardSelector;
   productionTotal?: ResourceType;
   accumulation?: boolean;
+  ownProduction?: boolean; // total production of the card itself
   deficitTarget?: number; // count = max(0, deficitTarget - actual_count)
 };
 

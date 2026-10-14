@@ -1,6 +1,7 @@
 import { type Options, PassiveType, type ResourceType, Trigger } from '../domain/enums';
 import type { CardDef, GameState, Passive, Resources, Sticker } from '../domain/types';
 import { getActiveState, getInstancesTriggerEffects } from './cardHelpers';
+import { cardSelector } from './cardSelector';
 
 export { mergeResources } from './resources';
 
@@ -78,7 +79,28 @@ export const drawCards = (
   gameState.board = [...new Set([...gameState.board, ...turnCards])];
   gameState.resources = {};
 
-  return gameState;
+  return discardCardsMissingRequirement(gameState, cardDefs, stickerDefs);
+};
+
+/** REQUIRES_IN_PLAY: a card in play is discarded as soon as no card matches its selector. */
+export const discardCardsMissingRequirement = (
+  gameState: GameState,
+  cardDefs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): GameState => {
+  const missing = Object.entries(gameState.boardEffects)
+    .filter(
+      ([sourceId, passives]) =>
+        gameState.board.includes(Number(sourceId)) &&
+        passives.some(
+          p =>
+            p.type === PassiveType.REQUIRES_IN_PLAY &&
+            cardSelector(p.cards ?? {}, Number(sourceId), gameState, cardDefs, stickerDefs)
+              .length === 0,
+        ),
+    )
+    .map(([sourceId]) => Number(sourceId));
+  return missing.length > 0 ? discardCards(gameState, missing, cardDefs, stickerDefs) : gameState;
 };
 
 export const destroyCards = (_gameState: GameState, cardIds: number[]): GameState => {

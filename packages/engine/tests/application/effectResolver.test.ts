@@ -923,7 +923,8 @@ describe('resolveActionEffect – valuePerElement', () => {
       },
     };
     const [resolved] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
-    expect(resolved.value).toBe(2);
+    // 2 cards × amount 2
+    expect(resolved.value).toBe(4);
   });
 
   it('resolves resource from accumulation', () => {
