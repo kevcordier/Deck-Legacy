@@ -1,5 +1,6 @@
 import { Header } from '@components/Header/Header';
 import { KingdomTable } from '@components/KingdomTable/KingdomTable';
+import { KingdomViewer } from '@components/KingdomViewer/KingdomViewer';
 import { NewKingdomModal } from '@components/NewKingdomModal/NewKingdomModal';
 import { OptionsModal, type OptionsTab } from '@components/OptionsModal/OptionsModal';
 import { RulesModal } from '@components/RulesModal/RulesModal';
@@ -64,6 +65,7 @@ export function Home() {
   );
   const [creating, setCreating] = useState(false);
   const [toDelete, setToDelete] = useState<KingdomMeta | null>(null);
+  const [viewing, setViewing] = useState<KingdomMeta | null>(null);
   const [rulesOpen, setRulesOpen] = useState(false);
   const [optionsTab, setOptionsTab] = useState<OptionsTab | null>(null);
 
@@ -166,6 +168,7 @@ export function Home() {
                   <KingdomTable
                     kingdoms={kingdoms}
                     onOpen={kingdom => router.push(kingdomPath(kingdom))}
+                    onView={setViewing}
                     onDelete={setToDelete}
                   />
                 )}
@@ -181,6 +184,8 @@ export function Home() {
             onCreate={create}
           />
         )}
+
+        {viewing && <KingdomViewer kingdom={viewing} onClose={() => setViewing(null)} />}
 
         {toDelete && (
           <Modal

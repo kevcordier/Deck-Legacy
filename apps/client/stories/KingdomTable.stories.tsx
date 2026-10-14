@@ -35,6 +35,7 @@ const meta: Meta<typeof KingdomTable> = {
   ],
   argTypes: {
     onOpen: { action: 'open' },
+    onView: { action: 'view' },
     onDelete: { action: 'delete' },
   },
 };
@@ -54,6 +55,7 @@ export const Scoreboard: Story = {
   args: {
     ranking: true,
     onOpen: undefined,
+    onView: undefined,
     onDelete: undefined,
     kingdoms: Array.from({ length: 5 }, (_, i) => ({
       ...kingdom(4 - i, (4 - i) % 4),

@@ -1,6 +1,7 @@
 import { Button } from '@components/ui/Button/Button';
-import { DestroyIcon } from '@components/ui/Icon/icon';
+import { DestroyIcon, EyeIcon } from '@components/ui/Icon/icon';
 import { Text, TextStyle } from '@components/ui/Text/Text';
+import { Tooltip } from '@components/ui/Tooltip/Tooltip';
 import type { CampaignSegmentScore } from '@deck-legacy/api-contract';
 import { ExpansionIcon } from '@helpers/expansionIcon';
 import type { KingdomSummary } from '@services/persistence';
@@ -9,6 +10,7 @@ import { Pressable, View, useWindowDimensions } from 'react-native';
 
 /** Below this width, each kingdom is a card instead of a table row. */
 const TABLE_MIN_WIDTH = 640;
+const MENU_WIDTH = 240;
 
 /** A kingdom of this device, or of any registered player on the scoreboard. */
 export type KingdomRow = {
@@ -24,6 +26,8 @@ type KingdomTableProps<T extends KingdomRow> = {
   /** Scoreboard: shows the player instead of the round and turn. */
   readonly ranking?: boolean;
   readonly onOpen?: (kingdom: T) => void;
+  /** Menu actions; the "⋯" menu shows only when one is given. */
+  readonly onView?: (kingdom: T) => void;
   readonly onDelete?: (kingdom: T) => void;
 };
 
@@ -47,41 +51,74 @@ function ExpansionScore({ segment }: { readonly segment: CampaignSegmentScore })
   );
 }
 
-function DeleteButton<T extends KingdomRow>({
+/** "⋯" button opening a popover with the kingdom's actions (view its cards, delete it). */
+function KingdomMenu<T extends KingdomRow>({
   kingdom,
+  onView,
   onDelete,
 }: {
   readonly kingdom: T;
-  readonly onDelete: (kingdom: T) => void;
+  readonly onView?: (kingdom: T) => void;
+  readonly onDelete?: (kingdom: T) => void;
 }) {
   const { t } = useTranslation();
+  const items = [
+    { key: 'view', label: t('kingdom.view'), Icon: EyeIcon, action: onView },
+    { key: 'delete', label: t('kingdom.deleteAction'), Icon: DestroyIcon, action: onDelete },
+  ];
   return (
-    <Button
-      variant="text"
-      color="danger"
-      size="sm"
-      className="min-h-11 min-w-11 items-center justify-center"
-      accessibilityLabel={t('kingdom.delete', { name: kingdom.name })}
-      title={t('kingdom.delete', { name: kingdom.name })}
-      onPress={() => onDelete(kingdom)}
+    <Tooltip
+      interactive
+      position="bottom"
+      maxWidth={MENU_WIDTH}
+      accessibilityLabel={t('kingdom.menu', { name: kingdom.name })}
+      className="min-h-11 min-w-11 items-center justify-center active:opacity-70"
+      content={close =>
+        items.map(
+          ({ key, label, Icon, action }) =>
+            action && (
+              <Button
+                key={key}
+                size="md"
+                variant="text"
+                color={key === 'delete' ? 'danger' : 'ink'}
+                font="body"
+                className="min-h-11 justify-start"
+                onPress={() => {
+                  close();
+                  action(kingdom);
+                }}
+              >
+                <View className="flex-row items-center gap-2">
+                  <Icon className="size-5" color="currentColor" />
+                  <Text>{label}</Text>
+                </View>
+              </Button>
+            ),
+        )
+      }
     >
-      <DestroyIcon className="size-5" color="currentColor" />
-    </Button>
+      <Text className="font-body-bold text-lg">⋯</Text>
+    </Tooltip>
   );
 }
 
 /**
  * Kingdoms: name, current round and turn (or the player on the scoreboard), total score, base
- * game score, then each expansion (logo and cumulative score) in the order it was played, and the
- * delete action when given.
+ * game score, then each expansion (logo and cumulative score) in the order it was played, and a
+ * menu to view or delete the kingdom when those actions are given.
  */
 export function KingdomTable<T extends KingdomRow>({
   kingdoms,
   ranking = false,
   onOpen,
+  onView,
   onDelete,
 }: KingdomTableProps<T>) {
   const { t } = useTranslation();
+  const hasMenu = Boolean(onView ?? onDelete);
+  const menu = (kingdom: T) =>
+    hasMenu && <KingdomMenu kingdom={kingdom} onView={onView} onDelete={onDelete} />;
   const { width } = useWindowDimensions();
   const columns = Math.max(0, ...kingdoms.map(k => expansions(k).length));
 
@@ -135,7 +172,7 @@ export function KingdomTable<T extends KingdomRow>({
                   ))}
                 </View>
               </Pressable>
-              {onDelete && <DeleteButton kingdom={kingdom} onDelete={onDelete} />}
+              {menu(kingdom)}
             </View>
           ))}
         </View>
@@ -164,7 +201,7 @@ export function KingdomTable<T extends KingdomRow>({
               {t('home.table.expansion', { number: i + 1 })}
             </Text>
           ))}
-          {onDelete && <View className="w-11" />}
+          {hasMenu && <View className="w-11" />}
         </View>
         {kingdoms.map((kingdom, index) => {
           const played = expansions(kingdom);
@@ -207,7 +244,7 @@ export function KingdomTable<T extends KingdomRow>({
                   </View>
                 ))}
               </Pressable>
-              {onDelete && <DeleteButton kingdom={kingdom} onDelete={onDelete} />}
+              {menu(kingdom)}
             </View>
           );
         })}

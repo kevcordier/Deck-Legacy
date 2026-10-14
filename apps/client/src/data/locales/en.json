@@ -427,10 +427,12 @@
     "validate": "Found the kingdom",
     "cancel": "Cancel",
     "open": "Play {{name}}",
-    "delete": "Delete {{name}}",
     "deleteTitle": "Delete the kingdom",
     "deleteConfirm": "Delete “{{name}}”? Its game will be deleted on every device.",
-    "deleteConfirmButton": "Delete"
+    "deleteConfirmButton": "Delete",
+    "menu": "Actions for {{name}}",
+    "view": "View the kingdom",
+    "deleteAction": "Delete the kingdom"
   },
   "scoreboard": {
     "title": "Scoreboard",
