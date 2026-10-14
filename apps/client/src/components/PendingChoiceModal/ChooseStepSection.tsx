@@ -35,7 +35,7 @@ export function ChooseStepSection(props: Readonly<ChoiceSectionProps>) {
   };
 
   return (
-    <TextStyle className="text-base-ink">
+    <TextStyle className="text-ink-card">
       <View className="flex-row flex-wrap gap-3">
         {steps.map(step => {
           const isSelected = isMultiSelect && selectedIds.includes(step.id);
@@ -45,7 +45,7 @@ export function ChooseStepSection(props: Readonly<ChoiceSectionProps>) {
               onPress={() => handleStepPress(step.id)}
               accessibilityRole="button"
               accessibilityState={{ selected: isSelected }}
-              className={`bg-card active:bg-base-ink/10 aspect-square min-w-8 items-center gap-1 rounded-md border-2 p-3 ${isSelected ? 'border-primary' : 'border-base-ink'}`}
+              className={`bg-card active:bg-ink-card/10 aspect-square min-w-8 items-center gap-1 rounded-md border-2 p-3 ${isSelected ? 'border-primary' : 'border-ink-card'}`}
             >
               {track && targetInst && (
                 <CardTrackStep

@@ -15,8 +15,8 @@ const BAR_COLORS = ['', 'bg-danger', 'bg-base-primary', 'bg-success', 'bg-succes
 export function PasswordStrength({ password, tone = 'theme' }: PasswordStrengthProps) {
   const { t } = useTranslation();
   const { rules, score, strength } = checkPassword(password);
-  const muted = tone === 'card' ? 'text-base-ink/70' : 'text-ink/70';
-  const empty = tone === 'card' ? 'bg-base-ink/15' : 'bg-ink/15';
+  const muted = tone === 'card' ? 'text-ink-card/70' : 'text-ink/70';
+  const empty = tone === 'card' ? 'bg-ink-card/15' : 'bg-ink/15';
 
   return (
     <View className="gap-1">

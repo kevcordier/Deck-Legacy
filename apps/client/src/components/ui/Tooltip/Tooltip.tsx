@@ -149,12 +149,12 @@ export function Tooltip({
             accessibilityRole="text"
             pointerEvents="none"
             onLayout={event => setPanelHeight(event.nativeEvent.layout.height)}
-            className={`absolute ${bare ? '' : 'border-base-ink/20 bg-card rounded-md border p-2 shadow-md'} ${contentClassName}`}
+            className={`absolute ${bare ? '' : 'border-ink-card/20 bg-card rounded-md border p-2 shadow-md'} ${contentClassName}`}
             // Hidden until measured, so it never flashes at the wrong place.
             style={{ left, top, maxWidth, opacity: panelHeight === null ? 0 : 1 }}
           >
             <TextRoot>
-              {bare ? content : <TextStyle className="text-base-ink text-xs">{content}</TextStyle>}
+              {bare ? content : <TextStyle className="text-ink-card text-xs">{content}</TextStyle>}
             </TextRoot>
           </View>
         </Pressable>

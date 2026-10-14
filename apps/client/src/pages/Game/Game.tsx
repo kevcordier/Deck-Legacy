@@ -82,7 +82,7 @@ export function Game() {
                   <Text className="font-display text-base-primary text-2xl">
                     {t('campaign.chooseExpansionTitle')}
                   </Text>
-                  <Text className="text-base-ink text-sm">
+                  <Text className="text-ink-card text-sm">
                     {t('campaign.chooseExpansionDescription')}
                   </Text>
                   {availableExpansions.map(expansion => (
@@ -97,7 +97,7 @@ export function Game() {
                           {t(`campaign.expansions.${expansion}.title`)}
                         </Button>
                       </View>
-                      <Text className="text-base-ink flex-1 text-sm">
+                      <Text className="text-ink-card flex-1 text-sm">
                         {t(`campaign.expansions.${expansion}.description`)}
                       </Text>
                     </View>

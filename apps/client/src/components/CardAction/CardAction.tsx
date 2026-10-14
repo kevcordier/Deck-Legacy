@@ -184,7 +184,7 @@ export function CardAction({
         disabled={isDisabled}
         accessibilityRole="button"
         accessibilityState={{ disabled: isDisabled }}
-        className={`${boxClass} active:bg-base-ink/20 ${isDisabled ? 'opacity-50' : ''}`}
+        className={`${boxClass} active:bg-ink-card/20 ${isDisabled ? 'opacity-50' : ''}`}
       >
         <Text className={textClass}>
           {getActionIcon(action, hasDestroyItselfCost, iconClass)} {actionLabel}

@@ -23,7 +23,7 @@ module.exports = {
       ink: 'rgb(var(--color-ink) / <alpha-value>)',
       border: 'rgb(var(--color-border) / <alpha-value>)',
       primary: 'rgb(var(--color-primary) / <alpha-value>)',
-      'base-ink': '#664a26',
+      'ink-card': '#664a26',
       'base-primary': '#c79233',
       'dark-background': '#3b342a',
       'dark-ink': '#fff2e0',

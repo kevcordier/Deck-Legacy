@@ -19,7 +19,7 @@ export default function ScoreTooltip() {
 
   if (segmentScores.length === 0) {
     return (
-      <Text className="text-base-ink/70 font-body-italic">
+      <Text className="text-ink-card/70 font-body-italic">
         {t('resourceBar.gloryTooltipEmpty')}
       </Text>
     );
@@ -31,13 +31,13 @@ export default function ScoreTooltip() {
       <View className="border-border/50 mb-1 gap-1 border-b pb-1">
         {segmentScores.map(([segment, segmentScore]) => (
           <View key={segment} className="flex-row items-center justify-between gap-3">
-            <Text className="text-base-ink/80">{getSegmentLabel(segment)}</Text>
+            <Text className="text-ink-card/80">{getSegmentLabel(segment)}</Text>
             <Text className="font-display text-base-primary">{segmentScore}</Text>
           </View>
         ))}
       </View>
       <View className="flex-row items-center justify-between gap-3">
-        <Text className="text-base-ink/80">{t('gameOver.purgedGlory')}</Text>
+        <Text className="text-ink-card/80">{t('gameOver.purgedGlory')}</Text>
         <Text className="font-display text-base-primary">{purgedScore}</Text>
       </View>
     </View>

@@ -27,11 +27,11 @@ export function CardStatePreview({ instance, defs, renderCard }: CardStatePrevie
       <Button
         onPress={() => setOpen(true)}
         title={t('cardPreview.viewAllStates')}
-        color="base-ink"
+        color="ink-card"
         variant="text"
         size="sm"
       >
-        <EyeIcon className="text-base-ink size-4" />
+        <EyeIcon className="text-ink-card size-4" />
       </Button>
 
       {open && (

@@ -10,10 +10,10 @@ const TONES = {
     inactiveText: 'text-ink/70',
   },
   card: {
-    tabs: 'border-base-ink/30',
+    tabs: 'border-ink-card/30',
     active: 'border-base-primary bg-base-primary/15',
     activeText: 'text-base-primary font-body-bold',
-    inactiveText: 'text-base-ink/70',
+    inactiveText: 'text-ink-card/70',
   },
 } as const;
 

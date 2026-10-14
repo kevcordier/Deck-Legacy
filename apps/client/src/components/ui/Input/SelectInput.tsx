@@ -32,10 +32,10 @@ export function SelectInput<T extends string | number>({
         onPress={() => setOpen(true)}
         className={`border-ink flex-row items-center justify-between gap-2 rounded border bg-white px-2 py-1 ${disabled ? 'opacity-50' : ''} ${className}`}
       >
-        <Text className="text-base-ink shrink text-sm" numberOfLines={1}>
+        <Text className="text-ink-card shrink text-sm" numberOfLines={1}>
           {selected?.label ?? placeholder ?? ''}
         </Text>
-        <Text className="text-base-ink text-xs">▾</Text>
+        <Text className="text-ink-card text-xs">▾</Text>
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>

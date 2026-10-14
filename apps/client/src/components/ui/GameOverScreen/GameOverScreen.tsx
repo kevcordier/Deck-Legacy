@@ -56,14 +56,14 @@ export function GameOverScreen({
             >
               <Glory glory={score} className="size-20" textClassName="text-2xl" />
             </Tooltip>
-            <Text className="font-display text-base-ink text-lg">{t('gameOver.glory')}</Text>
+            <Text className="font-display text-ink-card text-lg">{t('gameOver.glory')}</Text>
           </View>
 
           <Button onPress={() => setKingdomOpen(true)} color="base-primary" size="md">
             {t('gameOver.viewKingdom')}
           </Button>
 
-          <Text className="text-base-ink text-center">{t('gameOver.descriptionEndGame')}</Text>
+          <Text className="text-ink-card text-center">{t('gameOver.descriptionEndGame')}</Text>
 
           <View className="items-center justify-center gap-2">
             {onContinueCampaign && (

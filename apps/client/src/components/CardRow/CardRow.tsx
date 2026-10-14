@@ -202,8 +202,8 @@ function Card({ id, blockingMap, isDesktop, onOpenViewer, onHoverChange, tiltEna
               key={`${sourceId}-${passive.id}`}
               className={`bg-gray flex-row items-center gap-1 border border-black/40 px-3 py-2 ${index === labelledEffects.length - 1 ? 'rounded-b-md' : ''}`}
             >
-              <PassifIcon className="text-base-ink size-3" />
-              <Text className="text-base-ink text-xs">{label}</Text>
+              <PassifIcon className="text-ink-card size-3" />
+              <Text className="text-ink-card text-xs">{label}</Text>
             </View>
           ))}
         </View>

@@ -94,7 +94,7 @@ function ActionBadges({
       {hasUpgrade && (
         <Badge label={t('card.upgradeAvailable')} highlighted={hasAvailableUpgrade}>
           <UpgradeIcon
-            className={`size-5 ${hasAvailableUpgrade ? 'text-base-ink' : 'text-gray'}`}
+            className={`size-5 ${hasAvailableUpgrade ? 'text-ink-card' : 'text-gray'}`}
           />
         </Badge>
       )}
@@ -118,12 +118,12 @@ function ActionBadges({
       )}
       {hasTrigger && (
         <Badge label={t('card.hasTrigger')}>
-          <TriggerIcon className="text-base-ink size-5" />
+          <TriggerIcon className="text-ink-card size-5" />
         </Badge>
       )}
       {hasPassive && (
         <Badge label={t('card.hasPassive')}>
-          <PassifIcon className="text-base-ink size-5" />
+          <PassifIcon className="text-ink-card size-5" />
         </Badge>
       )}
     </View>
@@ -145,7 +145,7 @@ function MiniTrack({
           <View
             key={step.id}
             className={`size-4 shrink-0 items-center justify-center rounded-sm border ${
-              isValidated ? 'border-success bg-success/20' : 'border-base-ink/70 bg-base-ink/10'
+              isValidated ? 'border-success bg-success/20' : 'border-ink-card/70 bg-ink-card/10'
             }`}
           >
             {isValidated && <Text className="text-success text-xs leading-none">✓</Text>}

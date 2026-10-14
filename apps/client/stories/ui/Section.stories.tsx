@@ -41,7 +41,7 @@ export const WithRichContent: Story = {
       <View className="flex-row flex-wrap gap-2">
         {['Carte A', 'Carte B', 'Carte C'].map(c => (
           <View key={c} className="bg-card border-primary rounded-lg border px-4 py-3">
-            <Text className="text-base-ink">{c}</Text>
+            <Text className="text-ink-card">{c}</Text>
           </View>
         ))}
       </View>

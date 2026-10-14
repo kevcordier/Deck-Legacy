@@ -31,13 +31,13 @@ export function TutorialTooltip({
   return (
     <FadeInScale className="border-base-primary bg-card overflow-hidden rounded-2xl border-2 shadow-lg">
       <ScrollView className="max-h-[36rem]" contentContainerClassName="p-4 sm:p-6">
-        <View className="bg-base-ink self-start rounded-full px-2.5 py-1">
+        <View className="bg-ink-card self-start rounded-full px-2.5 py-1">
           <Text className="font-display text-xs text-card uppercase tracking-widest">
             {t('tutorial.tooltip.badge')}
           </Text>
         </View>
 
-        <TextStyle className="text-base-ink text-base">
+        <TextStyle className="text-ink-card text-base">
           <View className="mt-4">
             {typeof step.content === 'string' ? (
               <Text className="leading-6">{step.content}</Text>
@@ -50,14 +50,14 @@ export function TutorialTooltip({
         <View className="border-border/70 mt-6 flex-row flex-wrap items-center justify-between gap-3 border-t pt-4">
           <View>
             {showSkip && (
-              <Button variant="text" color="base-ink" size="sm" font="body" onPress={onSkip}>
+              <Button variant="text" color="ink-card" size="sm" font="body" onPress={onSkip}>
                 {t('tutorial.tooltip.skip')}
               </Button>
             )}
           </View>
           <View className="min-w-0 shrink flex-row flex-wrap items-center justify-end gap-3">
             {onBack && (
-              <Button variant="outlined" color="base-ink" size="sm" onPress={onBack}>
+              <Button variant="outlined" color="ink-card" size="sm" onPress={onBack}>
                 {t('tutorial.tooltip.back')}
               </Button>
             )}

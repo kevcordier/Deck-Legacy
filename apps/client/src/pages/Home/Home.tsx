@@ -27,10 +27,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 /** First screen without an account: sign in, or play on this device only. */
 function Welcome({ onPlayOffline }: { readonly onPlayOffline: () => void }) {
   const { t } = useTranslation();
-  // `bg-card` keeps its color in every theme: use the fixed `base-*` colors on it.
+  // `bg-card` keeps its color in every theme: use `ink-card` and `base-primary` on it.
   return (
-    <View className="bg-card border-base-ink/30 w-full max-w-md gap-6 self-center rounded-lg border p-4 lg:p-6">
-      <TextStyle className="text-base-ink">
+    <View className="bg-card border-ink-card/30 w-full max-w-md gap-6 self-center rounded-lg border p-4 lg:p-6">
+      <TextStyle className="text-ink-card">
         <View className="gap-2">
           <Title level={2} className="text-base-primary">
             {t('home.welcomeTitle')}
@@ -38,12 +38,12 @@ function Welcome({ onPlayOffline }: { readonly onPlayOffline: () => void }) {
           <Text className="text-sm">{t('home.welcomeText')}</Text>
         </View>
         <SignInForm tone="card" />
-        <Divider color="base-ink" />
+        <Divider color="ink-card" />
         <View className="gap-2">
-          <Button size="md" color="base-ink" font="body" onPress={onPlayOffline}>
+          <Button size="md" color="ink-card" font="body" onPress={onPlayOffline}>
             {t('home.playOffline')}
           </Button>
-          <Text className="text-base-ink/70 text-xs">{t('home.playOfflineHint')}</Text>
+          <Text className="text-ink-card/70 text-xs">{t('home.playOfflineHint')}</Text>
         </View>
       </TextStyle>
     </View>
@@ -110,15 +110,15 @@ export function Home() {
           {showWelcome ? (
             <Welcome onPlayOffline={playOffline} />
           ) : (
-            // `bg-card` keeps its color in every theme: use the fixed `base-*` colors on it.
-            <View className="bg-card border-base-ink/30 gap-4 rounded-lg border p-4 lg:p-6">
-              <TextStyle className="text-base-ink">
+            // `bg-card` keeps its color in every theme: use `ink-card` and `base-primary` on it.
+            <View className="bg-card border-ink-card/30 gap-4 rounded-lg border p-4 lg:p-6">
+              <TextStyle className="text-ink-card">
                 <View className="flex-row flex-wrap items-center justify-between gap-3">
                   <View>
                     <Title level={2} className="text-base-primary">
                       {t('home.kingdoms')}
                     </Title>
-                    <Text className="text-base-ink/70 text-xs">
+                    <Text className="text-ink-card/70 text-xs">
                       {t('home.kingdomCount', { count: kingdoms.length, max: limit })}
                     </Text>
                   </View>
@@ -134,13 +134,13 @@ export function Home() {
                 </View>
 
                 {atLimit && (
-                  <Text className="text-base-ink/70 text-sm">
+                  <Text className="text-ink-card/70 text-sm">
                     {signedIn ? t('home.limitReached') : t('home.limitReachedGuest')}
                   </Text>
                 )}
 
                 {kingdoms.length === 0 ? (
-                  <View className="border-base-ink/30 items-center gap-2 rounded-lg border border-dashed p-8">
+                  <View className="border-ink-card/30 items-center gap-2 rounded-lg border border-dashed p-8">
                     <Text className="font-body-italic text-center">{t('home.empty')}</Text>
                     <Button
                       size="md"

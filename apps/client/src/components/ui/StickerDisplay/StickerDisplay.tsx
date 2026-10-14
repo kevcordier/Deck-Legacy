@@ -43,8 +43,8 @@ export const StickerDisplay = ({ sticker, className = 'size-10', large = false }
   if (sticker.effectId === 'stays_in_play') {
     return (
       <View className={`${STICKER_CLASS} flex-row items-center gap-1 px-2 py-1`}>
-        <PassifIcon className={large ? 'size-6 text-base-ink' : 'size-3 text-base-ink'} />
-        <Text className={`text-base-ink ${large ? 'text-lg' : 'text-xs'}`}>
+        <PassifIcon className={large ? 'size-6 text-ink-card' : 'size-3 text-ink-card'} />
+        <Text className={`text-ink-card ${large ? 'text-lg' : 'text-xs'}`}>
           {t('passives.stay_in_play', { ns: 'cards' })}
         </Text>
       </View>

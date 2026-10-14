@@ -69,12 +69,12 @@ export function KingdomTable({ kingdoms, onOpen, onDelete }: KingdomTableProps) 
 
   if (width < TABLE_MIN_WIDTH) {
     return (
-      <TextStyle className="text-base-ink">
+      <TextStyle className="text-ink-card">
         <View className="gap-3">
           {kingdoms.map(kingdom => (
             <View
               key={kingdom.id}
-              className="bg-card border-base-ink/30 flex-row items-center gap-2 rounded-lg border p-3"
+              className="bg-card border-ink-card/30 flex-row items-center gap-2 rounded-lg border p-3"
             >
               <Pressable
                 onPress={() => onOpen(kingdom)}
@@ -90,7 +90,7 @@ export function KingdomTable({ kingdoms, onOpen, onDelete }: KingdomTableProps) 
                   </Text>
                 </View>
                 <View className="flex-row flex-wrap items-center gap-x-4 gap-y-1">
-                  <Text className="text-base-ink/70 text-sm">
+                  <Text className="text-ink-card/70 text-sm">
                     {t('home.table.base')}{' '}
                     <Text className="font-body-bold">{baseScore(kingdom) ?? '–'}</Text>
                   </Text>
@@ -107,11 +107,11 @@ export function KingdomTable({ kingdoms, onOpen, onDelete }: KingdomTableProps) 
     );
   }
 
-  // `bg-card` keeps its color in every theme: use the fixed `base-*` colors on it.
+  // `bg-card` keeps its color in every theme: use `ink-card` and `base-primary` on it.
   return (
-    <TextStyle className="text-base-ink">
-      <View className="border-base-ink/30 bg-card overflow-hidden rounded-lg border">
-        <View className="border-base-ink/30 bg-base-ink/10 flex-row items-center gap-2 border-b px-3 py-2">
+    <TextStyle className="text-ink-card">
+      <View className="border-ink-card/30 bg-card overflow-hidden rounded-lg border">
+        <View className="border-ink-card/30 bg-ink-card/10 flex-row items-center gap-2 border-b px-3 py-2">
           <Text className="flex-[2] text-xs uppercase">{t('home.table.name')}</Text>
           <Text className="w-20 text-right text-xs uppercase">{t('home.table.total')}</Text>
           <Text className="w-20 text-right text-xs uppercase">{t('home.table.base')}</Text>
@@ -128,7 +128,7 @@ export function KingdomTable({ kingdoms, onOpen, onDelete }: KingdomTableProps) 
           return (
             <View
               key={kingdom.id}
-              className={`flex-row items-center gap-2 px-3 ${isLast ? '' : 'border-base-ink/30 border-b'}`}
+              className={`flex-row items-center gap-2 px-3 ${isLast ? '' : 'border-ink-card/30 border-b'}`}
             >
               <Pressable
                 onPress={() => onOpen(kingdom)}
@@ -147,7 +147,7 @@ export function KingdomTable({ kingdoms, onOpen, onDelete }: KingdomTableProps) 
                     {played[i] ? (
                       <ExpansionScore segment={played[i]} />
                     ) : (
-                      <Text className="text-base-ink/40">–</Text>
+                      <Text className="text-ink-card/40">–</Text>
                     )}
                   </View>
                 ))}
