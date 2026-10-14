@@ -5,6 +5,7 @@ export * from './GameEventContext';
 export * from './GameEventStrategy';
 export * from './GameStartedStrategy';
 export * from './RoundStartedStrategy';
+export * from './StoryAdvancedStrategy';
 export * from './SkipTriggerStrategy';
 export * from './TurnEndedStrategy';
 export * from './TurnStartedStrategy';

@@ -11,6 +11,5 @@ export * from './PlaceCardInDrawPileStrategy';
 export * from './PlayCardStrategy';
 export * from './RemoveResourceOnCardStrategy';
 export * from './SetCumulatedStrategy';
-export * from './SetLastRoundStrategy';
 export * from './ShuffleDeckStrategy';
 export * from './UpgradeCardStrategy';

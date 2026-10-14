@@ -35,7 +35,9 @@ function addLocationScopeParts(
   if (locationScopes.includes(TargetScope.DRAWN)) parts.push(...gameState.lastDrawnCards);
   if (locationScopes.includes(TargetScope.DISCARDED)) parts.push(...gameState.lastDiscardedCards);
   if (locationScopes.includes(TargetScope.BOARD)) parts.push(...gameState.board);
-  if (locationScopes.includes(TargetScope.DISCOVERY)) parts.push(...gameState.discoveryPile);
+  if (locationScopes.includes(TargetScope.DISCOVERY)) {
+    parts.push(...gameState.discoveryPile, ...(gameState.discoverablePile ?? []));
+  }
   if (locationScopes.includes(TargetScope.DISCARD)) parts.push(...gameState.discardPile);
   if (locationScopes.includes(TargetScope.BLOCKED)) parts.push(...blockedInstanceIds);
   if (locationScopes.includes(TargetScope.PERMANENTS))
@@ -202,9 +204,6 @@ export function cardSelector(
   }
   if (scope.includes(TargetScope.TOP_OF_DISCARD)) {
     return gameState.discardPile.slice(-1);
-  }
-  if (scope.includes(TargetScope.TOP_OF_DISCOVERY)) {
-    return gameState.discoveryPile.slice(0, selector.pickNumber ?? 1);
   }
 
   const blockedEffect = getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK);

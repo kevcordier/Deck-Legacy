@@ -7,13 +7,16 @@ export class GameStartedStrategy implements GameEventStrategy {
   constructor(private readonly defs: Record<number, CardDef>) {}
   apply(gameState: GameState, event: GameEvent): GameState {
     const e = event as GameStartedEvent;
-    const allInstances = e.deck.map(entry =>
-      createInstance(entry.id, entry.cardId, this.defs[entry.cardId].states[0].id, this.defs),
-    );
+    const inGame = new Set([...e.initialDeck, ...e.discoveryPile, ...(e.discoverablePile ?? [])]);
     return {
       ...gameState,
       instances: Object.fromEntries(
-        [...e.initialDeck, ...e.discoveryPile].map(inst => [inst, allInstances[inst - 1]]),
+        e.deck
+          .filter(entry => inGame.has(entry.id))
+          .map(entry => [
+            entry.id,
+            createInstance(entry.id, entry.cardId, this.defs[entry.cardId].states[0].id, this.defs),
+          ]),
       ),
       drawPile: e.initialDeck,
       discardPile: [],
@@ -25,6 +28,7 @@ export class GameStartedStrategy implements GameEventStrategy {
       resources: {},
       stickerStock: e.stickerStock,
       discoveryPile: e.discoveryPile,
+      discoverablePile: e.discoverablePile,
       parameterOverrides: {},
       campaignScores: {},
       activeExpansion: undefined,

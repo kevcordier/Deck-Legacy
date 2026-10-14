@@ -1,3 +1,4 @@
+import { CardNumber } from '@components/CardNumber/CardNumber';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
 import { TriggerIcon } from '@components/ui/Icon/icon';
@@ -45,7 +46,8 @@ export function TriggerPileSection({
               <View className="flex-1">
                 {!!cardName && (
                   <Text className="font-display text-primary mb-1 text-sm">
-                    #{trigger.sourceInstanceId} {cardName}
+                    <CardNumber instanceId={trigger.sourceInstanceId} iconClassName="size-4" />{' '}
+                    {cardName}
                   </Text>
                 )}
                 <Text className="font-display text-xs">{actionLabel}</Text>

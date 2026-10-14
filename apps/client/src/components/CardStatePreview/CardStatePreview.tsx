@@ -1,3 +1,4 @@
+import { CardNumber } from '@components/CardNumber/CardNumber';
 import { Button } from '@components/ui/Button/Button';
 import { Grid } from '@components/ui/Grid/Grid';
 import { EyeIcon } from '@components/ui/Icon/icon';
@@ -58,7 +59,12 @@ function CardStatesModal({ instance, def, renderCard, onClose }: CardStatesModal
   return (
     <Modal
       title={tCardName(t, def.states[0]?.name || '')}
-      subtitle={t('cardPreview.statesMeta', { count: def.states.length, id: instance.id })}
+      subtitle={
+        <>
+          {t('cardPreview.statesMeta', { count: def.states.length })}{' '}
+          <CardNumber instanceId={instance.id} iconClassName="size-4" />
+        </>
+      }
       onClose={onClose}
     >
       <Grid minItemWidth={240} maxColumns={4}>

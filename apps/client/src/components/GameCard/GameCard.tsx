@@ -1,9 +1,6 @@
 import { CardAction } from '@components/CardAction/CardAction';
 import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview';
-import {
-  CardStateTooltip,
-  upgradeIconTooltip,
-} from '@components/CardStateTooltip/CardStateTooltip';
+import { CardStateTooltip, cardTextTokens } from '@components/CardStateTooltip/CardStateTooltip';
 import { CardIllustration } from '@components/CardTilt/CardIllustration';
 import { CardTrack } from '@components/CardTrack/CardTrack';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
@@ -37,7 +34,7 @@ import {
   tCardTag,
 } from '@helpers/cardI18n';
 import { catalog } from '@helpers/catalog';
-import { ExpansionIcon, expansionOfInstance } from '@helpers/expansionIcon';
+import { ExpansionIcon, cardNumber } from '@helpers/expansionIcon';
 import { getIllustrationSource } from '@helpers/illustrations';
 import { getResMeta } from '@helpers/renderHelpers';
 import { useGame } from '@hooks/useGame';
@@ -181,7 +178,7 @@ export function GameCard({
   const glory = getEffectiveGlory(cs, gameState, defs, instance, stickerDefs);
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
   const illustration = getIllustrationSource(cs.illustration);
-  const expansion = expansionOfInstance(instance.id, catalog.expansions);
+  const { expansion, number } = cardNumber(instance.id, catalog.expansions, instance);
   const tourId = (id: string) => (tourTarget ? id : undefined);
   const renderPreview = (i: CardInstance) => <GameCard instance={i} hideStatePreview />;
 
@@ -232,7 +229,7 @@ export function GameCard({
                     id={tourId('card-number')}
                     className="mr-1 rounded bg-black/5 px-1"
                   >
-                    <Text className={`font-body-bold ${sizes.nameText}`}>#{instance.id}</Text>
+                    <Text className={`font-body-bold ${sizes.nameText}`}>#{number}</Text>
                   </TutorialTarget>
                 )}
                 <TutorialTarget id={tourId('card-name')} className="min-w-0 shrink">
@@ -360,7 +357,7 @@ export function GameCard({
                       action.id,
                       instance.cumulated,
                       // Inside the action button: a tap keeps triggering the action.
-                      upgradeIconTooltip(instance.id, action.actionEffects, renderPreview, false),
+                      cardTextTokens(instance.id, action.actionEffects, renderPreview, false),
                     )}
                     disabled={!canActivate}
                     size={size}

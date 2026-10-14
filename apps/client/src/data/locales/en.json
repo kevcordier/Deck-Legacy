@@ -122,7 +122,7 @@
   },
   "cardPreview": {
     "viewAllStates": "View all states",
-    "statesMeta": "{{count}} states · #{{id}}"
+    "statesMeta": "{{count}} states ·"
   },
   "cardViewer": {
     "previous": "Previous card",
@@ -327,6 +327,8 @@
     "title": "History",
     "gameStarted": "Game started",
     "roundStarted": "Round {{round}} started",
+    "storyAdvanced": "The story advances — {{count}} card discovered",
+    "storyAdvanced_other": "The story advances — {{count}} cards discovered",
     "turnStarted": "Turn {{turn}} — {{count}} card drawn",
     "turnStarted_other": "Turn {{turn}} — {{count}} cards drawn",
     "turnEnded": "Turn ended",

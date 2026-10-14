@@ -9,7 +9,7 @@ export function getStoryCatalog(): GameCatalog {
 
 /** Builds instances for the base deck, keyed by instance id. */
 export function baseInstances(): Record<number, CardInstance> {
-  const entries = [...catalog.deck].sort((a, b) => a.id - b.id);
+  const entries = [...catalog.campaign, ...catalog.discoverable].sort((a, b) => a.id - b.id);
   return Object.fromEntries(
     entries.map(entry => [
       entry.id,

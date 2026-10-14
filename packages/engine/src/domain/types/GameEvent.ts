@@ -22,7 +22,10 @@ export interface GameStartedEvent extends GameEvent {
   initialDeck: number[];
   deck: { id: number; cardId: number }[];
   stickerStock: Record<string, number>;
+  /** Campaign pile. */
   discoveryPile: number[];
+  /** Absent in games started before the two packs (EDR-045). */
+  discoverablePile?: number[];
 }
 
 export interface GameEndedEvent extends GameEvent {
@@ -40,6 +43,12 @@ export interface RoundStartedEvent extends GameEvent {
   round: number;
   newDrawPile: number[];
   lastAddedCards?: number[];
+}
+
+/** Start of a round: the first cards of the campaign pile are discovered. */
+export interface StoryAdvancedEvent extends GameEvent {
+  type: GameEventType.STORY_ADVANCED;
+  discoveredIds: number[];
 }
 
 export interface ParchmentCardDiscoveredEvent extends GameEvent {
@@ -120,6 +129,10 @@ export interface ExpansionSelectedEvent extends GameEvent {
   expansionName: string;
   expansionMaxRound?: number;
   deckEntries: ExpansionDeckEntry[];
+  /** Entries of the discoverable pack; absent in older events (one discovery pile). */
+  discoverableIds?: number[];
+  /** `ExpansionConfig.expansion`: recorded on the created instances. */
+  expansion?: string;
   purgeBatchSize: number;
   purgePermanentCount: number;
   purgePool: number[];

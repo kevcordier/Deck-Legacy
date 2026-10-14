@@ -10,8 +10,12 @@ export type TriggerEntry = {
 };
 
 export type ExpansionDeckEntry = {
+  /** Instance id, unique across the base game and every expansion: card selectors use it. */
   id: number;
+  /** Card definition (file `cards/<cardId>.ts`), unique across the base game and expansions. */
   cardId: number;
+  /** Number printed on the card, scoped to its expansion; the instance id in the base game. */
+  number?: number;
 };
 
 export type ExpansionConfig = {
@@ -22,7 +26,12 @@ export type ExpansionConfig = {
     focus?: PurgeFocus;
   };
   parameters?: Partial<GameParameters>;
-  deck: ExpansionDeckEntry[];
+  /** Expansion that brings the deck (instances record it); absent for the base game campaigns. */
+  expansion?: string;
+  /** Campaign pack: the start of the round discovers its first cards ("advance the story"). */
+  campaign: ExpansionDeckEntry[];
+  /** Discoverable pack: cards only discovered by card effects. */
+  discoverable?: ExpansionDeckEntry[];
   stickers?: StickerStock; // stickers added to the stock when the expansion starts
   onStart?: {
     discover?: {
@@ -51,7 +60,13 @@ export type PurgeState = {
 
 export type GameState = {
   drawPile: number[];
+  /** Campaign pile: the start of each round discovers its first cards; empty, the campaign ends. */
   discoveryPile: number[];
+  /**
+   * Discoverable pile: cards only discovered by card effects. Absent in games started before the
+   * two packs (EDR-045): their single `discoveryPile` keeps the former rules.
+   */
+  discoverablePile?: number[];
   destroyedPile: number[];
   discardPile: number[];
   board: number[];

@@ -9,6 +9,7 @@ import {
   IronIcon,
   PassifIcon,
   ProsperityIcon,
+  RiddingTheWoodsIcon,
   StickerIcon,
   StoneIcon,
   TimeIcon,
@@ -50,6 +51,7 @@ const ICONS = [
   { name: 'Prosperity', Component: ProsperityIcon, color: IconColors.gold },
   { name: 'The Water Mill', Component: WaterMillIcon, color: IconColors.wood },
   { name: 'Border Dispute', Component: BorderDisputeIcon, color: IconColors.iron },
+  { name: 'Ridding the Woods', Component: RiddingTheWoodsIcon, color: IconColors.wood },
   { name: 'Time', Component: TimeIcon, color: 'currentColor' },
   { name: 'Trigger', Component: TriggerIcon, color: 'currentColor' },
 ];

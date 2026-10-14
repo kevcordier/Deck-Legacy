@@ -528,31 +528,6 @@ describe('cardSelector – missing def or state', () => {
   });
 });
 
-describe('cardSelector – TOP_OF_DISCOVERY scope', () => {
-  it('returns first card in discoveryPile', () => {
-    const gs = makeState({ discoveryPile: [10, 20], instances: { 10: instA, 20: instB } });
-    const result = cardSelector(
-      { scope: [TargetScope.TOP_OF_DISCOVERY] },
-      99,
-      gs,
-      defs,
-      stickerDefs,
-    );
-    expect(result).toEqual([10]);
-  });
-
-  it('returns empty when discoveryPile is empty', () => {
-    const result = cardSelector(
-      { scope: [TargetScope.TOP_OF_DISCOVERY] },
-      99,
-      makeState(),
-      defs,
-      stickerDefs,
-    );
-    expect(result).toEqual([]);
-  });
-});
-
 describe('cardSelector – having filter', () => {
   const defWithGlory: CardDef = {
     id: 7,

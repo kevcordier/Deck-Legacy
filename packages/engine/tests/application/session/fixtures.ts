@@ -54,7 +54,11 @@ export function makeCatalog(): GameCatalog {
   return {
     cards: { 1: fieldCard, 2: workshopCard },
     stickers: { 1: { id: 1, production: 'gold' } },
-    deck: Array.from({ length: 12 }, (_, i) => ({ id: i + 1, cardId: i === 8 || i === 9 ? 2 : 1 })),
+    campaign: Array.from({ length: 12 }, (_, i) => ({
+      id: i + 1,
+      cardId: i === 8 || i === 9 ? 2 : 1,
+    })),
+    discoverable: [],
     expansions: {},
     stickerStock: { 1: 2 },
   };

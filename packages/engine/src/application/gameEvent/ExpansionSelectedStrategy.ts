@@ -17,14 +17,59 @@ function addStickers(stock: StickerStock, added: StickerStock = {}): StickerStoc
   return result;
 }
 
+/**
+ * Discoverable cards already in the game (brought by another campaign of the same expansion):
+ * they keep their instance and their place (pile, deck, destroyed, purged).
+ */
+function knownDiscoverables(gameState: GameState, e: ExpansionSelectedEvent): number[] {
+  if (!gameState.discoverablePile) return [];
+  return (e.discoverableIds ?? []).filter(id => gameState.instances[id] !== undefined);
+}
+
+/**
+ * Adds the expansion packs to the piles. A game started with a single discovery pile (EDR-045)
+ * keeps it: every expansion card goes there.
+ */
+function discoveryPiles(
+  gameState: GameState,
+  e: ExpansionSelectedEvent,
+): Pick<GameState, 'discoveryPile' | 'discoverablePile'> {
+  const discoverableIds = gameState.discoverablePile ? (e.discoverableIds ?? []) : [];
+  const campaignIds = e.deckEntries.map(d => d.id).filter(id => !discoverableIds.includes(id));
+  const known = knownDiscoverables(gameState, e);
+  return {
+    discoveryPile: [
+      ...new Set(
+        e.expansionDiscoveryFirst
+          ? [...campaignIds, ...gameState.discoveryPile]
+          : [...gameState.discoveryPile, ...campaignIds],
+      ),
+    ],
+    discoverablePile: gameState.discoverablePile && [
+      ...new Set([
+        ...gameState.discoverablePile,
+        ...discoverableIds.filter(id => !known.includes(id)),
+      ]),
+    ],
+  };
+}
+
 export class ExpansionSelectedStrategy implements GameEventStrategy {
   constructor(private readonly defs: Record<number, CardDef>) {}
 
   apply(gameState: GameState, event: GameEvent): GameState {
     const e = event as ExpansionSelectedEvent;
-    const createdInstances = e.deckEntries.map(entry =>
-      createInstance(entry.id, entry.cardId, this.defs[entry.cardId].states[0].id, this.defs),
-    );
+    const known = knownDiscoverables(gameState, e);
+    const createdInstances = e.deckEntries
+      .filter(entry => !known.includes(entry.id))
+      .map(entry => {
+        // Cards of an expansion: their printed number is scoped to it.
+        const origin = e.expansion
+          ? { expansion: e.expansion, expansionId: entry.number ?? entry.id }
+          : undefined;
+        const firstState = this.defs[entry.cardId].states[0];
+        return createInstance(entry.id, entry.cardId, firstState.id, this.defs, origin);
+      });
 
     const newInstances = { ...gameState.instances };
     createdInstances.forEach(inst => {
@@ -37,13 +82,7 @@ export class ExpansionSelectedStrategy implements GameEventStrategy {
       turn: 0,
       instances: newInstances,
       stickerStock: addStickers(gameState.stickerStock, e.addedStickers),
-      discoveryPile: [
-        ...new Set(
-          e.expansionDiscoveryFirst
-            ? [...e.deckEntries.map(d => d.id), ...gameState.discoveryPile]
-            : [...gameState.discoveryPile, ...e.deckEntries.map(d => d.id)],
-        ),
-      ],
+      ...discoveryPiles(gameState, e),
       activeExpansion: e.expansionName,
       expansionMaxRound: e.expansionMaxRound,
       parameterOverrides: e.parameterOverrides ?? {},

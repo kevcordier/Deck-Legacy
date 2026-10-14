@@ -15,10 +15,6 @@ export const stop6: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionEffectType.SET_LAST_ROUND,
-            },
-            {
-              id: 2,
               type: ActionEffectType.DISCOVER_CARD,
               cards: {
                 ids: [69, 70],

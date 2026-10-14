@@ -39,7 +39,7 @@ export const discardCards = (
     if (gameState.destroyedPile.includes(cardId)) {
       return;
     }
-    gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== cardId);
+    removeFromDiscovery(gameState, [cardId]);
     gameState.board = gameState.board.filter(c => c !== cardId);
     gameState.drawPile = gameState.drawPile.filter(c => c !== cardId);
     gameState.discardPile = [...new Set([...gameState.discardPile, cardId])];
@@ -106,7 +106,7 @@ export const discardCardsMissingRequirement = (
 export const destroyCards = (_gameState: GameState, cardIds: number[]): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
   cardIds.forEach(cardId => {
-    gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== cardId);
+    removeFromDiscovery(gameState, [cardId]);
     gameState.board = gameState.board.filter(c => c !== cardId);
     gameState.drawPile = gameState.drawPile.filter(c => c !== cardId);
     gameState.permanents = gameState.permanents.filter(c => c !== cardId);
@@ -154,6 +154,22 @@ export const syncInstancePassivesInBoardEffects = (
   gameState.boardEffects[instanceId] = passives;
   return gameState;
 };
+
+/** Removes cards from the campaign and discoverable piles (mutates `gameState`). */
+export function removeFromDiscovery(gameState: GameState, ids: readonly number[]): void {
+  gameState.discoveryPile = gameState.discoveryPile.filter(id => !ids.includes(id));
+  if (gameState.discoverablePile) {
+    gameState.discoverablePile = gameState.discoverablePile.filter(id => !ids.includes(id));
+  }
+}
+
+/**
+ * The end of a game empties the campaign pile. Games started with a single discovery pile keep it:
+ * it also holds the cards that effects discover later (EDR-045).
+ */
+export function clearCampaignPile(gameState: GameState): GameState {
+  return gameState.discoverablePile ? { ...gameState, discoveryPile: [] } : gameState;
+}
 
 export function computeGameStateDiff(before: GameState, after: GameState): Partial<GameState> {
   return Object.fromEntries(

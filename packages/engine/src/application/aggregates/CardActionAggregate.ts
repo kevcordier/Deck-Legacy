@@ -28,6 +28,7 @@ import {
   discardCards,
   discardCardsMissingRequirement,
   mergeResources,
+  removeFromDiscovery,
   spendResources,
 } from '../gameStateHelper';
 import { CardChoiceStrategy } from '../playerChoice/CardChoiceStrategy';
@@ -432,10 +433,8 @@ export class CardActionAggregate {
     );
 
     if (this.def.parchmentCard) {
-      this.gameState = {
-        ...this.gameState,
-        discoveryPile: this.gameState.discoveryPile.filter(id => id !== this.instance.id),
-      };
+      this.gameState = { ...this.gameState };
+      removeFromDiscovery(this.gameState, [this.instance.id]);
     }
 
     if (this.triggerId) {

@@ -139,6 +139,7 @@ describe('GameAggregate.gameStarted', () => {
       ],
       {},
       [],
+      [],
     );
     expect(agg.getGameState().instances[1]).toBeDefined();
     expect(agg.getEvents().length).toBeGreaterThan(0);
@@ -1735,7 +1736,7 @@ describe('GameAggregate campaign/purge', () => {
   const expansion: ExpansionConfig = {
     purge: { purge: 12, permanent: 0 },
     parameters: { discoverPerRound: 0 },
-    deck: [{ id: 136, cardId: 120 }],
+    campaign: [{ id: 136, cardId: 120 }],
     onStart: { discover: { ids: [136] } },
   };
 

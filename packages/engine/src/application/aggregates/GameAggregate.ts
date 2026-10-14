@@ -35,6 +35,7 @@ import type {
   RoundStartedEvent,
   SkipTriggerEvent,
   Sticker,
+  StoryAdvancedEvent,
   TriggerEntry,
   TurnEndedEvent,
   TurnStartedEvent,
@@ -124,6 +125,7 @@ export class GameAggregate {
     deck: { id: number; cardId: number }[],
     stickerStock: Record<string, number>,
     discoveryPile: number[],
+    discoverablePile: number[],
     firstDrawPile?: number[],
   ): GameState {
     const event: GameStartedEvent = {
@@ -134,6 +136,7 @@ export class GameAggregate {
       deck,
       stickerStock,
       discoveryPile,
+      discoverablePile,
     };
     this.apply(event);
     this.events.push(event);
@@ -330,7 +333,9 @@ export class GameAggregate {
       timestamp: Date.now(),
       expansionName,
       expansionMaxRound,
-      deckEntries: expansion.deck,
+      deckEntries: [...expansion.campaign, ...(expansion.discoverable ?? [])],
+      discoverableIds: expansion.discoverable?.map(entry => entry.id) ?? [],
+      expansion: expansion.expansion,
       purgeBatchSize: expansion.purge.purge,
       purgePermanentCount: expansion.purge.permanent,
       purgePool,
@@ -522,29 +527,33 @@ export class GameAggregate {
   /** `drawPile` replaces the shuffle (tutorial order); it is stored in the event like a shuffle. */
   public roundStarted(drawPile?: number[]): GameState {
     const round = this.gameState.round + 1;
-    const cardNumberToDiscover = this.getParameters().discoverPerRound;
+    const cardNumberToDiscover = round > 1 ? this.getParameters().discoverPerRound : 0;
+    // A game started with a single discovery pile keeps the former rules (EDR-045).
+    const twoPacks = this.gameState.discoverablePile !== undefined;
+    if (twoPacks && cardNumberToDiscover > 0 && this.gameState.discoveryPile.length === 0) {
+      // Nothing left to discover in the campaign pile: the campaign ends.
+      return this.endGame();
+    }
     const lastAddedCards: number[] = [];
-    if (round > 1) {
-      const discoveredCard = this.gameState.discoveryPile.slice(0, cardNumberToDiscover);
+    const discoveredCard = this.gameState.discoveryPile.slice(0, cardNumberToDiscover);
 
-      for (const cardId of discoveredCard) {
-        const cardInstance = this.gameState.instances[cardId];
-        const cardDef = this.cardDefs[cardInstance.cardId];
+    for (const cardId of discoveredCard) {
+      const cardInstance = this.gameState.instances[cardId];
+      const cardDef = this.cardDefs[cardInstance.cardId];
 
-        if (cardDef.parchmentCard) {
-          const parchEvent: ParchmentCardDiscoveredEvent = {
-            id: crypto.randomUUID(),
-            type: GameEventType.PARCHMENT_CARD_DISCOVERED,
-            timestamp: Date.now(),
-            cardInstanceId: cardId,
-          };
-          this.apply(parchEvent);
-          this.events.push(parchEvent);
-          return this.gameState;
-        }
-
-        lastAddedCards.push(cardId);
+      if (cardDef.parchmentCard) {
+        const parchEvent: ParchmentCardDiscoveredEvent = {
+          id: crypto.randomUUID(),
+          type: GameEventType.PARCHMENT_CARD_DISCOVERED,
+          timestamp: Date.now(),
+          cardInstanceId: cardId,
+        };
+        this.apply(parchEvent);
+        this.events.push(parchEvent);
+        return this.gameState;
       }
+
+      lastAddedCards.push(cardId);
     }
 
     const event: RoundStartedEvent = {
@@ -552,7 +561,8 @@ export class GameAggregate {
       type: GameEventType.ROUND_STARTED,
       timestamp: Date.now(),
       round,
-      lastAddedCards,
+      // With two packs, the discovery is its own event (STORY_ADVANCED) below.
+      lastAddedCards: twoPacks ? [] : lastAddedCards,
       newDrawPile:
         drawPile ??
         this.shuffle([
@@ -564,6 +574,17 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
+
+    if (twoPacks && lastAddedCards.length > 0) {
+      const storyEvent: StoryAdvancedEvent = {
+        id: crypto.randomUUID(),
+        type: GameEventType.STORY_ADVANCED,
+        timestamp: Date.now(),
+        discoveredIds: lastAddedCards,
+      };
+      this.apply(storyEvent);
+      this.events.push(storyEvent);
+    }
     return this.gameState;
   }
 

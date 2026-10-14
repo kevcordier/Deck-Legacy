@@ -28,9 +28,10 @@ The tutorial guides you through a first round; at its end, you can keep that gam
 
 A **round** is a series of turns that ends when your draw deck is empty.
 
-- At the start of each round (from round 2), the next **2 cards** in number order are **discovered** and join your deck. If the first of them is a **parchment card**, its instructions apply immediately, then it is destroyed.
+- The cards are split into two packs. The **campaign pack** (cards **1–70** in the base game) tells the story; the **discoverable pack** (cards above #70) holds the cards that only card effects discover.
+- At the start of each round (from round 2), **the story advances**: the next **2 cards** of the campaign pack, in number order, are **discovered** and join your deck. If the first of them is a **parchment card**, its instructions apply immediately, then it is destroyed.
 - The round preview shows the cards you just discovered; tap **▶︎ Start round** to shuffle all your cards into a new deck and play the first turn.
-- The game ends after the round in which you discover card **#70**. Cards above #70 can only be discovered through card effects.
+- The game ends after the round in which you discover card **#70**. If the campaign pack is empty when the story must advance, the campaign ends; the cards it still holds at the end of the game are never discovered.
 
 ---
 
@@ -121,6 +122,7 @@ Some cards have a row of **boxes** to mark. Marking a box may cost resources and
 
 ### Discovering and Your Deck
 
+- Some effects **advance the story**: they discover the next cards of the campaign pack, as at the start of a round.
 - A card discovered by an effect goes to your **discard pile**. If an effect lets you discover one of several cards, you see them all before choosing.
 - Some effects put cards on top of or under your deck; they cannot be used when your deck is empty. An empty deck always ends the round after the turn.
 
@@ -169,7 +171,7 @@ Red cards are **negative**, usually _Enemy_ or _Event_ cards; every other card i
 
 ## Expansions
 
-Once you finish the base game, you can continue your kingdom with **expansions**, one at a time: each one adds rounds and often new cards and concepts. Each kingdom may play each expansion only once. Mini expansions add 4 rounds without discovering new cards each round; larger expansions add rounds and many new cards.
+Once you finish the base game, you can continue your kingdom with **expansions**, one at a time: each one adds rounds and often new cards and concepts. Each kingdom may play each expansion only once. Mini expansions add 4 rounds without discovering new cards each round; larger expansions add rounds and many new cards, with their own campaign pack and discoverable pack (Ridding the Woods: cards 1–25 and 26–29).
 
 ### Purge
 

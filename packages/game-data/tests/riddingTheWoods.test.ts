@@ -25,7 +25,12 @@ const TAX_COLLECTOR = 148;
 const WILD_GRASS = 1;
 
 function makeGame(overrides: Partial<GameState>, states: Record<number, number> = {}) {
-  const entries = [{ id: WILD_GRASS, cardId: 1 }, ...catalog.expansions[EXPANSION].deck];
+  const expansion = catalog.expansions[EXPANSION];
+  const entries = [
+    { id: WILD_GRASS, cardId: 1 },
+    ...expansion.campaign,
+    ...(expansion.discoverable ?? []),
+  ];
   const instances = Object.fromEntries(
     entries.map(({ id, cardId }) => [
       id,
@@ -48,7 +53,7 @@ function found<T>(value: T | undefined): T {
 }
 
 function passivesOf(id: number, stateId = 1): Record<number, Passive[]> {
-  const { cardId } = found(catalog.expansions[EXPANSION].deck.find(e => e.id === id));
+  const { cardId } = found(catalog.expansions[EXPANSION].campaign.find(e => e.id === id));
   return { [id]: found(catalog.cards[cardId].states.find(s => s.id === stateId)).passives ?? [] };
 }
 

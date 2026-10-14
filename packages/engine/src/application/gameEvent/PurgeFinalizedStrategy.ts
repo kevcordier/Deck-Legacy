@@ -18,12 +18,14 @@ export class PurgeFinalizedStrategy implements GameEventStrategy {
     const newPermanents = [...gameState.permanents];
     const newDiscard = [...gameState.discardPile];
     const remainingDiscovery = [...gameState.discoveryPile];
+    const remainingDiscoverable = gameState.discoverablePile && [...gameState.discoverablePile];
     let newBoardEffects = { ...gameState.boardEffects };
 
     for (const cardId of e.onStartDiscoverIds) {
-      const idx = remainingDiscovery.indexOf(cardId);
-      if (idx < 0) continue;
-      remainingDiscovery.splice(idx, 1);
+      const pile = remainingDiscovery.includes(cardId) ? remainingDiscovery : remainingDiscoverable;
+      const idx = pile?.indexOf(cardId) ?? -1;
+      if (!pile || idx < 0) continue;
+      pile.splice(idx, 1);
 
       const instance = gameState.instances[cardId];
       if (!instance) continue;
@@ -51,6 +53,7 @@ export class PurgeFinalizedStrategy implements GameEventStrategy {
       board: removeIds(gameState.board, e.purgedIds),
       permanents: removeIds(newPermanents, e.purgedIds),
       discoveryPile: removeIds(remainingDiscovery, e.purgedIds),
+      discoverablePile: remainingDiscoverable && removeIds(remainingDiscoverable, e.purgedIds),
       purgedCards: [...new Set([...gameState.purgedCards, ...e.purgedIds])],
       purgedGlory: [...gameState.purgedGlory, e.glory],
       purgeState: undefined,

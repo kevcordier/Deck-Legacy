@@ -1,4 +1,5 @@
 import type { GameState, ResolvedActionEffect } from '../../domain/types';
+import { removeFromDiscovery } from '../gameStateHelper';
 import type { CardActionStrategy } from './CardActionStrategy';
 
 export class PlaceCardInPileStrategy implements CardActionStrategy {
@@ -11,9 +12,10 @@ export class PlaceCardInPileStrategy implements CardActionStrategy {
       let index = payload.position === 'top' ? 0 : payload.position;
       gameState.board = gameState.board.filter(c => c !== instanceId);
       gameState.drawPile = gameState.drawPile.filter(c => c !== instanceId);
-      gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== instanceId);
+      removeFromDiscovery(gameState, [instanceId]);
       gameState.discardPile = gameState.discardPile.filter(c => c !== instanceId);
 
+      // "Discovery" is the campaign pile: the card comes back at the next rounds.
       if (payload.deck === 'discovery') {
         if (index === 'bottom') index = gameState.discoveryPile.length;
         gameState.discoveryPile.splice(index as number, 0, instanceId);

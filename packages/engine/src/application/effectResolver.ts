@@ -789,14 +789,27 @@ function getEnrichedCardSelector(
   return { ...action.cards, lastSelectedIds };
 }
 
+/**
+ * Triggers queued before EDR-046 keep their stored definition: "discover the top of the
+ * discovery pile" (the removed `top_of_discovery` scope) is now ADVANCE_STORY.
+ */
+function upgradeLegacyEffect(action: ActionEffect): ActionEffect {
+  const scope = action.cards?.scope as string[] | undefined;
+  if (action.type !== ActionEffectType.DISCOVER_CARD || !scope?.includes('top_of_discovery')) {
+    return action;
+  }
+  return { id: action.id, type: ActionEffectType.ADVANCE_STORY, value: action.cards?.pickNumber };
+}
+
 export function resolveActionEffect(
-  action: ActionEffect,
+  storedAction: ActionEffect,
   instanceId: number,
   gameState: GameState,
   defs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
   options: ResolveActionEffectOptions = {},
 ): [ResolvedActionEffect, PendingChoice[]] {
+  const action = upgradeLegacyEffect(storedAction);
   const isMandatory = options.isMandatory ?? false;
   const parentActionId = options.parentActionId;
   const lastSelectedIds = options.lastSelectedIds;

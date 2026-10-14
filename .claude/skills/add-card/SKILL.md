@@ -84,24 +84,32 @@ Base game cards: `src/locales/`. Expansion folder cards: `src/expansions/<name>/
 
 Use icon placeholders in text: `{{gold}} {{wood}} {{stone}} {{iron}} {{weapon}} {{goods}}
 {{glory}} {{time}} {{passif}} {{destroy}} {{trigger}} {{upgrade}} {{accumulated}}`.
+`{{discovered}}` shows the number (with the expansion logo) of the cards the action discovers,
+with a preview on hover: use it instead of writing the number, e.g. `Discover Sheriff ({{discovered}}).`
 Match the tone of neighbouring entries ("End of round: …" / "Fin de manche : …").
 Insert keys next to other keys of the same card id, keeping numeric order.
 
 ## 6. Wire it into the game (`packages/game-data/src/deck.json`)
 
-Ask if unclear. Instance ids in `deck.json` are global and unique: use max existing
-instance `id` (across `deck` and every `expansions.*.deck`) + 1.
+Ask if unclear. A deck entry has three ids (EDR-047):
 
-- **Initial deck**: add `{ "id": <instanceId>, "cardId": <id> }` to `deck`.
-- **Discovered later** (by another card's `DISCOVER_CARD`): still needs an instance in
-  `deck`; update the discovering card's effect and its locale text if needed.
+- `id`: the instance id, unique across the base game and every expansion (card selectors use it):
+  max existing `id` in every `deck.json` + 1.
+- `cardId`: the card definition (`cards/<cardId>.ts`), also unique across the whole game.
+- `number` (expansions only): the number printed on the card, scoped to the expansion; the base
+  game prints the instance id.
+
+- **Campaign** (starting deck = cards 1–10, then discovered in order at the start of each round,
+  EDR-045): add `{ "id": <instanceId>, "cardId": <id> }` to `campaign`.
+- **Discoverable** (only by another card's `DISCOVER_CARD`): add it to `discoverable`; update the discovering card's effect and its locale text if needed.
 - **Expansion** (EDR-042): the card lives in `src/expansions/<name>/cards/<id>.ts`, is listed
   in `src/expansions/<name>/index.ts`, and its instance goes in `src/expansions/<name>/deck.json`
   (`name`, `expansionMaxRound`, `purge` (with an optional `focus: { resource, count }`), `parameters`, `stickers` added to the stock,
-  `deck`, `onStart.discover.ids`).
+  `campaign`, `discoverable`, `onStart.discover.ids`), each entry with its printed `number`.
   A new expansion folder is added to `expansionPacks` in `src/expansions/index.ts`, with a
-  translated title in `campaign.expansions.<name>` (en/fr). Card ids and instance ids stay global.
-  Prosperity, The Water Mill and Border Dispute predate this and stay in `cards/` and `deck.json`.
+  translated title in `campaign.expansions.<name>` (en/fr).
+  Prosperity, The Water Mill and Border Dispute are base game mini campaigns, not expansions: their
+  cards stay in `cards/` and their decks in `campaigns` of `deck.json`.
 
 ## 7. Engine support
 

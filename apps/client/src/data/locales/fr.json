@@ -122,7 +122,7 @@
   },
   "cardPreview": {
     "viewAllStates": "Voir tous les états",
-    "statesMeta": "{{count}} états · #{{id}}"
+    "statesMeta": "{{count}} états ·"
   },
   "cardViewer": {
     "previous": "Carte précédente",
@@ -327,6 +327,8 @@
     "title": "Historique",
     "gameStarted": "Partie démarrée",
     "roundStarted": "Manche {{round}} démarrée",
+    "storyAdvanced": "L'histoire avance — {{count}} carte découverte",
+    "storyAdvanced_other": "L'histoire avance — {{count}} cartes découvertes",
     "turnStarted": "Tour {{turn}} — {{count}} carte piochée",
     "turnStarted_other": "Tour {{turn}} — {{count}} cartes piochées",
     "turnEnded": "Fin de tour",

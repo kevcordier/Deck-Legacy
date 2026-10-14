@@ -6,6 +6,7 @@ import { AddGloryStrategy } from './AddGloryStrategy';
 import { AddResourceStrategy } from './AddResourceStrategy';
 import { AddStickerStrategy } from './AddStickerStrategy';
 import { AddToPurgeStrategy } from './AddToPurgeStrategy';
+import { AdvanceStoryStrategy } from './AdvanceStoryStrategy';
 import { BlockCardStrategy } from './BlockCardStrategy';
 import type { CardActionStrategy } from './CardActionStrategy';
 import { ChoseStateStrategy } from './ChoseStateStrategy';
@@ -18,7 +19,6 @@ import { PlayCardStrategy } from './PlayCardStrategy';
 import { RemoveResourceOnCardStrategy } from './RemoveResourceOnCardStrategy';
 import { SaveFromPurgeStrategy } from './SaveFromPurgeStrategy';
 import { SetCumulatedStrategy } from './SetCumulatedStrategy';
-import { SetLastRoundStrategy } from './SetLastRoundStrategy';
 import { ShuffleDeckStrategy } from './ShuffleDeckStrategy';
 import { TrackAdvanceStrategy } from './TrackAdvanceStrategy';
 import { UpgradeCardStrategy } from './UpgradeCardStrategy';
@@ -33,6 +33,7 @@ export class CardActionContext {
       [ActionEffectType.REMOVE_RESOURCE_ON_CARD]: new RemoveResourceOnCardStrategy(),
       [ActionEffectType.DISCARD_CARD]: new DiscardCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs),
+      [ActionEffectType.ADVANCE_STORY]: new AdvanceStoryStrategy(cardDefs),
       [ActionEffectType.DESTROY_CARD]: new DestroyCardStrategy(),
       [ActionEffectType.UPGRADE_CARD]: new UpgradeCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.PLACE_CARD_IN_PILE]: new PlaceCardInPileStrategy(),
@@ -49,7 +50,6 @@ export class CardActionContext {
       [ActionEffectType.SHUFFLE_DECK]: new ShuffleDeckStrategy(),
       [ActionEffectType.ADD_GLORY]: new AddGloryStrategy(cardDefs, stickerDefs),
       [ActionEffectType.SAVE_FROM_PURGE]: new SaveFromPurgeStrategy(),
-      [ActionEffectType.SET_LAST_ROUND]: new SetLastRoundStrategy(),
       [ActionEffectType.ADD_TO_PURGE]: new AddToPurgeStrategy(),
     };
   }

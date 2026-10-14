@@ -21,16 +21,16 @@ The game state is derived by replaying an ordered list of `GameEvent` objects. `
 
 ## Key Domain Types (packages/engine/src/domain/)
 
-| Type              | Description                                                           |
-| ----------------- | --------------------------------------------------------------------- |
-| `CardDef`         | Static card template with states, productions, upgrade paths, effects |
-| `CardInstance`    | Runtime card: `{id, cardId, stateId, stickers, trackProgress}`        |
-| `GameState`       | Full snapshot: piles, board, instances, resources, trigger stack      |
-| `GameEvent`       | Discriminated union of all recordable events                          |
-| `PendingChoice`   | Prompt awaiting player input (card select, resource, state)           |
-| `Action` / `Cost` | Effect definitions for card abilities                                 |
-| `Resource`        | `{gold, wood, stone, iron, weapon, goods}`                            |
-| `Sticker`         | Persistent card modifier (production bonus, glory, stay-in-play)      |
+| Type              | Description                                                                                                                        |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `CardDef`         | Static card template with states, productions, upgrade paths, effects                                                              |
+| `CardInstance`    | Runtime card: `{id, cardId, stateId, stickers, trackProgress, expansion?, expansionId?}` (`expansionId` = printed number, EDR-047) |
+| `GameState`       | Full snapshot: piles, board, instances, resources, trigger stack                                                                   |
+| `GameEvent`       | Discriminated union of all recordable events                                                                                       |
+| `PendingChoice`   | Prompt awaiting player input (card select, resource, state)                                                                        |
+| `Action` / `Cost` | Effect definitions for card abilities                                                                                              |
+| `Resource`        | `{gold, wood, stone, iron, weapon, goods}`                                                                                         |
+| `Sticker`         | Persistent card modifier (production bonus, glory, stay-in-play)                                                                   |
 
 ## Card Structure
 
@@ -86,7 +86,7 @@ ActionEffect {
                                 // BLOCK_CARD | PLAY_CARD | ADD_STICKER | CHOOSE_STATE | BOOST_CARD |
                                 // COST | ADD_CUMULATED | SET_CUMULATED | TRACK_ADVANCE |
                                 // ADD_BOARD_EFFECT | CHOOSE_EFFECT | END_GAME | SHUFFLE_DECK | ADD_GLORY |
-                                // SAVE_FROM_PURGE | SET_LAST_ROUND | ADD_TO_PURGE
+                                // SAVE_FROM_PURGE | ADD_TO_PURGE | ADVANCE_STORY
   cards?: CardSelector          // target card filter (scope, tags, ids…)
   resources?: ResourceSelector  // target resource filter
   states?: StateSelector        // state ids choice
@@ -122,7 +122,8 @@ StepDef {
 GameState {
   // Piles — arrays of CardInstance IDs
   drawPile:       number[]   // cards to be drawn this round
-  discoveryPile:  number[]   // cards available for discovery
+  discoveryPile:  number[]   // campaign pile: STORY_ADVANCED discovers its first cards each round
+  discoverablePile?: number[] // cards only discovered by effects (absent in games started before EDR-045)
   discardPile:    number[]   // cards discarded after play
   destroyedPile:  number[]   // permanently removed cards
   board:          number[]   // cards in play this turn
@@ -181,7 +182,7 @@ This lets expansion-specific round limits (`expansionMaxRound`) be evaluated fro
 
 ## Strategy Pattern (Card Actions)
 
-`packages/engine/src/application/cardAction/` contains one strategy per `ActionEffectType` implementing `CardActionStrategy` (AddResource, AddSticker, AddBoardEffect, AddCumulated, AddGlory, AddToPurge, BlockCard, ChoseState, DestroyCard, DiscardCard, DiscoverCard, EndGame, PlaceCardInDrawPile, PlayCard, RemoveResourceOnCard, SaveFromPurge, SetCumulated, SetLastRound, ShuffleDeck, TrackAdvance, UpgradeCard), registered in `CardActionContext`.
+`packages/engine/src/application/cardAction/` contains one strategy per `ActionEffectType` implementing `CardActionStrategy` (AddResource, AddSticker, AddBoardEffect, AddCumulated, AddGlory, AddToPurge, BlockCard, ChoseState, DestroyCard, DiscardCard, DiscoverCard, EndGame, PlaceCardInDrawPile, PlayCard, RemoveResourceOnCard, SaveFromPurge, SetCumulated, ShuffleDeck, TrackAdvance, UpgradeCard), registered in `CardActionContext`.
 
 When adding new action types, add a new strategy file and register it in `CardActionContext`.
 
@@ -199,6 +200,7 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - `TargetScope.STAYING`: keeps the selected cards that stay in play (use with `BOARD`).
 - `ValuePerElement.ownProduction`: counts the total production of the card itself. For effects other than `TRACK_ADVANCE`, `value` = (`value` ?? 1) × `amount` × count (`REMOVE_RESOURCE_ON_CARD` crosses out `value` times; `ADD_STICKER` stickers every chosen card).
 - `LAST_SELECTED` alone picks all last selected cards, unless `pickNumber`/`pickMax` asks the player to choose among them.
+- Two packs (EDR-045): `campaign` and `discoverable` in each `deck.json`. At round start `STORY_ADVANCED` discovers the first `discoverPerRound` cards of `discoveryPile` (campaign); an empty campaign pile then ends the campaign (`GAME_ENDED`), which empties it. Effects discover from both piles; `ADVANCE_STORY` (`value` cards, EDR-046) discovers the first cards of the campaign pile. A discoverable card already in the game (another campaign of the same expansion) is neither recreated nor put back at `EXPANSION_SELECTED`. Games without `discoverablePile` keep the single-pile rules.
 - `EXPANSION_SELECTED.expansionDiscoveryFirst` (always set by new events): expansion cards go before the remaining base cards in the discovery pile; `onStart.discover.ids` gives the first round its discoveries.
 - `PassiveType.RESTRICT_SPEND` (`resources` = reserved types): they pay only upgrade costs (`Cost.forUpgrade`, set by `getEffectiveUpgradeCost`), never action, step or discover costs.
 

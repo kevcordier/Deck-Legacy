@@ -1,7 +1,8 @@
+import { CardNumber } from '@components/CardNumber/CardNumber';
 import {
   CardStateTooltip,
+  cardTextTokens,
   selfUpgradeStateId,
-  upgradeIconTooltip,
 } from '@components/CardStateTooltip/CardStateTooltip';
 import { Glory } from '@components/ui/Glory/Glory';
 import { UpgradeIcon } from '@components/ui/Icon/icon';
@@ -69,7 +70,7 @@ export function CardTrackContent({
   const getActionContent = (action: ActionEffect): JSX.Element | null => {
     if (action.type === ActionEffectType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
       const discoveredId = action.cards.ids[0];
-      const label = <Text className="text-xs">#{discoveredId}</Text>;
+      const label = <CardNumber instanceId={discoveredId} className="text-xs" />;
       return renderCard ? (
         <CardStateTooltip key={action.id} instanceId={discoveredId} renderCard={renderCard}>
           {label}
@@ -138,7 +139,7 @@ export function CardTrackContent({
           instance.cardId,
           instance.stateId,
           step.id,
-          renderCard && upgradeIconTooltip(instance.id, step.effects, renderCard),
+          cardTextTokens(instance.id, step.effects, renderCard),
         )}
       </Text>,
     );
