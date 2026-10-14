@@ -36,7 +36,7 @@
     "expo-font": "~57.0.4",
     "expo-linear-gradient": "~57.0.2",
     "expo-linking": "~57.0.12",
-    "expo-router": "~57.0.25",
+    "expo-router": "~58.0.17",
     "expo-sensors": "~57.0.3",
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
