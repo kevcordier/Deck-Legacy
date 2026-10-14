@@ -432,7 +432,10 @@
     "deleteConfirmButton": "Delete",
     "menu": "Actions for {{name}}",
     "view": "View the kingdom",
-    "deleteAction": "Delete the kingdom"
+    "deleteAction": "Delete the kingdom",
+    "rename": "Rename the kingdom",
+    "renameTitle": "Rename the kingdom",
+    "renameConfirm": "Rename"
   },
   "scoreboard": {
     "title": "Scoreboard",

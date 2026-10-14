@@ -1,5 +1,5 @@
 import { Button } from '@components/ui/Button/Button';
-import { DestroyIcon, EyeIcon } from '@components/ui/Icon/icon';
+import { DestroyIcon, EyeIcon, PencilIcon } from '@components/ui/Icon/icon';
 import { Text, TextStyle } from '@components/ui/Text/Text';
 import { Tooltip } from '@components/ui/Tooltip/Tooltip';
 import type { CampaignSegmentScore } from '@deck-legacy/api-contract';
@@ -28,6 +28,7 @@ type KingdomTableProps<T extends KingdomRow> = {
   readonly onOpen?: (kingdom: T) => void;
   /** Menu actions; the "⋯" menu shows only when one is given. */
   readonly onView?: (kingdom: T) => void;
+  readonly onRename?: (kingdom: T) => void;
   readonly onDelete?: (kingdom: T) => void;
 };
 
@@ -51,19 +52,22 @@ function ExpansionScore({ segment }: { readonly segment: CampaignSegmentScore })
   );
 }
 
-/** "⋯" button opening a popover with the kingdom's actions (view its cards, delete it). */
+/** "⋯" button opening a popover with the kingdom's actions (view its cards, rename it, delete it). */
 function KingdomMenu<T extends KingdomRow>({
   kingdom,
   onView,
+  onRename,
   onDelete,
 }: {
   readonly kingdom: T;
   readonly onView?: (kingdom: T) => void;
+  readonly onRename?: (kingdom: T) => void;
   readonly onDelete?: (kingdom: T) => void;
 }) {
   const { t } = useTranslation();
   const items = [
     { key: 'view', label: t('kingdom.view'), Icon: EyeIcon, action: onView },
+    { key: 'rename', label: t('kingdom.rename'), Icon: PencilIcon, action: onRename },
     { key: 'delete', label: t('kingdom.deleteAction'), Icon: DestroyIcon, action: onDelete },
   ];
   return (
@@ -106,19 +110,22 @@ function KingdomMenu<T extends KingdomRow>({
 /**
  * Kingdoms: name, current round and turn (or the player on the scoreboard), total score, base
  * game score, then each expansion (logo and cumulative score) in the order it was played, and a
- * menu to view or delete the kingdom when those actions are given.
+ * menu to view, rename or delete the kingdom when those actions are given.
  */
 export function KingdomTable<T extends KingdomRow>({
   kingdoms,
   ranking = false,
   onOpen,
   onView,
+  onRename,
   onDelete,
 }: KingdomTableProps<T>) {
   const { t } = useTranslation();
-  const hasMenu = Boolean(onView ?? onDelete);
+  const hasMenu = Boolean(onView ?? onRename ?? onDelete);
   const menu = (kingdom: T) =>
-    hasMenu && <KingdomMenu kingdom={kingdom} onView={onView} onDelete={onDelete} />;
+    hasMenu && (
+      <KingdomMenu kingdom={kingdom} onView={onView} onRename={onRename} onDelete={onDelete} />
+    );
   const { width } = useWindowDimensions();
   const columns = Math.max(0, ...kingdoms.map(k => expansions(k).length));
 

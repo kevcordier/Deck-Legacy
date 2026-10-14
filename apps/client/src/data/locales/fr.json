@@ -432,7 +432,10 @@
     "deleteConfirmButton": "Supprimer",
     "menu": "Actions pour {{name}}",
     "view": "Voir le royaume",
-    "deleteAction": "Supprimer le royaume"
+    "deleteAction": "Supprimer le royaume",
+    "rename": "Renommer le royaume",
+    "renameTitle": "Renommer le royaume",
+    "renameConfirm": "Renommer"
   },
   "scoreboard": {
     "title": "Classement",

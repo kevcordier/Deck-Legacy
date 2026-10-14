@@ -391,6 +391,20 @@ export function ZoomInIcon(props: IconProps) {
   return <MagnifierIcon {...props} plus />;
 }
 
+export function PencilIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+  return (
+    <SvgIcon fill="none" viewBox="0 0 24 24" className={className} style={style} alt={alt}>
+      <Path
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 20h4L19.3 8.7a1.4 1.4 0 0 0 0-2l-2-2a1.4 1.4 0 0 0-2 0L4 16zM14 6l4 4"
+      />
+    </SvgIcon>
+  );
+}
+
 export function EyeIcon({ color = 'currentColor', className, style, alt }: IconProps) {
   return (
     <SvgIcon fill="none" viewBox="0 0 24 24" className={className} style={style} alt={alt}>

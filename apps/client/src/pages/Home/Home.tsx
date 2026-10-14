@@ -7,15 +7,22 @@ import { RulesModal } from '@components/RulesModal/RulesModal';
 import { SignInForm } from '@components/SignInForm/SignInForm';
 import { Button } from '@components/ui/Button/Button';
 import { Divider } from '@components/ui/Divider/Divider';
+import { TextInput } from '@components/ui/Input/TextInput';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text, TextStyle } from '@components/ui/Text/Text';
 import { Title } from '@components/ui/Title/Title';
+import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/api-contract';
 import { kingdomPath, maxKingdoms } from '@helpers/kingdom';
 import { FULL_SIZE, PAGE_BACKGROUND } from '@helpers/pageBackground';
 import { useAuth } from '@hooks/useAuth';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useKingdoms } from '@hooks/useKingdoms';
-import { type KingdomMeta, abandonKingdom, createKingdom } from '@services/persistence';
+import {
+  type KingdomMeta,
+  abandonKingdom,
+  createKingdom,
+  renameKingdom,
+} from '@services/persistence';
 import { STORAGE_KEYS, storage } from '@services/storage';
 import { scheduleSync } from '@services/sync';
 import { randomUUID } from 'expo-crypto';
@@ -66,6 +73,8 @@ export function Home() {
   const [creating, setCreating] = useState(false);
   const [toDelete, setToDelete] = useState<KingdomMeta | null>(null);
   const [viewing, setViewing] = useState<KingdomMeta | null>(null);
+  const [toRename, setToRename] = useState<KingdomMeta | null>(null);
+  const [newName, setNewName] = useState('');
   const [rulesOpen, setRulesOpen] = useState(false);
   const [optionsTab, setOptionsTab] = useState<OptionsTab | null>(null);
 
@@ -86,6 +95,19 @@ export function Home() {
     setTutorialEnabled(tutorial);
     setCreating(false);
     router.push(kingdomPath(kingdom));
+  };
+
+  const startRename = (kingdom: KingdomMeta) => {
+    setNewName(kingdom.name);
+    setToRename(kingdom);
+  };
+
+  const confirmRename = () => {
+    const name = newName.trim();
+    if (!toRename || name.length === 0) return;
+    renameKingdom(toRename.id, name);
+    scheduleSync();
+    setToRename(null);
   };
 
   const confirmDelete = () => {
@@ -169,6 +191,7 @@ export function Home() {
                     kingdoms={kingdoms}
                     onOpen={kingdom => router.push(kingdomPath(kingdom))}
                     onView={setViewing}
+                    onRename={startRename}
                     onDelete={setToDelete}
                   />
                 )}
@@ -186,6 +209,48 @@ export function Home() {
         )}
 
         {viewing && <KingdomViewer kingdom={viewing} onClose={() => setViewing(null)} />}
+
+        {toRename && (
+          <Modal
+            title={t('kingdom.renameTitle')}
+            onClose={() => setToRename(null)}
+            footer={
+              <View className="flex-row justify-end gap-2">
+                <Button
+                  size="md"
+                  variant="text"
+                  color="ink"
+                  font="body"
+                  onPress={() => setToRename(null)}
+                >
+                  {t('kingdom.cancel')}
+                </Button>
+                <Button
+                  size="md"
+                  color="primary"
+                  font="body"
+                  disabled={newName.trim().length === 0}
+                  onPress={confirmRename}
+                >
+                  {t('kingdom.renameConfirm')}
+                </Button>
+              </View>
+            }
+          >
+            <View className="gap-2">
+              <Text className="text-sm">{t('kingdom.nameLabel')}</Text>
+              <TextInput
+                value={newName}
+                onChangeText={setNewName}
+                maxLength={KINGDOM_NAME_MAX_LENGTH}
+                autoFocus
+                returnKeyType="done"
+                onSubmitEditing={confirmRename}
+                className="min-h-11"
+              />
+            </View>
+          </Modal>
+        )}
 
         {toDelete && (
           <Modal

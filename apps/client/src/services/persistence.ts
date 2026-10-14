@@ -200,6 +200,22 @@ export function createKingdom(id: string, name: string): KingdomMeta {
   return kingdom;
 }
 
+/** Renames a kingdom; a started one is marked dirty so the new name reaches the server. */
+export function renameKingdom(id: string, name: string): void {
+  const kingdom = getKingdom(id);
+  if (!kingdom) return;
+  upsertKingdom({ ...kingdom, name });
+  const save = loadSave(id);
+  // A later `savedAt` also tells a push in flight that the save changed meanwhile.
+  if (save) {
+    writeSave({
+      ...save,
+      savedAt: Math.max(Date.now(), save.savedAt + 1),
+      sync: { ...save.sync, dirty: true },
+    });
+  }
+}
+
 /** Removes a kingdom and its save from this device. */
 export function deleteKingdom(id: string): void {
   storage.removeItem(saveKey(id));
