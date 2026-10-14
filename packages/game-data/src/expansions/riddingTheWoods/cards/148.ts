@@ -1,55 +1,92 @@
-import {
-  ActionEffectType,
-  CardTag,
-  ResourceType,
-  TargetScope,
-} from '@deck-legacy/engine/domain/enums';
-import type { CardAction, CardDef } from '@deck-legacy/engine/domain/types';
+import { ActionEffectType, ResourceType, TargetScope } from '@deck-legacy/engine/domain/enums';
+import type { CardDef, StepDef } from '@deck-legacy/engine/domain/types';
 
-const landForTwoResources = (id: string, unlimited: boolean): CardAction => ({
+// Same pattern as the base game Treasury (card 18)
+const makeStep = (id: number, gold: number, glory: number): StepDef => ({
   id,
-  unlimited,
-  cost: { discard: [{ scope: [TargetScope.BOARD], tags: [CardTag.LAND], pickNumber: 1 }] },
-  actionEffects: [
-    { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { choice: [{ any: 1 }] }, repeat: 2 },
+  icon: 'glory',
+  cost: { resources: [{ [ResourceType.GOLD]: gold }] },
+  effects: [
+    {
+      id: 1,
+      type: ActionEffectType.SET_CUMULATED,
+      value: glory,
+      cards: { scope: [TargetScope.SELF] },
+    },
   ],
 });
 
-export const sheriff: CardDef = {
+const fillTreasury = (id: string) => ({
+  id,
+  endsTurn: true,
+  actionEffects: [
+    { id: 1, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
+  ],
+});
+
+export const woodsTreasury: CardDef = {
   id: 148,
-  name: 'Sheriff',
+  name: 'Treasury',
   states: [
     {
       id: 1,
-      name: 'Sheriff',
-      tags: [CardTag.PERSON],
+      name: 'Treasury',
+      permanent: true,
+      glory: { amount: 0, valuePerElement: { amount: 1, accumulation: true } },
       illustration: 'cards/148_1.jpg',
-      actions: [
-        {
-          id: '148-1-1',
-          unlimited: true,
-          cost: { resources: [{ [ResourceType.GOODS]: 3 }] },
-          actionEffects: [
-            {
-              id: 1,
-              type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
-              resourceScopes: ['upgradeCost'],
-              resources: { [ResourceType.GOODS]: 1 },
-              cards: { scope: [TargetScope.SELF] },
-            },
-          ],
-        },
-        landForTwoResources('148-1-2', false),
-      ],
-      upgrade: [{ cost: { resources: [{ [ResourceType.GOODS]: 12 }] }, upgradeTo: 2 }],
+      actions: [fillTreasury('148-1-1')],
+      track: {
+        inOrder: true,
+        steps: [
+          makeStep(1, 1, 1),
+          makeStep(2, 2, 2),
+          makeStep(3, 3, 3),
+          makeStep(4, 4, 5),
+          makeStep(5, 5, 7),
+          makeStep(6, 6, 10),
+          makeStep(7, 7, 14),
+          makeStep(8, 8, 19),
+          makeStep(9, 9, 25),
+          makeStep(10, 10, 32),
+          makeStep(11, 11, 40),
+          {
+            id: 12,
+            icon: 'glory',
+            cost: { resources: [{ [ResourceType.GOLD]: 12 }] },
+            effects: [
+              {
+                id: 2,
+                type: ActionEffectType.UPGRADE_CARD,
+                cards: { scope: [TargetScope.SELF] },
+                states: { ids: [2] },
+              },
+            ],
+          },
+        ],
+      },
     },
     {
       id: 2,
-      name: 'Feared Sheriff',
-      tags: [CardTag.PERSON],
+      name: 'Famed Treasury',
+      permanent: true,
+      glory: { amount: 50, valuePerElement: { amount: 1, accumulation: true } },
       illustration: 'cards/148_2.jpg',
-      glory: { amount: -12 },
-      actions: [landForTwoResources('148-2-1', true)],
+      actions: [fillTreasury('148-2-1')],
+      track: {
+        inOrder: true,
+        steps: [
+          makeStep(13, 13, 10),
+          makeStep(14, 14, 20),
+          makeStep(15, 15, 30),
+          makeStep(16, 16, 40),
+          makeStep(17, 17, 50),
+          makeStep(18, 18, 60),
+          makeStep(19, 19, 70),
+          makeStep(20, 20, 80),
+          makeStep(21, 25, 100),
+          makeStep(22, 30, 125),
+        ],
+      },
     },
   ],
 };

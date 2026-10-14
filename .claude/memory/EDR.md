@@ -1288,4 +1288,4 @@ Alternatives rejetées
 Conséquences
 
 - Les campagnes du jeu de base (Prosperity, The Water Mill, Border Dispute) n'ont pas d'`expansion` : leurs instances affichent leur `id`, leurs anciens événements se rejouent à l'identique.
-- Ridding the Woods : instances 139–167, cartes 122–150, numéros 1–29.
+- Ridding the Woods : instances 139–167, cartes 122–149 (la 127, doublon du Bandit 124, a été retirée), numéros 1–29.

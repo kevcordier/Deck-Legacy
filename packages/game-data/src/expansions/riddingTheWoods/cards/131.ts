@@ -1,3 +1,4 @@
+import { prisonerState } from './124';
 import {
   ActionEffectType,
   CardTag,
@@ -5,35 +6,46 @@ import {
   TargetScope,
   Trigger,
 } from '@deck-legacy/engine/domain/enums';
-import type { CardDef, StepDef } from '@deck-legacy/engine/domain/types';
+import type { CardDef } from '@deck-legacy/engine/domain/types';
 
-const minusOneGloryStep = (id: number): StepDef => ({
-  id,
-  effects: [
-    { id: 1, type: ActionEffectType.ADD_GLORY, cards: { scope: [TargetScope.SELF] }, value: -1 },
-  ],
-});
-
-export const taxCollector: CardDef = {
+export const robberVeteran: CardDef = {
   id: 131,
-  name: 'Tax Collector',
+  name: 'Robber Veteran',
   states: [
     {
       id: 1,
-      name: 'Tax Collector',
-      tags: [CardTag.PERSON],
+      name: 'Robber Veteran',
+      tags: [CardTag.ENEMY],
+      negative: true,
       illustration: 'cards/131_1.jpg',
-      productions: [{ [ResourceType.GOLD]: 4 }],
+      glory: { amount: -2 },
       actions: [
         {
           id: '131-1-1',
-          trigger: Trigger.ON_PRODUCE,
+          trigger: Trigger.ON_PLAY,
           actionEffects: [
-            { id: 1, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
+            {
+              id: 1,
+              type: ActionEffectType.DISCARD_CARD,
+              cards: { scope: [TargetScope.BOARD], produces: [ResourceType.GOLD], autoPick: true },
+            },
+          ],
+        },
+        {
+          id: '131-1-2',
+          defeat: true,
+          cost: { resources: [{ [ResourceType.WEAPON]: 5 }] },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
+              states: { ids: [2] },
+            },
           ],
         },
       ],
-      track: { inOrder: true, steps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(minusOneGloryStep) },
     },
+    prisonerState(131),
   ],
 };

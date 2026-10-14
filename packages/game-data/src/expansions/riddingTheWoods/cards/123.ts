@@ -6,15 +6,13 @@ import {
   TargetScope,
   Trigger,
 } from '@deck-legacy/engine/domain/enums';
-import type { CardDef, CardSelector } from '@deck-legacy/engine/domain/types';
+import type { CardDef, CardSelector, Condition } from '@deck-legacy/engine/domain/types';
 
-const ladyIn = (scope: TargetScope[]): CardSelector => ({ name: 'A Certain Lady', scope });
-const ladyAnywhere = ladyIn([
-  TargetScope.DECK,
-  TargetScope.BOARD,
-  TargetScope.DISCARD,
-  TargetScope.PERMANENTS,
-]);
+const lady: CardSelector = {
+  name: 'A Certain Lady',
+  scope: [TargetScope.DECK, TargetScope.DISCARD, TargetScope.BOARD],
+};
+const ladyFound: Condition = { type: 'cardCount', cards: lady, min: 1 };
 
 export const robbinLeader: CardDef = {
   id: 123,
@@ -40,54 +38,31 @@ export const robbinLeader: CardDef = {
           ],
         },
         {
+          // If A Certain Lady is in the deck, the discard pile or in play: destroy her and upgrade.
+          // Otherwise destroy this. The upgrade comes first so that the lady is still there when
+          // the second effect checks her absence.
           id: '123-1-3',
           trigger: Trigger.ON_TRACK_END,
-          condition: { type: 'cardCount', cards: ladyIn([TargetScope.DECK]), min: 1 },
           actionEffects: [
             {
               id: 1,
-              type: ActionEffectType.DESTROY_CARD,
-              cards: { ...ladyIn([TargetScope.DECK]), autoPick: true },
-            },
-            { id: 2, type: ActionEffectType.SHUFFLE_DECK },
-            {
-              id: 3,
               type: ActionEffectType.UPGRADE_CARD,
+              condition: ladyFound,
               cards: { scope: [TargetScope.SELF] },
               states: { ids: [2] },
-            },
-          ],
-        },
-        {
-          id: '123-1-4',
-          trigger: Trigger.ON_TRACK_END,
-          condition: {
-            type: 'and',
-            conditions: [
-              { type: 'cardCount', cards: ladyAnywhere, min: 1 },
-              { type: 'cardCount', cards: ladyIn([TargetScope.DECK]), max: 0 },
-            ],
-          },
-          actionEffects: [
-            {
-              id: 1,
-              type: ActionEffectType.DESTROY_CARD,
-              cards: { ...ladyAnywhere, autoPick: true },
             },
             {
               id: 2,
-              type: ActionEffectType.UPGRADE_CARD,
+              type: ActionEffectType.DESTROY_CARD,
+              condition: { type: 'not', condition: ladyFound },
               cards: { scope: [TargetScope.SELF] },
-              states: { ids: [2] },
             },
-          ],
-        },
-        {
-          id: '123-1-5',
-          trigger: Trigger.ON_TRACK_END,
-          condition: { type: 'cardCount', cards: ladyAnywhere, max: 0 },
-          actionEffects: [
-            { id: 1, type: ActionEffectType.DESTROY_CARD, cards: { scope: [TargetScope.SELF] } },
+            {
+              id: 3,
+              type: ActionEffectType.DESTROY_CARD,
+              condition: ladyFound,
+              cards: { ...lady, autoPick: true },
+            },
           ],
         },
       ],

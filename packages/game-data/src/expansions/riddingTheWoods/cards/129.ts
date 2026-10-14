@@ -1,55 +1,98 @@
-import { CardTag, PassiveType, ResourceType } from '@deck-legacy/engine/domain/enums';
-import type { CardDef, CardState, Passive } from '@deck-legacy/engine/domain/types';
+import {
+  ActionEffectType,
+  CardTag,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+} from '@deck-legacy/engine/domain/enums';
+import type { CardDef } from '@deck-legacy/engine/domain/types';
 import { CardPassives } from '@deck-legacy/engine/domain/types/effects';
 
-const weaponsOnlyForUpgrades = (id: string): Passive => ({
-  id,
-  type: PassiveType.RESTRICT_SPEND,
-  resources: { [ResourceType.WEAPON]: 1 },
-});
-
-/** Large Robber Camp → Small Robber Camp → Empty Camp, then the given forest (state 4). */
-export const robberCampStates = (
-  cardId: number,
-  forest: Omit<CardState, 'id' | 'illustration'>,
-): CardState[] => [
-  {
-    id: 1,
-    name: 'Large Robber Camp',
-    tags: [CardTag.LAND, CardTag.ENEMY],
-    negative: true,
-    illustration: `cards/${cardId}_1.jpg`,
-    passives: [weaponsOnlyForUpgrades(`${cardId}-1-1`)],
-    upgrade: [{ cost: { resources: [{ [ResourceType.WEAPON]: 4 }] }, upgradeTo: 2 }],
-  },
-  {
-    id: 2,
-    name: 'Small Robber Camp',
-    tags: [CardTag.LAND, CardTag.ENEMY],
-    negative: true,
-    illustration: `cards/${cardId}_2.jpg`,
-    passives: [weaponsOnlyForUpgrades(`${cardId}-2-1`)],
-    upgrade: [{ cost: { resources: [{ [ResourceType.WEAPON]: 3 }] }, upgradeTo: 3 }],
-  },
-  {
-    id: 3,
-    name: 'Empty Camp',
-    tags: [CardTag.LAND],
-    illustration: `cards/${cardId}_3.jpg`,
-    productions: [{ [ResourceType.WOOD]: 1 }],
-    upgrade: [{ cost: { resources: [{ [ResourceType.GOLD]: 6 }] }, upgradeTo: 4 }],
-  },
-  { id: 4, illustration: `cards/${cardId}_4.jpg`, ...forest },
-];
-
-export const largeRobberCamp: CardDef = {
+export const fortGrounds: CardDef = {
   id: 129,
-  name: 'Large Robber Camp',
-  states: robberCampStates(129, {
-    name: 'Rich Forest',
-    tags: [CardTag.LAND],
-    productions: [{ [ResourceType.GOLD]: 1, [ResourceType.WOOD]: 1 }],
-    glory: { amount: 3 },
-    passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
-  }),
+  name: 'Fort Grounds',
+  states: [
+    {
+      id: 1,
+      name: 'Fort Grounds',
+      tags: [CardTag.LAND],
+      illustration: 'cards/129_1.jpg',
+      upgrade: [
+        { cost: { resources: [{ [ResourceType.STONE]: 2 }] }, upgradeTo: 4 },
+        { cost: { resources: [{ [ResourceType.STONE]: 4 }] }, upgradeTo: 2 },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Wall',
+      tags: [CardTag.BUILDING, CardTag.WALL],
+      illustration: 'cards/129_2.jpg',
+      productions: [{ [ResourceType.WEAPON]: 1 }],
+      glory: { amount: 3 },
+      passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
+    },
+    {
+      id: 3,
+      name: 'Large Dungeon',
+      tags: [CardTag.BUILDING],
+      illustration: 'cards/129_3.jpg',
+      glory: { amount: 0, valuePerElement: { amount: 2, accumulation: true } },
+      actions: [
+        {
+          id: '129-3-1',
+          unlimited: true,
+          cost: { discard: [{ scope: [TargetScope.BOARD], name: 'Prisoner', pickNumber: 1 }] },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.ADD_CUMULATED,
+              cards: { scope: [TargetScope.SELF] },
+              value: 1,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 4,
+      name: 'Small Dungeon',
+      tags: [CardTag.BUILDING],
+      illustration: 'cards/129_4.jpg',
+      actions: [
+        {
+          id: '129-4-1',
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.DISCARD_CARD,
+              cards: { scope: [TargetScope.BOARD], name: 'Prisoner', pickMin: 0, pickMax: 99 },
+            },
+            {
+              id: 2,
+              type: ActionEffectType.TRACK_ADVANCE,
+              cards: { scope: [TargetScope.SELF] },
+              valuePerElement: { amount: 1, cards: { scope: [TargetScope.LAST_SELECTED] } },
+            },
+          ],
+        },
+      ],
+      track: {
+        inOrder: true,
+        steps: [
+          ...[1, 2, 3].map(id => ({ id })),
+          {
+            id: 4,
+            effects: [
+              {
+                id: 1,
+                type: ActionEffectType.UPGRADE_CARD,
+                cards: { scope: [TargetScope.SELF] },
+                states: { ids: [3] },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
 };

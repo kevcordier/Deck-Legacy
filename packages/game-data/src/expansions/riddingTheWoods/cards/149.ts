@@ -1,92 +1,85 @@
-import { ActionEffectType, ResourceType, TargetScope } from '@deck-legacy/engine/domain/enums';
-import type { CardDef, StepDef } from '@deck-legacy/engine/domain/types';
+import {
+  ActionEffectType,
+  CardTag,
+  PassiveType,
+  ResourceType,
+  TargetScope,
+  Trigger,
+} from '@deck-legacy/engine/domain/enums';
+import type { CardAction, CardDef, CardSelector } from '@deck-legacy/engine/domain/types';
+import { CardPassives } from '@deck-legacy/engine/domain/types/effects';
 
-// Same pattern as the base game Treasury (card 18)
-const makeStep = (id: number, gold: number, glory: number): StepDef => ({
+/** End of Turn: discard this to make lands stay in play (same pattern as card 108). */
+const keepLands = (id: string, lands: CardSelector): CardAction => ({
   id,
-  icon: 'glory',
-  cost: { resources: [{ [ResourceType.GOLD]: gold }] },
-  effects: [
+  trigger: Trigger.END_OF_TURN,
+  optional: true,
+  cost: { discard: [{ scope: [TargetScope.SELF] }] },
+  actionEffects: [
     {
       id: 1,
-      type: ActionEffectType.SET_CUMULATED,
-      value: glory,
-      cards: { scope: [TargetScope.SELF] },
+      type: ActionEffectType.ADD_BOARD_EFFECT,
+      cards: { scope: [TargetScope.BOARD], tags: [CardTag.LAND], ...lands },
+      effect: CardPassives[PassiveType.STAY_IN_PLAY],
     },
   ],
 });
 
-const fillTreasury = (id: string) => ({
-  id,
-  endsTurn: true,
-  actionEffects: [
-    { id: 1, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
-  ],
-});
-
-export const woodsTreasury: CardDef = {
+export const outpostConstruction: CardDef = {
   id: 149,
-  name: 'Treasury',
+  name: 'Outpost Construction',
   states: [
     {
       id: 1,
-      name: 'Treasury',
-      permanent: true,
-      glory: { amount: 0, valuePerElement: { amount: 1, accumulation: true } },
+      name: 'Outpost Construction',
+      tags: [CardTag.LAND],
       illustration: 'cards/149_1.jpg',
-      actions: [fillTreasury('149-1-1')],
-      track: {
-        inOrder: true,
-        steps: [
-          makeStep(1, 1, 1),
-          makeStep(2, 2, 2),
-          makeStep(3, 3, 3),
-          makeStep(4, 4, 5),
-          makeStep(5, 5, 7),
-          makeStep(6, 6, 10),
-          makeStep(7, 7, 14),
-          makeStep(8, 8, 19),
-          makeStep(9, 9, 25),
-          makeStep(10, 10, 32),
-          makeStep(11, 11, 40),
-          {
-            id: 12,
-            icon: 'glory',
-            cost: { resources: [{ [ResourceType.GOLD]: 12 }] },
-            effects: [
-              {
-                id: 2,
-                type: ActionEffectType.UPGRADE_CARD,
-                cards: { scope: [TargetScope.SELF] },
-                states: { ids: [2] },
-              },
-            ],
-          },
-        ],
-      },
+      upgrade: [{ cost: { resources: [{ [ResourceType.WOOD]: 4 }] }, upgradeTo: 2 }],
     },
     {
       id: 2,
-      name: 'Famed Treasury',
-      permanent: true,
-      glory: { amount: 50, valuePerElement: { amount: 1, accumulation: true } },
+      name: 'Palisades',
+      tags: [CardTag.LAND],
       illustration: 'cards/149_2.jpg',
-      actions: [fillTreasury('149-2-1')],
-      track: {
-        inOrder: true,
-        steps: [
-          makeStep(13, 13, 10),
-          makeStep(14, 14, 20),
-          makeStep(15, 15, 30),
-          makeStep(16, 16, 40),
-          makeStep(17, 17, 50),
-          makeStep(18, 18, 60),
-          makeStep(19, 19, 70),
-          makeStep(20, 20, 80),
-          makeStep(21, 25, 100),
-          makeStep(22, 30, 125),
-        ],
-      },
+      actions: [keepLands('149-2-1', { pickMin: 0, pickMax: 2 })],
+      upgrade: [{ cost: { resources: [{ [ResourceType.WOOD]: 6 }] }, upgradeTo: 3 }],
+    },
+    {
+      id: 3,
+      name: 'Forest Outpost',
+      tags: [CardTag.LAND],
+      illustration: 'cards/149_3.jpg',
+      glory: { amount: 3 },
+      actions: [keepLands('149-3-1', { pickMin: 0, pickMax: 3 })],
+      upgrade: [
+        {
+          cost: { resources: [{ [ResourceType.WOOD]: 4, [ResourceType.STONE]: 4 }] },
+          upgradeTo: 4,
+        },
+      ],
+    },
+    {
+      id: 4,
+      name: 'Walled Outpost',
+      tags: [CardTag.LAND, CardTag.BUILDING, CardTag.WALL],
+      illustration: 'cards/149_4.jpg',
+      productions: [{ [ResourceType.WEAPON]: 1 }],
+      glory: { amount: 5 },
+      actions: [
+        keepLands('149-4-1', { autoPick: true }),
+        {
+          id: '149-4-2',
+          trigger: Trigger.ON_PURGE,
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.ADD_GLORY,
+              cards: { scope: [TargetScope.SELF] },
+              valuePerElement: { amount: 2, cards: { scope: [TargetScope.PURGE_SELECTED] } },
+            },
+          ],
+        },
+      ],
     },
   ],
 };

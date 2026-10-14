@@ -81,22 +81,21 @@ describe('A Certain Lady', () => {
     resolveTrigger(agg, '122-1-1');
     expect(agg.getGameState().instances[LADY].trackProgress).toEqual([1, 2]);
 
-    const later = makeGame(
-      { board: [LADY], boardEffects: passivesOf(LADY), drawPile: [BANDIT, BANDIT_2] },
-      {},
-    );
+    const later = makeGame({ board: [LADY], drawPile: [BANDIT, BANDIT_2] }, {});
     later.advance();
-    resolveTrigger(later, '122-1-3');
+    resolveTrigger(later, '122-1-1');
     expect(later.getGameState().instances[LADY].trackProgress).toEqual([1, 2]);
 
     const rogue = makeGame({ board: [LADY, HUGE_ROBBER], drawPile: [] });
     rogue.getGameState().instances[LADY].trackProgress = [1, 2, 3];
-    rogue.getGameState().boardEffects = passivesOf(LADY);
     rogue.getGameState().drawPile = [BANDIT];
     rogue.advance();
-    resolveTrigger(rogue, '122-1-3');
-    resolveTrigger(rogue, '122-1-2');
+    // only the enemy just played counts, not the Huge Robber already in play
+    expect(triggerIds(rogue).filter(id => id.startsWith('122'))).toEqual(['122-1-1']);
+    resolveTrigger(rogue, '122-1-1');
+    // the last step upgrades her; Rogue Lady starts with an empty track
     expect(stateOf(rogue, LADY)).toBe('Rogue Lady');
+    expect(rogue.getGameState().instances[LADY].trackProgress).toEqual([1, 2, 3, 4]);
   });
 
   it('stops marking once the expansion is over', () => {
@@ -139,16 +138,21 @@ describe("Robbin' Leader", () => {
     expect(stateOf(agg, ROBBIN)).toBe('Sobbing');
   });
 
-  it('takes her from the discard pile without shuffling', () => {
-    const agg = defeatWithLadyIn({ discardPile: [LADY] });
-    expect(triggerIds(agg)).toEqual(['123-1-4']);
+  it('takes her from the discard pile or from play', () => {
+    for (const pile of [{ discardPile: [LADY] }, { board: [ROBBIN, LADY] }]) {
+      const agg = defeatWithLadyIn(pile);
+      resolveTrigger(agg, '123-1-3');
+      expect(agg.getGameState().destroyedPile).toEqual([LADY]);
+      expect(stateOf(agg, ROBBIN)).toBe('Sobbing');
+    }
   });
 
   it('is destroyed when there is no lady', () => {
     const agg = defeatWithLadyIn({});
-    expect(triggerIds(agg)).toEqual(['123-1-5']);
-    resolveTrigger(agg, '123-1-5');
-    expect(agg.getGameState().destroyedPile).toContain(ROBBIN);
+    expect(triggerIds(agg)).toEqual(['123-1-3']);
+    resolveTrigger(agg, '123-1-3');
+    expect(agg.getGameState().destroyedPile).toEqual([ROBBIN]);
+    expect(stateOf(agg, ROBBIN)).toBe("Robbin' Leader");
   });
 
   it('lets only weapons be gained while in play', () => {
@@ -247,7 +251,7 @@ describe('Tax Collector', () => {
   it('loses 1 glory each time it produces', () => {
     const agg = makeGame({ board: [TAX_COLLECTOR] });
     agg.cardProduced(TAX_COLLECTOR, { gold: 4 });
-    resolveTrigger(agg, '131-1-1');
+    resolveTrigger(agg, '130-1-1');
     expect(agg.getGameState().instances[TAX_COLLECTOR].glories).toEqual([-1]);
   });
 });
@@ -297,7 +301,7 @@ describe('Lousy Guard', () => {
     const agg = makeGame({ drawPile: [GUARD, ROBBER_VETERAN] });
     agg.turnStarted();
     agg.getGameState().resources = { weapon: 5 };
-    agg.cardAction(actionOf(132, '132-1-2'), ROBBER_VETERAN);
+    agg.cardAction(actionOf(131, '131-1-2'), ROBBER_VETERAN);
     expect(agg.getGameState().discardPile).toEqual(expect.arrayContaining([GUARD, ROBBER_VETERAN]));
   });
 });
@@ -306,12 +310,12 @@ describe('Treasure Wagon', () => {
   it('loses 1 production per enemy and is worth 5 glory per production left when purged', () => {
     const agg = makeGame({ drawPile: [WAGON, ROBBER_VETERAN, BANDIT, BANDIT_2] });
     agg.turnStarted();
-    resolveTrigger(agg, '135-1-1');
+    resolveTrigger(agg, '134-1-1');
     agg.getGameState().drawPile = [BANDIT, BANDIT_2];
     agg.getGameState().board = [WAGON];
     agg.getGameState().boardEffects = passivesOf(WAGON);
     agg.advance();
-    resolveTrigger(agg, '135-1-2');
+    resolveTrigger(agg, '134-1-2');
     const gs = agg.getGameState();
     expect(
       getProductionChoicesForAction({ gold: 9 }, gs, catalog.cards, gs.instances[WAGON], {}),
@@ -329,7 +333,7 @@ describe('Treasure Wagon', () => {
       onStartDiscoverIds: [],
     };
     agg.finalizePurge();
-    resolveTrigger(agg, '135-1-3');
+    resolveTrigger(agg, '134-1-3');
     expect(agg.getGameState().instances[WAGON].glories).toEqual([30]);
   });
 });
@@ -338,14 +342,14 @@ describe('Druid Camp', () => {
   it('discards the cards that stay in play', () => {
     const agg = makeGame({ board: [FOREST, WILD_GRASS], drawPile: [DRUID_CAMP] }, { [FOREST]: 4 });
     agg.turnStarted();
-    resolveTrigger(agg, '145-1-1');
+    resolveTrigger(agg, '144-1-1');
     expect(agg.getGameState().discardPile).toEqual([FOREST]);
   });
 });
 
 describe('Bait and Trap', () => {
   it('can only be used with a lady in play', () => {
-    const baitAndTrap = actionOf(133, '133-2-1');
+    const baitAndTrap = actionOf(132, '132-2-1');
     const alone = makeGame({ board: [ARCHERY], discardPile: [BANDIT] }, { [ARCHERY]: 2 });
     expect(() => alone.cardAction(baitAndTrap, ARCHERY)).toThrow();
 
@@ -369,17 +373,17 @@ describe('Keeper of Secrets', () => {
   it('clears the board, turns into The Chase and is destroyed by its red track', () => {
     const agg = makeGame({ board: [WILD_GRASS], drawPile: [KEEPER] });
     agg.turnStarted();
-    resolveTrigger(agg, '147-1-1');
+    resolveTrigger(agg, '146-1-1');
     expect(stateOf(agg, KEEPER)).toBe('The Chase');
     expect(agg.getGameState().discardPile).toEqual(expect.arrayContaining([WILD_GRASS, KEEPER]));
 
     const chase = makeGame({ board: [KEEPER], drawPile: [WILD_GRASS] }, { [KEEPER]: 2 });
     chase.turnEnded();
-    expect(triggerIds(chase)).toEqual(['147-2-3']);
+    expect(triggerIds(chase)).toEqual(['146-2-3']);
     chase.getGameState().instances[KEEPER].cumulated = 2;
     expect(
       getActiveState(chase.getGameState().instances[KEEPER], catalog.cards).actions?.length,
-    ).toBe(4);
+    ).toBe(3);
   });
 });
 
@@ -390,7 +394,7 @@ describe('Ceremony', () => {
       { board: [HILLTOP, ...friendly], stickerStock: { 10: 1 } },
       { [HILLTOP]: 4, [CAMP]: 3 },
     );
-    agg.cardAction(actionOf(146, '146-4-1'), HILLTOP);
+    agg.cardAction(actionOf(145, '145-4-1'), HILLTOP);
     agg.resolveCardActionChoice(
       {
         id: `${HILLTOP}-1`,

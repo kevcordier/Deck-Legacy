@@ -1,79 +1,68 @@
 import {
   ActionEffectType,
   CardTag,
-  PassiveType,
   ResourceType,
   TargetScope,
   Trigger,
 } from '@deck-legacy/engine/domain/enums';
-import type { CardDef } from '@deck-legacy/engine/domain/types';
+import type { CardAction, CardDef } from '@deck-legacy/engine/domain/types';
 
-export const treasureWagon: CardDef = {
+const gainAnyResources = (id: string, count: number): CardAction => ({
+  id,
+  trigger: Trigger.ON_PLAY,
+  actionEffects: [
+    {
+      id: 1,
+      type: ActionEffectType.ADD_RESOURCES,
+      resources: { choice: [{ any: 1 }] },
+      repeat: count,
+    },
+  ],
+});
+
+export const powerfulPrince: CardDef = {
   id: 135,
-  name: 'Treasure Wagon',
+  name: 'Powerful Prince',
   states: [
     {
       id: 1,
-      name: 'Treasure Wagon',
-      tags: [CardTag.WAGON],
+      name: 'Powerful Prince',
+      tags: [CardTag.PERSON],
       illustration: 'cards/135_1.jpg',
-      productions: [{ [ResourceType.GOLD]: 9 }],
-      glory: { amount: 0 },
-      passives: [
-        {
-          id: '135-1-2',
-          type: PassiveType.ADD_TRIGGER,
-          trigger: {
-            id: '135-1-2',
-            type: Trigger.ON_PLAY,
-            cards: { scope: [TargetScope.DRAWN], tags: [CardTag.ENEMY] },
-            actions: [
-              {
-                id: 1,
-                type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
-                resourceScopes: ['production'],
-                resources: { [ResourceType.GOLD]: 1 },
-                cards: { scope: [TargetScope.TRIGGER_SOURCE] },
-                // 1 production per enemy played
-                valuePerElement: {
-                  amount: 1,
-                  cards: { scope: [TargetScope.DRAWN], tags: [CardTag.ENEMY] },
-                },
-              },
-            ],
-          },
-        },
-      ],
+      glory: { amount: -5 },
       actions: [
         {
           id: '135-1-1',
-          trigger: Trigger.ON_PLAY,
-          condition: {
-            type: 'cardCount',
-            cards: { scope: [TargetScope.BOARD, TargetScope.DRAWN], tags: [CardTag.ENEMY] },
-            min: 1,
-          },
+          unlimited: true,
+          cost: { resources: [{ [ResourceType.GOLD]: 3 }] },
           actionEffects: [
             {
               id: 1,
               type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
-              resourceScopes: ['production'],
+              resourceScopes: ['upgradeCost'],
               resources: { [ResourceType.GOLD]: 1 },
               cards: { scope: [TargetScope.SELF] },
             },
           ],
         },
+        gainAnyResources('135-1-2', 2),
+      ],
+      upgrade: [{ cost: { resources: [{ [ResourceType.GOLD]: 18 }] }, upgradeTo: 2 }],
+    },
+    {
+      id: 2,
+      name: 'Prince _____',
+      chooseName: true,
+      tags: [CardTag.PERSON],
+      illustration: 'cards/135_2.jpg',
+      glory: { amount: -12 },
+      actions: [
+        gainAnyResources('135-2-1', 3),
         {
-          id: '135-1-3',
-          trigger: Trigger.ON_PURGE,
-          actionEffects: [
-            {
-              id: 1,
-              type: ActionEffectType.ADD_GLORY,
-              cards: { scope: [TargetScope.SELF] },
-              valuePerElement: { amount: 5, ownProduction: true },
-            },
-          ],
+          id: '135-2-2',
+          endsTurn: true,
+          // Treasury (Ridding the Woods 28)
+          actionEffects: [{ id: 1, type: ActionEffectType.DISCOVER_CARD, cards: { ids: [166] } }],
         },
       ],
     },

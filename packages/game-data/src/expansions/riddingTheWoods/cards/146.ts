@@ -1,85 +1,109 @@
 import {
   ActionEffectType,
   CardTag,
-  ResourceType,
+  PassiveType,
   TargetScope,
+  Trigger,
 } from '@deck-legacy/engine/domain/enums';
 import type { CardDef } from '@deck-legacy/engine/domain/types';
 
-export const hilltop: CardDef = {
+export const keeperOfSecrets: CardDef = {
   id: 146,
-  name: 'Hilltop',
+  name: 'Keeper of Secrets',
   states: [
     {
       id: 1,
-      name: 'Hilltop',
-      tags: [CardTag.LAND],
+      name: 'Keeper of Secrets',
+      tags: [CardTag.ENEMY],
+      negative: true,
       illustration: 'cards/146_1.jpg',
-      productions: [{ [ResourceType.GOLD]: 1 }],
-      upgrade: [{ cost: { resources: [{ [ResourceType.STONE]: 3 }] }, upgradeTo: 2 }],
-    },
-    {
-      id: 2,
-      name: 'Hill Monument',
-      tags: [CardTag.LAND],
-      illustration: 'cards/146_2.jpg',
-      productions: [{ [ResourceType.GOLD]: 1 }],
-      glory: { amount: 4 },
-      upgrade: [{ cost: { resources: [{ [ResourceType.STONE]: 6 }] }, upgradeTo: 3 }],
-    },
-    {
-      id: 3,
-      name: 'Hill Megalith',
-      tags: [CardTag.LAND],
-      illustration: 'cards/146_3.jpg',
-      productions: [{ [ResourceType.GOLD]: 1 }],
-      glory: { amount: 10 },
       actions: [
         {
-          id: '146-3-1',
-          endsTurn: true,
-          cost: { resources: [{ [ResourceType.GOODS]: 4 }] },
-          // Keeper of Secrets (Ridding the Woods 26)
-          actionEffects: [{ id: 1, type: ActionEffectType.DISCOVER_CARD, cards: { ids: [164] } }],
-        },
-      ],
-      // the printed upgrade box is empty: free upgrade
-      upgrade: [{ cost: {}, upgradeTo: 4 }],
-    },
-    {
-      id: 4,
-      name: 'Ceremony',
-      tags: [CardTag.EVENT],
-      illustration: 'cards/146_4.jpg',
-      glory: { amount: 10 },
-      actions: [
-        {
-          id: '146-4-1',
+          id: '146-1-1',
+          trigger: Trigger.ON_PLAY,
           actionEffects: [
             {
               id: 1,
               type: ActionEffectType.DISCARD_CARD,
-              cards: {
-                scope: [TargetScope.BOARD, TargetScope.FRIENDLY],
-                pickNumber: 5,
-                pickMin: 5,
-              },
+              cards: { scope: [TargetScope.BOARD], autoPick: true },
             },
             {
               id: 2,
-              type: ActionEffectType.ADD_STICKER,
-              cards: { scope: [TargetScope.LAST_SELECTED], pickNumber: 1 },
-              stickers: { ids: [10], pickNumber: 1 },
-            },
-            {
-              id: 3,
               type: ActionEffectType.UPGRADE_CARD,
               cards: { scope: [TargetScope.SELF] },
-              states: { ids: [3] },
+              states: { ids: [2] },
             },
           ],
         },
       ],
+    },
+    {
+      id: 2,
+      name: 'The Chase',
+      tags: [CardTag.EVENT],
+      negative: true,
+      illustration: 'cards/146_2.jpg',
+      actions: [
+        {
+          // green track
+          id: '146-2-1',
+          cost: {
+            discard: [{ scope: [TargetScope.BOARD, TargetScope.FRIENDLY], pickNumber: 6 }],
+          },
+          actionEffects: [
+            { id: 1, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
+          ],
+        },
+        {
+          // shortcut: the red track (3 boxes) is the card's accumulation because a state has only
+          // one track; when another card needs a second track, support several tracks per state.
+          id: '146-2-3',
+          trigger: Trigger.END_OF_TURN,
+          condition: { type: 'accumulation', max: 1 },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.ADD_CUMULATED,
+              cards: { scope: [TargetScope.SELF] },
+              value: 1,
+            },
+          ],
+        },
+        {
+          id: '146-2-4',
+          trigger: Trigger.END_OF_TURN,
+          condition: { type: 'accumulation', min: 2 },
+          actionEffects: [
+            { id: 1, type: ActionEffectType.DESTROY_CARD, cards: { scope: [TargetScope.SELF] } },
+          ],
+        },
+      ],
+      track: {
+        inOrder: true,
+        steps: [
+          ...[1, 2].map(id => ({ id })),
+          {
+            id: 3,
+            effects: [
+              {
+                id: 1,
+                type: ActionEffectType.UPGRADE_CARD,
+                cards: { scope: [TargetScope.SELF] },
+                states: { ids: [3] },
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      id: 3,
+      name: 'Ether Connector',
+      tags: [CardTag.ARTIFACT],
+      permanent: true,
+      illustration: 'cards/146_3.jpg',
+      glory: { amount: 10 },
+      passives: [{ id: '146-3-1', type: PassiveType.CANT_BE_DESTROYED }],
     },
   ],
 };

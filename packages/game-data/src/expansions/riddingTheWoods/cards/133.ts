@@ -1,69 +1,71 @@
 import {
   ActionEffectType,
   CardTag,
+  PassiveType,
   ResourceType,
   TargetScope,
   Trigger,
 } from '@deck-legacy/engine/domain/enums';
-import type { ActionEffect, CardDef } from '@deck-legacy/engine/domain/types';
+import type { CardDef, Passive } from '@deck-legacy/engine/domain/types';
 
-const playEnemyFromDiscard: ActionEffect = {
-  id: 2,
-  type: ActionEffectType.PLAY_CARD,
-  cards: { scope: [TargetScope.DISCARD], tags: [CardTag.ENEMY], pickNumber: 1 },
-};
+const leavesWithoutEnemy = (id: string): Passive => ({
+  id,
+  type: PassiveType.REQUIRES_IN_PLAY,
+  cards: { scope: [TargetScope.BOARD], tags: [CardTag.ENEMY] },
+});
 
-export const archeryContest: CardDef = {
+export const lousyGuard: CardDef = {
   id: 133,
-  name: 'Archery Contest',
+  name: 'Lousy Guard',
   states: [
     {
       id: 1,
-      name: 'Archery Contest',
-      tags: [CardTag.EVENT],
+      name: 'Lousy Guard',
+      tags: [CardTag.PERSON],
       illustration: 'cards/133_1.jpg',
-      actions: [
-        {
-          id: '133-1-1',
-          actionEffects: [
-            { id: 1, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
-            playEnemyFromDiscard,
-          ],
-        },
-        {
-          id: '133-1-2',
-          trigger: Trigger.ON_TRACK_END,
-          actionEffects: [
-            {
-              id: 1,
-              type: ActionEffectType.UPGRADE_CARD,
-              cards: { scope: [TargetScope.SELF] },
-              states: { ids: [2] },
-            },
-          ],
-        },
-      ],
-      track: { inOrder: true, steps: [1, 2, 3, 4].map(id => ({ id })) },
+      productions: [{ [ResourceType.WEAPON]: 1 }],
+      passives: [leavesWithoutEnemy('133-1-1')],
+      upgrade: [{ cost: { resources: [{ [ResourceType.IRON]: 2 }] }, upgradeTo: 2 }],
     },
     {
       id: 2,
-      name: 'Bait and Trap',
-      tags: [CardTag.EVENT],
+      name: 'Impatient Guard',
+      tags: [CardTag.PERSON],
       illustration: 'cards/133_2.jpg',
+      productions: [{ [ResourceType.WEAPON]: 1 }],
+      passives: [leavesWithoutEnemy('133-2-1')],
+      upgrade: [{ cost: { resources: [{ [ResourceType.WEAPON]: 3 }] }, upgradeTo: 3 }],
+    },
+    {
+      id: 3,
+      name: 'Guard',
+      tags: [CardTag.PERSON],
+      illustration: 'cards/133_3.jpg',
+      productions: [{ [ResourceType.WEAPON]: 1 }],
+      glory: { amount: 3 },
+      upgrade: [
+        {
+          cost: { discard: [{ scope: [TargetScope.BOARD], tags: [CardTag.ENEMY], pickNumber: 1 }] },
+          upgradeTo: 4,
+        },
+      ],
+    },
+    {
+      id: 4,
+      name: 'Brave Knight',
+      tags: [CardTag.PERSON, CardTag.KNIGHT],
+      illustration: 'cards/133_4.jpg',
+      productions: [{ [ResourceType.WEAPON]: 2 }],
+      glory: { amount: 13 },
       actions: [
         {
-          id: '133-2-1',
-          condition: {
-            type: 'cardCount',
-            cards: { scope: [TargetScope.BOARD], tags: [CardTag.LADY] },
-            min: 1,
-          },
+          id: '133-4-1',
+          trigger: Trigger.ON_PLAY,
           actionEffects: [
-            { ...playEnemyFromDiscard, id: 1 },
             {
-              id: 2,
-              type: ActionEffectType.ADD_RESOURCES,
-              resources: { [ResourceType.WEAPON]: 2 },
+              id: 1,
+              type: ActionEffectType.PLAY_CARD,
+              cards: { scope: [TargetScope.DISCARD], tags: [CardTag.ENEMY], pickNumber: 1 },
             },
           ],
         },

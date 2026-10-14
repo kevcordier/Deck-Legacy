@@ -1,4 +1,3 @@
-import { prisonerState } from './124';
 import {
   ActionEffectType,
   CardTag,
@@ -6,19 +5,25 @@ import {
   TargetScope,
   Trigger,
 } from '@deck-legacy/engine/domain/enums';
-import type { CardDef } from '@deck-legacy/engine/domain/types';
+import type { CardDef, StepDef } from '@deck-legacy/engine/domain/types';
 
-export const rebelliousMonk: CardDef = {
+const markStep = (id: number): StepDef => ({
+  id,
+  effects: [
+    { id: 1, type: ActionEffectType.ADD_CUMULATED, cards: { scope: [TargetScope.SELF] }, value: 1 },
+  ],
+});
+
+export const bardOfThePeople: CardDef = {
   id: 140,
-  name: 'Rebellious Monk',
+  name: 'Bard of the People',
   states: [
     {
       id: 1,
-      name: 'Rebellious Monk',
-      tags: [CardTag.ENEMY],
+      name: 'Bard of the People',
+      tags: [CardTag.ENEMY, CardTag.PERSON],
       negative: true,
       illustration: 'cards/140_1.jpg',
-      glory: { amount: -2 },
       actions: [
         {
           id: '140-1-1',
@@ -26,27 +31,39 @@ export const rebelliousMonk: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionEffectType.BLOCK_CARD,
-              cards: { scope: [TargetScope.BOARD, TargetScope.FRIENDLY], pickNumber: 3 },
-            },
-          ],
-        },
-        {
-          // "Spend to upgrade", not a defeat
-          id: '140-1-2',
-          endsTurn: true,
-          cost: { resources: [{ [ResourceType.GOODS]: 4 }] },
-          actionEffects: [
-            {
-              id: 1,
-              type: ActionEffectType.UPGRADE_CARD,
-              cards: { scope: [TargetScope.SELF] },
-              states: { ids: [2] },
+              type: ActionEffectType.PLAY_CARD,
+              cards: { scope: [TargetScope.DISCARD], tags: [CardTag.ENEMY], pickNumber: 1 },
             },
           ],
         },
       ],
+      upgrade: [
+        {
+          cost: { resources: [{ [ResourceType.IRON]: 2, [ResourceType.WEAPON]: 2 }] },
+          upgradeTo: 2,
+        },
+      ],
     },
-    prisonerState(140),
+    {
+      id: 2,
+      name: 'Obedient Bard',
+      tags: [CardTag.PERSON],
+      illustration: 'cards/140_2.jpg',
+      glory: { amount: 0, valuePerElement: { amount: 2, accumulation: true } },
+      actions: [
+        {
+          id: '140-2-1',
+          actionEffects: [
+            { id: 1, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
+            {
+              id: 2,
+              type: ActionEffectType.PLAY_CARD,
+              cards: { scope: [TargetScope.DISCARD], tags: [CardTag.EVENT], pickNumber: 1 },
+            },
+          ],
+        },
+      ],
+      track: { inOrder: true, steps: [1, 2, 3, 4, 5, 6].map(markStep) },
+    },
   ],
 };

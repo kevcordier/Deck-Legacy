@@ -8,13 +8,13 @@ import {
 } from '@deck-legacy/engine/domain/enums';
 import type { CardDef } from '@deck-legacy/engine/domain/types';
 
-export const robberSaboteur: CardDef = {
+export const rebelliousMonk: CardDef = {
   id: 139,
-  name: 'Robber Saboteur',
+  name: 'Rebellious Monk',
   states: [
     {
       id: 1,
-      name: 'Robber Saboteur',
+      name: 'Rebellious Monk',
       tags: [CardTag.ENEMY],
       negative: true,
       illustration: 'cards/139_1.jpg',
@@ -26,23 +26,16 @@ export const robberSaboteur: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
-              resourceScopes: ['production'],
-              cards: {
-                scope: [TargetScope.BOARD],
-                tags: [CardTag.BUILDING],
-                produces: Object.values(ResourceType),
-                pickNumber: 1,
-              },
-              resources: { choice: [{ any: 1 }] },
+              type: ActionEffectType.BLOCK_CARD,
+              cards: { scope: [TargetScope.BOARD, TargetScope.FRIENDLY], pickNumber: 3 },
             },
           ],
         },
         {
+          // "Spend to upgrade", not a defeat
           id: '139-1-2',
           endsTurn: true,
-          defeat: true,
-          cost: { resources: [{ [ResourceType.WEAPON]: 3 }] },
+          cost: { resources: [{ [ResourceType.GOODS]: 4 }] },
           actionEffects: [
             {
               id: 1,

@@ -1,28 +1,24 @@
 import {
   ActionEffectType,
   CardTag,
-  PassiveType,
   ResourceType,
   TargetScope,
   Trigger,
 } from '@deck-legacy/engine/domain/enums';
-import type { CardDef, Passive } from '@deck-legacy/engine/domain/types';
+import type { CardAction, CardDef } from '@deck-legacy/engine/domain/types';
 
-const discardOnEnemyPlayed = (id: string, count: number): Passive => ({
+const discardOnEnemyPlayed = (id: string, count: number): CardAction => ({
   id,
-  type: PassiveType.ADD_TRIGGER,
-  trigger: {
-    id,
-    type: Trigger.ON_PLAY,
-    cards: { scope: [TargetScope.DRAWN], tags: [CardTag.ENEMY] },
-    actions: [
-      {
-        id: 1,
-        type: ActionEffectType.DISCARD_CARD,
-        cards: { scope: [TargetScope.BOARD, TargetScope.FRIENDLY], pickNumber: count },
-      },
-    ],
-  },
+  trigger: Trigger.ON_PLAY,
+  triggeredBy: { scope: [TargetScope.DRAWN], tags: [CardTag.ENEMY] },
+  condition: { type: 'not', condition: { type: 'justPlayed' } },
+  actionEffects: [
+    {
+      id: 1,
+      type: ActionEffectType.DISCARD_CARD,
+      cards: { scope: [TargetScope.BOARD, TargetScope.FRIENDLY], pickNumber: count },
+    },
+  ],
 });
 
 const weapons = (amount: number) => ({ resources: [{ [ResourceType.WEAPON]: amount }] });
@@ -37,7 +33,7 @@ export const terrifiedTown: CardDef = {
       tags: [CardTag.LAND],
       illustration: 'cards/126_1.jpg',
       productions: [{ [ResourceType.WEAPON]: 1 }],
-      passives: [discardOnEnemyPlayed('126-1-1', 3)],
+      actions: [discardOnEnemyPlayed('126-1-1', 3)],
       upgrade: [{ cost: weapons(4), upgradeTo: 2 }],
     },
     {
@@ -46,7 +42,7 @@ export const terrifiedTown: CardDef = {
       tags: [CardTag.LAND],
       illustration: 'cards/126_2.jpg',
       productions: [{ [ResourceType.WEAPON]: 1 }],
-      passives: [discardOnEnemyPlayed('126-2-1', 2)],
+      actions: [discardOnEnemyPlayed('126-2-1', 2)],
       upgrade: [{ cost: weapons(4), upgradeTo: 3 }],
     },
     {

@@ -1,15 +1,16 @@
 import {
   ActionEffectType,
   CardTag,
-  PassiveType,
   ResourceType,
   TargetScope,
   Trigger,
 } from '@deck-legacy/engine/domain/enums';
-import type { CardDef, Condition, StepDef } from '@deck-legacy/engine/domain/types';
+import type { CardDef, CardSelector, Condition, StepDef } from '@deck-legacy/engine/domain/types';
 
 const emptyStep = (id: number): StepDef => ({ id });
 const duringRiddingTheWoods: Condition = { type: 'expansionActive', name: 'Ridding the Woods' };
+const enemiesJustPlayed: CardSelector = { scope: [TargetScope.DRAWN], tags: [CardTag.ENEMY] };
+const ladyJustPlayed: Condition = { type: 'justPlayed' };
 
 export const aCertainLady: CardDef = {
   id: 122,
@@ -21,60 +22,65 @@ export const aCertainLady: CardDef = {
       tags: [CardTag.PERSON, CardTag.LADY],
       illustration: 'cards/122_1.jpg',
       glory: { amount: 6 },
-      passives: [
+      actions: [
         {
-          id: '122-1-3',
-          type: PassiveType.ADD_TRIGGER,
-          condition: duringRiddingTheWoods,
-          trigger: {
-            id: '122-1-3',
-            type: Trigger.ON_PLAY,
-            cards: { scope: [TargetScope.DRAWN], tags: [CardTag.ENEMY] },
-            actions: [
+          // When she or an enemy is played: mark 1 step per enemy in play with her.
+          id: '122-1-1',
+          trigger: Trigger.ON_PLAY,
+          triggeredBy: enemiesJustPlayed,
+          condition: {
+            type: 'and',
+            conditions: [
+              duringRiddingTheWoods,
               {
-                id: 1,
-                type: ActionEffectType.TRACK_ADVANCE,
-                cards: { scope: [TargetScope.TRIGGER_SOURCE] },
-                valuePerElement: {
-                  amount: 1,
-                  cards: { scope: [TargetScope.DRAWN], tags: [CardTag.ENEMY] },
-                },
+                type: 'cardCount',
+                cards: { scope: [TargetScope.BOARD, TargetScope.DRAWN], tags: [CardTag.ENEMY] },
+                min: 1,
               },
             ],
           },
-        },
-      ],
-      actions: [
-        {
-          id: '122-1-1',
-          trigger: Trigger.ON_PLAY,
-          condition: duringRiddingTheWoods,
           actionEffects: [
             {
+              // she has just been played: every enemy in play counts
               id: 1,
               type: ActionEffectType.TRACK_ADVANCE,
+              condition: ladyJustPlayed,
               cards: { scope: [TargetScope.SELF] },
               valuePerElement: {
                 amount: 1,
                 cards: { scope: [TargetScope.BOARD], tags: [CardTag.ENEMY] },
               },
             },
-          ],
-        },
-        {
-          id: '122-1-2',
-          trigger: Trigger.ON_TRACK_END,
-          actionEffects: [
             {
-              id: 1,
-              type: ActionEffectType.UPGRADE_CARD,
+              // she was already in play: only the enemies just played count
+              id: 2,
+              type: ActionEffectType.TRACK_ADVANCE,
+              condition: { type: 'not', condition: ladyJustPlayed },
               cards: { scope: [TargetScope.SELF] },
-              states: { ids: [2] },
+              valuePerElement: { amount: 1, cards: enemiesJustPlayed },
             },
           ],
         },
       ],
-      track: { inOrder: true, steps: [emptyStep(1), emptyStep(2), emptyStep(3), emptyStep(4)] },
+      track: {
+        inOrder: true,
+        steps: [
+          emptyStep(1),
+          emptyStep(2),
+          emptyStep(3),
+          {
+            id: 4,
+            effects: [
+              {
+                id: 1,
+                type: ActionEffectType.UPGRADE_CARD,
+                cards: { scope: [TargetScope.SELF] },
+                states: { ids: [2] },
+              },
+            ],
+          },
+        ],
+      },
     },
     {
       id: 2,
@@ -108,21 +114,26 @@ export const aCertainLady: CardDef = {
             },
           ],
         },
-        {
-          id: '122-2-2',
-          trigger: Trigger.ON_TRACK_END,
-          actionEffects: [
-            {
-              id: 1,
-              type: ActionEffectType.DESTROY_CARD,
-              cards: { scope: [TargetScope.SELF] },
-            },
-          ],
-        },
       ],
       track: {
         inOrder: true,
-        steps: [1, 2, 3, 4, 5, 6].map(emptyStep),
+        steps: [
+          emptyStep(5),
+          emptyStep(6),
+          emptyStep(7),
+          emptyStep(8),
+          emptyStep(9),
+          {
+            id: 10,
+            effects: [
+              {
+                id: 1,
+                type: ActionEffectType.DESTROY_CARD,
+                cards: { scope: [TargetScope.SELF] },
+              },
+            ],
+          },
+        ],
       },
     },
   ],
