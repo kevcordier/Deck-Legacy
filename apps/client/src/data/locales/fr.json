@@ -250,10 +250,6 @@
   "options": {
     "title": "Options",
     "general": "Général",
-    "theme": "Thème",
-    "theme_light": "Clair",
-    "theme_dark": "Sombre",
-    "theme_system": "Système",
     "language": "Langue",
     "en": "Anglais",
     "fr": "Français",

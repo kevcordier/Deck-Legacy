@@ -27,7 +27,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 /** First screen without an account: sign in, or play on this device only. */
 function Welcome({ onPlayOffline }: { readonly onPlayOffline: () => void }) {
   const { t } = useTranslation();
-  // `bg-card` keeps its color in every theme: use `ink-card` and `base-primary` on it.
+  // `bg-card` is light on the dark page: use `ink-card` and `base-primary` on it.
   return (
     <View className="bg-card border-ink-card/30 w-full max-w-md gap-6 self-center rounded-lg border p-4 lg:p-6">
       <TextStyle className="text-ink-card">
@@ -110,7 +110,7 @@ export function Home() {
           {showWelcome ? (
             <Welcome onPlayOffline={playOffline} />
           ) : (
-            // `bg-card` keeps its color in every theme: use `ink-card` and `base-primary` on it.
+            // `bg-card` is light on the dark page: use `ink-card` and `base-primary` on it.
             <View className="bg-card border-ink-card/30 gap-4 rounded-lg border p-4 lg:p-6">
               <TextStyle className="text-ink-card">
                 <View className="flex-row flex-wrap items-center justify-between gap-3">

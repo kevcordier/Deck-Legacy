@@ -1,4 +1,3 @@
-import type { Theme } from '@contexts/GameUIProvider';
 import { createContext } from 'react';
 
 type GameUIContextType = {
@@ -8,8 +7,6 @@ type GameUIContextType = {
   setRulesOpen: (open: boolean) => void;
   stickerStockOpen: boolean;
   setStickerStockOpen: (open: boolean) => void;
-  theme: Theme;
-  applyTheme: (theme: Theme) => void;
   tutorialEnabled: boolean;
   setTutorialEnabled: (enabled: boolean) => void;
   resourceWarningEnabled: boolean;

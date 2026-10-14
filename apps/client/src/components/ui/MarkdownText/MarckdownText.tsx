@@ -1,7 +1,7 @@
 import { Divider } from '@components/ui/Divider/Divider';
 import { IconColors } from '@components/ui/Icon/iconColors';
 import { renderTextWithIcons } from '@helpers/renderHelpers';
-import { useThemeColors } from '@helpers/themeColors';
+import { THEME_COLORS as colors } from '@helpers/themeColors';
 import { type ReactNode, isValidElement, useMemo } from 'react';
 import { Text, type TextStyle, View, type ViewStyle } from 'react-native';
 import { type MarkedStyles, Renderer, useMarkdown } from 'react-native-marked';
@@ -83,7 +83,6 @@ type MarkdownTextProps = {
 };
 
 export function MarkdownText({ text, ink, compact = false }: MarkdownTextProps) {
-  const colors = useThemeColors();
   const textColor = ink ? IconColors.baseInk : colors.ink;
   const titleColor = ink ? IconColors.baseInk : colors.primary;
   const k = compact ? 0.65 : 1;
@@ -113,11 +112,11 @@ export function MarkdownText({ text, ink, compact = false }: MarkdownTextProps) 
       table: { borderColor: colors.border, borderWidth: 1, marginTop: 8 },
       tableCell: { padding: 8 * k },
     }),
-    [colors.border, textColor, titleColor, k],
+    [textColor, titleColor, k],
   );
 
   const renderer = useMemo(() => new GameRenderer({ selectable: false }), []);
-  const elements = useMarkdown(text, { renderer, styles, colorScheme: 'light' });
+  const elements = useMarkdown(text, { renderer, styles, colorScheme: 'dark' });
 
   return <View>{elements}</View>;
 }

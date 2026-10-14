@@ -1,7 +1,7 @@
 /* global module, require */
 /**
- * Design tokens. Themed colors (`background`, `ink`, `border`, `primary`) are CSS variables
- * declared in `src/styles/global.css` and switched by the `dark` class (see GameUIProvider).
+ * Design tokens. Page colors (`background`, `ink`, `border`, `primary`) are CSS variables
+ * declared in `src/styles/global.css`; the app has a single (dark) theme.
  * @type {import('tailwindcss').Config}
  */
 module.exports = {
@@ -13,7 +13,6 @@ module.exports = {
     './.rnstorybook/**/*.{ts,tsx}',
   ],
   presets: [require('nativewind/preset')],
-  darkMode: 'class',
   theme: {
     colors: {
       transparent: 'transparent',
@@ -25,10 +24,6 @@ module.exports = {
       primary: 'rgb(var(--color-primary) / <alpha-value>)',
       'ink-card': '#664a26',
       'base-primary': '#c79233',
-      'dark-background': '#3b342a',
-      'dark-ink': '#fff2e0',
-      'dark-border': '#65553c',
-      'dark-primary': '#ffd07c',
       card: '#f0e4be',
       gray: '#d1d5dc',
       permanent: '#27272a',

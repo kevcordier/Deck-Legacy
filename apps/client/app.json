@@ -6,8 +6,8 @@
     "orientation": "default",
     "icon": "./assets/icon-512x512.png",
     "scheme": "decklegacy",
-    "userInterfaceStyle": "automatic",
-    "backgroundColor": "#fff2e0",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#3b342a",
     "splash": {
       "image": "./assets/icon-512x512.png",
       "resizeMode": "contain",
@@ -32,7 +32,7 @@
       "name": "Deck Legacy",
       "shortName": "Deck Legacy",
       "description": "A Digital version of a well known legacy deck game",
-      "themeColor": "#f0e4be",
+      "themeColor": "#3b342a",
       "backgroundColor": "#f0e4be"
     },
     "experiments": {

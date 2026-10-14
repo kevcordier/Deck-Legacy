@@ -5,7 +5,6 @@ import { Checkbox } from '@components/ui/Checkbox/Checkbox';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Tabs } from '@components/ui/Tabs/Tabs';
 import { GameUIContext } from '@contexts/GameUIContext';
-import type { Theme } from '@contexts/GameUIProvider';
 import { useAuth } from '@hooks/useAuth';
 import { use, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +19,7 @@ interface OptionsModalProps {
   readonly initialTab?: OptionsTab;
 }
 
-/** Options (theme, language) and, when accounts are available, the account tab. */
+/** Options (language) and, when accounts are available, the account tab. */
 export function OptionsModal({ onClose, onGoHome, initialTab = 'general' }: OptionsModalProps) {
   const { t } = useTranslation();
   const { status } = useAuth();
@@ -51,24 +50,10 @@ export function OptionsModal({ onClose, onGoHome, initialTab = 'general' }: Opti
 
 function GeneralOptions({ onGoHome }: { readonly onGoHome?: () => void }) {
   const { t, i18n } = useTranslation();
-  const { theme, applyTheme, resourceWarningEnabled, setResourceWarningEnabled } =
-    use(GameUIContext);
+  const { resourceWarningEnabled, setResourceWarningEnabled } = use(GameUIContext);
 
   return (
     <>
-      <ButtonGroup
-        label={t('options.theme')}
-        value={theme}
-        onChange={value => applyTheme(value as Theme)}
-        size="sm"
-        font="body"
-        options={[
-          { children: t('options.theme_light'), value: 'light' },
-          { children: t('options.theme_dark'), value: 'dark' },
-          { children: t('options.theme_system'), value: 'system' },
-        ]}
-      />
-
       <ButtonGroup
         label={t('options.language')}
         value={i18n.language}

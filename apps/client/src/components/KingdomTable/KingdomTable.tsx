@@ -107,7 +107,7 @@ export function KingdomTable({ kingdoms, onOpen, onDelete }: KingdomTableProps) 
     );
   }
 
-  // `bg-card` keeps its color in every theme: use `ink-card` and `base-primary` on it.
+  // `bg-card` is light on the dark page: use `ink-card` and `base-primary` on it.
   return (
     <TextStyle className="text-ink-card">
       <View className="border-ink-card/30 bg-card overflow-hidden rounded-lg border">
