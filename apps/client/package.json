@@ -44,7 +44,7 @@
     "nativewind": "4.2.7",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-error-boundary": "^6.1.5",
+    "react-error-boundary": "^6.1.6",
     "react-i18next": "^17.0.14",
     "react-native": "0.86.3",
     "react-native-marked": "^8.3.2",
