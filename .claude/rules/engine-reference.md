@@ -75,8 +75,14 @@ CardAction {
   trigger?: Trigger         // fired automatically on the given trigger
   optional?: boolean        // only for trigger effects — allows skipping the trigger
   condition?: Condition     // a trigger fires only if it holds; a regular action can only be used if it holds
-                            // (cardCount | production | resource | and | or | not | expansionActive | accumulation)
+                            // (cardCount | production | resource | and | or | not | expansionActive | accumulation |
+                            // justPlayed = this card is one of the cards just played)
   defeat?: boolean          // the action defeats an enemy: queues the ON_DEFEAT triggers in play
+  triggeredBy?: CardSelector // the trigger also fires while this card is in play when a card matching
+                            // it causes it (scope DRAWN = the cards just played, DISCARDED = just
+                            // discarded). "When X is played" cards (Volcanic Eruption, Assassin…) add
+                            // condition { not: justPlayed } so they don't fire for themselves.
+                            // Passives never carry triggers: every triggered effect is a CardAction.
 }
 
 ActionEffect {
@@ -96,6 +102,8 @@ ActionEffect {
   effect?: Passive              // passive effect for ADD_BOARD_EFFECT
   effects?: ActionEffect[]      // nested effects for CHOOSE_EFFECT
   steps?: { pickNumber?: number; pickMin?: number; pickMax?: number }
+  condition?: Condition         // checked when this effect resolves (after the previous ones):
+                                // the effect is skipped when it does not hold
 }
 
 TrackDef {

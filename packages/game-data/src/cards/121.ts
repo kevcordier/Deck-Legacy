@@ -51,43 +51,35 @@ export const borderDispute: CardDef = {
       tags: [CardTag.EVENT],
       illustration: 'cards/121_2.webp',
       permanent: true,
-      passives: [
+      actions: [
         {
           id: '121-2-1',
-          type: PassiveType.ADD_TRIGGER,
-          trigger: {
-            id: '121-2-1',
-            type: Trigger.ON_PLAY,
-            cards: {
-              scope: [TargetScope.DRAWN],
-              tags: [CardTag.PERSON],
+          trigger: Trigger.ON_PLAY,
+          triggeredBy: { scope: [TargetScope.DRAWN], tags: [CardTag.PERSON] },
+          condition: { type: 'not', condition: { type: 'justPlayed' } },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.CHOOSE_EFFECT,
+              effects: [
+                {
+                  id: 1,
+                  type: ActionEffectType.TRACK_ADVANCE,
+                  cards: { scope: [TargetScope.SELF] },
+                },
+                {
+                  id: 2,
+                  type: ActionEffectType.DISCARD_CARD,
+                  cards: {
+                    scope: [TargetScope.BOARD, TargetScope.FRIENDLY],
+                    pickNumber: 2,
+                    pickMin: 2,
+                  },
+                },
+              ],
             },
-            actions: [
-              {
-                id: 1,
-                type: ActionEffectType.CHOOSE_EFFECT,
-                effects: [
-                  {
-                    id: 1,
-                    type: ActionEffectType.TRACK_ADVANCE,
-                    cards: { scope: [TargetScope.TRIGGER_SOURCE] },
-                  },
-                  {
-                    id: 2,
-                    type: ActionEffectType.DISCARD_CARD,
-                    cards: {
-                      scope: [TargetScope.BOARD, TargetScope.FRIENDLY],
-                      pickNumber: 2,
-                      pickMin: 2,
-                    },
-                  },
-                ],
-              },
-            ],
-          },
+          ],
         },
-      ],
-      actions: [
         {
           id: '121-2-2',
           trigger: Trigger.END_OF_ROUND,
@@ -131,47 +123,35 @@ export const borderDispute: CardDef = {
       tags: [CardTag.EVENT],
       illustration: 'cards/121_3.jpg',
       permanent: true,
-      passives: [
+      actions: [
         {
           id: '121-3-1',
-          type: PassiveType.ADD_TRIGGER,
+          trigger: Trigger.END_OF_TURN,
           condition: {
             type: 'not',
-            condition: {
-              type: 'resource',
-              resourceType: ResourceType.WEAPON,
-              min: 1,
-            },
+            condition: { type: 'resource', resourceType: ResourceType.WEAPON, min: 1 },
           },
-          trigger: {
-            id: '121-3-1',
-            type: Trigger.END_OF_TURN,
-            actions: [
-              {
-                id: 1,
-                type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
-                resourceScopes: ['production'],
-                cards: {
-                  scope: [TargetScope.BOARD],
-                  produces: [
-                    ResourceType.GOLD,
-                    ResourceType.WOOD,
-                    ResourceType.STONE,
-                    ResourceType.IRON,
-                    ResourceType.WEAPON,
-                    ResourceType.GOODS,
-                  ],
-                  pickNumber: 1,
-                },
-                resources: {
-                  choice: [{ any: 1 }],
-                },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+              resourceScopes: ['production'],
+              cards: {
+                scope: [TargetScope.BOARD],
+                produces: [
+                  ResourceType.GOLD,
+                  ResourceType.WOOD,
+                  ResourceType.STONE,
+                  ResourceType.IRON,
+                  ResourceType.WEAPON,
+                  ResourceType.GOODS,
+                ],
+                pickNumber: 1,
               },
-            ],
-          },
+              resources: { choice: [{ any: 1 }] },
+            },
+          ],
         },
-      ],
-      actions: [
         {
           id: '121-3-2',
           trigger: Trigger.END_OF_ROUND,

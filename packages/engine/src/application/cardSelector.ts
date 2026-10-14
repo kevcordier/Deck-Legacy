@@ -360,6 +360,8 @@ export function evaluateCondition(
         condition.min,
         condition.max,
       );
+    case 'justPlayed':
+      return gameState.lastDrawnCards.includes(instanceId);
     case 'expansionActive':
       return (
         gameState.activeExpansion === condition.name &&

@@ -1,12 +1,13 @@
 import {
   ActionEffectType,
   CardTag,
-  PassiveType,
   ResourceType,
   TargetScope,
   Trigger,
 } from '@deck-legacy/engine/domain/enums';
-import type { CardDef } from '@deck-legacy/engine/domain/types';
+import type { CardDef, CardSelector } from '@deck-legacy/engine/domain/types';
+
+const personDiscarded: CardSelector = { scope: [TargetScope.DISCARDED], tags: [CardTag.PERSON] };
 
 export const alchemist: CardDef = {
   id: 81,
@@ -73,36 +74,28 @@ export const alchemist: CardDef = {
       name: 'Healing Potion',
       illustration: 'cards/81_3.jpg',
       tags: [CardTag.POTION, CardTag.ITEM],
-      passives: [
+      actions: [
         {
+          // When a person is discarded, you may play it again and reset this.
           id: '81-3-1',
-          type: PassiveType.ADD_TRIGGER,
-          trigger: {
-            id: '81-3-1',
-            type: Trigger.ON_DISCARD,
-            optional: true,
-            cards: {
-              scope: [TargetScope.DISCARDED],
-              tags: [CardTag.PERSON],
+          trigger: Trigger.ON_DISCARD,
+          optional: true,
+          triggeredBy: personDiscarded,
+          // also when this is discarded together with a person
+          condition: { type: 'cardCount', cards: personDiscarded, min: 1 },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.PLAY_CARD,
+              cards: { ...personDiscarded, pickNumber: 1 },
             },
-            actions: [
-              {
-                id: 1,
-                type: ActionEffectType.PLAY_CARD,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-              {
-                id: 2,
-                type: ActionEffectType.UPGRADE_CARD,
-                cards: {
-                  scope: [TargetScope.TRIGGER_SOURCE],
-                },
-                states: { ids: [1] },
-              },
-            ],
-          },
+            {
+              id: 2,
+              type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
+              states: { ids: [1] },
+            },
+          ],
         },
       ],
     },

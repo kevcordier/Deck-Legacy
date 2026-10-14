@@ -365,57 +365,29 @@ export function canAffordTrackAdvanceCost(
   });
 }
 
-function getBoardEffectTriggersAction(
-  gameState: GameState,
+/** Actions of the cards in play (not among `sources`) whose `triggeredBy` matches a card. */
+function getTriggeredByEffects(
+  sources: CardInstance[],
   defs: Record<number, CardDef>,
+  gameState: GameState,
+  canFire: (ce: CardAction, instance: CardInstance) => boolean,
   stickerDefs: Record<number, Sticker>,
-  trigger: Trigger,
 ): TriggerEntry[] {
-  return Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) => {
-    const cardActions: CardAction[] = [];
-    const originalSourceId = Number(sourceId);
-    let instanceId = originalSourceId;
-    passives
-      .filter(
-        passive =>
-          passive.type === PassiveType.ADD_TRIGGER &&
-          passive.trigger?.type === trigger &&
-          (!passive.condition ||
-            evaluateCondition(passive.condition, gameState, originalSourceId, defs, stickerDefs)),
-      )
-      .forEach(passive => {
-        if (passive.trigger?.cards) {
-          const selectedCards = cardSelector(
-            passive.trigger.cards,
-            instanceId,
-            gameState,
-            defs,
-            stickerDefs,
-          );
-
-          if (selectedCards.length === 0) return;
-
-          instanceId = selectedCards[0];
-        }
-        if (passive.trigger?.actions) {
-          const getCard = (ae: ActionEffect) => {
-            if (ae.cards?.scope?.includes(TargetScope.TRIGGER_SOURCE))
-              return { ids: [originalSourceId] };
-            return ae.cards?.scope?.includes(TargetScope.SELF) ? { ids: [instanceId] } : ae.cards;
-          };
-          cardActions.push({
-            id: passive.trigger.id,
-            optional: passive.trigger?.optional,
-            actionEffects: passive.trigger.actions.map(ae => ({
-              ...ae,
-              cards: getCard(ae),
-            })),
-          });
-        }
-      });
-
-    return cardActions.map(effectDef => ({ effectDef, sourceInstanceId: Number(sourceId) }));
-  });
+  const sourceIds = new Set(sources.map(instance => instance.id));
+  return [...new Set([...gameState.board, ...gameState.permanents])]
+    .filter(id => !sourceIds.has(id))
+    .map(id => gameState.instances[id])
+    .filter(Boolean)
+    .flatMap(instance =>
+      (getActiveState(instance, defs).actions ?? [])
+        .filter(
+          ce =>
+            ce.triggeredBy &&
+            canFire(ce, instance) &&
+            cardSelector(ce.triggeredBy, instance.id, gameState, defs, stickerDefs).length > 0,
+        )
+        .map(effectDef => ({ effectDef, sourceInstanceId: instance.id })),
+    );
 }
 
 export function getInstancesTriggerEffects(
@@ -425,24 +397,21 @@ export function getInstancesTriggerEffects(
   effect: Trigger,
   gameState: GameState,
 ): TriggerEntry[] {
+  const canFire = (ce: CardAction, instance: CardInstance) =>
+    ce.trigger === effect &&
+    (!ce.condition || evaluateCondition(ce.condition, gameState, instance.id, defs, stickerDefs)) &&
+    canAffordCost(ce.cost, instance.id, gameState, defs, stickerDefs) &&
+    canAffordTrackAdvanceCost(ce, instance, gameState, defs, stickerDefs) &&
+    !instance.usedActionIds?.includes(ce.id);
+
   const effects = instances.reduce<TriggerEntry[]>((acc, instance) => {
     const state = getActiveState(instance, defs);
-    const effects =
-      state.actions?.filter(ce => {
-        return (
-          ce.trigger === effect &&
-          (!ce.condition ||
-            evaluateCondition(ce.condition, gameState, instance.id, defs, stickerDefs)) &&
-          canAffordCost(ce.cost, instance.id, gameState, defs, stickerDefs) &&
-          canAffordTrackAdvanceCost(ce, instance, gameState, defs, stickerDefs) &&
-          !instance.usedActionIds?.includes(ce.id)
-        );
-      }) ?? [];
+    const effects = state.actions?.filter(ce => canFire(ce, instance)) ?? [];
 
     return [...acc, ...effects.map(effectDef => ({ effectDef, sourceInstanceId: instance.id }))];
   }, [] as TriggerEntry[]);
 
-  effects.push(...getBoardEffectTriggersAction(gameState, defs, stickerDefs, effect));
+  effects.push(...getTriggeredByEffects(instances, defs, gameState, canFire, stickerDefs));
 
   return effects;
 }

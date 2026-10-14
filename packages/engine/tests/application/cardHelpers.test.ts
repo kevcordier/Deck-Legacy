@@ -1172,245 +1172,35 @@ describe('getInstancesTriggerEffects', () => {
     expect(result[0].effectDef).toBe(action);
   });
 
-  it('includes board effect triggers matching the trigger type', () => {
-    const gs = makeState({
-      boardEffects: {
-        1: [
-          {
-            id: 'trig',
-            type: PassiveType.ADD_TRIGGER,
-            trigger: {
-              id: 't1',
-              type: Trigger.END_OF_TURN,
-              actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
-            },
-          },
-        ],
-      },
-    });
-    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
-    expect(result).toHaveLength(1);
-    expect(result[0].sourceInstanceId).toBe(1);
-  });
-
-  it('resolves SELF scope in board effect trigger actions to the selected card id', () => {
-    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
-    const defs: Record<number, CardDef> = {
-      1: { id: 1, name: 'S', states: [{ id: 1, name: 'S1' }] },
-      2: { id: 2, name: 'T', states: [{ id: 1, name: 'T1' }] },
-    };
-    const gs = makeState({
-      board: [2],
-      instances: { 2: inst2 },
-      boardEffects: {
-        1: [
-          {
-            id: 'trig',
-            type: PassiveType.ADD_TRIGGER,
-            trigger: {
-              id: 't1',
-              type: Trigger.END_OF_TURN,
-              cards: { scope: [TargetScope.BOARD] },
-              actions: [
-                {
-                  id: 0,
-                  type: ActionEffectType.ADD_RESOURCES,
-                  cards: { scope: [TargetScope.SELF] },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    });
-    const result = getInstancesTriggerEffects([], defs, makeStickerDefs(), Trigger.END_OF_TURN, gs);
-    expect(result).toHaveLength(1);
-    expect(result[0].effectDef.actionEffects[0].cards?.ids).toEqual([2]);
-  });
-
-  it('resolves TRIGGER_SOURCE scope in board effect trigger actions to the original source id', () => {
-    const inst2 = makeInstance({ id: 2, cardId: 2, stateId: 1 });
-    const defs2: Record<number, CardDef> = {
-      1: { id: 1, name: 'S', states: [{ id: 1, name: 'S1' }] },
-      2: { id: 2, name: 'T', states: [{ id: 1, name: 'T1' }] },
-    };
-    const gs = makeState({
-      board: [2],
-      instances: { 2: inst2 },
-      boardEffects: {
-        1: [
-          {
-            id: 'trig',
-            type: PassiveType.ADD_TRIGGER,
-            trigger: {
-              id: 't1',
-              type: Trigger.END_OF_TURN,
-              cards: { scope: [TargetScope.BOARD] },
-              actions: [
-                {
-                  id: 0,
-                  type: ActionEffectType.ADD_RESOURCES,
-                  cards: { scope: [TargetScope.TRIGGER_SOURCE] },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    });
-    const result = getInstancesTriggerEffects(
-      [],
-      defs2,
-      makeStickerDefs(),
-      Trigger.END_OF_TURN,
-      gs,
-    );
-    expect(result).toHaveLength(1);
-    expect(result[0].effectDef.actionEffects[0].cards?.ids).toEqual([1]);
-  });
-
-  it('skips board effect trigger when no cards match the selector', () => {
-    const gs = makeState({
-      boardEffects: {
-        1: [
-          {
-            id: 'trig',
-            type: PassiveType.ADD_TRIGGER,
-            trigger: {
-              id: 't1',
-              type: Trigger.ON_PLAY,
-              cards: { ids: [99] },
-              actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
-            },
-          },
-        ],
-      },
-    });
-    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
-    expect(result).toHaveLength(0);
-  });
-
-  it('skips board effect trigger when no actions defined', () => {
-    const gs = makeState({
-      boardEffects: {
-        1: [
-          {
-            id: 'trig',
-            type: PassiveType.ADD_TRIGGER,
-            trigger: { id: 't1', type: Trigger.END_OF_TURN },
-          },
-        ],
-      },
-    });
-    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
-    expect(result).toHaveLength(0);
-  });
-
-  it('returns empty when board trigger cards selector matches nothing for the right trigger type', () => {
-    const gs = makeState({
-      boardEffects: {
-        1: [
-          {
-            id: 'trig',
-            type: PassiveType.ADD_TRIGGER,
-            trigger: {
-              id: 't1',
-              type: Trigger.END_OF_TURN,
-              cards: { scope: [TargetScope.BOARD], ids: [99] }, // no card with id 99 on board
-              actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
-            },
-          },
-        ],
-      },
-    });
-    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
-    expect(result).toHaveLength(0);
-  });
-
-  it('includes board effect trigger when passive condition is true', () => {
-    const gs = makeState({
-      resources: { gold: 2 },
-      boardEffects: {
-        1: [
-          {
-            id: 'trig',
-            type: PassiveType.ADD_TRIGGER,
-            condition: {
-              type: 'resource',
-              resourceType: ResourceType.GOLD,
-              min: 1,
-            },
-            trigger: {
-              id: 't1',
-              type: Trigger.END_OF_TURN,
-              actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
-            },
-          },
-        ],
-      },
-    });
-
-    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
-    expect(result).toHaveLength(1);
-    expect(result[0].sourceInstanceId).toBe(1);
-  });
-
-  it('skips board effect trigger when passive condition is false', () => {
-    const gs = makeState({
-      resources: {},
-      boardEffects: {
-        1: [
-          {
-            id: 'trig',
-            type: PassiveType.ADD_TRIGGER,
-            condition: {
-              type: 'resource',
-              resourceType: ResourceType.GOLD,
-              min: 1,
-            },
-            trigger: {
-              id: 't1',
-              type: Trigger.END_OF_TURN,
-              actions: [{ id: 0, type: ActionEffectType.ADD_RESOURCES }],
-            },
-          },
-        ],
-      },
-    });
-
-    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, gs);
-    expect(result).toHaveLength(0);
-  });
-
-  it('fires an end of turn board trigger only when the deck is empty', () => {
-    const deckEmpty = {
-      id: 'trig',
-      type: PassiveType.ADD_TRIGGER,
-      condition: { type: 'cardCount' as const, cards: { scope: [TargetScope.DECK] }, max: 0 },
-      trigger: {
-        id: 't1',
-        type: Trigger.END_OF_TURN,
-        optional: true,
-        actions: [
-          { id: 1, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
-        ],
-      },
+  it('fires the ON_PLAY action of a card in play when a card matching triggeredBy is played', () => {
+    const action = {
+      id: 'a1',
+      actionEffects: [],
+      trigger: Trigger.ON_PLAY,
+      triggeredBy: { scope: [TargetScope.DRAWN], tags: [CardTag.ENEMY] },
     };
     const defs: Record<number, CardDef> = {
-      5: { id: 5, name: 'C', states: [{ id: 1, name: 'S' }] },
+      1: { id: 1, name: 'Watcher', states: [{ id: 1, name: 'S', actions: [action] }] },
+      2: { id: 2, name: 'Enemy', states: [{ id: 1, name: 'S', tags: [CardTag.ENEMY] }] },
+      3: { id: 3, name: 'Friend', states: [{ id: 1, name: 'S' }] },
     };
-    const withDeck = makeState({
-      drawPile: [5],
-      instances: { 5: makeInstance({ id: 5, cardId: 5, stateId: 1 }) },
-      boardEffects: { 1: [deckEmpty] },
-    });
-    const emptyDeck = makeState({ drawPile: [], boardEffects: { 1: [deckEmpty] } });
+    const watcher = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const enemy = makeInstance({ id: 2, cardId: 2, stateId: 1 });
+    const friend = makeInstance({ id: 3, cardId: 3, stateId: 1 });
+    const instances = { 1: watcher, 2: enemy, 3: friend };
+    const fire = (played: typeof watcher, board: number[]) =>
+      getInstancesTriggerEffects(
+        [played],
+        defs,
+        makeStickerDefs(),
+        Trigger.ON_PLAY,
+        makeState({ board, instances, lastDrawnCards: [played.id] }),
+      );
 
-    expect(getInstancesTriggerEffects([], defs, {}, Trigger.END_OF_TURN, withDeck)).toHaveLength(0);
-    const result = getInstancesTriggerEffects([], {}, {}, Trigger.END_OF_TURN, emptyDeck);
-    expect(result).toHaveLength(1);
-    expect(result[0].effectDef.optional).toBe(true);
-    expect(result[0].effectDef.actionEffects[0].cards).toEqual({ ids: [1] });
+    expect(fire(enemy, [1])).toEqual([{ effectDef: action, sourceInstanceId: 1 }]);
+    expect(fire(friend, [1])).toHaveLength(0);
+    // played itself: fires once, as its own ON_PLAY
+    expect(fire(watcher, [])).toEqual([{ effectDef: action, sourceInstanceId: 1 }]);
   });
 });
 
@@ -1420,6 +1210,12 @@ describe('evaluateCondition', () => {
   const defs: Record<number, CardDef> = {
     1: { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] },
   };
+
+  it('justPlayed holds only for the cards just played', () => {
+    const gs = makeState({ lastDrawnCards: [1] });
+    expect(evaluateCondition({ type: 'justPlayed' }, gs, 1, defs, {})).toBe(true);
+    expect(evaluateCondition({ type: 'justPlayed' }, gs, 2, defs, {})).toBe(false);
+  });
 
   it('cardCount returns true when count meets min', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });

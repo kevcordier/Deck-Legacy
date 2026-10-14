@@ -380,6 +380,19 @@ export class CardActionAggregate {
     let index = startIndex;
     while (index < this.effects.length) {
       const effect = this.effects[index];
+      if (
+        effect.condition &&
+        !evaluateCondition(
+          effect.condition,
+          this.gameState,
+          this.instance.id,
+          this.cardDefs,
+          this.stickerDefs,
+        )
+      ) {
+        index++;
+        continue;
+      }
       const [resolvedAction, choices] = resolveActionEffect(
         effect,
         this.instance.id,
