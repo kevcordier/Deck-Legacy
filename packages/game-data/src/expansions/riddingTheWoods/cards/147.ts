@@ -67,7 +67,8 @@ export const keeperOfSecrets: CardDef = {
           ],
         },
         {
-          // red track (3 boxes) kept as the accumulation: the third mark destroys this card
+          // shortcut: the red track (3 boxes) is the card's accumulation because a state has only
+          // one track; when another card needs a second track, support several tracks per state.
           id: '147-2-3',
           trigger: Trigger.END_OF_TURN,
           condition: { type: 'accumulation', max: 1 },
