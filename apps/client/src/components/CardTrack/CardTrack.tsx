@@ -5,7 +5,8 @@ import {
   selfUpgradeStateId,
 } from '@components/CardStateTooltip/CardStateTooltip';
 import { Glory } from '@components/ui/Glory/Glory';
-import { UpgradeIcon } from '@components/ui/Icon/icon';
+import { DestroyIcon, UpgradeIcon } from '@components/ui/Icon/icon';
+import { IconColors } from '@components/ui/Icon/iconColors';
 import { Text } from '@components/ui/Text/Text';
 import { ActionEffectType } from '@deck-legacy/engine/domain/enums';
 import type {
@@ -95,6 +96,10 @@ export function CardTrackContent({
       ) : (
         <React.Fragment key={action.id}>{icon}</React.Fragment>
       );
+    }
+
+    if (action.type === ActionEffectType.DESTROY_CARD) {
+      return <DestroyIcon key={action.id} className="size-3" color={IconColors.tagEnemy} />;
     }
 
     if (action.resources) {
