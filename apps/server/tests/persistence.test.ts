@@ -312,6 +312,35 @@ describe('ScoresService', () => {
     });
   });
 
+  it('ranks the kingdoms of registered players by total score', async () => {
+    const { prisma, tx } = fakePrisma();
+    tx.game.findMany.mockResolvedValue([
+      {
+        id: GAME,
+        name: 'Avalon',
+        score: 52,
+        segments: [{ segment: 'base', score: 40 }, 'broken'],
+        user: { displayName: 'Alice' },
+      },
+    ]);
+
+    const board = await new ScoresService(prisma).kingdomLeaderboard(5);
+
+    expect(tx.game.findMany.mock.calls[0][0].where).toEqual({
+      status: { in: ['ACTIVE', 'FINISHED'] },
+      user: { isAnonymous: false },
+    });
+    expect(board).toEqual([
+      {
+        id: GAME,
+        name: 'Avalon',
+        displayName: 'Alice',
+        score: 52,
+        segments: [{ segment: 'base', score: 40 }],
+      },
+    ]);
+  });
+
   it("lists a player's own scores", async () => {
     const { prisma, tx } = fakePrisma();
 

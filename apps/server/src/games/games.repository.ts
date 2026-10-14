@@ -50,7 +50,7 @@ function toCardNames(value: Prisma.JsonValue): Record<string, string> {
   return names;
 }
 
-function toSegments(value: Prisma.JsonValue): CampaignSegmentScore[] {
+export function toSegments(value: Prisma.JsonValue): CampaignSegmentScore[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap(item => {
     if (typeof item !== 'object' || item === null || Array.isArray(item)) return [];

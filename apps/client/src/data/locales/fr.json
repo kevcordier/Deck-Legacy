@@ -431,5 +431,13 @@
     "deleteTitle": "Supprimer le royaume",
     "deleteConfirm": "Supprimer « {{name}} » ? Sa partie sera supprimée sur tous vos appareils.",
     "deleteConfirmButton": "Supprimer"
+  },
+  "scoreboard": {
+    "title": "Classement",
+    "subtitle": "Les royaumes des joueurs inscrits ayant les meilleurs scores.",
+    "player": "Joueur",
+    "anonymous": "Anonyme",
+    "empty": "Aucun royaume au classement pour l'instant.",
+    "loading": "Chargement…"
   }
 }

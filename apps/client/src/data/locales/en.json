@@ -431,5 +431,13 @@
     "deleteTitle": "Delete the kingdom",
     "deleteConfirm": "Delete “{{name}}”? Its game will be deleted on every device.",
     "deleteConfirmButton": "Delete"
+  },
+  "scoreboard": {
+    "title": "Scoreboard",
+    "subtitle": "Kingdoms of registered players with the best scores.",
+    "player": "Player",
+    "anonymous": "Anonymous",
+    "empty": "No kingdom on the scoreboard yet.",
+    "loading": "Loading…"
   }
 }

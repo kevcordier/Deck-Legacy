@@ -30,7 +30,7 @@ apps/client/
 ├── assets/                # App icons + card illustrations (assets/cards, bundled for offline play)
 ├── scripts/               # generate-illustrations.mjs, spa-fallback.mjs (dist/404.html for deep links)
 ├── src/
-│   ├── app/               # expo-router routes: _layout.tsx (storage, fonts, i18n, auth, sync), index.tsx (home), game/[kingdom].tsx
+│   ├── app/               # expo-router routes: _layout.tsx (storage, fonts, i18n, auth, sync), index.tsx (home), scoreboard.tsx, game/[kingdom].tsx
 │   ├── polyfills.ts       # crypto.randomUUID on Hermes (the engine needs it)
 │   ├── components/        # React UI components (feature folders)
 │   ├── contexts/          # Auth, Game, GameUI, Tutorial contexts + providers
@@ -54,6 +54,7 @@ apps/client/
 `_layout.tsx` hydrates the storage and the kingdom saves (`helpers/bootstrap.ts`, which also migrates the single save of older versions into a kingdom), loads fonts and i18n, then renders the pages **immediately**, whatever the network. In parallel, `AuthProvider` opens a Supabase session when it can; once a user is known, `reconcile()` aligns the local kingdoms with the server. It runs again when the app comes back to the foreground and every minute, so a kingdom played on another device is picked up.
 
 - `/` — `pages/Home/Home.tsx`: without an account, a welcome screen (sign in, or play without an account, remembered in `deck_legacy_offline`); then the **kingdoms** table (`KingdomTable`: name, round and turn, total, base game, each expansion played in order with its logo and cumulative score, delete) and "New kingdom" (`NewKingdomModal`: name, tutorial, rules). A kingdom is one save (EDR-038): up to 10 with an account, 1 without (`maxKingdoms`).
+- `/scoreboard` — `pages/Scoreboard/Scoreboard.tsx`, opened from the home header's 🏆 button (only when accounts are available): the kingdoms of registered players with the best total score (`GET /scores/kingdoms`), shown in `KingdomTable` with `ranking` (player instead of round and turn, no open or delete). Needs the network; offline it shows `errors.network`.
 - `/game/{slug}-{id}` — `app/game/[kingdom].tsx`: opens the kingdom's save (only the trailing id of the URL counts, `kingdomIdFromParam`). A new kingdom starts its first game, or the tutorial when it was chosen. The page remounts with an info toast when the sync downloads a newer version of the kingdom, and shows a conflict modal (keep the online version or overwrite it) when both devices changed it. Unknown kingdoms redirect to `/`.
 - Navigation uses the static `router` from `expo-router` (works outside a navigator, e.g. Storybook). Build paths with `kingdomPath()`.
 

@@ -104,7 +104,18 @@ export function Home() {
         <Header
           onOpenRules={() => setRulesOpen(true)}
           onOpenOptions={() => setOptionsTab('general')}
-        />
+        >
+          {accountsAvailable && (
+            <Button
+              onPress={() => router.push('/scoreboard')}
+              color="danger"
+              size="xs"
+              title={t('scoreboard.title')}
+            >
+              🏆
+            </Button>
+          )}
+        </Header>
 
         <ScrollView contentContainerClassName="w-full max-w-5xl gap-6 self-center p-4 lg:p-8">
           {showWelcome ? (

@@ -72,6 +72,7 @@ Imports inside the server are relative; shared code comes from `@deck-legacy/eng
 | `DELETE /me`                       | user   | Delete the account (Supabase user + all its data)        |
 | `GET /scores/me`                   | user   | Own final scores                                         |
 | `GET /scores/leaderboard?segment=` | public | Best scores of registered (non-anonymous) players        |
+| `GET /scores/kingdoms?limit=`      | public | Kingdoms of registered players with the best total score |
 
 - Every route requires a token unless decorated with `@Public()` (global `AuthGuard`).
 - Validate bodies with `new ZodValidationPipe(schema)` using the schemas of `@deck-legacy/api-contract`.
