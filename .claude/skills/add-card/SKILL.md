@@ -66,9 +66,9 @@ Conventions (from existing cards — follow these, not older docs):
 Add `import { camelCaseName } from './<id>';` after the last import and append
 `camelCaseName,` at the end of the `cardsData` array.
 
-## 5. Locales — `apps/client/src/data/locales/cards.en.json` AND `cards.fr.json`
+## 5. Locales — `cards.en.json` AND `cards.fr.json` in `packages/game-data`
 
-Both files must get exactly the same keys. Sections and key formats:
+Base game cards: `src/locales/`. Expansion folder cards: `src/expansions/<name>/locales/` (EDR-043). Both files must get exactly the same keys, and a key lives in one file only. Sections and key formats:
 
 | Section    | Key                                  | When                                         |
 | ---------- | ------------------------------------ | -------------------------------------------- |
@@ -95,7 +95,7 @@ instance `id` (across `deck` and every `expansions.*.deck`) + 1.
 - **Initial deck**: add `{ "id": <instanceId>, "cardId": <id> }` to `deck`.
 - **Discovered later** (by another card's `DISCOVER_CARD`): still needs an instance in
   `deck`; update the discovering card's effect and its locale text if needed.
-- **Expansion** (EDR-041): the card lives in `src/expansions/<name>/cards/<id>.ts`, is listed
+- **Expansion** (EDR-042): the card lives in `src/expansions/<name>/cards/<id>.ts`, is listed
   in `src/expansions/<name>/index.ts`, and its instance goes in `src/expansions/<name>/deck.json`
   (`name`, `expansionMaxRound`, `purge` (with an optional `focus: { resource, count }`), `parameters`, `stickers` added to the stock,
   `deck`, `onStart.discover.ids`).
@@ -112,13 +112,7 @@ and full test coverage in `packages/engine/tests/application/`. Do it only with 
 
 ## 8. Verify
 
-Run `pnpm verify` and fix every error/warning (zero-warning policy). `packages/game-data/tests/catalog.test.ts` checks that every deck entry references a known card and that instance ids are unique. Then check locale parity:
-
-```bash
-python3 -c "import json;a=json.load(open('apps/client/src/data/locales/cards.en.json'));b=json.load(open('apps/client/src/data/locales/cards.fr.json'));[print(s,set(a[s])^set(b[s])) for s in a if set(a[s])!=set(b.get(s,{}))]"
-```
-
-No output = in sync.
+Run `pnpm verify` and fix every error/warning (zero-warning policy). `packages/game-data/tests/catalog.test.ts` checks that every deck entry references a known card and that instance ids are unique. `packages/game-data/tests/locales.test.ts` checks that EN and FR have the same keys in each file, that no key is defined twice, and that every state name is translated.
 
 Card data is replayed by the server to validate synced games: never change the meaning of an
 existing card in a way that would break already-played games without telling the user.

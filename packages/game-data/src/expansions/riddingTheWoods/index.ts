@@ -29,8 +29,11 @@ import { sheriff } from './cards/148';
 import { woodsTreasury } from './cards/149';
 import { outpostConstruction } from './cards/150';
 import deck from './deck.json';
+import en from './locales/cards.en.json';
+import fr from './locales/cards.fr.json';
 
 export const riddingTheWoods: ExpansionPack = {
+  locales: { en, fr },
   deck: deck as ExpansionPack['deck'], // JSON strings → ResourceType
   cards: [
     aCertainLady,

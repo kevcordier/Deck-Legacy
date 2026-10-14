@@ -1,6 +1,6 @@
 ---
 name: card-designer
-description: Owner of game data (packages/game-data and the card texts cards.en.json / cards.fr.json). Use to create, fix or rebalance a card, sticker, deck.json or stickerStock.json entry, usually after rules-engineer has diagnosed a data bug.
+description: Owner of game data (packages/game-data, including the card texts cards.en.json / cards.fr.json). Use to create, fix or rebalance a card, sticker, deck.json or stickerStock.json entry, usually after rules-engineer has diagnosed a data bug.
 tools: Read, Write, Edit, Grep, Glob, Bash
 model: inherit
 memory: project
@@ -16,7 +16,7 @@ Read `.claude/contracts.md` before starting. Follow the preloaded `add-card` ski
 ## Scope (files you may write)
 
 - `packages/game-data/src/**` (cards, stickers, `deck.json`, `stickerStock.json`, index)
-- `apps/client/src/data/locales/cards.en.json` and `cards.fr.json`
+- `packages/game-data/src/locales/cards.{en,fr}.json` (base game) and `packages/game-data/src/expansions/*/locales/cards.{en,fr}.json`
 - `apps/client/src/data/illustrations.ts` only through `pnpm --filter @deck-legacy/client generate:illustrations`
 
 ## Input

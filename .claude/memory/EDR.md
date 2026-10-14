@@ -1149,3 +1149,29 @@ Conséquences
 
 - Le catalogue (donc le client et le serveur) ne change pas de forme : `GameCatalog.expansions` reste indexé par nom.
 - Ajouter une extension rangée ainsi impose de l'ajouter à `expansionPacks`.
+
+---
+
+ID : EDR-043
+Date : 2026-10-14
+Titre : Textes des cartes dans game-data, un fichier par extension
+Statut : Active
+
+Contexte
+Les textes des cartes (`cards.en.json`, `cards.fr.json`) vivaient dans le client et grossissaient à chaque extension : près de 1 000 entrées avec Ridding the Woods.
+
+Problème
+Comment garder des fichiers de traduction lisibles, rangés avec les cartes qu'ils décrivent ?
+
+Décision
+Les textes des cartes sont dans `packages/game-data` : `src/locales/cards.{en,fr}.json` pour le jeu de base (avec les trois mini-extensions, dont les cartes sont dans `cards/`), et `src/expansions/<nom>/locales/cards.{en,fr}.json` pour chaque dossier d'extension (EDR-042), déclarés dans son `ExpansionPack`. `game-data` exporte `cardTexts`, la fusion des deux, que le client donne à i18next comme espace `cards`.
+
+Alternatives rejetées
+
+- Garder un seul fichier par langue dans le client : il continue de grossir à chaque extension.
+- Découper dans le client : les textes restent loin des cartes qu'ils décrivent.
+
+Conséquences
+
+- `tests/locales.test.ts` vérifie la parité EN/FR de chaque fichier, l'absence de clé en double et la traduction de chaque nom d'état.
+- Les textes des cartes font partie du `dist/` de `game-data`, que le serveur charge sans s'en servir.
