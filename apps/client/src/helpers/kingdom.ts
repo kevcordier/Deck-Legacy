@@ -41,9 +41,12 @@ export function maxKingdoms(user: { readonly isAnonymous: boolean } | null): num
 
 /** Scores shown on the home page, computed from the game being played. */
 export function summarizeSession(session: GameSession): KingdomSummary {
+  const state = session.getState();
   return {
     score: session.getScore(),
     segments: session.getCampaignSegments(),
-    finished: session.getState().phase === Phase.GAME_OVER,
+    finished: state.phase === Phase.GAME_OVER,
+    round: state.round,
+    turn: state.turn,
   };
 }

@@ -104,6 +104,7 @@ describe('kingdoms', () => {
       'deck_legacy_kingdoms',
       JSON.stringify([
         { id: 'k1', summary: { segments: [{ segment: 'base', score: 3 }, { segment: 4 }] } },
+        { id: 'k3', summary: { round: 4, turn: 'x' } },
         42,
       ]),
     );
@@ -115,6 +116,7 @@ describe('kingdoms', () => {
       createdAt: 0,
       summary: { score: 0, segments: [{ segment: 'base', score: 3 }], finished: false },
     });
+    expect(getKingdom('k3')?.summary).toEqual({ ...EMPTY_SUMMARY, round: 4 });
   });
 
   it('reads an unreadable index as empty', () => {

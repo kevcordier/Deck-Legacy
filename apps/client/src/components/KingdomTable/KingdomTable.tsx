@@ -59,7 +59,7 @@ function DeleteButton({
 }
 
 /**
- * The player's kingdoms: name, total score, base game score, then each expansion (logo and
+ * The player's kingdoms: name, current round and turn, total score, base game score, then each expansion (logo and
  * cumulative score) in the order it was played, and the delete action.
  */
 export function KingdomTable({ kingdoms, onOpen, onDelete }: KingdomTableProps) {
@@ -91,6 +91,14 @@ export function KingdomTable({ kingdoms, onOpen, onDelete }: KingdomTableProps) 
                 </View>
                 <View className="flex-row flex-wrap items-center gap-x-4 gap-y-1">
                   <Text className="text-ink-card/70 text-sm">
+                    {t('resourceBar.round')}{' '}
+                    <Text className="font-body-bold">{kingdom.summary.round ?? '–'}</Text>
+                  </Text>
+                  <Text className="text-ink-card/70 text-sm">
+                    {t('resourceBar.turn')}{' '}
+                    <Text className="font-body-bold">{kingdom.summary.turn ?? '–'}</Text>
+                  </Text>
+                  <Text className="text-ink-card/70 text-sm">
                     {t('home.table.base')}{' '}
                     <Text className="font-body-bold">{baseScore(kingdom) ?? '–'}</Text>
                   </Text>
@@ -113,6 +121,8 @@ export function KingdomTable({ kingdoms, onOpen, onDelete }: KingdomTableProps) 
       <View className="border-ink-card/30 bg-card overflow-hidden rounded-lg border">
         <View className="border-ink-card/30 bg-ink-card/10 flex-row items-center gap-2 border-b px-3 py-2">
           <Text className="flex-[2] text-xs uppercase">{t('home.table.name')}</Text>
+          <Text className="w-16 text-right text-xs uppercase">{t('resourceBar.round')}</Text>
+          <Text className="w-16 text-right text-xs uppercase">{t('resourceBar.turn')}</Text>
           <Text className="w-20 text-right text-xs uppercase">{t('home.table.total')}</Text>
           <Text className="w-20 text-right text-xs uppercase">{t('home.table.base')}</Text>
           {Array.from({ length: columns }, (_, i) => (
@@ -138,6 +148,8 @@ export function KingdomTable({ kingdoms, onOpen, onDelete }: KingdomTableProps) 
                 <Text className="font-display flex-[2] text-lg" numberOfLines={1}>
                   {kingdom.name}
                 </Text>
+                <Text className="w-16 text-right">{kingdom.summary.round ?? '–'}</Text>
+                <Text className="w-16 text-right">{kingdom.summary.turn ?? '–'}</Text>
                 <Text className="font-body-bold text-base-primary w-20 text-right">
                   {kingdom.summary.score}
                 </Text>

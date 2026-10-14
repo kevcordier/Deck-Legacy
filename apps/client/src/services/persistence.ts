@@ -42,6 +42,9 @@ export type KingdomSummary = {
   /** Cumulative score at the end of each campaign segment, in the order they were played. */
   segments: CampaignSegmentScore[];
   finished: boolean;
+  /** Missing for summaries saved before they were recorded, or freshly downloaded from the server. */
+  round?: number;
+  turn?: number;
 };
 
 export type KingdomMeta = {
@@ -110,6 +113,8 @@ function toSummary(value: unknown): KingdomSummary {
     score: typeof value.score === 'number' ? value.score : 0,
     segments: toSegments(value.segments),
     finished: value.finished === true,
+    ...(typeof value.round === 'number' && { round: value.round }),
+    ...(typeof value.turn === 'number' && { turn: value.turn }),
   };
 }
 
