@@ -216,7 +216,7 @@ export function GameCard({
         <TextStyle className="text-base-ink font-body">
           <View className={`border-b border-black/10 bg-black/5 ${sizes.header}`}>
             <View className="flex-row items-start justify-between gap-2">
-              <View className="min-w-0 shrink flex-row flex-wrap items-center gap-1">
+              <View className="min-w-0 flex-1 flex-row flex-wrap items-center gap-1">
                 {expansion && (
                   <ExpansionIcon
                     expansion={expansion}
@@ -232,7 +232,7 @@ export function GameCard({
                     <Text className={`font-body-bold ${sizes.nameText}`}>#{number}</Text>
                   </TutorialTarget>
                 )}
-                <TutorialTarget id={tourId('card-name')} className="min-w-0 shrink">
+                <TutorialTarget id={tourId('card-name')} className="min-w-0 flex-1">
                   {canChooseName ? (
                     <View className="flex-row flex-wrap items-baseline gap-1">
                       <Text className={`font-display ${sizes.nameText}`}>{namePrefix}</Text>
@@ -240,7 +240,7 @@ export function GameCard({
                         value={name ?? ''}
                         onChangeText={setName}
                         onBlur={() => setCardName(instance.id, name ?? '')}
-                        className={`text-base-ink font-display min-w-8 flex-1 p-0 ${sizes.nameText} ${name ? '' : 'border-base-ink border-b'}`}
+                        className={`text-base-ink font-display w-0 min-w-8 flex-1 p-0 ${sizes.nameText} ${name ? '' : 'border-base-ink border-b'}`}
                         accessibilityLabel={t('card.name')}
                       />
                       <Text className={`font-display ${sizes.nameText}`}>{nameSuffix}</Text>
