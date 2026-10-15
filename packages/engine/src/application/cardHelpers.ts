@@ -36,6 +36,7 @@ export {
   getEffectiveProductions,
   getTotalProduction,
   getTotalResourceProduction,
+  isPermanent,
 } from './cardSelector';
 
 function sanitizeResources(resources: Resources): Resources {
@@ -246,6 +247,7 @@ export function tagClass(tag: string, isEnemy: boolean): string {
   if (t === 'seafaring') return tagClass + ' bg-tag-seafaring/10 border-tag-seafaring';
   if (t === 'land') return tagClass + ' bg-tag-land/10 border-tag-land';
   if (t === 'livestock') return tagClass + ' bg-tag-livestock/10 border-tag-livestock';
+  if (t === 'permanent') return tagClass + ' bg-permanent/10 border-permanent';
   return tagClass + ' bg-tag-tag/10 border-tag-tag';
 }
 

@@ -8,8 +8,7 @@ export const etherCrystal: CardDef = {
     {
       id: 1,
       name: 'Ether Crystal',
-      permanent: true,
-      tags: [CardTag.ARTIFACT],
+      tags: [CardTag.ARTIFACT, CardTag.PERMANENT],
       illustration: 'cards/92_1.jpg',
       glory: { amount: 10 },
       passives: [

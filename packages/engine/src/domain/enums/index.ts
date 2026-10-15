@@ -21,6 +21,7 @@ export enum CardTag {
   HORSE = 'horse',
   LADY = 'lady',
   WAGON = 'wagon',
+  PERMANENT = 'permanent',
 }
 
 export enum Trigger {

@@ -1,6 +1,6 @@
 import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { TurnStartedStrategy } from '@engine/application/gameEvent/TurnStartedStrategy';
-import { GameEventType, Phase, Trigger } from '@engine/domain/enums';
+import { CardTag, GameEventType, Phase, Trigger } from '@engine/domain/enums';
 import type { CardDef, TurnStartedEvent } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -13,7 +13,7 @@ const defs: Record<number, CardDef> = {
       {
         id: 1,
         name: 'S',
-        permanent: true,
+        tags: [CardTag.PERMANENT],
         actions: [{ id: 'sot', trigger: Trigger.START_OF_TURN, actionEffects: [] }],
       },
     ],

@@ -405,6 +405,16 @@ export function PencilIcon({ color = 'currentColor', className, style, alt }: Ic
   );
 }
 
+export function DotsVerticalIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+  return (
+    <SvgIcon fill="none" viewBox="0 0 24 24" className={className} style={style} alt={alt}>
+      <Circle cx="12" cy="5" r="2" fill={color} />
+      <Circle cx="12" cy="12" r="2" fill={color} />
+      <Circle cx="12" cy="19" r="2" fill={color} />
+    </SvgIcon>
+  );
+}
+
 export function EyeIcon({ color = 'currentColor', className, style, alt }: IconProps) {
   return (
     <SvgIcon fill="none" viewBox="0 0 24 24" className={className} style={style} alt={alt}>

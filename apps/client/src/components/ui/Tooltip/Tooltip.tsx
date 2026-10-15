@@ -166,21 +166,26 @@ export function Tooltip({
         >
           <View
             accessibilityRole={interactive ? 'menu' : 'text'}
-            pointerEvents={interactive ? 'box-none' : 'none'}
             onLayout={event => {
               const { width, height } = event.nativeEvent.layout;
               setPanelSize({ width, height });
             }}
             className={`absolute ${surface} ${contentClassName}`}
             // Hidden until measured, so it never flashes at the wrong place.
-            style={{ left, top, maxWidth, opacity: panelSize === null ? 0 : 1 }}
+            style={{
+              left,
+              top,
+              maxWidth,
+              pointerEvents: interactive ? 'box-none' : 'none',
+              opacity: panelSize === null ? 0 : 1,
+            }}
           >
             {interactive && (
               // Only the two outer sides have a border; the inner half blends into the panel.
               <View
-                pointerEvents="none"
                 className={`border-border bg-background absolute ${below ? 'border-l border-t' : 'border-b border-r'}`}
                 style={{
+                  pointerEvents: 'none',
                   width: ARROW_SIZE,
                   height: ARROW_SIZE,
                   left: arrowLeft,

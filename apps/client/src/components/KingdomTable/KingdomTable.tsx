@@ -1,5 +1,5 @@
 import { Button } from '@components/ui/Button/Button';
-import { DestroyIcon, EyeIcon, PencilIcon } from '@components/ui/Icon/icon';
+import { DestroyIcon, DotsVerticalIcon, EyeIcon, PencilIcon } from '@components/ui/Icon/icon';
 import { Text, TextStyle } from '@components/ui/Text/Text';
 import { Tooltip } from '@components/ui/Tooltip/Tooltip';
 import type { CampaignSegmentScore } from '@deck-legacy/api-contract';
@@ -26,7 +26,7 @@ type KingdomTableProps<T extends KingdomRow> = {
   /** Scoreboard: shows the player instead of the round and turn. */
   readonly ranking?: boolean;
   readonly onOpen?: (kingdom: T) => void;
-  /** Menu actions; the "⋯" menu shows only when one is given. */
+  /** Menu actions; the "⋮" menu shows only when one is given. */
   readonly onView?: (kingdom: T) => void;
   readonly onRename?: (kingdom: T) => void;
   readonly onDelete?: (kingdom: T) => void;
@@ -52,7 +52,7 @@ function ExpansionScore({ segment }: { readonly segment: CampaignSegmentScore })
   );
 }
 
-/** "⋯" button opening a popover with the kingdom's actions (view its cards, rename it, delete it). */
+/** "⋮" button opening a popover with the kingdom's actions (view its cards, rename it, delete it). */
 function KingdomMenu<T extends KingdomRow>({
   kingdom,
   onView,
@@ -102,7 +102,7 @@ function KingdomMenu<T extends KingdomRow>({
         )
       }
     >
-      <Text className="font-body-bold text-lg">⋯</Text>
+      <DotsVerticalIcon className="size-5" />
     </Tooltip>
   );
 }

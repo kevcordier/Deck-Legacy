@@ -1,4 +1,4 @@
-import { ActionEffectType, TargetScope } from '@deck-legacy/engine/domain/enums';
+import { ActionEffectType, CardTag, TargetScope } from '@deck-legacy/engine/domain/enums';
 import type { CardDef, StepDef } from '@deck-legacy/engine/domain/types';
 
 const makeStep = (id: number, iron: number, cumulated: number): StepDef => ({
@@ -22,7 +22,7 @@ export const jewellery: CardDef = {
     {
       id: 1,
       name: 'Jewellery',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       illustration: 'cards/75_1.jpg',
       glory: { amount: 0, valuePerElement: { accumulation: true, amount: 1 } },
       actions: [

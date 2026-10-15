@@ -1,6 +1,6 @@
 import { makeDef, makeInstance, makeState } from '../fixtures';
 import { GameAggregate } from '@engine/application/aggregates/GameAggregate';
-import { GameEventType, PassiveType, Phase, Trigger } from '@engine/domain/enums';
+import { CardTag, GameEventType, PassiveType, Phase, Trigger } from '@engine/domain/enums';
 import type { CardDef, ExpansionConfig, TriggerEntry } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -40,7 +40,7 @@ describe('GameAggregate purge branch coverage', () => {
   it('filters purge permanent candidates with all eligibility guards', () => {
     const defs: Record<number, CardDef> = {
       1: { id: 1, name: 'Enemy', states: [{ id: 1, name: 'S', negative: true }] },
-      2: { id: 2, name: 'NotPermanent', states: [{ id: 1, name: 'S', permanent: false }] },
+      2: { id: 2, name: 'NotPermanent', states: [{ id: 1, name: 'S' }] },
       3: {
         id: 3,
         name: 'Protected',
@@ -48,12 +48,12 @@ describe('GameAggregate purge branch coverage', () => {
           {
             id: 1,
             name: 'S',
-            permanent: true,
+            tags: [CardTag.PERMANENT],
             passives: [{ id: 'cant', type: PassiveType.CANT_BE_DESTROYED }],
           },
         ],
       },
-      4: { id: 4, name: 'Valid', states: [{ id: 1, name: 'S', permanent: true }] },
+      4: { id: 4, name: 'Valid', states: [{ id: 1, name: 'S', tags: [CardTag.PERMANENT] }] },
     };
 
     const state = makeState({
@@ -176,7 +176,7 @@ describe('GameAggregate purge branch coverage', () => {
 
   it('selects purge permanent when candidate is valid', () => {
     const defs: Record<number, CardDef> = {
-      1: { id: 1, name: 'Permanent', states: [{ id: 1, name: 'S', permanent: true }] },
+      1: { id: 1, name: 'Permanent', states: [{ id: 1, name: 'S', tags: [CardTag.PERMANENT] }] },
     };
 
     const state = makeState({

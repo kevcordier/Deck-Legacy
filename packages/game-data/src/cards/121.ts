@@ -17,9 +17,8 @@ export const borderDispute: CardDef = {
     {
       id: 1,
       name: 'Border Dispute',
-      tags: [CardTag.EVENT],
+      tags: [CardTag.EVENT, CardTag.PERMANENT],
       illustration: 'cards/121_1.webp',
-      permanent: true,
       passives: [
         {
           id: '121-1-1',
@@ -48,9 +47,8 @@ export const borderDispute: CardDef = {
     {
       id: 2,
       name: 'Espionage',
-      tags: [CardTag.EVENT],
+      tags: [CardTag.EVENT, CardTag.PERMANENT],
       illustration: 'cards/121_2.webp',
-      permanent: true,
       actions: [
         {
           id: '121-2-1',
@@ -120,9 +118,8 @@ export const borderDispute: CardDef = {
     {
       id: 3,
       name: 'Attack',
-      tags: [CardTag.EVENT],
+      tags: [CardTag.EVENT, CardTag.PERMANENT],
       illustration: 'cards/121_3.jpg',
-      permanent: true,
       actions: [
         {
           id: '121-3-1',
@@ -181,9 +178,8 @@ export const borderDispute: CardDef = {
     {
       id: 4,
       name: 'Resistance',
-      tags: [CardTag.EVENT],
+      tags: [CardTag.EVENT, CardTag.PERMANENT],
       illustration: 'cards/121_4.png',
-      permanent: true,
       actions: [
         {
           id: '121-4-1',

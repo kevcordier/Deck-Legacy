@@ -3,6 +3,7 @@ import { CardActionAggregate } from '@engine/application/aggregates/CardActionAg
 import { ChooseActionEffectStrategy } from '@engine/application/playerChoice/ChooseActionEffectStrategy';
 import {
   ActionEffectType,
+  CardTag,
   PassiveType,
   PendingChoiceType,
   ResourceType,
@@ -19,7 +20,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // ─── minimal card definitions ─────────────────────────────────────────────────
 
 const plainDef: CardDef = { id: 1, name: 'C', states: [{ id: 1, name: 'S' }] };
-const permanentDef: CardDef = { id: 2, name: 'P', states: [{ id: 1, name: 'S', permanent: true }] };
+const permanentDef: CardDef = {
+  id: 2,
+  name: 'P',
+  states: [{ id: 1, name: 'S', tags: [CardTag.PERMANENT] }],
+};
 const parchmentDef: CardDef = {
   id: 3,
   name: 'Q',

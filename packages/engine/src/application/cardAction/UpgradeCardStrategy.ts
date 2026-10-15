@@ -1,6 +1,6 @@
 import { Trigger } from '../../domain/enums';
 import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '../../domain/types';
-import { getActiveState, getInstancesTriggerEffects } from '../cardHelpers';
+import { getActiveState, getInstancesTriggerEffects, isPermanent } from '../cardHelpers';
 import { discardCards, syncInstancePassivesInBoardEffects } from '../gameStateHelper';
 import type { CardActionStrategy } from './CardActionStrategy';
 
@@ -34,7 +34,7 @@ export class UpgradeCardStrategy implements CardActionStrategy {
     gs.instances[instanceId].stateId = targetStateId;
     const syncedState = syncInstancePassivesInBoardEffects(gs, instanceId, this.cardDefs);
     // if new state is permanent add it to permanents pile
-    if (getActiveState(syncedState.instances[instanceId], this.cardDefs)?.permanent) {
+    if (isPermanent(getActiveState(syncedState.instances[instanceId], this.cardDefs))) {
       return {
         ...syncedState,
         permanents: [...new Set([...syncedState.permanents, instanceId])],

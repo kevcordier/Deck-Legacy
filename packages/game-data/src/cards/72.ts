@@ -32,7 +32,7 @@ export const quest: CardDef = {
       id: 1,
       name: 'Quest',
       illustration: 'cards/72_1.jpg',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       glory: {
         amount: 0,
         valuePerElement: {

@@ -13,6 +13,8 @@ module.exports = {
     './.rnstorybook/**/*.{ts,tsx}',
   ],
   presets: [require('nativewind/preset')],
+  // NativeWind web throws at startup with the default 'media' mode; no `dark` class is ever set.
+  darkMode: 'class',
   theme: {
     colors: {
       transparent: 'transparent',

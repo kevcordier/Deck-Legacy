@@ -16,9 +16,8 @@ export const waterMill: CardDef = {
     {
       id: 1,
       name: 'The Water Mill',
-      tags: [CardTag.INVENTION],
+      tags: [CardTag.INVENTION, CardTag.PERMANENT],
       illustration: 'cards/120_1.jpg',
-      permanent: true,
       actions: [
         {
           id: '120-1-1',
@@ -49,9 +48,8 @@ export const waterMill: CardDef = {
     {
       id: 2,
       name: 'Efficient Farming',
-      tags: [CardTag.EVENT],
+      tags: [CardTag.EVENT, CardTag.PERMANENT],
       illustration: 'cards/120_2.webp',
-      permanent: true,
       actions: [
         {
           id: '120-2-1',
@@ -85,9 +83,8 @@ export const waterMill: CardDef = {
     {
       id: 3,
       name: 'Surplus',
-      tags: [CardTag.EVENT],
+      tags: [CardTag.EVENT, CardTag.PERMANENT],
       illustration: 'cards/120_3.jpg',
-      permanent: true,
       passives: [
         {
           id: '120-3-1',
@@ -116,8 +113,7 @@ export const waterMill: CardDef = {
     {
       id: 4,
       name: 'Obsolete Farms',
-      tags: [CardTag.EVENT],
-      permanent: true,
+      tags: [CardTag.EVENT, CardTag.PERMANENT],
       illustration: 'cards/120_4.jpg',
       actions: [
         {

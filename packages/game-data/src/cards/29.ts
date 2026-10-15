@@ -8,9 +8,8 @@ export const strengthInNumbers: CardDef = {
   states: [
     {
       id: 1,
-      permanent: true,
       name: 'Strength in Numbers',
-      tags: [CardTag.GOAL],
+      tags: [CardTag.GOAL, CardTag.PERMANENT],
       illustration: 'cards/29_1.jpg',
       glory: {
         amount: 0,
@@ -23,8 +22,7 @@ export const strengthInNumbers: CardDef = {
     {
       id: 2,
       name: 'Military Dominance',
-      tags: [CardTag.GOAL],
-      permanent: true,
+      tags: [CardTag.GOAL, CardTag.PERMANENT],
       illustration: 'cards/29_2.jpg',
       glory: {
         amount: 0,

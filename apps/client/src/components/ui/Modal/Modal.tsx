@@ -28,6 +28,8 @@ export type ModalProps = {
   readonly bare?: boolean;
   /** Full-height side panel sliding in from this edge, instead of a centred panel. */
   readonly side?: 'left' | 'right';
+  /** Centred panel at its maximum width on desktop, whatever its content (e.g. a card grid). */
+  readonly wide?: boolean;
 };
 
 const PEEK_BUTTON_CLASS = 'absolute right-4 top-12 size-10';
@@ -38,12 +40,12 @@ const SLIDE_IN = {
   right: SlideInRight.duration(SLIDE_DURATION_MS),
 };
 
-function panelClass(side?: 'left' | 'right'): string {
+function panelClass(side?: 'left' | 'right', wide = false): string {
   const drawer =
     'bg-background border-border absolute inset-y-0 w-[95%] max-w-5xl gap-6 p-4 lg:p-6';
   if (side === 'left') return `${drawer} left-0 rounded-r-2xl border-r`;
   if (side === 'right') return `${drawer} right-0 rounded-l-2xl border-l`;
-  return 'bg-background border-border max-h-[90%] w-[95%] gap-6 rounded-2xl border p-4 lg:max-h-[80%] lg:w-auto lg:min-w-[32rem] lg:max-w-[80%] lg:p-6';
+  return `bg-background border-border max-h-[90%] w-[95%] gap-6 rounded-2xl border p-4 lg:max-h-[80%] ${wide ? 'lg:w-[80%]' : 'lg:w-auto lg:min-w-[32rem] lg:max-w-[80%]'} lg:p-6`;
 }
 
 type ModalHeaderProps = Pick<ModalProps, 'title' | 'subtitle' | 'onClose' | 'label'>;
@@ -102,6 +104,7 @@ export function Modal({
   label,
   bare = false,
   side,
+  wide = false,
 }: ModalProps) {
   const insets = useSafeAreaInsets();
   const tutorial = use(TutorialContext);
@@ -198,7 +201,7 @@ export function Modal({
                   // The side panel runs under the status and navigation bars.
                   side && { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 16 },
                 ]}
-                className={`${panelClass(side)} ${className}`}
+                className={`${panelClass(side, wide)} ${className}`}
               >
                 <ModalHeader title={title} subtitle={subtitle} onClose={onClose} label={label} />
 

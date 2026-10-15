@@ -1,51 +1,42 @@
-import { DeckCardGrid } from '@components/DeckViewer/DeckViewer';
+import { FilterableCardGrid } from '@components/DeckViewer/DeckViewer';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
-import { Title } from '@components/ui/Title/Title';
 import { GameProvider } from '@contexts/GameProvider';
 import { useGame } from '@hooks/useGame';
 import { type KingdomMeta, loadSave } from '@services/persistence';
 import { useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
 
 type KingdomViewerProps = {
   readonly kingdom: KingdomMeta;
   readonly onClose: () => void;
 };
 
-/** The kingdom's cards by zone: tableau, permanents, draw pile (sorted, order hidden), discard. */
+/** All the kingdom's cards in one list, sorted by id (hides the draw order), with search and tag filter. */
 function KingdomCards({ kingdom, onClose }: KingdomViewerProps) {
   const { t } = useTranslation();
   const { gameState } = useGame();
   const { board, permanents, drawPile, discardPile, instances } = gameState;
-  const zones = [
-    { key: 'sections.tableau', ids: board },
-    { key: 'sections.permanents', ids: permanents },
-    { key: 'deckViewer.draw', ids: [...drawPile].sort((a, b) => a - b) },
-    { key: 'deckViewer.discard', ids: discardPile },
-  ];
-  const count = zones.reduce((total, zone) => total + zone.ids.length, 0);
+  const cards = [...board, ...permanents, ...drawPile, ...discardPile]
+    .sort((a, b) => a - b)
+    .map(id => instances[id])
+    .filter(Boolean);
 
   return (
     <Modal
       title={kingdom.name}
-      subtitle={t('deckViewer.modalSubtitle', { count })}
+      subtitle={t('deckViewer.modalSubtitle', { count: cards.length })}
       onClose={onClose}
+      wide
     >
-      <View className="gap-6">
-        {zones.map(zone => (
-          <View key={zone.key} className="gap-2">
-            <Title level={4}>{`${t(zone.key)} (${zone.ids.length})`}</Title>
-            {zone.ids.length > 0 ? (
-              <DeckCardGrid cards={zone.ids.map(id => instances[id]).filter(Boolean)} />
-            ) : (
-              <Text className="text-ink/50 font-body-italic text-sm">{t('deckViewer.empty')}</Text>
-            )}
-          </View>
-        ))}
-      </View>
+      {cards.length > 0 ? (
+        <FilterableCardGrid cards={cards} />
+      ) : (
+        <Text className="text-ink/50 font-body-italic p-2 text-center text-sm">
+          {t('deckViewer.emptyDeck')}
+        </Text>
+      )}
     </Modal>
   );
 }

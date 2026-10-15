@@ -89,9 +89,8 @@ export const fishingShips: CardDef = {
     {
       id: 4,
       name: 'Fishing Excellence',
-      tags: [CardTag.STATE],
+      tags: [CardTag.STATE, CardTag.PERMANENT],
       illustration: 'cards/87_4.jpg',
-      permanent: true,
       glory: { amount: 13 },
       passives: [
         CardPassives[PassiveType.STAY_IN_PLAY],

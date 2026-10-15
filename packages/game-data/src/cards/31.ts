@@ -9,8 +9,7 @@ export const loyalty: CardDef = {
     {
       id: 1,
       name: 'Loyalty',
-      permanent: true,
-      tags: [CardTag.GOAL],
+      tags: [CardTag.GOAL, CardTag.PERMANENT],
       illustration: 'cards/31_1.jpg',
       glory: {
         amount: 25,
@@ -20,8 +19,7 @@ export const loyalty: CardDef = {
     {
       id: 2,
       name: 'Trader',
-      permanent: true,
-      tags: [CardTag.GOAL],
+      tags: [CardTag.GOAL, CardTag.PERMANENT],
       glory: {
         amount: 25,
         condition: { type: 'production', resourceType: ResourceType.GOODS, min: 10 },

@@ -113,7 +113,7 @@ describe('GameEventContext', () => {
     const ctx = new GameEventContext(defs, makeStickerDefs());
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], instances: { 1: inst } });
-    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S', permanent: false });
+    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S' });
     const result = ctx.apply(gs, {
       id: 'e1',
       type: GameEventType.UPGRADE_CARD,

@@ -1,4 +1,9 @@
-import { ActionEffectType, ResourceType, TargetScope } from '@deck-legacy/engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  ResourceType,
+  TargetScope,
+} from '@deck-legacy/engine/domain/enums';
 import type { CardDef, StepDef } from '@deck-legacy/engine/domain/types';
 
 const makeStep = (id: number, weapon: number, cumulated: number): StepDef => ({
@@ -30,7 +35,7 @@ export const army: CardDef = {
     {
       id: 1,
       name: 'Army',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       glory: {
         amount: 0,
         valuePerElement: {
@@ -100,7 +105,7 @@ export const army: CardDef = {
     {
       id: 2,
       name: 'Grand Army',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       glory: {
         amount: 50,
         valuePerElement: {
