@@ -102,33 +102,27 @@ export const prosperity: CardDef = {
       tags: [CardTag.EVENT],
       illustration: 'cards/119_3.jpg',
       permanent: true,
-      passives: [
+      actions: [
         {
-          id: '119-3-1',
-          type: PassiveType.ADD_TRIGGER,
+          id: '119-3-2',
+          trigger: Trigger.ON_PLAY,
+          triggeredBy: { scope: [TargetScope.DRAWN], tags: [CardTag.PERSON] },
+          // a person was already in play before this one
           condition: {
-            type: 'cardCount',
-            cards: { scope: [TargetScope.BOARD], tags: [CardTag.PERSON] },
-            min: 1,
-          },
-          trigger: {
-            id: '119-3-2',
-            type: Trigger.ON_PLAY,
-            cards: {
-              scope: [TargetScope.DRAWN],
-              tags: [CardTag.PERSON],
-            },
-            actions: [
+            type: 'and',
+            conditions: [
+              { type: 'not', condition: { type: 'justPlayed' } },
               {
-                id: 1,
-                type: ActionEffectType.TRACK_ADVANCE,
-                cards: { scope: [TargetScope.TRIGGER_SOURCE] },
+                type: 'cardCount',
+                cards: { scope: [TargetScope.BOARD], tags: [CardTag.PERSON] },
+                min: 1,
               },
             ],
           },
+          actionEffects: [
+            { id: 1, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
+          ],
         },
-      ],
-      actions: [
         {
           id: '119-3-1',
           trigger: Trigger.END_OF_ROUND,

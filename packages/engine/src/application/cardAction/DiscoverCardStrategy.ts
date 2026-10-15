@@ -1,5 +1,6 @@
 import type { CardDef, GameState, ResolvedActionEffect } from '../../domain/types';
 import { getActiveState } from '../cardHelpers';
+import { removeFromDiscovery } from '../gameStateHelper';
 import type { CardActionStrategy } from './CardActionStrategy';
 
 export class DiscoverCardStrategy implements CardActionStrategy {
@@ -8,7 +9,7 @@ export class DiscoverCardStrategy implements CardActionStrategy {
   apply(_gameState: GameState, payload: ResolvedActionEffect): GameState {
     const ids = payload.instanceIds ?? [];
     const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
-    gameState.discoveryPile = gameState.discoveryPile.filter(id => !ids.includes(id));
+    removeFromDiscovery(gameState, ids);
 
     gameState.lastAddedCards = [];
     ids.forEach(instanceId => {

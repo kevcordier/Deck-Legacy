@@ -19,40 +19,29 @@ export const assassin: CardDef = {
       tags: [CardTag.ENEMY],
       negative: true,
       illustration: 'cards/48_1.jpg',
-      passives: [
-        {
-          id: '48-1-1',
-          type: PassiveType.ADD_TRIGGER,
-          trigger: {
-            id: '48-1-2',
-            type: Trigger.ON_PLAY,
-            cards: {
-              scope: [TargetScope.DRAWN],
-              tags: [CardTag.PERSON],
-            },
-            actions: [
-              {
-                id: 1,
-                type: ActionEffectType.DESTROY_CARD,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-              {
-                id: 2,
-                type: ActionEffectType.UPGRADE_CARD,
-                cards: {
-                  scope: [TargetScope.TRIGGER_SOURCE],
-                },
-                states: { ids: [2] },
-              },
-            ],
-          },
-        },
-      ],
       actions: [
         {
+          id: '48-1-2',
+          trigger: Trigger.ON_PLAY,
+          triggeredBy: { scope: [TargetScope.DRAWN], tags: [CardTag.PERSON] },
+          condition: { type: 'not', condition: { type: 'justPlayed' } },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.DESTROY_CARD,
+              cards: { scope: [TargetScope.DRAWN], tags: [CardTag.PERSON], pickNumber: 1 },
+            },
+            {
+              id: 2,
+              type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
+              states: { ids: [2] },
+            },
+          ],
+        },
+        {
           id: '48-1-1',
+          defeat: true,
           cost: {
             resources: [
               {
@@ -113,6 +102,7 @@ export const assassin: CardDef = {
         },
         {
           id: '48-2-3',
+          defeat: true,
           cost: {
             resources: [
               {

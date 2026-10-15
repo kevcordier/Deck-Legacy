@@ -1,5 +1,6 @@
 import { type ActionEffectType, PassiveType, TargetScope } from '../../domain/enums';
 import type { CardDef, GameState, Resources, Sticker } from '../../domain/types';
+import { keepGainableResources } from '../cardHelpers';
 import { cardSelector } from '../cardSelector';
 import { mergeResources } from '../gameStateHelper';
 import type { CardActionStrategy } from './CardActionStrategy';
@@ -62,6 +63,12 @@ export class AddResourceStrategy implements CardActionStrategy {
       resources,
     );
 
-    return { ...gameState, resources: mergeResources(gameState.resources, adjustedResources) };
+    return {
+      ...gameState,
+      resources: mergeResources(
+        gameState.resources,
+        keepGainableResources(adjustedResources, gameState),
+      ),
+    };
   }
 }

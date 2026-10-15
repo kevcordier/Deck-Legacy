@@ -1,6 +1,7 @@
 import { type Options, PassiveType, type ResourceType, Trigger } from '../domain/enums';
 import type { CardDef, GameState, Passive, Resources, Sticker } from '../domain/types';
 import { getActiveState, getInstancesTriggerEffects } from './cardHelpers';
+import { cardSelector } from './cardSelector';
 
 export { mergeResources } from './resources';
 
@@ -38,7 +39,7 @@ export const discardCards = (
     if (gameState.destroyedPile.includes(cardId)) {
       return;
     }
-    gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== cardId);
+    removeFromDiscovery(gameState, [cardId]);
     gameState.board = gameState.board.filter(c => c !== cardId);
     gameState.drawPile = gameState.drawPile.filter(c => c !== cardId);
     gameState.discardPile = [...new Set([...gameState.discardPile, cardId])];
@@ -78,13 +79,34 @@ export const drawCards = (
   gameState.board = [...new Set([...gameState.board, ...turnCards])];
   gameState.resources = {};
 
-  return gameState;
+  return discardCardsMissingRequirement(gameState, cardDefs, stickerDefs);
+};
+
+/** REQUIRES_IN_PLAY: a card in play is discarded as soon as no card matches its selector. */
+export const discardCardsMissingRequirement = (
+  gameState: GameState,
+  cardDefs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): GameState => {
+  const missing = Object.entries(gameState.boardEffects)
+    .filter(
+      ([sourceId, passives]) =>
+        gameState.board.includes(Number(sourceId)) &&
+        passives.some(
+          p =>
+            p.type === PassiveType.REQUIRES_IN_PLAY &&
+            cardSelector(p.cards ?? {}, Number(sourceId), gameState, cardDefs, stickerDefs)
+              .length === 0,
+        ),
+    )
+    .map(([sourceId]) => Number(sourceId));
+  return missing.length > 0 ? discardCards(gameState, missing, cardDefs, stickerDefs) : gameState;
 };
 
 export const destroyCards = (_gameState: GameState, cardIds: number[]): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
   cardIds.forEach(cardId => {
-    gameState.discoveryPile = gameState.discoveryPile.filter(c => c !== cardId);
+    removeFromDiscovery(gameState, [cardId]);
     gameState.board = gameState.board.filter(c => c !== cardId);
     gameState.drawPile = gameState.drawPile.filter(c => c !== cardId);
     gameState.permanents = gameState.permanents.filter(c => c !== cardId);
@@ -132,6 +154,22 @@ export const syncInstancePassivesInBoardEffects = (
   gameState.boardEffects[instanceId] = passives;
   return gameState;
 };
+
+/** Removes cards from the campaign and discoverable piles (mutates `gameState`). */
+export function removeFromDiscovery(gameState: GameState, ids: readonly number[]): void {
+  gameState.discoveryPile = gameState.discoveryPile.filter(id => !ids.includes(id));
+  if (gameState.discoverablePile) {
+    gameState.discoverablePile = gameState.discoverablePile.filter(id => !ids.includes(id));
+  }
+}
+
+/**
+ * The end of a game empties the campaign pile. Games started with a single discovery pile keep it:
+ * it also holds the cards that effects discover later (EDR-045).
+ */
+export function clearCampaignPile(gameState: GameState): GameState {
+  return gameState.discoverablePile ? { ...gameState, discoveryPile: [] } : gameState;
+}
 
 export function computeGameStateDiff(before: GameState, after: GameState): Partial<GameState> {
   return Object.fromEntries(

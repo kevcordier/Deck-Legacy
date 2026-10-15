@@ -89,6 +89,7 @@ export const plague: CardDef = {
         },
         {
           id: '47-2-3',
+          defeat: true,
           cost: {
             resources: [
               {

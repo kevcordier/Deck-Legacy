@@ -16,6 +16,7 @@ export const ICON_PASSTHROUGH = {
   passif: '{{passif}}',
   destroy: '{{destroy}}',
   trigger: '{{trigger}}',
+  discovered: '{{discovered}}',
 };
 
 export function tCardName(t: TFunction, stateName = ''): string {

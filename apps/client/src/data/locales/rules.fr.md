@@ -28,9 +28,10 @@ Le tutoriel vous guide pendant une première manche ; à la fin, vous pouvez gar
 
 Une **manche** est une suite de tours qui se termine quand votre deck est vide.
 
-- Au début de chaque manche (à partir de la 2e), les **2 cartes** suivantes dans l'ordre des numéros sont **découvertes** et rejoignent votre deck. Si la première est une **carte parchemin**, ses instructions s'appliquent immédiatement, puis elle est détruite.
+- Les cartes forment deux paquets. Le **paquet de campagne** (cartes **1 à 70** dans le jeu de base) raconte l'histoire ; le **paquet de cartes découvrables** (au-delà du n° 70) contient les cartes que seuls des effets de cartes découvrent.
+- Au début de chaque manche (à partir de la 2e), **l'histoire avance** : les **2 cartes** suivantes du paquet de campagne, dans l'ordre des numéros, sont **découvertes** et rejoignent votre deck. Si la première est une **carte parchemin**, ses instructions s'appliquent immédiatement, puis elle est détruite.
 - L'aperçu de manche montre les cartes que vous venez de découvrir ; touchez **▶︎ Commencer la manche** pour mélanger toutes vos cartes en un nouveau deck et jouer le premier tour.
-- La partie se termine après la manche où vous découvrez la carte **n° 70**. Les cartes au-delà du n° 70 ne se découvrent que par des effets de cartes.
+- La partie se termine après la manche où vous découvrez la carte **n° 70**. Si le paquet de campagne est vide quand l'histoire doit avancer, la campagne se termine ; les cartes qu'il contient encore à la fin de la partie ne seront jamais découvertes.
 
 ---
 
@@ -121,6 +122,7 @@ Certaines cartes ont une rangée de **cases** à marquer. Marquer une case peut 
 
 ### Découvrir et votre deck
 
+- Certains effets **font avancer l'histoire** : ils découvrent les cartes suivantes du paquet de campagne, comme au début d'une manche.
 - Une carte découverte par un effet va dans votre **défausse**. Si un effet vous laisse découvrir une carte parmi plusieurs, vous les voyez toutes avant de choisir.
 - Certains effets placent des cartes sur ou sous votre deck ; ils ne peuvent pas s'utiliser quand votre deck est vide. Un deck vide termine toujours la manche après le tour.
 
@@ -169,7 +171,7 @@ Les cartes rouges sont **négatives**, en général des cartes _Ennemi_ ou _Év�
 
 ## Extensions
 
-Une fois le jeu de base terminé, vous pouvez poursuivre votre royaume avec des **extensions**, une à la fois : chacune ajoute des manches, et souvent de nouvelles cartes et de nouveaux concepts. Chaque royaume ne peut jouer chaque extension qu'une seule fois. Les mini-extensions ajoutent 4 manches sans découvrir de nouvelles cartes à chaque manche ; les grandes extensions ajoutent des manches et beaucoup de nouvelles cartes.
+Une fois le jeu de base terminé, vous pouvez poursuivre votre royaume avec des **extensions**, une à la fois : chacune ajoute des manches, et souvent de nouvelles cartes et de nouveaux concepts. Chaque royaume ne peut jouer chaque extension qu'une seule fois. Les mini-extensions ajoutent 4 manches sans découvrir de nouvelles cartes à chaque manche ; les grandes extensions ajoutent des manches et beaucoup de nouvelles cartes, avec leur propre paquet de campagne et leur paquet de cartes découvrables (Ridding the Woods : cartes 1 à 25 et 26 à 29).
 
 ### Purge
 

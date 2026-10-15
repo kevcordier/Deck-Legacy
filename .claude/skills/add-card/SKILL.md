@@ -61,14 +61,14 @@ Conventions (from existing cards — follow these, not older docs):
 - Illustrations are referenced as `cards/<id>_<stateId>.<ext>` and the files live in `apps/client/assets/cards/` (bundled for offline play). After adding an image, run `pnpm --filter @deck-legacy/client generate:illustrations` (Metro only bundles images listed in `apps/client/src/data/illustrations.ts`). If the image does not exist yet, still set the path and tell the user which files to add.
 - Use `import type` for types only; no `any`.
 
-## 4. Register in `packages/game-data/src/cards/index.ts`
+## 4. Register in `packages/game-data/src/cards/index.ts` (or the expansion's `index.ts`)
 
 Add `import { camelCaseName } from './<id>';` after the last import and append
 `camelCaseName,` at the end of the `cardsData` array.
 
-## 5. Locales — `apps/client/src/data/locales/cards.en.json` AND `cards.fr.json`
+## 5. Locales — `cards.en.json` AND `cards.fr.json` in `packages/game-data`
 
-Both files must get exactly the same keys. Sections and key formats:
+Base game cards: `src/locales/`. Expansion folder cards: `src/expansions/<name>/locales/` (EDR-043). Both files must get exactly the same keys, and a key lives in one file only. Sections and key formats:
 
 | Section    | Key                                  | When                                         |
 | ---------- | ------------------------------------ | -------------------------------------------- |
@@ -84,20 +84,32 @@ Both files must get exactly the same keys. Sections and key formats:
 
 Use icon placeholders in text: `{{gold}} {{wood}} {{stone}} {{iron}} {{weapon}} {{goods}}
 {{glory}} {{time}} {{passif}} {{destroy}} {{trigger}} {{upgrade}} {{accumulated}}`.
+`{{discovered}}` shows the number (with the expansion logo) of the cards the action discovers,
+with a preview on hover: use it instead of writing the number, e.g. `Discover Sheriff ({{discovered}}).`
 Match the tone of neighbouring entries ("End of round: …" / "Fin de manche : …").
 Insert keys next to other keys of the same card id, keeping numeric order.
 
 ## 6. Wire it into the game (`packages/game-data/src/deck.json`)
 
-Ask if unclear. Instance ids in `deck.json` are global and unique: use max existing
-instance `id` (across `deck` and every `expansions.*.deck`) + 1.
+Ask if unclear. A deck entry has three ids (EDR-047):
 
-- **Initial deck**: add `{ "id": <instanceId>, "cardId": <id> }` to `deck`.
-- **Discovered later** (by another card's `DISCOVER_CARD`): still needs an instance in
-  `deck`; update the discovering card's effect and its locale text if needed.
-- **Expansion**: add an entry under `expansions` modelled on existing ones
-  (`expansionMaxRound`, `purge`, `parameters`, `deck`, `onStart.discover.ids`) and a
-  translated expansion name if the UI needs one.
+- `id`: the instance id, unique across the base game and every expansion (card selectors use it):
+  max existing `id` in every `deck.json` + 1.
+- `cardId`: the card definition (`cards/<cardId>.ts`), also unique across the whole game.
+- `number` (expansions only): the number printed on the card, scoped to the expansion; the base
+  game prints the instance id.
+
+- **Campaign** (starting deck = cards 1–10, then discovered in order at the start of each round,
+  EDR-045): add `{ "id": <instanceId>, "cardId": <id> }` to `campaign`.
+- **Discoverable** (only by another card's `DISCOVER_CARD`): add it to `discoverable`; update the discovering card's effect and its locale text if needed.
+- **Expansion** (EDR-042): the card lives in `src/expansions/<name>/cards/<id>.ts`, is listed
+  in `src/expansions/<name>/index.ts`, and its instance goes in `src/expansions/<name>/deck.json`
+  (`name`, `expansionMaxRound`, `purge` (with an optional `focus: { resource, count }`), `parameters`, `stickers` added to the stock,
+  `campaign`, `discoverable`, `onStart.discover.ids`), each entry with its printed `number`.
+  A new expansion folder is added to `expansionPacks` in `src/expansions/index.ts`, with a
+  translated title in `campaign.expansions.<name>` (en/fr).
+  Prosperity, The Water Mill and Border Dispute are base game mini campaigns, not expansions: their
+  cards stay in `cards/` and their decks in `campaigns` of `deck.json`.
 
 ## 7. Engine support
 
@@ -108,13 +120,7 @@ and full test coverage in `packages/engine/tests/application/`. Do it only with 
 
 ## 8. Verify
 
-Run `pnpm verify` and fix every error/warning (zero-warning policy). `packages/game-data/tests/catalog.test.ts` checks that every deck entry references a known card and that instance ids are unique. Then check locale parity:
-
-```bash
-python3 -c "import json;a=json.load(open('apps/client/src/data/locales/cards.en.json'));b=json.load(open('apps/client/src/data/locales/cards.fr.json'));[print(s,set(a[s])^set(b[s])) for s in a if set(a[s])!=set(b.get(s,{}))]"
-```
-
-No output = in sync.
+Run `pnpm verify` and fix every error/warning (zero-warning policy). `packages/game-data/tests/catalog.test.ts` checks that every deck entry references a known card and that instance ids are unique. `packages/game-data/tests/locales.test.ts` checks that EN and FR have the same keys in each file, that no key is defined twice, and that every state name is translated.
 
 Card data is replayed by the server to validate synced games: never change the meaning of an
 existing card in a way that would break already-played games without telling the user.

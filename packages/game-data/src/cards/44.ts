@@ -15,6 +15,7 @@ export const witch: CardDef = {
       actions: [
         {
           id: '44-1-1',
+          defeat: true,
           cost: {
             resources: [
               {
@@ -59,11 +60,8 @@ export const witch: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionEffectType.DISCOVER_CARD,
-              cards: {
-                scope: [TargetScope.TOP_OF_DISCOVERY],
-                pickNumber: 2,
-              },
+              type: ActionEffectType.ADVANCE_STORY,
+              value: 2,
             },
             {
               id: 3,
@@ -87,6 +85,7 @@ export const witch: CardDef = {
       actions: [
         {
           id: '44-2-1',
+          defeat: true,
           cost: {
             resources: [
               {
@@ -128,11 +127,8 @@ export const witch: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionEffectType.DISCOVER_CARD,
-              cards: {
-                scope: [TargetScope.TOP_OF_DISCOVERY],
-                pickNumber: 2,
-              },
+              type: ActionEffectType.ADVANCE_STORY,
+              value: 2,
             },
             {
               id: 3,

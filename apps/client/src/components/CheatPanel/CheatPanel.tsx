@@ -84,7 +84,8 @@ function Cheat() {
     ...ids.map(id => ({ label: instName(id), value: String(id) })),
   ];
 
-  const notOnBoard = [...gameState.drawPile, ...gameState.discardPile, ...gameState.discoveryPile];
+  const discovery = [...gameState.discoveryPile, ...(gameState.discoverablePile ?? [])];
+  const notOnBoard = [...gameState.drawPile, ...gameState.discardPile, ...discovery];
   const onBoard = [...gameState.board, ...gameState.permanents];
   const allAlive = Object.keys(gameState.instances)
     .map(Number)
@@ -195,7 +196,7 @@ function Cheat() {
           className={selectClass}
           value={discoverTarget}
           onChange={setDiscoverTarget}
-          options={instanceOptions(gameState.discoveryPile)}
+          options={instanceOptions(discovery)}
         />
         <CheatButton
           label="Discover"

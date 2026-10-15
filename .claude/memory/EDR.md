@@ -12,49 +12,54 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 
 ## Index
 
-| ID      | Date       | Titre                                       | Statut                                  |
-| ------- | ---------- | ------------------------------------------- | --------------------------------------- |
-| EDR-001 | 2026-03-22 | Jeu solo de deck-building médiéval          | Active                                  |
-| EDR-002 | 2026-03-22 | Application web React + Vite                | Dépréciée par EDR-020                   |
-| EDR-003 | 2026-03-22 | État de jeu par event sourcing              | Active                                  |
-| EDR-004 | 2026-03-22 | Cartes décrites en données déclaratives     | Active                                  |
-| EDR-005 | 2026-03-22 | TypeScript strict, zéro warning             | Active                                  |
-| EDR-006 | 2026-03-24 | Jeu bilingue anglais et français            | Active                                  |
-| EDR-007 | 2026-04-02 | Une stratégie par type d'effet              | Active                                  |
-| EDR-008 | 2026-04-02 | Tests Vitest, couverture moteur 80 %        | Active                                  |
-| EDR-009 | 2026-04-02 | Storybook comme catalogue de composants     | Active                                  |
-| EDR-010 | 2026-04-02 | Documentation dédiée aux assistants IA      | Active                                  |
-| EDR-011 | 2026-04-02 | Client web hébergé sur GitHub Pages         | Active, en partie remplacée par EDR-039 |
-| EDR-012 | 2026-04-05 | Hook pre-commit bloquant (Husky)            | Active                                  |
-| EDR-013 | 2026-04-09 | Styles Tailwind CSS v4                      | Dépréciée par EDR-021                   |
-| EDR-014 | 2026-04-10 | Couches imposées par dependency-cruiser     | Active                                  |
-| EDR-015 | 2026-04-12 | Analyse qualité continue SonarCloud         | Active                                  |
-| EDR-016 | 2026-05-01 | Dépendances suivies par Dependabot          | Active                                  |
-| EDR-017 | 2026-05-13 | Tutoriel hors du journal d'événements       | Dépréciée par EDR-040                   |
-| EDR-018 | 2026-05-17 | Versions bêta en semver                     | Active                                  |
-| EDR-019 | 2026-05-19 | Illustrations hébergées dans le dépôt       | Active                                  |
-| EDR-020 | 2026-10-10 | Client Expo / React Native multiplateforme  | Active                                  |
-| EDR-021 | 2026-10-10 | Styles NativeWind (syntaxe Tailwind v3)     | Active                                  |
-| EDR-022 | 2026-10-10 | Monorepo pnpm avec paquets partagés         | Active                                  |
-| EDR-023 | 2026-10-10 | Moteur de jeu côté serveur uniquement       | Dépréciée par EDR-024                   |
-| EDR-024 | 2026-10-10 | Local-first, serveur valide par rejeu       | Active                                  |
-| EDR-025 | 2026-10-10 | Compatibilité ascendante des rejeux         | Active                                  |
-| EDR-026 | 2026-10-10 | API NestJS 11 en CommonJS                   | Active                                  |
-| EDR-027 | 2026-10-10 | PostgreSQL et Prisma pour la persistance    | Active                                  |
-| EDR-028 | 2026-10-10 | Supabase Auth avec invités anonymes         | Active                                  |
-| EDR-029 | 2026-10-10 | Synchronisation : dernier écrivain gagne    | En partie remplacée par EDR-038, 041    |
-| EDR-030 | 2026-10-10 | Scores issus du rejeu, classement inscrits  | Active                                  |
-| EDR-031 | 2026-10-10 | Code et documentation du dépôt en anglais   | Active                                  |
-| EDR-032 | 2026-10-10 | Système d'agents spécialisés et contrats    | Active                                  |
-| EDR-033 | 2026-10-10 | Projet personnel gratuit, hors stores       | Active                                  |
-| EDR-034 | 2026-10-10 | Serveur hébergé sur Supabase                | Dépréciée par EDR-035                   |
-| EDR-035 | 2026-10-10 | API sur Cloud Run, données Supabase         | Active                                  |
-| EDR-036 | 2026-10-10 | Anciennes règles pour parties commencées    | Active                                  |
-| EDR-037 | 2026-10-10 | Fusion soumise à la relecture du mainteneur | Active                                  |
-| EDR-038 | 2026-10-10 | Plusieurs royaumes par joueur               | Active                                  |
-| EDR-039 | 2026-10-11 | Déploiement déclenché par un tag de version | Active                                  |
-| EDR-040 | 2026-10-11 | Tutoriel joué comme une vraie partie        | Active                                  |
-| EDR-041 | 2026-10-13 | Synchronisation incrémentale et versionnée  | Active                                  |
+| ID      | Date       | Titre                                        | Statut                                  |
+| ------- | ---------- | -------------------------------------------- | --------------------------------------- |
+| EDR-001 | 2026-03-22 | Jeu solo de deck-building médiéval           | Active                                  |
+| EDR-002 | 2026-03-22 | Application web React + Vite                 | Dépréciée par EDR-020                   |
+| EDR-003 | 2026-03-22 | État de jeu par event sourcing               | Active                                  |
+| EDR-004 | 2026-03-22 | Cartes décrites en données déclaratives      | Active                                  |
+| EDR-005 | 2026-03-22 | TypeScript strict, zéro warning              | Active                                  |
+| EDR-006 | 2026-03-24 | Jeu bilingue anglais et français             | Active                                  |
+| EDR-007 | 2026-04-02 | Une stratégie par type d'effet               | Active                                  |
+| EDR-008 | 2026-04-02 | Tests Vitest, couverture moteur 80 %         | Active                                  |
+| EDR-009 | 2026-04-02 | Storybook comme catalogue de composants      | Active                                  |
+| EDR-010 | 2026-04-02 | Documentation dédiée aux assistants IA       | Active                                  |
+| EDR-011 | 2026-04-02 | Client web hébergé sur GitHub Pages          | Active, en partie remplacée par EDR-039 |
+| EDR-012 | 2026-04-05 | Hook pre-commit bloquant (Husky)             | Active                                  |
+| EDR-013 | 2026-04-09 | Styles Tailwind CSS v4                       | Dépréciée par EDR-021                   |
+| EDR-014 | 2026-04-10 | Couches imposées par dependency-cruiser      | Active                                  |
+| EDR-015 | 2026-04-12 | Analyse qualité continue SonarCloud          | Active                                  |
+| EDR-016 | 2026-05-01 | Dépendances suivies par Dependabot           | Active                                  |
+| EDR-017 | 2026-05-13 | Tutoriel hors du journal d'événements        | Dépréciée par EDR-040                   |
+| EDR-018 | 2026-05-17 | Versions bêta en semver                      | Active                                  |
+| EDR-019 | 2026-05-19 | Illustrations hébergées dans le dépôt        | Active                                  |
+| EDR-020 | 2026-10-10 | Client Expo / React Native multiplateforme   | Active                                  |
+| EDR-021 | 2026-10-10 | Styles NativeWind (syntaxe Tailwind v3)      | Active                                  |
+| EDR-022 | 2026-10-10 | Monorepo pnpm avec paquets partagés          | Active                                  |
+| EDR-023 | 2026-10-10 | Moteur de jeu côté serveur uniquement        | Dépréciée par EDR-024                   |
+| EDR-024 | 2026-10-10 | Local-first, serveur valide par rejeu        | Active                                  |
+| EDR-025 | 2026-10-10 | Compatibilité ascendante des rejeux          | Active                                  |
+| EDR-026 | 2026-10-10 | API NestJS 11 en CommonJS                    | Active                                  |
+| EDR-027 | 2026-10-10 | PostgreSQL et Prisma pour la persistance     | Active                                  |
+| EDR-028 | 2026-10-10 | Supabase Auth avec invités anonymes          | Active                                  |
+| EDR-029 | 2026-10-10 | Synchronisation : dernier écrivain gagne     | En partie remplacée par EDR-038, 041    |
+| EDR-030 | 2026-10-10 | Scores issus du rejeu, classement inscrits   | Active                                  |
+| EDR-031 | 2026-10-10 | Code et documentation du dépôt en anglais    | Active                                  |
+| EDR-032 | 2026-10-10 | Système d'agents spécialisés et contrats     | Active                                  |
+| EDR-033 | 2026-10-10 | Projet personnel gratuit, hors stores        | Active                                  |
+| EDR-034 | 2026-10-10 | Serveur hébergé sur Supabase                 | Dépréciée par EDR-035                   |
+| EDR-035 | 2026-10-10 | API sur Cloud Run, données Supabase          | Active                                  |
+| EDR-036 | 2026-10-10 | Anciennes règles pour parties commencées     | Active                                  |
+| EDR-037 | 2026-10-10 | Fusion soumise à la relecture du mainteneur  | Active                                  |
+| EDR-038 | 2026-10-10 | Plusieurs royaumes par joueur                | Active                                  |
+| EDR-039 | 2026-10-11 | Déploiement déclenché par un tag de version  | Active                                  |
+| EDR-040 | 2026-10-11 | Tutoriel joué comme une vraie partie         | Active                                  |
+| EDR-041 | 2026-10-13 | Synchronisation incrémentale et versionnée   | Active                                  |
+| EDR-044 | 2026-10-14 | Numéros de cartes propres à chaque extension | Dépréciée par EDR-047                   |
+| EDR-045 | 2026-10-14 | Paquet de campagne et paquet découvrable     | Active                                  |
+| EDR-046 | 2026-10-14 | Effet « avancer dans l'histoire »            | Active                                  |
+| EDR-047 | 2026-10-14 | Trois identifiants par carte d'extension     | Active                                  |
+| EDR-048 | 2026-10-14 | Suppression de l'effet « dernière manche »   | Active                                  |
 
 ---
 
@@ -1123,3 +1128,164 @@ Conséquences
 - Les anciens clients (sans `baseVersion` ni `fromSeq`) fonctionnent toujours et écrasent comme avant.
 - Le téléchargement d'un royaume (`GET /games/:id/export`) reste complet.
 - Chaque client connecté appelle `GET /games` chaque minute.
+
+---
+
+ID : EDR-042
+Date : 2026-10-11
+Titre : Un dossier par extension dans game-data
+Statut : Active
+
+Contexte
+Les extensions déjà jouables (Prosperity, The Water Mill, Border Dispute) n'ont qu'une carte chacune, rangée dans `cards/` avec une entrée dans `deck.json`. Ridding the Woods en aura 29, avec ses propres mécaniques.
+
+Problème
+Où ranger les cartes et la configuration d'une grande extension sans noyer `cards/` et `deck.json` ?
+
+Décision
+Une extension a son dossier `packages/game-data/src/expansions/<nom>/` : `cards/<id>.ts`, un `deck.json` (`name` + la configuration `ExpansionConfig`) et un `index.ts` qui exporte un `ExpansionPack`. `expansions/index.ts` liste ces dossiers et `loadGameCatalog()` fusionne leurs cartes et leur configuration dans le catalogue. Les ids de cartes et d'instances restent globaux et uniques (vérifié par `catalog.test.ts`).
+
+Alternatives rejetées
+
+- Tout garder dans `cards/` et `deck.json` : les cartes d'une extension se perdent parmi celles du jeu de base.
+- Déplacer aussi les trois mini-extensions : aucun gain pour une carte chacune.
+
+Conséquences
+
+- Le catalogue (donc le client et le serveur) ne change pas de forme : `GameCatalog.expansions` reste indexé par nom.
+- Ajouter une extension rangée ainsi impose de l'ajouter à `expansionPacks`.
+
+---
+
+ID : EDR-043
+Date : 2026-10-14
+Titre : Textes des cartes dans game-data, un fichier par extension
+Statut : Active
+
+Contexte
+Les textes des cartes (`cards.en.json`, `cards.fr.json`) vivaient dans le client et grossissaient à chaque extension : près de 1 000 entrées avec Ridding the Woods.
+
+Problème
+Comment garder des fichiers de traduction lisibles, rangés avec les cartes qu'ils décrivent ?
+
+Décision
+Les textes des cartes sont dans `packages/game-data` : `src/locales/cards.{en,fr}.json` pour le jeu de base (avec les trois mini-extensions, dont les cartes sont dans `cards/`), et `src/expansions/<nom>/locales/cards.{en,fr}.json` pour chaque dossier d'extension (EDR-042), déclarés dans son `ExpansionPack`. `game-data` exporte `cardTexts`, la fusion des deux, que le client donne à i18next comme espace `cards`.
+
+Alternatives rejetées
+
+- Garder un seul fichier par langue dans le client : il continue de grossir à chaque extension.
+- Découper dans le client : les textes restent loin des cartes qu'ils décrivent.
+
+Conséquences
+
+- `tests/locales.test.ts` vérifie la parité EN/FR de chaque fichier, l'absence de clé en double et la traduction de chaque nom d'état.
+- Les textes des cartes font partie du `dist/` de `game-data`, que le serveur charge sans s'en servir.
+
+---
+
+ID : EDR-044
+Date : 2026-10-14
+Titre : Numéros de cartes propres à chaque extension
+Statut : Dépréciée par EDR-047
+Complète : EDR-042
+
+Contexte
+Les cartes d'une extension sont imprimées avec leurs propres numéros (1 à 29 pour Ridding the Woods), précédés du logo de l'extension, et leurs textes renvoient à ces numéros. Prosperity, The Water Mill et Border Dispute sont des mini-campagnes du jeu de base (`campaigns` de `deck.json`), numérotées dans la suite du jeu de base.
+
+Problème
+Comment écrire et afficher les numéros d'une extension sans casser l'unicité des ids d'instance dans `GameState` ?
+
+Décision
+Un dossier d'extension (EDR-042) numérote ses instances à partir de 1 dans son `deck.json`, son `onStart.discover.ids` et les `ids` de ses sélecteurs de cartes (`cards`, `destroy`, `discard`) : un id y désigne toujours une carte de la même extension. Son `deck.json` déclare un `instanceIdOffset` fixe, et `loadGameCatalog()` convertit ces numéros en ids globaux (id global = numéro + décalage). L'engine, les événements et le serveur ne voient que des ids globaux. Chaque instance créée par une extension porte son extension et son numéro imprimé (`CardInstance.expansion` / `expansionId`, calculés à partir de `instanceIdOffset`, enregistré dans l'événement `EXPANSION_SELECTED`) ; le client l'affiche après le logo de l'extension (`CardNumber`).
+
+Alternatives rejetées
+
+- Afficher seulement les numéros locaux, avec des ids globaux dans les données : les données ne suivent plus les numéros imprimés sur les cartes.
+- Résoudre les ids selon l'extension de la carte appelante dans l'engine : touche l'engine, les événements et le rejeu pour un besoin de données.
+
+Conséquences
+
+- Le décalage d'une extension publiée ne change jamais : il fixe les ids globaux des parties en cours.
+- Une carte d'extension ne peut pas désigner une carte du jeu de base par son id ; il faudra une autre syntaxe le jour où ce sera nécessaire.
+- Ridding the Woods (décalage 138) est passé à cette numérotation avant sa première release : aucune partie de joueur n'est concernée.
+
+---
+
+ID : EDR-045
+Date : 2026-10-14
+Titre : Paquet de campagne et paquet découvrable
+Statut : Active
+
+Contexte
+Une seule pile de découverte mêlait les cartes de l'histoire, découvertes au début de chaque manche, et celles que seuls des effets découvrent (au-delà du n° 70 dans le jeu de base). La fin d'une campagne dépendait d'une carte (« Stop », n° 68) ou de `expansionMaxRound`.
+
+Problème
+Comment séparer les deux usages, et terminer une campagne quand son histoire est épuisée, sans changer les parties déjà commencées ?
+
+Décision
+Le jeu de base et chaque extension ont deux paquets dans leur `deck.json` : `campaign` (jeu de base 1–70, dont les cartes 1–10 forment le deck de départ ; Ridding the Woods 1–25) et `discoverable` (jeu de base 71+, Ridding the Woods 26–29). `GameCatalog` et `ExpansionConfig` exposent `campaign` et `discoverable`. Dans `GameState`, `discoveryPile` reste le nom du paquet de campagne (les anciens `CARD_ACTION` l'écrivent dans `gameStateChanges`) et `discoverablePile` est le paquet découvrable. Au début d'une manche, la découverte est un événement à part, `STORY_ADVANCED` (« avancer dans l'histoire »), émis après `ROUND_STARTED` ; si le paquet de campagne est vide alors qu'il faut découvrir, la campagne se termine (`GAME_ENDED`). La fin de partie (`GAME_ENDED`, effet `END_GAME`) vide le paquet de campagne. Les découvertes par effet (`DISCOVER_CARD`, portée `DISCOVERY`) cherchent dans les deux paquets ; « le haut de la pile de découverte » (`PLACE_CARD_IN_PILE` vers `discovery`) est le paquet de campagne. `EXPANSION_SELECTED` enregistre `discoverableIds`.
+
+Alternatives rejetées
+
+- Renommer `discoveryPile` en `campaignPile` : les `CARD_ACTION` des journaux existants écrivent `discoveryPile`, leur rejeu divergerait.
+- Garder la découverte dans `ROUND_STARTED` : les deux découvertes (début de manche, effets) se confondent dans l'historique.
+
+Conséquences
+
+- Une partie commencée avant ce changement n'a pas de `discoverablePile` (`GAME_STARTED` sans ce champ) et garde les anciennes règles (EDR-036) : une seule pile, découverte du début de manche dans `ROUND_STARTED.lastAddedCards`, pas de fin de campagne sur pile vide, pile non vidée en fin de partie, cartes d'extension toutes dans cette pile.
+- Une extension peut avoir plusieurs campagnes qui partagent ses cartes découvrables : au début d'une campagne, une carte découvrable déjà entrée dans la partie (son instance existe) n'est ni recréée ni remise dans le paquet découvrable.
+- Dans le jeu de base, « Stop » (n° 68) découvre 69 et 70 et marque la dernière manche : le paquet de campagne est vide à la fin, la partie se termine comme avant.
+
+---
+
+ID : EDR-046
+Date : 2026-10-14
+Titre : Effet « avancer dans l'histoire »
+Statut : Active
+Complète : EDR-045
+
+Contexte
+La Sorcière (carte 44) découvrait « les 2 prochaines cartes » avec `DISCOVER_CARD` et la portée `TOP_OF_DISCOVERY`, seule carte à utiliser cette portée.
+
+Problème
+Comment exprimer qu'un effet fait avancer l'histoire comme le début d'une manche ?
+
+Décision
+Un effet `ADVANCE_STORY` (`value` = nombre de cartes, 1 par défaut) découvre les premières cartes du paquet de campagne, comme `DISCOVER_CARD`. La portée `TOP_OF_DISCOVERY` est supprimée. Les déclencheurs déjà en attente gardent leur définition stockée dans le journal : `resolveActionEffect` convertit un `DISCOVER_CARD` de portée `top_of_discovery` en `ADVANCE_STORY` de même nombre.
+
+Alternatives rejetées
+
+- Garder `TOP_OF_DISCOVERY` : une portée qui ne sert qu'à une carte et ne dit pas qu'il s'agit de l'histoire.
+
+Conséquences
+
+- Paquet de campagne vide : l'effet ne découvre rien et ne termine pas la campagne (seul le début de manche la termine).
+- Le résultat est identique pour les parties en cours (vérifié en rejouant et en continuant des parties jouées avec l'ancien moteur).
+
+---
+
+ID : EDR-047
+Date : 2026-10-14
+Titre : Numéro imprimé d'une carte d'extension
+Statut : Active
+Remplace : EDR-044
+
+Contexte
+EDR-044 numérotait les instances d'une extension à partir de 1 et les convertissait au chargement. Or l'identifiant d'instance doit rester unique dans tout le jeu : les sélecteurs de cartes l'utilisent.
+
+Problème
+Comment afficher le numéro imprimé sur une carte d'extension, propre à l'extension, sans changer les identifiants du jeu ?
+
+Décision
+Une entrée de `deck.json` a trois identifiants : `id`, l'instance, unique dans le jeu de base et toutes les extensions (sélecteurs, `onStart.discover.ids`) ; `cardId`, la définition de carte (`cards/<cardId>.ts`), unique dans tout le jeu elle aussi ; `number`, le numéro imprimé, propre à l'extension (dans le jeu de base, c'est `id`). `ExpansionConfig.expansion` (et `EXPANSION_SELECTED.expansion`) nomme l'extension ; une instance créée par elle porte `expansion` et `expansionId` (= `number`), que le client affiche après le logo de l'extension.
+
+Alternatives rejetées
+
+- Numéroter les instances à partir de 1 (EDR-044) : les sélecteurs de cartes ont besoin d'un identifiant unique dans tout le jeu.
+- Faire recommencer `cardId` à 1 dans chaque extension (clé composée extension + `cardId`) : toutes les lectures de définition, les clés de texte et les images devraient porter l'extension, pour un seul avantage de nommage.
+- Calculer le numéro (`id` − décalage) : un champ explicite reste juste si les numéros ne se suivent pas.
+
+Conséquences
+
+- Les campagnes du jeu de base (Prosperity, The Water Mill, Border Dispute) n'ont pas d'`expansion` : leurs instances affichent leur `id`, leurs anciens événements se rejouent à l'identique.
+- Ridding the Woods : instances 139–167, cartes 122–149 (la 127, doublon du Bandit 124, a été retirée), numéros 1–29.

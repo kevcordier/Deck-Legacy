@@ -17,6 +17,7 @@ import { PurgePermanentSelectedStrategy } from './PurgePermanentSelectedStrategy
 import { RoundEndedStrategy } from './RoundEndedStrategy';
 import { RoundStartedStrategy } from './RoundStartedStrategy';
 import { SkipTriggerStrategy } from './SkipTriggerStrategy';
+import { StoryAdvancedStrategy } from './StoryAdvancedStrategy';
 import { TurnEndedStrategy } from './TurnEndedStrategy';
 import { TurnStartedStrategy } from './TurnStartedStrategy';
 import { UpgradeCardEventStrategy } from './UpgradeCardEventStrategy';
@@ -29,6 +30,7 @@ export class GameEventContext {
       [GameEventType.GAME_STARTED]: new GameStartedStrategy(cardDefs),
       [GameEventType.GAME_ENDED]: new GameEndedStrategy(),
       [GameEventType.ROUND_STARTED]: new RoundStartedStrategy(),
+      [GameEventType.STORY_ADVANCED]: new StoryAdvancedStrategy(),
       [GameEventType.ROUND_ENDED]: new RoundEndedStrategy(),
       [GameEventType.TURN_STARTED]: new TurnStartedStrategy(cardDefs, stickerDefs),
       [GameEventType.CARD_PRODUCED]: new CardProducedStrategy(cardDefs, stickerDefs),

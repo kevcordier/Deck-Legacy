@@ -7,6 +7,7 @@ import type {
   Sticker,
 } from '../../domain/types';
 import { getActiveState, getInstancesTriggerEffects } from '../cardHelpers';
+import { removeFromDiscovery } from '../gameStateHelper';
 import type { CardActionStrategy } from './CardActionStrategy';
 
 export class PlayCardStrategy implements CardActionStrategy {
@@ -40,7 +41,7 @@ export class PlayCardStrategy implements CardActionStrategy {
         gs.boardEffects[instanceId] = [...(gs.boardEffects[instanceId] ?? []), passive];
       });
 
-      gs.discoveryPile = gs.discoveryPile.filter(c => c !== instanceId);
+      removeFromDiscovery(gs, [instanceId]);
       gs.drawPile = gs.drawPile.filter(c => c !== instanceId);
       gs.destroyedPile = gs.destroyedPile.filter(c => c !== instanceId);
       gs.discardPile = gs.discardPile.filter(c => c !== instanceId);

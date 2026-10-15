@@ -26,7 +26,7 @@ Deck-Legacy turns an existing solo legacy deck-building board game into a free d
 apps/client/          @deck-legacy/client — Expo / React Native app (runs the engine, saves locally, syncs)
 apps/server/          @deck-legacy/server — NestJS API (validates synced games by replay, stores them, scores)
 packages/engine/      @deck-legacy/engine — pure game engine (domain = types, application = logic)
-packages/game-data/   @deck-legacy/game-data — card definitions, stickers, deck.json
+packages/game-data/   @deck-legacy/game-data — card definitions, stickers, deck.json, expansions/<name>/ (cards + deck.json)
 packages/api-contract/ @deck-legacy/api-contract — HTTP DTOs + zod schemas
 .claude/              agents, contracts.md, memory/EDR.md (decisions), memory/INSIGHTS.md (lessons), rules, skills
 scripts/dev.mjs       `pnpm dev` launcher; docker-compose.yml = local PostgreSQL
@@ -34,13 +34,14 @@ scripts/dev.mjs       `pnpm dev` launcher; docker-compose.yml = local PostgreSQL
 
 **Where things go.**
 
-| To change…         | Edit…                                                                                            |
-| ------------------ | ------------------------------------------------------------------------------------------------ |
-| A card             | `packages/game-data/src/cards/<id>.ts` + `cards.{en,fr}.json` (skill `add-card`)                 |
-| A card effect type | new strategy in `packages/engine/src/application/cardAction/`, registered in `CardActionContext` |
-| A player action    | `GameCommand` → `GameSession.dispatch` → tests → client `GameProvider`                           |
-| The UI             | `apps/client/src/components/<Component>/` + Storybook story                                      |
-| An API route       | `packages/api-contract` first, then `apps/server`, then the client `services/`                   |
+| To change…         | Edit…                                                                                                      |
+| ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| A card             | `packages/game-data/src/cards/<id>.ts` + `src/locales/cards.{en,fr}.json` (skill `add-card`)               |
+| An expansion card  | `packages/game-data/src/expansions/<name>/cards/<id>.ts` + its `deck.json` + its `locales/` (EDR-042, 043) |
+| A card effect type | new strategy in `packages/engine/src/application/cardAction/`, registered in `CardActionContext`           |
+| A player action    | `GameCommand` → `GameSession.dispatch` → tests → client `GameProvider`                                     |
+| The UI             | `apps/client/src/components/<Component>/` + Storybook story                                                |
+| An API route       | `packages/api-contract` first, then `apps/server`, then the client `services/`                             |
 
 ## 3. How
 
@@ -78,7 +79,7 @@ pnpm --filter <workspace> <script>   # one workspace: @deck-legacy/{client,serve
 
 **Tests.** Vitest. Coverage: engine 80 % everywhere; server 80 % (60 % branches). Every new function or branch in `packages/engine/src` is covered. Engine tests use minimal fixtures (`packages/engine/tests/application/fixtures.ts`, `…/session/fixtures.ts`), never real game data. A bug found while playing becomes a failing test before it is fixed (a `GameSession` scenario, or the event log from `GET /games/:id/export`). Cards with triggers or several states get a `GameSession` scenario test.
 
-**Translations.** EN and FR always have the same keys: UI in `en.json`/`fr.json`, cards in `cards.{en,fr}.json`, rules in `rules.{en,fr}.md`. A new mechanic or icon ships with its explanation in the game and in the rules.
+**Translations.** EN and FR always have the same keys: UI in `en.json`/`fr.json`, cards in `cards.{en,fr}.json` of `packages/game-data` (one pair for the base game, one per expansion folder), rules in `rules.{en,fr}.md`. A new mechanic or icon ships with its explanation in the game and in the rules.
 
 **UI.** Design for the phone first, then desktop; check every change at ≤ 375 px and ≥ 1024 px before committing; touch targets ≥ 44 pt, nothing hover-only. React Native primitives and NativeWind only (see `apps/client/CLAUDE.md`).
 

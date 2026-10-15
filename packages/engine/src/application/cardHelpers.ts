@@ -6,6 +6,7 @@ import type {
   CardInstance,
   Cost,
   GameState,
+  Passive,
   Resources,
   StepDef,
   Sticker,
@@ -27,11 +28,13 @@ import {
 import { fixResources, mergeResources } from './resources';
 
 export {
+  cardShouldStayInPlay,
   evaluateCondition,
   getActiveState,
   getAffectedCardsByBoardEffects,
   getEffectiveGlory,
   getEffectiveProductions,
+  getTotalProduction,
   getTotalResourceProduction,
 } from './cardSelector';
 
@@ -62,7 +65,7 @@ export function getEffectiveUpgradeCost(
   stickerDefs: Record<number, Sticker>,
   instanceId: number,
 ): Cost {
-  const adjustedCost = JSON.parse(JSON.stringify(baseCost)) as Cost;
+  const adjustedCost = { ...(JSON.parse(JSON.stringify(baseCost)) as Cost), forUpgrade: true };
   const sourceInstance = gameState.instances[instanceId];
 
   for (const [passiveSourceId, passives] of Object.entries(gameState.boardEffects)) {
@@ -112,21 +115,33 @@ export function getEffectiveActionCost(
   return removeResourceKeysFromCost(fixedCost, removedKeys);
 }
 
-export function getTotalProduction(
-  instanceId: number,
-  gameState: GameState,
-  defs: Record<number, CardDef>,
-  stickerDefs: Record<number, Sticker>,
-): number {
-  const instance = gameState.instances[instanceId];
-  if (!instance) return 0;
-  const state = getActiveState(instance, defs);
-  const productions = (state.productions as Resources[]) ?? [{}];
-  return productions.reduce((maxTotal, base) => {
-    const effective = getEffectiveProductions(base, gameState, defs, instance, stickerDefs, false);
-    const total = Object.values(effective).reduce<number>((sum, v) => sum + (v ?? 0), 0);
-    return Math.max(maxTotal, total);
-  }, 0);
+function passivesInPlay(gameState: GameState, type: PassiveType): Passive[] {
+  return Object.values(gameState.boardEffects)
+    .flat()
+    .filter(p => p.type === type);
+}
+
+/** Drops the resources that a RESTRICT_GAIN passive in play does not allow. */
+export function keepGainableResources(resources: Resources, gameState: GameState): Resources {
+  const restrictions = passivesInPlay(gameState, PassiveType.RESTRICT_GAIN);
+  return Object.fromEntries(
+    Object.entries(resources).filter(([key]) =>
+      restrictions.every(p => p.resources?.[key as keyof Resources]),
+    ),
+  );
+}
+
+/** Resources that can pay a cost: RESTRICT_SPEND keeps its resources for upgrade costs only. */
+export function getSpendableResources(gameState: GameState, forUpgrade = false): Resources {
+  if (forUpgrade) return gameState.resources;
+  const reserved = new Set(
+    passivesInPlay(gameState, PassiveType.RESTRICT_SPEND).flatMap(p =>
+      Object.keys(p.resources ?? {}),
+    ),
+  );
+  return Object.fromEntries(
+    Object.entries(gameState.resources).filter(([key]) => !reserved.has(key)),
+  );
 }
 
 function applyReplacementOnProduction(
@@ -219,7 +234,7 @@ export function getProductionChoicesForAction(
     unique.set(serialize(choice), choice);
   });
 
-  return [...unique.values()];
+  return [...unique.values()].map(choice => keepGainableResources(choice, gameState));
 }
 
 export function tagClass(tag: string, isEnemy: boolean): string {
@@ -266,6 +281,7 @@ export function canAffordCost(
   equivalenceSourceInstanceId = instanceId,
 ): boolean {
   if (cost?.resources) {
+    const available = getSpendableResources(gameState, cost.forUpgrade);
     const equivalence = getSourceResourceEquivalence(
       equivalenceSourceInstanceId,
       gameState,
@@ -276,14 +292,11 @@ export function canAffordCost(
     const canAffordResourceCostOption = equivalence
       ? cost.resources.some(
           resourceCost =>
-            getPayableResourceCostVariants(
-              fixResources(resourceCost),
-              gameState.resources,
-              equivalence,
-            ).length > 0,
+            getPayableResourceCostVariants(fixResources(resourceCost), available, equivalence)
+              .length > 0,
         )
       : canAffordResources(
-          gameState.resources,
+          available,
           cost.resources.map(r => fixResources(r)),
         );
 
@@ -352,57 +365,29 @@ export function canAffordTrackAdvanceCost(
   });
 }
 
-function getBoardEffectTriggersAction(
-  gameState: GameState,
+/** Actions of the cards in play (not among `sources`) whose `triggeredBy` matches a card. */
+function getTriggeredByEffects(
+  sources: CardInstance[],
   defs: Record<number, CardDef>,
+  gameState: GameState,
+  canFire: (ce: CardAction, instance: CardInstance) => boolean,
   stickerDefs: Record<number, Sticker>,
-  trigger: Trigger,
 ): TriggerEntry[] {
-  return Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) => {
-    const cardActions: CardAction[] = [];
-    const originalSourceId = Number(sourceId);
-    let instanceId = originalSourceId;
-    passives
-      .filter(
-        passive =>
-          passive.type === PassiveType.ADD_TRIGGER &&
-          passive.trigger?.type === trigger &&
-          (!passive.condition ||
-            evaluateCondition(passive.condition, gameState, originalSourceId, defs, stickerDefs)),
-      )
-      .forEach(passive => {
-        if (passive.trigger?.cards) {
-          const selectedCards = cardSelector(
-            passive.trigger.cards,
-            instanceId,
-            gameState,
-            defs,
-            stickerDefs,
-          );
-
-          if (selectedCards.length === 0) return;
-
-          instanceId = selectedCards[0];
-        }
-        if (passive.trigger?.actions) {
-          const getCard = (ae: ActionEffect) => {
-            if (ae.cards?.scope?.includes(TargetScope.TRIGGER_SOURCE))
-              return { ids: [originalSourceId] };
-            return ae.cards?.scope?.includes(TargetScope.SELF) ? { ids: [instanceId] } : ae.cards;
-          };
-          cardActions.push({
-            id: passive.trigger.id,
-            optional: passive.trigger?.optional,
-            actionEffects: passive.trigger.actions.map(ae => ({
-              ...ae,
-              cards: getCard(ae),
-            })),
-          });
-        }
-      });
-
-    return cardActions.map(effectDef => ({ effectDef, sourceInstanceId: Number(sourceId) }));
-  });
+  const sourceIds = new Set(sources.map(instance => instance.id));
+  return [...new Set([...gameState.board, ...gameState.permanents])]
+    .filter(id => !sourceIds.has(id))
+    .map(id => gameState.instances[id])
+    .filter(Boolean)
+    .flatMap(instance =>
+      (getActiveState(instance, defs).actions ?? [])
+        .filter(
+          ce =>
+            ce.triggeredBy &&
+            canFire(ce, instance) &&
+            cardSelector(ce.triggeredBy, instance.id, gameState, defs, stickerDefs).length > 0,
+        )
+        .map(effectDef => ({ effectDef, sourceInstanceId: instance.id })),
+    );
 }
 
 export function getInstancesTriggerEffects(
@@ -412,79 +397,23 @@ export function getInstancesTriggerEffects(
   effect: Trigger,
   gameState: GameState,
 ): TriggerEntry[] {
+  const canFire = (ce: CardAction, instance: CardInstance) =>
+    ce.trigger === effect &&
+    (!ce.condition || evaluateCondition(ce.condition, gameState, instance.id, defs, stickerDefs)) &&
+    canAffordCost(ce.cost, instance.id, gameState, defs, stickerDefs) &&
+    canAffordTrackAdvanceCost(ce, instance, gameState, defs, stickerDefs) &&
+    !instance.usedActionIds?.includes(ce.id);
+
   const effects = instances.reduce<TriggerEntry[]>((acc, instance) => {
     const state = getActiveState(instance, defs);
-    const effects =
-      state.actions?.filter(ce => {
-        return (
-          ce.trigger === effect &&
-          canAffordCost(ce.cost, instance.id, gameState, defs, stickerDefs) &&
-          canAffordTrackAdvanceCost(ce, instance, gameState, defs, stickerDefs) &&
-          !instance.usedActionIds?.includes(ce.id)
-        );
-      }) ?? [];
+    const effects = state.actions?.filter(ce => canFire(ce, instance)) ?? [];
 
     return [...acc, ...effects.map(effectDef => ({ effectDef, sourceInstanceId: instance.id }))];
   }, [] as TriggerEntry[]);
 
-  effects.push(...getBoardEffectTriggersAction(gameState, defs, stickerDefs, effect));
+  effects.push(...getTriggeredByEffects(instances, defs, gameState, canFire, stickerDefs));
 
   return effects;
-}
-
-// Sticker ID for the 'stays_in_play' effect (see src/data/stickers.ts)
-const STAYS_IN_PLAY_STICKER_ID = 7;
-
-export function cardShouldStayInPlay(
-  instanceId: number,
-  gameState: GameState,
-  cardDefs: Record<number, CardDef>,
-): boolean {
-  const instance = gameState.instances[instanceId];
-  if (!instance) return false;
-  const def = cardDefs[instance.cardId];
-  if (getActiveState(instance, cardDefs)?.permanent) return true;
-  const state = def?.states.find(s => s.id === instance.stateId);
-  if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
-
-  const stayInPlayTargets = new Set<number>(
-    Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) =>
-      passives
-        .filter(passive => passive.type === PassiveType.STAY_IN_PLAY)
-        .flatMap(passive => {
-          if (!passive.cards) {
-            return [Number(sourceId)];
-          }
-          return cardSelector(passive.cards, Number(sourceId), gameState, cardDefs, {});
-        }),
-    ),
-  );
-
-  if (stayInPlayTargets.has(instanceId)) return true;
-
-  if (
-    Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))
-      .flat()
-      .includes(instanceId)
-  )
-    return true;
-  // If the card is blocked by a card that also has STAY_IN_PLAY, it should stay in play
-  const blockerCard = Object.entries(
-    getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK),
-  ).find(([_, ids]) => ids.includes(instanceId))?.[0];
-  if (blockerCard && stayInPlayTargets.has(Number(blockerCard))) {
-    return true;
-  }
-  if (
-    blockerCard &&
-    Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))
-      .flat()
-      .includes(Number(blockerCard))
-  ) {
-    return true;
-  }
-  const stickers = instance.stickers[instance.stateId] ?? [];
-  return stickers.includes(STAYS_IN_PLAY_STICKER_ID);
 }
 
 export function cardIsBlocked(instanceId: number, gameState: GameState): boolean {

@@ -144,10 +144,10 @@ The client uses **NativeWind 4** (Tailwind CSS **v3** syntax for React Native). 
 - Library: i18next + react-i18next
 - Languages: English (`en`) and French (`fr`)
 - UI strings: `src/data/locales/en.json`, `fr.json`
-- Card text: `src/data/locales/cards.en.json`, `cards.fr.json`
+- Card text: the `cards` namespace comes from `cardTexts` in `@deck-legacy/game-data` (base game file plus one file per expansion, EDR-043)
 - Game rules: `src/data/locales/rules.en.md`, `rules.fr.md` — Markdown files inlined as raw strings by `babel-plugin-inline-import` (relative import paths; their content is hashed into Metro's `cacheVersion` in `metro.config.js`, so restart Metro after editing them — no `--clear` needed) and rendered with `react-native-marked`. Icon placeholders (`{{gold}}`, `{{glory}}`, …) are replaced with inline SVG icons at render time.
 - Language preference persisted to storage key `deck_legacy_lang` (i18n is initialised by `initI18n()` after storage hydration)
-- When adding new UI strings, add to **both** locale files. Card name/description additions go in both `cards.*.json` files.
+- When adding new UI strings, add to **both** locale files. Card texts go in both `cards.*.json` files of `packages/game-data`.
 - Keep locale files lean — only add keys that are actively used in the UI. Remove keys when their component is deleted or refactored away.
 - Engine rule errors (`CommandError.message`) are i18n keys: keep them in both locale files.
 

@@ -20,6 +20,7 @@ export enum CardTag {
   LIVESTOCK = 'livestock',
   HORSE = 'horse',
   LADY = 'lady',
+  WAGON = 'wagon',
 }
 
 export enum Trigger {
@@ -32,12 +33,15 @@ export enum Trigger {
   ON_PRODUCE = 'on_produce',
   ON_UPGRADE = 'on_upgrade',
   ON_TRACK_END = 'on_track_end',
+  ON_DEFEAT = 'on_defeat',
+  ON_PURGE_SELECTION = 'on_purge_selection',
 }
 
 export enum GameEventType {
   GAME_STARTED = 'GAME_STARTED',
   GAME_ENDED = 'GAME_ENDED',
   ROUND_STARTED = 'ROUND_STARTED',
+  STORY_ADVANCED = 'STORY_ADVANCED',
   ROUND_ENDED = 'ROUND_ENDED',
   TURN_STARTED = 'TURN_STARTED',
   TURN_ENDED = 'TURN_ENDED',
@@ -79,7 +83,9 @@ export enum ActionEffectType {
   SHUFFLE_DECK = 'SHUFFLE_DECK',
   ADD_GLORY = 'ADD_GLORY',
   SAVE_FROM_PURGE = 'SAVE_FROM_PURGE',
-  SET_LAST_ROUND = 'SET_LAST_ROUND',
+  ADD_TO_PURGE = 'ADD_TO_PURGE',
+  /** Discovers the next `value` cards of the campaign pile (EDR-046). */
+  ADVANCE_STORY = 'ADVANCE_STORY',
 }
 
 export enum PassiveType {
@@ -87,7 +93,6 @@ export enum PassiveType {
   STAY_IN_PLAY = 'STAY_IN_PLAY',
   ADJUST_GLORY = 'ADJUST_GLORY',
   ADJUST_PRODUCTION = 'ADJUST_PRODUCTION',
-  ADD_TRIGGER = 'ADD_TRIGGER',
   DESACTIVATE_OPTION = 'DESACTIVATE_OPTION',
   COUNT_AS_2 = 'COUNT_AS_2',
   ADJUST_ADD_RESOURCES = 'ADJUST_ADD_RESOURCES',
@@ -96,6 +101,9 @@ export enum PassiveType {
   RESOURCE_EQUIVALENCE = 'RESOURCE_EQUIVALENCE',
   SET_GAME_PARAMETER = 'SET_GAME_PARAMETER',
   CANT_BE_DESTROYED = 'CANT_BE_DESTROYED',
+  RESTRICT_GAIN = 'RESTRICT_GAIN',
+  RESTRICT_SPEND = 'RESTRICT_SPEND',
+  REQUIRES_IN_PLAY = 'REQUIRES_IN_PLAY',
 }
 
 export enum Options {
@@ -128,7 +136,6 @@ export enum TargetScope {
   ENEMY = 'enemy',
   SELF = 'self',
   TOP_OF_DECK = 'top_of_deck',
-  TOP_OF_DISCOVERY = 'top_of_discovery',
   DRAWN = 'drawn',
   DISCARDED = 'discarded',
   LAST_SELECTED = 'last_selected',
@@ -136,6 +143,7 @@ export enum TargetScope {
   UPGRADABLE = 'upgradable',
   WITH_TRACK = 'with_track',
   PURGE_SELECTED = 'purge_selected',
+  STAYING = 'staying',
 }
 
 export enum PendingChoiceType {

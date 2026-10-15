@@ -336,7 +336,7 @@ describe('GameAggregate campaign score branch coverage', () => {
 
     const agg = new GameAggregate(crypto.randomUUID(), state, { 1: makeDef({ id: 1 }) }, {}, []);
     const expansion: ExpansionConfig = {
-      deck: [{ id: 10, cardId: 1 }],
+      campaign: [{ id: 10, cardId: 1 }],
       purge: { purge: 1, permanent: 0 },
     };
 
@@ -398,7 +398,7 @@ describe('GameAggregate campaign score branch coverage', () => {
     const agg = new GameAggregate(crypto.randomUUID(), state, { 1: makeDef({ id: 1 }) }, {}, []);
     const expansion: ExpansionConfig = {
       expansionMaxRound: 3,
-      deck: [{ id: 10, cardId: 1 }],
+      campaign: [{ id: 10, cardId: 1 }],
       purge: { purge: 1, permanent: 0 },
     };
 
@@ -417,7 +417,7 @@ describe('GameAggregate campaign score branch coverage', () => {
     const agg = new GameAggregate(crypto.randomUUID(), state, { 1: makeDef({ id: 1 }) }, {}, []);
     const expansion: ExpansionConfig = {
       expansionMaxRound: 0,
-      deck: [{ id: 10, cardId: 1 }],
+      campaign: [{ id: 10, cardId: 1 }],
       purge: { purge: 1, permanent: 0 },
     };
 

@@ -1,5 +1,5 @@
 {
-  "deck": [
+  "campaign": [
     {
       "id": 1,
       "cardId": 1
@@ -279,7 +279,9 @@
     {
       "id": 70,
       "cardId": 60
-    },
+    }
+  ],
+  "discoverable": [
     {
       "id": 71,
       "cardId": 2
@@ -541,7 +543,7 @@
       "cardId": 118
     }
   ],
-  "expansions": {
+  "campaigns": {
     "Prosperity": {
       "expansionMaxRound": 4,
       "purge": {
@@ -551,17 +553,17 @@
       "parameters": {
         "discoverPerRound": 0
       },
-      "deck": [
-        {
-          "id": 136,
-          "cardId": 119
-        }
-      ],
       "onStart": {
         "discover": {
           "ids": [136]
         }
-      }
+      },
+      "campaign": [
+        {
+          "id": 136,
+          "cardId": 119
+        }
+      ]
     },
     "The Water Mill": {
       "expansionMaxRound": 4,
@@ -572,17 +574,17 @@
       "parameters": {
         "discoverPerRound": 0
       },
-      "deck": [
-        {
-          "id": 137,
-          "cardId": 120
-        }
-      ],
       "onStart": {
         "discover": {
           "ids": [137]
         }
-      }
+      },
+      "campaign": [
+        {
+          "id": 137,
+          "cardId": 120
+        }
+      ]
     },
     "Border Dispute": {
       "expansionMaxRound": 4,
@@ -593,17 +595,17 @@
       "parameters": {
         "discoverPerRound": 0
       },
-      "deck": [
-        {
-          "id": 138,
-          "cardId": 121
-        }
-      ],
       "onStart": {
         "discover": {
           "ids": [138]
         }
-      }
+      },
+      "campaign": [
+        {
+          "id": 138,
+          "cardId": 121
+        }
+      ]
     }
   }
 }

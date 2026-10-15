@@ -20,7 +20,7 @@ import React from 'react';
 
 // Detects tokens like {{gold}}, {{wood}}, etc. in translated texts
 const ICON_TOKEN =
-  /\{\{(gold|wood|stone|iron|weapon|goods|glory|action|time|passif|destroy|trigger|optionalTrigger|upgrade)\}\}/g;
+  /\{\{(gold|wood|stone|iron|weapon|goods|glory|action|time|passif|destroy|trigger|optionalTrigger|upgrade|discovered)\}\}/g;
 
 const RESOURCE_META: Record<
   string,
@@ -68,6 +68,11 @@ export function renderTextWithIcons(
   while ((match = ICON_TOKEN.exec(text)) !== null) {
     if (match.index > last) parts.push(text.slice(last, match.index));
     const key = match[1];
+    // {{discovered}} is a card number, only rendered by a `wrapIcon` that knows the card.
+    if (key === 'discovered' && !wrapIcon) {
+      last = match.index + match[0].length;
+      continue;
+    }
     const meta = getResMeta(key);
     const icon = meta.icon ? <meta.icon color={meta.color} className="size-4" alt={key} /> : key;
     parts.push(

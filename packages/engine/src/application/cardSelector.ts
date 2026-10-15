@@ -35,7 +35,9 @@ function addLocationScopeParts(
   if (locationScopes.includes(TargetScope.DRAWN)) parts.push(...gameState.lastDrawnCards);
   if (locationScopes.includes(TargetScope.DISCARDED)) parts.push(...gameState.lastDiscardedCards);
   if (locationScopes.includes(TargetScope.BOARD)) parts.push(...gameState.board);
-  if (locationScopes.includes(TargetScope.DISCOVERY)) parts.push(...gameState.discoveryPile);
+  if (locationScopes.includes(TargetScope.DISCOVERY)) {
+    parts.push(...gameState.discoveryPile, ...(gameState.discoverablePile ?? []));
+  }
   if (locationScopes.includes(TargetScope.DISCARD)) parts.push(...gameState.discardPile);
   if (locationScopes.includes(TargetScope.BLOCKED)) parts.push(...blockedInstanceIds);
   if (locationScopes.includes(TargetScope.PERMANENTS))
@@ -170,6 +172,11 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
   if (ctx.selector.ids && !ctx.selector.ids.includes(inst.id)) return false;
   if (ctx.isUpgradable && (!state.upgrade || state.upgrade.length === 0)) return false;
   if (ctx.withTrack && !hasAvailableTrackStep(state, inst.trackProgress)) return false;
+  if (
+    ctx.scope?.includes(TargetScope.STAYING) &&
+    !cardShouldStayInPlay(id, ctx.gameState, ctx.defs)
+  )
+    return false;
 
   return true;
 }
@@ -197,9 +204,6 @@ export function cardSelector(
   }
   if (scope.includes(TargetScope.TOP_OF_DISCARD)) {
     return gameState.discardPile.slice(-1);
-  }
-  if (scope.includes(TargetScope.TOP_OF_DISCOVERY)) {
-    return gameState.discoveryPile.slice(0, selector.pickNumber ?? 1);
   }
 
   const blockedEffect = getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK);
@@ -350,6 +354,19 @@ export function evaluateCondition(
       );
     case 'not':
       return !evaluateCondition(condition.condition, gameState, instanceId, defs, stickers);
+    case 'accumulation':
+      return isWithinBounds(
+        gameState.instances[instanceId]?.cumulated ?? 0,
+        condition.min,
+        condition.max,
+      );
+    case 'justPlayed':
+      return gameState.lastDrawnCards.includes(instanceId);
+    case 'expansionActive':
+      return (
+        gameState.activeExpansion === condition.name &&
+        !Object.hasOwn(gameState.campaignScores, condition.name)
+      );
   }
 }
 
@@ -514,6 +531,8 @@ export function countValuePerElement(
     ).length;
   } else if (valuePerElement.accumulation && gameState.instances[instanceId].cumulated >= 1) {
     count = gameState.instances[instanceId].cumulated;
+  } else if (valuePerElement.ownProduction) {
+    count = getTotalProduction(instanceId, gameState, defs, stickerDefs);
   } else if (valuePerElement.productionTotal) {
     const prodKey = valuePerElement.productionTotal;
     count = getTotalResourceProduction(instanceId, prodKey, gameState, defs, stickerDefs);
@@ -610,4 +629,76 @@ export function matchHaving(id: number, stateId: number, ctx: StateCriteriaConte
     matchHavingProduction(id, stateId, ctx) &&
     matchHavingSticker(id, stateId, ctx)
   );
+}
+
+export function getTotalProduction(
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): number {
+  const instance = gameState.instances[instanceId];
+  if (!instance) return 0;
+  const state = getActiveState(instance, defs);
+  const productions = (state.productions as Resources[]) ?? [{}];
+  return productions.reduce((maxTotal, base) => {
+    const effective = getEffectiveProductions(base, gameState, defs, instance, stickerDefs, false);
+    const total = Object.values(effective).reduce<number>((sum, v) => sum + (v ?? 0), 0);
+    return Math.max(maxTotal, total);
+  }, 0);
+}
+
+// Sticker ID for the 'stays_in_play' effect (see src/data/stickers.ts)
+const STAYS_IN_PLAY_STICKER_ID = 7;
+
+export function cardShouldStayInPlay(
+  instanceId: number,
+  gameState: GameState,
+  cardDefs: Record<number, CardDef>,
+): boolean {
+  const instance = gameState.instances[instanceId];
+  if (!instance) return false;
+  const def = cardDefs[instance.cardId];
+  if (getActiveState(instance, cardDefs)?.permanent) return true;
+  const state = def?.states.find(s => s.id === instance.stateId);
+  if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
+
+  const stayInPlayTargets = new Set<number>(
+    Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) =>
+      passives
+        .filter(passive => passive.type === PassiveType.STAY_IN_PLAY)
+        .flatMap(passive => {
+          if (!passive.cards) {
+            return [Number(sourceId)];
+          }
+          return cardSelector(passive.cards, Number(sourceId), gameState, cardDefs, {});
+        }),
+    ),
+  );
+
+  if (stayInPlayTargets.has(instanceId)) return true;
+
+  if (
+    Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))
+      .flat()
+      .includes(instanceId)
+  )
+    return true;
+  // If the card is blocked by a card that also has STAY_IN_PLAY, it should stay in play
+  const blockerCard = Object.entries(
+    getAffectedCardsByBoardEffects(gameState, PassiveType.BLOCK),
+  ).find(([_, ids]) => ids.includes(instanceId))?.[0];
+  if (blockerCard && stayInPlayTargets.has(Number(blockerCard))) {
+    return true;
+  }
+  if (
+    blockerCard &&
+    Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))
+      .flat()
+      .includes(Number(blockerCard))
+  ) {
+    return true;
+  }
+  const stickers = instance.stickers[instance.stateId] ?? [];
+  return stickers.includes(STAYS_IN_PLAY_STICKER_ID);
 }

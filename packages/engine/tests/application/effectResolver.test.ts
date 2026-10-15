@@ -293,17 +293,17 @@ describe('resolveActionEffect – DISCOVER_CARD', () => {
     expect(resolved.instanceIds).toEqual([5]);
   });
 
-  it('does not force DISCOVERY scope if a different scope is specified', () => {
-    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
-    const inst2 = makeInstance({ id: 6, cardId: 1, stateId: 1 });
-    const gs = makeState({ discoveryPile: [5, 6], instances: { 5: inst, 6: inst2 } });
+  it('turns a stored "discover the top of the discovery pile" into ADVANCE_STORY', () => {
+    // Triggers queued before EDR-046 keep the removed `top_of_discovery` scope.
     const effect = {
       id: 1,
       type: ActionEffectType.DISCOVER_CARD,
-      cards: { scope: [TargetScope.TOP_OF_DISCOVERY], pickNumber: 2 },
+      cards: { scope: ['top_of_discovery' as TargetScope], pickNumber: 2 },
     };
-    const [resolved] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
-    expect(resolved.instanceIds).toEqual([5, 6]);
+    const [resolved, pending] = resolveActionEffect(effect, 99, makeState(), defs, stickerDefs);
+    expect(resolved).toMatchObject({ type: ActionEffectType.ADVANCE_STORY, value: 2 });
+    expect(resolved.instanceIds).toBeUndefined();
+    expect(pending).toEqual([]);
   });
 });
 
@@ -923,7 +923,8 @@ describe('resolveActionEffect – valuePerElement', () => {
       },
     };
     const [resolved] = resolveActionEffect(effect, 99, gs, defs, stickerDefs);
-    expect(resolved.value).toBe(2);
+    // 2 cards × amount 2
+    expect(resolved.value).toBe(4);
   });
 
   it('resolves resource from accumulation', () => {

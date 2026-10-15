@@ -5,6 +5,7 @@ import {
   ActionEffectType,
   PassiveType,
   PendingChoiceType,
+  ResourceType,
   TargetScope,
 } from '@engine/domain/enums';
 import type {
@@ -99,6 +100,32 @@ describe('CardActionAggregate.resolveAction', () => {
     const gs = agg.getGameState();
     expect(gs.resources.gold).toBe(1);
     expect(gs.discardPile).toContain(1);
+  });
+
+  it('skips an effect whose condition does not hold when it resolves', () => {
+    const hasWood = { type: 'resource', resourceType: ResourceType.WOOD, min: 1 } as const;
+    const agg = makeAggregate({
+      action: {
+        id: 'a1',
+        actionEffects: [
+          {
+            id: 1,
+            type: ActionEffectType.ADD_RESOURCES,
+            resources: { gold: 1 },
+            condition: hasWood,
+          },
+          { id: 2, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 1 } },
+          {
+            id: 3,
+            type: ActionEffectType.ADD_RESOURCES,
+            resources: { gold: 2 },
+            condition: hasWood,
+          },
+        ],
+      },
+    });
+    agg.resolveAction();
+    expect(agg.getGameState().resources).toMatchObject({ gold: 2, wood: 1 });
   });
 
   it('does not discard permanent cards', () => {
@@ -1361,5 +1388,34 @@ describe('CardActionAggregate.resolveCostChoice – pendingTrackCost', () => {
 
     expect(agg.getPendingChoices()).toHaveLength(1);
     expect(agg.getGameState().instances[1].trackProgress).toEqual([]);
+  });
+});
+
+describe('CardActionAggregate — action cost with a track step', () => {
+  it('pays the action cost once', () => {
+    const defs: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'Treasury',
+        states: [{ id: 1, name: 'S', track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }] } }],
+      },
+    };
+    const gs = makeState({
+      board: [1],
+      resources: { gold: 5 },
+      instances: { 1: makeInstance({ id: 1, cardId: 1 }) },
+    });
+    const agg = new CardActionAggregate(defs, {}, gs, gs.instances[1], {
+      id: '1-1-1',
+      cost: { resources: [{ gold: 2 }] },
+      actionEffects: [
+        { id: 1, type: ActionEffectType.TRACK_ADVANCE, cards: { scope: [TargetScope.SELF] } },
+      ],
+    });
+
+    agg.resolveAction();
+
+    expect(agg.getGameState().resources).toEqual({ gold: 3 });
+    expect(agg.getGameState().instances[1].trackProgress).toEqual([1]);
   });
 });

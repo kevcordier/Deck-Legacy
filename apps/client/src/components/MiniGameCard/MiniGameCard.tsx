@@ -15,6 +15,7 @@ import {
   canAffordCost,
   canAffordTrackAdvanceCost,
   cardIsBlocked,
+  evaluateCondition,
   getActiveState,
   getEffectiveActionCost,
   getEffectiveGlory,
@@ -207,6 +208,8 @@ export function MiniGameCard({
     if (optionDisabled) return false;
     const cost = getEffectiveActionCost(action.cost, instance);
     return (
+      (!action.condition ||
+        evaluateCondition(action.condition, gameState, instance.id, defs, stickerDefs)) &&
       canAffordCost(cost, instance.id, gameState, defs, stickerDefs) &&
       canAffordTrackAdvanceCost(action, instance, gameState, defs, stickerDefs)
     );

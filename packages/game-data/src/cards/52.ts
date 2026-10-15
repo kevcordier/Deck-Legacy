@@ -30,6 +30,7 @@ export const darkPrince: CardDef = {
       actions: [
         {
           id: '52-1-1',
+          defeat: true,
           cost: {
             resources: [
               {

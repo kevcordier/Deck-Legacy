@@ -1,10 +1,4 @@
-import {
-  ActionEffectType,
-  CardTag,
-  PassiveType,
-  TargetScope,
-  Trigger,
-} from '@deck-legacy/engine/domain/enums';
+import { ActionEffectType, CardTag, TargetScope, Trigger } from '@deck-legacy/engine/domain/enums';
 import type { CardDef } from '@deck-legacy/engine/domain/types';
 
 export const volcanicEruption: CardDef = {
@@ -17,35 +11,25 @@ export const volcanicEruption: CardDef = {
       negative: true,
       tags: [CardTag.EVENT],
       illustration: 'cards/20_1.jpg',
-      passives: [
+      actions: [
         {
           id: '20-1-1',
-          type: PassiveType.ADD_TRIGGER,
-          trigger: {
-            id: '20-1-1',
-            type: Trigger.ON_PLAY,
-            cards: {
-              scope: [TargetScope.DRAWN],
-              tags: [CardTag.LAND],
+          trigger: Trigger.ON_PLAY,
+          triggeredBy: { scope: [TargetScope.DRAWN], tags: [CardTag.LAND] },
+          condition: { type: 'not', condition: { type: 'justPlayed' } },
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.DESTROY_CARD,
+              cards: { scope: [TargetScope.DRAWN], tags: [CardTag.LAND], pickNumber: 1 },
             },
-            actions: [
-              {
-                id: 1,
-                type: ActionEffectType.DESTROY_CARD,
-                cards: {
-                  scope: [TargetScope.SELF],
-                },
-              },
-              {
-                id: 2,
-                type: ActionEffectType.UPGRADE_CARD,
-                cards: {
-                  scope: [TargetScope.TRIGGER_SOURCE],
-                },
-                states: { ids: [2] },
-              },
-            ],
-          },
+            {
+              id: 2,
+              type: ActionEffectType.UPGRADE_CARD,
+              cards: { scope: [TargetScope.SELF] },
+              states: { ids: [2] },
+            },
+          ],
         },
       ],
     },

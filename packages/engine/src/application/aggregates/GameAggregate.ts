@@ -4,6 +4,7 @@ import {
   PassiveType,
   type PendingChoiceType,
   Phase,
+  TargetScope,
   Trigger,
 } from '../../domain/enums';
 import { ActionCancelledError } from '../../domain/errors/ActionCancelledError';
@@ -34,6 +35,7 @@ import type {
   RoundStartedEvent,
   SkipTriggerEvent,
   Sticker,
+  StoryAdvancedEvent,
   TriggerEntry,
   TurnEndedEvent,
   TurnStartedEvent,
@@ -48,6 +50,7 @@ import {
   getEffectiveGlory,
   getInstancesTriggerEffects,
 } from '../cardHelpers';
+import { cardSelector } from '../cardSelector';
 import { DEFAULT_PARAMETERS } from '../emptyState';
 import { GameEventContext } from '../gameEvent/GameEventContext';
 import { canUseOptions, computeGameStateDiff } from '../gameStateHelper';
@@ -122,6 +125,7 @@ export class GameAggregate {
     deck: { id: number; cardId: number }[],
     stickerStock: Record<string, number>,
     discoveryPile: number[],
+    discoverablePile: number[],
     firstDrawPile?: number[],
   ): GameState {
     const event: GameStartedEvent = {
@@ -132,6 +136,7 @@ export class GameAggregate {
       deck,
       stickerStock,
       discoveryPile,
+      discoverablePile,
     };
     this.apply(event);
     this.events.push(event);
@@ -175,6 +180,56 @@ export class GameAggregate {
     return true;
   }
 
+  private isNegative(instanceId: number): boolean {
+    const instance = this.gameState.instances[instanceId];
+    return !!instance && getActiveState(instance, this.cardDefs).negative === true;
+  }
+
+  /** ON_PURGE_SELECTION triggers of the unselected cards; identical copies trigger once. */
+  private getPurgeSelectionTriggers(selectedIds: number[]): TriggerEntry[] {
+    const purgeState = this.gameState.purgeState;
+    if (!purgeState) return [];
+    const unselected = purgeState.shuffledPool
+      .filter(id => !selectedIds.includes(id))
+      .map(id => this.gameState.instances[id])
+      .filter(Boolean);
+    const seen = new Set<string>();
+    return getInstancesTriggerEffects(
+      unselected,
+      this.cardDefs,
+      this.stickerDefs,
+      Trigger.ON_PURGE_SELECTION,
+      this.gameState,
+    ).filter(({ effectDef }) => {
+      const key = JSON.stringify(effectDef.actionEffects);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  /** Keeps only the focused cards while the focus is not reached and the batch has some. */
+  private applyPurgeFocus(candidates: number[]): number[] {
+    const focus = this.gameState.purgeState?.focus;
+    if (!focus) return candidates;
+    const producers = new Set(
+      cardSelector(
+        {
+          scope: [TargetScope.DECK, TargetScope.DISCARD, TargetScope.BOARD],
+          produces: [focus.resource],
+        },
+        -1,
+        this.gameState,
+        this.cardDefs,
+        this.stickerDefs,
+      ),
+    );
+    const selected = this.gameState.purgeState?.selectedCardIds ?? [];
+    if (selected.filter(id => producers.has(id)).length >= focus.count) return candidates;
+    const focused = candidates.filter(id => producers.has(id));
+    return focused.length > 0 ? focused : candidates;
+  }
+
   private getCurrentBatchStartAndCandidates(): { batchStart: number; candidates: number[] } | null {
     const purgeState = this.gameState.purgeState;
     if (!purgeState) return null;
@@ -188,11 +243,14 @@ export class GameAggregate {
 
       const batch = purgeState.shuffledPool.slice(batchStart, batchStart + purgeState.batchSize);
       const candidates = batch.filter(
-        id => !purgeState.selectedCardIds.includes(id) && !this.gameState.purgedCards.includes(id),
+        id =>
+          !purgeState.selectedCardIds.includes(id) &&
+          !this.gameState.purgedCards.includes(id) &&
+          !this.isNegative(id),
       );
 
       if (candidates.length > 0) {
-        return { batchStart, candidates };
+        return { batchStart, candidates: this.applyPurgeFocus(candidates) };
       }
 
       batchStart += purgeState.batchSize;
@@ -275,12 +333,17 @@ export class GameAggregate {
       timestamp: Date.now(),
       expansionName,
       expansionMaxRound,
-      deckEntries: expansion.deck,
+      deckEntries: [...expansion.campaign, ...(expansion.discoverable ?? [])],
+      discoverableIds: expansion.discoverable?.map(entry => entry.id) ?? [],
+      expansion: expansion.expansion,
       purgeBatchSize: expansion.purge.purge,
       purgePermanentCount: expansion.purge.permanent,
       purgePool,
       parameterOverrides: expansion.parameters,
       onStartDiscoverIds: expansion.onStart?.discover?.ids ?? [],
+      addedStickers: expansion.stickers,
+      purgeFocus: expansion.purge.focus,
+      expansionDiscoveryFirst: true,
     };
 
     this.apply(event);
@@ -338,13 +401,16 @@ export class GameAggregate {
 
     if (!purgeState.onPurgeTriggered) {
       const selectedIds = this.getSelectedPurgeIds();
-      const triggers = getInstancesTriggerEffects(
-        selectedIds.map(id => this.gameState.instances[id]).filter(Boolean),
-        this.cardDefs,
-        this.stickerDefs,
-        Trigger.ON_PURGE,
-        this.gameState,
-      ).reduce(
+      const triggers = [
+        ...getInstancesTriggerEffects(
+          selectedIds.map(id => this.gameState.instances[id]).filter(Boolean),
+          this.cardDefs,
+          this.stickerDefs,
+          Trigger.ON_PURGE,
+          this.gameState,
+        ),
+        ...this.getPurgeSelectionTriggers(selectedIds),
+      ].reduce(
         (acc, { effectDef, sourceInstanceId }) => {
           acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
           return acc;
@@ -461,29 +527,33 @@ export class GameAggregate {
   /** `drawPile` replaces the shuffle (tutorial order); it is stored in the event like a shuffle. */
   public roundStarted(drawPile?: number[]): GameState {
     const round = this.gameState.round + 1;
-    const cardNumberToDiscover = this.getParameters().discoverPerRound;
+    const cardNumberToDiscover = round > 1 ? this.getParameters().discoverPerRound : 0;
+    // A game started with a single discovery pile keeps the former rules (EDR-045).
+    const twoPacks = this.gameState.discoverablePile !== undefined;
+    if (twoPacks && cardNumberToDiscover > 0 && this.gameState.discoveryPile.length === 0) {
+      // Nothing left to discover in the campaign pile: the campaign ends.
+      return this.endGame();
+    }
     const lastAddedCards: number[] = [];
-    if (round > 1) {
-      const discoveredCard = this.gameState.discoveryPile.slice(0, cardNumberToDiscover);
+    const discoveredCard = this.gameState.discoveryPile.slice(0, cardNumberToDiscover);
 
-      for (const cardId of discoveredCard) {
-        const cardInstance = this.gameState.instances[cardId];
-        const cardDef = this.cardDefs[cardInstance.cardId];
+    for (const cardId of discoveredCard) {
+      const cardInstance = this.gameState.instances[cardId];
+      const cardDef = this.cardDefs[cardInstance.cardId];
 
-        if (cardDef.parchmentCard) {
-          const parchEvent: ParchmentCardDiscoveredEvent = {
-            id: crypto.randomUUID(),
-            type: GameEventType.PARCHMENT_CARD_DISCOVERED,
-            timestamp: Date.now(),
-            cardInstanceId: cardId,
-          };
-          this.apply(parchEvent);
-          this.events.push(parchEvent);
-          return this.gameState;
-        }
-
-        lastAddedCards.push(cardId);
+      if (cardDef.parchmentCard) {
+        const parchEvent: ParchmentCardDiscoveredEvent = {
+          id: crypto.randomUUID(),
+          type: GameEventType.PARCHMENT_CARD_DISCOVERED,
+          timestamp: Date.now(),
+          cardInstanceId: cardId,
+        };
+        this.apply(parchEvent);
+        this.events.push(parchEvent);
+        return this.gameState;
       }
+
+      lastAddedCards.push(cardId);
     }
 
     const event: RoundStartedEvent = {
@@ -491,7 +561,8 @@ export class GameAggregate {
       type: GameEventType.ROUND_STARTED,
       timestamp: Date.now(),
       round,
-      lastAddedCards,
+      // With two packs, the discovery is its own event (STORY_ADVANCED) below.
+      lastAddedCards: twoPacks ? [] : lastAddedCards,
       newDrawPile:
         drawPile ??
         this.shuffle([
@@ -503,6 +574,17 @@ export class GameAggregate {
     };
     this.apply(event);
     this.events.push(event);
+
+    if (twoPacks && lastAddedCards.length > 0) {
+      const storyEvent: StoryAdvancedEvent = {
+        id: crypto.randomUUID(),
+        type: GameEventType.STORY_ADVANCED,
+        timestamp: Date.now(),
+        discoveredIds: lastAddedCards,
+      };
+      this.apply(storyEvent);
+      this.events.push(storyEvent);
+    }
     return this.gameState;
   }
 

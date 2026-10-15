@@ -1,3 +1,4 @@
+import { Dismissible } from './Dismissible';
 import { NewKingdomModal } from '@components/NewKingdomModal/NewKingdomModal';
 import type { Meta, StoryObj } from '@storybook/react-native';
 
@@ -8,6 +9,19 @@ const meta: Meta<typeof NewKingdomModal> = {
     onClose: { action: 'close' },
     onCreate: { action: 'create' },
   },
+  render: args => (
+    <Dismissible>
+      {close => (
+        <NewKingdomModal
+          {...args}
+          onClose={() => {
+            args.onClose();
+            close();
+          }}
+        />
+      )}
+    </Dismissible>
+  ),
 };
 
 export default meta;

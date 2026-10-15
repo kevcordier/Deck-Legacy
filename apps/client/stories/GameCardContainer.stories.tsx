@@ -3,10 +3,37 @@ import { GameCard } from '@components/GameCard/GameCard';
 import { Grid } from '@components/ui/Grid/Grid';
 import { GameProvider } from '@contexts/GameProvider';
 import { EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
+import type { ExpansionDeckEntry } from '@deck-legacy/engine/domain/types';
 import { CardPassives } from '@deck-legacy/engine/domain/types/effects';
+import { baseCampaignNames } from '@deck-legacy/game-data';
 import type { Meta, StoryObj } from '@storybook/react-native';
 
+const BASE_GAME = 'Base game';
+
+/** `expansion`: the expansion that brings the deck (absent for the base game and its campaigns). */
+type StoryDeck = { deck: ExpansionDeckEntry[]; expansion?: string };
+
+/** Decks per option: the base game, its mini campaigns, then the expansions. */
+const decks: Record<string, StoryDeck> = {
+  [BASE_GAME]: { deck: [...getStoryCatalog().campaign, ...getStoryCatalog().discoverable] },
+  ...Object.fromEntries(
+    Object.entries(getStoryCatalog().expansions)
+      .map(([name, config]) => {
+        const isCampaign = baseCampaignNames.includes(name);
+        const deck = [...config.campaign, ...(config.discoverable ?? [])];
+        return [
+          `${isCampaign ? 'Campaign' : 'Expansion'}: ${name}`,
+          { deck, expansion: config.expansion },
+          isCampaign,
+        ] as const;
+      })
+      .sort(([, , a], [, , b]) => Number(b) - Number(a))
+      .map(([label, config]) => [label, config]),
+  ),
+};
+
 type GameCardContainerProps = {
+  expansion: string;
   instanceId: number;
   stickers: Record<number, number[]>;
   trackProgress: number[];
@@ -25,7 +52,8 @@ type GameCardContainerProps = {
 const meta: Meta<GameCardContainerProps> = {
   title: 'Components/GameCard',
   argTypes: {
-    instanceId: { control: 'number', min: 1, max: 120 },
+    expansion: { control: 'select', options: Object.keys(decks) },
+    instanceId: { control: { type: 'number', min: 1, max: 120 } },
     wood: { control: 'number' },
     gold: { control: 'number' },
     stone: { control: 'number' },
@@ -36,6 +64,7 @@ const meta: Meta<GameCardContainerProps> = {
     isBlocked: { control: 'boolean' },
   },
   render: ({
+    expansion,
     instanceId,
     stickers = {},
     trackProgress = [],
@@ -54,15 +83,16 @@ const meta: Meta<GameCardContainerProps> = {
     const catalog = getStoryCatalog();
     const defs = catalog.cards;
 
-    const validCardId =
-      [
-        ...catalog.deck,
-        ...Object.values(catalog.expansions).flatMap(expansion => expansion.deck),
-      ].find(({ id }) => id === instanceId)?.cardId ?? 1;
+    // `instanceId` is the number printed on the card; one outside the deck shows its first card.
+    const { deck, expansion: cardExpansion } = decks[expansion] ?? decks[BASE_GAME];
+    const entry = deck.find(({ id, number }) => (number ?? id) === instanceId) ?? deck[0];
+    const validCardId = entry.cardId;
     const def = defs[validCardId];
     const instance = makeInstance({
-      id: instanceId,
+      id: entry.id,
       cardId: validCardId,
+      expansion: cardExpansion,
+      expansionId: cardExpansion ? (entry.number ?? entry.id) : undefined,
       stateId: 1,
       stickers,
       trackProgress,
@@ -73,6 +103,7 @@ const meta: Meta<GameCardContainerProps> = {
     return (
       <GameProvider
         key={JSON.stringify({
+          expansion,
           instanceId,
           isOnBoard,
           isBlocked,
@@ -112,6 +143,7 @@ type Story = StoryObj<GameCardContainerProps>;
 
 export const GameCardPreview: Story = {
   args: {
+    expansion: BASE_GAME,
     instanceId: 1,
     stickers: {},
     trackProgress: [],

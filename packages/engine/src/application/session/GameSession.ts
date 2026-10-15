@@ -25,7 +25,6 @@ import {
 } from '../cardHelpers';
 import { resolveCost } from '../costResolver';
 import { EMPTY_STATE } from '../emptyState';
-import { createInstance } from '../factory';
 import { mergeResources } from '../gameStateHelper';
 
 export type GameSessionOptions = {
@@ -256,21 +255,12 @@ export class GameSession {
   }
 
   private startNewGame(firstDrawPile?: number[]): GameState {
-    const deckEntries = [...this.catalog.deck].sort((a, b) => a.id - b.id);
-    const starterEntries = deckEntries.slice(0, 10);
-    const discoveryEntries = deckEntries.filter(e => e.id > 10);
-    const allInstances = [...starterEntries, ...discoveryEntries].map(entry =>
-      createInstance(
-        entry.id,
-        entry.cardId,
-        this.catalog.cards[entry.cardId].states[0].id,
-        this.catalog.cards,
-      ),
-    );
-    const initialDeck = starterEntries.map((_, i) => allInstances[i].id);
-    const discoveryPile = discoveryEntries.map(
-      (_, i) => allInstances[starterEntries.length + i].id,
-    );
+    // The starting deck is the first 10 cards of the campaign pack.
+    const campaignEntries = [...this.catalog.campaign].sort((a, b) => a.id - b.id);
+    const discoverableEntries = [...this.catalog.discoverable].sort((a, b) => a.id - b.id);
+    const initialDeck = campaignEntries.slice(0, 10).map(entry => entry.id);
+    const discoveryPile = campaignEntries.slice(10).map(entry => entry.id);
+    const discoverablePile = discoverableEntries.map(entry => entry.id);
 
     if (
       firstDrawPile &&
@@ -282,9 +272,10 @@ export class GameSession {
 
     return this.agg.gameStarted(
       initialDeck,
-      deckEntries,
+      [...campaignEntries, ...discoverableEntries],
       { ...this.catalog.stickerStock },
       discoveryPile,
+      discoverablePile,
       firstDrawPile,
     );
   }

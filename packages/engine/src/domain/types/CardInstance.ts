@@ -22,4 +22,8 @@ export type CardInstance = {
   removedResourcesByState?: Record<number, RemovedResourcesByScope>;
   /** Empty glory values */
   glories: number[];
+  /** Expansion that brought the card into the game; absent for the base game and its campaigns. */
+  expansion?: string;
+  /** Number printed on the card, scoped to its expansion (deck entry `number`). */
+  expansionId?: number;
 };

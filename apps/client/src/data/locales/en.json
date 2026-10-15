@@ -122,7 +122,7 @@
   },
   "cardPreview": {
     "viewAllStates": "View all states",
-    "statesMeta": "{{count}} states · #{{id}}"
+    "statesMeta": "{{count}} states ·"
   },
   "cardViewer": {
     "previous": "Previous card",
@@ -230,6 +230,10 @@
       "Border Dispute": {
         "title": "Border Dispute",
         "description": "This mini expansion introduces permanent card #138 (Border Dispute). It guiding you through 4 additional game rounds. You will perform a purge 12 and purge 1 permanent card. In these expansions, you do NOT discover 2 new cards at the start of the round. When done, add the score of this segment to your previous score, then choose the next expansion."
+      },
+      "Ridding the Woods": {
+        "title": "Ridding the Woods",
+        "description": "Robbers have settled in the woods around your kingdom. You will perform a purge 8 (focus 2 wood: while fewer than 2 purged cards produce wood, pick a wood producer when the batch has one) and purge 2 permanent cards, then play 5 additional rounds. At the start of each round, discover 5 cards from this expansion instead of 2. Defeat the enemies and lock up the prisoners. Add 6 \"+5 Glory\" stickers and 2 \"Empty Glory\" stickers to your stock. When done, add the score of this segment to your previous score, then choose the next expansion."
       }
     }
   },
@@ -323,6 +327,8 @@
     "title": "History",
     "gameStarted": "Game started",
     "roundStarted": "Round {{round}} started",
+    "storyAdvanced": "The story advances — {{count}} card discovered",
+    "storyAdvanced_other": "The story advances — {{count}} cards discovered",
     "turnStarted": "Turn {{turn}} — {{count}} card drawn",
     "turnStarted_other": "Turn {{turn}} — {{count}} cards drawn",
     "turnEnded": "Turn ended",

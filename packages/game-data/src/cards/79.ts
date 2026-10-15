@@ -38,6 +38,7 @@ export const backstabber: CardDef = {
         },
         {
           id: '79-1-2',
+          defeat: true,
           cost: {
             resources: [
               {

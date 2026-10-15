@@ -9,6 +9,8 @@ export type Cost = {
   destroy?: CardSelector;
   /** Cumulated resources or points to add (positive) or set (negative). */
   accumulated?: number;
+  /** Set on upgrade costs: resources reserved by RESTRICT_SPEND can pay them. */
+  forUpgrade?: boolean;
 };
 
 export type ResolvedCost = {

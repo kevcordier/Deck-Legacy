@@ -14,6 +14,7 @@ import type {
   ParchmentCardDiscoveredEvent,
   RoundEndedEvent,
   RoundStartedEvent,
+  StoryAdvancedEvent,
   TurnStartedEvent,
   UpgradeCardEvent,
 } from '@deck-legacy/engine/domain/types';
@@ -139,6 +140,12 @@ function EventRow({ event, gameState, defs }: EventRowProps) {
       color = 'text-base-primary';
       break;
     }
+    case GameEventType.STORY_ADVANCED:
+      label = t('history.storyAdvanced', {
+        count: (event as StoryAdvancedEvent).discoveredIds.length,
+      });
+      color = 'text-base-primary';
+      break;
     case GameEventType.SKIP_TRIGGER:
       label = t('history.skipTrigger');
       color = 'text-ink/60';

@@ -29,6 +29,7 @@ export const darkKnight: CardDef = {
       actions: [
         {
           id: '36-1-1',
+          defeat: true,
           cost: {
             resources: [
               {

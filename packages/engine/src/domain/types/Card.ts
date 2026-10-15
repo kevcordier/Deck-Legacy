@@ -14,7 +14,13 @@ export type Condition =
   | { type: 'resource'; resourceType: ResourceType; min?: number; max?: number }
   | { type: 'and'; conditions: Condition[] }
   | { type: 'or'; conditions: Condition[] }
-  | { type: 'not'; condition: Condition };
+  | { type: 'not'; condition: Condition }
+  // true while this expansion is played (selected and its score not saved yet)
+  | { type: 'expansionActive'; name: string }
+  // accumulation (`cumulated`) of the card owning the condition
+  | { type: 'accumulation'; min?: number; max?: number }
+  // the card owning the condition is one of the cards just played (drawn or played by an effect)
+  | { type: 'justPlayed' };
 
 export type CardDef = {
   id: number;
@@ -75,6 +81,11 @@ export type CardAction = {
   trigger?: Trigger;
   optional?: boolean;
   limitedTime?: number; // max number of uses for this action
+  condition?: Condition; // checked when the trigger fires, or before the action is used
+  defeat?: boolean; // the action defeats an enemy: fires ON_DEFEAT triggers once resolved
+  // the trigger also fires while this card is in play when a card matching this selector causes
+  // it (scope DRAWN = the cards just played, DISCARDED = the cards just discarded)
+  triggeredBy?: CardSelector;
 };
 
 export type ValuePerElement = {
@@ -82,6 +93,7 @@ export type ValuePerElement = {
   cards?: CardSelector;
   productionTotal?: ResourceType;
   accumulation?: boolean;
+  ownProduction?: boolean; // total production of the card itself
   deficitTarget?: number; // count = max(0, deficitTarget - actual_count)
 };
 
@@ -110,6 +122,7 @@ export type ActionEffect = {
   };
   sourceStepId?: number;
   repeat?: number | 'accumulation'; // number of times this action will be repeated
+  condition?: Condition; // checked when the effect resolves: skipped when it does not hold
 };
 
 export type Passive = {
@@ -117,14 +130,6 @@ export type Passive = {
   type: PassiveType;
   amount?: number;
   cards?: CardSelector;
-  trigger?: {
-    id: string;
-    type: Trigger;
-    cards?: CardSelector;
-    actions?: ActionEffect[];
-    having?: Having;
-    optional?: boolean;
-  };
   resources?: {
     gold?: number;
     wood?: number;

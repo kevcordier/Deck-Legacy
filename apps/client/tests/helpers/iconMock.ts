@@ -16,6 +16,7 @@ export const GoldIcon = Icon;
 export const GoodsIcon = Icon;
 export const IronIcon = Icon;
 export const PassifIcon = Icon;
+export const RiddingTheWoodsIcon = Icon;
 export const StoneIcon = Icon;
 export const TimeIcon = Icon;
 export const TriggerIcon = Icon;

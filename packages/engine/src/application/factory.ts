@@ -13,6 +13,7 @@ export function createInstance(
   cardId: number,
   stateId: number,
   defs: Record<number, CardDef>,
+  origin?: Pick<CardInstance, 'expansion' | 'expansionId'>,
 ): CardInstance {
   const def = defs[cardId];
   if (!def) throw new Error(`Card def not found: ${cardId}`);
@@ -28,5 +29,6 @@ export function createInstance(
     usedActionIds: [],
     removedResourcesByState: {},
     glories: [],
+    ...origin,
   };
 }
