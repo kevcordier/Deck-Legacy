@@ -210,7 +210,7 @@ Résolution
 Introduction de `expansionMaxRound` et remise à zéro de `round` et `turn` avant la purge lors du choix d'une extension.
 
 Comment l'éviter
-Avant d'implémenter une extension, écrire sa fiche de règles complète : mise en place, conditions de fin, score, transitions entre segments de campagne. Écrire les tests de scénario de fin de partie **avant** le code. C'est d'autant plus important que la `1.0.0` dépend des extensions manquantes (EDR-018).
+Avant d'implémenter une extension, écrire sa fiche de règles complète : mise en place, conditions de fin, score, transitions entre segments de campagne. Écrire les tests de scénario de fin de partie **avant** le code. C'est d'autant plus important que la `1.0.0` dépend d'un mécanisme d'extensions fiable (EDR-049).
 
 Temps perdu
 Environ une journée (deux remaniements sur deux jours consécutifs ; non mesuré précisément).

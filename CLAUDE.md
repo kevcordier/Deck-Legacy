@@ -18,7 +18,7 @@ Deck-Legacy turns an existing solo legacy deck-building board game into a free d
 - iOS and Android builds through Expo, for development and personal use (no store release).
 - An API for optional accounts: cross-device sync and leaderboard. The game never needs it to play.
 
-**Status.** `1.0.0-beta.3`. Version `1.0.0` ships when all missing expansions are implemented. The migration from the former Vite web app to the Expo monorepo is in progress (`chore/react-native-version`).
+**Status.** `1.0.0-beta.10`. Version `1.0.0` ships once the base game works well and the expansion mechanism is reliable; the missing expansions then arrive in minor versions (`1.x.0`) (EDR-049). The migration from the former Vite web app to the Expo monorepo is in progress (`chore/react-native-version`).
 
 **Layout.**
 

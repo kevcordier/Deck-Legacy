@@ -31,7 +31,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-015 | 2026-04-12 | Analyse qualité continue SonarCloud          | Active                                  |
 | EDR-016 | 2026-05-01 | Dépendances suivies par Dependabot           | Active                                  |
 | EDR-017 | 2026-05-13 | Tutoriel hors du journal d'événements        | Dépréciée par EDR-040                   |
-| EDR-018 | 2026-05-17 | Versions bêta en semver                      | Active                                  |
+| EDR-018 | 2026-05-17 | Versions bêta en semver                      | Dépréciée par EDR-049                   |
 | EDR-019 | 2026-05-19 | Illustrations hébergées dans le dépôt        | Active                                  |
 | EDR-020 | 2026-10-10 | Client Expo / React Native multiplateforme   | Active                                  |
 | EDR-021 | 2026-10-10 | Styles NativeWind (syntaxe Tailwind v3)      | Active                                  |
@@ -60,6 +60,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-046 | 2026-10-14 | Effet « avancer dans l'histoire »            | Active                                  |
 | EDR-047 | 2026-10-14 | Trois identifiants par carte d'extension     | Active                                  |
 | EDR-048 | 2026-10-14 | Suppression de l'effet « dernière manche »   | Active                                  |
+| EDR-049 | 2026-10-15 | Critère de sortie de la 1.0.0                | Active                                  |
 
 ---
 
@@ -494,7 +495,7 @@ Conséquences
 ID : EDR-018
 Date : 2026-05-17
 Titre : Versions bêta en semver
-Statut : Active
+Statut : Dépréciée par EDR-049
 
 Contexte
 Le jeu est devenu jouable de bout en bout ; une première version a été posée le 2026-05-17 (`1.0.0-beta.1`).
@@ -1289,3 +1290,30 @@ Conséquences
 
 - Les campagnes du jeu de base (Prosperity, The Water Mill, Border Dispute) n'ont pas d'`expansion` : leurs instances affichent leur `id`, leurs anciens événements se rejouent à l'identique.
 - Ridding the Woods : instances 139–167, cartes 122–149 (la 127, doublon du Bandit 124, a été retirée), numéros 1–29.
+
+---
+
+ID : EDR-049
+Date : 2026-10-15
+Titre : Critère de sortie de la 1.0.0
+Statut : Active
+Remplace : EDR-018
+
+Contexte
+EDR-018 liait la sortie de la `1.0.0` à l'implémentation de toutes les extensions manquantes, ce qui repousse la version stable sans rapport avec la stabilité du jeu.
+
+Problème
+Quand sortir la `1.0.0` ?
+
+Décision
+La `1.0.0` sort quand le mainteneur est sûr que le jeu de base fonctionne bien et que le mécanisme d'ajout d'extensions est fiable. Les extensions encore manquantes arrivent ensuite dans des versions mineures (`1.x.0`). Le reste d'EDR-018 est inchangé : pré-versions `1.0.0-beta.N` portées par les deux `package.json` alignés (préfixe `v` à la racine, pas dans le client).
+
+Alternatives rejetées
+
+- Attendre toutes les extensions (EDR-018) : la version stable dépend du volume de contenu, pas de la qualité du jeu.
+
+Conséquences
+
+- La décision de sortir la `1.0.0` revient au mainteneur ; il n'y a pas de liste de contrôle formelle.
+- Chaque nouvelle extension après la `1.0.0` incrémente la version mineure.
+- Ce qui déclenche une nouvelle bêta n'est toujours pas défini.
