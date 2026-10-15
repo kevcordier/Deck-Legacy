@@ -3,7 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover"
+    />
     <title>Deck Legacy</title>
     <!-- Without this link the browser asks for /favicon.ico at the domain root, outside the /Deck-Legacy base path. -->
     <link rel="icon" href="/Deck-Legacy/favicon.ico" />
@@ -13,7 +16,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Deck Legacy" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <!-- Content runs under the status bar (white text): the header pads itself with the top safe area, and the
+         page background matches the header so iOS has no light band to blend into it. -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="theme-color" content="#3b342a" />
     <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
     <style id="expo-reset">
@@ -21,6 +26,7 @@
       html,
       body {
         height: 100%;
+        background-color: #3b342a;
       }
       /* These styles disable body scrolling if you are using <ScrollView> */
       body {

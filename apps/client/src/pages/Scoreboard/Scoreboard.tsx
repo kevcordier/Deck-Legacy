@@ -5,7 +5,7 @@ import { RulesModal } from '@components/RulesModal/RulesModal';
 import { Button } from '@components/ui/Button/Button';
 import { Text, TextStyle } from '@components/ui/Text/Text';
 import { Title } from '@components/ui/Title/Title';
-import { FULL_SIZE, PAGE_BACKGROUND } from '@helpers/pageBackground';
+import { FULL_SIZE, PAGE_BACKGROUND, PAGE_EDGES } from '@helpers/pageBackground';
 import { api } from '@services/api';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -64,7 +64,7 @@ export function Scoreboard() {
       className="flex-1"
       imageStyle={FULL_SIZE}
     >
-      <SafeAreaView className="bg-background/80 flex-1">
+      <SafeAreaView edges={PAGE_EDGES} className="bg-background/80 flex-1">
         <Header onOpenRules={() => setRulesOpen(true)} onOpenOptions={() => setOptionsOpen(true)} />
 
         <ScrollView contentContainerClassName="w-full max-w-5xl gap-6 self-center p-4 lg:p-8">

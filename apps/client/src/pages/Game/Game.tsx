@@ -11,7 +11,7 @@ import { GameOverScreen } from '@components/ui/GameOverScreen/GameOverScreen';
 import { Text } from '@components/ui/Text/Text';
 import { TutorialProvider } from '@contexts/TutorialProvider';
 import { Phase } from '@deck-legacy/engine/domain/enums';
-import { FULL_SIZE, PAGE_BACKGROUND } from '@helpers/pageBackground';
+import { FULL_SIZE, PAGE_BACKGROUND, PAGE_EDGES } from '@helpers/pageBackground';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { syncNow } from '@services/sync';
@@ -62,7 +62,7 @@ export function Game() {
         className="flex-1"
         imageStyle={FULL_SIZE}
       >
-        <SafeAreaView className="bg-background/80 flex-1">
+        <SafeAreaView edges={PAGE_EDGES} className="bg-background/80 flex-1">
           <GameHeader />
           {isGamePlaying && <ResourceBar />}
           {isGamePlaying && <GameBoard />}
