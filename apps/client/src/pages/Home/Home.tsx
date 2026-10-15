@@ -7,6 +7,7 @@ import { RulesModal } from '@components/RulesModal/RulesModal';
 import { SignInForm } from '@components/SignInForm/SignInForm';
 import { Button } from '@components/ui/Button/Button';
 import { Divider } from '@components/ui/Divider/Divider';
+import { TrophyIcon } from '@components/ui/Icon/icon';
 import { TextInput } from '@components/ui/Input/TextInput';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text, TextStyle } from '@components/ui/Text/Text';
@@ -136,7 +137,7 @@ export function Home() {
               size="xs"
               title={t('scoreboard.title')}
             >
-              🏆
+              <TrophyIcon />
             </Button>
           )}
         </Header>
