@@ -22,6 +22,7 @@ import {
   GestureDetector,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type SheetName = 'draw' | 'discard' | 'destroyed';
 
@@ -77,6 +78,9 @@ export function GameBoard() {
   const { drawPile, discardPile, destroyedPile, purgedCards, instances } = gameState;
 
   const isDesktop = useIsDesktop();
+  // A bottom inset means a screen with rounded corners: they would cut buttons stuck to the edges.
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const roundedScreen = bottomInset > 0;
 
   const [openSheet, setOpenSheet] = useState<SheetName | null>(null);
   const [destroyedModalOpen, setDestroyedModalOpen] = useState(false);
@@ -260,13 +264,14 @@ export function GameBoard() {
 
       {!isDesktop && (
         <View
-          style={lockedPointer}
-          className="bg-background border-t-border z-10 flex-row items-center justify-between gap-1 border-t py-2"
+          // The footer owns the bottom safe area (the page skips it) so its color reaches the screen edge.
+          style={[lockedPointer, { paddingBottom: bottomInset + 8 }]}
+          className={`bg-background border-t-border z-10 flex-row items-center justify-between gap-1 border-t pt-2 ${roundedScreen ? 'px-4' : ''}`}
         >
           <TutorialTarget id="draw-mobile-button">
             <Button
               onPress={openDraw}
-              edge="left"
+              edge={roundedScreen ? undefined : 'left'}
               variant="outlined"
               color="ink"
               size="sm"
@@ -310,7 +315,7 @@ export function GameBoard() {
             <TutorialTarget id="discard-mobile-button">
               <Button
                 onPress={openDiscard}
-                edge="right"
+                edge={roundedScreen ? undefined : 'right'}
                 variant="outlined"
                 color="ink"
                 size="sm"

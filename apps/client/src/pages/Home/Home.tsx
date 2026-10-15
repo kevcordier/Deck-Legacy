@@ -7,13 +7,14 @@ import { RulesModal } from '@components/RulesModal/RulesModal';
 import { SignInForm } from '@components/SignInForm/SignInForm';
 import { Button } from '@components/ui/Button/Button';
 import { Divider } from '@components/ui/Divider/Divider';
+import { TrophyIcon } from '@components/ui/Icon/icon';
 import { TextInput } from '@components/ui/Input/TextInput';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text, TextStyle } from '@components/ui/Text/Text';
 import { Title } from '@components/ui/Title/Title';
 import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/api-contract';
 import { kingdomPath, maxKingdoms } from '@helpers/kingdom';
-import { FULL_SIZE, PAGE_BACKGROUND } from '@helpers/pageBackground';
+import { FULL_SIZE, PAGE_BACKGROUND, PAGE_EDGES } from '@helpers/pageBackground';
 import { useAuth } from '@hooks/useAuth';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useKingdoms } from '@hooks/useKingdoms';
@@ -124,7 +125,7 @@ export function Home() {
       className="flex-1"
       imageStyle={FULL_SIZE}
     >
-      <SafeAreaView className="bg-background/80 flex-1">
+      <SafeAreaView edges={PAGE_EDGES} className="bg-background/80 flex-1">
         <Header
           onOpenRules={() => setRulesOpen(true)}
           onOpenOptions={() => setOptionsTab('general')}
@@ -136,7 +137,7 @@ export function Home() {
               size="xs"
               title={t('scoreboard.title')}
             >
-              🏆
+              <TrophyIcon />
             </Button>
           )}
         </Header>
