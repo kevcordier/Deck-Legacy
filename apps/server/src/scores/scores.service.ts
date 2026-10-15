@@ -1,5 +1,6 @@
+import { toSegments } from '../games/games.repository';
 import { PrismaService } from '../prisma/prisma.service';
-import type { LeaderboardResponse, ScoreEntry } from '@deck-legacy/api-contract';
+import type { KingdomRanking, LeaderboardResponse, ScoreEntry } from '@deck-legacy/api-contract';
 import { Injectable } from '@nestjs/common';
 
 type ScoreWriter = Pick<PrismaService, 'score'>;
@@ -59,6 +60,29 @@ export class ScoresService {
       include: { user: { select: { displayName: true } } },
     });
     return { segment, entries: rows.map(toEntry) };
+  }
+
+  /** Kingdoms (non-abandoned games) of registered players with the best total score. */
+  async kingdomLeaderboard(limit: number): Promise<KingdomRanking[]> {
+    const rows = await this.prisma.game.findMany({
+      where: { status: { in: ['ACTIVE', 'FINISHED'] }, user: { isAnonymous: false } },
+      orderBy: [{ score: 'desc' }, { updatedAt: 'asc' }],
+      take: limit,
+      select: {
+        id: true,
+        name: true,
+        score: true,
+        segments: true,
+        user: { select: { displayName: true } },
+      },
+    });
+    return rows.map(row => ({
+      id: row.id,
+      name: row.name,
+      displayName: row.user.displayName,
+      score: row.score,
+      segments: toSegments(row.segments),
+    }));
   }
 
   async forUser(userId: string): Promise<ScoreEntry[]> {

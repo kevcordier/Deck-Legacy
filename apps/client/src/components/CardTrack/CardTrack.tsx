@@ -202,7 +202,7 @@ export function CardTrackStep({
   }
 
   const textSize = wide ? 'text-sm' : 'text-xs';
-  const costNode = <Text className={`text-base-ink ${textSize}`}>{cost}</Text>;
+  const costNode = <Text className={`text-ink-card ${textSize}`}>{cost}</Text>;
   const contentNode = <View className="items-center justify-center">{contents}</View>;
   let boxSize = 'size-8';
   if (track.vertical) boxSize = wide ? 'size-6' : 'size-5';
@@ -216,7 +216,7 @@ export function CardTrackStep({
       </View>
       <View
         accessibilityLabel={isValidated ? '✓' : undefined}
-        className={`shrink-0 items-center justify-center rounded-md border-2 ${boxSize} ${isValidated ? 'border-success bg-success/20' : 'bg-card border-base-ink'}`}
+        className={`shrink-0 items-center justify-center rounded-md border-2 ${boxSize} ${isValidated ? 'border-success bg-success/20' : 'bg-card border-ink-card'}`}
       >
         {track.inverse ? costNode : contentNode}
       </View>

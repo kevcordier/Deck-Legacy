@@ -1,20 +1,28 @@
 import { Header } from '@components/Header/Header';
 import { KingdomTable } from '@components/KingdomTable/KingdomTable';
+import { KingdomViewer } from '@components/KingdomViewer/KingdomViewer';
 import { NewKingdomModal } from '@components/NewKingdomModal/NewKingdomModal';
 import { OptionsModal, type OptionsTab } from '@components/OptionsModal/OptionsModal';
 import { RulesModal } from '@components/RulesModal/RulesModal';
 import { SignInForm } from '@components/SignInForm/SignInForm';
 import { Button } from '@components/ui/Button/Button';
 import { Divider } from '@components/ui/Divider/Divider';
+import { TextInput } from '@components/ui/Input/TextInput';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text, TextStyle } from '@components/ui/Text/Text';
 import { Title } from '@components/ui/Title/Title';
+import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/api-contract';
 import { kingdomPath, maxKingdoms } from '@helpers/kingdom';
 import { FULL_SIZE, PAGE_BACKGROUND } from '@helpers/pageBackground';
 import { useAuth } from '@hooks/useAuth';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useKingdoms } from '@hooks/useKingdoms';
-import { type KingdomMeta, abandonKingdom, createKingdom } from '@services/persistence';
+import {
+  type KingdomMeta,
+  abandonKingdom,
+  createKingdom,
+  renameKingdom,
+} from '@services/persistence';
 import { STORAGE_KEYS, storage } from '@services/storage';
 import { scheduleSync } from '@services/sync';
 import { randomUUID } from 'expo-crypto';
@@ -27,10 +35,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 /** First screen without an account: sign in, or play on this device only. */
 function Welcome({ onPlayOffline }: { readonly onPlayOffline: () => void }) {
   const { t } = useTranslation();
-  // `bg-card` keeps its color in every theme: use the fixed `base-*` colors on it.
+  // `bg-card` is light on the dark page: use `ink-card` and `base-primary` on it.
   return (
-    <View className="bg-card border-base-ink/30 w-full max-w-md gap-6 self-center rounded-lg border p-4 lg:p-6">
-      <TextStyle className="text-base-ink">
+    <View className="bg-card border-ink-card/30 w-full max-w-md gap-6 self-center rounded-lg border p-4 lg:p-6">
+      <TextStyle className="text-ink-card">
         <View className="gap-2">
           <Title level={2} className="text-base-primary">
             {t('home.welcomeTitle')}
@@ -38,12 +46,12 @@ function Welcome({ onPlayOffline }: { readonly onPlayOffline: () => void }) {
           <Text className="text-sm">{t('home.welcomeText')}</Text>
         </View>
         <SignInForm tone="card" />
-        <Divider color="base-ink" />
+        <Divider color="ink-card" />
         <View className="gap-2">
-          <Button size="md" color="base-ink" font="body" onPress={onPlayOffline}>
+          <Button size="md" color="ink-card" font="body" onPress={onPlayOffline}>
             {t('home.playOffline')}
           </Button>
-          <Text className="text-base-ink/70 text-xs">{t('home.playOfflineHint')}</Text>
+          <Text className="text-ink-card/70 text-xs">{t('home.playOfflineHint')}</Text>
         </View>
       </TextStyle>
     </View>
@@ -64,6 +72,9 @@ export function Home() {
   );
   const [creating, setCreating] = useState(false);
   const [toDelete, setToDelete] = useState<KingdomMeta | null>(null);
+  const [viewing, setViewing] = useState<KingdomMeta | null>(null);
+  const [toRename, setToRename] = useState<KingdomMeta | null>(null);
+  const [newName, setNewName] = useState('');
   const [rulesOpen, setRulesOpen] = useState(false);
   const [optionsTab, setOptionsTab] = useState<OptionsTab | null>(null);
 
@@ -86,6 +97,19 @@ export function Home() {
     router.push(kingdomPath(kingdom));
   };
 
+  const startRename = (kingdom: KingdomMeta) => {
+    setNewName(kingdom.name);
+    setToRename(kingdom);
+  };
+
+  const confirmRename = () => {
+    const name = newName.trim();
+    if (!toRename || name.length === 0) return;
+    renameKingdom(toRename.id, name);
+    scheduleSync();
+    setToRename(null);
+  };
+
   const confirmDelete = () => {
     if (!toDelete) return;
     abandonKingdom(toDelete.id);
@@ -104,21 +128,32 @@ export function Home() {
         <Header
           onOpenRules={() => setRulesOpen(true)}
           onOpenOptions={() => setOptionsTab('general')}
-        />
+        >
+          {accountsAvailable && (
+            <Button
+              onPress={() => router.push('/scoreboard')}
+              color="danger"
+              size="xs"
+              title={t('scoreboard.title')}
+            >
+              🏆
+            </Button>
+          )}
+        </Header>
 
         <ScrollView contentContainerClassName="w-full max-w-5xl gap-6 self-center p-4 lg:p-8">
           {showWelcome ? (
             <Welcome onPlayOffline={playOffline} />
           ) : (
-            // `bg-card` keeps its color in every theme: use the fixed `base-*` colors on it.
-            <View className="bg-card border-base-ink/30 gap-4 rounded-lg border p-4 lg:p-6">
-              <TextStyle className="text-base-ink">
+            // `bg-card` is light on the dark page: use `ink-card` and `base-primary` on it.
+            <View className="bg-card border-ink-card/30 gap-4 rounded-lg border p-4 lg:p-6">
+              <TextStyle className="text-ink-card">
                 <View className="flex-row flex-wrap items-center justify-between gap-3">
                   <View>
                     <Title level={2} className="text-base-primary">
                       {t('home.kingdoms')}
                     </Title>
-                    <Text className="text-base-ink/70 text-xs">
+                    <Text className="text-ink-card/70 text-xs">
                       {t('home.kingdomCount', { count: kingdoms.length, max: limit })}
                     </Text>
                   </View>
@@ -134,13 +169,13 @@ export function Home() {
                 </View>
 
                 {atLimit && (
-                  <Text className="text-base-ink/70 text-sm">
+                  <Text className="text-ink-card/70 text-sm">
                     {signedIn ? t('home.limitReached') : t('home.limitReachedGuest')}
                   </Text>
                 )}
 
                 {kingdoms.length === 0 ? (
-                  <View className="border-base-ink/30 items-center gap-2 rounded-lg border border-dashed p-8">
+                  <View className="border-ink-card/30 items-center gap-2 rounded-lg border border-dashed p-8">
                     <Text className="font-body-italic text-center">{t('home.empty')}</Text>
                     <Button
                       size="md"
@@ -155,6 +190,8 @@ export function Home() {
                   <KingdomTable
                     kingdoms={kingdoms}
                     onOpen={kingdom => router.push(kingdomPath(kingdom))}
+                    onView={setViewing}
+                    onRename={startRename}
                     onDelete={setToDelete}
                   />
                 )}
@@ -169,6 +206,50 @@ export function Home() {
             onClose={() => setCreating(false)}
             onCreate={create}
           />
+        )}
+
+        {viewing && <KingdomViewer kingdom={viewing} onClose={() => setViewing(null)} />}
+
+        {toRename && (
+          <Modal
+            title={t('kingdom.renameTitle')}
+            onClose={() => setToRename(null)}
+            footer={
+              <View className="flex-row justify-end gap-2">
+                <Button
+                  size="md"
+                  variant="text"
+                  color="ink"
+                  font="body"
+                  onPress={() => setToRename(null)}
+                >
+                  {t('kingdom.cancel')}
+                </Button>
+                <Button
+                  size="md"
+                  color="primary"
+                  font="body"
+                  disabled={newName.trim().length === 0}
+                  onPress={confirmRename}
+                >
+                  {t('kingdom.renameConfirm')}
+                </Button>
+              </View>
+            }
+          >
+            <View className="gap-2">
+              <Text className="text-sm">{t('kingdom.nameLabel')}</Text>
+              <TextInput
+                value={newName}
+                onChangeText={setNewName}
+                maxLength={KINGDOM_NAME_MAX_LENGTH}
+                autoFocus
+                returnKeyType="done"
+                onSubmitEditing={confirmRename}
+                className="min-h-11"
+              />
+            </View>
+          </Modal>
         )}
 
         {toDelete && (

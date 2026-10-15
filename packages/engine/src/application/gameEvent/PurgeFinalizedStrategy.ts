@@ -1,6 +1,6 @@
 import { Phase } from '../../domain/enums';
 import type { CardDef, GameEvent, GameState, PurgeFinalizedEvent } from '../../domain/types';
-import { getActiveState } from '../cardHelpers';
+import { getActiveState, isPermanent } from '../cardHelpers';
 import { syncInstancePassivesInBoardEffects } from '../gameStateHelper';
 import type { GameEventStrategy } from './GameEventStrategy';
 
@@ -31,7 +31,7 @@ export class PurgeFinalizedStrategy implements GameEventStrategy {
       if (!instance) continue;
       discoveredOnStart.push(cardId);
 
-      if (getActiveState(instance, this.defs).permanent) {
+      if (isPermanent(getActiveState(instance, this.defs))) {
         if (!newPermanents.includes(cardId)) {
           newPermanents.push(cardId);
         }

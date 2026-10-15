@@ -19,6 +19,7 @@ import {
   getEffectiveGlory,
   getEffectiveUpgradeCost,
   getProductionChoicesForAction,
+  isPermanent,
   tagClass,
 } from '@deck-legacy/engine/application/cardHelpers';
 import { getPickNumbers } from '@deck-legacy/engine/application/effectResolver';
@@ -158,7 +159,6 @@ export function GameCard({
   const cs = getActiveState(instance, defs);
   const def = defs[instance.cardId];
   const isEnemy = cs.negative === true;
-  const isPermanent = cs?.permanent;
   const isParchment = def?.parchmentCard ?? false;
   const productions =
     cs.productions?.flatMap(base =>
@@ -211,12 +211,12 @@ export function GameCard({
         disabled={!onPress}
         onLayout={event => setWidth(event.nativeEvent.layout.width)}
         style={{ aspectRatio: 3 / 5 }}
-        className={`bg-card relative w-full justify-between overflow-hidden border-[3px] shadow-lg ${size === 'lg' || width >= WIDE_CARD_MIN_WIDTH ? 'rounded-xl' : 'rounded-md'} ${isPermanent ? 'border-permanent border-t-4' : 'border-black/5'}`}
+        className={`bg-card relative w-full justify-between overflow-hidden border-[3px] shadow-lg ${size === 'lg' || width >= WIDE_CARD_MIN_WIDTH ? 'rounded-xl' : 'rounded-md'} ${isPermanent(cs) ? 'border-permanent border-t-4' : 'border-black/5'}`}
       >
-        <TextStyle className="text-base-ink font-body">
+        <TextStyle className="text-ink-card font-body">
           <View className={`border-b border-black/10 bg-black/5 ${sizes.header}`}>
             <View className="flex-row items-start justify-between gap-2">
-              <View className="min-w-0 flex-1 flex-row flex-wrap items-center gap-1">
+              <View className="min-w-0 flex-1 flex-row items-center gap-1">
                 {expansion && (
                   <ExpansionIcon
                     expansion={expansion}
@@ -240,7 +240,7 @@ export function GameCard({
                         value={name ?? ''}
                         onChangeText={setName}
                         onBlur={() => setCardName(instance.id, name ?? '')}
-                        className={`text-base-ink font-display w-0 min-w-8 flex-1 p-0 ${sizes.nameText} ${name ? '' : 'border-base-ink border-b'}`}
+                        className={`text-ink-card font-display w-0 min-w-8 flex-1 p-0 ${sizes.nameText} ${name ? '' : 'border-ink-card border-b'}`}
                         accessibilityLabel={t('card.name')}
                       />
                       <Text className={`font-display ${sizes.nameText}`}>{nameSuffix}</Text>
@@ -429,7 +429,7 @@ export function GameCard({
                         disabled={disabled}
                         accessibilityRole="button"
                         accessibilityState={{ disabled }}
-                        className={`${sizes.actionBox} active:bg-base-ink/20 ${disabled ? 'opacity-50' : ''}`}
+                        className={`${sizes.actionBox} active:bg-ink-card/20 ${disabled ? 'opacity-50' : ''}`}
                       >
                         <Text className={sizes.actionText}>
                           <CardStateTooltip

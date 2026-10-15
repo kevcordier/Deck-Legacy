@@ -994,7 +994,7 @@ describe('cardShouldStayInPlay', () => {
   it('returns true for permanent cards', () => {
     const inst = makeInstance({ id: 1, cardId: 1 });
     const defs: Record<number, CardDef> = {
-      1: { id: 1, name: 'P', states: [{ id: 1, name: 'S', permanent: true }] },
+      1: { id: 1, name: 'P', states: [{ id: 1, name: 'S', tags: [CardTag.PERMANENT] }] },
     };
     const gs = makeState({ instances: { 1: inst } });
     expect(cardShouldStayInPlay(1, gs, defs)).toBe(true);
@@ -1490,6 +1490,7 @@ describe('tagClass additional branches', () => {
 
   it('returns person class', () => {
     expect(tagClass('person', false)).toContain('border-tag-person');
+    expect(tagClass('permanent', false)).toContain('border-permanent');
   });
 
   it('returns seafaring class', () => {

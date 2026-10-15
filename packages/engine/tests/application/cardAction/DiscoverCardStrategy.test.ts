@@ -1,6 +1,6 @@
 import { makeInstance, makeState } from '../fixtures';
 import { DiscoverCardStrategy } from '@engine/application/cardAction/DiscoverCardStrategy';
-import { ActionEffectType } from '@engine/domain/enums';
+import { ActionEffectType, CardTag } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -8,7 +8,7 @@ const plainDef: CardDef = { id: 1, name: 'Plain', states: [{ id: 1, name: 'S' }]
 const permanentDef: CardDef = {
   id: 2,
   name: 'Perm',
-  states: [{ id: 1, name: 'S', permanent: true }],
+  states: [{ id: 1, name: 'S', tags: [CardTag.PERMANENT] }],
 };
 const permanentWithPassiveDef: CardDef = {
   id: 4,
@@ -17,7 +17,7 @@ const permanentWithPassiveDef: CardDef = {
     {
       id: 1,
       name: 'S',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       passives: [{ id: 'stay', type: 'STAY_IN_PLAY' as never }],
     },
   ],

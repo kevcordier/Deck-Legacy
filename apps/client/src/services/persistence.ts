@@ -42,6 +42,9 @@ export type KingdomSummary = {
   /** Cumulative score at the end of each campaign segment, in the order they were played. */
   segments: CampaignSegmentScore[];
   finished: boolean;
+  /** Missing for summaries saved before they were recorded, or freshly downloaded from the server. */
+  round?: number;
+  turn?: number;
 };
 
 export type KingdomMeta = {
@@ -110,6 +113,8 @@ function toSummary(value: unknown): KingdomSummary {
     score: typeof value.score === 'number' ? value.score : 0,
     segments: toSegments(value.segments),
     finished: value.finished === true,
+    ...(typeof value.round === 'number' && { round: value.round }),
+    ...(typeof value.turn === 'number' && { turn: value.turn }),
   };
 }
 
@@ -193,6 +198,22 @@ export function createKingdom(id: string, name: string): KingdomMeta {
   const kingdom: KingdomMeta = { id, name, createdAt: Date.now(), summary: EMPTY_SUMMARY };
   upsertKingdom(kingdom);
   return kingdom;
+}
+
+/** Renames a kingdom; a started one is marked dirty so the new name reaches the server. */
+export function renameKingdom(id: string, name: string): void {
+  const kingdom = getKingdom(id);
+  if (!kingdom) return;
+  upsertKingdom({ ...kingdom, name });
+  const save = loadSave(id);
+  // A later `savedAt` also tells a push in flight that the save changed meanwhile.
+  if (save) {
+    writeSave({
+      ...save,
+      savedAt: Math.max(Date.now(), save.savedAt + 1),
+      sync: { ...save.sync, dirty: true },
+    });
+  }
 }
 
 /** Removes a kingdom and its save from this device. */

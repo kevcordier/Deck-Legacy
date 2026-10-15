@@ -1,4 +1,4 @@
-import { ActionEffectType } from '@deck-legacy/engine/domain/enums';
+import { ActionEffectType, CardTag } from '@deck-legacy/engine/domain/enums';
 import type { CardDef } from '@deck-legacy/engine/domain/types';
 
 export const tradeRelations: CardDef = {
@@ -9,7 +9,7 @@ export const tradeRelations: CardDef = {
       id: 1,
       name: 'Trade Relations',
       illustration: 'cards/101_1.jpg',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       actions: [
         {
           id: '101-1-1',

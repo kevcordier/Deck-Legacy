@@ -99,8 +99,7 @@ export const keeperOfSecrets: CardDef = {
     {
       id: 3,
       name: 'Ether Connector',
-      tags: [CardTag.ARTIFACT],
-      permanent: true,
+      tags: [CardTag.ARTIFACT, CardTag.PERMANENT],
       illustration: 'cards/146_3.jpg',
       glory: { amount: 10 },
       passives: [{ id: '146-3-1', type: PassiveType.CANT_BE_DESTROYED }],

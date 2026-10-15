@@ -54,7 +54,6 @@ export type GloryDef = {
 export type CardState = {
   id: number;
   name: string;
-  permanent?: boolean;
   chooseName?: boolean; // if true, the player can choose a name on the card
   tags?: CardTag[];
   negative?: boolean;

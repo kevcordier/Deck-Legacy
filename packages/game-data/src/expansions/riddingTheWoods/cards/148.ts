@@ -1,4 +1,9 @@
-import { ActionEffectType, ResourceType, TargetScope } from '@deck-legacy/engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  ResourceType,
+  TargetScope,
+} from '@deck-legacy/engine/domain/enums';
 import type { CardDef, StepDef } from '@deck-legacy/engine/domain/types';
 
 // Same pattern as the base game Treasury (card 18)
@@ -31,7 +36,7 @@ export const woodsTreasury: CardDef = {
     {
       id: 1,
       name: 'Treasury',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       glory: { amount: 0, valuePerElement: { amount: 1, accumulation: true } },
       illustration: 'cards/148_1.jpg',
       actions: [fillTreasury('148-1-1')],
@@ -68,7 +73,7 @@ export const woodsTreasury: CardDef = {
     {
       id: 2,
       name: 'Famed Treasury',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       glory: { amount: 50, valuePerElement: { amount: 1, accumulation: true } },
       illustration: 'cards/148_2.jpg',
       actions: [fillTreasury('148-2-1')],

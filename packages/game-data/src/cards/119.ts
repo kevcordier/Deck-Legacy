@@ -31,9 +31,8 @@ export const prosperity: CardDef = {
     {
       id: 1,
       name: 'Prosperity',
-      tags: [CardTag.EVENT],
+      tags: [CardTag.EVENT, CardTag.PERMANENT],
       illustration: 'cards/119_1.webp',
-      permanent: true,
       passives: [
         {
           id: '119-1-1',
@@ -61,9 +60,8 @@ export const prosperity: CardDef = {
     {
       id: 2,
       name: 'Hoarding',
-      tags: [CardTag.EVENT],
+      tags: [CardTag.EVENT, CardTag.PERMANENT],
       illustration: 'cards/119_2.jpg',
-      permanent: true,
       actions: [
         {
           id: '119-2-1',
@@ -99,9 +97,8 @@ export const prosperity: CardDef = {
     {
       id: 3,
       name: 'Uprising',
-      tags: [CardTag.EVENT],
+      tags: [CardTag.EVENT, CardTag.PERMANENT],
       illustration: 'cards/119_3.jpg',
-      permanent: true,
       actions: [
         {
           id: '119-3-2',
@@ -153,9 +150,8 @@ export const prosperity: CardDef = {
     {
       id: 4,
       name: 'Royal Decree',
-      tags: [CardTag.EVENT],
+      tags: [CardTag.EVENT, CardTag.PERMANENT],
       illustration: 'cards/119_4.webp',
-      permanent: true,
       actions: [
         {
           id: '119-4-1',

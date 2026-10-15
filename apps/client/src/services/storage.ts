@@ -23,7 +23,6 @@ export const STORAGE_KEYS = {
   offline: 'deck_legacy_offline',
   pendingAbandons: 'deck_legacy_pending_abandons',
   lang: 'deck_legacy_lang',
-  theme: 'deck_legacy_theme',
   tutorial: 'deck_legacy_tutorial',
   /** Warn before progressing while resources are in play (`false` = disabled). */
   resourceWarning: 'deck_legacy_resource_warning',

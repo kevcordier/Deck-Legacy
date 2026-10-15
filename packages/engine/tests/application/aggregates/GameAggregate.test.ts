@@ -3,6 +3,7 @@ import { EMPTY_STATE, GameAggregate } from '@engine/application/aggregates/GameA
 import { ChooseActionEffectStrategy } from '@engine/application/playerChoice/ChooseActionEffectStrategy';
 import {
   ActionEffectType,
+  CardTag,
   GameEventType,
   PassiveType,
   PendingChoiceType,
@@ -50,7 +51,7 @@ const startOfTurnDef: CardDef = {
     {
       id: 1,
       name: 'S',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       actions: [{ id: 'st', actionEffects: [], trigger: Trigger.START_OF_TURN }],
     },
   ],
@@ -62,7 +63,7 @@ const unlimitedPermanentDef: CardDef = {
     {
       id: 1,
       name: 'S',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       actions: [
         {
           id: 'up-1',
@@ -392,7 +393,7 @@ describe('GameAggregate.turnEnded', () => {
         {
           id: 1,
           name: 'S',
-          permanent: true,
+          tags: [CardTag.PERMANENT],
           actions: [
             {
               id: 'up-2',
@@ -1100,7 +1101,7 @@ describe('GameAggregate.turnEnded – hasAvailableUnlimitedAction', () => {
         {
           id: 1,
           name: 'S',
-          permanent: true,
+          tags: [CardTag.PERMANENT],
           actions: [{ id: 'lu', unlimited: true, limitedTime: 1, actionEffects: [] }],
         },
       ],
@@ -1137,7 +1138,7 @@ describe('GameAggregate.turnEnded – hasAvailableUnlimitedAction', () => {
         {
           id: 1,
           name: 'S',
-          permanent: true,
+          tags: [CardTag.PERMANENT],
           actions: [{ id: 'fu', unlimited: true, actionEffects: [] }],
         },
       ],
@@ -1177,7 +1178,7 @@ describe('GameAggregate.turnEnded – hasAvailableUnlimitedAction', () => {
         {
           id: 1,
           name: 'S',
-          permanent: true,
+          tags: [CardTag.PERMANENT],
           actions: [
             {
               id: 'tu',
@@ -1221,7 +1222,7 @@ describe('GameAggregate.turnEnded – hasAvailableUnlimitedAction', () => {
         {
           id: 1,
           name: 'S',
-          permanent: true,
+          tags: [CardTag.PERMANENT],
           actions: [
             {
               id: 'la',
@@ -1266,7 +1267,7 @@ describe('GameAggregate.turnEnded – hasAvailableUnlimitedAction', () => {
         {
           id: 1,
           name: 'S',
-          permanent: true,
+          tags: [CardTag.PERMANENT],
           actions: [{ id: 'fu', unlimited: true, actionEffects: [] }],
         },
       ],
@@ -1302,7 +1303,7 @@ describe('GameAggregate.turnEnded – hasAvailableUnlimitedAction', () => {
     const noActionPermanentDef: CardDef = {
       id: 14,
       name: 'NoActionPermanent',
-      states: [{ id: 1, name: 'S', permanent: true }],
+      states: [{ id: 1, name: 'S', tags: [CardTag.PERMANENT] }],
     };
     const perm = makeInstance({ id: 1, cardId: 14, stateId: 1 });
     const nextCard = makeInstance({ id: 2, cardId: 1, stateId: 1 });

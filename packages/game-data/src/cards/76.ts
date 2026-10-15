@@ -33,7 +33,7 @@ export const buildAnArk: CardDef = {
       id: 1,
       name: 'Build an Ark',
       illustration: 'cards/76_1.jpg',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       actions: [
         {
           id: '76-1-1',

@@ -21,7 +21,7 @@ const TONES = {
     main: 'primary',
   },
   card: {
-    hint: 'text-base-ink/70',
+    hint: 'text-ink-card/70',
     main: 'base-primary',
   },
 } as const;

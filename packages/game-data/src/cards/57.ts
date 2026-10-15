@@ -60,9 +60,8 @@ export const sickness: CardDef = {
     {
       id: 2,
       name: 'Crippled',
-      tags: [CardTag.STATE],
+      tags: [CardTag.STATE, CardTag.PERMANENT],
       illustration: 'cards/57_2.jpg',
-      permanent: true,
       glory: { amount: -2 },
     },
     {

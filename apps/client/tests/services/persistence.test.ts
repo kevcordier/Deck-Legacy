@@ -11,6 +11,7 @@ import {
   loadSave,
   migrateLegacySave,
   parseSave,
+  renameKingdom,
   saveGame,
   setPendingAbandons,
   subscribeKingdoms,
@@ -104,6 +105,7 @@ describe('kingdoms', () => {
       'deck_legacy_kingdoms',
       JSON.stringify([
         { id: 'k1', summary: { segments: [{ segment: 'base', score: 3 }, { segment: 4 }] } },
+        { id: 'k3', summary: { round: 4, turn: 'x' } },
         42,
       ]),
     );
@@ -115,6 +117,7 @@ describe('kingdoms', () => {
       createdAt: 0,
       summary: { score: 0, segments: [{ segment: 'base', score: 3 }], finished: false },
     });
+    expect(getKingdom('k3')?.summary).toEqual({ ...EMPTY_SUMMARY, round: 4 });
   });
 
   it('reads an unreadable index as empty', () => {
@@ -137,6 +140,32 @@ describe('kingdoms', () => {
 
     expect(getKingdom('k1')).toBeNull();
     expect(getPendingAbandons()).toEqual(['k1']);
+  });
+});
+
+describe('renameKingdom', () => {
+  it('renames a kingdom and marks its save dirty', () => {
+    createKingdom('k1', 'Avalon');
+    saveGame('k1', events, {}, EMPTY_SUMMARY);
+    const before = loadSave('k1');
+    updateSyncInfo('k1', before?.savedAt ?? 0, { dirty: false, userId: 'u1', serverVersion: 1 });
+
+    renameKingdom('k1', 'Camelot');
+
+    expect(getKingdom('k1')?.name).toBe('Camelot');
+    expect(loadSave('k1')?.sync).toEqual({ dirty: true, userId: 'u1', serverVersion: 1 });
+    expect(loadSave('k1')?.savedAt).toBeGreaterThan(before?.savedAt ?? 0);
+  });
+
+  it('renames a kingdom without a save and ignores unknown ones', () => {
+    createKingdom('k1', 'Avalon');
+
+    renameKingdom('k1', 'Camelot');
+    renameKingdom('missing', 'Nowhere');
+
+    expect(getKingdom('k1')?.name).toBe('Camelot');
+    expect(loadSave('k1')).toBeNull();
+    expect(getKingdom('missing')).toBeNull();
   });
 });
 

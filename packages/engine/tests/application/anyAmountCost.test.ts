@@ -2,7 +2,7 @@ import { makeInstance, makeState } from './fixtures';
 import { GameAggregate } from '@engine/application/aggregates/GameAggregate';
 import { canAffordCost, getEffectiveActionCost } from '@engine/application/cardHelpers';
 import { fixResources, hasAnyAmountCost } from '@engine/application/resources';
-import { ActionEffectType, Phase, ResourceType, TargetScope } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, Phase, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardAction, CardDef, GameState } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -18,7 +18,7 @@ const depositAction: CardAction = {
 const depositDef: CardDef = {
   id: 1,
   name: 'Deposit',
-  states: [{ id: 1, name: 'S', permanent: true, actions: [depositAction] }],
+  states: [{ id: 1, name: 'S', tags: [CardTag.PERMANENT], actions: [depositAction] }],
 };
 
 function makeAggregate(goods: number) {

@@ -12,7 +12,7 @@ Arguments: `$ARGUMENTS` (card id and/or a description of the card; may be empty)
 
 Before writing code, make sure you know for **each state**: name, tags, productions, glory,
 actions (cost, effects, trigger, `unlimited`/`endsTurn`/`optional`), passives, upgrade paths,
-track steps, `permanent`, and the illustration file. Also: is it a parchment card
+track steps, the `PERMANENT` tag, and the illustration file. Also: is it a parchment card
 (`parchmentCard: true`, text in `texts.<cardId>`)? Where does it enter the game (initial
 deck, discovered later by id, or an expansion)?
 

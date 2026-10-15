@@ -1,4 +1,4 @@
-import { type CardTag, PassiveType, type ResourceType, TargetScope } from '../domain/enums';
+import { CardTag, PassiveType, type ResourceType, TargetScope } from '../domain/enums';
 import type {
   CardDef,
   CardInstance,
@@ -659,7 +659,7 @@ export function cardShouldStayInPlay(
   const instance = gameState.instances[instanceId];
   if (!instance) return false;
   const def = cardDefs[instance.cardId];
-  if (getActiveState(instance, cardDefs)?.permanent) return true;
+  if (isPermanent(getActiveState(instance, cardDefs))) return true;
   const state = def?.states.find(s => s.id === instance.stateId);
   if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
 
@@ -701,4 +701,9 @@ export function cardShouldStayInPlay(
   }
   const stickers = instance.stickers[instance.stateId] ?? [];
   return stickers.includes(STAYS_IN_PLAY_STICKER_ID);
+}
+
+/** A permanent card state: kept out of the deck, always active (`CardTag.PERMANENT`). */
+export function isPermanent(state: CardState | undefined): boolean {
+  return state?.tags?.includes(CardTag.PERMANENT) ?? false;
 }

@@ -104,6 +104,15 @@ export type LeaderboardResponse = {
   entries: ScoreEntry[];
 };
 
+/** A kingdom of a registered player on the kingdom leaderboard (`GET /scores/kingdoms`). */
+export type KingdomRanking = {
+  id: string;
+  name: string;
+  displayName: string | null;
+  score: number;
+  segments: CampaignSegmentScore[];
+};
+
 export type ApiErrorBody = {
   statusCode: number;
   code: ApiErrorCode;

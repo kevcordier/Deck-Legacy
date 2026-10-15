@@ -7,11 +7,11 @@ type TextInputProps = RNTextInputProps & {
 };
 
 export function TextInput({ className = '', tone = 'theme', ...rest }: TextInputProps) {
-  const border = tone === 'card' ? 'border-base-ink' : 'border-ink';
+  const border = tone === 'card' ? 'border-ink-card' : 'border-ink';
   return (
     <RNTextInput
       placeholderTextColor="#bda887"
-      className={`${border} font-body text-base-ink w-full bg-white rounded border px-2 py-1 text-base ${className}`}
+      className={`${border} font-body text-ink-card w-full bg-white rounded border px-2 py-1 text-base ${className}`}
       {...rest}
     />
   );

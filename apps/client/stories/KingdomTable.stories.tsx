@@ -35,6 +35,8 @@ const meta: Meta<typeof KingdomTable> = {
   ],
   argTypes: {
     onOpen: { action: 'open' },
+    onView: { action: 'view' },
+    onRename: { action: 'rename' },
     onDelete: { action: 'delete' },
   },
 };
@@ -48,4 +50,18 @@ export const OneKingdom: Story = { args: { kingdoms: [kingdom(0, 0)] } };
 
 export const TenKingdoms: Story = {
   args: { kingdoms: Array.from({ length: 10 }, (_, i) => kingdom(i, i % 4)) },
+};
+
+export const Scoreboard: Story = {
+  args: {
+    ranking: true,
+    onOpen: undefined,
+    onView: undefined,
+    onRename: undefined,
+    onDelete: undefined,
+    kingdoms: Array.from({ length: 5 }, (_, i) => ({
+      ...kingdom(4 - i, (4 - i) % 4),
+      player: ['Morgane', 'Arthur', 'Guenièvre', 'Merlin', 'Lancelot'][i],
+    })),
+  },
 };

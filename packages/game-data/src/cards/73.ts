@@ -1,4 +1,9 @@
-import { ActionEffectType, ResourceType, TargetScope } from '@deck-legacy/engine/domain/enums';
+import {
+  ActionEffectType,
+  CardTag,
+  ResourceType,
+  TargetScope,
+} from '@deck-legacy/engine/domain/enums';
 import type { CardDef, StepDef } from '@deck-legacy/engine/domain/types';
 
 const makeStep = (id: number, stone: number, cumulated: number): StepDef => ({
@@ -31,7 +36,7 @@ export const aPerfectTower: CardDef = {
       id: 1,
       name: 'A Perfect Tower',
       illustration: 'cards/73_1.jpg',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       glory: {
         amount: 0,
         valuePerElement: {

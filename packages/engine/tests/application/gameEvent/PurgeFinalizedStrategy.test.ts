@@ -1,6 +1,6 @@
 import { makeInstance, makeState } from '../fixtures';
 import { PurgeFinalizedStrategy } from '@engine/application/gameEvent/PurgeFinalizedStrategy';
-import { GameEventType, PassiveType, Phase } from '@engine/domain/enums';
+import { CardTag, GameEventType, PassiveType, Phase } from '@engine/domain/enums';
 import type { PurgeFinalizedEvent } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -14,7 +14,7 @@ describe('PurgeFinalizedStrategy', () => {
           {
             id: 1,
             name: 'Base',
-            permanent: true,
+            tags: [CardTag.PERMANENT],
             passives: [
               {
                 id: 'perm-parameter',
@@ -62,7 +62,7 @@ describe('PurgeFinalizedStrategy', () => {
       2: {
         id: 2,
         name: 'Non permanent',
-        states: [{ id: 1, name: 'Base', permanent: false }],
+        states: [{ id: 1, name: 'Base' }],
       },
     };
 
@@ -119,7 +119,7 @@ describe('PurgeFinalizedStrategy', () => {
           {
             id: 1,
             name: 'Base',
-            permanent: true,
+            tags: [CardTag.PERMANENT],
             passives: [{ id: 'perm', type: PassiveType.STAY_IN_PLAY }],
           },
         ],

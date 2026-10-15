@@ -1,6 +1,6 @@
 import { GameEventType, Trigger } from '../../domain/enums';
 import type { CardDef, GameEvent, GameState, Sticker, UpgradeCardEvent } from '../../domain/types';
-import { getActiveState, getInstancesTriggerEffects } from '../cardHelpers';
+import { getActiveState, getInstancesTriggerEffects, isPermanent } from '../cardHelpers';
 import {
   destroyCards,
   discardCards,
@@ -54,7 +54,7 @@ export class UpgradeCardEventStrategy implements GameEventStrategy {
     );
 
     let newState: GameState;
-    if (getActiveState(upgradedState.instances[e.cardInstanceId], this.cardDefs)?.permanent) {
+    if (isPermanent(getActiveState(upgradedState.instances[e.cardInstanceId], this.cardDefs))) {
       newState = {
         ...upgradedState,
         permanents: [...new Set([...upgradedState.permanents, e.cardInstanceId])],

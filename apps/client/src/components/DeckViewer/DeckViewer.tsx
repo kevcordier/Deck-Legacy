@@ -10,7 +10,7 @@ import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
 import { Title } from '@components/ui/Title/Title';
 import { getActiveState } from '@deck-legacy/engine/application/cardHelpers';
-import { CardTag } from '@deck-legacy/engine/domain/enums';
+import type { CardTag } from '@deck-legacy/engine/domain/enums';
 import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import { tCardTag } from '@helpers/cardI18n';
 import { useGame } from '@hooks/useGame';
@@ -118,6 +118,61 @@ export function DeckCardGrid({ cards }: { readonly cards: CardInstance[] }) {
   );
 }
 
+/** `DeckCardGrid` under a search field and a tag filter (tags of the given cards only). */
+export function FilterableCardGrid({ cards }: { readonly cards: CardInstance[] }) {
+  const { defs } = useGame();
+  const { t } = useTranslation();
+  const [cardFilter, setCardFilter] = useState<CardListFilter>({ search: '', tag: '' });
+
+  const cardFilterFn = (inst: CardInstance) => {
+    const cs = getActiveState(inst, defs);
+    return (
+      t(`names.${cs.name}`, { ns: 'cards' })
+        ?.toString()
+        .toLowerCase()
+        .includes(cardFilter.search.toLowerCase()) &&
+      (cardFilter.tag === '' || cs.tags?.includes(cardFilter.tag as CardTag))
+    );
+  };
+
+  const filteredCards = cards.filter(cardFilterFn);
+
+  const tagOptions = [
+    { label: t('cardList.allTags'), value: '' },
+    ...cards
+      .reduce<string[]>((acc, inst) => {
+        const cs = getActiveState(inst, defs);
+        cs.tags?.forEach(tag => {
+          if (!acc.includes(tag)) acc.push(tag);
+        });
+        return acc;
+      }, [])
+      .map(value => ({ label: tCardTag(t, value), value }))
+      .sort((a, b) => a.label.localeCompare(b.label)),
+  ];
+
+  return (
+    <>
+      <View className="gap-4 py-4 sm:flex-row sm:items-center">
+        <TextInput
+          value={cardFilter.search}
+          onChangeText={search => setCardFilter({ ...cardFilter, search })}
+          placeholder={t('cardList.searchPlaceholder')}
+          className="sm:flex-1"
+        />
+        <SelectInput
+          value={cardFilter.tag}
+          onChange={tag => setCardFilter({ ...cardFilter, tag })}
+          options={tagOptions}
+          className="sm:w-56"
+        />
+      </View>
+      <Divider color="gradient" orientation="horizontal" className="my-4" />
+      <DeckCardGrid cards={filteredCards} />
+    </>
+  );
+}
+
 export function DeckViewer({
   title,
   icon,
@@ -131,45 +186,14 @@ export function DeckViewer({
   deckName,
   stackCount = 0,
 }: DeckViewerProps) {
-  const { defs } = useGame();
   const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
-  const [cardFilter, setCardFilter] = useState<CardListFilter>({ search: '', tag: '' });
   const isLeft = variant === 'left';
   // Collapsed side columns only show their icon (former `@min-[10rem]` container query).
   const expanded = variant === 'full' || pinned === true;
 
-  const cardFilterFn = (inst: CardInstance) => {
-    const cs = getActiveState(inst, defs);
-    return (
-      t(`names.${cs.name}`, { ns: 'cards' })
-        ?.toString()
-        .toLowerCase()
-        .includes(cardFilter.search.toLowerCase()) &&
-      (cardFilter.tag === '' || cs.tags?.includes(cardFilter.tag as CardTag))
-    );
-  };
-
-  const filteredDeck = deck.filter(cardFilterFn);
-
   const openIcon = isLeft ? '▶︎' : '◀︎';
   const closeIcon = isLeft ? '◀︎' : '▶︎';
-
-  const tagOptions = [
-    { label: t('cardList.allTags'), value: '' },
-    ...deck
-      .reduce<string[]>((acc, inst) => {
-        const cs = getActiveState(inst, defs);
-        cs.tags?.forEach(tag => {
-          if (![CardTag.GOAL].includes(tag) && !acc.includes(tag)) {
-            acc.push(tag);
-          }
-        });
-        return acc;
-      }, [])
-      .map(value => ({ label: tCardTag(t, value), value }))
-      .sort((a, b) => a.label.localeCompare(b.label)),
-  ];
 
   const content = (
     <>
@@ -236,35 +260,17 @@ export function DeckViewer({
         <Modal
           title={t('deckViewer.title')}
           subtitle={t('deckViewer.modalSubtitle', { count: deck.length })}
-          onClose={() => {
-            setModalOpen(false);
-            setCardFilter({ search: '', tag: '' });
-          }}
+          onClose={() => setModalOpen(false)}
           label={deckName}
           // The draw pile slides in from the left, the discard (and destroyed) piles from the right.
           side={deckName === 'draw' ? 'left' : 'right'}
         >
-          <View className="gap-4 py-4 sm:flex-row sm:items-center">
-            <TextInput
-              value={cardFilter.search}
-              onChangeText={search => setCardFilter({ ...cardFilter, search })}
-              placeholder={t('cardList.searchPlaceholder')}
-              className="sm:flex-1"
-            />
-            <SelectInput
-              value={cardFilter.tag}
-              onChange={tag => setCardFilter({ ...cardFilter, tag })}
-              options={tagOptions}
-              className="sm:w-56"
-            />
-          </View>
-          <Divider color="gradient" orientation="horizontal" className="my-4" />
           {deck.length === 0 ? (
             <Text className="text-ink/50 font-body-italic p-2 text-center text-sm">
               {t('deckViewer.emptyDeck')}
             </Text>
           ) : (
-            <DeckCardGrid cards={filteredDeck} />
+            <FilterableCardGrid cards={deck} />
           )}
         </Modal>
       )}

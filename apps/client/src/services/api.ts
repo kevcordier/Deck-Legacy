@@ -2,6 +2,7 @@ import type {
   ApiErrorBody,
   GameExport,
   GameSummary,
+  KingdomRanking,
   SyncGameRequest,
   UserProfile,
 } from '@deck-legacy/api-contract';
@@ -68,4 +69,7 @@ export const api = {
   updateMe: (displayName: string) => request<UserProfile>('PATCH', '/me', { displayName }),
   /** Deletes the account and all its data (kingdoms, scores). */
   deleteMe: () => request<undefined>('DELETE', '/me'),
+
+  /** Kingdoms of registered players with the best total score. */
+  kingdomLeaderboard: () => request<KingdomRanking[]>('GET', '/scores/kingdoms'),
 };

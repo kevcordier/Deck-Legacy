@@ -21,7 +21,7 @@ export function Glory({ glory, className = 'size-10', textClassName = 'text-base
         className="absolute inset-0 size-full"
       />
       <Text
-        className={`font-display font-bold ${isNegative ? 'text-danger' : 'text-base-ink'} ${textClassName}`}
+        className={`font-display font-bold ${isNegative ? 'text-danger' : 'text-ink-card'} ${textClassName}`}
       >
         {glory ?? ''}
       </Text>

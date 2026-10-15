@@ -3,11 +3,11 @@ import { View } from 'react-native';
 
 type DividerProps = {
   readonly orientation?: 'vertical' | 'horizontal';
-  readonly color?: 'ink' | 'base-ink' | 'border' | 'gradient';
+  readonly color?: 'ink' | 'ink-card' | 'border' | 'gradient';
   readonly className?: string;
 };
 
-const BACKGROUND = { ink: 'bg-ink', 'base-ink': 'bg-base-ink', border: 'bg-border' } as const;
+const BACKGROUND = { ink: 'bg-ink', 'ink-card': 'bg-ink-card', border: 'bg-border' } as const;
 
 // Must stay in sync with `primary` in tailwind.config.js.
 const GRADIENT_COLOR = '#c79233';

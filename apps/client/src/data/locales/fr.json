@@ -250,10 +250,6 @@
   "options": {
     "title": "Options",
     "general": "Général",
-    "theme": "Thème",
-    "theme_light": "Clair",
-    "theme_dark": "Sombre",
-    "theme_system": "Système",
     "language": "Langue",
     "en": "Anglais",
     "fr": "Français",
@@ -431,9 +427,22 @@
     "validate": "Fonder le royaume",
     "cancel": "Annuler",
     "open": "Jouer à {{name}}",
-    "delete": "Supprimer {{name}}",
     "deleteTitle": "Supprimer le royaume",
     "deleteConfirm": "Supprimer « {{name}} » ? Sa partie sera supprimée sur tous vos appareils.",
-    "deleteConfirmButton": "Supprimer"
+    "deleteConfirmButton": "Supprimer",
+    "menu": "Actions pour {{name}}",
+    "view": "Voir le royaume",
+    "deleteAction": "Supprimer le royaume",
+    "rename": "Renommer le royaume",
+    "renameTitle": "Renommer le royaume",
+    "renameConfirm": "Renommer"
+  },
+  "scoreboard": {
+    "title": "Classement",
+    "subtitle": "Les royaumes des joueurs inscrits ayant les meilleurs scores.",
+    "player": "Joueur",
+    "anonymous": "Anonyme",
+    "empty": "Aucun royaume au classement pour l'instant.",
+    "loading": "Chargement…"
   }
 }

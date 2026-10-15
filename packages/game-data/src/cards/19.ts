@@ -14,7 +14,7 @@ export const exportation: CardDef = {
     {
       id: 1,
       name: 'Export',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       illustration: 'cards/19_1.jpg',
       actions: [
         {
@@ -193,7 +193,7 @@ export const exportation: CardDef = {
     {
       id: 2,
       name: 'Mass Export',
-      permanent: true,
+      tags: [CardTag.PERMANENT],
       glory: { amount: 25 },
       illustration: 'cards/19_2.jpg',
       actions: [

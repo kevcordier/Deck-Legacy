@@ -49,6 +49,7 @@ import {
   getEffectiveActionCost,
   getEffectiveGlory,
   getInstancesTriggerEffects,
+  isPermanent,
 } from '../cardHelpers';
 import { cardSelector } from '../cardSelector';
 import { DEFAULT_PARAMETERS } from '../emptyState';
@@ -159,7 +160,7 @@ export class GameAggregate {
     return cardIds.filter(cardId => {
       const instance = this.gameState.instances[cardId];
       if (!instance) return false;
-      return getActiveState(instance, this.cardDefs)?.permanent !== true;
+      return !isPermanent(getActiveState(instance, this.cardDefs));
     });
   }
 
@@ -169,8 +170,7 @@ export class GameAggregate {
 
     const state = getActiveState(instance, this.cardDefs);
     if (state.negative === true) return false;
-    if (requirePermanent && state.permanent !== true) return false;
-    if (!requirePermanent && state.permanent === true) return false;
+    if (requirePermanent !== isPermanent(state)) return false;
 
     // Règle de campagne: une carte portant CANT_BE_DESTROYED est toujours inéligible.
     if (state.passives?.some(passive => passive.type === PassiveType.CANT_BE_DESTROYED)) {

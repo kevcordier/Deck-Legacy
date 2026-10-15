@@ -9,8 +9,7 @@ export const expandingBorders: CardDef = {
     {
       id: 1,
       name: 'Expanding Borders',
-      permanent: true,
-      tags: [CardTag.GOAL],
+      tags: [CardTag.GOAL, CardTag.PERMANENT],
       illustration: 'cards/30_1.jpg',
       glory: {
         amount: 0,
@@ -24,8 +23,7 @@ export const expandingBorders: CardDef = {
     {
       id: 2,
       name: 'Maximizer',
-      permanent: true,
-      tags: [CardTag.GOAL],
+      tags: [CardTag.GOAL, CardTag.PERMANENT],
       illustration: 'cards/30_2.jpg',
       glory: {
         amount: 0,

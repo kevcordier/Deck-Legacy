@@ -12,7 +12,7 @@ type TagProps = {
 export function Tag({ label, className = 'bg-black/20', textClassName = '' }: TagProps) {
   return (
     <View className={`self-start rounded px-1 py-0.5 ${className}`}>
-      <TextStyle className="font-display text-base-ink text-xs">
+      <TextStyle className="font-display text-ink-card text-xs">
         <Text className={textClassName}>{label}</Text>
       </TextStyle>
     </View>

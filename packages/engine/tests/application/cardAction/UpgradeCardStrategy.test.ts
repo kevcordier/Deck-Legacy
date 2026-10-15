@@ -1,7 +1,7 @@
 import { makeDefs, makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { UpgradeCardStrategy } from '@engine/application/cardAction/UpgradeCardStrategy';
 import * as cardHelpers from '@engine/application/cardHelpers';
-import { ActionEffectType, PassiveType, Trigger } from '@engine/domain/enums';
+import { ActionEffectType, CardTag, PassiveType, Trigger } from '@engine/domain/enums';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('UpgradeCardStrategy', () => {
@@ -45,7 +45,7 @@ describe('UpgradeCardStrategy', () => {
     vi.spyOn(cardHelpers, 'getActiveState').mockImplementation(instance =>
       instance.stateId === 1
         ? { id: 1, name: 'State 1', upgrade: [{ cost: {}, upgradeTo: 2 }] }
-        : { id: 2, name: 'State 2', permanent: false },
+        : { id: 2, name: 'State 2' },
     );
     const result = strategyWithUpgrade.apply(gs, {
       id: 'x',
@@ -84,7 +84,7 @@ describe('UpgradeCardStrategy', () => {
   it('updates stateId and discards the card', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], instances: { 1: inst } });
-    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S', permanent: false });
+    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S' });
     const result = strategy.apply(gs, {
       id: 'x',
       type: ActionEffectType.UPGRADE_CARD,
@@ -100,7 +100,11 @@ describe('UpgradeCardStrategy', () => {
   it('moves card to permanents when new state is permanent', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], instances: { 1: inst } });
-    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S', permanent: true });
+    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({
+      id: 2,
+      name: 'S',
+      tags: [CardTag.PERMANENT],
+    });
     const result = strategy.apply(gs, {
       id: 'x',
       type: ActionEffectType.UPGRADE_CARD,
@@ -135,7 +139,7 @@ describe('UpgradeCardStrategy', () => {
         ? {
             id: 1,
             name: 'S1',
-            permanent: true,
+            tags: [CardTag.PERMANENT],
             passives: [
               {
                 id: 'old-passive',
@@ -147,7 +151,7 @@ describe('UpgradeCardStrategy', () => {
         : {
             id: 2,
             name: 'S2',
-            permanent: true,
+            tags: [CardTag.PERMANENT],
             passives: [
               {
                 id: 'new-passive',
@@ -178,7 +182,7 @@ describe('UpgradeCardStrategy', () => {
   it('removes card from permanents when upgraded to a non-permanent state', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ permanents: [1], instances: { 1: inst } });
-    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S', permanent: false });
+    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S' });
     const result = strategy.apply(gs, {
       id: 'x',
       type: ActionEffectType.UPGRADE_CARD,

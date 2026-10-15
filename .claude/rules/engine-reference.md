@@ -48,11 +48,12 @@ CardDef {
 CardState {
   id: number                  // unique state identifier
   name: string                // visual name of the state (not use in code, local string use instead)
-  permanent?: boolean         // stays on board instead of going to discard at the end of turn
   chooseName?: boolean        // if true, the player can choose a name on the card
   tags?: CardTag[]            // ARTIFACT | LAND | BUILDING | PERSON | EVENT | ENEMY | SEAFARING |
                               // GOAL | KNIGHT | ELDER | WALL | STATE | SHIP | ITEM | INVENTION |
-                              // POTION | LOOT | LIVESTOCK | HORSE | LADY | WAGON
+                              // POTION | LOOT | LIVESTOCK | HORSE | LADY | WAGON | PERMANENT
+                              // (PERMANENT: stays on board instead of going to discard
+                              // at the end of turn; check it with `isPermanent(state)`)
   negative?: boolean          // define if a card is an enemy
   productions?: Resources[]   // resources generated on production action
   glory?: GloryDef            // glory point definition (amount, condition, valuePerElement…)

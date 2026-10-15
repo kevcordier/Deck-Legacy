@@ -20,6 +20,7 @@ import {
   getEffectiveActionCost,
   getEffectiveUpgradeCost,
   getInstancesTriggerEffects,
+  isPermanent,
 } from '../cardHelpers';
 import { resolveCost } from '../costResolver';
 import { resolveActionEffect } from '../effectResolver';
@@ -685,7 +686,7 @@ export class CardActionAggregate {
     if (
       !this.triggerId &&
       !this.action.unlimited &&
-      !getActiveState(this.instance, this.cardDefs)?.permanent &&
+      !isPermanent(getActiveState(this.instance, this.cardDefs)) &&
       !this.def.parchmentCard
     ) {
       this.gameState = discardCards(

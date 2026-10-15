@@ -30,13 +30,13 @@ export function ResourceChoice({
             disabled={disabled}
             accessibilityRole="button"
             accessibilityState={{ disabled }}
-            className={`bg-card active:bg-base-ink/20 flex-row items-center gap-1 rounded-full p-2 shadow-sm ${disabled ? 'opacity-50' : ''}`}
+            className={`bg-card active:bg-ink-card/20 flex-row items-center gap-1 rounded-full p-2 shadow-sm ${disabled ? 'opacity-50' : ''}`}
           >
             {entries.map(([key, val]) =>
               val > 2 ? (
                 <View key={key} className="flex-row items-start">
                   <ResourcePill resource={key} className={pillClassName} />
-                  <Text className="font-display text-base-ink">x{val}</Text>
+                  <Text className="font-display text-ink-card">x{val}</Text>
                 </View>
               ) : (
                 Array.from({ length: val }, (_, j) => (

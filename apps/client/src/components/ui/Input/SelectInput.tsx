@@ -1,6 +1,4 @@
-import { Text } from '@components/ui/Text/Text';
-import { useState } from 'react';
-import { Modal, Pressable, ScrollView, View } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 type SelectInputProps<T extends string | number> = {
   readonly options: { label: string; value: T }[];
@@ -11,7 +9,7 @@ type SelectInputProps<T extends string | number> = {
   readonly disabled?: boolean;
 };
 
-/** Cross-platform select: a pressable field opening a list of options. */
+/** The platform's native select: `<select>` on the web, the system picker on iOS and Android. */
 export function SelectInput<T extends string | number>({
   options,
   value,
@@ -20,51 +18,23 @@ export function SelectInput<T extends string | number>({
   className = '',
   disabled = false,
 }: SelectInputProps<T>) {
-  const [open, setOpen] = useState(false);
-  const selected = options.find(option => option.value === value);
-
+  const selected = options.some(option => option.value === value);
   return (
-    <>
-      <Pressable
-        accessibilityRole="combobox"
-        accessibilityState={{ disabled, expanded: open }}
-        disabled={disabled}
-        onPress={() => setOpen(true)}
-        className={`border-ink flex-row items-center justify-between gap-2 rounded border bg-white px-2 py-1 ${disabled ? 'opacity-50' : ''} ${className}`}
-      >
-        <Text className="text-base-ink shrink text-sm" numberOfLines={1}>
-          {selected?.label ?? placeholder ?? ''}
-        </Text>
-        <Text className="text-base-ink text-xs">▾</Text>
-      </Pressable>
-
-      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-        <Pressable
-          className="flex-1 items-center justify-center bg-black/40 p-6"
-          onPress={() => setOpen(false)}
-          accessibilityRole="none"
-        >
-          <View className="bg-background border-border max-h-[70%] w-full max-w-sm rounded-xl border py-2">
-            <ScrollView>
-              {options.map(option => (
-                <Pressable
-                  key={String(option.value)}
-                  accessibilityRole="menuitem"
-                  onPress={() => {
-                    onChange(option.value);
-                    setOpen(false);
-                  }}
-                  className={`active:bg-primary/20 px-4 py-2 ${option.value === value ? 'bg-primary/10' : ''}`}
-                >
-                  <Text className={option.value === value ? 'text-primary' : ''}>
-                    {option.label}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </View>
-        </Pressable>
-      </Modal>
-    </>
+    <Picker
+      selectedValue={selected ? value : ''}
+      enabled={!disabled}
+      mode="dropdown"
+      // The web gives back strings: map the index to the typed value.
+      onValueChange={(_, index) => {
+        const option = options[selected || !placeholder ? index : index - 1];
+        if (option) onChange(option.value);
+      }}
+      className={`border-ink text-ink-card font-body min-h-8 rounded border bg-white px-2 py-1 text-sm ${disabled ? 'opacity-50' : ''} ${className}`}
+    >
+      {!selected && placeholder !== undefined && <Picker.Item label={placeholder} value="" />}
+      {options.map(option => (
+        <Picker.Item key={String(option.value)} label={option.label} value={option.value} />
+      ))}
+    </Picker>
   );
 }

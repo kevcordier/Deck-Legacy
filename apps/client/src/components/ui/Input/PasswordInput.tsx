@@ -30,9 +30,9 @@ export function PasswordInput({ className = '', tone = 'theme', ...rest }: Passw
         className="absolute bottom-0 right-0 top-0 w-11 items-center justify-center active:opacity-60"
       >
         {visible ? (
-          <EyeOffIcon className="text-base-ink size-5" />
+          <EyeOffIcon className="text-ink-card size-5" />
         ) : (
-          <EyeIcon className="text-base-ink size-5" />
+          <EyeIcon className="text-ink-card size-5" />
         )}
       </Pressable>
     </View>

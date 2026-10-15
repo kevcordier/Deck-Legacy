@@ -1,5 +1,5 @@
 import type { CardDef, GameState, ResolvedActionEffect } from '../../domain/types';
-import { getActiveState } from '../cardHelpers';
+import { getActiveState, isPermanent } from '../cardHelpers';
 import { removeFromDiscovery } from '../gameStateHelper';
 import type { CardActionStrategy } from './CardActionStrategy';
 
@@ -20,7 +20,7 @@ export class DiscoverCardStrategy implements CardActionStrategy {
       } else {
         gameState.lastAddedCards.push(instanceId);
 
-        if (getActiveState(gameState.instances[instanceId], this.cardDefs)?.permanent) {
+        if (isPermanent(getActiveState(gameState.instances[instanceId], this.cardDefs))) {
           gameState.permanents.push(instanceId);
           const passives = getActiveState(gameState.instances[instanceId], this.cardDefs)?.passives;
           if (passives) {
