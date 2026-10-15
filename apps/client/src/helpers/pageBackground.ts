@@ -8,3 +8,6 @@ export const FULL_SIZE = { width: '100%', height: '100%' } as const;
 
 /** Safe area edges of the page `SafeAreaView`: the top inset belongs to `Header`, so the status bar area matches it. */
 export const PAGE_EDGES = ['right', 'bottom', 'left'] as const;
+
+/** Edges of the game page on mobile: the bottom inset belongs to the `GameBoard` footer, like the top one to `Header`. */
+export const PAGE_EDGES_WITH_FOOTER = ['right', 'left'] as const;

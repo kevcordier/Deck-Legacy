@@ -11,9 +11,15 @@ import { GameOverScreen } from '@components/ui/GameOverScreen/GameOverScreen';
 import { Text } from '@components/ui/Text/Text';
 import { TutorialProvider } from '@contexts/TutorialProvider';
 import { Phase } from '@deck-legacy/engine/domain/enums';
-import { FULL_SIZE, PAGE_BACKGROUND, PAGE_EDGES } from '@helpers/pageBackground';
+import {
+  FULL_SIZE,
+  PAGE_BACKGROUND,
+  PAGE_EDGES,
+  PAGE_EDGES_WITH_FOOTER,
+} from '@helpers/pageBackground';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
+import { useIsDesktop } from '@hooks/useIsDesktop';
 import { syncNow } from '@services/sync';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -40,6 +46,7 @@ export function Game() {
   } = useGame();
   const { t } = useTranslation();
   const { setOptionsOpen, setRulesOpen, optionsOpen, rulesOpen } = useGameUI();
+  const isDesktop = useIsDesktop();
 
   const isGamePlaying =
     gameState.phase !== Phase.PRE_GAME &&
@@ -62,7 +69,10 @@ export function Game() {
         className="flex-1"
         imageStyle={FULL_SIZE}
       >
-        <SafeAreaView edges={PAGE_EDGES} className="bg-background/80 flex-1">
+        <SafeAreaView
+          edges={isGamePlaying && !isDesktop ? PAGE_EDGES_WITH_FOOTER : PAGE_EDGES}
+          className="bg-background/80 flex-1"
+        >
           <GameHeader />
           {isGamePlaying && <ResourceBar />}
           {isGamePlaying && <GameBoard />}
