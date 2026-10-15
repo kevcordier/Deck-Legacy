@@ -28,7 +28,6 @@
     "web": {
       "bundler": "metro",
       "output": "single",
-      "favicon": "./assets/icon-192x192.png",
       "name": "Deck Legacy",
       "shortName": "Deck Legacy",
       "description": "A Digital version of a well known legacy deck game",
