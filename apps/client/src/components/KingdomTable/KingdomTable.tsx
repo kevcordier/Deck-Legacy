@@ -5,6 +5,7 @@ import { Tooltip } from '@components/ui/Tooltip/Tooltip';
 import type { CampaignSegmentScore } from '@deck-legacy/api-contract';
 import { ExpansionIcon } from '@helpers/expansionIcon';
 import type { KingdomSummary } from '@services/persistence';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View, useWindowDimensions } from 'react-native';
 
@@ -52,23 +53,38 @@ function ExpansionScore({ segment }: { readonly segment: CampaignSegmentScore })
   );
 }
 
-/** "⋮" button opening a popover with the kingdom's actions (view its cards, rename it, delete it). */
-function KingdomMenu<T extends KingdomRow>({
+/**
+ * Button (by default "⋮") opening a popover with the kingdom's actions (view its cards, view its
+ * destroyed cards, rename it, delete it); only the given actions are listed.
+ */
+export function KingdomMenu<T extends KingdomRow>({
   kingdom,
   onView,
+  onViewDestroyed,
   onRename,
   onDelete,
+  className = 'min-h-11 min-w-11 items-center justify-center active:opacity-70',
+  children = <DotsVerticalIcon className="size-5" />,
 }: {
   readonly kingdom: T;
   readonly onView?: (kingdom: T) => void;
+  readonly onViewDestroyed?: (kingdom: T) => void;
   readonly onRename?: (kingdom: T) => void;
   readonly onDelete?: (kingdom: T) => void;
+  readonly className?: string;
+  readonly children?: ReactNode;
 }) {
   const { t } = useTranslation();
   const items = [
     { key: 'view', label: t('kingdom.view'), Icon: EyeIcon, action: onView },
     { key: 'rename', label: t('kingdom.rename'), Icon: PencilIcon, action: onRename },
     { key: 'delete', label: t('kingdom.deleteAction'), Icon: DestroyIcon, action: onDelete },
+    {
+      key: 'destroyed',
+      label: t('kingdom.destroyedCards'),
+      Icon: DestroyIcon,
+      action: onViewDestroyed,
+    },
   ];
   return (
     <Tooltip
@@ -76,7 +92,7 @@ function KingdomMenu<T extends KingdomRow>({
       position="bottom"
       maxWidth={MENU_WIDTH}
       accessibilityLabel={t('kingdom.menu', { name: kingdom.name })}
-      className="min-h-11 min-w-11 items-center justify-center active:opacity-70"
+      className={className}
       content={close =>
         items.map(
           ({ key, label, Icon, action }) =>
@@ -85,7 +101,7 @@ function KingdomMenu<T extends KingdomRow>({
                 key={key}
                 size="md"
                 variant="text"
-                color={key === 'delete' ? 'danger' : 'ink'}
+                color={key === 'delete' || key === 'destroyed' ? 'danger' : 'ink'}
                 font="body"
                 className="min-h-11 justify-start"
                 onPress={() => {
@@ -102,7 +118,7 @@ function KingdomMenu<T extends KingdomRow>({
         )
       }
     >
-      <DotsVerticalIcon className="size-5" />
+      {children}
     </Tooltip>
   );
 }

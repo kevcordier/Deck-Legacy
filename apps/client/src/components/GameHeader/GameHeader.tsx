@@ -1,20 +1,31 @@
+import { FilterableCardGrid } from '@components/DeckViewer/DeckViewer';
 import { GamePhaseActions } from '@components/GamePhaseActions/GamePhaseActions';
 import { Header } from '@components/Header/Header';
 import { HistoryDrawer } from '@components/HistoryDrawer/HistoryDrawer';
+import { KingdomMenu } from '@components/KingdomTable/KingdomTable';
+import { KingdomCards } from '@components/KingdomViewer/KingdomViewer';
+import { RenameKingdomModal } from '@components/RenameKingdomModal/RenameKingdomModal';
 import { Button } from '@components/ui/Button/Button';
-import { HistoryIcon } from '@components/ui/Icon/icon';
+import { ChevronDownIcon, HistoryIcon } from '@components/ui/Icon/icon';
+import { Modal } from '@components/ui/Modal/Modal';
+import { Text } from '@components/ui/Text/Text';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useIsDesktop } from '@hooks/useIsDesktop';
+import { useKingdoms } from '@hooks/useKingdoms';
 import { useTutorial } from '@hooks/useTutorial';
 import { useWebKeyDown } from '@hooks/useWebKeyDown';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/** Game page header: the shared `Header` with undo (button and Ctrl/Cmd+Z) and the phase actions. */
+/**
+ * Game page header: the shared `Header` with the kingdom name in the center (menu to view the
+ * kingdom, its destroyed cards or rename it), undo (button and Ctrl/Cmd+Z) and the phase actions.
+ */
 export function GameHeader() {
   const { t } = useTranslation();
   const {
+    id,
     progress,
     endTurnVoluntary,
     startTurn,
@@ -31,6 +42,14 @@ export function GameHeader() {
   const { run } = useTutorial();
   const isDesktop = useIsDesktop();
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [kingdomModal, setKingdomModal] = useState<'view' | 'destroyed' | 'rename' | null>(null);
+  // The session id is the kingdom id (none for a tutorial outside a kingdom).
+  const kingdom = useKingdoms().find(k => k.id === id);
+  const { destroyedPile, purgedCards, instances } = gameState;
+  const destroyedDeck = useMemo(
+    () => [...new Set([...destroyedPile, ...purgedCards])].map(i => instances[i]).filter(Boolean),
+    [destroyedPile, purgedCards, instances],
+  );
   const deckEmpty = gameState.drawPile.length === 0;
 
   const haveChoiceToDo =
@@ -65,7 +84,30 @@ export function GameHeader() {
   useWebKeyDown(onKeyDown);
 
   return (
-    <Header onOpenRules={() => setRulesOpen(true)} onOpenOptions={() => setOptionsOpen(true)}>
+    <Header
+      onOpenRules={() => setRulesOpen(true)}
+      onOpenOptions={() => setOptionsOpen(true)}
+      center={
+        kingdom && (
+          <KingdomMenu
+            kingdom={kingdom}
+            onView={() => setKingdomModal('view')}
+            onViewDestroyed={() => setKingdomModal('destroyed')}
+            onRename={() => setKingdomModal('rename')}
+            className="min-h-11 min-w-0 shrink items-center justify-center gap-1 px-2 active:opacity-70"
+          >
+            {/* Ellipsis (CSS `text-overflow` on the web) when the name is wider than the space. */}
+            <Text
+              numberOfLines={1}
+              className="font-deco text-primary shrink text-sm tracking-widest lg:text-md"
+            >
+              {isDesktop ? t('kingdom.titleOf', { name: kingdom.name }) : kingdom.name}
+            </Text>
+            <ChevronDownIcon className="text-primary size-4 shrink-0" />
+          </KingdomMenu>
+        )
+      }
+    >
       {canRewind() && (
         <Button
           onPress={() => rewindEvent()}
@@ -85,6 +127,22 @@ export function GameHeader() {
         <HistoryIcon />
       </Button>
       {historyOpen && <HistoryDrawer onClose={() => setHistoryOpen(false)} />}
+      {kingdom && kingdomModal === 'view' && (
+        <KingdomCards kingdom={kingdom} onClose={() => setKingdomModal(null)} />
+      )}
+      {kingdomModal === 'destroyed' && (
+        <Modal
+          title={t('deckViewer.destroyed')}
+          subtitle={t('deckViewer.modalSubtitle', { count: destroyedDeck.length })}
+          onClose={() => setKingdomModal(null)}
+          side="right"
+        >
+          <FilterableCardGrid cards={destroyedDeck} />
+        </Modal>
+      )}
+      {kingdom && kingdomModal === 'rename' && (
+        <RenameKingdomModal kingdom={kingdom} onClose={() => setKingdomModal(null)} />
+      )}
       {isDesktop && (
         <GamePhaseActions
           gameState={gameState}
