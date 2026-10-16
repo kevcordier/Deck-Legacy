@@ -17,7 +17,7 @@ import { useGame } from '@hooks/useGame';
 import { useIsDesktop } from '@hooks/useIsDesktop';
 import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 type CardListFilter = {
   search: string;
@@ -31,8 +31,6 @@ type DeckViewerProps = {
   readonly deck: CardInstance[];
   readonly displayedCards?: CardInstance[];
   readonly variant?: 'full' | 'left' | 'right';
-  readonly pinned?: boolean;
-  readonly onTogglePinned?: () => void;
   readonly footer?: ReactNode;
   readonly deckName?: 'draw' | 'discard' | 'destroyed';
   /** Cards of the pile under the displayed ones, drawn as a stack under the last card. */
@@ -50,9 +48,11 @@ const STACK_LAYER_HORIZONTAL_OFFSET = 1;
 function StackedCard({
   instance,
   stackCount,
+  onPress,
 }: {
   readonly instance: CardInstance;
   readonly stackCount: number;
+  readonly onPress: () => void;
 }) {
   const [width, setWidth] = useState(0);
   const layers = Math.min(MAX_STACK_LAYERS, Math.ceil(stackCount / CARDS_PER_STACK_LAYER));
@@ -79,7 +79,52 @@ function StackedCard({
           }}
         />
       ))}
-      <GameCard instance={instance} />
+      <GameCard instance={instance} onPress={onPress} />
+    </View>
+  );
+}
+
+/**
+ * Top cards of a pile, the last one stacked on the rest: in a column (side column) or a `row`
+ * (phone board). A tap zooms the card; the viewer only steps through the cards shown.
+ */
+export function PileTop({
+  cards,
+  stackCount,
+  row = false,
+}: {
+  readonly cards: CardInstance[];
+  readonly stackCount: number;
+  readonly row?: boolean;
+}) {
+  const [viewerCardId, setViewerCardId] = useState<number | null>(null);
+  return (
+    <View className={row ? 'flex-row items-start justify-center gap-2' : 'items-center gap-2 p-2'}>
+      {cards.map((inst, index) => {
+        const open = () => setViewerCardId(inst.id);
+        const card =
+          index === cards.length - 1 ? (
+            <StackedCard instance={inst} stackCount={stackCount} onPress={open} />
+          ) : (
+            <GameCard instance={inst} onPress={open} />
+          );
+        return row ? (
+          <View key={inst.id} className="max-w-56 flex-1">
+            {card}
+          </View>
+        ) : (
+          <View key={inst.id} className="w-full items-center">
+            {card}
+          </View>
+        );
+      })}
+      {viewerCardId !== null && (
+        <CardViewerModal
+          cardIds={cards.map(inst => inst.id)}
+          initialId={viewerCardId}
+          onClose={() => setViewerCardId(null)}
+        />
+      )}
     </View>
   );
 }
@@ -180,8 +225,6 @@ export function DeckViewer({
   deck,
   displayedCards,
   variant = 'full',
-  pinned,
-  onTogglePinned,
   footer,
   deckName,
   stackCount = 0,
@@ -189,35 +232,18 @@ export function DeckViewer({
   const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
   const isLeft = variant === 'left';
-  // Collapsed side columns only show their icon (former `@min-[10rem]` container query).
-  const expanded = variant === 'full' || pinned === true;
-
-  const openIcon = isLeft ? '▶︎' : '◀︎';
-  const closeIcon = isLeft ? '◀︎' : '▶︎';
 
   const content = (
     <>
       <View
         className={`border-b-border min-h-11 items-center justify-between gap-2 border-b p-2 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}
       >
-        {variant !== 'full' && (
-          <Pressable
-            onPress={onTogglePinned}
-            accessibilityRole="button"
-            accessibilityLabel={pinned ? t('deckViewer.unpinPanel') : t('deckViewer.pinPanel')}
-            className="px-1 active:opacity-60"
-          >
-            <Text className="text-ink/40 text-xs leading-none">
-              {pinned ? closeIcon : openIcon}
-            </Text>
-          </Pressable>
-        )}
         <View className="shrink flex-row items-center gap-2">
           <Title level={4}>
             {icon}
-            {expanded && ` ${title} (${deck.length})`}
+            {` ${title} (${deck.length})`}
           </Title>
-          {expanded && deck.length > 1 && (
+          {deck.length > 1 && (
             <Button onPress={() => setModalOpen(true)} size="xs" variant="text" color="ink">
               {t('deckViewer.viewAll')}
             </Button>
@@ -225,29 +251,14 @@ export function DeckViewer({
         </View>
       </View>
 
-      {expanded &&
-        (deck.length > 0
-          ? displayedCards &&
-            displayedCards.length > 0 && (
-              <View className="items-center gap-2 p-2">
-                {displayedCards.map((displayedCard, index) =>
-                  index === displayedCards.length - 1 ? (
-                    <StackedCard
-                      key={displayedCard.id}
-                      instance={displayedCard}
-                      stackCount={stackCount}
-                    />
-                  ) : (
-                    <GameCard key={displayedCard.id} instance={displayedCard} />
-                  ),
-                )}
-              </View>
-            )
-          : emptyText && (
-              <Text className="text-ink/50 font-body-italic p-2 text-center text-sm">
-                {emptyText}
-              </Text>
-            ))}
+      {deck.length > 0
+        ? displayedCards &&
+          displayedCards.length > 0 && <PileTop cards={displayedCards} stackCount={stackCount} />
+        : emptyText && (
+            <Text className="text-ink/50 font-body-italic p-2 text-center text-sm">
+              {emptyText}
+            </Text>
+          )}
     </>
   );
 

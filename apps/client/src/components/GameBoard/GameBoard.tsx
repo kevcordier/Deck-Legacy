@@ -1,12 +1,12 @@
 import { CardUpgradeReveal } from '@components/CardUpgradeReveal/CardUpgradeReveal';
 import { CheatPanel } from '@components/CheatPanel/CheatPanel';
-import { DeckCardGrid, DeckViewer } from '@components/DeckViewer/DeckViewer';
+import { DeckViewer, FilterableCardGrid } from '@components/DeckViewer/DeckViewer';
 import { GamePhaseActions } from '@components/GamePhaseActions/GamePhaseActions';
 import { MainBoard } from '@components/MainBoard/MainBoard';
 import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
-import { DestroyIcon, DiscardIcon, DrawCardIcon } from '@components/ui/Icon/icon';
+import { DiscardIcon, DrawCardIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
 import { Phase } from '@deck-legacy/engine/domain/enums';
@@ -24,7 +24,7 @@ import {
 } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-type SheetName = 'draw' | 'discard' | 'destroyed';
+type SheetName = 'draw' | 'discard';
 
 /** Width of the screen edges where a swipe opens the side sheets (px). */
 const EDGE_SWIPE_WIDTH = 20;
@@ -75,7 +75,7 @@ export function GameBoard() {
     upgradeReveal,
     dismissUpgradeReveal,
   } = useGame();
-  const { drawPile, discardPile, destroyedPile, purgedCards, instances } = gameState;
+  const { drawPile, discardPile, instances } = gameState;
 
   const isDesktop = useIsDesktop();
   // A bottom inset means a screen with rounded corners: they would cut buttons stuck to the edges.
@@ -83,7 +83,6 @@ export function GameBoard() {
   const roundedScreen = bottomInset > 0;
 
   const [openSheet, setOpenSheet] = useState<SheetName | null>(null);
-  const [destroyedModalOpen, setDestroyedModalOpen] = useState(false);
   // Pending choice modal hidden to look at the board: scrolling stays, card actions are locked.
   const choiceKey = pendingChoices?.[0]?.id ?? 'trigger';
   const [peekedKey, setPeekedKey] = useState<string | null>(null);
@@ -93,8 +92,6 @@ export function GameBoard() {
   // Tied to the choice: a new choice (or none) is never shown hidden.
   const peeking = choiceOpen && peekedKey === choiceKey;
   const lockedPointer = { pointerEvents: peeking ? 'none' : 'auto' } as const;
-  const [pinnedLeft, setPinnedLeft] = useState(true);
-  const [pinnedRight, setPinnedRight] = useState(true);
   const centerScrollRef = useRef<ScrollView>(null);
   const centerScrollYRef = useRef(0);
   const { registerScroller } = useTutorial();
@@ -128,11 +125,6 @@ export function GameBoard() {
     return [...discardPile].map(id => instances[id]).filter(Boolean);
   }, [discardPile, instances]);
 
-  const destroyedDeck = useMemo(() => {
-    const allDestroyedIds = [...new Set([...destroyedPile, ...purgedCards])];
-    return allDestroyedIds.map(id => instances[id]).filter(Boolean);
-  }, [destroyedPile, purgedCards, instances]);
-
   const deckEmpty = drawPile.length === 0;
   const haveChoiceToDo =
     (!!pendingChoices && pendingChoices.length > 0) ||
@@ -141,57 +133,16 @@ export function GameBoard() {
   const openDraw = () => setOpenSheet('draw');
   const openDiscard = () => setOpenSheet('discard');
 
-  const lastDiscarded = discardDeck.slice(-1);
-  const lastDestroyed = destroyedDeck.slice(-1);
-
-  const sheets: Record<
-    SheetName,
-    {
-      title: string;
-      icon: React.ReactNode;
-      deck: typeof drawDeck;
-      displayed: typeof drawDeck;
-      stackCount?: number;
-    }
-  > = {
-    draw: {
-      title: t('deckViewer.draw'),
-      icon: <DrawCardIcon className="size-4" />,
-      deck: drawDeck,
-      displayed: nextCards,
-      stackCount: drawPile.length - nextCards.length,
-    },
-    discard: {
-      title: t('deckViewer.discard'),
-      icon: <DiscardIcon className="size-4" />,
-      deck: discardDeck,
-      displayed: lastDiscarded,
-      stackCount: discardPile.length - 1,
-    },
-    destroyed: {
-      title: t('deckViewer.destroyed'),
-      icon: <DestroyIcon className="size-4" />,
-      deck: destroyedDeck,
-      displayed: lastDestroyed,
-    },
-  };
-
   return (
     <View className="flex-1 overflow-hidden">
       <View className="flex-1 flex-row items-stretch gap-1 overflow-hidden">
         {isDesktop && (
-          <TutorialTarget
-            id="draw-column"
-            className={pinnedLeft ? 'w-64' : 'w-[60px]'}
-            style={lockedPointer}
-          >
+          <TutorialTarget id="draw-column" className="w-64" style={lockedPointer}>
             <DeckViewer
               title={t('deckViewer.draw')}
               deckName="draw"
               icon={<DrawCardIcon className="size-4" />}
               emptyText={t('deckViewer.empty')}
-              pinned={pinnedLeft}
-              onTogglePinned={() => setPinnedLeft(p => !p)}
               deck={drawDeck}
               variant="left"
               displayedCards={nextCards}
@@ -219,44 +170,6 @@ export function GameBoard() {
             <EdgeSwipe side="left" onSwipe={openDraw} />
             <EdgeSwipe side="right" onSwipe={openDiscard} />
           </>
-        )}
-
-        {isDesktop && (
-          <TutorialTarget
-            id="discard-column"
-            className={pinnedRight ? 'w-64' : 'w-[60px]'}
-            style={lockedPointer}
-          >
-            <DeckViewer
-              title={t('deckViewer.discard')}
-              deckName="discard"
-              icon={<DiscardIcon className="size-4" />}
-              deck={discardDeck}
-              pinned={pinnedRight}
-              onTogglePinned={() => setPinnedRight(p => !p)}
-              variant="right"
-              displayedCards={lastDiscarded}
-              stackCount={discardPile.length - 1}
-              footer={
-                destroyedDeck.length > 0 ? (
-                  <TutorialTarget id="destroyed-button-desktop">
-                    <Button
-                      onPress={() => setDestroyedModalOpen(true)}
-                      variant="text"
-                      color="danger"
-                      size="xs"
-                      className="w-full"
-                    >
-                      <Text>
-                        <DestroyIcon className="size-4" />
-                        {pinnedRight && ` ${t('deckViewer.destroyed')} (${destroyedDeck.length})`}
-                      </Text>
-                    </Button>
-                  </TutorialTarget>
-                ) : null
-              }
-            />
-          </TutorialTarget>
         )}
       </View>
 
@@ -296,37 +209,20 @@ export function GameBoard() {
             variant="mobile"
           />
 
-          <View className="flex-row items-center gap-1">
-            {destroyedDeck.length > 0 && (
-              <TutorialTarget id="destroyed-button-mobile">
-                <Button
-                  onPress={() => setOpenSheet('destroyed')}
-                  variant="outlined"
-                  color="danger"
-                  size="sm"
-                  accessibilityLabel={t('deckViewer.destroyed')}
-                >
-                  <Text>
-                    <DestroyIcon className="size-4" /> ({destroyedDeck.length})
-                  </Text>
-                </Button>
-              </TutorialTarget>
-            )}
-            <TutorialTarget id="discard-mobile-button">
-              <Button
-                onPress={openDiscard}
-                edge={roundedScreen ? undefined : 'right'}
-                variant="outlined"
-                color="ink"
-                size="sm"
-                accessibilityLabel={t('deckViewer.discard')}
-              >
-                <Text>
-                  <DiscardIcon className="size-4" /> ({discardPile.length})
-                </Text>
-              </Button>
-            </TutorialTarget>
-          </View>
+          <TutorialTarget id="discard-mobile-button">
+            <Button
+              onPress={openDiscard}
+              edge={roundedScreen ? undefined : 'right'}
+              variant="outlined"
+              color="ink"
+              size="sm"
+              accessibilityLabel={t('deckViewer.discard')}
+            >
+              <Text>
+                <DiscardIcon className="size-4" /> ({discardPile.length})
+              </Text>
+            </Button>
+          </TutorialTarget>
         </View>
       )}
 
@@ -358,33 +254,31 @@ export function GameBoard() {
         />
       )}
 
-      {destroyedModalOpen && (
+      {openSheet === 'discard' && (
         <Modal
-          title={t('deckViewer.destroyed')}
-          subtitle={t('deckViewer.modalSubtitle', { count: destroyedDeck.length })}
-          onClose={() => setDestroyedModalOpen(false)}
+          title={t('deckViewer.discard')}
+          subtitle={t('deckViewer.modalSubtitle', { count: discardDeck.length })}
+          onClose={() => setOpenSheet(null)}
           side="right"
         >
-          <DeckCardGrid cards={destroyedDeck} />
+          <FilterableCardGrid cards={discardDeck} />
         </Modal>
       )}
 
-      {openSheet !== null && (
+      {openSheet === 'draw' && (
         <Modal
+          title={t('deckViewer.draw')}
+          subtitle={t('deckViewer.modalSubtitle', { count: drawDeck.length })}
           onClose={() => setOpenSheet(null)}
-          label="mobile-deck-viewer"
-          side={openSheet === 'draw' ? 'left' : 'right'}
+          side="left"
         >
-          <DeckViewer
-            variant="full"
-            deckName={openSheet}
-            icon={sheets[openSheet].icon}
-            title={sheets[openSheet].title}
-            emptyText={t('deckViewer.empty')}
-            deck={sheets[openSheet].deck}
-            displayedCards={sheets[openSheet].displayed}
-            stackCount={sheets[openSheet].stackCount}
-          />
+          {drawDeck.length === 0 ? (
+            <Text className="text-ink/50 font-body-italic p-2 text-center text-sm">
+              {t('deckViewer.emptyDeck')}
+            </Text>
+          ) : (
+            <FilterableCardGrid cards={drawDeck} />
+          )}
         </Modal>
       )}
     </View>

@@ -71,7 +71,7 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       },
       { target: 'draw-column', content: text('tutorial.interface.draw') },
       { target: 'draw-mobile-button', content: text('tutorial.interface.draw') },
-      { target: 'discard-column', content: text('tutorial.interface.discard') },
+      { target: 'discard-button-desktop', content: text('tutorial.interface.discard') },
       { target: 'discard-mobile-button', content: text('tutorial.interface.discard') },
       { target: 'resource-bar', content: text('tutorial.interface.resourceBar') },
       { target: 'board', content: text('tutorial.turn1.hand') },

@@ -4,9 +4,9 @@ import { HoverPressable } from '@components/ui/HoverPressable/HoverPressable';
 import {
   ActivatedIcon,
   DestroyIcon,
-  PassifIcon,
   TimeIcon,
   TriggerIcon,
+  UnlimitedIcon,
 } from '@components/ui/Icon/icon';
 import { TextInput } from '@components/ui/Input/TextInput';
 import { Modal } from '@components/ui/Modal/Modal';
@@ -46,12 +46,12 @@ function getActionIcon(
 ): ReactNode {
   if (hasDestroyItselfCost) return <DestroyIcon color="red" className={iconClass} />;
   if (action.endsTurn) return <TimeIcon className={iconClass} />;
-  if (action.unlimited) return <PassifIcon className={iconClass} />;
+  if (action.unlimited) return <UnlimitedIcon className={iconClass} />;
   return <ActivatedIcon className={iconClass} />;
 }
 
 function getTriggerIcon(action: CardAction, iconClass: string): ReactNode {
-  if (action.unlimited) return <PassifIcon className={iconClass} />;
+  if (action.unlimited) return <UnlimitedIcon className={iconClass} />;
 
   return action.optional ? (
     <TriggerIcon color="yellow" className={iconClass} />

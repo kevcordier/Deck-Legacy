@@ -14,7 +14,7 @@ type KingdomViewerProps = {
 };
 
 /** All the kingdom's cards in one list, sorted by id (hides the draw order), with search and tag filter. */
-function KingdomCards({ kingdom, onClose }: KingdomViewerProps) {
+export function KingdomCards({ kingdom, onClose }: KingdomViewerProps) {
   const { t } = useTranslation();
   const { gameState } = useGame();
   const { board, permanents, drawPile, discardPile, instances } = gameState;
@@ -25,7 +25,7 @@ function KingdomCards({ kingdom, onClose }: KingdomViewerProps) {
 
   return (
     <Modal
-      title={kingdom.name}
+      title={t('kingdom.titleOf', { name: kingdom.name })}
       subtitle={t('deckViewer.modalSubtitle', { count: cards.length })}
       onClose={onClose}
       wide

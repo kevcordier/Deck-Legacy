@@ -80,8 +80,6 @@
     "round": "Manche",
     "turn": "Tour",
     "noResources": "Aucune ressource",
-    "deck": "Pioche",
-    "discard": "Défausse",
     "glory": "Gloire",
     "baseSegment": "Jeu de base",
     "gloryTooltipTitle": "Scores de campagne",
@@ -182,9 +180,7 @@
     "modalSubtitle": "{{count}} carte",
     "modalSubtitle_other": "{{count}} cartes",
     "emptyDeck": "La pioche est vide",
-    "remainingCards": "Autres cartes",
-    "pinPanel": "Épingler le panneau",
-    "unpinPanel": "Désépingler le panneau"
+    "remainingCards": "Autres cartes"
   },
   "cardList": {
     "noCards": "Aucune carte",
@@ -292,7 +288,7 @@
       "production": "Certaines cartes possèdent une production : en défaussant la carte, vous gagnez ces ressources. La Forêt rapporte 1 {{wood}}.",
       "action": "{{action}} Certaines cartes ont des actions : en défaussant la carte, vous appliquez son effet. Celle-ci est gratuite : vous gagnez 3 {{wood}}, puis la Forêt devient une Forêt abattue.",
       "actionCost": "Certaines actions ont un coût à payer. Le Marchand, par exemple, échange 1 {{gold}} contre 1 {{wood}}.",
-      "otherEffects": "Vous croiserez d'autres icônes d'effet : {{time}} défausser la carte et finir le tour, {{passif}} effet toujours actif, {{destroy}} détruire la carte, {{trigger}} effet déclenché automatiquement. Les règles les détaillent toutes.",
+      "otherEffects": "Vous croiserez d'autres icônes d'effet : {{time}} défausser la carte et finir le tour, {{passif}} effet toujours actif, {{unlimited}} utilisable plusieurs fois, {{destroy}} détruire la carte, {{trigger}} effet déclenché automatiquement. Les règles les détaillent toutes.",
       "upgrade": "Certaines cartes peuvent être améliorées : en payant ce coût, la carte passe à un autre état. Avec 2 {{stone}}, la Forêt devient un Puits sacré.",
       "statePreview": "Touchez ici pour découvrir tous les états que la carte peut prendre."
     },
@@ -435,7 +431,9 @@
     "deleteAction": "Supprimer le royaume",
     "rename": "Renommer le royaume",
     "renameTitle": "Renommer le royaume",
-    "renameConfirm": "Renommer"
+    "renameConfirm": "Renommer",
+    "titleOf": "Royaume de {{name}}",
+    "destroyedCards": "Cartes détruites"
   },
   "scoreboard": {
     "title": "Classement",

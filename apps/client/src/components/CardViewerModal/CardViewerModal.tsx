@@ -159,10 +159,13 @@ export function CardViewerModal({ cardIds, initialId, onClose, title }: CardView
           card
         )}
         {hasNav && (
-          <View className="flex-row items-center gap-4">
+          <View className="w-full flex-row items-center gap-4">
+            {/* The empty space beside the buttons closes the viewer, like the backdrop. */}
+            <Pressable onPress={onClose} accessible={false} className="flex-1 self-stretch" />
             {navButton('previous')}
             {position}
             {navButton('next')}
+            <Pressable onPress={onClose} accessible={false} className="flex-1 self-stretch" />
           </View>
         )}
       </Modal>

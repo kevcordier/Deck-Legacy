@@ -11,12 +11,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 type HeaderProps = {
   readonly onOpenRules: () => void;
   readonly onOpenOptions: () => void;
+  /** Content centered in the header (e.g. the kingdom name). */
+  readonly center?: ReactNode;
   /** Page actions shown before the rules and options buttons. */
   readonly children?: ReactNode;
 };
 
 /** Page header shared by the home and game pages: logo, title, rules and options. */
-export function Header({ onOpenRules, onOpenOptions, children }: HeaderProps) {
+export function Header({ onOpenRules, onOpenOptions, center, children }: HeaderProps) {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
@@ -27,16 +29,26 @@ export function Header({ onOpenRules, onOpenOptions, children }: HeaderProps) {
         id="header"
         className="border-b-border flex-row items-center justify-between gap-2 border-b px-3 py-3 lg:px-6"
       >
-        <View className="shrink flex-row items-center gap-2">
+        {/* Desktop: both sides grow equally so the center content stays centered. Phone: the
+            center content follows the logo and shrinks (ellipsis) before the buttons. */}
+        <View className="min-w-0 flex-1 flex-row items-center gap-2">
           <Image
             source={logo}
             style={{ width: 32, height: 32 }}
             accessibilityLabel="Deck Legacy Logo"
           />
-          {isDesktop && <Title level={2}>{t('game.title')}</Title>}
+          {isDesktop ? <Title level={2}>{t('game.title')}</Title> : center}
         </View>
 
-        <View className="flex-row items-center gap-2">
+        {isDesktop && center}
+
+        <View
+          className={
+            isDesktop
+              ? 'flex-1 flex-row items-center justify-end gap-2'
+              : 'shrink-0 flex-row items-center gap-2'
+          }
+        >
           {children}
           <TutorialTarget id="rules-button">
             <Button onPress={onOpenRules} color="danger" size="xs" title={t('rules.open')}>

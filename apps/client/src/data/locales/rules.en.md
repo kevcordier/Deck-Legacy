@@ -41,7 +41,7 @@ Each turn starts by playing the top **4 cards** of your deck onto the board (all
 
 Then take actions in any order until your turn ends:
 
-| Action         | How                                                                                                                  |
+| **Action**     | **How**                                                                                                              |
 | -------------- | -------------------------------------------------------------------------------------------------------------------- |
 | **Produce**    | Tap a card's production: you gain its resources and the card is discarded. A card without production cannot produce. |
 | **Use effect** | Tap an effect of a card and pay its cost, if any (see _Effects_).                                                    |
@@ -55,11 +55,11 @@ A card discarded by another effect does not give its production.
 
 Resources are gained by producing and by some effects, and spent to pay costs. **All your resources are lost as soon as a new card enters play and at the end of the turn**: gain them only when you can spend them. The app warns you before you progress with unspent resources.
 
-|           | Resource  |            | Resource   |
-| --------- | --------- | ---------- | ---------- |
-| {{gold}}  | **Gold**  | {{weapon}} | **Weapon** |
-| {{wood}}  | **Wood**  | {{goods}}  | **Goods**  |
-| {{stone}} | **Stone** | {{iron}}   | **Iron**   |
+|           | **Resource** |            | **Resource** |
+| --------- | ------------ | ---------- | ------------ |
+| {{gold}}  | **Gold**     | {{weapon}} | **Weapon**   |
+| {{wood}}  | **Wood**     | {{goods}}  | **Goods**    |
+| {{stone}} | **Stone**    | {{iron}}   | **Iron**     |
 
 A slash (/) between resources means "or": you choose one of them.
 
@@ -76,9 +76,10 @@ A slash (/) between resources means "or": you choose one of them.
 
 Each effect starts with an icon telling how it is used:
 
-| Icon                | Effect                  | Use                                                                                      |
+| **Icon**            | **Effect**              | **Use**                                                                                  |
 | ------------------- | ----------------------- | ---------------------------------------------------------------------------------------- |
-| {{passif}}          | **Passive**             | Always applies, or may be used repeatedly without discarding the card.                   |
+| {{passif}}          | **Passive**             | Always applies.                                                                          |
+| {{unlimited}}       | **Unlimited**           | May be used repeatedly without discarding the card.                                      |
 | {{action}}          | **Activated**           | Discard the card to carry out the effect.                                                |
 | {{time}}            | **Time**                | Discard the card (unless it is permanent) and **end your turn** to carry out the effect. |
 | {{destroy}}         | **Destroy**             | Destroy the card to carry out the effect.                                                |
@@ -158,7 +159,7 @@ Red cards are **negative**, usually _Enemy_ or _Event_ cards; every other card i
 
 ## Card Keywords
 
-| Keyword           | Description                 |
+| **Keyword**       | **Description**             |
 | ----------------- | --------------------------- |
 | **Land**          | Basic territory cards       |
 | **Building**      | Infrastructure cards        |
