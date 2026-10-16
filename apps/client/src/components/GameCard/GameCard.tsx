@@ -315,6 +315,7 @@ export function GameCard({
                       <StickerDisplay
                         key={`${stickerId}-${index.toString()}`}
                         sticker={sticker}
+                        className={size === 'lg' ? undefined : 'size-8'}
                         large={size === 'lg'}
                       />
                     );

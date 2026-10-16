@@ -6,9 +6,11 @@ import {
   PassifIcon,
   TimeIcon,
   TriggerIcon,
+  UnlimitedIcon,
   UpgradeIcon,
 } from '@components/ui/Icon/icon';
 import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
+import { StickerDisplay } from '@components/ui/StickerDisplay/StickerDisplay';
 import { Tag } from '@components/ui/Tag/Tag';
 import { Text } from '@components/ui/Text/Text';
 import {
@@ -24,9 +26,9 @@ import {
   tagBorderClass,
 } from '@deck-legacy/engine/application/cardHelpers';
 import { canUseOptions } from '@deck-legacy/engine/application/gameStateHelper';
-import { Options, TargetScope } from '@deck-legacy/engine/domain/enums';
+import { Options, PassiveType, TargetScope } from '@deck-legacy/engine/domain/enums';
 import type { CardAction, CardInstance, StepDef } from '@deck-legacy/engine/domain/types';
-import { tCardName } from '@helpers/cardI18n';
+import { tCardName, tCardPassiveLabel } from '@helpers/cardI18n';
 import { getIllustrationSource } from '@helpers/illustrations';
 import { useGame } from '@hooks/useGame';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -104,7 +106,7 @@ function ActionBadges({
             <TimeIcon className="size-5" color={hasAvailableAction ? 'green' : 'gray'} />
           )}
           {actionIcon === 'unlimited' && (
-            <PassifIcon className="size-5" color={hasAvailableAction ? 'green' : 'gray'} />
+            <UnlimitedIcon className="size-5" color={hasAvailableAction ? 'green' : 'gray'} />
           )}
           {actionIcon === 'activated' && (
             <ActivatedIcon className="size-5" color={hasAvailableAction ? 'green' : 'gray'} />
@@ -138,17 +140,17 @@ function MiniTrack({
   readonly validatedSteps: number[];
 }) {
   return (
-    <View className="flex-row flex-wrap items-center justify-center gap-0.5">
+    <View className="flex-row flex-wrap items-center justify-center gap-1">
       {steps.map(step => {
         const isValidated = validatedSteps.includes(step.id);
         return (
           <View
             key={step.id}
-            className={`size-4 shrink-0 items-center justify-center rounded-sm border ${
+            className={`size-6 shrink-0 items-center justify-center rounded border ${
               isValidated ? 'border-success bg-success/20' : 'border-ink-card/70 bg-ink-card/10'
             }`}
           >
-            {isValidated && <Text className="text-success text-xs leading-none">✓</Text>}
+            {isValidated && <Text className="text-success text-base leading-none">✓</Text>}
           </View>
         );
       })}
@@ -225,7 +227,12 @@ export function MiniGameCard({
     action => !action.trigger && !destroyActions.includes(action),
   );
 
-  const hasPassive = (cs.passives?.length ?? 0) > 0;
+  // "Stays in play" is written on the card: the passive badge is for the other passives.
+  const stayInPlay = cs.passives?.find(p => p.type === PassiveType.STAY_IN_PLAY);
+  const hasPassive = cs.passives?.some(p => p.type !== PassiveType.STAY_IN_PLAY) ?? false;
+  const stickers = (instance.stickers[instance.stateId] ?? [])
+    .map(id => stickerDefs[id])
+    .filter(Boolean);
   const hasTrigger = triggerActions.length > 0;
   const hasDestroyAction = destroyActions.length > 0;
   const hasAction = regularActions.length > 0;
@@ -276,8 +283,28 @@ export function MiniGameCard({
           )}
           {hasGlory && <Glory glory={glory} className="size-8" textClassName="text-xs" />}
 
+          {stickers.length > 0 && (
+            <View className="w-full flex-row flex-wrap items-center gap-1">
+              {stickers.map((sticker, index) => (
+                <StickerDisplay
+                  key={`${sticker.id}-${index.toString()}`}
+                  sticker={sticker}
+                  className="size-7"
+                />
+              ))}
+            </View>
+          )}
+
           {/* Badges stack above the track so they never overlap. */}
           <View className="absolute inset-x-1 bottom-1 gap-1">
+            {stayInPlay && (
+              <View className="self-center rounded-lg bg-white/60 px-2 py-1">
+                <Text className="text-ink-card text-center text-sm">
+                  <PassifIcon className="text-ink-card size-4" />{' '}
+                  {tCardPassiveLabel(t, stayInPlay.id)}
+                </Text>
+              </View>
+            )}
             <ActionBadges
               hasPassive={hasPassive}
               hasTrigger={hasTrigger}
