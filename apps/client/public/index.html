@@ -28,6 +28,15 @@
         height: 100%;
         background-color: #3b342a;
       }
+      /* iOS 26 home screen app (black-translucent): 100% is short by the top safe area, which leaves a band at
+         the bottom, or at the top once iOS scrolls the page to fill it. 100lvh is the full screen there. */
+      @media (display-mode: standalone) {
+        html,
+        body {
+          height: 100lvh;
+          overflow: hidden;
+        }
+      }
       /* These styles disable body scrolling if you are using <ScrollView> */
       body {
         overflow: hidden;
