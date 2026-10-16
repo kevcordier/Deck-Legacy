@@ -3,7 +3,7 @@ import { useTextDefaults } from '@components/ui/Text/Text';
 import { textCategories } from '@helpers/textClasses';
 import type { ReactNode } from 'react';
 import { Platform, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, G, Line, Path, Polygon } from 'react-native-svg';
+import Svg, { Circle, Ellipse, G, Line, Path, Polygon, Rect } from 'react-native-svg';
 
 export interface IconProps {
   readonly color?: string;
@@ -60,6 +60,25 @@ export function ActivatedIcon({ color = 'green', className, style, alt }: IconPr
         clipRule="evenodd"
         d="M18.0183 8.17565C18.2525 8.40985 18.2525 8.78956 18.0183 9.02376L11.6861 15.356C10.8274 16.2147 9.43512 16.2147 8.57639 15.356L5.9757 12.7553C5.7415 12.5211 5.7415 12.1414 5.9757 11.9072C6.2099 11.673 6.58961 11.673 6.82381 11.9072L9.4245 14.5078C9.81483 14.8982 10.4477 14.8982 10.838 14.5078L17.1702 8.17565C17.4044 7.94145 17.7841 7.94145 18.0183 8.17565Z"
         fill="white"
+      />
+    </SvgIcon>
+  );
+}
+
+/** Action that may be used repeatedly: the activated square with a loop instead of the check. */
+export function UnlimitedIcon({ color = 'green', className, style, alt }: IconProps) {
+  return (
+    <SvgIcon viewBox="0 0 24 24" fill="none" className={className} style={style} alt={alt}>
+      <Path
+        fill={color}
+        d="M1.25 7.25C1.25 3.93629 3.93629 1.25 7.25 1.25H16.75C20.0637 1.25 22.75 3.93629 22.75 7.25V16.75C22.75 20.0637 20.0637 22.75 16.75 22.75H7.25C3.93629 22.75 1.25 20.0637 1.25 16.75V7.25Z"
+      />
+      <Path
+        stroke="white"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M17 12a5 5 0 1 1-1.46-3.54M17 6.5v3h-3"
       />
     </SvgIcon>
   );
@@ -143,178 +162,183 @@ export function TimeIcon({ color = 'currentColor', className, style, alt }: Icon
   );
 }
 
+/** Outline of the resource and trigger icons: keeps them readable on any card or background. */
+const OUTLINE = '#1c1408';
+const OUTLINE_WIDTH = 1.2;
+/** Relief drawn over the main color, so it works with any `color` (e.g. greyed out). */
+const SHINE = 'rgba(255,255,255,0.45)';
+const SHADE = 'rgba(0,0,0,0.3)';
+
 export function TriggerIcon({ color = 'currentColor', className, style, alt }: IconProps) {
   return (
-    <SvgIcon viewBox="0 0 512 512" className={className} style={style} alt={alt}>
+    // Room around the bolt for its outline (the viewBox is 512 wide: 24 px ≈ 21 units per px).
+    <SvgIcon viewBox="-24 -24 560 560" className={className} style={style} alt={alt}>
       <Polygon
         fill={color}
+        stroke={OUTLINE}
+        strokeWidth={28}
+        strokeLinejoin="round"
         points="386.415,193.208 287.481,193.208 359.434,0 161.566,0 125.585,280.151 206.528,280.151 170.557,512"
       />
     </SvgIcon>
   );
 }
 
+/** Log seen from its cut end: bark, rings and a lighter cut face. */
 export function WoodIcon({ color = IconColors.wood, className, style, alt }: IconProps) {
   return (
-    <SvgIcon viewBox="1 1 22 22" fill="none" className={className} style={style} alt={alt}>
-      <Circle
-        stroke={color}
-        strokeMiterlimit={10}
-        strokeWidth="1.88"
-        cx="6.82"
-        cy="17.18"
-        r="5.32"
-      />
-      <Circle
-        stroke={color}
-        strokeMiterlimit={10}
-        strokeWidth="1.88"
-        cx="6.82"
-        cy="17.18"
-        r="2.35"
+    <SvgIcon viewBox="0 0 24 24" className={className} style={style} alt={alt}>
+      <Path
+        fill={color}
+        stroke={OUTLINE}
+        strokeWidth={OUTLINE_WIDTH}
+        strokeLinejoin="round"
+        d="M6.5 4.5h12a4 7.5 0 0 1 0 15h-12z"
       />
       <Path
-        stroke={color}
-        strokeMiterlimit={10}
-        strokeWidth="1.88"
-        d="M20.94,10.59,10.59,20.94a5.32,5.32,0,0,0-7.53-7.53L13.41,3.06a5.32,5.32,0,0,1,7.53,7.53Z"
+        stroke={SHADE}
+        strokeWidth={1}
+        strokeLinecap="round"
+        d="M11 8.5h6.5M12.5 15.5h5.5M10.5 12h3"
       />
-      <Line
-        stroke={color}
-        strokeMiterlimit={10}
-        strokeWidth="1.88"
-        x1="9.35"
-        y1="12.41"
-        x2="12.79"
-        y2="8.97"
+      <Ellipse cx="6.5" cy="12" rx="5" ry="7.5" fill={color} />
+      <Ellipse
+        cx="6.5"
+        cy="12"
+        rx="5"
+        ry="7.5"
+        fill={SHINE}
+        stroke={OUTLINE}
+        strokeWidth={OUTLINE_WIDTH}
       />
-      <Line
-        stroke={color}
-        strokeMiterlimit={10}
-        strokeWidth="1.88"
-        x1="21.94"
-        y1="4.36"
-        x2="18.18"
-        y2="8.12"
-      />
-      <Line
-        stroke={color}
-        strokeMiterlimit={10}
-        strokeWidth="1.88"
-        x1="13.73"
-        y1="13.18"
-        x2="17.06"
-        y2="9.85"
-      />
-      <Line
-        stroke={color}
-        strokeMiterlimit={10}
-        strokeWidth="1.88"
-        x1="15.76"
-        y1="5.41"
-        x2="19.06"
-        y2="2.12"
-      />
+      <Ellipse cx="6.5" cy="12" rx="2.8" ry="4.3" fill="none" stroke={SHADE} strokeWidth={0.9} />
+      <Circle cx="6.5" cy="12" r="1" fill={SHADE} />
     </SvgIcon>
   );
 }
 
+/** Coin with a raised rim, an embossed star and a shine. */
 export function GoldIcon({ color = IconColors.gold, className, style, alt }: IconProps) {
   return (
-    <SvgIcon viewBox="2 2 20 20" fill="none" className={className} style={style} alt={alt}>
+    <SvgIcon viewBox="0 0 24 24" className={className} style={style} alt={alt}>
+      <Circle cx="12" cy="12" r="10" fill={color} stroke={OUTLINE} strokeWidth={OUTLINE_WIDTH} />
+      <Circle cx="12" cy="12" r="7" fill="none" stroke={SHADE} strokeWidth={1.2} />
+      <Polygon
+        fill={SHADE}
+        points="12,7.6 13.3,10.4 16.3,10.6 14,12.6 14.7,15.6 12,14 9.3,15.6 10,12.6 7.7,10.6 10.7,10.4"
+      />
       <Path
-        d="M12 10V14M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12ZM17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12Z"
-        stroke={color}
-        strokeWidth="2"
+        stroke={SHINE}
+        strokeWidth={1.6}
         strokeLinecap="round"
-        strokeLinejoin="round"
+        fill="none"
+        d="M5.5 9.5a7 7 0 0 1 4-4"
       />
     </SvgIcon>
   );
 }
 
+/** Rock with a lit facet and cracks. */
 export function StoneIcon({ color = IconColors.stone, className, style, alt }: IconProps) {
   return (
-    <SvgIcon viewBox="0 0 16 16" className={className} style={style} alt={alt}>
+    <SvgIcon viewBox="0 0 24 24" className={className} style={style} alt={alt}>
       <Path
         fill={color}
-        d="M6.516,2.612L9.325,3.55l0.734,2.934l0.188,0.75l0.644,0.428l2.238,1.494L13.734,14H2.441l0.331-1.65l1.125-0.562 l0.875-0.438l0.191-0.959L6.516,2.612 M5,0L3,10l-2,1l-1,5h16l-1-8l-3-2l-1-4L5,0L5,0z"
+        stroke={OUTLINE}
+        strokeWidth={OUTLINE_WIDTH}
+        strokeLinejoin="round"
+        d="M2.5 19.5l2.5-8 4.5-5.5 5.5 1 4.5 4 2 8.5z"
+      />
+      <Path fill={SHINE} d="M5 11.5l4.5-5.5 1.5 6z" />
+      <Path fill={SHADE} d="M15 7l4.5 4 2 8.5-6-3z" />
+      <Path
+        stroke={SHADE}
+        strokeWidth={0.9}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+        d="M11 12l4.5 4.5M11 12l-3.5 7.5"
       />
     </SvgIcon>
   );
 }
 
+/** Ingot in three-quarter view: lit top with a stamp, front face, shaded right side. */
 export function IronIcon({ color = IconColors.iron, className, style, alt }: IconProps) {
   return (
-    <SvgIcon viewBox="0 0 512.082 512.082" className={className} style={style} alt={alt}>
-      <G transform="translate(0 -1)">
-        <Path
-          fill={color}
-          d="M417.826,509.073c0.007-0.005,0.013-0.01,0.02-0.014c4.369-3.068,7.642-7.78,8.581-13.776
-            c0.267-1.529,0.36-3.095,0.282-4.67V107.709c0-5.658-2.248-11.084-6.248-15.085L335.126,7.291
-            c-4.701-4.701-10.569-6.585-16.212-6.244H193.168c-5.052-0.305-10.281,1.18-14.694,4.868
-            c-0.002,0.002-0.005,0.004-0.007,0.006c-0.514,0.43-1.02,0.88-1.511,1.371L91.623,92.624
-            c-4.001,4.001-6.248,9.427-6.248,15.085v382.903c-0.078,1.576,0.015,3.141,0.282,4.67
-            c0.939,5.995,4.212,10.708,8.581,13.776c0.007,0.005,0.013,0.01,0.02,0.014
-            c0.242,0.17,0.486,0.335,0.735,0.495c2.514,1.66,5.43,2.815,8.658,3.264
-            c1.428,0.216,2.877,0.281,4.324,0.211h296.134c1.447,0.07,2.897,0.005,4.324-0.211
-            c3.228-0.448,6.144-1.604,8.658-3.264C417.339,509.408,417.583,509.242,417.826,509.073z
-            M384.041,116.546V421.25l-42.667-64V73.879L384.041,116.546z
-            M203.455,385.047h105.171l56.886,85.329H146.569L203.455,385.047z
-            M298.706,342.376h-85.331V43.714h85.331V342.376z
-            M170.706,73.881v283.372l-42.664,63.997V116.546L170.706,73.881z"
-        />
-      </G>
+    <SvgIcon viewBox="0 0 24 24" className={className} style={style} alt={alt}>
+      <Path
+        fill={color}
+        stroke={OUTLINE}
+        strokeWidth={OUTLINE_WIDTH}
+        strokeLinejoin="round"
+        d="M1.5 18.5L4.5 12.5L9.5 8H19L22.5 14L15 18.5Z"
+      />
+      <Path fill={SHINE} d="M4.5 12.5L9.5 8H19L13.5 12.5Z" />
+      <Path fill={SHADE} d="M13.5 12.5L19 8L22.5 14L15 18.5Z" />
+      <Path
+        fill="none"
+        stroke={OUTLINE}
+        strokeWidth={0.8}
+        strokeLinejoin="round"
+        d="M4.5 12.5H13.5L19 8M13.5 12.5L15 18.5"
+      />
+      <Path fill="none" stroke={SHADE} strokeWidth={0.8} d="M10 9.6h4.6l-1.6 1.3h-4.6z" />
+      <Path stroke={SHINE} strokeWidth={1} strokeLinecap="round" d="M4.2 16.8h7" />
     </SvgIcon>
   );
 }
 
+/** Barrel: staves, two hoops and a shine. */
 export function GoodsIcon({ color = IconColors.wood, className, style, alt }: IconProps) {
   return (
-    <SvgIcon viewBox="1 1 22 22" fill="none" className={className} style={style} alt={alt}>
+    <SvgIcon viewBox="0 0 24 24" className={className} style={style} alt={alt}>
       <Path
-        stroke={color}
-        strokeMiterlimit={10}
-        strokeWidth="1.91"
-        d="M22.5,12A22.79,22.79,0,0,0,19.64,1.5H4.36A22.79,22.79,0,0,0,1.5,12,22.79,22.79,0,0,0,4.36,22.5H19.64A22.79,22.79,0,0,0,22.5,12Z"
+        fill={color}
+        stroke={OUTLINE}
+        strokeWidth={OUTLINE_WIDTH}
+        strokeLinejoin="round"
+        d="M6.5 2.5h11q3 9.5 0 19h-11q-3-9.5 0-19z"
       />
       <Path
-        stroke={color}
-        strokeMiterlimit={10}
-        strokeWidth="1.91"
-        d="M15.82,12A38.34,38.34,0,0,0,14.29,1.5H9.71A38.34,38.34,0,0,0,8.18,12,38.34,38.34,0,0,0,9.71,22.5h4.58A38.34,38.34,0,0,0,15.82,12Z"
+        stroke={SHADE}
+        strokeWidth={0.9}
+        fill="none"
+        d="M10 2.5q-1.2 9.5 0 19M14 2.5q1.2 9.5 0 19"
       />
-      <Line
-        stroke={color}
-        strokeMiterlimit={10}
-        strokeWidth="1.91"
-        x1="2.45"
-        y1="5.32"
-        x2="21.55"
-        y2="5.32"
+      <Path
+        stroke={SHINE}
+        strokeWidth={1.4}
+        strokeLinecap="round"
+        fill="none"
+        d="M7.2 8q-.7 4 0 8"
       />
-      <Line
-        stroke={color}
-        strokeMiterlimit={10}
-        strokeWidth="1.91"
-        x1="2.45"
-        y1="18.68"
-        x2="21.55"
-        y2="18.68"
+      <Path
+        stroke={OUTLINE}
+        strokeWidth={1.6}
+        strokeLinecap="round"
+        d="M4.9 7.5h14.2M4.9 16.5h14.2"
       />
     </SvgIcon>
   );
 }
 
+/** Sword, point up and to the right: steel blade, gold guard, leather grip. */
 export function WeaponIcon({ color = IconColors.iron, className, style, alt }: IconProps) {
   return (
-    <SvgIcon viewBox="0 0 24 24" fill="none" className={className} style={style} alt={alt}>
-      <Path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        fill={color}
-        d="M19 1.48416e-05L23 0C23.2652 -9.53668e-07 23.5195 0.105355 23.7071 0.292891C23.8946 0.480426 24 0.73478 24 0.999997L24 5.00001C24 5.26523 23.8946 5.51958 23.7071 5.70712L11.9142 17.5L13.7071 19.2929C14.0976 19.6834 14.0976 20.3166 13.7071 20.7071C13.3166 21.0977 12.6834 21.0977 12.2929 20.7071L9.79289 18.2071L9.46376 17.878L5.9999 20.9955C6.00096 21.7635 5.70873 22.534 5.12132 23.1214C3.94975 24.293 2.05025 24.293 0.87868 23.1214C-0.292893 21.9498 -0.292893 20.0503 0.87868 18.8787C1.46607 18.2913 2.23647 17.9991 3.00451 18.0002L6.12202 14.5363L5.79287 14.2071L3.29289 11.7071C2.90237 11.3166 2.90237 10.6834 3.29289 10.2929C3.68342 9.90239 4.31658 9.90239 4.70711 10.2929L6.49998 12.0858L18.2929 0.292907C18.4804 0.105372 18.7348 1.57952e-05 19 1.48416e-05ZM7.91419 13.5L8.2071 13.7929L10.2071 15.7929L10.5 16.0858L22 4.5858L22 2L19.4142 2.00001L7.91419 13.5ZM7.53819 15.9524L5.00435 18.7678C5.0441 18.8035 5.08311 18.8405 5.12132 18.8787C5.15952 18.9169 5.19648 18.9559 5.23221 18.9957L8.04759 16.4618L7.53819 15.9524ZM3.20676 20.0214C2.88445 19.954 2.54009 20.0458 2.29289 20.293C1.90237 20.6835 1.90237 21.3166 2.29289 21.7072C2.68342 22.0977 3.31658 22.0977 3.70711 21.7072C3.95431 21.46 4.0461 21.1156 3.97862 20.7933C3.94032 20.6103 3.85075 20.4366 3.70711 20.293C3.56346 20.1493 3.3897 20.0597 3.20676 20.0214Z"
-      />
+    <SvgIcon viewBox="0 0 24 24" className={className} style={style} alt={alt}>
+      <G
+        transform="rotate(45 12 12)"
+        stroke={OUTLINE}
+        strokeWidth={OUTLINE_WIDTH}
+        strokeLinejoin="round"
+      >
+        <Path fill={color} d="M10.2 15.5V4.5L12 1.2l1.8 3.3v11z" />
+        <Path fill={SHINE} stroke="none" d="M12 2.4v13.1h1.8v-11z" />
+        <Rect x="7.5" y="15.5" width="9" height="2" rx="1" fill={IconColors.gold} />
+        <Rect x="11" y="17.5" width="2" height="3.6" fill={IconColors.wood} />
+        <Circle cx="12" cy="22" r="1.3" fill={IconColors.gold} />
+      </G>
     </SvgIcon>
   );
 }
@@ -400,6 +424,20 @@ export function PencilIcon({ color = 'currentColor', className, style, alt }: Ic
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M4 20h4L19.3 8.7a1.4 1.4 0 0 0 0-2l-2-2a1.4 1.4 0 0 0-2 0L4 16zM14 6l4 4"
+      />
+    </SvgIcon>
+  );
+}
+
+export function ChevronDownIcon({ color = 'currentColor', className, style, alt }: IconProps) {
+  return (
+    <SvgIcon fill="none" viewBox="0 0 24 24" className={className} style={style} alt={alt}>
+      <Path
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M6 9l6 6 6-6"
       />
     </SvgIcon>
   );

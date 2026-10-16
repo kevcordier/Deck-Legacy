@@ -11,6 +11,7 @@ import {
   StoneIcon,
   TimeIcon,
   TriggerIcon,
+  UnlimitedIcon,
   UpgradeIcon,
   WeaponIcon,
   WoodIcon,
@@ -20,7 +21,7 @@ import React from 'react';
 
 // Detects tokens like {{gold}}, {{wood}}, etc. in translated texts
 const ICON_TOKEN =
-  /\{\{(gold|wood|stone|iron|weapon|goods|glory|action|time|passif|destroy|trigger|optionalTrigger|upgrade|discovered)\}\}/g;
+  /\{\{(gold|wood|stone|iron|weapon|goods|glory|action|time|passif|unlimited|destroy|trigger|optionalTrigger|upgrade|discovered)\}\}/g;
 
 const RESOURCE_META: Record<
   string,
@@ -40,6 +41,7 @@ const RESOURCE_META: Record<
   action: { icon: ActivatedIcon, color: 'green', label: 'resources.action' },
   time: { icon: TimeIcon, color: IconColors.baseInk, label: 'resources.time' },
   passif: { icon: PassifIcon, color: IconColors.baseInk, label: 'resources.passif' },
+  unlimited: { icon: UnlimitedIcon, color: 'green', label: 'resources.unlimited' },
   destroy: { icon: DestroyIcon, color: IconColors.tagEnemy, label: 'resources.destroy' },
   trigger: { icon: TriggerIcon, color: 'red', label: 'resources.trigger' },
   optionalTrigger: { icon: TriggerIcon, color: 'yellow', label: 'resources.trigger' },
@@ -54,11 +56,12 @@ export function getResMeta(key: string) {
  * Replaces {{resource}} tokens in a text with the corresponding SVG icon.
  * Example: "Gain 3 {{wood}}, then upgrade." → "Gain 3 [wood icon], then upgrade."
  * The result must be rendered inside a `Text` (icons are inline views).
- * `wrapIcon` can wrap an icon, e.g. in a tooltip.
+ * `wrapIcon` can wrap an icon, e.g. in a tooltip; `iconClassName` sizes the icons.
  */
 export function renderTextWithIcons(
   text: string,
   wrapIcon?: (key: string, icon: React.ReactNode) => React.ReactNode,
+  iconClassName = 'size-4',
 ): React.ReactNode {
   const parts: React.ReactNode[] = [];
   let last = 0;
@@ -74,7 +77,11 @@ export function renderTextWithIcons(
       continue;
     }
     const meta = getResMeta(key);
-    const icon = meta.icon ? <meta.icon color={meta.color} className="size-4" alt={key} /> : key;
+    const icon = meta.icon ? (
+      <meta.icon color={meta.color} className={iconClassName} alt={key} />
+    ) : (
+      key
+    );
     parts.push(
       <React.Fragment key={match.index}>{wrapIcon ? wrapIcon(key, icon) : icon}</React.Fragment>,
     );

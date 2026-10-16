@@ -6,14 +6,38 @@ import { type ReactNode, isValidElement, useMemo } from 'react';
 import { Text, type TextStyle, View, type ViewStyle } from 'react-native';
 import { type MarkedStyles, Renderer, useMarkdown } from 'react-native-marked';
 
+/** Tables sit on the card color so their icons stay visible; their text takes the card ink. */
+const TABLE_BACKGROUND = '#f0e4be';
+const TABLE_BORDER = 'rgba(102, 74, 38, 0.35)';
+const TABLE_TEXT: TextStyle = { color: IconColors.baseInk };
+
+/** Table cell texts take the card ink: the parser only gives them a `textAlign` (column alignment). */
+function isCell(styles?: TextStyle): boolean {
+  return styles?.textAlign !== undefined;
+}
+
+function cellInk(styles?: TextStyle): TextStyle | undefined {
+  return isCell(styles) ? { ...styles, ...TABLE_TEXT } : styles;
+}
+
 /** Renders `{{resource}}` tokens as inline icons and hides the document title (h1). */
 class GameRenderer extends Renderer {
   text(text: string | ReactNode[], styles?: TextStyle): ReactNode {
+    // Larger icons in the tables (icon legends).
+    const iconClassName = isCell(styles) ? 'size-6' : undefined;
     return (
-      <Text key={this.getKey()} style={styles}>
-        {typeof text === 'string' ? renderTextWithIcons(text) : text}
+      <Text key={this.getKey()} style={cellInk(styles)}>
+        {typeof text === 'string' ? renderTextWithIcons(text, undefined, iconClassName) : text}
       </Text>
     );
+  }
+
+  strong(children: string | ReactNode[], styles?: TextStyle): ReactNode {
+    return super.strong(children, cellInk(styles));
+  }
+
+  em(children: string | ReactNode[], styles?: TextStyle): ReactNode {
+    return super.em(children, cellInk(styles));
   }
 
   heading(text: string | ReactNode[], styles?: TextStyle, depth?: number): ReactNode {
@@ -44,9 +68,12 @@ class GameRenderer extends Renderer {
     const weights = header.map((_, col) =>
       Math.sqrt(Math.max(2, ...allRows.map(row => contentLength(row[col])))),
     );
-    const border = { borderColor: tableStyle?.borderColor };
+    const border = { borderColor: TABLE_BORDER };
     return (
-      <View key={this.getKey()} style={tableStyle}>
+      <View
+        key={this.getKey()}
+        style={[tableStyle, border, { backgroundColor: TABLE_BACKGROUND, borderRadius: 6 }]}
+      >
         {allRows.map((row, r) => (
           <View key={this.getKey()} style={[rowStyle, border, r > 0 && { borderTopWidth: 1 }]}>
             {row.map((cell, c) => (
@@ -54,7 +81,8 @@ class GameRenderer extends Renderer {
                 key={this.getKey()}
                 style={[cellStyle, border, { flex: weights[c] }, c > 0 && { borderLeftWidth: 1 }]}
               >
-                {cell}
+                {/* One text: the cell's runs (plain, bold, italic) flow inline and wrap. */}
+                <Text>{cell}</Text>
               </View>
             ))}
           </View>

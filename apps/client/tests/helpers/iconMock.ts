@@ -20,6 +20,7 @@ export const RiddingTheWoodsIcon = Icon;
 export const StoneIcon = Icon;
 export const TimeIcon = Icon;
 export const TriggerIcon = Icon;
+export const UnlimitedIcon = Icon;
 export const UpgradeIcon = Icon;
 export const WeaponIcon = Icon;
 export const WoodIcon = Icon;

@@ -41,7 +41,7 @@ Chaque tour commence en jouant les **4 premières cartes** de votre deck sur le 
 
 Faites ensuite vos actions dans l'ordre que vous voulez, jusqu'à la fin de votre tour :
 
-| Action                | Comment                                                                                                                                   |
+| **Action**            | **Comment**                                                                                                                               |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | **Produire**          | Touchez la production d'une carte : vous gagnez ses ressources et la carte est défaussée. Une carte sans production ne peut pas produire. |
 | **Utiliser un effet** | Touchez un effet d'une carte et payez son coût s'il y en a un (voir _Effets_).                                                            |
@@ -55,11 +55,11 @@ Une carte défaussée par un autre effet ne donne pas sa production.
 
 Les ressources se gagnent en produisant et grâce à certains effets, et se dépensent pour payer des coûts. **Toutes vos ressources sont perdues dès qu'une nouvelle carte entre en jeu et à la fin du tour** : ne les gagnez que lorsque vous pouvez les dépenser. L'application vous prévient avant de progresser avec des ressources non dépensées.
 
-|           | Ressource  |            | Ressource       |
-| --------- | ---------- | ---------- | --------------- |
-| {{gold}}  | **Or**     | {{weapon}} | **Épée**        |
-| {{wood}}  | **Bois**   | {{goods}}  | **Marchandise** |
-| {{stone}} | **Pierre** | {{iron}}   | **Fer**         |
+|           | **Ressource** |            | **Ressource**   |
+| --------- | ------------- | ---------- | --------------- |
+| {{gold}}  | **Or**        | {{weapon}} | **Épée**        |
+| {{wood}}  | **Bois**      | {{goods}}  | **Marchandise** |
+| {{stone}} | **Pierre**    | {{iron}}   | **Fer**         |
 
 Une barre oblique (/) entre des ressources signifie « ou » : vous en choisissez une.
 
@@ -76,9 +76,10 @@ Une barre oblique (/) entre des ressources signifie « ou » : vous en choisisse
 
 Chaque effet commence par une icône qui indique comment l'utiliser :
 
-| Icône               | Effet                      | Utilisation                                                                                         |
+| **Icône**           | **Effet**                  | **Utilisation**                                                                                     |
 | ------------------- | -------------------------- | --------------------------------------------------------------------------------------------------- |
-| {{passif}}          | **Passif**                 | S'applique toujours, ou s'utilise plusieurs fois sans défausser la carte.                           |
+| {{passif}}          | **Passif**                 | S'applique toujours.                                                                                |
+| {{unlimited}}       | **Illimité**               | S'utilise plusieurs fois sans défausser la carte.                                                   |
 | {{action}}          | **Activé**                 | Défaussez la carte pour appliquer l'effet.                                                          |
 | {{time}}            | **Temps**                  | Défaussez la carte (sauf si elle est permanente) et **terminez votre tour** pour appliquer l'effet. |
 | {{destroy}}         | **Destruction**            | Détruisez la carte pour appliquer l'effet.                                                          |
@@ -158,7 +159,7 @@ Les cartes rouges sont **négatives**, en général des cartes _Ennemi_ ou _Év�
 
 ## Mots-clés des cartes
 
-| Mot-clé                | Description                        |
+| **Mot-clé**            | **Description**                    |
 | ---------------------- | ---------------------------------- |
 | **Terre**              | Cartes de territoire de base       |
 | **Bâtiment**           | Cartes d'infrastructure            |
