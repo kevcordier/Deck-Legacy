@@ -147,6 +147,23 @@ export function GameBoard() {
               variant="left"
               displayedCards={nextCards}
               stackCount={drawPile.length - nextCards.length}
+              footer={
+                <TutorialTarget id="discard-button-desktop">
+                  <Button
+                    onPress={openDiscard}
+                    variant="outlined"
+                    color="primary"
+                    size="xs"
+                    className="w-full"
+                    accessibilityLabel={t('deckViewer.discard')}
+                  >
+                    <Text>
+                      <DiscardIcon className="size-4" /> {t('deckViewer.discard')} (
+                      {discardPile.length})
+                    </Text>
+                  </Button>
+                </TutorialTarget>
+              }
             />
           </TutorialTarget>
         )}

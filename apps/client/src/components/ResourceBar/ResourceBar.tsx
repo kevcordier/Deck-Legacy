@@ -1,12 +1,10 @@
-import { FilterableCardGrid } from '@components/DeckViewer/DeckViewer';
 import { StickerStockModal } from '@components/StickerStockModal/StickerStockModal';
 import ScoreTooltip from '@components/Tooltips/ScoreTooltip';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
 import { Divider } from '@components/ui/Divider/Divider';
-import { DiscardIcon, GloryIcon, StickerIcon } from '@components/ui/Icon/icon';
+import { GloryIcon, StickerIcon } from '@components/ui/Icon/icon';
 import { IconColors } from '@components/ui/Icon/iconColors';
-import { Modal } from '@components/ui/Modal/Modal';
 import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Stat } from '@components/ui/Stat/Stat';
 import { Text } from '@components/ui/Text/Text';
@@ -14,7 +12,6 @@ import { Tooltip } from '@components/ui/Tooltip/Tooltip';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useIsDesktop } from '@hooks/useIsDesktop';
-import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import Animated, { type CSSAnimationKeyframes, useReducedMotion } from 'react-native-reanimated';
@@ -33,15 +30,8 @@ export function ResourceBar() {
   const isDesktop = useIsDesktop();
   const reduceMotion = useReducedMotion();
 
-  const [discardOpen, setDiscardOpen] = useState(false);
-
-  const { resources, round, turn, discardPile, instances } = gameState;
+  const { resources, round, turn } = gameState;
   const entries = Object.entries(resources).filter(([, v]) => v > 0);
-
-  const discardDeck = useMemo(
-    () => discardPile.map(id => instances[id]).filter(Boolean),
-    [discardPile, instances],
-  );
 
   return (
     <TutorialTarget id="resource-bar" className="bg-background border-b-border z-10 border-b">
@@ -82,26 +72,6 @@ export function ResourceBar() {
         </View>
 
         <View className="shrink-0 flex-row items-stretch gap-2 lg:gap-4">
-          {isDesktop && (
-            <View className="shrink-0 flex-row items-stretch gap-2 lg:gap-4">
-              <Divider orientation="vertical" />
-              <TutorialTarget id="discard-button-desktop" className="justify-center">
-                <Button
-                  onPress={() => setDiscardOpen(true)}
-                  variant="outlined"
-                  color="primary"
-                  size="xs"
-                  accessibilityLabel={t('deckViewer.discard')}
-                >
-                  <Text>
-                    <DiscardIcon className="size-4" /> {t('deckViewer.discard')} (
-                    {discardDeck.length})
-                  </Text>
-                </Button>
-              </TutorialTarget>
-            </View>
-          )}
-
           <View className="shrink-0 flex-row items-stretch gap-2">
             <Divider orientation="vertical" />
             <Tooltip
@@ -134,16 +104,6 @@ export function ResourceBar() {
         </View>
       </ScrollView>
       <StickerStockModal />
-      {discardOpen && (
-        <Modal
-          title={t('deckViewer.discard')}
-          subtitle={t('deckViewer.modalSubtitle', { count: discardDeck.length })}
-          onClose={() => setDiscardOpen(false)}
-          side="right"
-        >
-          <FilterableCardGrid cards={discardDeck} />
-        </Modal>
-      )}
     </TutorialTarget>
   );
 }

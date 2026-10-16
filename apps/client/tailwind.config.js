@@ -28,7 +28,7 @@ module.exports = {
       'base-primary': '#c79233',
       card: '#f0e4be',
       gray: '#d1d5dc',
-      permanent: '#27272a',
+      permanent: '#71717a',
       danger: '#c2554f',
       success: '#00b286',
       'tag-enemy': '#c10007',
