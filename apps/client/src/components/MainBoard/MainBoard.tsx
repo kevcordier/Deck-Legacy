@@ -1,5 +1,6 @@
 import { type BoardZoomLevel, CardRow, RaiseOnDrag } from '@components/CardRow/CardRow';
 import { CardViewerModal } from '@components/CardViewerModal/CardViewerModal';
+import { PileTop } from '@components/DeckViewer/DeckViewer';
 import { GameCard } from '@components/GameCard/GameCard';
 import { MiniGameCard } from '@components/MiniGameCard/MiniGameCard';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
@@ -20,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 const MIN_ZOOM: BoardZoomLevel = 0;
-const MAX_ZOOM: BoardZoomLevel = 2;
+const MAX_ZOOM: BoardZoomLevel = 1;
 
 function NewCardSelection({
   cardIds,
@@ -106,6 +107,7 @@ export function MainBoard() {
     defs,
     parchmentTextPending,
     dismissParchmentText,
+    parameters,
   } = useGame();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
@@ -146,6 +148,13 @@ export function MainBoard() {
   );
 
   const isBoardPhase = [Phase.PLAYING, Phase.TURN_END].includes(gameState.phase);
+
+  // Top of the draw pile: on desktop it is in the left column.
+  const { drawPile } = gameState;
+  const nextCards = drawPile
+    .slice(0, parameters.displayedDrawDeckCards)
+    .map(id => gameState.instances[id])
+    .filter(Boolean);
 
   return (
     <View className="flex-1 gap-6 p-2 lg:p-4">
@@ -225,6 +234,12 @@ export function MainBoard() {
             </Button>
           }
         />
+      )}
+
+      {!isDesktop && isBoardPhase && nextCards.length > 0 && (
+        <Section title={t('deckViewer.draw')} subtitle={t('cardCount', { count: drawPile.length })}>
+          <PileTop cards={nextCards} stackCount={drawPile.length - nextCards.length} row />
+        </Section>
       )}
 
       {gameState.phase === Phase.PLAYING && gameState.board.length > 0 && (

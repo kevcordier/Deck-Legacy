@@ -42,7 +42,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import type { GridDimensions } from 'react-native-reanimated-dnd';
 
-export type BoardZoomLevel = 0 | 1 | 2;
+export type BoardZoomLevel = 0 | 1;
 
 interface CardRowProps {
   readonly cardIds: number[];
@@ -54,7 +54,7 @@ type EffectEntry = { sourceId: number; passive: Passive };
 const STACK_OFFSET_PX = 36;
 const MINI_STACK_OFFSET_PX = 14;
 /** Minimum card width per zoom level on desktop (replaces the container-query grid). */
-const MIN_CARD_WIDTH_BY_ZOOM: Record<BoardZoomLevel, number> = { 0: 280, 1: 200, 2: 160 };
+const MIN_CARD_WIDTH_BY_ZOOM: Record<BoardZoomLevel, number> = { 0: 280, 1: 200 };
 const MIN_MINI_CARD_WIDTH = 160;
 /** Height / width of a card. */
 const CARD_ASPECT_RATIO = 5 / 3;
