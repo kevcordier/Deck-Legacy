@@ -1,4 +1,5 @@
 import { CardAction } from '@components/CardAction/CardAction';
+import { CardDragHandle } from '@components/CardRow/SortableCardGrid';
 import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview';
 import { CardStateTooltip, cardTextTokens } from '@components/CardStateTooltip/CardStateTooltip';
 import { CardIllustration } from '@components/CardTilt/CardIllustration';
@@ -216,7 +217,7 @@ export function GameCard({
         <TextStyle className="text-ink-card font-body">
           <View className={`border-b border-black/10 bg-black/5 ${sizes.header}`}>
             <View className="flex-row items-start justify-between gap-2">
-              <View className="min-w-0 flex-1 flex-row items-center gap-1">
+              <CardDragHandle className="min-w-0 flex-1 flex-row items-center gap-1">
                 {expansion && (
                   <ExpansionIcon
                     expansion={expansion}
@@ -253,7 +254,7 @@ export function GameCard({
                     </Text>
                   )}
                 </TutorialTarget>
-              </View>
+              </CardDragHandle>
               {!hideStatePreview && (
                 <TutorialTarget id={tourId('card-state-preview')}>
                   <CardStatePreview instance={instance} defs={defs} renderCard={renderPreview} />

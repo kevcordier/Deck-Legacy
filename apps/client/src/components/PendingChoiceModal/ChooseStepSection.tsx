@@ -45,7 +45,7 @@ export function ChooseStepSection(props: Readonly<ChoiceSectionProps>) {
               onPress={() => handleStepPress(step.id)}
               accessibilityRole="button"
               accessibilityState={{ selected: isSelected }}
-              className={`bg-card active:bg-ink-card/10 aspect-square min-w-8 items-center gap-1 rounded-md border-2 p-3 ${isSelected ? 'border-primary' : 'border-ink-card'}`}
+              className={`bg-card active:bg-ink-card/10 min-w-8 items-center gap-1 rounded-md border-2 p-3 ${isSelected ? 'border-primary' : 'border-ink-card'}`}
             >
               {track && targetInst && (
                 <CardTrackStep

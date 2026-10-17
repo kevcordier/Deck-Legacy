@@ -294,7 +294,7 @@ export function GameBoard() {
               {t('deckViewer.emptyDeck')}
             </Text>
           ) : (
-            <FilterableCardGrid cards={drawDeck} />
+            <FilterableCardGrid cards={drawDeck} hiddenOrder />
           )}
         </Modal>
       )}

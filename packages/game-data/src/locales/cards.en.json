@@ -1,7 +1,7 @@
 {
   "actions": {
-    "1-2-1": "Discard a friendly card to gain 2 {{gold}}.",
-    "2-2-1": "Spend 1 {{gold}} to gain 2 {{stone}}.",
+    "1-2-1": "Discard a friendly card to gain {{gold}}{{gold}}.",
+    "2-2-1": "Spend {{gold}} to gain {{stone}}{{stone}}.",
     "2-4-1": "Discover Mine (84/85).",
     "3-1-1": "Gain {{wood}} {{wood}} {{wood}}, then {{upgrade}}.",
     "3-4-1": "Discover Shrine (82/83).",
@@ -22,13 +22,13 @@
     "10-1-1": "When played, blocks 1 card with {{gold}} productions.",
     "10-1-2": "Spend {{weapon}} to defeat (destroy this card) and gain any 2 resources. (Can be {{upgrade}} by a Missionary)",
     "10-2-1": "Choose a Land in play. Gain its productions as resources.",
-    "11-2-1": "Spend 3 {{gold}} to discover a Missionary (103).",
+    "11-2-1": "Spend {{gold}}{{gold}}{{gold}} to discover a Missionary (103).",
     "11-3-1": "Spend 4 {{gold}} to discover a Priest (104).",
     "12-2-1": "Reset to discover Jewellery (90).",
     "12-3-1": "Gain {{weapon}} for each Person in play.",
     "14-3-1": "Discover Shore 75.",
     "14-4-1": "Discard the top card of your deck.",
-    "15-1-1": "Stop",
+    "15-1-1": "Discover cards 24-27.",
     "16-1-1": "Add a {{gold}} sticker to a land",
     "17-1-1": "Spend the corresponding {{weapon}} to advance 1 track.",
     "17-2-1": "Spend the corresponding {{weapon}} to advance 1 track.",
@@ -57,7 +57,7 @@
     "26-2-1-2": "Gain any 1 resource for each Mark",
     "27-1-1": "Spend {{gold}} {{gold}} to mark 1-2 step.",
     "27-2-1": "Spend {{iron}} {{iron}} {{iron}} to add sticker {{weapon}} here (On use only).",
-    "27-2-2": "Spend {{iron}} {{iron}} {{iron}} {{iron}} to add sticker {{weapon}} here (On use only).",
+    "27-2-2": "Spend 4 {{iron}} to add sticker {{weapon}} here (On use only).",
     "28-1-1": "Discover 5 cards this round, instead of 2 (cards 38-42). The first 3 are goal cards. For each card, you need to choose one of its sides now, it cannot be changed later.",
     "32-1-1": "Discard the top card of your deck.",
     "32-1-2": "Mark 1 step.",
@@ -91,7 +91,7 @@
     "42-3-1": "Discover Border (132).",
     "42-4-1": "Play a Knight or Wall card.",
     "43-4-1": "Reset to discover Town (105). (Note: Town may be discovered a second time later.)",
-    "44-1-1": "Spend {{weapon}}{{weapon}}{{weapon}}{{weapon}} to defeat ({{destroy}}).",
+    "44-1-1": "Spend 4 {{weapon}} to defeat ({{destroy}}).",
     "44-1-2": "Discard 3 persons to {{upgrade}}.",
     "44-1-3": "End of Turn: Advance the story by 2 cards, then {{upgrade}}.",
     "44-2-1": "Spend {{weapon}}{{weapon}}{{weapon}} to defeat ({{destroy}}).",
@@ -119,7 +119,7 @@
     "51-1-1": "When played, blocks 3 cards with production.",
     "51-1-2": "Spend {{weapon}}{{weapon}}{{weapon}} to defeat ({{destroy}}) and gain any 3 resources. (Can be {{upgrade}} by a Missionary)",
     "51-2-1": "Choose a building in play. Gain its productions as resources.",
-    "52-1-1": "Spend {{weapon}}{{weapon}}{{weapon}}{{weapon}} to defeat ({{upgrade}}).",
+    "52-1-1": "Spend 5 {{weapon}} to defeat ({{upgrade}}).",
     "52-2-1": "Gain {{weapon}}{{weapon}}.",
     "52-3-1": "Gain {{weapon}}{{weapon}}{{weapon}}.",
     "53-4-1": "Discard a person to gain any 2 resources.",
@@ -172,7 +172,7 @@
     "77-2-1": "When played: mark 1 next step.",
     "78-2-1": "End of Turn: Unfortunately discover Backstabber (94).",
     "79-1-1": "When played: discard 2 persons.",
-    "79-1-2": "Spend {{weapon}}{{weapon}}{{weapon}}{{weapon}} to defeat ({{destroy}}).",
+    "79-1-2": "Spend 4 {{weapon}} to defeat ({{destroy}}).",
     "80-1-1": "Spend {{gold}}{{gold}} to mark 1 step.",
     "80-2-1": "Put up to 3 other cards in play on top or bottom of your deck.",
     "80-2-1-1": "Put up to 3 other cards in play on top of your deck.",
@@ -180,7 +180,7 @@
     "81-1-1": "Spend {{gold}}{{gold}} to choose any state.",
     "81-2-1": "Reset this card ({{upgrade}}) to gain {{weapon}}{{weapon}}{{weapon}}.",
     "81-3-1": "When discarding a person, you may reset this instead.",
-    "81-4-1": "Reset this card ({{upgrade}}) to gain {{goods}}{{goods}}{{goods}}{{goods}}{{goods}}.",
+    "81-4-1": "Reset this card ({{upgrade}}) to gain 5 {{goods}}.",
     "83-1-1": "Mark 1 step for each seafaring card in play, including this.",
     "83-2-1": "Mark 1 step for each seafaring card in play, including this.",
     "83-3-1": "Mark 1 step for each seafaring card in play, including this.",
@@ -231,7 +231,7 @@
     "108-2-1": "End of Turn: Discard to make up to 5 other cards stay in play.",
     "108-3-1": "End of Turn: Discard to make up to 5 other cards stay in play.",
     "108-4-1": "End of Turn: Discard to make up to 5 other cards stay in play.",
-    "108-4-2": "Spend {{goods}}{{goods}}{{goods}}{{goods}} to mark 1 step.",
+    "108-4-2": "Spend 4 {{goods}} to mark 1 step.",
     "108-4-3": "When you purge this, it is worth +10 {{glory}} per marked step.",
     "110-4-1": "Discard 1 person to gain {{goods}}{{goods}}.",
     "111-4-1": "Discard 1 person and spend {{stone}}{{stone}}{{stone}} to mark 1 step.",
@@ -273,7 +273,8 @@
     "121-4-2": "End of round: Add {{accumulated}} as {{glory}} on 1 land, then destroy this and end the game.",
     "121-2-1": "When a person is played: either mark 1 step on this, or discard 2 friendly cards.",
     "91-4-1": "End of turn: if you have no cards in your deck, mark 1 step.",
-    "121-3-1": "End of turn: if you have no {{weapon}} production, cross out 1 production on 1 card in play."
+    "121-3-1": "End of turn: if you have no {{weapon}} production, cross out 1 production on 1 card in play.",
+    "58-1-1": "Discover 2 cards as normal (cards 69-70)."
   },
   "glory": {
     "17-1": "This card is worth the highest {{glory}} marked.",
@@ -712,6 +713,6 @@
     "22": "## Stop!\n\nWith your kingdom growing and flourishing, many are coming here to pursue their dreams.\n\nThis round, instead of discovering the next 2 cards, look at the 4 next cards of the box (cards 31-34).\n\nChoose 2 of them to discover and destroy the other 2.",
     "28": "## STOP!\n\nIt's time to set up some goals for your kingdom, something to strive for.\nDiscover 5 cards this round, instead of 2 (cards 38-42). The first 3 are goal cards.\nFor each card, you need to choose one of its sides now, it cannot be changed later.",
     "38": "## STOP!\n\nEven more immigrants are longing for a place to follow their dreams, and your kingdom seems to deliver on that promise.\n\nThis round, instead of discovering 2 cards, look at the next 4 cards (cards 48-51).\n\nDiscover 2 of them and destroy the other 2.",
-    "58": "## STOP!\n\nDiscover 2 cards as normal (cards 69-70). This is your last round."
+    "58": "## STOP!\n\nDiscover 2 cards as normal (cards 69-70). This is your last round.\n\nWhen this round is over, count your fame ({{glory}}) and write it in the first {{glory}} on the side of the box. It's time to brag to your friends! Can they beat your score and make a better kingdom? I doubt it!"
   }
 }

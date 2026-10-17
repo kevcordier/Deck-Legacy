@@ -162,7 +162,8 @@
     "choices-between": "Choisissez entre {{min}} et {{max}}",
     "cancel": "Annuler",
     "confirm": "Confirmer ({{selected}})",
-    "select": "Sélectionner"
+    "select": "Sélectionner",
+    "deselect": "Désélectionner"
   },
   "triggerPile": {
     "title": "Effets en attente",
@@ -185,7 +186,47 @@
   "cardList": {
     "noCards": "Aucune carte",
     "searchPlaceholder": "Rechercher par nom",
-    "allTags": "Tous les tags"
+    "allTags": "Tous les tags",
+    "sort": {
+      "pile": "Ordre de la pile",
+      "expansion": "Extension + numéro",
+      "number": "Numéro",
+      "name": "Nom",
+      "glory": "Gloire (décroissante)"
+    },
+    "moreFilters": "Voir plus de filtres",
+    "lessFilters": "Moins de filtres",
+    "side": {
+      "all": "Alliés et ennemis",
+      "ally": "Alliés uniquement",
+      "enemy": "Ennemis uniquement"
+    },
+    "glory": "Gloire",
+    "min": "Min",
+    "max": "Max",
+    "minGlory": "Gloire minimum",
+    "maxGlory": "Gloire maximum",
+    "allResources": "Toutes les productions",
+    "feature": {
+      "all": "Toutes les capacités",
+      "action": "Avec une action",
+      "trigger": "Avec un déclencheur",
+      "track": "Avec une piste",
+      "passive": "Avec un passif"
+    },
+    "stayInPlay": {
+      "all": "Reste en jeu ou non",
+      "yes": "Reste en jeu",
+      "no": "Ne reste pas en jeu"
+    },
+    "stickers": {
+      "all": "Avec ou sans autocollants",
+      "yes": "Avec autocollants",
+      "no": "Sans autocollants"
+    },
+    "allExpansions": "Toutes les extensions",
+    "baseGame": "Jeu de base",
+    "resetFilters": "Réinitialiser les filtres"
   },
   "cardAdded": {
     "title": "Nouvelle carte découverte",
