@@ -28,7 +28,7 @@
     "12-3-1": "Gagnez {{weapon}} par Personne en jeu.",
     "14-3-1": "Découvrez Rivage 75.",
     "14-4-1": "Défausser la carte au sommet de votre pioche.",
-    "15-1-1": "Stop",
+    "15-1-1": "Découvrez les cartes 24-27.",
     "16-1-1": "Ajouter un autocollant {{gold}} à un terrain",
     "17-1-1": "Dépensez l'{{weapon}} correspondant pour avancer d'une case.",
     "17-2-1": "Dépensez l'{{weapon}} correspondant pour avancer d'une case.",
@@ -273,7 +273,8 @@
     "121-4-2": "Fin de manche : ajoutez {{accumulated}} en {{glory}} sur 1 terrain, puis détruisez cette carte et terminez la partie.",
     "121-2-1": "Quand une personne est jouée : soit marquez 1 étape sur cette carte, soit défaussez 2 cartes alliées.",
     "91-4-1": "Fin de tour : si vous n'avez plus de carte dans votre pioche, marquez 1 étape.",
-    "121-3-1": "Fin de tour : si vous n'avez pas de production de {{weapon}}, rayez 1 production sur 1 carte en jeu."
+    "121-3-1": "Fin de tour : si vous n'avez pas de production de {{weapon}}, rayez 1 production sur 1 carte en jeu.",
+    "58-1-1": "Découvrez 2 cartes comme d'habitude (cartes 69-70)."
   },
   "glory": {
     "17-1": "Cette carte vaut le plus de {{glory}} marqué.",
@@ -712,6 +713,6 @@
     "22": "## STOP !\n\nVotre royaume grandissant et prospérant, beaucoup viennent ici pour réaliser leurs rêves.\n\nCe tour, au lieu de découvrir les 2 prochaines cartes, regardez les 4 prochaines cartes de la boîte (cartes 31-34).\n\nChoisissez-en 2 à découvrir et détruisez les 2 autres.",
     "28": "## STOP!\n\nIl est temps de fixer les grande orientations de votre royaume, des objectifs à atteindre qui vous demanderont de travailler dur.\n\nLors de cette manche, découvrez 5 cartes au lieu de 2 (les cartes n°38 à 42). Les 3 premières sont des cartes d'objectif.\n\nPour chaque carte, vous devez choisir un de ses côtés maintenant, vous ne pouvez plus la changer.",
     "38": "## STOP!\n\nEncore plus d'immigrants aspirent à un endroit pour réaliser leurs rêves, et votre royaume semble tenir cette promesse.\n\nCe tour, au lieu de découvrir 2 cartes, regardez les 4 prochaines cartes (cartes 48-51).\n\nDécouvrez-en 2 et détruisez les 2 autres.",
-    "58": "## STOP!\n\nDécouvrez 2 cartes comme d'habitude (cartes 69-70). C'est votre dernier tour."
+    "58": "## STOP!\n\nDécouvrez 2 cartes comme d'habitude (cartes 69-70). C'est votre dernier tour.\n\nQuand ce tour est terminé, comptez votre renommée ({{glory}}) et inscrivez-la dans le premier {{glory}} sur le côté de la boîte. Il est temps de vous vanter auprès de vos amis ! Pourront-ils battre votre score et bâtir un meilleur royaume ? J'en doute !"
   }
 }
