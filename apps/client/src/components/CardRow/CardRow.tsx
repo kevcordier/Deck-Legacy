@@ -287,13 +287,25 @@ export function CardRow({ cardIds, zoom = 1 }: CardRowProps) {
   const columns = Math.max(1, Math.floor((width + gap) / (minItemWidth + gap)));
   // Floored so rounding never pushes the last item of a row onto the next one.
   const itemWidth = Math.max(1, Math.floor((width - gap * (columns - 1)) / columns));
-  // Every cell has the height of the tallest card (blocked stacks and effects make cards taller).
-  const measuredHeights = orderedCardIds.map(id => heights[id] ?? 0);
-  const itemHeight = Math.max(Math.ceil(itemWidth * CARD_ASPECT_RATIO), ...measuredHeights);
-
+  const itemHeight = Math.ceil(itemWidth * CARD_ASPECT_RATIO);
+  // Each row has the height of its tallest card (blocked stacks and effects make cards taller).
+  const rowHeights = Array.from({ length: Math.ceil(orderedCardIds.length / columns) }, (_, row) =>
+    Math.max(
+      itemHeight,
+      ...orderedCardIds.slice(row * columns, (row + 1) * columns).map(id => heights[id] ?? 0),
+    ),
+  );
+  const rowHeightsKey = rowHeights.join(',');
   const dimensions = useMemo<GridDimensions>(
-    () => ({ columns, itemWidth, itemHeight, rowGap: gap, columnGap: gap }),
-    [columns, itemWidth, itemHeight, gap],
+    () => ({
+      columns,
+      itemWidth,
+      itemHeight,
+      rowHeights: rowHeightsKey.split(',').map(Number),
+      rowGap: gap,
+      columnGap: gap,
+    }),
+    [columns, itemWidth, itemHeight, rowHeightsKey, gap],
   );
 
   const raise = use(RaiseContext);
@@ -339,7 +351,7 @@ export function CardRow({ cardIds, zoom = 1 }: CardRowProps) {
         ? null
         : {
             x: -(column + 1) * (itemWidth + gap),
-            y: -row * (itemHeight + gap),
+            y: -rowHeights.slice(0, row).reduce((top, height) => top + height + gap, 0),
             delay: drawIndex * DRAW_STAGGER_MS,
           };
     return (
