@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: 🏗️ Install pnpm
-        uses: pnpm/action-setup@v4 # version read from package.json "packageManager"
+        uses: pnpm/action-setup@v6 # version read from package.json "packageManager"
       - name: ⚙️ Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: 'pnpm'
@@ -43,11 +43,9 @@ jobs:
         with:
           name: engine
           working-directory: packages/engine
-          threshold-icons: "{0: '🔴', 80: '🟠', 90: '🟢'}"
       - name: 📊 Report server coverage
         if: always()
         uses: davelosert/vitest-coverage-report-action@3c50566c523e04813df28de8f7c48dd97d663f1c
         with:
           name: server
           working-directory: apps/server
-          threshold-icons: "{0: '🔴', 80: '🟠', 90: '🟢'}"
