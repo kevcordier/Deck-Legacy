@@ -79,7 +79,7 @@ pnpm --filter <workspace> <script>   # one workspace: @deck-legacy/{client,serve
 
 **Tests.** Vitest. Coverage: engine 80 % everywhere; server 80 % (60 % branches). Every new function or branch in `packages/engine/src` is covered. Engine tests use minimal fixtures (`packages/engine/tests/application/fixtures.ts`, `…/session/fixtures.ts`), never real game data. A bug found while playing becomes a failing test before it is fixed (a `GameSession` scenario, or the event log from `GET /games/:id/export`). Cards with triggers or several states get a `GameSession` scenario test.
 
-**Translations.** EN and FR always have the same keys: UI in `en.json`/`fr.json`, cards in `cards.{en,fr}.json` of `packages/game-data` (one pair for the base game, one per expansion folder), rules in `rules.{en,fr}.md`. A new mechanic or icon ships with its explanation in the game and in the rules.
+**Translations.** EN and FR always have the same keys: UI in `en.json`/`fr.json`, cards in `cards.{en,fr}.json` of `packages/game-data` (one pair for the base game, one per expansion folder), rules in `rules.{en,fr}.md`. In card texts, a resource amount of 3 or fewer repeats the icon (`{{gold}}{{gold}}`), 4 or more is written `4 {{gold}}` (checked by `packages/game-data/tests/locales.test.ts`). A new mechanic or icon ships with its explanation in the game and in the rules.
 
 **UI.** Design for the phone first, then desktop; check every change at ≤ 375 px and ≥ 1024 px before committing; touch targets ≥ 44 pt, nothing hover-only. React Native primitives and NativeWind only (see `apps/client/CLAUDE.md`).
 

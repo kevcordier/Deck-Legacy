@@ -86,6 +86,10 @@ Use icon placeholders in text: `{{gold}} {{wood}} {{stone}} {{iron}} {{weapon}} 
 {{glory}} {{time}} {{passif}} {{destroy}} {{trigger}} {{upgrade}} {{accumulated}}`.
 `{{discovered}}` shows the number (with the expansion logo) of the cards the action discovers,
 with a preview on hover: use it instead of writing the number, e.g. `Discover Sheriff ({{discovered}}).`
+
+Resource amounts: 3 or fewer, repeat the icon (`Spend {{gold}}{{gold}} to…`); 4 or more, write the
+number then one icon (`Spend 4 {{weapon}} to…`). Modifiers keep their number (`+1 {{gold}} production`,
+`cross out 1 {{gold}}`). `locales.test.ts` checks it.
 Match the tone of neighbouring entries ("End of round: …" / "Fin de manche : …").
 Insert keys next to other keys of the same card id, keeping numeric order.
 

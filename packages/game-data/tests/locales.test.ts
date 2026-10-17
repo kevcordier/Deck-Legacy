@@ -30,6 +30,20 @@ describe('card texts', () => {
     expect(keys.filter((key, i) => keys.indexOf(key) !== i)).toEqual([]);
   });
 
+  // 3 or fewer: repeat the icon ({{gold}}{{gold}}); more: write the number (4 {{gold}}). A
+  // modifier (+1 {{gold}} production, cross out 1 {{gold}}) keeps its number.
+  it.each(files)('%s writes resource amounts with the icon convention', (_name, en, fr) => {
+    const res = '(gold|wood|stone|iron|weapon|goods)';
+    const repeatedFourTimes = new RegExp(String.raw`\{\{${res}\}\}(\s*\{\{\1\}\}){3}`);
+    const smallNumber = new RegExp(String.raw`(^|[^+\-\d\s])\s*[23] ?\{\{${res}\}\}`);
+    const texts = [en, fr].flatMap(file =>
+      Object.values(file).flatMap(section => Object.values(section)),
+    );
+    expect(texts.filter(text => repeatedFourTimes.test(text) || smallNumber.test(text))).toEqual(
+      [],
+    );
+  });
+
   it('names every card state', () => {
     const names = Object.values(loadGameCatalog().cards).flatMap(card =>
       card.states.map(state => state.name),
