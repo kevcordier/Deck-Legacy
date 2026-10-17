@@ -1,7 +1,13 @@
 import { DEFAULT_OPTIONS, makeCatalog } from './fixtures';
 import { GameSession } from '@engine/application/session/GameSession';
-import { ActionEffectType, PendingChoiceType, Phase, Trigger } from '@engine/domain/enums';
-import type { ResolvedActionEffect } from '@engine/domain/types';
+import {
+  ActionEffectType,
+  PendingChoiceType,
+  Phase,
+  TargetScope,
+  Trigger,
+} from '@engine/domain/enums';
+import type { ActionEffect, ResolvedActionEffect } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
 const WORKSHOP = 9;
@@ -44,6 +50,7 @@ describe('card actions', () => {
 
     session.execute({ type: 'skipChoice' });
     expect(session.toView().pendingChoices).toBeNull();
+    expect(session.getEvents()).toHaveLength(events);
   });
 
   it('applies the chosen card once the choice is resolved', () => {
@@ -189,7 +196,9 @@ describe('development cheats', () => {
 
 describe('triggers', () => {
   /** Fields (card 1) get an optional on-play trigger. */
-  function catalogWithTrigger() {
+  function catalogWithTrigger(
+    effect: ActionEffect = { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 1 } },
+  ) {
     const catalog = makeCatalog();
     const [field, farm] = catalog.cards[1].states;
     catalog.cards[1] = {
@@ -202,9 +211,7 @@ describe('triggers', () => {
               id: '1-1-1',
               trigger: Trigger.ON_PLAY,
               optional: true,
-              actionEffects: [
-                { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 1 } },
-              ],
+              actionEffects: [effect],
             },
           ],
         },
@@ -229,5 +236,32 @@ describe('triggers', () => {
     expect(Object.keys(restored.getState().triggerPile)).toHaveLength(
       Object.keys(session.getState().triggerPile).length,
     );
+  });
+
+  it('keeps a trigger in the pile when its choice is cancelled', () => {
+    const session = GameSession.start(
+      'g',
+      catalogWithTrigger({
+        id: 1,
+        type: ActionEffectType.DISCARD_CARD,
+        cards: { scope: [TargetScope.BOARD], pickNumber: 1 },
+      }),
+      DEFAULT_OPTIONS,
+    );
+    const events = session.getEvents().length;
+    const [triggerId, entry] = Object.entries(session.getState().triggerPile)[0];
+
+    session.execute({
+      type: 'resolveAction',
+      instanceId: entry.sourceInstanceId,
+      actionId: entry.effectDef.id,
+      triggerId,
+    });
+    expect(session.toView().pendingChoices).not.toBeNull();
+
+    session.execute({ type: 'skipChoice' });
+    expect(session.toView().pendingChoices).toBeNull();
+    expect(session.getEvents()).toHaveLength(events);
+    expect(session.getState().triggerPile).toHaveProperty(triggerId);
   });
 });

@@ -214,14 +214,13 @@ export function PendingChoiceModal({
     }));
   }
 
-  const onClose = choice?.isMandatory === false ? () => onSkipChoice() : undefined;
-  const footer = choice && (isMultiSelect || choice.isMandatory === false) && (
+  // Any choice can be cancelled: the engine records no event until the action completes.
+  const onClose = choice ? () => onSkipChoice() : undefined;
+  const footer = choice && (
     <View className="flex-row flex-wrap items-center justify-end gap-2 pt-2">
-      {choice.isMandatory === false && (
-        <Button onPress={() => onSkipChoice()} variant="outlined" color="ink">
-          {t('pendingChoice.cancel')}
-        </Button>
-      )}
+      <Button onPress={() => onSkipChoice()} variant="outlined" color="ink">
+        {t('pendingChoice.cancel')}
+      </Button>
       <Text>
         {minSelect === maxSelect
           ? t('pendingChoice.choices', {
