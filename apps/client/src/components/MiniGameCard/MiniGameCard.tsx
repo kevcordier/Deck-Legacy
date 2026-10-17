@@ -30,9 +30,10 @@ import { Options, PassiveType, TargetScope } from '@deck-legacy/engine/domain/en
 import type { CardAction, CardInstance, StepDef } from '@deck-legacy/engine/domain/types';
 import { tCardName, tCardPassiveLabel } from '@helpers/cardI18n';
 import { getIllustrationSource } from '@helpers/illustrations';
+import { getResMeta } from '@helpers/renderHelpers';
 import { useGame } from '@hooks/useGame';
 import { LinearGradient } from 'expo-linear-gradient';
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
@@ -70,10 +71,8 @@ type ActionBadgesProps = {
   readonly hasDestroyAction: boolean;
   readonly hasAction: boolean;
   readonly actionIcon: 'time' | 'unlimited' | 'activated';
-  readonly hasUpgrade: boolean;
   readonly hasAvailableDestroyAction: boolean;
   readonly hasAvailableAction: boolean;
-  readonly hasAvailableUpgrade: boolean;
 };
 
 function ActionBadges({
@@ -82,24 +81,15 @@ function ActionBadges({
   hasDestroyAction,
   hasAction,
   actionIcon,
-  hasUpgrade,
   hasAvailableDestroyAction,
   hasAvailableAction,
-  hasAvailableUpgrade,
 }: ActionBadgesProps) {
   const { t } = useTranslation();
-  if (!hasPassive && !hasTrigger && !hasDestroyAction && !hasAction && !hasUpgrade) return null;
+  if (!hasPassive && !hasTrigger && !hasDestroyAction && !hasAction) return null;
 
   // Row-reverse keeps the original visual order (passive … upgrade) anchored to the right.
   return (
     <View className="flex-row-reverse flex-wrap-reverse items-end justify-start gap-1 self-end">
-      {hasUpgrade && (
-        <Badge label={t('card.upgradeAvailable')} highlighted={hasAvailableUpgrade}>
-          <UpgradeIcon
-            className={`size-5 ${hasAvailableUpgrade ? 'text-ink-card' : 'text-gray'}`}
-          />
-        </Badge>
-      )}
       {hasAction && (
         <Badge label={t('card.actionAvailable')} highlighted={hasAvailableAction}>
           {actionIcon === 'time' && (
@@ -131,6 +121,39 @@ function ActionBadges({
     </View>
   );
 }
+
+function MiniUpgrades({ upgrades }: { readonly upgrades: MiniUpgrade[] }) {
+  const { t } = useTranslation();
+  if (upgrades.length === 0) return null;
+  return (
+    <View className="flex-row flex-wrap items-center justify-end gap-1">
+      {upgrades.map(({ upgradeTo, resources, available }) => (
+        <View
+          key={upgradeTo}
+          accessibilityLabel={t('card.upgradeAvailable')}
+          className={`bg-card flex-row items-center gap-0.5 rounded-full border-2 px-1.5 py-1 shadow-sm ${available ? 'border-card' : 'border-border'}`}
+        >
+          <UpgradeIcon className={`size-5 ${available ? 'text-ink-card' : 'text-gray'}`} />
+          {Object.entries(resources).map(([k, v]) => {
+            const meta = getResMeta(k);
+            return (
+              <Fragment key={k}>
+                <Text className="text-ink-card text-sm leading-none">{v}</Text>
+                {meta.icon && <meta.icon className="size-5" color={meta.color} alt={k} />}
+              </Fragment>
+            );
+          })}
+        </View>
+      ))}
+    </View>
+  );
+}
+
+type MiniUpgrade = {
+  readonly upgradeTo: number;
+  readonly resources: Record<string, number>;
+  readonly available: boolean;
+};
 
 function MiniTrack({
   steps,
@@ -187,15 +210,15 @@ export function MiniGameCard({
   const glory = getEffectiveGlory(cs, gameState, defs, instance, stickerDefs);
   const hasGlory = cs.glory !== undefined && (cs.glory.amount !== 0 || !!cs.glory.valuePerElement);
 
-  const upgrades = cs.upgrade ?? [];
-  const hasUpgrade = upgrades.length > 0;
-  const hasAvailableUpgrade =
-    !isBlocked &&
-    canUseOptions(gameState, Options.UPGRADE) &&
-    upgrades.some(upg => {
-      const cost = getEffectiveUpgradeCost(upg.cost, gameState, defs, stickerDefs, instance.id);
-      return canAffordCost(cost, instance.id, gameState, defs, stickerDefs);
-    });
+  const canUpgrade = !isBlocked && canUseOptions(gameState, Options.UPGRADE);
+  const upgrades: MiniUpgrade[] = (cs.upgrade ?? []).map(upg => {
+    const cost = getEffectiveUpgradeCost(upg.cost, gameState, defs, stickerDefs, instance.id);
+    return {
+      upgradeTo: upg.upgradeTo,
+      resources: (cost.resources?.[0] ?? {}) as Record<string, number>,
+      available: canUpgrade && canAffordCost(cost, instance.id, gameState, defs, stickerDefs),
+    };
+  });
 
   const actions = (cs.actions ?? []).filter(
     action =>
@@ -311,11 +334,10 @@ export function MiniGameCard({
               hasDestroyAction={hasDestroyAction}
               hasAction={hasAction}
               actionIcon={actionIcon}
-              hasUpgrade={hasUpgrade}
               hasAvailableDestroyAction={hasAvailableDestroyAction}
               hasAvailableAction={hasAvailableAction}
-              hasAvailableUpgrade={hasAvailableUpgrade}
             />
+            <MiniUpgrades upgrades={upgrades} />
             {!isBlocked && cs.track && (
               <MiniTrack steps={cs.track.steps} validatedSteps={instance.trackProgress} />
             )}
