@@ -162,7 +162,8 @@
     "choices-between": "Choisissez entre {{min}} et {{max}}",
     "cancel": "Annuler",
     "confirm": "Confirmer ({{selected}})",
-    "select": "Sélectionner"
+    "select": "Sélectionner",
+    "deselect": "Désélectionner"
   },
   "triggerPile": {
     "title": "Effets en attente",

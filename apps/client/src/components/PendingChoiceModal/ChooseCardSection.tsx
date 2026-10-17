@@ -1,6 +1,7 @@
 import { type ChoiceSectionProps, buildCardCostResolution } from './shared';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
+import { Text } from '@components/ui/Text/Text';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
@@ -49,14 +50,26 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
         return (
           <View
             key={`${id}-${index.toString()}`}
-            className="w-72 max-w-full items-stretch gap-2 p-2"
+            className="w-72 max-w-full items-stretch gap-3 p-2"
           >
             <View
-              className={`rounded-xl border-2 ${isSelected ? 'border-primary' : 'border-transparent'}`}
+              className={`rounded-2xl border-4 p-1 ${isSelected ? 'border-primary bg-primary/30 shadow-lg' : 'border-transparent'}`}
             >
               <GameCard instance={inst} />
+              {isSelected && (
+                <View className="bg-primary absolute -right-3 -top-3 size-10 items-center justify-center rounded-full border-2 border-white shadow-md">
+                  <Text className="text-xl font-bold text-white">✓</Text>
+                </View>
+              )}
             </View>
-            <Button onPress={() => handleCardPress(id)}>{t('pendingChoice.select')}</Button>
+            <Button
+              onPress={() => handleCardPress(id)}
+              color={isSelected ? 'danger' : 'primary'}
+              variant={isSelected ? 'outlined' : 'contained'}
+              accessibilityState={{ selected: isSelected }}
+            >
+              {t(isSelected ? 'pendingChoice.deselect' : 'pendingChoice.select')}
+            </Button>
           </View>
         );
       })}

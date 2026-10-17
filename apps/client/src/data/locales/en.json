@@ -162,7 +162,8 @@
     "choices-between": "Choose between {{min}} and {{max}}",
     "cancel": "Cancel",
     "confirm": "Confirm ({{selected}})",
-    "select": "Select"
+    "select": "Select",
+    "deselect": "Deselect"
   },
   "triggerPile": {
     "title": "Pending effects",
