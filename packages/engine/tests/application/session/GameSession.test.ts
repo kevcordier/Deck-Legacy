@@ -81,14 +81,33 @@ describe('GameSession commands', () => {
   });
 
   it('pays the upgrade cost from produced resources', () => {
+    // Seeded: the first turn draws at least two fields.
+    const session = GameSession.start(
+      'g',
+      makeCatalog(),
+      DEFAULT_OPTIONS,
+      'standard',
+      undefined,
+      'seed',
+    );
+    const state = session.getState();
+    const [produced, upgraded] = state.board.filter(id => state.instances[id].cardId === 1);
+    session.execute({ type: 'resolveProduction', instanceId: produced, choiceIndex: 0 });
+
+    session.execute({ type: 'resolveUpgrade', instanceId: upgraded, upgradeTo: 2 });
+
+    expect(session.getState().instances[upgraded].stateId).toBe(2);
+    expect(session.getState().resources.gold ?? 0).toBe(0);
+  });
+
+  it('ignores upgrades of cards out of play', () => {
     const session = startGame();
     const instanceId = boardCard(session);
     session.execute({ type: 'resolveProduction', instanceId, choiceIndex: 0 });
 
     session.execute({ type: 'resolveUpgrade', instanceId, upgradeTo: 2 });
 
-    expect(session.getState().instances[instanceId].stateId).toBe(2);
-    expect(session.getState().resources.gold ?? 0).toBe(0);
+    expect(session.getState().instances[instanceId].stateId).toBe(1);
   });
 
   it('ignores actions that do not exist on the card', () => {

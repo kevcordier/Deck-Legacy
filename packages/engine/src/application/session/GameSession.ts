@@ -1,4 +1,4 @@
-import { ActionEffectType, PendingChoiceType, Phase } from '../../domain/enums';
+import { ActionEffectType, GameEventType, PendingChoiceType, Phase } from '../../domain/enums';
 import { ActionCancelledError } from '../../domain/errors/ActionCancelledError';
 import { CostResolutionError } from '../../domain/errors/CostResolutionError';
 import type {
@@ -9,6 +9,7 @@ import type {
   GameCatalog,
   GameCommand,
   GameEvent,
+  GameStartedEvent,
   GameState,
   GameView,
   PendingChoice,
@@ -26,6 +27,7 @@ import {
 import { resolveCost } from '../costResolver';
 import { EMPTY_STATE } from '../emptyState';
 import { mergeResources } from '../gameStateHelper';
+import { isFlowCommandAllowed, isInPlay, sanitizeChoice, sanitizeCost } from './playerInput';
 
 export type GameSessionOptions = {
   /** Development only: rewind any event, even ones that revealed cards. */
@@ -45,6 +47,80 @@ export class CorruptedGameError extends Error {}
 
 /** Thrown for commands that are not allowed in the current context. */
 export class ForbiddenCommandError extends Error {}
+
+/** Thrown by `verify()` when the event log is not what the recorded commands produce. */
+export class UnverifiedGameError extends Error {}
+
+/** Commands that change nothing in the log are not recorded (rewinds remove events instead). */
+const UNRECORDED = new Set<GameCommand['type']>(['rewind', 'setCardName']);
+const TRIGGER_REF = '@';
+
+/**
+ * Trigger keys are random and regenerated on every replay: a recorded command names the trigger
+ * by its source card, its action and its rank among identical entries of the trigger pile.
+ */
+function triggerRef(state: GameState, triggerId: string): string {
+  const entry = state.triggerPile[triggerId];
+  // Unknown key: kept as is, the action then runs the same way (no matching trigger).
+  if (!entry) return triggerId;
+  const same = Object.entries(state.triggerPile).filter(
+    ([, other]) =>
+      other.sourceInstanceId === entry.sourceInstanceId &&
+      other.effectDef.id === entry.effectDef.id,
+  );
+  const rank = same.findIndex(([key]) => key === triggerId);
+  return `${TRIGGER_REF}${entry.sourceInstanceId}|${entry.effectDef.id}|${rank}`;
+}
+
+function triggerKey(state: GameState, ref: string): string {
+  const [source, actionId, rank] = ref.slice(TRIGGER_REF.length).split('|');
+  const same = Object.entries(state.triggerPile).filter(
+    ([, entry]) => String(entry.sourceInstanceId) === source && entry.effectDef.id === actionId,
+  );
+  return same[Number(rank)]?.[0] ?? '';
+}
+
+function mapTriggerId(command: GameCommand, map: (triggerId: string) => string): GameCommand {
+  if (command.type === 'skipTrigger') return { ...command, triggerId: map(command.triggerId) };
+  if (command.type === 'resolveAction' && command.triggerId !== undefined) {
+    return { ...command, triggerId: map(command.triggerId) };
+  }
+  return command;
+}
+
+/**
+ * Events compared without what differs from one run to another: ids, timestamps, recorded
+ * commands and the random keys of trigger records (replaced by their sorted values). Key order
+ * is ignored too (the database stores events as `jsonb`).
+ */
+function canonical(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (typeof value === 'string') return UUID.test(value) ? '#' : value;
+  if (typeof value !== 'object' || value === null) return value;
+  const random: string[] = [];
+  const fields: [string, unknown][] = [];
+  for (const [key, item] of Object.entries(value)) {
+    if (UUID.test(key)) random.push(JSON.stringify(canonical(item)));
+    else fields.push([key, canonical(item)]);
+  }
+  fields.sort(([a], [b]) => (a < b ? -1 : 1));
+  random.sort((a, b) => a.localeCompare(b));
+  if (random.length > 0) fields.push(['#', random]);
+  return Object.fromEntries(fields);
+}
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function eventContent(event: GameEvent): string {
+  const { id: _id, timestamp: _timestamp, commands: _commands, ...rest } = event;
+  return JSON.stringify(canonical(JSON.parse(JSON.stringify(rest))));
+}
+
+function nextRecordedEvent(events: GameEvent[], from: number): number {
+  let index = from;
+  while (index < events.length && !events[index].commands) index += 1;
+  return index;
+}
 
 const CHOICE_TYPES = new Set<string>(Object.values(PendingChoiceType));
 
@@ -77,6 +153,8 @@ export class GameSession {
   private pendingUpgrade: PendingUpgrade | null = null;
   private pendingChoices: PendingChoice[] | null = null;
   private cardNames: Record<string, string>;
+  /** Commands run since the last event, waiting to be set on the next one (EDR-051). */
+  private unrecorded: GameCommand[] = [];
 
   private constructor(
     readonly id: string,
@@ -101,9 +179,10 @@ export class GameSession {
     options: GameSessionOptions,
     mode: 'standard' | 'tutorial' = 'standard',
     firstDrawPile?: number[],
+    seed: string = crypto.randomUUID(),
   ): GameSession {
     const session = new GameSession(id, mode === 'tutorial', catalog, options, {});
-    session.startNewGame(firstDrawPile);
+    session.startNewGame(firstDrawPile, seed);
     session.finalize();
     return session;
   }
@@ -123,6 +202,79 @@ export class GameSession {
     }
     session.pendingChoices = null;
     return session;
+  }
+
+  /**
+   * Rebuilds a game by running its recorded commands again (EDR-051), from the seed of its first
+   * event, and checks they produce the submitted events. Returns `null` for games without a
+   * seed (started before EDR-051), which can only be replayed; throws `UnverifiedGameError` when
+   * the log is not what the commands produce. The returned session is the trusted one: its score
+   * does not depend on the submitted events.
+   */
+  static verify(id: string, events: GameEvent[], catalog: GameCatalog): GameSession | null {
+    const first = events[0] as GameStartedEvent | undefined;
+    if (first?.type !== GameEventType.GAME_STARTED || first.seed === undefined) return null;
+    const options = { allowCheats: false, unrestrictedRewind: false };
+    const firstDrawPiles = [undefined, catalog.tutorialDrawOrder];
+    for (const firstDrawPile of firstDrawPiles) {
+      const session = new GameSession(id, false, catalog, options, {});
+      session.startNewGame(firstDrawPile, first.seed);
+      session.finalize();
+      try {
+        session.settle(events, 0);
+      } catch (error) {
+        if (error instanceof UnverifiedGameError) continue;
+        throw error;
+      }
+      return session.runRecorded(events);
+    }
+    throw new UnverifiedGameError('The game start does not match its seed');
+  }
+
+  private runRecorded(events: GameEvent[]): GameSession {
+    let index = nextRecordedEvent(events, 0);
+    while (index < events.length) {
+      for (const recorded of events[index].commands ?? []) {
+        if (UNRECORDED.has(recorded.type) || recorded.type === 'cheat') {
+          throw new UnverifiedGameError(`Unexpected recorded command ${recorded.type}`);
+        }
+        const state = this.agg.getGameState();
+        const command = mapTriggerId(recorded, ref =>
+          ref.startsWith(TRIGGER_REF) ? triggerKey(state, ref) : ref,
+        );
+        this.execute(command);
+      }
+      if (this.agg.getEvents().length <= index) {
+        throw new UnverifiedGameError(`The commands of event ${index} produce no event`);
+      }
+      index = this.settle(events, index);
+    }
+    return this;
+  }
+
+  /**
+   * Compares the events produced since `from` with the submitted ones up to the next recorded
+   * event; the player may have rewound the last ones. Returns the index of that next event.
+   */
+  private settle(events: GameEvent[], from: number): number {
+    const end = nextRecordedEvent(events, from + 1);
+    while (this.agg.getEvents().length > end) {
+      const before = this.agg.getEvents().length;
+      this.rewind();
+      if (this.agg.getEvents().length >= before) {
+        throw new UnverifiedGameError(`Event ${end} cannot be rewound`);
+      }
+    }
+    const produced = this.agg.getEvents();
+    if (produced.length < end) {
+      throw new UnverifiedGameError(`Events ${produced.length} to ${end - 1} were not produced`);
+    }
+    for (let index = from; index < end; index++) {
+      if (eventContent(produced[index]) !== eventContent(events[index])) {
+        throw new UnverifiedGameError(`Event ${index} does not match the player's commands`);
+      }
+    }
+    return end;
   }
 
   // ─── Read model ───────────────────────────────────────────────────────────
@@ -180,16 +332,35 @@ export class GameSession {
     if (command.type === 'cheat' && !this.options.allowCheats) {
       throw new ForbiddenCommandError('Cheat commands are disabled');
     }
+    const from = this.agg.getEvents().length;
+    if (!UNRECORDED.has(command.type)) {
+      const state = this.agg.getGameState();
+      this.unrecorded.push(mapTriggerId(command, triggerId => triggerRef(state, triggerId)));
+    }
     try {
       this.dispatch(command);
       return undefined;
     } catch (error) {
       if (error instanceof ForbiddenCommandError) throw error;
       return this.handleActionError(error);
+    } finally {
+      this.record(from);
+    }
+  }
+
+  /** Sets the waiting commands on the first new event; drops them when the action ended without one. */
+  private record(from: number): void {
+    const events = this.agg.getEvents();
+    if (events.length > from) {
+      events[from].commands = this.unrecorded;
+      this.unrecorded = [];
+    } else if (!this.pendingChoices && !this.pendingUpgrade) {
+      this.unrecorded = [];
     }
   }
 
   private dispatch(command: GameCommand): void {
+    if (!isFlowCommandAllowed(command, this.agg.getGameState())) return;
     switch (command.type) {
       case 'startRound':
         return this.sync(this.agg.roundStarted());
@@ -219,6 +390,8 @@ export class GameSession {
       case 'resolvePayCost':
         return this.resolvePayCost(command.resolved);
       case 'skipTrigger':
+        // Only optional triggers can be skipped (the UI offers no skip for the others).
+        if (!this.agg.getGameState().triggerPile[command.triggerId]?.effectDef.optional) return;
         return this.sync(this.agg.skipTrigger(command.triggerId));
       case 'skipChoice':
         return this.cancelPendingAction();
@@ -254,7 +427,7 @@ export class GameSession {
     );
   }
 
-  private startNewGame(firstDrawPile?: number[]): GameState {
+  private startNewGame(firstDrawPile: number[] | undefined, seed: string): GameState {
     // The starting deck is the first 10 cards of the campaign pack.
     const campaignEntries = [...this.catalog.campaign].sort((a, b) => a.id - b.id);
     const discoverableEntries = [...this.catalog.discoverable].sort((a, b) => a.id - b.id);
@@ -277,6 +450,7 @@ export class GameSession {
       discoveryPile,
       discoverablePile,
       firstDrawPile,
+      seed,
     );
   }
 
@@ -365,13 +539,23 @@ export class GameSession {
     this.sync(this.agg.selectExpansion(name, expansion));
   }
 
+  /** The state of a card just discovered, among the ones its definition offers. */
   private chooseState(instanceId: number, stateId: number): void {
-    if (!this.isPlayable(instanceId)) return;
+    const gs = this.agg.getGameState();
+    const inst = gs.instances[instanceId];
+    if (
+      gs.phase !== Phase.ROUND_START ||
+      !inst ||
+      !gs.lastAddedCards.includes(instanceId) ||
+      !this.catalog.cards[inst.cardId].chooseState?.includes(stateId)
+    ) {
+      return;
+    }
     this.sync(this.agg.chooseState(instanceId, stateId));
   }
 
   private resolveProduction(instanceId: number, choiceIndex: number): void {
-    if (!this.isPlayable(instanceId)) return;
+    if (!this.isPlayable(instanceId) || !isInPlay(this.agg.getGameState(), instanceId)) return;
     const gs = this.agg.getGameState();
     const inst = gs.instances[instanceId];
     const { cards, stickers } = this.catalog;
@@ -398,8 +582,15 @@ export class GameSession {
       triggerEntry?.sourceInstanceId === instanceId && triggerEntry?.effectDef.id === actionId;
     const action =
       (isMatchingTrigger ? triggerEntry?.effectDef : undefined) ??
-      cs.actions?.find(ce => ce.id === actionId);
+      cs.actions?.find(ce => ce.id === actionId && !ce.trigger);
     if (!action) return;
+    // A card action (not a trigger): from a card in play, during the turn unless unlimited.
+    if (
+      !isMatchingTrigger &&
+      (!isInPlay(gs, instanceId) || (gs.phase !== Phase.PLAYING && !action.unlimited))
+    ) {
+      return;
+    }
 
     const newState = this.agg.cardAction(action, instanceId, triggerId, amount);
     if (this.syncAggregatePending()) return;
@@ -407,7 +598,7 @@ export class GameSession {
   }
 
   private resolveUpgrade(instanceId: number, upgradeTo: number): void {
-    if (!this.isPlayable(instanceId)) return;
+    if (!this.isPlayable(instanceId) || !isInPlay(this.agg.getGameState(), instanceId)) return;
     const gs = this.agg.getGameState();
     const cs = getActiveState(gs.instances[instanceId], this.catalog.cards);
     const upgrade = (cs.upgrade ?? []).find(u => u.upgradeTo === upgradeTo);
@@ -447,13 +638,17 @@ export class GameSession {
   }
 
   private resolvePlayerChoice(choice: ResolvedActionEffect, choiceType: PendingChoiceType): void {
-    const newState = this.agg.resolveCardActionChoice(choice, choiceType);
+    const sanitized = sanitizeChoice(choice, choiceType, this.pendingChoices?.[0]);
+    if (!sanitized) throw new ActionCancelledError();
+    const newState = this.agg.resolveCardActionChoice(sanitized, choiceType);
     if (this.syncAggregatePending()) return;
     this.sync(newState);
   }
 
   /** Called when the player made a choice needed to pay an action or upgrade cost. */
-  private resolvePayCost(resolved: ResolvedCost): void {
+  private resolvePayCost(input: ResolvedCost): void {
+    const resolved = sanitizeCost(input, this.pendingChoices?.[0]);
+    if (!resolved) throw new ActionCancelledError();
     if (this.pendingUpgrade) {
       const pending = this.pendingUpgrade;
       const merged: ResolvedCost = {

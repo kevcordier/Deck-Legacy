@@ -8,6 +8,7 @@ import type {
   StickerStock,
   TriggerEntry,
 } from './';
+import type { GameCommand } from './GameSession';
 
 export interface GameEvent {
   id: string;
@@ -15,6 +16,12 @@ export interface GameEvent {
   timestamp: number;
   /** Produced by a development cheat command: the server refuses such games. */
   cheat?: true;
+  /**
+   * Player commands run since the previous event, set on the first event they produced: the
+   * server runs them again to check the event log (EDR-051). Trigger ids are replaced by a
+   * stable reference (`GameSession`). Absent in older games and on the events of `start()`.
+   */
+  commands?: GameCommand[];
 }
 
 export interface GameStartedEvent extends GameEvent {
@@ -26,6 +33,8 @@ export interface GameStartedEvent extends GameEvent {
   discoveryPile: number[];
   /** Absent in games started before the two packs (EDR-045). */
   discoverablePile?: number[];
+  /** Seed of every shuffle of the game (EDR-051). Absent in older games: they cannot be verified. */
+  seed?: string;
 }
 
 export interface GameEndedEvent extends GameEvent {

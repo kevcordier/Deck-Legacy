@@ -1,7 +1,7 @@
 /**
  * Background sync of the local kingdoms with the server.
  *
- * Games are always played locally (offline included). When a session exists, the events the
+ * Games are always played locally (offline included). When a registered account is signed in, the events the
  * server does not have yet are pushed after changes (debounced), built on the server version
  * the device last saw. On startup, on return to the foreground and every minute,
  * `reconcile()` downloads the kingdoms another device moved forward when this device has no
@@ -268,6 +268,11 @@ function forgetOtherAccounts(account: string): void {
       updateSyncInfo(save.id, save.savedAt, { ...save.sync, limited: undefined });
     }
   }
+}
+
+/** After sign-out: the kingdoms synced with an account stay on it, remove them from this device. */
+export function forgetAccountKingdoms(): void {
+  forgetOtherAccounts('');
 }
 
 /** Synced kingdoms the server no longer has were deleted on another device. */

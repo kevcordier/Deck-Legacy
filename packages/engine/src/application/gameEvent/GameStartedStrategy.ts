@@ -10,6 +10,7 @@ export class GameStartedStrategy implements GameEventStrategy {
     const inGame = new Set([...e.initialDeck, ...e.discoveryPile, ...(e.discoverablePile ?? [])]);
     return {
       ...gameState,
+      seed: e.seed,
       instances: Object.fromEntries(
         e.deck
           .filter(entry => inGame.has(entry.id))

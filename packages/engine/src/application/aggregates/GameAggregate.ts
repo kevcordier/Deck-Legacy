@@ -55,6 +55,7 @@ import { cardSelector } from '../cardSelector';
 import { DEFAULT_PARAMETERS } from '../emptyState';
 import { GameEventContext } from '../gameEvent/GameEventContext';
 import { canUseOptions, computeGameStateDiff } from '../gameStateHelper';
+import { shuffle } from '../random';
 import { CardActionAggregate } from './CardActionAggregate';
 
 export { EMPTY_STATE } from '../emptyState';
@@ -128,6 +129,7 @@ export class GameAggregate {
     discoveryPile: number[],
     discoverablePile: number[],
     firstDrawPile?: number[],
+    seed?: string,
   ): GameState {
     const event: GameStartedEvent = {
       id: crypto.randomUUID(),
@@ -138,6 +140,7 @@ export class GameAggregate {
       stickerStock,
       discoveryPile,
       discoverablePile,
+      ...(seed === undefined ? {} : { seed }),
     };
     this.apply(event);
     this.events.push(event);
@@ -146,14 +149,9 @@ export class GameAggregate {
     return this.gameState;
   }
 
-  private shuffle<T>(arr: T[]): T[] {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      // eslint-disable-next-line sonarjs/pseudo-random
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
+  /** Seeded by the game and the position in the log: a rewound shuffle comes out the same. */
+  private shuffle(arr: number[]): number[] {
+    return shuffle(arr, this.gameState.seed, String(this.events.length));
   }
 
   private filterNonPermanentCardIds(cardIds: number[]): number[] {

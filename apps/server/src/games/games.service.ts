@@ -11,6 +11,7 @@ import {
 import {
   CorruptedGameError,
   GameSession,
+  UnverifiedGameError,
 } from '@deck-legacy/engine/application/session/GameSession';
 import { GameEventType, Phase } from '@deck-legacy/engine/domain/enums';
 import type { CardActionEvent, GameCatalog, GameEvent } from '@deck-legacy/engine/domain/types';
@@ -60,8 +61,9 @@ function staleVersion(): ConflictException {
  * events before `fromSeq`, replays it with the engine to check it is a
  * consistent game, computes the score and mirrors campaign scores for the leaderboard. A sync
  * with a `baseVersion` other than the stored version is refused (another device synced first);
- * without one, the last sync wins. Replaying proves consistency, not fairness: events are produced by the
- * client, so a modified client could forge them.
+ * without one, the last sync wins. The server runs the recorded player commands again from the
+ * game seed and refuses a log they do not produce (EDR-051); older games without a seed are only
+ * replayed: new ones are stored unverified, out of the leaderboards; stored ones keep their flag.
  */
 @Injectable()
 export class GamesService {
@@ -154,18 +156,7 @@ export class GamesService {
     if (!this.allowCheats && usesCheats(body.events)) {
       throw new UnprocessableEntityException('Games using development cheats are not accepted');
     }
-    let session: GameSession;
-    try {
-      session = GameSession.restore('sync', body.events, this.catalog, {
-        allowCheats: false,
-        unrestrictedRewind: false,
-      });
-    } catch (error) {
-      if (error instanceof CorruptedGameError) {
-        throw new UnprocessableEntityException('Event log cannot be replayed');
-      }
-      throw error;
-    }
+    const { session, verified } = this.replay(body.events);
     const state = session.getState();
     return {
       events: body.events,
@@ -174,8 +165,35 @@ export class GamesService {
       score: session.getScore(),
       segments: session.getCampaignSegments(),
       finished: state.phase === Phase.GAME_OVER,
+      verified,
       campaignScores: state.campaignScores,
     };
+  }
+
+  /**
+   * Runs the player's recorded commands again (EDR-051): the score then comes from the server's
+   * own run. Games started before EDR-051 can only be replayed (`verified` undefined): a new one is
+   * stored unverified, a stored one keeps its flag (the games trusted by the migration).
+   */
+  private replay(events: GameEvent[]): { session: GameSession; verified?: boolean } {
+    try {
+      // Development games with cheats (accepted when `allowCheats`) can only be replayed.
+      const verified = usesCheats(events) ? null : GameSession.verify('sync', events, this.catalog);
+      if (verified) return { session: verified, verified: true };
+      const session = GameSession.restore('sync', events, this.catalog, {
+        allowCheats: false,
+        unrestrictedRewind: false,
+      });
+      return { session };
+    } catch (error) {
+      if (error instanceof UnverifiedGameError) {
+        throw new UnprocessableEntityException('Event log does not match the player commands');
+      }
+      if (error instanceof CorruptedGameError) {
+        throw new UnprocessableEntityException('Event log cannot be replayed');
+      }
+      throw error;
+    }
   }
 
   /** Serialises work per game so concurrent syncs never interleave. */

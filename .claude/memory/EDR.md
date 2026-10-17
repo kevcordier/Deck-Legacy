@@ -37,11 +37,11 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-021 | 2026-10-10 | Styles NativeWind (syntaxe Tailwind v3)      | Active                                  |
 | EDR-022 | 2026-10-10 | Monorepo pnpm avec paquets partagés          | Active                                  |
 | EDR-023 | 2026-10-10 | Moteur de jeu côté serveur uniquement        | Dépréciée par EDR-024                   |
-| EDR-024 | 2026-10-10 | Local-first, serveur valide par rejeu        | Active                                  |
+| EDR-024 | 2026-10-10 | Local-first, serveur valide par rejeu        | En partie remplacée par EDR-051         |
 | EDR-025 | 2026-10-10 | Compatibilité ascendante des rejeux          | Active                                  |
 | EDR-026 | 2026-10-10 | API NestJS 11 en CommonJS                    | Active                                  |
 | EDR-027 | 2026-10-10 | PostgreSQL et Prisma pour la persistance     | Active                                  |
-| EDR-028 | 2026-10-10 | Supabase Auth avec invités anonymes          | Active                                  |
+| EDR-028 | 2026-10-10 | Supabase Auth avec invités anonymes          | Dépréciée par EDR-050                   |
 | EDR-029 | 2026-10-10 | Synchronisation : dernier écrivain gagne     | En partie remplacée par EDR-038, 041    |
 | EDR-030 | 2026-10-10 | Scores issus du rejeu, classement inscrits   | Active                                  |
 | EDR-031 | 2026-10-10 | Code et documentation du dépôt en anglais    | Active                                  |
@@ -61,6 +61,8 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-047 | 2026-10-14 | Trois identifiants par carte d'extension     | Active                                  |
 | EDR-048 | 2026-10-14 | Suppression de l'effet « dernière manche »   | Active                                  |
 | EDR-049 | 2026-10-15 | Critère de sortie de la 1.0.0                | Active                                  |
+| EDR-050 | 2026-10-17 | Sans compte, aucun appel à l'API             | Active                                  |
+| EDR-051 | 2026-10-17 | Parties vérifiées par réexécution            | Active                                  |
 
 ---
 
@@ -648,7 +650,7 @@ Conséquences
 ID : EDR-024
 Date : 2026-10-10
 Titre : Local-first, serveur valide par rejeu
-Statut : Active
+Statut : Active ; la validation par simple rejeu (« le serveur n'exécute jamais de commande ») est remplacée par EDR-051
 Remplace : EDR-023
 
 Contexte
@@ -749,7 +751,7 @@ Conséquences
 ID : EDR-028
 Date : 2026-10-10
 Titre : Supabase Auth avec invités anonymes
-Statut : Active
+Statut : Dépréciée par EDR-050
 
 Contexte
 On veut synchroniser les parties sans obliger le joueur à créer un compte avant de jouer.
@@ -1317,3 +1319,67 @@ Conséquences
 - La décision de sortir la `1.0.0` revient au mainteneur ; il n'y a pas de liste de contrôle formelle.
 - Chaque nouvelle extension après la `1.0.0` incrémente la version mineure.
 - Ce qui déclenche une nouvelle bêta n'est toujours pas défini.
+
+---
+
+ID : EDR-050
+Date : 2026-10-17
+Titre : Sans compte, aucun appel à l'API
+Statut : Active
+Remplace : EDR-028
+
+Contexte
+EDR-028 ouvrait une session invitée (anonyme) au premier lancement, et ses royaumes étaient synchronisés avec l'API. Le mainteneur veut qu'un joueur qui ne se connecte pas ne dépende en rien du serveur.
+
+Problème
+Que fait l'application pour un joueur sans compte ?
+
+Décision
+Aucune session invitée n'est ouverte : sans compte inscrit, les parties sont uniquement sauvegardées sur l'appareil et l'application n'appelle pas l'API (ni synchronisation, ni `/me`). La synchronisation démarre à la connexion ou à la création d'un compte (`signUp`), et les royaumes locaux pas encore synchronisés sont alors envoyés au compte. Les sessions invitées ouvertes par les anciennes versions sont conservées, sans être synchronisées, pour pouvoir encore devenir un compte (`updateUser`). La déconnexion retire de l'appareil les royaumes synchronisés avec le compte. Le classement public reste consultable sans compte. Le reste d'EDR-028 est inchangé (jetons vérifiés par le serveur, mode hors ligne sans configuration Supabase).
+
+Alternatives rejetées
+
+- Garder les invités synchronisés (EDR-028) : appels réseau et données serveur pour des joueurs qui n'ont rien demandé.
+
+Conséquences
+
+- Les royaumes d'un joueur sans compte ne sont pas récupérables sur un autre appareil.
+- Le serveur continue d'accepter les jetons anonymes (anciens clients) ; les anciens invités ne synchronisent plus jusqu'à la création d'un compte.
+
+---
+
+ID : EDR-051
+Date : 2026-10-17
+Titre : Parties vérifiées par réexécution
+Statut : Active
+Remplace : EDR-024 (en partie : la validation par simple rejeu)
+
+Contexte
+Le serveur validait un journal en le rejouant (EDR-024). Les événements portent des résultats (`CARD_ACTION.gameStateChanges`, `CARD_PRODUCED.productions`, mélanges tirés par `Math.random` côté client) : un client modifié pouvait envoyer n'importe quel état cohérent, et le classement ne prouvait rien. Le moteur reprenait aussi tels quels les choix et les paiements envoyés par l'interface (`resolvePlayerChoice`, `resolvePayCost`), et plusieurs commandes n'avaient pas de garde de phase (`startRound` relançait un mélange à volonté).
+
+Problème
+Comment s'assurer qu'un journal synchronisé vient de coups légaux, sans rendre le jeu dépendant du réseau ?
+
+Décision
+
+- **Commandes enregistrées.** `GameSession` place sur le premier événement produit (`GameEvent.commands`) les commandes jouées depuis l'événement précédent ; les identifiants de déclencheurs, aléatoires, y sont remplacés par une référence stable (carte source, action, rang). `rewind` et `setCardName` ne sont pas enregistrés.
+- **Hasard à graine.** `GAME_STARTED.seed` (tirée par le client) ; chaque mélange dépend de la graine, d'un sel (position dans le journal, ou carte, manche et tour pour `SHUFFLE_DECK`) et des cartes mélangées (`application/random.ts`).
+- **Réexécution sur le serveur.** `GameSession.verify()` redémarre la partie avec la graine (ou l'ordre du tutoriel du catalogue), réexécute les commandes et compare chaque événement produit à celui reçu, sans tenir compte des ids, horodatages et clés aléatoires ; il annule lui-même les derniers événements que le joueur a annulés. Un écart donne `422 INVALID_GAME`. Le score vient de la session réexécutée.
+- **Saisie contrôlée par le moteur** (`session/playerInput.ts`) : commandes de déroulement limitées aux phases où l'interface les propose, choix et paiements reconstruits à partir du choix en attente (valeurs proposées, nombre minimal et maximal), actions et améliorations réservées aux cartes en jeu, déclencheurs obligatoires non passables, choix d'état réservé aux cartes découvertes.
+- **Anciennes parties.** Sans graine, une partie ne peut être que rejouée : une nouvelle est stockée avec `Game.verified = false` et exclue des classements ; une partie déjà stockée garde son indicateur. La migration marque les parties existantes comme vérifiées : la seule en cours est celle du mainteneur, qui lui fait confiance.
+- L'état intermédiaire d'une action (choix en attente) reste en mémoire (EDR-003) : seules les commandes rejoignent le journal.
+
+Alternatives rejetées
+
+- Graine fournie par le serveur : demande le réseau au lancement d'une partie (EDR-024, règle 4).
+- Clés de déclencheurs déterministes dans le moteur : une quinzaine de sites de génération à changer, et les journaux existants gardent leurs UUID ; la comparaison normalisée suffit.
+- Contrôles d'invariants seuls (ressources positives, coûts) : arrêtent la triche grossière, pas un état fabriqué cohérent.
+
+Conséquences
+
+- La graine est dans le journal : un client modifié peut prévoir les mélanges et explorer des variantes par annulation. La réexécution garantit que chaque partie classée est une suite de coups légaux, pas qu'elle a été jouée à l'aveugle.
+- La vérification ne vaut que ce que valent les gardes du moteur : toute nouvelle commande ou tout nouveau type de choix doit être contrôlé dans `playerInput.ts`.
+- Le moteur doit rester déterministe à partir des commandes (pas de `Math.random`, de `Date.now()` ni d'ordre de clés aléatoires dans la logique) ; `apps/server/tests/verification.fuzz.test.ts` le vérifie sur les vraies cartes.
+- La vérification coûte environ deux fois un rejeu (≈ 0,45 s pour 1 000 événements).
+- Une partie dont une partie du journal vient d'un client antérieur à EDR-051 (même partie jouée sur deux appareils de versions différentes) est refusée.
+- Une partie reprise par la migration reste classée sans être vérifiée : de nouveaux événements falsifiés y seraient acceptés. Acceptable tant qu'elle est la seule ; ne pas reproduire cette reprise pour d'autres joueurs.

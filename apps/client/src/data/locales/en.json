@@ -377,7 +377,7 @@
   },
   "account": {
     "title": "Account",
-    "guestStatus": "You are playing as a guest.",
+    "guestStatus": "You are playing without an account: your games are saved on this device only.",
     "signedInAs": "Signed in as {{email}}.",
     "displayName": "Display name (shown on the leaderboard)",
     "displayNamePlaceholder": "Your name",
@@ -386,7 +386,7 @@
     "keepProgressHint": "Create an account to keep your kingdoms on every device and appear on the leaderboard.",
     "email": "Email",
     "accountCreated": "Account created.",
-    "signInHint": "Signing in switches to that account: games played as a guest stay on the guest account.",
+    "signInHint": "Signing in switches to that account: the kingdoms of this device not yet saved online are added to it.",
     "password": "Password",
     "showPassword": "Show password",
     "hidePassword": "Hide password",

@@ -377,7 +377,7 @@
   },
   "account": {
     "title": "Compte",
-    "guestStatus": "Vous jouez en tant qu'invité.",
+    "guestStatus": "Vous jouez sans compte : vos parties sont sauvegardées sur cet appareil uniquement.",
     "signedInAs": "Connecté en tant que {{email}}.",
     "displayName": "Pseudo (affiché dans le classement)",
     "displayNamePlaceholder": "Votre pseudo",
@@ -386,7 +386,7 @@
     "keepProgressHint": "Créez un compte pour retrouver vos royaumes sur tous vos appareils et apparaître dans le classement.",
     "email": "E-mail",
     "accountCreated": "Compte créé.",
-    "signInHint": "Se connecter bascule sur ce compte : les parties jouées en invité restent sur le compte invité.",
+    "signInHint": "Se connecter bascule sur ce compte : les royaumes de cet appareil pas encore sauvegardés en ligne y sont ajoutés.",
     "password": "Mot de passe",
     "showPassword": "Afficher le mot de passe",
     "hidePassword": "Masquer le mot de passe",

@@ -56,6 +56,7 @@ const snapshot = (count: number) => ({
   score: 4,
   segments: [{ segment: 'base', score: 4 }],
   finished: false,
+  verified: true,
   events: events(count),
 });
 
@@ -150,6 +151,7 @@ describe('GamesRepository reads and creation', () => {
       status: 'FINISHED',
       version: 1,
       name: 'Avalon',
+      verified: true,
     });
     expect(tx.gameEvent.createMany.mock.calls[0][0].data).toHaveLength(2);
     expect(afterWrite).toHaveBeenCalledOnce();
@@ -301,6 +303,7 @@ describe('ScoresService', () => {
     expect(tx.score.findMany.mock.calls[0][0].where).toEqual({
       segment: 'base',
       user: { isAnonymous: false },
+      game: { verified: true },
     });
     expect(board.entries[0]).toEqual({
       id: 's1',
@@ -328,6 +331,7 @@ describe('ScoresService', () => {
 
     expect(tx.game.findMany.mock.calls[0][0].where).toEqual({
       status: { in: ['ACTIVE', 'FINISHED'] },
+      verified: true,
       user: { isAnonymous: false },
     });
     expect(board).toEqual([

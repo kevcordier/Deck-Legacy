@@ -59,6 +59,8 @@ export type PurgeState = {
 };
 
 export type GameState = {
+  /** Seed of the shuffles (EDR-051); absent in older games, which shuffle with `Math.random`. */
+  seed?: string;
   drawPile: number[];
   /** Campaign pile: the start of each round discovers its first cards; empty, the campaign ends. */
   discoveryPile: number[];

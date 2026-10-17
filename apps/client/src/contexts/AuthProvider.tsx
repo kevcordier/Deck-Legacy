@@ -6,6 +6,7 @@ import {
 } from '@contexts/AuthContext';
 import { api, setAccessTokenProvider } from '@services/api';
 import { getSupabase } from '@services/supabase';
+import { forgetAccountKingdoms } from '@services/sync';
 import type { Session } from '@supabase/supabase-js';
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -21,9 +22,10 @@ function toAuthUser(session: Session | null): AuthUser | null {
 }
 
 /**
- * Keeps a Supabase session when the network allows it: players start as anonymous guests and
- * can later attach an email to keep their games and appear on the leaderboard. The game never
- * waits for it: without a session, games are only saved on the device.
+ * Restores the Supabase session saved on the device, if any. Without an account, no session is
+ * opened and games are only saved on the device; signing in or creating an account syncs them.
+ * Guest sessions opened by older versions are kept (so they can still become an account) but
+ * never synced (EDR-050).
  */
 export function AuthProvider({ children }: { readonly children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>('loading');
@@ -54,14 +56,8 @@ export function AuthProvider({ children }: { readonly children: ReactNode }) {
     void (async () => {
       try {
         const { data } = await supabase.auth.getSession();
-        let session = data.session;
-        if (!session) {
-          const { data: anonymous, error } = await supabase.auth.signInAnonymously();
-          if (error) throw error;
-          session = anonymous.session;
-        }
         if (cancelled) return;
-        setUser(toAuthUser(session));
+        setUser(toAuthUser(data.session));
         setStatus('ready');
       } catch (error) {
         // Usually offline: the game stays playable, the session is retried later.
@@ -80,8 +76,16 @@ export function AuthProvider({ children }: { readonly children: ReactNode }) {
   }, [attempt]);
 
   const createAccount = useCallback(async (email: string, password: string) => {
-    // Email and password in one request: Supabase accepts a password for a guest only with it.
     const supabase = getSupabase();
+    const { data: current } = await supabase.auth.getSession();
+    if (!current.session?.user.is_anonymous) {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
+      setUser(toAuthUser(data.session));
+      return;
+    }
+    // Guest session from an older version: email and password in one request, Supabase accepts
+    // a password for a guest only with it.
     const { error } = await supabase.auth.updateUser({ email, password });
     if (error) throw error;
     // The current access token still describes a guest: refresh it so the API sees the account.
@@ -101,11 +105,9 @@ export function AuthProvider({ children }: { readonly children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
-    const supabase = getSupabase();
-    await supabase.auth.signOut();
-    const { data, error } = await supabase.auth.signInAnonymously();
-    if (error) throw error;
-    setUser(toAuthUser(data.session));
+    await getSupabase().auth.signOut();
+    forgetAccountKingdoms();
+    setUser(null);
   }, []);
 
   const deleteAccount = useCallback(async () => {
@@ -113,9 +115,8 @@ export function AuthProvider({ children }: { readonly children: ReactNode }) {
     const supabase = getSupabase();
     // The user no longer exists on the server: only forget the local session.
     await supabase.auth.signOut({ scope: 'local' });
-    const { data, error } = await supabase.auth.signInAnonymously();
-    if (error) throw error;
-    setUser(toAuthUser(data.session));
+    forgetAccountKingdoms();
+    setUser(null);
   }, []);
 
   const retry = useCallback(() => setAttempt(a => a + 1), []);

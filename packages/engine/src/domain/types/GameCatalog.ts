@@ -12,4 +12,6 @@ export type GameCatalog = {
   discoverable: ExpansionDeckEntry[];
   expansions: Record<string, ExpansionConfig>;
   stickerStock: StickerStock;
+  /** First draw order of the tutorial game, so the server can verify kept tutorials (EDR-051). */
+  tutorialDrawOrder?: number[];
 };

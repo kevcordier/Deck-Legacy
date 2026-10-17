@@ -16,17 +16,17 @@ export type AuthContextType = {
   status: AuthStatus;
   user: AuthUser | null;
   /**
-   * Turns the current guest account into a registered one (email + password); its kingdoms are
-   * kept. Email confirmation is off: the session is refreshed so the API sees the account.
+   * Creates a registered account (email + password), or upgrades an older guest session; the
+   * kingdoms of the device are kept and synced. Email confirmation is off.
    */
   createAccount: (email: string, password: string) => Promise<void>;
   /** Changes the password of the signed-in account. */
   setPassword: (password: string) => Promise<void>;
-  /** Signs in to an existing account; the current anonymous progress stays on the old account. */
+  /** Signs in to an existing account; unsynced kingdoms of the device are added to it. */
   signIn: (email: string, password: string) => Promise<void>;
-  /** Signs out and continues as a new guest. */
+  /** Signs out and continues without an account (local saves only). */
   signOut: () => Promise<void>;
-  /** Deletes the account and its data on the server, then continues as a new guest. */
+  /** Deletes the account and its data on the server, then continues without an account. */
   deleteAccount: () => Promise<void>;
   retry: () => void;
 };

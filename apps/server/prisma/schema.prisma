@@ -43,6 +43,9 @@ model Game {
   name       String      @default("")
   /// Campaign segment scores in the order they were played: [{ segment, score }].
   segments   Json        @default("[]")
+  /// The server ran the player's recorded commands again and got the same log (EDR-051).
+  /// Unverified games (started before EDR-051) are kept but left out of the leaderboards.
+  verified   Boolean     @default(false)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   events     GameEvent[]

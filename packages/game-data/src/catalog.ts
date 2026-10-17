@@ -31,6 +31,12 @@ export function indexById<T extends { id: number }>(items: readonly T[]): Record
   return byId;
 }
 
+/**
+ * Draw order of the tutorial's first round (starting deck instances), scripted by its steps; the
+ * server needs it to verify a kept tutorial (EDR-051).
+ */
+export const TUTORIAL_DRAW_ORDER = [5, 1, 2, 7, 6, 3, 10, 8, 4, 9];
+
 /** Builds the catalog from the game data of this package. */
 export function loadGameCatalog(): GameCatalog {
   const deck = deckData as DeckData;
@@ -49,5 +55,6 @@ export function loadGameCatalog(): GameCatalog {
       ),
     },
     stickerStock: stickerStockData,
+    tutorialDrawOrder: TUTORIAL_DRAW_ORDER,
   };
 }

@@ -33,7 +33,7 @@ Maximize **Glory** points across all rounds by discovering, upgrading, and chain
 
 ## Getting Started
 
-**Requirements:** Node.js v24 (see `.nvmrc`), pnpm (version pinned in `package.json`), Docker for the local database, and a [Supabase](https://supabase.com) project for authentication (anonymous sign-ins enabled).
+**Requirements:** Node.js v24 (see `.nvmrc`), pnpm (version pinned in `package.json`), Docker for the local database, and a [Supabase](https://supabase.com) project for authentication.
 
 ```bash
 # Install dependencies for every workspace
@@ -86,7 +86,7 @@ The game is playable without the API or Supabase (offline, saved on the device);
 - **NativeWind 4** — Tailwind CSS classes for React Native
 - **NestJS 11** — API server: accounts, game sync (validated by replaying the engine), scores
 - **PostgreSQL + Prisma 7** — users, game event logs and scores
-- **Supabase Auth** — guest (anonymous) sessions, upgradable to email accounts
+- **Supabase Auth** — optional email accounts
 - **TypeScript** — strict mode throughout
 - **Vitest** — unit and end-to-end tests with v8 coverage
 - **i18next** — internationalization (English & French)
@@ -116,7 +116,7 @@ packages/
 
 **Event Sourcing** — The game state is derived by replaying an ordered list of `GameEvent` objects. Nothing is mutated directly; undo pops the last event.
 
-**Accounts** — Players start as Supabase guests (as soon as a connection is available). Linking an email keeps their games across devices and ranks their final scores on the leaderboard.
+**Accounts** — Without an account, games are saved on the device only and the API is never called. Creating an account or signing in syncs the kingdoms across devices and ranks their final scores on the leaderboard.
 
 For full architectural details, see [CLAUDE.md](./CLAUDE.md).
 

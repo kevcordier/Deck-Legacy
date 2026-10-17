@@ -31,6 +31,7 @@ type Row = {
   status: string;
   score: number;
   cardNames: Record<string, string>;
+  verified: boolean;
   events: GameEvent[];
   updatedAt: Date;
 };
@@ -117,6 +118,7 @@ class InMemoryGamesRepository {
       status: snapshot.finished ? 'FINISHED' : 'ACTIVE',
       score: snapshot.score,
       cardNames: snapshot.cardNames,
+      verified: snapshot.verified ?? false,
       events: structuredClone(snapshot.events),
       updatedAt: new Date(),
     });
@@ -139,6 +141,7 @@ class InMemoryGamesRepository {
     row.status = snapshot.finished ? 'FINISHED' : 'ACTIVE';
     row.score = snapshot.score;
     row.cardNames = snapshot.cardNames;
+    row.verified = snapshot.verified ?? row.verified;
     row.events = structuredClone(snapshot.events);
     row.updatedAt = new Date();
     if (afterWrite) await afterWrite({} as never);
@@ -305,8 +308,10 @@ describe('Games sync API (e2e, in-memory storage)', () => {
     const unknown = await put(aliceToken, randomUUID(), { events, fromSeq: 1 }).expect(409);
     expect(unknown.body.code).toBe('STALE_VERSION');
 
-    await put(aliceToken, session.id, { events: events.slice(0, 1) }).expect(200);
-    await put(aliceToken, session.id, { events, fromSeq: 2, baseVersion: 1 }).expect(409);
+    // The events of `GameSession.start`, before the first recorded command.
+    const start = events.findIndex(event => event.commands);
+    await put(aliceToken, session.id, { events: events.slice(0, start) }).expect(200);
+    await put(aliceToken, session.id, { events, fromSeq: start + 1, baseVersion: 1 }).expect(409);
   });
 
   it('rejects a delta that makes the log impossible to replay', async () => {
@@ -318,6 +323,50 @@ describe('Games sync API (e2e, in-memory storage)', () => {
       baseVersion: 1,
     }).expect(422);
     expect(response.body.code).toBe('INVALID_GAME');
+  });
+
+  it('verifies a game by running its recorded commands again', async () => {
+    const session = playedGame(3);
+    await put(aliceToken, session.id, { events: session.getEvents() }).expect(200);
+
+    expect(repository.games.get(session.id)?.verified).toBe(true);
+  });
+
+  it('refuses a log the recorded commands do not produce', async () => {
+    const session = playedGame(2);
+    const events = structuredClone(session.getEvents());
+    const produced = events.find(event => event.type === 'CARD_PRODUCED') as GameEvent & {
+      productions: Record<string, number>;
+    };
+    produced.productions = { gold: 50 };
+
+    const response = await put(aliceToken, session.id, { events }).expect(422);
+    expect(response.body.code).toBe('INVALID_GAME');
+    expect(repository.games.has(session.id)).toBe(false);
+  });
+
+  it('stores games started before the seed unverified', async () => {
+    const session = playedGame(1);
+    const [first, ...rest] = session.getEvents();
+    const { seed: _seed, ...legacyStart } = first as GameEvent & { seed?: string };
+    await put(aliceToken, session.id, { events: [legacyStart, ...rest] }).expect(200);
+
+    expect(repository.games.get(session.id)?.verified).toBe(false);
+  });
+
+  it('keeps a game trusted by the migration verified when it syncs again', async () => {
+    const session = playedGame(1);
+    const [first, ...rest] = session.getEvents();
+    const { seed: _seed, ...legacyStart } = first as GameEvent & { seed?: string };
+    const events = [legacyStart, ...rest];
+    await put(aliceToken, session.id, { events: events.slice(0, -1) }).expect(200);
+    const row = repository.games.get(session.id);
+    if (row) row.verified = true;
+
+    await put(aliceToken, session.id, { events, baseVersion: row?.version }).expect(200);
+
+    expect(repository.games.get(session.id)?.verified).toBe(true);
+    repository.games.delete(session.id);
   });
 
   it('exports what was synced', async () => {

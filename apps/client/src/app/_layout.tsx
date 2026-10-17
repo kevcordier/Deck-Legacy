@@ -18,10 +18,10 @@ import Toast from 'react-native-toast-message';
 
 void SplashScreen.preventAutoHideAsync();
 
-/** Syncs the local kingdoms with the server whenever a session exists. */
+/** Syncs the local kingdoms with the server for a registered account only (EDR-050). */
 function AccountSync() {
   const { user } = useAuth();
-  const userId = user?.id ?? null;
+  const userId = user && !user.isAnonymous ? user.id : null;
 
   useEffect(() => {
     setSyncUser(userId);
