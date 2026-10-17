@@ -185,7 +185,47 @@
   "cardList": {
     "noCards": "No cards",
     "searchPlaceholder": "Search by name",
-    "allTags": "All tags"
+    "allTags": "All tags",
+    "sort": {
+      "pile": "Pile order",
+      "expansion": "Expansion + number",
+      "number": "Number",
+      "name": "Name",
+      "glory": "Glory (highest first)"
+    },
+    "moreFilters": "More filters",
+    "lessFilters": "Fewer filters",
+    "side": {
+      "all": "Allies and enemies",
+      "ally": "Allies only",
+      "enemy": "Enemies only"
+    },
+    "glory": "Glory",
+    "min": "Min",
+    "max": "Max",
+    "minGlory": "Minimum glory",
+    "maxGlory": "Maximum glory",
+    "allResources": "All productions",
+    "feature": {
+      "all": "All features",
+      "action": "With an action",
+      "trigger": "With a trigger",
+      "track": "With a track",
+      "passive": "With a passive"
+    },
+    "stayInPlay": {
+      "all": "Stays in play or not",
+      "yes": "Stays in play",
+      "no": "Does not stay in play"
+    },
+    "stickers": {
+      "all": "With or without stickers",
+      "yes": "With stickers",
+      "no": "Without stickers"
+    },
+    "allExpansions": "All expansions",
+    "baseGame": "Base game",
+    "resetFilters": "Reset filters"
   },
   "cardAdded": {
     "title": "New card discovered",
