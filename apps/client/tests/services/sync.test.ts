@@ -13,6 +13,7 @@ import {
   updateSyncInfo,
 } from '@services/persistence';
 import {
+  forgetAccountKingdoms,
   getSyncStatus,
   reconcile,
   resolveConflict,
@@ -366,6 +367,21 @@ describe('reconcile', () => {
     expect(getKingdom('g1')?.name).toBe('Avalon');
   });
 
+  it('creates on the server a kingdom played without an account, once signed up', async () => {
+    kingdom('g1');
+    api.syncGame.mockResolvedValue(summary);
+    api.listGames.mockResolvedValue([summary]);
+
+    await reconcile('u1');
+
+    expect(api.syncGame).toHaveBeenCalledWith(
+      'g1',
+      expect.objectContaining({ events, fromSeq: 0, name: 'Avalon' }),
+    );
+    expect(loadSave('g1')?.sync).toMatchObject({ dirty: false, userId: 'u1', serverVersion: 4 });
+    expect(getSyncStatus()).toBe('synced');
+  });
+
   it('removes the kingdoms of another account', async () => {
     kingdom('g1');
     markSynced('g1', 'other');
@@ -373,6 +389,16 @@ describe('reconcile', () => {
     await reconcile('u1');
 
     expect(listKingdoms()).toEqual([]);
+  });
+
+  it('removes the kingdoms synced with an account after sign-out, keeps local ones', () => {
+    kingdom('g1');
+    markSynced('g1');
+    kingdom('g2', 'Camelot');
+
+    forgetAccountKingdoms();
+
+    expect(listKingdoms().map(k => k.id)).toEqual(['g2']);
   });
 
   it('removes synced kingdoms the server no longer has', async () => {

@@ -37,7 +37,8 @@ export function AccountPanel({ onDone }: AccountPanelProps) {
 
   useEffect(() => {
     let cancelled = false;
-    if (!user) return;
+    // Without a registered account, nothing is sent to the API (EDR-050).
+    if (!user || user.isAnonymous) return;
     api.getMe().then(
       me => {
         if (!cancelled) setDisplayName(me.displayName ?? '');
@@ -61,7 +62,7 @@ export function AccountPanel({ onDone }: AccountPanelProps) {
     }
   };
 
-  if (!user) {
+  if (status === 'disabled' || status === 'offline') {
     return (
       <Text className="text-sm">
         {t(status === 'disabled' ? 'account.unavailable' : 'account.offline')}
@@ -69,7 +70,14 @@ export function AccountPanel({ onDone }: AccountPanelProps) {
     );
   }
 
-  const isGuest = user.isAnonymous;
+  if (!user || user.isAnonymous) {
+    return (
+      <View className="gap-6">
+        <Text className="text-sm">{t('account.guestStatus')}</Text>
+        <SignInForm />
+      </View>
+    );
+  }
   const passwordsMatch = newPassword === confirmPassword;
   const canChangePassword = checkPassword(newPassword).valid && passwordsMatch;
 
@@ -79,11 +87,7 @@ export function AccountPanel({ onDone }: AccountPanelProps) {
         <Text className="text-ink/70 text-xs">{t(`sync.${syncStatus}`)}</Text>
 
         <View className="gap-2">
-          <Text className="text-sm">
-            {isGuest
-              ? t('account.guestStatus')
-              : t('account.signedInAs', { email: user.email ?? '' })}
-          </Text>
+          <Text className="text-sm">{t('account.signedInAs', { email: user.email ?? '' })}</Text>
 
           <Text className="text-xs">{t('account.displayName')}</Text>
           <View className="flex-row items-center gap-2">
@@ -116,87 +120,81 @@ export function AccountPanel({ onDone }: AccountPanelProps) {
 
         <Divider />
 
-        {isGuest ? (
-          <SignInForm />
-        ) : (
-          <>
-            <View className="gap-2">
-              <Title level={4}>{t('account.changePassword')}</Title>
-              <PasswordInput
-                value={newPassword}
-                onChangeText={setNewPassword}
-                autoComplete="new-password"
-                placeholder={t('account.newPassword')}
-                className="min-h-11"
-              />
-              <PasswordStrength password={newPassword} />
-              <PasswordInput
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                autoComplete="new-password"
-                placeholder={t('account.confirmPassword')}
-                className="min-h-11"
-              />
-              {!passwordsMatch && confirmPassword.length > 0 && (
-                <Text className="text-danger text-xs">{t('account.passwordMismatch')}</Text>
-              )}
-              <View className="items-start">
-                <Button
-                  size="md"
-                  color="ink"
-                  font="body"
-                  disabled={working || !canChangePassword}
-                  onPress={() =>
-                    void run(async () => {
-                      await setPassword(newPassword);
-                      setNewPassword('');
-                      setConfirmPassword('');
-                    }, 'account.passwordChanged')
-                  }
-                >
-                  {t('account.changePassword')}
-                </Button>
-              </View>
-            </View>
+        <View className="gap-2">
+          <Title level={4}>{t('account.changePassword')}</Title>
+          <PasswordInput
+            value={newPassword}
+            onChangeText={setNewPassword}
+            autoComplete="new-password"
+            placeholder={t('account.newPassword')}
+            className="min-h-11"
+          />
+          <PasswordStrength password={newPassword} />
+          <PasswordInput
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            autoComplete="new-password"
+            placeholder={t('account.confirmPassword')}
+            className="min-h-11"
+          />
+          {!passwordsMatch && confirmPassword.length > 0 && (
+            <Text className="text-danger text-xs">{t('account.passwordMismatch')}</Text>
+          )}
+          <View className="items-start">
+            <Button
+              size="md"
+              color="ink"
+              font="body"
+              disabled={working || !canChangePassword}
+              onPress={() =>
+                void run(async () => {
+                  await setPassword(newPassword);
+                  setNewPassword('');
+                  setConfirmPassword('');
+                }, 'account.passwordChanged')
+              }
+            >
+              {t('account.changePassword')}
+            </Button>
+          </View>
+        </View>
 
-            <Divider />
+        <Divider />
 
-            <View className="items-start gap-2">
-              <Button
-                size="md"
-                color="ink"
-                font="body"
-                disabled={working}
-                onPress={() =>
-                  void run(async () => {
-                    await signOut();
-                    onDone();
-                  })
-                }
-              >
-                {t('account.signOut')}
-              </Button>
-            </View>
+        <View className="items-start gap-2">
+          <Button
+            size="md"
+            color="ink"
+            font="body"
+            disabled={working}
+            onPress={() =>
+              void run(async () => {
+                await signOut();
+                onDone();
+              })
+            }
+          >
+            {t('account.signOut')}
+          </Button>
+        </View>
 
-            <Divider />
+        <Divider />
 
-            <View className="items-start gap-2">
-              <Title level={4} className="text-danger">
-                {t('account.deleteTitle')}
-              </Title>
-              <Text className="text-ink/70 text-xs">{t('account.deleteHint')}</Text>
-              <Button
-                size="md"
-                color="danger"
-                font="body"
-                disabled={working}
-                onPress={() => setConfirmDelete(true)}
-              >
-                {t('account.deleteButton')}
-              </Button>
-            </View>
-          </>
-        )}
+        <View className="items-start gap-2">
+          <Title level={4} className="text-danger">
+            {t('account.deleteTitle')}
+          </Title>
+          <Text className="text-ink/70 text-xs">{t('account.deleteHint')}</Text>
+          <Button
+            size="md"
+            color="danger"
+            font="body"
+            disabled={working}
+            onPress={() => setConfirmDelete(true)}
+          >
+            {t('account.deleteButton')}
+          </Button>
+        </View>
       </View>
 
       {confirmDelete && (

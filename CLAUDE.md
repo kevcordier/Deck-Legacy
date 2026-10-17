@@ -127,7 +127,7 @@ Major decisions already taken (details and rejected alternatives in `.claude/mem
 | Client        | Expo SDK 57 / React Native 0.86 + react-native-web; expo-router (`/`, `/game/{slug}-{id}`); NativeWind 4 (Tailwind v3 syntax); i18next EN/FR                              | 020, 021, 006, 038 |
 | API           | NestJS 11 in CommonJS (v12 is ESM-only, incompatible with the engine); contract-first with zod                                                                            | 026                |
 | Data          | PostgreSQL + Prisma 7; events stored as `jsonb`, compared by content, never by serialised string                                                                          | 027                |
-| Auth          | Supabase Auth with anonymous guests upgradable to email; guests excluded from the leaderboard                                                                             | 028, 030           |
+| Auth          | Supabase Auth; without an account, no session and no API call (local saves only); sync starts at sign-in or sign-up                                                       | 050, 030           |
 | Sync          | Last writer wins per kingdom; a kingdom = one save, up to 10 per account and 1 without; per-game in-memory lock → a single API instance                                   | 029, 038           |
 | Hosting       | Web on GitHub Pages; API on Google Cloud Run (`max-instances=1`); database and auth on Supabase                                                                           | 011, 035           |
 | Quality       | Husky pre-commit; CI: lint → typecheck → format → depcruise → tests with coverage → server build; SonarCloud; Dependabot                                                  | 012, 015, 016      |

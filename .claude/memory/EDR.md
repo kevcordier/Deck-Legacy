@@ -41,7 +41,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-025 | 2026-10-10 | Compatibilité ascendante des rejeux          | Active                                  |
 | EDR-026 | 2026-10-10 | API NestJS 11 en CommonJS                    | Active                                  |
 | EDR-027 | 2026-10-10 | PostgreSQL et Prisma pour la persistance     | Active                                  |
-| EDR-028 | 2026-10-10 | Supabase Auth avec invités anonymes          | Active                                  |
+| EDR-028 | 2026-10-10 | Supabase Auth avec invités anonymes          | Dépréciée par EDR-050                   |
 | EDR-029 | 2026-10-10 | Synchronisation : dernier écrivain gagne     | En partie remplacée par EDR-038, 041    |
 | EDR-030 | 2026-10-10 | Scores issus du rejeu, classement inscrits   | Active                                  |
 | EDR-031 | 2026-10-10 | Code et documentation du dépôt en anglais    | Active                                  |
@@ -61,6 +61,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-047 | 2026-10-14 | Trois identifiants par carte d'extension     | Active                                  |
 | EDR-048 | 2026-10-14 | Suppression de l'effet « dernière manche »   | Active                                  |
 | EDR-049 | 2026-10-15 | Critère de sortie de la 1.0.0                | Active                                  |
+| EDR-050 | 2026-10-17 | Sans compte, aucun appel à l'API             | Active                                  |
 
 ---
 
@@ -749,7 +750,7 @@ Conséquences
 ID : EDR-028
 Date : 2026-10-10
 Titre : Supabase Auth avec invités anonymes
-Statut : Active
+Statut : Dépréciée par EDR-050
 
 Contexte
 On veut synchroniser les parties sans obliger le joueur à créer un compte avant de jouer.
@@ -1317,3 +1318,29 @@ Conséquences
 - La décision de sortir la `1.0.0` revient au mainteneur ; il n'y a pas de liste de contrôle formelle.
 - Chaque nouvelle extension après la `1.0.0` incrémente la version mineure.
 - Ce qui déclenche une nouvelle bêta n'est toujours pas défini.
+
+---
+
+ID : EDR-050
+Date : 2026-10-17
+Titre : Sans compte, aucun appel à l'API
+Statut : Active
+Remplace : EDR-028
+
+Contexte
+EDR-028 ouvrait une session invitée (anonyme) au premier lancement, et ses royaumes étaient synchronisés avec l'API. Le mainteneur veut qu'un joueur qui ne se connecte pas ne dépende en rien du serveur.
+
+Problème
+Que fait l'application pour un joueur sans compte ?
+
+Décision
+Aucune session invitée n'est ouverte : sans compte inscrit, les parties sont uniquement sauvegardées sur l'appareil et l'application n'appelle pas l'API (ni synchronisation, ni `/me`). La synchronisation démarre à la connexion ou à la création d'un compte (`signUp`), et les royaumes locaux pas encore synchronisés sont alors envoyés au compte. Les sessions invitées ouvertes par les anciennes versions sont conservées, sans être synchronisées, pour pouvoir encore devenir un compte (`updateUser`). La déconnexion retire de l'appareil les royaumes synchronisés avec le compte. Le classement public reste consultable sans compte. Le reste d'EDR-028 est inchangé (jetons vérifiés par le serveur, mode hors ligne sans configuration Supabase).
+
+Alternatives rejetées
+
+- Garder les invités synchronisés (EDR-028) : appels réseau et données serveur pour des joueurs qui n'ont rien demandé.
+
+Conséquences
+
+- Les royaumes d'un joueur sans compte ne sont pas récupérables sur un autre appareil.
+- Le serveur continue d'accepter les jetons anonymes (anciens clients) ; les anciens invités ne synchronisent plus jusqu'à la création d'un compte.
