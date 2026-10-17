@@ -2,8 +2,7 @@ import type { GameState } from '@deck-legacy/engine/domain/types';
 import { type ReactNode, createContext } from 'react';
 import type { View } from 'react-native';
 
-/** Draw order of the tutorial's first round (starting deck instances), scripted by its steps. */
-export const TUTORIAL_DRAW_ORDER = [5, 1, 2, 7, 6, 3, 10, 8, 4, 9];
+export { TUTORIAL_DRAW_ORDER } from '@deck-legacy/game-data';
 
 /** `top`: inside the top of the target (e.g. a modal filling the screen); `auto` otherwise. */
 export type TutorialPlacement = 'center' | 'auto' | 'top';

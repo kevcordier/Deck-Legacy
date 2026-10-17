@@ -51,10 +51,10 @@ export class ScoresService {
     }
   }
 
-  /** Best scores of registered (non-anonymous) players for a campaign segment. */
+  /** Best scores of registered (non-anonymous) players for a campaign segment, verified games only. */
   async leaderboard(segment: string, limit: number): Promise<LeaderboardResponse> {
     const rows = await this.prisma.score.findMany({
-      where: { segment, user: { isAnonymous: false } },
+      where: { segment, user: { isAnonymous: false }, game: { verified: true } },
       orderBy: [{ score: 'desc' }, { createdAt: 'asc' }],
       take: limit,
       include: { user: { select: { displayName: true } } },
@@ -62,10 +62,14 @@ export class ScoresService {
     return { segment, entries: rows.map(toEntry) };
   }
 
-  /** Kingdoms (non-abandoned games) of registered players with the best total score. */
+  /** Verified kingdoms (non-abandoned games) of registered players with the best total score. */
   async kingdomLeaderboard(limit: number): Promise<KingdomRanking[]> {
     const rows = await this.prisma.game.findMany({
-      where: { status: { in: ['ACTIVE', 'FINISHED'] }, user: { isAnonymous: false } },
+      where: {
+        status: { in: ['ACTIVE', 'FINISHED'] },
+        verified: true,
+        user: { isAnonymous: false },
+      },
       orderBy: [{ score: 'desc' }, { updatedAt: 'asc' }],
       take: limit,
       select: {

@@ -24,7 +24,7 @@ Deck-Legacy turns an existing solo legacy deck-building board game into a free d
 
 ```text
 apps/client/          @deck-legacy/client — Expo / React Native app (runs the engine, saves locally, syncs)
-apps/server/          @deck-legacy/server — NestJS API (validates synced games by replay, stores them, scores)
+apps/server/          @deck-legacy/server — NestJS API (verifies synced games by re-execution, stores them, scores)
 packages/engine/      @deck-legacy/engine — pure game engine (domain = types, application = logic)
 packages/game-data/   @deck-legacy/game-data — card definitions, stickers, deck.json, expansions/<name>/ (cards + deck.json)
 packages/api-contract/ @deck-legacy/api-contract — HTTP DTOs + zod schemas
@@ -118,7 +118,7 @@ Major decisions already taken (details and rejected alternatives in `.claude/mem
 | Area          | Decision                                                                                                                                                                  | EDR                |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
 | Play model    | Local-first: the client runs `GameSession` and saves on the device; online, it syncs the full event log                                                                   | 024                |
-| Validation    | The server replays each log with `GameSession.restore()` and the same game data; it never runs player commands                                                            | 024, 030           |
+| Validation    | The server runs the recorded player commands again from the game seed (`GameSession.verify()`) and refuses a log they do not produce; seedless older games are unverified | 024, 051, 030      |
 | Game state    | Event sourcing; mid-action state (pending choices) lives in memory; the tutorial is a real game with a scripted first draw, saved only if the player keeps it             | 003, 040           |
 | Cards         | Declarative `CardDef` data interpreted by a generic engine; one strategy per `ActionEffectType`                                                                           | 004, 007           |
 | Compatibility | Started games keep their rules: versioned rules/data (mechanism still to build before the first breaking change)                                                          | 025, 036           |

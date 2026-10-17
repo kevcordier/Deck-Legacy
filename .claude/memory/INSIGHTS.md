@@ -35,6 +35,7 @@ Ce que le projet a découvert en avançant, pour ne jamais réapprendre deux foi
 | INS-019 | 2026-10-10 | Le ressenti de jeu améliore la lisibilité         | Interface    |
 | INS-020 | 2026-10-10 | Parties courtes : marge pour les animations       | Game design  |
 | INS-021 | 2026-10-11 | Mesurer sans padding dans un parent ajusté        | Interface    |
+| INS-023 | 2026-10-17 | Le moteur faisait confiance à l'interface         | Serveur      |
 
 ---
 
@@ -502,3 +503,24 @@ Action
 
 - `resolvePayCost(cost)` paie seulement le coût passé ; sans argument, il paie le coût de l'action et défausse la carte jouée.
 - Tester le solde de ressources après une action à coût, pas seulement l'effet.
+
+---
+
+ID : INS-023
+Date : 2026-10-17
+Titre : Le moteur faisait confiance à l'interface
+Statut : Valide
+
+Découverte
+En ajoutant la vérification par réexécution (EDR-051), une simulation de parties aléatoires sur les vraies cartes a montré que `GameSession` acceptait des commandes que l'interface n'envoie jamais : `startRound` à n'importe quel moment (nouveau mélange à chaque fois), choix et paiements repris tels quels (ressources inventées, `newActionEffects` injectés, coût payé avec rien), production et amélioration d'une carte hors jeu, passage d'un déclencheur obligatoire.
+
+Source
+Première version de `apps/server/tests/verification.fuzz.test.ts` : 36 000 `ROUND_STARTED` sur 42 000 événements avant les gardes de phase.
+
+Impact
+Réexécuter les commandes ne prouve rien si le moteur accepte une commande illégale. Les gardes vivent maintenant dans `session/playerInput.ts`.
+
+Action
+
+- Toute nouvelle commande ou tout nouveau type de choix reçoit sa garde dans `playerInput.ts`, avec un test.
+- Un test du moteur qui joue un coup que l'interface ne propose pas (améliorer une carte déjà défaussée) décrit un coup illégal : le corriger plutôt que d'assouplir la garde.

@@ -25,6 +25,11 @@ export type GameSnapshot = {
   score: number;
   segments: CampaignSegmentScore[];
   finished: boolean;
+  /**
+   * The log was produced by the player's commands (EDR-051). `undefined`: a log without a seed,
+   * which cannot be verified: a new game is stored unverified, a stored one keeps its flag.
+   */
+  verified?: boolean;
   events: GameEvent[];
 };
 
@@ -201,6 +206,7 @@ export class GamesRepository {
           score: snapshot.score,
           segments: snapshot.segments,
           status: snapshot.finished ? 'FINISHED' : 'ACTIVE',
+          verified: snapshot.verified ?? false,
         },
       });
       await tx.gameEvent.createMany({ data: eventRows(gameId, snapshot.events, 0) });
@@ -236,6 +242,7 @@ export class GamesRepository {
           score: snapshot.score,
           segments: snapshot.segments,
           status: snapshot.finished ? 'FINISHED' : 'ACTIVE',
+          verified: snapshot.verified,
         },
       });
       await tx.gameEvent.deleteMany({ where: { gameId, seq: { gte: fromSeq } } });

@@ -10,14 +10,16 @@ Detailed reference for `packages/engine` and `packages/game-data`. Repository-wi
 
 ## Event Sourcing
 
-The game state is derived by replaying an ordered list of `GameEvent` objects. `GameAggregate` (`packages/engine/src/application/aggregates/GameAggregate.ts`) holds the events and reconstructs `GameState` on demand. Randomness (shuffles) happens when a command runs and its result is stored in the event, so replays are deterministic.
+The game state is derived by replaying an ordered list of `GameEvent` objects. `GameAggregate` (`packages/engine/src/application/aggregates/GameAggregate.ts`) holds the events and reconstructs `GameState` on demand. Randomness (shuffles) happens when a command runs and its result is stored in the event, so replays are deterministic. Games started since EDR-051 carry a `seed` in `GAME_STARTED`: every shuffle comes from `application/random.ts` (seed + salt + shuffled cards), so running the same commands again gives the same events. Never use `Math.random`, `Date.now()` or the order of random keys in game logic.
 
 - **Never mutate `GameState` directly.** Always dispatch a new event.
 - `GameSession` (`packages/engine/src/application/session/GameSession.ts`) wraps the aggregate and turns player commands (`GameCommand`) into events: guards (unknown or blocked cards are ignored), multi-step cost payment, parchment cards, automatic campaign score at game over, rewind, development cheats. It returns a `GameView` for the UI and a translatable `CommandError` for rule errors. Mid-action state (pending choices, pending upgrade) lives only in memory, never in the event log.
-- The client runs `GameSession` to play; the server uses `GameSession.restore()` to validate synced logs and compute scores.
+- The client runs `GameSession` to play; the server uses `GameSession.verify()` to check synced logs and compute scores (`restore()` only for older games without a seed).
+- **Recorded commands (EDR-051).** `execute()` sets the commands run since the previous event on the first event they produce (`GameEvent.commands`; trigger ids become `@<source>|<actionId>|<rank>`). `verify()` restarts the game from the seed, runs them again and compares the events (ids, timestamps and random trigger keys aside), rewinding the events the player rewound.
+- **Player input is checked** in `session/playerInput.ts`: flow commands only in the phases the UI offers them, choices and cost payments rebuilt from the pending choice (offered values, pick bounds), card actions and upgrades only for cards in play, mandatory triggers cannot be skipped. A new command or choice type needs its check there, or a modified client can send it.
 - Tutorial games are real games whose first draw order is imposed (`GameSession.start(…, 'tutorial', firstDrawPile)`); the order is stored in `ROUND_STARTED` like a shuffle. They are not saved until the player keeps them (EDR-040).
 - Undo (`rewind` command) pops the last event and replays the remainder.
-- To add a player action: add it to `GameCommand` (`domain/types/GameSession.ts`), handle it in `GameSession.dispatch`, test it, then expose it in the client `GameProvider`.
+- To add a player action: add it to `GameCommand` (`domain/types/GameSession.ts`), handle it in `GameSession.dispatch`, guard it in `playerInput.ts`, test it (including `GameSession.verify`), then expose it in the client `GameProvider`.
 
 ## Key Domain Types (packages/engine/src/domain/)
 
