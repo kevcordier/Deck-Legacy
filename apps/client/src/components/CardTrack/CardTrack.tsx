@@ -5,7 +5,7 @@ import {
   selfUpgradeStateId,
 } from '@components/CardStateTooltip/CardStateTooltip';
 import { Glory } from '@components/ui/Glory/Glory';
-import { DestroyIcon, UpgradeIcon } from '@components/ui/Icon/icon';
+import { AsteriskIcon, DestroyIcon, UpgradeIcon } from '@components/ui/Icon/icon';
 import { IconColors } from '@components/ui/Icon/iconColors';
 import { Text } from '@components/ui/Text/Text';
 import { ActionEffectType } from '@deck-legacy/engine/domain/enums';
@@ -119,15 +119,7 @@ export function CardTrackContent({
     }
 
     if (step.icon === '*') {
-      return (
-        <Text className="font-display text-3xl" key={action.id}>
-          *
-        </Text>
-      );
-    }
-
-    if (isValidated) {
-      return <Text key={action.id}>✓</Text>;
+      return <AsteriskIcon key={action.id} className="text-ink-card size-4" />;
     }
 
     return null;
@@ -152,6 +144,14 @@ export function CardTrackContent({
     actions.forEach(action => {
       contents.push(getActionContent(action));
     });
+    // The check only marks a validated step that shows no icon of its own.
+    if (isValidated && !contents.some(Boolean)) {
+      contents.push(
+        <Text key="validated" className="text-success">
+          ✓
+        </Text>,
+      );
+    }
   }
 
   return contents;
@@ -198,9 +198,12 @@ export function CardTrackStep({
   }
 
   if (track.inverse && isValidated) {
-    cost = ['✓'];
+    cost = [
+      <Text key="validated" className="text-success">
+        ✓
+      </Text>,
+    ];
   }
-
   const textSize = wide ? 'text-sm' : 'text-xs';
   const costNode = <Text className={`text-ink-card ${textSize}`}>{cost}</Text>;
   const contentNode = <View className="items-center justify-center">{contents}</View>;
