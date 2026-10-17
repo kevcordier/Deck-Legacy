@@ -1,6 +1,10 @@
-import { type ReactNode, useEffect, useMemo } from 'react';
-import { type StyleProp, View, type ViewStyle } from 'react-native';
-import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { type ReactNode, createContext, use, useEffect, useMemo } from 'react';
+import { Platform, type StyleProp, View, type ViewStyle } from 'react-native';
+import {
+  GestureDetector,
+  GestureHandlerRootView,
+  type GestureType,
+} from 'react-native-gesture-handler';
 import Animated, { useSharedValue } from 'react-native-reanimated';
 import {
   type GridDimensions,
@@ -18,6 +22,8 @@ type SortableCardGridProps = {
   readonly dimensions: GridDimensions;
   readonly renderItem: (id: string, index: number) => ReactNode;
   readonly itemStyle?: (id: string) => StyleProp<ViewStyle> | undefined;
+  /** Items are dragged only by their `CardDragHandle`, not by their whole surface. */
+  readonly dragByHandle?: boolean;
   readonly onDragStart?: (id: string) => void;
   /** Receives the ids in their new order. */
   readonly onDrop?: (orderedIds: string[]) => void;
@@ -33,19 +39,76 @@ const toItems = (ids: string[]) => ids.map(id => ({ id }));
 
 type CardGridItemProps = UseGridSortableOptions<unknown> & {
   readonly animatedStyle?: StyleProp<ViewStyle>;
+  readonly dragByHandle?: boolean;
   readonly children: ReactNode;
 };
+
+type DragHandleContextValue = {
+  gesture: GestureType;
+  registerHandle: (registered: boolean) => void;
+  isMoving: boolean;
+};
+
+const DragHandleContext = createContext<DragHandleContextValue | null>(null);
+
+// `cursor: grab` is web only and missing from the React Native style types.
+const webCursor = (cursor: string) =>
+  Platform.OS === 'web' ? ({ cursor } as unknown as ViewStyle) : undefined;
+const GRAB_CURSOR_STYLE = webCursor('grab');
+const GRABBING_CURSOR_STYLE = webCursor('grabbing');
+
+/**
+ * The only zone that drags its card when the grid is sorted by handle. Outside such a grid, it
+ * renders its children as they are.
+ */
+export function CardDragHandle({
+  className,
+  children,
+}: {
+  readonly className?: string;
+  readonly children: ReactNode;
+}) {
+  const context = use(DragHandleContext);
+  const registerHandle = context?.registerHandle;
+  useEffect(() => {
+    registerHandle?.(true);
+    return () => registerHandle?.(false);
+  }, [registerHandle]);
+  if (!context) return <View className={className}>{children}</View>;
+  return (
+    <GestureDetector gesture={context.gesture}>
+      <Animated.View
+        className={className}
+        style={context.isMoving ? GRABBING_CURSOR_STYLE : GRAB_CURSOR_STYLE}
+      >
+        {children}
+      </Animated.View>
+    </GestureDetector>
+  );
+}
 
 /**
  * `SortableGridItem` without its default `touch-action: none` on web, which stopped a swipe over
  * a card from scrolling the board on mobile browsers.
  */
-function CardGridItem({ animatedStyle, children, ...options }: CardGridItemProps) {
-  const { animatedStyle: positionStyle, panGestureHandler } = useGridSortable(options);
+function CardGridItem({ animatedStyle, dragByHandle, children, ...options }: CardGridItemProps) {
+  const {
+    animatedStyle: positionStyle,
+    panGestureHandler,
+    handlePanGestureHandler,
+    registerHandle,
+    isMoving,
+  } = useGridSortable(options);
+  const handle = useMemo(
+    () => (dragByHandle ? { gesture: handlePanGestureHandler, registerHandle, isMoving } : null),
+    [dragByHandle, handlePanGestureHandler, registerHandle, isMoving],
+  );
   return (
     <Animated.View style={[positionStyle, animatedStyle]}>
       <GestureDetector gesture={panGestureHandler} touchAction="manipulation">
-        <Animated.View style={{ flex: 1 }}>{children}</Animated.View>
+        <Animated.View style={{ flex: 1 }}>
+          <DragHandleContext value={handle}>{children}</DragHandleContext>
+        </Animated.View>
       </GestureDetector>
     </Animated.View>
   );
@@ -65,6 +128,7 @@ export function SortableCardGrid({
   dimensions,
   renderItem,
   itemStyle,
+  dragByHandle,
   onDragStart,
   onDrop,
 }: SortableCardGridProps) {
@@ -112,6 +176,7 @@ export function SortableCardGrid({
             containerWidth={NO_AUTO_SCROLL_SIZE}
             containerHeight={NO_AUTO_SCROLL_SIZE}
             animatedStyle={itemStyle?.(id)}
+            dragByHandle={dragByHandle}
             onDragStart={onDragStart}
             onDrop={handleDrop}
           >

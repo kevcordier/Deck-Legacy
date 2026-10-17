@@ -388,6 +388,8 @@ export function CardRow({ cardIds, zoom = 1 }: CardRowProps) {
             renderItem={renderItem}
             // The hovered card is scaled by its tilt: keep it above the next cells.
             itemStyle={id => (Number(id) === hoveredId ? HOVERED_CELL_STYLE : undefined)}
+            // Desktop: only the card number and name drag the card, the rest stays for its actions.
+            dragByHandle={isDesktop}
             onDragStart={handleDragStart}
             onDrop={handleDrop}
           />
