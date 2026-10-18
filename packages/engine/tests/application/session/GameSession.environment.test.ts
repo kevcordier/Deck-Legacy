@@ -3,7 +3,7 @@ import { GameSession } from '@engine/application/session/GameSession';
 import type { EngineEnvironment } from '@engine/domain/environment/EngineEnvironment';
 import { describe, expect, it } from 'vitest';
 
-/** A fixed clock, counted ids and a fixed random sequence. */
+/** A fixed clock, counted UUIDs and a fixed random sequence. */
 function fixedEnvironment(): EngineEnvironment {
   let ids = 0;
   let time = 1_000;
@@ -14,7 +14,7 @@ function fixedEnvironment(): EngineEnvironment {
     },
     newId: () => {
       ids += 1;
-      return `id-${ids}`;
+      return `00000000-0000-4000-8000-${String(ids).padStart(12, '0')}`;
     },
     random: () => 0.42,
   };
@@ -36,7 +36,7 @@ describe('GameSession environment', () => {
   it('takes timestamps and ids from the given environment', () => {
     const events = play('seed');
 
-    expect(events.every(event => event.id.startsWith('id-'))).toBe(true);
+    expect(events.every(event => event.id.startsWith('00000000-0000-4000-8000-'))).toBe(true);
     expect(events.every(event => event.timestamp > 1_000)).toBe(true);
   });
 
@@ -44,10 +44,18 @@ describe('GameSession environment', () => {
     expect(play('seed')).toEqual(play('seed'));
   });
 
+  it('gives logs that GameSession.verify accepts', () => {
+    const options = { ...DEFAULT_OPTIONS, environment: fixedEnvironment() };
+    const session = GameSession.start('g', makeCatalog(), options, 'standard', undefined, 'seed');
+    session.execute({ type: 'endTurn' });
+
+    expect(GameSession.verify('g', session.getEvents(), makeCatalog())).not.toBeNull();
+  });
+
   it('draws the seed from the environment when none is given', () => {
     const events = play();
 
-    expect(events[0]).toMatchObject({ seed: 'id-1' });
+    expect(events[0]).toMatchObject({ seed: '00000000-0000-4000-8000-000000000001' });
     expect(events).toEqual(play());
   });
 });

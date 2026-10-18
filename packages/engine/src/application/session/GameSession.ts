@@ -441,7 +441,6 @@ export class GameSession {
 
   // ─── Game start ───────────────────────────────────────────────────────────
 
-  /** A new game, or one resumed at a checkpoint (its earlier events are kept, not replayed). */
   /**
    * Installs this session's environment for the rules: the engine is synchronous, so it stays
    * active for the whole call even when several sessions exist (client viewer, server syncs).
@@ -450,6 +449,7 @@ export class GameSession {
     environment.use(this.options.environment ?? systemEnvironment);
   }
 
+  /** A new game, or one resumed at a checkpoint (its earlier events are kept, not replayed). */
   private makeAggregate(checkpoint?: GameCheckpoint, events: GameEvent[] = []): GameAggregate {
     return new GameAggregate(
       this.id,
