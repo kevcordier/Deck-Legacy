@@ -1,5 +1,5 @@
-import type { AppConfig } from '../config/env';
-import { trimTrailingSlashes } from '../shared/trim-trailing-slashes';
+import type { AppConfig } from '../../config/env';
+import { trimTrailingSlashes } from '../../shared/trim-trailing-slashes';
 
 /** Issuer of the project's access tokens. */
 export function supabaseIssuer(config: AppConfig): string {

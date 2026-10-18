@@ -1,5 +1,5 @@
-import type { AuthUser } from '../../auth/auth-user';
-import { CurrentUser } from '../../auth/current-user.decorator';
+import type { AuthUser } from '../../auth/domain/auth-user';
+import { CurrentUser } from '../../auth/presentation/current-user.decorator';
 import { ApiErrorDto } from '../../shared/presentation/http/api-error.dto';
 import { ZodValidationPipe } from '../../shared/presentation/http/zod-validation.pipe';
 import { AbandonGameUseCase } from '../application/abandon-game.use-case';

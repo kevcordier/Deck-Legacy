@@ -1,5 +1,5 @@
-import { InvalidTokenError } from '../src/auth/invalid-token.error';
-import { SupabaseTokenVerifier } from '../src/auth/supabase-token.verifier';
+import { InvalidTokenError } from '../src/auth/application/invalid-token.error';
+import { SupabaseTokenVerifier } from '../src/auth/infrastructure/supabase-token.verifier';
 import { signToken, testConfig, testJwks } from './helpers';
 import { beforeAll, describe, expect, it } from 'vitest';
 

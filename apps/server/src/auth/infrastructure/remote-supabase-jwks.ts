@@ -1,4 +1,4 @@
-import type { AppConfig } from '../config/env';
+import type { AppConfig } from '../../config/env';
 import { supabaseIssuer } from './supabase-issuer';
 import { type JWTVerifyGetKey, createRemoteJWKSet } from 'jose';
 

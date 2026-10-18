@@ -1,7 +1,8 @@
-import { APP_CONFIG } from '../config/app-config.token';
-import type { AppConfig } from '../config/env';
-import type { AuthUser } from './auth-user';
-import { InvalidTokenError } from './invalid-token.error';
+import { APP_CONFIG } from '../../config/app-config.token';
+import type { AppConfig } from '../../config/env';
+import { InvalidTokenError } from '../application/invalid-token.error';
+import { TokenVerifier } from '../application/token-verifier';
+import type { AuthUser } from '../domain/auth-user';
 import { supabaseIssuer } from './supabase-issuer';
 import { SUPABASE_JWKS } from './supabase-jwks.token';
 import { Inject, Injectable } from '@nestjs/common';
@@ -15,13 +16,14 @@ type SupabaseClaims = JWTPayload & {
 
 /** Verifies Supabase Auth access tokens against the project's JWKS (asymmetric signing keys). */
 @Injectable()
-export class SupabaseTokenVerifier {
+export class SupabaseTokenVerifier extends TokenVerifier {
   private readonly issuer: string;
 
   constructor(
     @Inject(APP_CONFIG) config: AppConfig,
     @Inject(SUPABASE_JWKS) private readonly jwks: JWTVerifyGetKey,
   ) {
+    super();
     this.issuer = supabaseIssuer(config);
   }
 
