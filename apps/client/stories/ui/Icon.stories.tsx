@@ -1,29 +1,27 @@
-import {
-  ActivatedIcon,
-  BorderDisputeIcon,
-  CrownIcon,
-  DestroyIcon,
-  DotsVerticalIcon,
-  GloryIcon,
-  GoldIcon,
-  GoodsIcon,
-  IronIcon,
-  PassifIcon,
-  PencilIcon,
-  ProsperityIcon,
-  RiddingTheWoodsIcon,
-  StickerIcon,
-  StoneIcon,
-  TimeIcon,
-  TriggerIcon,
-  TrophyIcon,
-  WaterMillIcon,
-  WeaponIcon,
-  WoodIcon,
-  ZoomInIcon,
-  ZoomOutIcon,
-} from '@components/ui/Icon/icon';
 import { IconColors } from '@components/ui/Icon/iconColors';
+import { ActivatedIcon } from '@components/ui/Icon/icons/ActivatedIcon';
+import { BorderDisputeIcon } from '@components/ui/Icon/icons/BorderDisputeIcon';
+import { CrownIcon } from '@components/ui/Icon/icons/CrownIcon';
+import { DestroyIcon } from '@components/ui/Icon/icons/DestroyIcon';
+import { DotsVerticalIcon } from '@components/ui/Icon/icons/DotsVerticalIcon';
+import { GloryIcon } from '@components/ui/Icon/icons/GloryIcon';
+import { GoldIcon } from '@components/ui/Icon/icons/GoldIcon';
+import { GoodsIcon } from '@components/ui/Icon/icons/GoodsIcon';
+import { IronIcon } from '@components/ui/Icon/icons/IronIcon';
+import { PassifIcon } from '@components/ui/Icon/icons/PassifIcon';
+import { PencilIcon } from '@components/ui/Icon/icons/PencilIcon';
+import { ProsperityIcon } from '@components/ui/Icon/icons/ProsperityIcon';
+import { RiddingTheWoodsIcon } from '@components/ui/Icon/icons/RiddingTheWoodsIcon';
+import { StickerIcon } from '@components/ui/Icon/icons/StickerIcon';
+import { StoneIcon } from '@components/ui/Icon/icons/StoneIcon';
+import { TimeIcon } from '@components/ui/Icon/icons/TimeIcon';
+import { TriggerIcon } from '@components/ui/Icon/icons/TriggerIcon';
+import { TrophyIcon } from '@components/ui/Icon/icons/TrophyIcon';
+import { WaterMillIcon } from '@components/ui/Icon/icons/WaterMillIcon';
+import { WeaponIcon } from '@components/ui/Icon/icons/WeaponIcon';
+import { WoodIcon } from '@components/ui/Icon/icons/WoodIcon';
+import { ZoomInIcon } from '@components/ui/Icon/icons/ZoomInIcon';
+import { ZoomOutIcon } from '@components/ui/Icon/icons/ZoomOutIcon';
 import { Text } from '@components/ui/Text/Text';
 import type { Meta, StoryObj } from '@storybook/react-native';
 import { View } from 'react-native';

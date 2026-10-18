@@ -1,7 +1,7 @@
+import '../src/presentation/styles/global.css';
+import '../src/presentation/styles/interop';
 import { view } from './storybook.requires';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import '@styles/global.css';
-import '@styles/interop';
 
 const StorybookUIRoot = view.getStorybookUI({
   storage: {

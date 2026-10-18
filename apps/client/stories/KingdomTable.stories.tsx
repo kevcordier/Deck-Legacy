@@ -1,5 +1,5 @@
 import { KingdomTable } from '@components/KingdomTable/KingdomTable';
-import type { KingdomMeta } from '@services/persistence';
+import type { KingdomMeta } from '@domain/kingdom/KingdomMeta';
 import type { Meta, StoryObj } from '@storybook/react-native';
 import { View } from 'react-native';
 
