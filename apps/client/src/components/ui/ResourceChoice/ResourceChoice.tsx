@@ -19,13 +19,18 @@ export function ResourceChoice({
   className = '',
   pillClassName,
 }: ResourceChoiceProps) {
+  // The same option can appear twice (a resource already chosen twice): number the copies.
+  const copies = new Map<string, number>();
   return (
     <View className={`flex-row flex-wrap items-center justify-start gap-1 ${className}`}>
       {options.map((opt, i) => {
         const entries = Object.entries(opt);
+        const id = JSON.stringify(opt);
+        const copy = copies.get(id) ?? 0;
+        copies.set(id, copy + 1);
         return (
           <HoverPressable
-            key={JSON.stringify(opt)}
+            key={`${id}#${copy}`}
             onPress={() => onSelect(i)}
             disabled={disabled}
             accessibilityRole="button"
@@ -34,7 +39,7 @@ export function ResourceChoice({
           >
             {entries.map(([key, val]) =>
               val > 2 ? (
-                <View key={key} className="flex-row items-start">
+                <View key={key} className="flex-row items-center">
                   <ResourcePill resource={key} className={pillClassName} />
                   <Text className="font-display text-ink-card">x{val}</Text>
                 </View>

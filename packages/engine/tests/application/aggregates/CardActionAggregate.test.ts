@@ -6,6 +6,7 @@ import {
   CardTag,
   PassiveType,
   PendingChoiceType,
+  Phase,
   ResourceType,
   TargetScope,
 } from '@engine/domain/enums';
@@ -280,6 +281,25 @@ describe('CardActionAggregate.resolveAction', () => {
     const agg = new CardActionAggregate({ 1: plainDef }, {}, gs, inst, action);
     agg.resolveAction();
     expect(agg.getPendingChoices().length).toBeGreaterThan(0);
+  });
+
+  it('lets the player cancel the choices of an action they started, not of a trigger or parchment', () => {
+    const isMandatory = (agg: CardActionAggregate) => {
+      agg.resolveAction();
+      return agg.getPendingChoices().map(choice => choice.isMandatory);
+    };
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const parchment = makeState({ phase: Phase.PARCHMENT, board: [1], instances: { 1: inst } });
+
+    expect(isMandatory(makeAggregate({ action: makeChooseEffectAction() }))).toEqual([false]);
+    expect(
+      isMandatory(makeAggregate({ action: makeChooseEffectAction(), triggerId: 'tid' })),
+    ).toEqual([true]);
+    expect(
+      isMandatory(
+        new CardActionAggregate({ 1: plainDef }, {}, parchment, inst, makeChooseEffectAction()),
+      ),
+    ).toEqual([true]);
   });
 
   it('removes triggerId from triggerPile after resolution', () => {

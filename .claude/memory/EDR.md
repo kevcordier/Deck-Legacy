@@ -56,13 +56,17 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-040 | 2026-10-11 | Tutoriel joué comme une vraie partie         | Active                                  |
 | EDR-041 | 2026-10-13 | Synchronisation incrémentale et versionnée   | Active                                  |
 | EDR-044 | 2026-10-14 | Numéros de cartes propres à chaque extension | Dépréciée par EDR-047                   |
-| EDR-045 | 2026-10-14 | Paquet de campagne et paquet découvrable     | Active                                  |
+| EDR-045 | 2026-10-14 | Paquet de campagne et paquet découvrable     | En partie remplacée par EDR-054         |
 | EDR-046 | 2026-10-14 | Effet « avancer dans l'histoire »            | Active                                  |
 | EDR-047 | 2026-10-14 | Trois identifiants par carte d'extension     | Active                                  |
 | EDR-048 | 2026-10-14 | Suppression de l'effet « dernière manche »   | Active                                  |
 | EDR-049 | 2026-10-15 | Critère de sortie de la 1.0.0                | Active                                  |
 | EDR-050 | 2026-10-17 | Sans compte, aucun appel à l'API             | Active                                  |
 | EDR-051 | 2026-10-17 | Parties vérifiées par réexécution            | Active                                  |
+| EDR-052 | 2026-10-17 | État de début de manche gardé par le serveur | En partie remplacée par EDR-053         |
+| EDR-053 | 2026-10-17 | Le client reprend la partie au checkpoint    | Active                                  |
+| EDR-054 | 2026-10-18 | Fin de campagne vérifiée en fin de manche    | Active                                  |
+| EDR-055 | 2026-10-18 | Graine visible et choisie par le joueur      | Active                                  |
 
 ---
 
@@ -1217,7 +1221,7 @@ Conséquences
 ID : EDR-045
 Date : 2026-10-14
 Titre : Paquet de campagne et paquet découvrable
-Statut : Active
+Statut : Active ; la fin de campagne sur paquet vide est remplacée par EDR-054
 
 Contexte
 Une seule pile de découverte mêlait les cartes de l'histoire, découvertes au début de chaque manche, et celles que seuls des effets découvrent (au-delà du n° 70 dans le jeu de base). La fin d'une campagne dépendait d'une carte (« Stop », n° 68) ou de `expansionMaxRound`.
@@ -1383,3 +1387,132 @@ Conséquences
 - La vérification coûte environ deux fois un rejeu (≈ 0,45 s pour 1 000 événements).
 - Une partie dont une partie du journal vient d'un client antérieur à EDR-051 (même partie jouée sur deux appareils de versions différentes) est refusée.
 - Une partie reprise par la migration reste classée sans être vérifiée : de nouveaux événements falsifiés y seraient acceptés. Acceptable tant qu'elle est la seule ; ne pas reproduire cette reprise pour d'autres joueurs.
+
+---
+
+ID : EDR-052
+Date : 2026-10-17
+Titre : État de début de manche gardé par le serveur
+Statut : En partie remplacée par EDR-053 (le client utilise aussi le checkpoint)
+Complète : EDR-003, EDR-041, EDR-051
+
+Contexte
+À chaque synchronisation, le serveur réexécute toutes les commandes depuis la graine (EDR-051), ou rejoue tout le journal pour une partie sans graine. Le coût croît avec la partie (≈ 0,45 s pour 1 000 événements, jusqu'à 20 000 événements). Une ancienne partie que le moteur actuel ne termine plus correctement (le « Stop » des parties d'avant EDR-045, qui ne marque plus la dernière manche) ne peut être réparée qu'en réécrivant son journal.
+
+Problème
+Comment éviter de tout vérifier à chaque synchronisation, et pouvoir réparer une partie sans réécrire ce que le joueur a joué ?
+
+Décision
+
+- Le serveur garde un **checkpoint** par partie (`Game.checkpointSeq`, `Game.checkpointState`) : l'état après les `checkpointSeq` premiers événements. Il est placé après les commandes qui ont tiré le premier tour de la dernière manche, quand d'autres commandes les suivent (`checkpointSeq()` du moteur) : une annulation normale ne revient jamais avant un tirage, et les commandes enregistrées commencent à cette frontière.
+- À chaque synchronisation acceptée, le checkpoint avance à la dernière manche commencée. Il est recalculé en rejouant les événements depuis le checkpoint précédent, déjà vérifiés : un checkpoint corrigé se reporte sur les suivants.
+- Tant que le journal reçu garde les événements que le checkpoint couvre (premier événement différent, par identifiant, à partir de `checkpointSeq`), le serveur part du checkpoint : `GameSession.verify(…, checkpoint)` ne réexécute que les commandes qui le suivent, `GameSession.restore(…, checkpoint)` ne rejoue que les événements qui le suivent. Sinon (annulation de développement, écrasement par un autre appareil), il vérifie tout le journal comme avant.
+- Le journal complet reste stocké (export, audit, débogage). Le client n'utilise pas le checkpoint : il rejoue son propre journal, et l'annulation reste illimitée hors ligne.
+- **Correction manuelle** : le mainteneur peut corriger `checkpointState` d'une partie en base (par exemple `UPDATE "Game" SET "checkpointState" = jsonb_set("checkpointState", '{isLastRound}', 'true') WHERE id = '…';`). La partie reprend depuis cet état à la synchronisation suivante.
+
+Alternatives rejetées
+
+- Supprimer les événements couverts par le checkpoint : perd l'export complet et l'historique pour le débogage.
+- Envoyer le checkpoint au client : limiterait l'annulation au début de la manche et changerait le format de téléchargement (EDR-041) ; non demandé.
+- Réécrire le journal pour réparer une partie : le journal ne correspondrait plus à ce que le joueur a joué (EDR-036).
+
+Conséquences
+
+- Une synchronisation ne vérifie que la manche en cours et la précédente au plus. La sécurité d'EDR-051 tient tant que le checkpoint vient d'un journal vérifié ou du mainteneur : rien de ce qu'envoie le client ne l'écrit.
+- Une correction ne touche que le serveur : le client rejoue toujours son journal et ne voit pas la correction. Elle sert aux parties sans graine (seulement rejouées) ; pour une partie vérifiée, une correction qui change ce que produisent les commandes suivantes fait refuser la synchronisation (`422 INVALID_GAME`).
+- Si le joueur écrase la partie ou annule avant le checkpoint (développement), la vérification complète reprend, et une partie corrigée dont le journal ne se rejoue plus est alors refusée.
+- Les parties existantes n'ont pas de checkpoint jusqu'à leur prochaine synchronisation, qui le crée après une vérification complète.
+- Le moteur garde la règle : `GameAggregate.loadFromHistory` ajoute les événements au journal existant, et le sel des mélanges (position dans le journal) reste le même en partant d'un checkpoint.
+
+---
+
+ID : EDR-053
+Date : 2026-10-17
+Titre : Le client reprend la partie au checkpoint
+Statut : Active
+Remplace : EDR-052 (en partie : checkpoint réservé au serveur)
+
+Contexte
+Avec EDR-052, une correction du checkpoint en base ne changeait que la partie du serveur : l'appareil rejouait tout son journal avec l'ancienne règle (une ancienne partie au « Stop » restait sans fin sur le client), et une longue partie restait lente à ouvrir.
+
+Problème
+Comment faire arriver le checkpoint, corrigé ou non, jusqu'à l'appareil, sans perdre l'historique ni le jeu hors ligne ?
+
+Décision
+
+- `GET /games/:id/export` renvoie le checkpoint (`GameExport.checkpoint`). Le client le garde dans la sauvegarde du royaume (`SaveData.checkpoint`) quand il télécharge le royaume, et ouvre la partie avec `GameSession.restore(…, checkpoint)` : seuls les événements qui le suivent sont rejoués.
+- Le journal complet reste sur l'appareil (historique, envoi au serveur à partir de `syncedUpTo`).
+- Une session reprise à un checkpoint ne revient jamais avant lui : `canRewind()` refuse, même pour l'annulation illimitée du développement, et une annulation qui doit rejouer le journal repart du checkpoint.
+- Le checkpoint local est abandonné dès que les événements qu'il couvre changent (`saveGame` : préfixe commun avec l'ancien journal plus court que `seq`). Le client ne calcule jamais de checkpoint lui-même : seul celui du serveur fait foi.
+- Une correction manuelle augmente aussi la version de la partie, pour que les appareils la téléchargent : `UPDATE "Game" SET "checkpointState" = …, "version" = "version" + 1 WHERE id = '…';`.
+
+Alternatives rejetées
+
+- Checkpoint calculé par le client : deux sources (appareil, serveur) à départager, et une correction ne passerait pas.
+- Supprimer sur l'appareil les événements couverts par le checkpoint : réduit la sauvegarde web (`localStorage`, ≈ 5 Mo), mais perd l'historique d'un joueur sans compte ; à reconsidérer si la taille devient un problème.
+
+Conséquences
+
+- Un appareil reçoit une correction au prochain téléchargement du royaume : il faut qu'il n'ait pas de coups non envoyés (sinon il envoie d'abord les siens, et la correction arrive au téléchargement suivant ou par le choix de conflit).
+- Sans compte, pas de checkpoint : la partie se rejoue en entier, comme avant.
+- Le joueur ne peut pas annuler avant le début de la dernière manche téléchargée ; c'était déjà impossible en jeu normal (on n'annule pas un tirage).
+- Un serveur plus ancien n'envoie pas de checkpoint : le client rejoue tout son journal.
+
+---
+
+ID : EDR-054
+Date : 2026-10-18
+Titre : Fin de campagne vérifiée en fin de manche
+Statut : Active
+Remplace : EDR-045 (en partie : fin de campagne sur paquet de campagne vide)
+
+Contexte
+Avec EDR-045, la campagne se terminait au début de la manche suivante, seulement si le paquet de campagne était vide. S'il restait moins de cartes que la manche doit en découvrir (`discoverPerRound`), une manche de plus commençait avec une découverte incomplète, et le joueur ne voyait la fin qu'en lançant cette manche.
+
+Problème
+Quand et sur quelle condition terminer la campagne ?
+
+Décision
+La vérification se fait à la fin de la manche (pioche vide) : avec deux paquets, si le paquet de campagne contient **strictement moins** de cartes que `discoverPerRound`, la manche qui se termine est la dernière (`isLastRound(state, parameters)` dans `gameStateHelper`, `GameAggregate.isLastRound()`). Elle se comporte comme une manche marquée `isLastRound` : pas de manche suivante, le joueur résout les déclencheurs de fin de manche puis termine la partie (`endRound` → `GAME_ENDED`). La condition est évaluée au moment où elle sert : un effet de fin de manche qui remet des cartes dans le paquet de campagne relance la campagne. `roundStarted` garde le même contrôle (`length < discoverPerRound`) en filet de sécurité.
+
+Alternatives rejetées
+
+- Écrire la fin dans un événement (`ROUND_ENDED`) : changerait le rejeu des événements existants.
+- Garder le contrôle au début de la manche suivante : le joueur voyait l'écran « lancer la manche » avant la fin.
+
+Conséquences
+
+- Les journaux existants se rejouent à l'identique : la règle ne change que l'exécution des commandes, pas l'application des événements.
+- Les parties vérifiées par réexécution (graine, EDR-051) n'existent pas dans une version publiée (v1.0.0-beta.12 n'a pas de graine) ; une partie de développement dont le paquet de campagne est passé sous `discoverPerRound` en fin de manche peut être refusée à la vérification.
+- Une manche avec `discoverPerRound` à 0 (mini-extensions) ne termine jamais la campagne par cette règle.
+
+---
+
+ID : EDR-055
+Date : 2026-10-18
+Titre : Graine visible et choisie par le joueur
+Statut : Active
+Complète : EDR-051
+
+Contexte
+La graine de chaque partie (EDR-051) était tirée par le client et invisible. Pour les tests manuels, et pour rejouer ou partager un départ, il faut la voir et pouvoir la réutiliser.
+
+Problème
+Comment montrer la graine et permettre de lancer une partie avec une graine choisie ?
+
+Décision
+
+- Les options de la partie affichent la graine (`gameState.seed`, texte sélectionnable), absente pour les anciennes parties.
+- `NewKingdomModal` propose une graine facultative (64 caractères au plus), passée à la page du royaume en `?seed=` puis à `GameSession.start`. Le champ est désactivé quand le tutoriel est coché (sa première manche est scriptée). Sans graine, le client en tire une au hasard comme avant.
+- Les parties à graine choisie sont **classées comme les autres** : aucun marqueur dans `GAME_STARTED`, rien côté serveur.
+- Scénarios de test : journaux d'événements JSON dans `apps/client/src/data/scenarios/`, choisis dans `NewKingdomModal` en `__DEV__` : le nouveau royaume ouvre la partie sauvegardée. Un scénario peut partir d'un `checkpoint` (`seq` 0, état de début de manche) suivi des seuls événements après lui ; le serveur ne peut pas le vérifier.
+
+Alternatives rejetées
+
+- Exclure du classement les parties à graine choisie : écarté par le mainteneur ; la graine est déjà lisible dans le journal (EDR-051).
+- Import de journaux pour tous les joueurs : plus d'interface et de validation pour un besoin de développement (EDR-038 a retiré l'import JSON).
+
+Conséquences
+
+- Un joueur peut relancer des royaumes jusqu'à un départ favorable puis le classer : accepté.
+- La graine n'est lue qu'à la création : une sauvegarde existante garde la sienne, `?seed=` est ignoré.

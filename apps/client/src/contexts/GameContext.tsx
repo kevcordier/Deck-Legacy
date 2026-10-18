@@ -65,6 +65,7 @@ export type GameContextType = {
   availableExpansions: string[];
   continueCampaign: () => void;
   selectExpansion: (expansionName: string) => void;
+  purgeBatch: number[];
   purgeCandidates: number[];
   purgePermanentCandidates: number[];
   selectedPurgeIds: number[];

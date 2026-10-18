@@ -342,6 +342,7 @@ describe('reconcile', () => {
       events,
       cardNames: { 2: 'Daisy' },
       savedAt: 0,
+      checkpoint: { seq: 1, state: { round: 1 } },
     });
 
     await reconcile('u1');
@@ -350,6 +351,7 @@ describe('reconcile', () => {
     expect(loadSave('g2')).toMatchObject({
       cardNames: { 2: 'Daisy' },
       sync: { dirty: false, userId: 'u1', serverVersion: 4 },
+      checkpoint: { seq: 1, state: { round: 1 } },
     });
     expect(getKingdom('g2')).toMatchObject({ name: 'Camelot', summary: { score: 7 } });
     expect(replaced).toHaveBeenCalledWith('g2');

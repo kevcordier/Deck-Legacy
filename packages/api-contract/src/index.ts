@@ -4,7 +4,7 @@
  * Games are played on the device (offline included); the client syncs each game's event log
  * to the server, which replays it to validate it and to compute scores.
  */
-import type { GameEvent } from '@deck-legacy/engine/domain/types';
+import type { GameCheckpoint, GameEvent } from '@deck-legacy/engine/domain/types';
 import { z } from 'zod';
 
 const isObject = (value: unknown): boolean => typeof value === 'object' && value !== null;
@@ -81,6 +81,11 @@ export type GameExport = {
   events: GameEvent[];
   cardNames: Record<string, string>;
   savedAt: number;
+  /**
+   * State kept by the server at the start of the last round (EDR-052, 053): the client resumes
+   * the game from it. Missing from servers older than EDR-053.
+   */
+  checkpoint?: GameCheckpoint | null;
 };
 
 export type UserProfile = {

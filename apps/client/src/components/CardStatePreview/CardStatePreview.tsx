@@ -5,6 +5,7 @@ import { EyeIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
 import type { CardDef, CardInstance } from '@deck-legacy/engine/domain/types';
 import { tCardName } from '@helpers/cardI18n';
+import { useIsDesktop } from '@hooks/useIsDesktop';
 import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -55,6 +56,7 @@ type CardStatesModalProps = {
 
 function CardStatesModal({ instance, def, renderCard, onClose }: CardStatesModalProps) {
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
 
   return (
     <Modal
@@ -67,7 +69,7 @@ function CardStatesModal({ instance, def, renderCard, onClose }: CardStatesModal
       }
       onClose={onClose}
     >
-      <Grid minItemWidth={240} maxColumns={4}>
+      <Grid minItemWidth={isDesktop ? 240 : 140} maxColumns={4} gap={isDesktop ? 16 : 8}>
         {def.states.map(s => {
           const isCurrent = s.id === instance.stateId;
           const fakeInstance: CardInstance = {

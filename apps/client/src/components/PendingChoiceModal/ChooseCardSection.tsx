@@ -2,6 +2,7 @@ import { type ChoiceSectionProps, buildCardCostResolution } from './shared';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Button } from '@components/ui/Button/Button';
 import { Text } from '@components/ui/Text/Text';
+import { useIsDesktop } from '@hooks/useIsDesktop';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
@@ -17,6 +18,7 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
     resolvePayCost,
   } = props;
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
 
   const handleCardPress = (instanceId: number) => {
     if (isMultiSelect) {
@@ -40,7 +42,7 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
 
   return (
     // Fixed card width: a grid sizes its cells from the modal, which itself shrinks to few cards.
-    <View className="flex-row flex-wrap justify-center gap-4 p-2">
+    <View className="flex-row flex-wrap justify-center gap-2 p-2 lg:gap-4">
       {choice.choices.map((id, index) => {
         if (typeof id !== 'number') return null;
         const inst = instances[id];
@@ -50,7 +52,7 @@ export function ChooseCardSection(props: Readonly<ChoiceSectionProps>) {
         return (
           <View
             key={`${id}-${index.toString()}`}
-            className="w-72 max-w-full items-stretch gap-3 p-2"
+            className={`${isDesktop ? 'w-72' : 'w-[48%]'} max-w-full items-stretch gap-3 p-2`}
           >
             <View
               className={`rounded-2xl border-4 p-1 ${isSelected ? 'border-primary bg-primary/30 shadow-lg' : 'border-transparent'}`}

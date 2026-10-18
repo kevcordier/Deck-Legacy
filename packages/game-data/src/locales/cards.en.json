@@ -713,6 +713,6 @@
     "22": "## Stop!\n\nWith your kingdom growing and flourishing, many are coming here to pursue their dreams.\n\nThis round, instead of discovering the next 2 cards, look at the 4 next cards of the box (cards 31-34).\n\nChoose 2 of them to discover and destroy the other 2.",
     "28": "## STOP!\n\nIt's time to set up some goals for your kingdom, something to strive for.\nDiscover 5 cards this round, instead of 2 (cards 38-42). The first 3 are goal cards.\nFor each card, you need to choose one of its sides now, it cannot be changed later.",
     "38": "## STOP!\n\nEven more immigrants are longing for a place to follow their dreams, and your kingdom seems to deliver on that promise.\n\nThis round, instead of discovering 2 cards, look at the next 4 cards (cards 48-51).\n\nDiscover 2 of them and destroy the other 2.",
-    "58": "## STOP!\n\nDiscover 2 cards as normal (cards 69-70). This is your last round.\n\nWhen this round is over, count your fame ({{glory}}) and write it in the first {{glory}} on the side of the box. It's time to brag to your friends! Can they beat your score and make a better kingdom? I doubt it!"
+    "58": "## STOP!\n\nDiscover 2 cards as normal (cards 69-70). This is your last round.\n\nWhen this round is over, your fame ({{glory}}) is counted and recorded as your kingdom's score. It's time to brag to your friends! Can they beat your score and make a better kingdom? I doubt it!"
   }
 }

@@ -20,6 +20,7 @@ import type {
   Sticker,
   StickerSelector,
 } from '../domain/types';
+import { getDefeatAction } from './cardAction/DefeatCardStrategy';
 import {
   canAffordCost,
   getActiveState,
@@ -205,7 +206,10 @@ function resolveCardTarget(
     id =>
       (!isStickerAction ||
         getTotalProduction(id, gameState, defs, stickerDefs) < STICKER_PRODUCTION_CAP) &&
-      (actionType !== ActionEffectType.DESTROY_CARD || !cantBeDestroyedInstanceIds?.has(id)),
+      (actionType !== ActionEffectType.DESTROY_CARD || !cantBeDestroyedInstanceIds?.has(id)) &&
+      // Only an enemy with a defeat action can be defeated.
+      (actionType !== ActionEffectType.DEFEAT_CARD ||
+        getDefeatAction(gameState, id, defs) !== undefined),
   );
 
   const picks = getPickNumbers(cards, choices.length);

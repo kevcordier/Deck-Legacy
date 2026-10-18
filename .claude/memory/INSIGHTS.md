@@ -524,3 +524,23 @@ Action
 
 - Toute nouvelle commande ou tout nouveau type de choix reçoit sa garde dans `playerInput.ts`, avec un test.
 - Un test du moteur qui joue un coup que l'interface ne propose pas (améliorer une carte déjà défaussée) décrit un coup illégal : le corriger plutôt que d'assouplir la garde.
+
+---
+
+ID : INS-024
+Date : 2026-10-18
+Titre : Un champ de saisie dans une poignée de glissement ne prend plus le focus
+Statut : Valide
+
+Découverte
+Depuis le glissement des cartes du plateau par leur en-tête (PR #94), le nom d'une carte nommable ne pouvait plus être modifié.
+
+Source
+`GameCard` : le `TextInput` du nom était dans `CardDragHandle`, dont le `GestureDetector` (pan) prend l'appui avant le champ.
+
+Impact
+Le moteur et la sauvegarde fonctionnaient ; seul le focus du champ était perdu, sans erreur.
+
+Action
+
+- Garder hors de `CardDragHandle` tout élément interactif (champ, bouton) : le nom éditable est maintenant à côté de la poignée.

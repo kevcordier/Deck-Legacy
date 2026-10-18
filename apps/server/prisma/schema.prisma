@@ -46,6 +46,12 @@ model Game {
   /// The server ran the player's recorded commands again and got the same log (EDR-051).
   /// Unverified games (started before EDR-051) are kept but left out of the leaderboards.
   verified   Boolean     @default(false)
+  /// Number of events covered by `checkpointState` (EDR-052).
+  checkpointSeq   Int?
+  /// Game state after the first `checkpointSeq` events, kept at a round start once the log was
+  /// checked: a sync starts from it instead of running the whole log again. The maintainer may
+  /// correct it to repair a game (EDR-052).
+  checkpointState Json?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   events     GameEvent[]

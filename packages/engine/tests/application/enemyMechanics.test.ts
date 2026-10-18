@@ -378,6 +378,7 @@ describe('purge focus', () => {
   it('offers only the focused cards until enough of them are selected', () => {
     const agg = makeAggregate([1, 4, 2, 5, 3, 6], 2);
     expect(agg.getPurgeCandidates()).toEqual([4]);
+    expect(agg.getPurgeBatch()).toEqual([1, 4]);
     agg.selectPurgeCard(4);
     expect(agg.getPurgeCandidates()).toEqual([5]);
     agg.selectPurgeCard(5);

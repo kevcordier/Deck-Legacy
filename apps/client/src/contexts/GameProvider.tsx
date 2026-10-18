@@ -27,6 +27,7 @@ import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } fro
 import { useTranslation } from 'react-i18next';
 
 const EMPTY_PURGE: GameView['purge'] = {
+  batch: [],
   candidates: [],
   permanentCandidates: [],
   selectedIds: [],
@@ -60,6 +61,7 @@ function initialSession(
   kingdomId: string | undefined,
   save: SaveData | null | undefined,
   tutorial: boolean,
+  seed: string | undefined,
 ): GameSession | null {
   if (tutorial) {
     return GameSession.start(
@@ -68,13 +70,23 @@ function initialSession(
       SESSION_OPTIONS,
       'tutorial',
       TUTORIAL_DRAW_ORDER,
+      seed,
     );
   }
   if (!save) {
-    return kingdomId ? GameSession.start(kingdomId, catalog, SESSION_OPTIONS, 'standard') : null;
+    return kingdomId
+      ? GameSession.start(kingdomId, catalog, SESSION_OPTIONS, 'standard', undefined, seed)
+      : null;
   }
   try {
-    return GameSession.restore(save.id, save.events, catalog, SESSION_OPTIONS, save.cardNames);
+    return GameSession.restore(
+      save.id,
+      save.events,
+      catalog,
+      SESSION_OPTIONS,
+      save.cardNames,
+      save.checkpoint,
+    );
   } catch (error) {
     if (error instanceof CorruptedGameError) throw new CorruptedSaveError(error.message);
     throw error;
@@ -96,6 +108,7 @@ export function GameProvider({
   initialSave,
   startTutorial: tutorialAtStart = false,
   initialState,
+  seed,
 }: {
   readonly children: ReactNode;
   /** Kingdom being played: its id is the game id. Without a save, its first game starts. */
@@ -104,10 +117,14 @@ export function GameProvider({
   /** Open the tutorial first (new kingdom created with the tutorial). */
   readonly startTutorial?: boolean;
   readonly initialState?: GameState;
+  /** Seed of a new kingdom's games (chosen by the player); a random one when absent. */
+  readonly seed?: string;
 }) {
   const { t } = useTranslation();
   const { cards: defs, stickers: stickerDefs, expansions } = catalog;
-  const [firstSession] = useState(() => initialSession(kingdomId, initialSave, tutorialAtStart));
+  const [firstSession] = useState(() =>
+    initialSession(kingdomId, initialSave, tutorialAtStart, seed),
+  );
   const sessionRef = useRef<GameSession | null>(firstSession);
   const [view, setView] = useState<GameView | null>(() => firstSession?.toView() ?? null);
   const viewRef = useRef<GameView | null>(view);
@@ -182,10 +199,17 @@ export function GameProvider({
   /** Starts the kingdom's game (after the tutorial), replacing its save. */
   const startGame = useCallback(() => {
     if (!kingdomId) return;
-    const session = GameSession.start(kingdomId, catalog, SESSION_OPTIONS, 'standard');
+    const session = GameSession.start(
+      kingdomId,
+      catalog,
+      SESSION_OPTIONS,
+      'standard',
+      undefined,
+      seed,
+    );
     sessionRef.current = session;
     publish(session);
-  }, [kingdomId, publish]);
+  }, [kingdomId, publish, seed]);
 
   /** Keeps the tutorial game: replayed as a standard session, so it is saved and synced. */
   const continueGame = useCallback(() => {
@@ -276,6 +300,7 @@ export function GameProvider({
       availableExpansions,
       continueCampaign: () => send({ type: 'continueCampaign' }),
       selectExpansion: name => send({ type: 'selectExpansion', name }),
+      purgeBatch: purge.batch,
       purgeCandidates: purge.candidates,
       purgePermanentCandidates: purge.permanentCandidates,
       selectedPurgeIds: purge.selectedIds,

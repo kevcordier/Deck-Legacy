@@ -1,0 +1,3655 @@
+{
+  "checkpoint": {
+    "seq": 0,
+    "state": {
+      "seed": "scenario-base-game-ended",
+      "drawPile": [
+        66, 3, 46, 78, 63, 49, 20, 13, 62, 101, 118, 85, 133, 11, 79, 48, 83, 59, 75, 33, 64, 35,
+        31, 7, 9, 17, 70, 43, 10, 134, 41, 21, 36, 89, 100, 103, 52, 111, 12, 58, 6, 14, 82, 55,
+        102, 104, 71, 44, 28, 69, 73
+      ],
+      "discoveryPile": [],
+      "discoverablePile": [
+        74, 76, 77, 80, 81, 87, 92, 93, 94, 95, 96, 97, 98, 99, 105, 106, 107, 113, 114, 115, 116,
+        117, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 135
+      ],
+      "destroyedPile": [
+        8, 32, 34, 1, 19, 22, 2, 15, 50, 51, 5, 53, 16, 29, 56, 119, 86, 72, 109, 57, 60, 45, 4, 54,
+        61, 112, 18, 65
+      ],
+      "discardPile": [],
+      "board": [42, 67, 110, 84],
+      "permanents": [25, 26, 27, 38, 39, 40, 91, 88, 90, 108],
+      "instances": {
+        "1": {
+          "id": 1,
+          "cardId": 1,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "2": {
+          "id": 2,
+          "cardId": 1,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "3": {
+          "id": 3,
+          "cardId": 1,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "4": {
+          "id": 4,
+          "cardId": 1,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "5": {
+          "id": 5,
+          "cardId": 2,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "6": {
+          "id": 6,
+          "cardId": 2,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "7": {
+          "id": 7,
+          "cardId": 3,
+          "stateId": 3,
+          "stickers": {
+            "3": [2]
+          },
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "8": {
+          "id": 8,
+          "cardId": 3,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "9": {
+          "id": 9,
+          "cardId": 4,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "10": {
+          "id": 10,
+          "cardId": 5,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "11": {
+          "id": 11,
+          "cardId": 6,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "12": {
+          "id": 12,
+          "cardId": 7,
+          "stateId": 4,
+          "stickers": {
+            "3": [1]
+          },
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": ["7-4-1", "7-4-1", "7-4-1"],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "13": {
+          "id": 13,
+          "cardId": 8,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "14": {
+          "id": 14,
+          "cardId": 9,
+          "stateId": 2,
+          "stickers": {
+            "2": [7, 1, 5, 11, 10]
+          },
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "15": {
+          "id": 15,
+          "cardId": 2,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "16": {
+          "id": 16,
+          "cardId": 10,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "17": {
+          "id": 17,
+          "cardId": 11,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": ["11-2-1", "11-3-1"],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "18": {
+          "id": 18,
+          "cardId": 12,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": ["12-2-1"],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "19": {
+          "id": 19,
+          "cardId": 3,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "20": {
+          "id": 20,
+          "cardId": 13,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "21": {
+          "id": 21,
+          "cardId": 13,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "22": {
+          "id": 22,
+          "cardId": 14,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": ["14-3-1"],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "23": {
+          "id": 23,
+          "cardId": 15,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "24": {
+          "id": 24,
+          "cardId": 16,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "25": {
+          "id": 25,
+          "cardId": 17,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [1, 2],
+          "cumulated": 4,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "26": {
+          "id": 26,
+          "cardId": 18,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [1, 2, 3],
+          "cumulated": 3,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "27": {
+          "id": 27,
+          "cardId": 19,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [1, 2, 3, 4, 5, 6],
+          "cumulated": 95,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "28": {
+          "id": 28,
+          "cardId": 20,
+          "stateId": 3,
+          "stickers": {
+            "3": [2, 2, 2, 2]
+          },
+          "trackProgress": [1, 2, 3, 4, 5],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "29": {
+          "id": 29,
+          "cardId": 21,
+          "stateId": 1,
+          "stickers": {
+            "1": [6]
+          },
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "30": {
+          "id": 30,
+          "cardId": 22,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "31": {
+          "id": 31,
+          "cardId": 23,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": ["23-1-1"],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "32": {
+          "id": 32,
+          "cardId": 24,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "33": {
+          "id": 33,
+          "cardId": 25,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": ["25-1-1", "25-1-3", "25-1-2"],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "34": {
+          "id": 34,
+          "cardId": 26,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "35": {
+          "id": 35,
+          "cardId": 2,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "36": {
+          "id": 36,
+          "cardId": 27,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [1, 2, 3, 4],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "37": {
+          "id": 37,
+          "cardId": 28,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "38": {
+          "id": 38,
+          "cardId": 29,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "39": {
+          "id": 39,
+          "cardId": 30,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "40": {
+          "id": 40,
+          "cardId": 31,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "41": {
+          "id": 41,
+          "cardId": 32,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [4, 5, 3, 6, 1, 2],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "42": {
+          "id": 42,
+          "cardId": 33,
+          "stateId": 2,
+          "stickers": {
+            "2": [5, 3, 4]
+          },
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "43": {
+          "id": 43,
+          "cardId": 34,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": ["34-1-1", "34-1-1", "34-2-1", "34-3-1"],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "44": {
+          "id": 44,
+          "cardId": 35,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "45": {
+          "id": 45,
+          "cardId": 36,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "46": {
+          "id": 46,
+          "cardId": 37,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "47": {
+          "id": 47,
+          "cardId": 38,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "48": {
+          "id": 48,
+          "cardId": 39,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": ["39-1-1"],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "49": {
+          "id": 49,
+          "cardId": 40,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "50": {
+          "id": 50,
+          "cardId": 41,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "51": {
+          "id": 51,
+          "cardId": 42,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "52": {
+          "id": 52,
+          "cardId": 43,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "53": {
+          "id": 53,
+          "cardId": 44,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "54": {
+          "id": 54,
+          "cardId": 45,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": ["45-2-1", "45-2-1"],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "55": {
+          "id": 55,
+          "cardId": 46,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [9, 16],
+          "cumulated": 0,
+          "usedActionIds": ["46-2-1"],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "56": {
+          "id": 56,
+          "cardId": 47,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "57": {
+          "id": 57,
+          "cardId": 48,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "58": {
+          "id": 58,
+          "cardId": 49,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "59": {
+          "id": 59,
+          "cardId": 50,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": ["50-3-1"],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "60": {
+          "id": 60,
+          "cardId": 51,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "61": {
+          "id": 61,
+          "cardId": 52,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "62": {
+          "id": 62,
+          "cardId": 37,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "63": {
+          "id": 63,
+          "cardId": 53,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "64": {
+          "id": 64,
+          "cardId": 54,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "65": {
+          "id": 65,
+          "cardId": 55,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "66": {
+          "id": 66,
+          "cardId": 56,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "67": {
+          "id": 67,
+          "cardId": 57,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "68": {
+          "id": 68,
+          "cardId": 58,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "69": {
+          "id": 69,
+          "cardId": 59,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "70": {
+          "id": 70,
+          "cardId": 60,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "71": {
+          "id": 71,
+          "cardId": 2,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "72": {
+          "id": 72,
+          "cardId": 3,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "73": {
+          "id": 73,
+          "cardId": 61,
+          "stateId": 2,
+          "stickers": {
+            "2": [3]
+          },
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "74": {
+          "id": 74,
+          "cardId": 62,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "75": {
+          "id": 75,
+          "cardId": 62,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "76": {
+          "id": 76,
+          "cardId": 63,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "77": {
+          "id": 77,
+          "cardId": 64,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "78": {
+          "id": 78,
+          "cardId": 65,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "79": {
+          "id": 79,
+          "cardId": 66,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "80": {
+          "id": 80,
+          "cardId": 67,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "81": {
+          "id": 81,
+          "cardId": 68,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "82": {
+          "id": 82,
+          "cardId": 69,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "83": {
+          "id": 83,
+          "cardId": 69,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "84": {
+          "id": 84,
+          "cardId": 70,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "85": {
+          "id": 85,
+          "cardId": 70,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "86": {
+          "id": 86,
+          "cardId": 71,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "87": {
+          "id": 87,
+          "cardId": 72,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "88": {
+          "id": 88,
+          "cardId": 73,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [1],
+          "cumulated": 3,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "89": {
+          "id": 89,
+          "cardId": 74,
+          "stateId": 4,
+          "stickers": {},
+          "trackProgress": [1, 2, 3, 11, 7, 4],
+          "cumulated": 2,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "90": {
+          "id": 90,
+          "cardId": 75,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [1, 2],
+          "cumulated": 2,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "91": {
+          "id": 91,
+          "cardId": 76,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [1, 2],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "92": {
+          "id": 92,
+          "cardId": 77,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "93": {
+          "id": 93,
+          "cardId": 78,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "94": {
+          "id": 94,
+          "cardId": 79,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "95": {
+          "id": 95,
+          "cardId": 80,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "96": {
+          "id": 96,
+          "cardId": 81,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "97": {
+          "id": 97,
+          "cardId": 82,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "98": {
+          "id": 98,
+          "cardId": 83,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "99": {
+          "id": 99,
+          "cardId": 84,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "100": {
+          "id": 100,
+          "cardId": 85,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": ["85-2-1"],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "101": {
+          "id": 101,
+          "cardId": 86,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "102": {
+          "id": 102,
+          "cardId": 87,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "103": {
+          "id": 103,
+          "cardId": 88,
+          "stateId": 2,
+          "stickers": {
+            "2": [1]
+          },
+          "trackProgress": [1, 2, 3, 4],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "104": {
+          "id": 104,
+          "cardId": 89,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "105": {
+          "id": 105,
+          "cardId": 90,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "106": {
+          "id": 106,
+          "cardId": 91,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "107": {
+          "id": 107,
+          "cardId": 60,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "108": {
+          "id": 108,
+          "cardId": 92,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "109": {
+          "id": 109,
+          "cardId": 93,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "110": {
+          "id": 110,
+          "cardId": 94,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "111": {
+          "id": 111,
+          "cardId": 95,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "112": {
+          "id": 112,
+          "cardId": 96,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "113": {
+          "id": 113,
+          "cardId": 97,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "114": {
+          "id": 114,
+          "cardId": 98,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "115": {
+          "id": 115,
+          "cardId": 99,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "116": {
+          "id": 116,
+          "cardId": 100,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "117": {
+          "id": 117,
+          "cardId": 101,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "118": {
+          "id": 118,
+          "cardId": 102,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "119": {
+          "id": 119,
+          "cardId": 5,
+          "stateId": 2,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "120": {
+          "id": 120,
+          "cardId": 103,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "121": {
+          "id": 121,
+          "cardId": 104,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "122": {
+          "id": 122,
+          "cardId": 105,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "123": {
+          "id": 123,
+          "cardId": 106,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "124": {
+          "id": 124,
+          "cardId": 107,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "125": {
+          "id": 125,
+          "cardId": 108,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "126": {
+          "id": 126,
+          "cardId": 109,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "127": {
+          "id": 127,
+          "cardId": 110,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "128": {
+          "id": 128,
+          "cardId": 111,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "129": {
+          "id": 129,
+          "cardId": 112,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "130": {
+          "id": 130,
+          "cardId": 113,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "131": {
+          "id": 131,
+          "cardId": 114,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "132": {
+          "id": 132,
+          "cardId": 115,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "133": {
+          "id": 133,
+          "cardId": 116,
+          "stateId": 3,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "134": {
+          "id": 134,
+          "cardId": 117,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [1, 4],
+          "cumulated": 2,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        },
+        "135": {
+          "id": 135,
+          "cardId": 118,
+          "stateId": 1,
+          "stickers": {},
+          "trackProgress": [],
+          "cumulated": 0,
+          "usedActionIds": [],
+          "removedResourcesByState": {},
+          "glories": []
+        }
+      },
+      "resources": {},
+      "stickerStock": {
+        "1": 7,
+        "2": 5,
+        "3": 3,
+        "4": 4,
+        "5": 3,
+        "6": 4,
+        "7": 1,
+        "8": 5,
+        "10": 4,
+        "11": 0,
+        "16": 5
+      },
+      "boardEffects": {
+        "42": [
+          {
+            "id": "stay_in_play",
+            "type": "STAY_IN_PLAY",
+            "cards": {
+              "scope": ["self"]
+            }
+          }
+        ],
+        "108": [
+          {
+            "id": "92-1-1",
+            "type": "CANT_BE_DESTROYED"
+          }
+        ]
+      },
+      "triggerPile": {
+        "d59523f4-467d-41f8-a9fb-0abf1922a8e8": {
+          "effectDef": {
+            "id": "57-1-1",
+            "trigger": "on_play",
+            "actionEffects": [
+              {
+                "id": 1,
+                "type": "DISCARD_CARD",
+                "cards": {
+                  "scope": ["top_of_deck"],
+                  "pickNumber": 2
+                }
+              }
+            ]
+          },
+          "sourceInstanceId": 67
+        }
+      },
+      "lastAddedCards": [],
+      "lastDrawnCards": [42, 67, 110, 84],
+      "lastDiscardedCards": [],
+      "round": 19,
+      "turn": 1,
+      "isLastRound": false,
+      "phase": "playing",
+      "onGoingParchment": 68,
+      "parameterOverrides": {},
+      "campaignScores": {},
+      "purgedCards": [],
+      "purgedGlory": []
+    }
+  },
+  "events": [
+    {
+      "id": "d86a13bd-8ba7-46bb-9450-88ed724eab52",
+      "type": "ROUND_STARTED",
+      "round": 19,
+      "timestamp": 1792268482249,
+      "newDrawPile": [
+        42, 67, 110, 84, 66, 3, 46, 78, 63, 49, 20, 13, 62, 101, 118, 85, 133, 11, 79, 48, 83, 59,
+        75, 33, 64, 35, 31, 7, 9, 17, 70, 43, 10, 134, 41, 21, 36, 89, 100, 103, 52, 111, 12, 58, 6,
+        14, 82, 55, 102, 104, 71, 44, 28, 69, 73
+      ],
+      "lastAddedCards": [69, 70]
+    },
+    {
+      "id": "ecc3fd0c-7990-433c-813f-b44de6d5f941",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322088104,
+      "gameStateChanges": {
+        "drawPile": [
+          46, 78, 63, 49, 20, 13, 62, 101, 118, 85, 133, 11, 79, 48, 83, 59, 75, 33, 64, 35, 31, 7,
+          9, 17, 70, 43, 10, 134, 41, 21, 36, 89, 100, 103, 52, 111, 12, 58, 6, 14, 82, 55, 102,
+          104, 71, 44, 28, 69, 73
+        ],
+        "discardPile": [66, 3],
+        "triggerPile": {},
+        "lastDiscardedCards": [66, 3]
+      },
+      "sourceInstanceId": 67,
+      "actionId": "57-1-1",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 67,
+          "actionId": "57-1-1",
+          "triggerId": "@67|57-1-1|0"
+        }
+      ]
+    },
+    {
+      "id": "fa6d2821-f8b5-46af-8e18-e53bf58a87d3",
+      "type": "ADVANCE",
+      "timestamp": 1792322094007,
+      "turnCards": [46, 78],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "f37a34e4-de08-4f75-9f2e-c1c52d8bf68d",
+      "type": "ADVANCE",
+      "timestamp": 1792322095756,
+      "turnCards": [63, 49],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "12c858c1-93a4-4dba-8235-978857add5a4",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322100812,
+      "gameStateChanges": {
+        "board": [42, 67, 110, 46, 78, 63],
+        "instances": {
+          "49": {
+            "id": 49,
+            "cardId": 40,
+            "glories": [],
+            "stateId": 1,
+            "stickers": {},
+            "cumulated": 0,
+            "trackProgress": [],
+            "usedActionIds": ["40-1-2"],
+            "removedResourcesByState": {}
+          }
+        },
+        "discardPile": [66, 3, 49, 124],
+        "destroyedPile": [
+          8, 32, 34, 1, 19, 22, 2, 15, 50, 51, 5, 53, 16, 29, 56, 119, 86, 72, 109, 57, 60, 45, 4,
+          54, 61, 112, 18, 65, 84
+        ],
+        "lastAddedCards": [124],
+        "discoverablePile": [
+          74, 76, 77, 80, 81, 87, 92, 93, 94, 95, 96, 97, 98, 99, 105, 106, 107, 113, 114, 115, 116,
+          117, 120, 121, 122, 123, 125, 126, 127, 128, 129, 130, 131, 132, 135
+        ],
+        "lastDiscardedCards": []
+      },
+      "sourceInstanceId": 49,
+      "actionId": "40-1-2",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 49,
+          "actionId": "40-1-2"
+        },
+        {
+          "type": "resolvePayCost",
+          "resolved": {
+            "resources": {},
+            "discardedCardIds": [],
+            "destroyedCardIds": [84]
+          }
+        }
+      ]
+    },
+    {
+      "id": "7da74ba5-578a-4935-838b-c64dafb0c5f4",
+      "type": "ADVANCE",
+      "timestamp": 1792322102952,
+      "turnCards": [20, 13],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "50e36e55-0821-4d09-9435-b70a152fbc45",
+      "type": "ADVANCE",
+      "timestamp": 1792322108668,
+      "turnCards": [62, 101],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "cfbe710b-8904-48d5-8a64-59cd5288c560",
+      "type": "ADVANCE",
+      "timestamp": 1792322110177,
+      "turnCards": [118, 85],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "e875411f-8f3a-458b-ad67-70075befc371",
+      "type": "ADVANCE",
+      "timestamp": 1792322119469,
+      "turnCards": [133, 11],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "2047c3ae-5ce3-4f96-9761-0a6685655d01",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322125636,
+      "gameStateChanges": {
+        "board": [42, 67, 110, 46, 78, 63, 20, 13, 62, 101, 118, 85, 11],
+        "resources": {
+          "goods": 2
+        },
+        "discardPile": [66, 3, 49, 124, 133]
+      },
+      "sourceInstanceId": 133,
+      "actionId": "116-3-1",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 133,
+          "actionId": "116-3-1"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "133-1",
+            "type": "ADD_RESOURCES",
+            "sourceInstanceId": 133,
+            "resources": {
+              "goods": 1
+            }
+          },
+          "choiceType": "choose_resource"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "133-1",
+            "type": "ADD_RESOURCES",
+            "sourceInstanceId": 133,
+            "resources": {
+              "goods": 1
+            }
+          },
+          "choiceType": "choose_resource"
+        }
+      ]
+    },
+    {
+      "id": "588e578f-398b-4fac-ac25-ae7b74ff777f",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322126903,
+      "cardInstanceId": 20,
+      "productions": {
+        "goods": 2
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 20,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "939c2d87-0d80-425e-ac09-6aaab96950ae",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322128086,
+      "cardInstanceId": 85,
+      "productions": {
+        "stone": 1,
+        "iron": 2,
+        "goods": 2
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 85,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "13e85476-fe15-48e2-b9ab-3a90c5cf1e81",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322143319,
+      "gameStateChanges": {
+        "board": [42, 67, 110, 46, 78, 62, 101, 118, 11],
+        "resources": {
+          "goods": 8,
+          "stone": 1,
+          "iron": 2
+        },
+        "discardPile": [66, 3, 49, 124, 133, 20, 85, 63, 13],
+        "lastDiscardedCards": [13]
+      },
+      "sourceInstanceId": 63,
+      "actionId": "53-4-1",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 63,
+          "actionId": "53-4-1"
+        },
+        {
+          "type": "resolvePayCost",
+          "resolved": {
+            "resources": {},
+            "discardedCardIds": [13],
+            "destroyedCardIds": []
+          }
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "63-1",
+            "type": "ADD_RESOURCES",
+            "sourceInstanceId": 63,
+            "resources": {
+              "goods": 1
+            }
+          },
+          "choiceType": "choose_resource"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "63-1",
+            "type": "ADD_RESOURCES",
+            "sourceInstanceId": 63,
+            "resources": {
+              "goods": 1
+            }
+          },
+          "choiceType": "choose_resource"
+        }
+      ]
+    },
+    {
+      "id": "3e0713b3-bc4f-4760-8e42-bd9db6a49b71",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322149606,
+      "gameStateChanges": {
+        "instances": {
+          "27": {
+            "id": 27,
+            "cardId": 19,
+            "glories": [],
+            "stateId": 1,
+            "stickers": {},
+            "cumulated": 96,
+            "trackProgress": [1, 2, 3, 4, 5, 6],
+            "usedActionIds": [],
+            "removedResourcesByState": {}
+          }
+        },
+        "resources": {
+          "goods": 7,
+          "stone": 1,
+          "iron": 2
+        },
+        "lastDiscardedCards": []
+      },
+      "sourceInstanceId": 27,
+      "actionId": "19-1-1",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 27,
+          "actionId": "19-1-1",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "id": "4d5f452c-2de1-47d8-8494-b2573fb2cfee",
+      "type": "UPGRADE_CARD",
+      "timestamp": 1792322151451,
+      "cardInstanceId": 67,
+      "stateId": 3,
+      "cost": {
+        "goods": 7
+      },
+      "discardedCardIds": [],
+      "destroyedCardIds": [],
+      "endTurnTrigger": {
+        "e0307304-2560-4d65-901d-070fd8f8624b": {
+          "effectDef": {
+            "id": "33-2-1",
+            "trigger": "end_of_turn",
+            "optional": true,
+            "cost": {
+              "discard": [
+                {
+                  "scope": ["self"]
+                }
+              ]
+            },
+            "actionEffects": [
+              {
+                "id": 1,
+                "type": "ADD_BOARD_EFFECT",
+                "cards": {
+                  "scope": ["board"],
+                  "pickMin": 0,
+                  "pickMax": 1
+                },
+                "effect": {
+                  "id": "stay_in_play",
+                  "type": "STAY_IN_PLAY",
+                  "cards": {
+                    "scope": ["self"]
+                  }
+                }
+              }
+            ]
+          },
+          "sourceInstanceId": 42
+        }
+      },
+      "commands": [
+        {
+          "type": "resolveUpgrade",
+          "instanceId": 67,
+          "upgradeTo": 3
+        }
+      ]
+    },
+    {
+      "id": "06acdabf-9ea1-4760-afac-8db09f746172",
+      "type": "SKIP_TRIGGER",
+      "timestamp": 1792322160427,
+      "triggerId": "e0307304-2560-4d65-901d-070fd8f8624b",
+      "sourceInstanceId": 42,
+      "actionId": "33-2-1",
+      "endTurn": true,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "skipTrigger",
+          "triggerId": "@42|33-2-1|0"
+        }
+      ]
+    },
+    {
+      "id": "6bc0a37d-5cec-4dbc-b322-03abc40839bd",
+      "type": "TURN_STARTED",
+      "timestamp": 1792322161901,
+      "turn": 2,
+      "turnCards": [79, 48, 83, 59],
+      "commands": [
+        {
+          "type": "startTurn"
+        }
+      ]
+    },
+    {
+      "id": "894159e1-c1fc-475f-bf5c-a9c4406eb947",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322167869,
+      "cardInstanceId": 101,
+      "productions": {
+        "gold": 4
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 101,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "b886ffd3-3caf-44b4-92ff-4603c466002e",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322173305,
+      "gameStateChanges": {
+        "board": [42, 11, 79, 83, 59],
+        "instances": {
+          "48": {
+            "id": 48,
+            "cardId": 39,
+            "glories": [],
+            "stateId": 2,
+            "stickers": {},
+            "cumulated": 0,
+            "trackProgress": [],
+            "usedActionIds": ["39-1-1", "39-2-1"],
+            "removedResourcesByState": {}
+          }
+        },
+        "resources": {
+          "gold": 1
+        },
+        "discardPile": [
+          66, 3, 49, 124, 133, 20, 85, 63, 13, 67, 110, 46, 78, 62, 118, 101, 48, 120
+        ],
+        "lastAddedCards": [120],
+        "discoverablePile": [
+          74, 76, 77, 80, 81, 87, 92, 93, 94, 95, 96, 97, 98, 99, 105, 106, 107, 113, 114, 115, 116,
+          117, 121, 122, 123, 125, 126, 127, 128, 129, 130, 131, 132, 135
+        ],
+        "lastDiscardedCards": []
+      },
+      "sourceInstanceId": 48,
+      "actionId": "39-2-1",
+      "triggers": {
+        "489cd7df-ac3e-490d-9b31-6b1a3d7d0eed": {
+          "effectDef": {
+            "id": "33-2-1",
+            "trigger": "end_of_turn",
+            "optional": true,
+            "cost": {
+              "discard": [
+                {
+                  "scope": ["self"]
+                }
+              ]
+            },
+            "actionEffects": [
+              {
+                "id": 1,
+                "type": "ADD_BOARD_EFFECT",
+                "cards": {
+                  "scope": ["board"],
+                  "pickMin": 0,
+                  "pickMax": 1
+                },
+                "effect": {
+                  "id": "stay_in_play",
+                  "type": "STAY_IN_PLAY",
+                  "cards": {
+                    "scope": ["self"]
+                  }
+                }
+              }
+            ]
+          },
+          "sourceInstanceId": 42
+        },
+        "3713fc61-7595-4717-8343-e6fc1108d823": {
+          "effectDef": {
+            "id": "66-1-1",
+            "trigger": "end_of_turn",
+            "optional": true,
+            "cost": {
+              "discard": [
+                {
+                  "scope": ["self"]
+                }
+              ]
+            },
+            "actionEffects": [
+              {
+                "id": 1,
+                "type": "ADD_BOARD_EFFECT",
+                "cards": {
+                  "scope": ["board"],
+                  "tags": ["person"],
+                  "pickMin": 0,
+                  "pickMax": 1
+                },
+                "effect": {
+                  "id": "stay_in_play",
+                  "type": "STAY_IN_PLAY",
+                  "cards": {
+                    "scope": ["self"]
+                  }
+                }
+              }
+            ]
+          },
+          "sourceInstanceId": 79
+        },
+        "b9a21d58-0c1e-4521-946a-51861bff36a4": {
+          "effectDef": {
+            "id": "69-1-1",
+            "trigger": "end_of_turn",
+            "optional": true,
+            "cost": {
+              "discard": [
+                {
+                  "scope": ["self"]
+                }
+              ]
+            },
+            "actionEffects": [
+              {
+                "id": 1,
+                "type": "ADD_BOARD_EFFECT",
+                "cards": {
+                  "scope": ["board"],
+                  "pickMin": 0,
+                  "pickMax": 1
+                },
+                "effect": {
+                  "id": "stay_in_play",
+                  "type": "STAY_IN_PLAY",
+                  "cards": {
+                    "scope": ["self"]
+                  }
+                }
+              }
+            ]
+          },
+          "sourceInstanceId": 83
+        }
+      },
+      "endTurn": true,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 48,
+          "actionId": "39-2-1"
+        }
+      ]
+    },
+    {
+      "id": "6ca45ecc-a53a-44ee-b0cf-a11277fb7029",
+      "type": "SKIP_TRIGGER",
+      "timestamp": 1792322177852,
+      "triggerId": "489cd7df-ac3e-490d-9b31-6b1a3d7d0eed",
+      "sourceInstanceId": 42,
+      "actionId": "33-2-1",
+      "endTurn": true,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "skipTrigger",
+          "triggerId": "@42|33-2-1|0"
+        }
+      ]
+    },
+    {
+      "id": "34313b79-0597-425d-b9ad-c041b4413618",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322179786,
+      "gameStateChanges": {
+        "board": [42, 11, 83, 59],
+        "discardPile": [
+          66, 3, 49, 124, 133, 20, 85, 63, 13, 67, 110, 46, 78, 62, 118, 101, 48, 120, 79
+        ],
+        "triggerPile": {
+          "b9a21d58-0c1e-4521-946a-51861bff36a4": {
+            "effectDef": {
+              "id": "69-1-1",
+              "trigger": "end_of_turn",
+              "optional": true,
+              "cost": {
+                "discard": [
+                  {
+                    "scope": ["self"]
+                  }
+                ]
+              },
+              "actionEffects": [
+                {
+                  "id": 1,
+                  "type": "ADD_BOARD_EFFECT",
+                  "cards": {
+                    "scope": ["board"],
+                    "pickMin": 0,
+                    "pickMax": 1
+                  },
+                  "effect": {
+                    "id": "stay_in_play",
+                    "type": "STAY_IN_PLAY",
+                    "cards": {
+                      "scope": ["self"]
+                    }
+                  }
+                }
+              ]
+            },
+            "sourceInstanceId": 83
+          }
+        },
+        "boardEffects": {
+          "11": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "42": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "79": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "108": [
+            {
+              "id": "92-1-1",
+              "type": "CANT_BE_DESTROYED"
+            }
+          ]
+        },
+        "lastDiscardedCards": [79]
+      },
+      "sourceInstanceId": 79,
+      "actionId": "66-1-1",
+      "triggers": {},
+      "endTurn": true,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 79,
+          "actionId": "66-1-1",
+          "triggerId": "@79|66-1-1|0"
+        }
+      ]
+    },
+    {
+      "id": "5064094c-1a72-43da-af6d-59ea12e4017c",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322184801,
+      "gameStateChanges": {
+        "board": [42, 11, 59],
+        "discardPile": [
+          66, 3, 49, 124, 133, 20, 85, 63, 13, 67, 110, 46, 78, 62, 118, 101, 48, 120, 79, 83
+        ],
+        "triggerPile": {},
+        "boardEffects": {
+          "11": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "42": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "79": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "83": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "ids": [59]
+              }
+            }
+          ],
+          "108": [
+            {
+              "id": "92-1-1",
+              "type": "CANT_BE_DESTROYED"
+            }
+          ]
+        },
+        "lastDiscardedCards": [83]
+      },
+      "sourceInstanceId": 83,
+      "actionId": "69-1-1",
+      "triggers": {},
+      "endTurn": true,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 83,
+          "actionId": "69-1-1",
+          "triggerId": "@83|69-1-1|0"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "83-1",
+            "type": "ADD_BOARD_EFFECT",
+            "sourceInstanceId": 83,
+            "instanceIds": [59]
+          },
+          "choiceType": "choose_card"
+        }
+      ]
+    },
+    {
+      "id": "98bf034a-9dd1-448a-a31c-07bb522a83d3",
+      "type": "TURN_STARTED",
+      "timestamp": 1792322187626,
+      "turn": 3,
+      "turnCards": [75, 33, 64, 35],
+      "commands": [
+        {
+          "type": "startTurn"
+        }
+      ]
+    },
+    {
+      "id": "7fd2a33b-4327-40c7-8929-52aa9653b439",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322238668,
+      "gameStateChanges": {
+        "triggerPile": {},
+        "boardEffects": {
+          "11": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "42": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "64": [
+            {
+              "id": "block",
+              "type": "BLOCK",
+              "cards": {
+                "ids": [11, 75, 35]
+              }
+            }
+          ],
+          "108": [
+            {
+              "id": "92-1-1",
+              "type": "CANT_BE_DESTROYED"
+            }
+          ]
+        }
+      },
+      "sourceInstanceId": 64,
+      "actionId": "54-1-1",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 64,
+          "actionId": "54-1-1",
+          "triggerId": "@64|54-1-1|0"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "64-1",
+            "type": "BLOCK_CARD",
+            "sourceInstanceId": 64,
+            "instanceIds": [11, 75, 35]
+          },
+          "choiceType": "choose_card"
+        }
+      ]
+    },
+    {
+      "id": "0ff534b8-1848-4f58-919f-505b40540a56",
+      "type": "ADVANCE",
+      "timestamp": 1792322242543,
+      "turnCards": [31, 7],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "257c92b3-7d68-4a33-8bd1-0550d3eba48d",
+      "type": "ADVANCE",
+      "timestamp": 1792322245867,
+      "turnCards": [9, 17],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "b463f933-8630-4698-8a0e-f00c065cef7f",
+      "type": "ADVANCE",
+      "timestamp": 1792322253926,
+      "turnCards": [70, 43],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "c3fc7eff-9880-4230-8fec-54398da873c4",
+      "type": "ADVANCE",
+      "timestamp": 1792322301800,
+      "turnCards": [10, 134],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "b047538d-9b58-4268-a9da-4f9efb38c4b7",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322312835,
+      "gameStateChanges": {
+        "board": [42, 11, 59, 75, 33, 64, 35, 31, 7, 9, 17, 43, 10, 134],
+        "instances": {
+          "33": {
+            "id": 33,
+            "cardId": 25,
+            "glories": [],
+            "stateId": 1,
+            "stickers": {},
+            "cumulated": 0,
+            "trackProgress": [],
+            "usedActionIds": ["25-1-1", "25-1-3", "25-1-2"],
+            "removedResourcesByState": {
+              "1": {
+                "upgradeCost": ["iron"]
+              }
+            }
+          }
+        },
+        "discardPile": [
+          66, 3, 49, 124, 133, 20, 85, 63, 13, 67, 110, 46, 78, 62, 118, 101, 48, 120, 79, 83, 70
+        ]
+      },
+      "sourceInstanceId": 70,
+      "actionId": "60-1-1",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 70,
+          "actionId": "60-1-1"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "70-1",
+            "type": "REMOVE_RESOURCE_ON_CARD",
+            "sourceInstanceId": 70,
+            "instanceIds": [33]
+          },
+          "choiceType": "choose_card"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "70-1",
+            "type": "REMOVE_RESOURCE_ON_CARD",
+            "sourceInstanceId": 70,
+            "resources": {
+              "iron": 1
+            }
+          },
+          "choiceType": "choose_resource"
+        }
+      ]
+    },
+    {
+      "id": "5337db9d-55c5-407d-98e4-4098923b9aba",
+      "type": "ADVANCE",
+      "timestamp": 1792322314957,
+      "turnCards": [41, 21],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "bcfda9ac-3d32-4f97-8e04-82faed530f04",
+      "type": "ADVANCE",
+      "timestamp": 1792322319058,
+      "turnCards": [36, 89],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "81454380-aa13-4b29-bd38-56ce993c814f",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322335701,
+      "cardInstanceId": 9,
+      "productions": {
+        "weapon": 1
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 9,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "f4018daa-f0fc-400d-b27d-0221419a1bd8",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322339318,
+      "cardInstanceId": 36,
+      "productions": {
+        "weapon": 1
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 36,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "000470f8-1fd7-4f73-9392-063e01637f09",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322341609,
+      "cardInstanceId": 89,
+      "productions": {
+        "weapon": 1
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 89,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "a6d7d3fd-b8fe-4b98-b3a7-5df6b9685660",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322364825,
+      "gameStateChanges": {
+        "board": [42, 11, 59, 75, 33, 35, 31, 7, 17, 43, 10, 134, 41, 21],
+        "resources": {
+          "iron": 1,
+          "wood": 1,
+          "stone": 1
+        },
+        "boardEffects": {
+          "11": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "17": [
+            {
+              "id": "11-4-1",
+              "type": "ADJUST_PRODUCTION",
+              "cards": {
+                "scope": ["self"]
+              },
+              "resources": {
+                "gold": 1
+              },
+              "valuePerElement": {
+                "amount": 1,
+                "cards": {
+                  "scope": ["board"],
+                  "tags": ["person"]
+                }
+              }
+            }
+          ],
+          "41": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "42": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "108": [
+            {
+              "id": "92-1-1",
+              "type": "CANT_BE_DESTROYED"
+            }
+          ],
+          "134": [
+            {
+              "id": "117-1-1",
+              "type": "CANT_BE_DESTROYED",
+              "condition": {
+                "type": "cardCount",
+                "cards": {
+                  "scope": ["any"],
+                  "name": "Lord Nimrod"
+                },
+                "min": 1
+              }
+            }
+          ]
+        },
+        "destroyedPile": [
+          8, 32, 34, 1, 19, 22, 2, 15, 50, 51, 5, 53, 16, 29, 56, 119, 86, 72, 109, 57, 60, 45, 4,
+          54, 61, 112, 18, 65, 84, 64
+        ],
+        "lastDiscardedCards": []
+      },
+      "sourceInstanceId": 64,
+      "actionId": "54-1-2",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 64,
+          "actionId": "54-1-2"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "64-1",
+            "type": "ADD_RESOURCES",
+            "sourceInstanceId": 64,
+            "resources": {
+              "iron": 1
+            }
+          },
+          "choiceType": "choose_resource"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "64-1",
+            "type": "ADD_RESOURCES",
+            "sourceInstanceId": 64,
+            "resources": {
+              "wood": 1
+            }
+          },
+          "choiceType": "choose_resource"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "64-1",
+            "type": "ADD_RESOURCES",
+            "sourceInstanceId": 64,
+            "resources": {
+              "stone": 1
+            }
+          },
+          "choiceType": "choose_resource"
+        }
+      ]
+    },
+    {
+      "id": "f9b2aed3-2984-4d26-8a0e-3595cab9e7d0",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322377349,
+      "cardInstanceId": 21,
+      "productions": {
+        "goods": 2
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 21,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "eaef89a5-5919-4a70-bd8e-c186eff214e1",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322379666,
+      "cardInstanceId": 31,
+      "productions": {
+        "gold": 1,
+        "goods": 1
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 31,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "533757d1-9dd3-4621-8129-f4d038a38cc0",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322383802,
+      "gameStateChanges": {
+        "board": [42, 11, 59, 75, 33, 35, 7, 17, 43, 10, 134],
+        "instances": {
+          "41": {
+            "id": 41,
+            "cardId": 32,
+            "glories": [],
+            "stateId": 1,
+            "stickers": {},
+            "cumulated": 0,
+            "trackProgress": [4, 5, 3, 6, 1, 2, 7],
+            "usedActionIds": [],
+            "removedResourcesByState": {}
+          }
+        },
+        "resources": {
+          "iron": 1,
+          "wood": 1,
+          "stone": 1,
+          "goods": 5,
+          "gold": 1
+        },
+        "discardPile": [
+          66, 3, 49, 124, 133, 20, 85, 63, 13, 67, 110, 46, 78, 62, 118, 101, 48, 120, 79, 83, 70,
+          9, 36, 89, 21, 31, 41
+        ],
+        "boardEffects": {
+          "11": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "17": [
+            {
+              "id": "11-4-1",
+              "type": "ADJUST_PRODUCTION",
+              "cards": {
+                "scope": ["self"]
+              },
+              "resources": {
+                "gold": 1
+              },
+              "valuePerElement": {
+                "amount": 1,
+                "cards": {
+                  "scope": ["board"],
+                  "tags": ["person"]
+                }
+              }
+            }
+          ],
+          "42": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "108": [
+            {
+              "id": "92-1-1",
+              "type": "CANT_BE_DESTROYED"
+            }
+          ],
+          "134": [
+            {
+              "id": "117-1-1",
+              "type": "CANT_BE_DESTROYED",
+              "condition": {
+                "type": "cardCount",
+                "cards": {
+                  "scope": ["any"],
+                  "name": "Lord Nimrod"
+                },
+                "min": 1
+              }
+            }
+          ]
+        },
+        "lastDiscardedCards": []
+      },
+      "sourceInstanceId": 41,
+      "actionId": "32-1-2",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 41,
+          "actionId": "32-1-2"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "41-1",
+            "type": "TRACK_ADVANCE",
+            "sourceInstanceId": 41,
+            "stepIds": [7]
+          },
+          "choiceType": "choose_step"
+        }
+      ]
+    },
+    {
+      "id": "54dd487a-5d29-48f4-8594-777aa330c59d",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322387015,
+      "gameStateChanges": {
+        "instances": {
+          "27": {
+            "id": 27,
+            "cardId": 19,
+            "glories": [],
+            "stateId": 1,
+            "stickers": {},
+            "cumulated": 101,
+            "trackProgress": [1, 2, 3, 4, 5, 6],
+            "usedActionIds": [],
+            "removedResourcesByState": {}
+          }
+        },
+        "resources": {
+          "iron": 1,
+          "wood": 1,
+          "stone": 1,
+          "gold": 1
+        }
+      },
+      "sourceInstanceId": 27,
+      "actionId": "19-1-1",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 27,
+          "actionId": "19-1-1",
+          "amount": 5
+        }
+      ]
+    },
+    {
+      "id": "986c4649-491f-4cfd-897e-82dc717f049c",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322393413,
+      "cardInstanceId": 10,
+      "productions": {
+        "wood": 1
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 10,
+          "choiceIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "272dc710-201a-4ce6-af4b-c8d465ee598d",
+      "type": "UPGRADE_CARD",
+      "timestamp": 1792322399925,
+      "cardInstanceId": 33,
+      "stateId": 2,
+      "cost": {
+        "wood": 2,
+        "iron": 1
+      },
+      "discardedCardIds": [],
+      "destroyedCardIds": [],
+      "endTurnTrigger": {
+        "ee2a93f7-0995-4b3b-913e-c3cfdfdeaad5": {
+          "effectDef": {
+            "id": "33-2-1",
+            "trigger": "end_of_turn",
+            "optional": true,
+            "cost": {
+              "discard": [
+                {
+                  "scope": ["self"]
+                }
+              ]
+            },
+            "actionEffects": [
+              {
+                "id": 1,
+                "type": "ADD_BOARD_EFFECT",
+                "cards": {
+                  "scope": ["board"],
+                  "pickMin": 0,
+                  "pickMax": 1
+                },
+                "effect": {
+                  "id": "stay_in_play",
+                  "type": "STAY_IN_PLAY",
+                  "cards": {
+                    "scope": ["self"]
+                  }
+                }
+              }
+            ]
+          },
+          "sourceInstanceId": 42
+        }
+      },
+      "commands": [
+        {
+          "type": "resolveUpgrade",
+          "instanceId": 33,
+          "upgradeTo": 2
+        }
+      ]
+    },
+    {
+      "id": "7ce44b42-bfb9-455f-aa24-ed4b271cd69b",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322412525,
+      "gameStateChanges": {
+        "board": [11, 59, 75, 35, 7, 17, 43, 134],
+        "discardPile": [
+          66, 3, 49, 124, 133, 20, 85, 63, 13, 67, 110, 46, 78, 62, 118, 101, 48, 120, 79, 83, 70,
+          9, 36, 89, 21, 31, 41, 10, 33, 42
+        ],
+        "triggerPile": {},
+        "boardEffects": {
+          "11": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "scope": ["self"]
+              }
+            }
+          ],
+          "17": [
+            {
+              "id": "11-4-1",
+              "type": "ADJUST_PRODUCTION",
+              "cards": {
+                "scope": ["self"]
+              },
+              "resources": {
+                "gold": 1
+              },
+              "valuePerElement": {
+                "amount": 1,
+                "cards": {
+                  "scope": ["board"],
+                  "tags": ["person"]
+                }
+              }
+            }
+          ],
+          "42": [
+            {
+              "id": "stay_in_play",
+              "type": "STAY_IN_PLAY",
+              "cards": {
+                "ids": [35]
+              }
+            }
+          ],
+          "108": [
+            {
+              "id": "92-1-1",
+              "type": "CANT_BE_DESTROYED"
+            }
+          ],
+          "134": [
+            {
+              "id": "117-1-1",
+              "type": "CANT_BE_DESTROYED",
+              "condition": {
+                "type": "cardCount",
+                "cards": {
+                  "scope": ["any"],
+                  "name": "Lord Nimrod"
+                },
+                "min": 1
+              }
+            }
+          ]
+        },
+        "lastDiscardedCards": [42]
+      },
+      "sourceInstanceId": 42,
+      "actionId": "33-2-1",
+      "triggers": {},
+      "endTurn": true,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 42,
+          "actionId": "33-2-1",
+          "triggerId": "@42|33-2-1|0"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "42-1",
+            "type": "ADD_BOARD_EFFECT",
+            "sourceInstanceId": 42,
+            "instanceIds": [35]
+          },
+          "choiceType": "choose_card"
+        }
+      ]
+    },
+    {
+      "id": "6415f85a-c447-4838-93a0-6a6eb16cb2e0",
+      "type": "TURN_STARTED",
+      "timestamp": 1792322413782,
+      "turn": 4,
+      "turnCards": [100, 103, 52, 111],
+      "commands": [
+        {
+          "type": "startTurn"
+        }
+      ]
+    },
+    {
+      "id": "35c95000-791c-44c3-b3b3-1bba79898248",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322433642,
+      "cardInstanceId": 100,
+      "productions": {
+        "wood": 4
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 100,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "6c479b20-558a-4a17-b563-3df34bf64f79",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322437204,
+      "cardInstanceId": 35,
+      "productions": {
+        "stone": 2
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 35,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "561d9f72-cd6a-4ada-8204-e6338de53b90",
+      "type": "UPGRADE_CARD",
+      "timestamp": 1792322445934,
+      "cardInstanceId": 52,
+      "stateId": 4,
+      "cost": {
+        "wood": 4,
+        "stone": 2
+      },
+      "discardedCardIds": [],
+      "destroyedCardIds": [],
+      "endTurnTrigger": {},
+      "commands": [
+        {
+          "type": "resolveUpgrade",
+          "instanceId": 52,
+          "upgradeTo": 4
+        }
+      ]
+    },
+    {
+      "id": "a48c8557-274e-411f-b77d-599933a17c2d",
+      "type": "TURN_STARTED",
+      "timestamp": 1792322449207,
+      "turn": 5,
+      "turnCards": [12, 58, 6, 14],
+      "commands": [
+        {
+          "type": "startTurn"
+        }
+      ]
+    },
+    {
+      "id": "56ea74f8-479e-4f1c-8026-cf5a69ac2af5",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322451521,
+      "gameStateChanges": {
+        "board": [11, 58, 6, 14],
+        "instances": {
+          "12": {
+            "id": 12,
+            "cardId": 7,
+            "glories": [],
+            "stateId": 3,
+            "stickers": {
+              "3": [1]
+            },
+            "cumulated": 0,
+            "trackProgress": [],
+            "usedActionIds": ["7-4-1", "7-4-1", "7-4-1", "7-4-1"],
+            "removedResourcesByState": {}
+          }
+        },
+        "discardPile": [
+          66, 3, 49, 124, 133, 20, 85, 63, 13, 67, 110, 46, 78, 62, 118, 101, 48, 120, 79, 83, 70,
+          9, 36, 89, 21, 31, 41, 10, 33, 42, 59, 75, 7, 17, 43, 134, 100, 35, 52, 103, 111, 12, 74
+        ],
+        "lastAddedCards": [74],
+        "discoverablePile": [
+          76, 77, 80, 81, 87, 92, 93, 94, 95, 96, 97, 98, 99, 105, 106, 107, 113, 114, 115, 116,
+          117, 121, 122, 123, 125, 126, 127, 128, 129, 130, 131, 132, 135
+        ],
+        "lastDiscardedCards": [12]
+      },
+      "sourceInstanceId": 12,
+      "actionId": "7-4-1",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 12,
+          "actionId": "7-4-1"
+        }
+      ]
+    },
+    {
+      "id": "228440c3-f684-4a14-aafd-fc9bfb5324f9",
+      "type": "ADVANCE",
+      "timestamp": 1792322456436,
+      "turnCards": [82, 55],
+      "commands": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    {
+      "id": "68ca6d34-6269-40da-9608-042df227abf6",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322473216,
+      "cardInstanceId": 11,
+      "productions": {
+        "gold": 1,
+        "wood": 2
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 11,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "95e21715-4839-4e6d-94a1-3a193dc94b3d",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322475000,
+      "cardInstanceId": 6,
+      "productions": {
+        "stone": 2
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 6,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "1b54c3d9-aeb1-4c82-85d9-efa3ec0abcf5",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322475758,
+      "cardInstanceId": 14,
+      "productions": {
+        "gold": 1,
+        "weapon": 1
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 14,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "f44407aa-2852-4257-9830-53e62dda19d5",
+      "type": "UPGRADE_CARD",
+      "timestamp": 1792322482749,
+      "cardInstanceId": 82,
+      "stateId": 4,
+      "cost": {
+        "gold": 2,
+        "wood": 2,
+        "stone": 2
+      },
+      "discardedCardIds": [],
+      "destroyedCardIds": [],
+      "endTurnTrigger": {},
+      "commands": [
+        {
+          "type": "resolveUpgrade",
+          "instanceId": 82,
+          "upgradeTo": 4
+        }
+      ]
+    },
+    {
+      "id": "ff73d178-f9dd-4e76-9689-0e59d1dde608",
+      "type": "TURN_STARTED",
+      "timestamp": 1792322488031,
+      "turn": 6,
+      "turnCards": [102, 104, 71, 44],
+      "commands": [
+        {
+          "type": "startTurn"
+        }
+      ]
+    },
+    {
+      "id": "7e62fbfb-abe2-495d-81ed-c5cccec23742",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322494085,
+      "cardInstanceId": 102,
+      "productions": {
+        "gold": 2,
+        "goods": 2
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 102,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "50eb1434-d1c8-4af1-96bb-9a7580bffafa",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322497963,
+      "gameStateChanges": {
+        "board": [44],
+        "instances": {
+          "71": {
+            "id": 71,
+            "cardId": 2,
+            "glories": [],
+            "stateId": 2,
+            "stickers": {},
+            "cumulated": 0,
+            "trackProgress": [],
+            "usedActionIds": [],
+            "removedResourcesByState": {}
+          }
+        },
+        "resources": {
+          "goods": 2
+        },
+        "discardPile": [
+          66, 3, 49, 124, 133, 20, 85, 63, 13, 67, 110, 46, 78, 62, 118, 101, 48, 120, 79, 83, 70,
+          9, 36, 89, 21, 31, 41, 10, 33, 42, 59, 75, 7, 17, 43, 134, 100, 35, 52, 103, 111, 12, 74,
+          11, 6, 14, 82, 58, 55, 102, 104, 71
+        ],
+        "lastDiscardedCards": [71]
+      },
+      "sourceInstanceId": 104,
+      "actionId": "89-2-1",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 104,
+          "actionId": "89-2-1"
+        },
+        {
+          "type": "resolvePlayerChoice",
+          "choice": {
+            "id": "104-1",
+            "type": "UPGRADE_CARD",
+            "sourceInstanceId": 104,
+            "instanceIds": [71]
+          },
+          "choiceType": "choose_card"
+        }
+      ]
+    },
+    {
+      "id": "b91eac2c-66a9-4420-a002-97fa045adc1b",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322502846,
+      "gameStateChanges": {
+        "instances": {
+          "27": {
+            "id": 27,
+            "cardId": 19,
+            "glories": [],
+            "stateId": 1,
+            "stickers": {},
+            "cumulated": 103,
+            "trackProgress": [1, 2, 3, 4, 5, 6],
+            "usedActionIds": [],
+            "removedResourcesByState": {}
+          }
+        },
+        "resources": {},
+        "lastDiscardedCards": []
+      },
+      "sourceInstanceId": 27,
+      "actionId": "19-1-1",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 27,
+          "actionId": "19-1-1",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "id": "06c057f8-fe63-4bd3-bfe1-36bd03dcf780",
+      "type": "TURN_ENDED",
+      "timestamp": 1792322509761,
+      "endTurnTrigger": {
+        "ced9af44-567e-43f5-b7dc-204e2cbc3848": {
+          "effectDef": {
+            "id": "35-2-3",
+            "trigger": "end_of_turn",
+            "actionEffects": [
+              {
+                "id": 1,
+                "type": "UPGRADE_CARD",
+                "cards": {
+                  "scope": ["self"]
+                },
+                "states": {
+                  "ids": [1]
+                }
+              }
+            ]
+          },
+          "sourceInstanceId": 44
+        }
+      },
+      "commands": [
+        {
+          "type": "endTurn"
+        }
+      ]
+    },
+    {
+      "id": "54848768-2e81-4860-853e-ba0165bd25b7",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322511255,
+      "gameStateChanges": {
+        "board": [],
+        "instances": {
+          "44": {
+            "id": 44,
+            "cardId": 35,
+            "glories": [],
+            "stateId": 1,
+            "stickers": {},
+            "cumulated": 0,
+            "trackProgress": [],
+            "usedActionIds": [],
+            "removedResourcesByState": {}
+          }
+        },
+        "discardPile": [
+          66, 3, 49, 124, 133, 20, 85, 63, 13, 67, 110, 46, 78, 62, 118, 101, 48, 120, 79, 83, 70,
+          9, 36, 89, 21, 31, 41, 10, 33, 42, 59, 75, 7, 17, 43, 134, 100, 35, 52, 103, 111, 12, 74,
+          11, 6, 14, 82, 58, 55, 102, 104, 71, 44
+        ],
+        "triggerPile": {},
+        "boardEffects": {
+          "108": [
+            {
+              "id": "92-1-1",
+              "type": "CANT_BE_DESTROYED"
+            }
+          ]
+        },
+        "lastDiscardedCards": [44]
+      },
+      "sourceInstanceId": 44,
+      "actionId": "35-2-3",
+      "triggers": {},
+      "endTurn": true,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 44,
+          "actionId": "35-2-3",
+          "triggerId": "@44|35-2-3|0"
+        }
+      ]
+    },
+    {
+      "id": "8385e859-673c-469d-a0d4-3501b16cfabe",
+      "type": "TURN_STARTED",
+      "timestamp": 1792322512794,
+      "turn": 7,
+      "turnCards": [28, 69, 73],
+      "commands": [
+        {
+          "type": "startTurn"
+        }
+      ]
+    },
+    {
+      "id": "eceecc3e-da19-4717-99b6-6dd1a32fa61e",
+      "type": "CARD_PRODUCED",
+      "timestamp": 1792322516799,
+      "cardInstanceId": 73,
+      "productions": {
+        "stone": 2,
+        "iron": 1
+      },
+      "commands": [
+        {
+          "type": "resolveProduction",
+          "instanceId": 73,
+          "choiceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "39972d6e-e83f-43ab-be63-6efa86ecc619",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322517976,
+      "gameStateChanges": {
+        "instances": {
+          "88": {
+            "id": 88,
+            "cardId": 73,
+            "glories": [],
+            "stateId": 1,
+            "stickers": {},
+            "cumulated": 6,
+            "trackProgress": [1, 2],
+            "usedActionIds": [],
+            "removedResourcesByState": {}
+          }
+        },
+        "resources": {
+          "iron": 1
+        },
+        "lastDiscardedCards": []
+      },
+      "sourceInstanceId": 88,
+      "actionId": "73-1-1",
+      "triggers": {},
+      "endTurn": true,
+      "endRound": false,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 88,
+          "actionId": "73-1-1"
+        }
+      ]
+    },
+    {
+      "id": "7663def2-fa11-4dfa-af2b-56f44d9c083b",
+      "type": "ROUND_ENDED",
+      "timestamp": 1792322519390,
+      "round": 19,
+      "endRoundTriggers": {
+        "02ba0852-f1c2-4d36-9718-57f8bc7fbf31": {
+          "effectDef": {
+            "id": "19-1-2",
+            "trigger": "end_of_round",
+            "optional": true,
+            "actionEffects": [
+              {
+                "id": 1,
+                "type": "TRACK_ADVANCE",
+                "cards": {
+                  "scope": ["self"]
+                }
+              }
+            ]
+          },
+          "sourceInstanceId": 27
+        }
+      },
+      "commands": [
+        {
+          "type": "endRound"
+        }
+      ]
+    },
+    {
+      "id": "9ff0633c-3c75-4f09-bee2-780f557cef3a",
+      "type": "CARD_ACTION",
+      "timestamp": 1792322521351,
+      "gameStateChanges": {
+        "instances": {
+          "27": {
+            "id": 27,
+            "cardId": 19,
+            "glories": [],
+            "stateId": 2,
+            "stickers": {},
+            "cumulated": 0,
+            "trackProgress": [1, 2, 3, 4, 5, 6, 7],
+            "usedActionIds": [],
+            "removedResourcesByState": {}
+          }
+        },
+        "triggerPile": {},
+        "lastDiscardedCards": []
+      },
+      "sourceInstanceId": 27,
+      "actionId": "19-1-2",
+      "triggers": {},
+      "endTurn": false,
+      "endRound": true,
+      "commands": [
+        {
+          "type": "resolveAction",
+          "instanceId": 27,
+          "actionId": "19-1-2",
+          "triggerId": "@27|19-1-2|0"
+        }
+      ]
+    },
+    {
+      "id": "6a01f9eb-45f6-46ee-a485-cadd20bbc8f3",
+      "type": "GAME_ENDED",
+      "timestamp": 1792322522606,
+      "commands": [
+        {
+          "type": "endRound"
+        }
+      ]
+    },
+    {
+      "id": "03e1e181-8244-43b4-bd11-c786bc0dec31",
+      "type": "CAMPAIGN_SCORE_SAVED",
+      "timestamp": 1792322522607,
+      "segment": "base",
+      "score": 241,
+      "openExpansionChoice": false
+    }
+  ]
+}

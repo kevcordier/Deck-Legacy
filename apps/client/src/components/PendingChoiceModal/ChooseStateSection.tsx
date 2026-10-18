@@ -5,12 +5,14 @@ import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { Text } from '@components/ui/Text/Text';
 import { getPickNumbers } from '@deck-legacy/engine/application/effectResolver';
 import { fixResources } from '@deck-legacy/engine/application/resources';
+import { useIsDesktop } from '@hooks/useIsDesktop';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 export function ChooseStateSection(props: Readonly<ChoiceSectionProps>) {
   const { choice, instances, defs, resolvePlayerChoice } = props;
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
   const targetId = choice.targetInstanceId ?? choice.sourceInstanceId;
   const targetInst = instances[targetId];
   const cardDef = targetInst ? defs[targetInst.cardId] : undefined;
@@ -24,7 +26,7 @@ export function ChooseStateSection(props: Readonly<ChoiceSectionProps>) {
 
   return (
     // Same fixed card width as ChooseCardSection.
-    <View className="flex-row flex-wrap justify-center gap-4 p-2">
+    <View className="flex-row flex-wrap justify-center gap-2 p-2 lg:gap-4">
       {choice.choices.map(stateId => {
         if (typeof stateId !== 'number') return null;
         const state = cardDef?.states.find(candidate => candidate.id === stateId);
@@ -52,7 +54,10 @@ export function ChooseStateSection(props: Readonly<ChoiceSectionProps>) {
           destroyLabel.length > 0;
         if (!cardDef || !state) return null;
         return (
-          <View key={stateId} className="w-72 max-w-full items-stretch gap-2 p-2">
+          <View
+            key={stateId}
+            className={`${isDesktop ? 'w-72' : 'w-[48%]'} max-w-full items-stretch gap-2 p-2`}
+          >
             {hasCost && (
               <View className="flex-row flex-wrap items-center justify-center gap-1">
                 {!!upgrade?.cost.resources?.length && (

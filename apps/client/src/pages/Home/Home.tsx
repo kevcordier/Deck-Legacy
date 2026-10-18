@@ -12,12 +12,13 @@ import { TrophyIcon } from '@components/ui/Icon/icon';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text, TextStyle } from '@components/ui/Text/Text';
 import { Title } from '@components/ui/Title/Title';
+import type { Scenario } from '@data/scenarios';
 import { kingdomPath, maxKingdoms } from '@helpers/kingdom';
 import { FULL_SIZE, PAGE_BACKGROUND, PAGE_EDGES } from '@helpers/pageBackground';
 import { useAuth } from '@hooks/useAuth';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useKingdoms } from '@hooks/useKingdoms';
-import { type KingdomMeta, abandonKingdom, createKingdom } from '@services/persistence';
+import { type KingdomMeta, abandonKingdom, createKingdom, writeSave } from '@services/persistence';
 import { STORAGE_KEYS, storage } from '@services/storage';
 import { scheduleSync } from '@services/sync';
 import { randomUUID } from 'expo-crypto';
@@ -83,12 +84,25 @@ export function Home() {
     setOfflineChosen(true);
   };
 
-  const create = (name: string, tutorial: boolean) => {
+  const create = (name: string, tutorial: boolean, seed?: string, scenario?: Scenario) => {
     if (atLimit) return;
     const kingdom = createKingdom(randomUUID(), name);
-    setTutorialEnabled(tutorial);
     setCreating(false);
-    router.push(kingdomPath(kingdom));
+    if (scenario) {
+      // The saved game opens instead of a new one; its events carry no game id.
+      writeSave({
+        id: kingdom.id,
+        events: scenario.events,
+        cardNames: {},
+        savedAt: Date.now(),
+        sync: { dirty: true },
+        ...(scenario.checkpoint ? { checkpoint: scenario.checkpoint } : {}),
+      });
+      router.push(kingdomPath(kingdom));
+      return;
+    }
+    setTutorialEnabled(tutorial);
+    router.push({ pathname: kingdomPath(kingdom), params: seed ? { seed } : {} });
   };
 
   const confirmDelete = () => {

@@ -12,9 +12,15 @@ import {
   CorruptedGameError,
   GameSession,
   UnverifiedGameError,
+  checkpointSeq,
 } from '@deck-legacy/engine/application/session/GameSession';
 import { GameEventType, Phase } from '@deck-legacy/engine/domain/enums';
-import type { CardActionEvent, GameCatalog, GameEvent } from '@deck-legacy/engine/domain/types';
+import type {
+  CardActionEvent,
+  GameCatalog,
+  GameCheckpoint,
+  GameEvent,
+} from '@deck-legacy/engine/domain/types';
 import { loadGameCatalog } from '@deck-legacy/game-data';
 import {
   ConflictException,
@@ -64,6 +70,8 @@ function staleVersion(): ConflictException {
  * without one, the last sync wins. The server runs the recorded player commands again from the
  * game seed and refuses a log they do not produce (EDR-051); older games without a seed are only
  * replayed: new ones are stored unverified, out of the leaderboards; stored ones keep their flag.
+ * The state at the start of the last round is kept as a checkpoint: while the incoming log keeps
+ * the events it covers, a sync only checks the events after it (EDR-052).
  */
 @Injectable()
 export class GamesService {
@@ -98,6 +106,7 @@ export class GamesService {
       events: game.events,
       cardNames: game.cardNames,
       savedAt: game.updatedAt.getTime(),
+      checkpoint: game.checkpoint,
     };
   }
 
@@ -114,20 +123,18 @@ export class GamesService {
       if (body.fromSeq > storedIds.length) throw staleVersion();
       const kept =
         body.fromSeq > 0 ? await this.repository.getEventPayloads(gameId, body.fromSeq) : [];
-      const snapshot = this.validate({ ...body, events: [...kept, ...body.events] });
+      const events = [...kept, ...body.events];
+      const firstChange = firstDifference(storedIds, events);
+      // A log rewritten before the checkpoint (development rewind, overwrite) is checked in full.
+      const checkpoint =
+        meta?.checkpoint && meta.checkpoint.seq <= firstChange ? meta.checkpoint : undefined;
+      const snapshot = this.validate({ ...body, events }, checkpoint);
 
       const mirrorScores = (tx: Parameters<ScoresService['syncGameScores']>[0]) =>
         this.scores.syncGameScores(tx, userId, gameId, snapshot.campaignScores);
 
       if (meta) {
-        await this.repository.save(
-          gameId,
-          userId,
-          limit,
-          firstDifference(storedIds, snapshot.events),
-          snapshot,
-          mirrorScores,
-        );
+        await this.repository.save(gameId, userId, limit, firstChange, snapshot, mirrorScores);
       } else {
         await this.repository.create(gameId, userId, limit, snapshot, mirrorScores);
       }
@@ -149,6 +156,7 @@ export class GamesService {
   /** Replays the events with the engine; rejects logs that cannot be replayed. */
   private validate(
     body: SyncGameRequest,
+    checkpoint?: GameCheckpoint,
   ): GameSnapshot & { campaignScores: Record<string, number> } {
     if (body.events.length === 0) {
       throw new UnprocessableEntityException('Empty event log');
@@ -156,7 +164,7 @@ export class GamesService {
     if (!this.allowCheats && usesCheats(body.events)) {
       throw new UnprocessableEntityException('Games using development cheats are not accepted');
     }
-    const { session, verified } = this.replay(body.events);
+    const { session, verified } = this.replay(body.events, checkpoint);
     const state = session.getState();
     return {
       events: body.events,
@@ -167,7 +175,27 @@ export class GamesService {
       finished: state.phase === Phase.GAME_OVER,
       verified,
       campaignScores: state.campaignScores,
+      checkpoint: this.nextCheckpoint(body.events, checkpoint),
     };
+  }
+
+  /**
+   * The checkpoint to keep after a checked log: the state at the start of its last round, rebuilt
+   * from the previous checkpoint (so a corrected checkpoint carries over), or the previous one.
+   */
+  private nextCheckpoint(events: GameEvent[], previous?: GameCheckpoint): GameCheckpoint | null {
+    const seq = checkpointSeq(events);
+    if (seq <= (previous?.seq ?? 0)) return previous ?? null;
+    const options = { allowCheats: false, unrestrictedRewind: false };
+    const session = GameSession.restore(
+      'sync',
+      events.slice(0, seq),
+      this.catalog,
+      options,
+      {},
+      previous,
+    );
+    return { seq, state: session.getState() };
   }
 
   /**
@@ -175,15 +203,18 @@ export class GamesService {
    * own run. Games started before EDR-051 can only be replayed (`verified` undefined): a new one is
    * stored unverified, a stored one keeps its flag (the games trusted by the migration).
    */
-  private replay(events: GameEvent[]): { session: GameSession; verified?: boolean } {
+  private replay(
+    events: GameEvent[],
+    checkpoint?: GameCheckpoint,
+  ): { session: GameSession; verified?: boolean } {
     try {
       // Development games with cheats (accepted when `allowCheats`) can only be replayed.
-      const verified = usesCheats(events) ? null : GameSession.verify('sync', events, this.catalog);
+      const verified = usesCheats(events)
+        ? null
+        : GameSession.verify('sync', events, this.catalog, checkpoint);
       if (verified) return { session: verified, verified: true };
-      const session = GameSession.restore('sync', events, this.catalog, {
-        allowCheats: false,
-        unrestrictedRewind: false,
-      });
+      const options = { allowCheats: false, unrestrictedRewind: false };
+      const session = GameSession.restore('sync', events, this.catalog, options, {}, checkpoint);
       return { session };
     } catch (error) {
       if (error instanceof UnverifiedGameError) {

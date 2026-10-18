@@ -1,4 +1,4 @@
-import { ActionEffectType, PendingChoiceType, Trigger } from '../../domain/enums';
+import { ActionEffectType, PendingChoiceType, Phase, Trigger } from '../../domain/enums';
 import type {
   ActionEffect,
   CardAction,
@@ -149,7 +149,10 @@ export class CardActionAggregate {
   }
 
   private decoratePendingChoices(pendingChoices: PendingChoice[]): PendingChoice[] {
-    return pendingChoices.map(choice => {
+    // The player can cancel an action they started; triggers and parchment cards must resolve.
+    const isPlayerAction = !this.triggerId && this.initGameState.phase !== Phase.PARCHMENT;
+    return pendingChoices.map(pendingChoice => {
+      const choice = isPlayerAction ? { ...pendingChoice, isMandatory: false } : pendingChoice;
       if (choice.type !== PendingChoiceType.CHOOSE_RESOURCE) {
         return choice;
       }

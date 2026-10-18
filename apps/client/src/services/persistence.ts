@@ -4,11 +4,12 @@
  * A kingdom is one save of the player (EDR-038). The index (`deck_legacy_kingdoms`) lists the
  * kingdoms with their name and a score summary for the home page; each save
  * (`deck_legacy_save_<id>`) holds the event log (the engine replays it to rebuild the state),
- * the custom card names and the sync status with the server. Saves written by older versions
- * have no `sync` field and are treated as not yet synced.
+ * the custom card names, the sync status with the server and the checkpoint the server sent, if
+ * any (the game resumes from it, EDR-053). Saves written by older versions have no `sync` field
+ * and are treated as not yet synced.
  */
 import type { CampaignSegmentScore } from '@deck-legacy/api-contract';
-import type { GameEvent } from '@deck-legacy/engine/domain/types';
+import type { GameCheckpoint, GameEvent, GameState } from '@deck-legacy/engine/domain/types';
 import { STORAGE_KEYS, hydrateKeys, saveKey, storage } from '@services/storage';
 
 export type SyncInfo = {
@@ -34,6 +35,8 @@ export type SaveData = {
   cardNames: Record<string, string>;
   savedAt: number;
   sync: SyncInfo;
+  /** State the server kept at the start of the last round: the game resumes from it. */
+  checkpoint?: GameCheckpoint;
 };
 
 /** Scores shown on the home page; computed on the device, the server's scores stay authoritative. */
@@ -98,6 +101,11 @@ export function commonPrefix(a: GameEvent[], b: GameEvent[]): number {
   return index;
 }
 
+function toCheckpoint(value: unknown): GameCheckpoint | undefined {
+  if (!isRecord(value) || typeof value.seq !== 'number' || !isRecord(value.state)) return undefined;
+  return { seq: value.seq, state: value.state as unknown as GameState };
+}
+
 function toSegments(value: unknown): CampaignSegmentScore[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap(item =>
@@ -121,12 +129,14 @@ function toSummary(value: unknown): KingdomSummary {
 /** Reads a stored save (current format or the former single-save versions). */
 export function parseSave(raw: unknown): SaveData | null {
   if (!isRecord(raw) || typeof raw.id !== 'string' || !Array.isArray(raw.events)) return null;
+  const checkpoint = toCheckpoint(raw.checkpoint);
   return {
     id: raw.id,
     events: raw.events as GameEvent[],
     cardNames: toCardNames(raw.cardNames),
     savedAt: typeof raw.savedAt === 'number' ? raw.savedAt : Date.now(),
     sync: toSyncInfo(raw.sync),
+    ...(checkpoint ? { checkpoint } : {}),
   };
 }
 
@@ -269,9 +279,11 @@ export function saveGame(
 ): void {
   const previous = loadSave(id);
   // A rewind followed by a new move changes events the server already has.
-  const syncedUpTo = previous
-    ? Math.min(previous.sync.syncedUpTo ?? 0, commonPrefix(previous.events, events))
-    : 0;
+  const kept = previous ? commonPrefix(previous.events, events) : 0;
+  const syncedUpTo = previous ? Math.min(previous.sync.syncedUpTo ?? 0, kept) : 0;
+  // A checkpoint only holds while the events it covers are unchanged.
+  const checkpoint =
+    previous?.checkpoint && previous.checkpoint.seq <= kept ? previous.checkpoint : undefined;
   writeSave({
     id,
     events,
@@ -284,6 +296,7 @@ export function saveGame(
       ...(syncedUpTo > 0 ? { syncedUpTo } : {}),
       ...(previous?.sync.conflict ? { conflict: true } : {}),
     },
+    ...(checkpoint ? { checkpoint } : {}),
   });
   const kingdom = getKingdom(id);
   if (kingdom) upsertKingdom({ ...kingdom, summary });

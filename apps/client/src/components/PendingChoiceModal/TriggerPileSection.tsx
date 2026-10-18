@@ -5,6 +5,7 @@ import { TriggerIcon } from '@components/ui/Icon/icon';
 import { Text } from '@components/ui/Text/Text';
 import type { CardDef, CardInstance, TriggerEntry } from '@deck-legacy/engine/domain/types';
 import { tCardActionLabel, tCardName } from '@helpers/cardI18n';
+import { useIsDesktop } from '@hooks/useIsDesktop';
 import type { TFunction } from 'i18next';
 import { View } from 'react-native';
 
@@ -25,8 +26,9 @@ export function TriggerPileSection({
   onResolveTrigger,
   onSkipTrigger,
 }: Readonly<TriggerPileSectionProps>) {
+  const isDesktop = useIsDesktop();
   return (
-    <View className="flex-row flex-wrap justify-center gap-4">
+    <View className="flex-row flex-wrap justify-center gap-2 lg:gap-4">
       {Object.entries(triggerPile).map(([triggerId, trigger]) => {
         const inst = instances[trigger.sourceInstanceId];
         const def = inst ? defs[inst.cardId] : undefined;
@@ -37,7 +39,7 @@ export function TriggerPileSection({
         const actionLabel = tCardActionLabel(t, `${trigger.effectDef.id}`, inst.cumulated);
 
         return (
-          <View key={triggerId} className="w-64 items-center gap-2">
+          <View key={triggerId} className={`${isDesktop ? 'w-64' : 'w-[48%]'} items-center gap-2`}>
             <View className="w-full flex-row items-start gap-3">
               <TriggerIcon
                 className="mt-1 size-8 shrink-0"

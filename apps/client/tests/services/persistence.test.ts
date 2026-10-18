@@ -17,6 +17,7 @@ import {
   subscribeKingdoms,
   updateSyncInfo,
   upsertKingdom,
+  writeSave,
 } from '@services/persistence';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -183,6 +184,23 @@ describe('saves', () => {
 
     expect(loadSave('k1')?.sync).toEqual({ dirty: true, userId: 'u1', serverVersion: 1 });
     expect(getKingdom('k1')?.summary).toEqual(summary);
+  });
+
+  it('keeps the checkpoint while the events it covers are unchanged', () => {
+    const checkpoint = { seq: 1, state: { round: 1 } as never };
+    const later = [...events, { id: 'e2' }] as never[];
+    writeSave({ id: 'k1', events, cardNames: {}, savedAt: 0, sync: { dirty: false }, checkpoint });
+
+    saveGame('k1', later, {}, EMPTY_SUMMARY);
+    expect(loadSave('k1')?.checkpoint).toEqual(checkpoint);
+
+    // A development rewind before the checkpoint, then another move.
+    saveGame('k1', [{ id: 'e9' }] as never[], {}, EMPTY_SUMMARY);
+    expect(loadSave('k1')?.checkpoint).toBeUndefined();
+  });
+
+  it('drops an unreadable checkpoint', () => {
+    expect(parseSave({ id: 'k1', events, checkpoint: { seq: '1' } })?.checkpoint).toBeUndefined();
   });
 
   it('ignores sync results for a save that changed meanwhile', () => {

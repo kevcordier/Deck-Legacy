@@ -18,7 +18,7 @@ Develop your kingdom by upgrading your cards, round after round. You cannot lose
 
 ## A New Kingdom
 
-Each game is a **kingdom**. On the home page, tap **New kingdom**, name it and choose whether to play the tutorial first. Your kingdom starts with cards **1–10**, shuffled into a draw deck; the other cards are waiting to be discovered.
+Each game is a **kingdom**. On the home page, tap **New kingdom**, name it and choose whether to play the tutorial first. You can also enter a **seed**: two kingdoms with the same seed get the same shuffles, which lets you replay a game or challenge a friend. The seed of your game is shown in the options. Your kingdom starts with cards **1–10**, shuffled into a draw deck; the other cards are waiting to be discovered.
 
 The tutorial guides you through a first round; at its end, you can keep that game or start a new one. Your kingdoms are listed on the home page with their total score, the base game score and the score after each expansion. You can keep **one kingdom** without an account and up to **10** with an account.
 
@@ -31,7 +31,7 @@ A **round** is a series of turns that ends when your draw deck is empty.
 - The cards are split into two packs. The **campaign pack** (cards **1–70** in the base game) tells the story; the **discoverable pack** (cards above #70) holds the cards that only card effects discover.
 - At the start of each round (from round 2), **the story advances**: the next **2 cards** of the campaign pack, in number order, are **discovered** and join your deck. If the first of them is a **parchment card**, its instructions apply immediately, then it is destroyed.
 - The round preview shows the cards you just discovered; tap **▶︎ Start round** to shuffle all your cards into a new deck and play the first turn.
-- The game ends after the round in which you discover card **#70**. If the campaign pack is empty when the story must advance, the campaign ends; the cards it still holds at the end of the game are never discovered.
+- The game ends after the round in which you discover card **#70**. If, at the end of a round, the campaign pack holds fewer cards than the next round must discover, that round is the last one and the campaign ends; the cards it still holds at the end of the game are never discovered.
 
 ---
 
@@ -151,7 +151,7 @@ Some effects **tab** a card with a sticker: a tabbed card stays marked and can b
 
 Red cards are **negative**, usually _Enemy_ or _Event_ cards; every other card is **friendly**. Negative cards cannot be purged normally.
 
-- **Defeating:** most enemies say how to defeat them: they are destroyed, turned, or have a box marked. An enemy without a defeat instruction cannot be defeated. Some cards react **when you defeat an enemy** (for example by letting you upgrade them): you must already have the resources they ask for.
+- **Defeating:** most enemies say how to defeat them: they are destroyed, turned, or have a box marked. An enemy without a defeat instruction cannot be defeated. A card that defeats an enemy for you (such as the Trebuchet) applies that enemy's defeat for free: you do not pay its cost, but an enemy that is destroyed when defeated is still destroyed. Some cards react **when you defeat an enemy** (for example by letting you upgrade them): you must already have the resources they ask for.
 - Some enemies **restrict your resources** while they are in play: you may only gain {{weapon}}, or you may use {{weapon}} only to upgrade cards (not for effects, tracks or {{time}} effects).
 - **Prisoners** are defeated enemies. They are negative too, but after selecting the cards of a purge you may add up to 2 Prisoners to it.
 

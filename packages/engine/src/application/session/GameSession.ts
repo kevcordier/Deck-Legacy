@@ -7,6 +7,7 @@ import type {
   CheatCommand,
   CommandError,
   GameCatalog,
+  GameCheckpoint,
   GameCommand,
   GameEvent,
   GameStartedEvent,
@@ -15,6 +16,7 @@ import type {
   PendingChoice,
   ResolvedActionEffect,
   ResolvedCost,
+  TurnStartedEvent,
 } from '../../domain/types';
 import { GameAggregate, eventDrewCards } from '../aggregates/GameAggregate';
 import { type CampaignSegment, getCampaignSegments } from '../campaignSegments';
@@ -122,6 +124,20 @@ function nextRecordedEvent(events: GameEvent[], from: number): number {
   return index;
 }
 
+/**
+ * Where the server may keep a checkpoint (EDR-052): after the commands that drew the first turn of
+ * the last round (a normal rewind never goes back past a draw), when later commands follow them.
+ * Returns 0 when there is no such point yet.
+ */
+export function checkpointSeq(events: GameEvent[]): number {
+  const firstTurn = events.findLastIndex(
+    event => event.type === GameEventType.TURN_STARTED && (event as TurnStartedEvent).turn === 1,
+  );
+  if (firstTurn < 0) return 0;
+  const seq = nextRecordedEvent(events, firstTurn + 1);
+  return seq < events.length ? seq : 0;
+}
+
 const CHOICE_TYPES = new Set<string>(Object.values(PendingChoiceType));
 
 function parseChoiceType(value: string): PendingChoiceType {
@@ -155,6 +171,8 @@ export class GameSession {
   private cardNames: Record<string, string>;
   /** Commands run since the last event, waiting to be set on the next one (EDR-051). */
   private unrecorded: GameCommand[] = [];
+  /** State the game was resumed from (EDR-052): rewinds never go back before it. */
+  private checkpoint?: GameCheckpoint;
 
   private constructor(
     readonly id: string,
@@ -193,10 +211,13 @@ export class GameSession {
     catalog: GameCatalog,
     options: GameSessionOptions,
     cardNames: Record<string, string> = {},
+    checkpoint?: GameCheckpoint,
   ): GameSession {
     const session = new GameSession(id, false, catalog, options, cardNames);
+    session.checkpoint = checkpoint;
     try {
-      session.agg.loadFromHistory([...events]);
+      if (checkpoint) session.agg = session.makeAggregate(checkpoint, events);
+      session.agg.loadFromHistory(events.slice(checkpoint?.seq ?? 0));
     } catch (error) {
       throw new CorruptedGameError(error instanceof Error ? error.message : String(error));
     }
@@ -209,12 +230,28 @@ export class GameSession {
    * event, and checks they produce the submitted events. Returns `null` for games without a
    * seed (started before EDR-051), which can only be replayed; throws `UnverifiedGameError` when
    * the log is not what the commands produce. The returned session is the trusted one: its score
-   * does not depend on the submitted events.
+   * does not depend on the submitted events. With a `checkpoint` (a state the server already
+   * trusts, EDR-052), only the commands recorded after it run again.
    */
-  static verify(id: string, events: GameEvent[], catalog: GameCatalog): GameSession | null {
+  static verify(
+    id: string,
+    events: GameEvent[],
+    catalog: GameCatalog,
+    checkpoint?: GameCheckpoint,
+  ): GameSession | null {
     const first = events[0] as GameStartedEvent | undefined;
     if (first?.type !== GameEventType.GAME_STARTED || first.seed === undefined) return null;
     const options = { allowCheats: false, unrestrictedRewind: false };
+    if (checkpoint) {
+      // Commands are recorded on the first event they produce: a checkpoint must end before one.
+      if (checkpoint.seq < events.length && !events[checkpoint.seq].commands) {
+        throw new UnverifiedGameError(`Event ${checkpoint.seq} does not start a command`);
+      }
+      const session = new GameSession(id, false, catalog, options, {});
+      session.checkpoint = checkpoint;
+      session.agg = session.makeAggregate(checkpoint, events);
+      return session.runRecorded(events, checkpoint.seq);
+    }
     const firstDrawPiles = [undefined, catalog.tutorialDrawOrder];
     for (const firstDrawPile of firstDrawPiles) {
       const session = new GameSession(id, false, catalog, options, {});
@@ -231,8 +268,8 @@ export class GameSession {
     throw new UnverifiedGameError('The game start does not match its seed');
   }
 
-  private runRecorded(events: GameEvent[]): GameSession {
-    let index = nextRecordedEvent(events, 0);
+  private runRecorded(events: GameEvent[], from = 0): GameSession {
+    let index = nextRecordedEvent(events, from);
     while (index < events.length) {
       for (const recorded of events[index].commands ?? []) {
         if (UNRECORDED.has(recorded.type) || recorded.type === 'cheat') {
@@ -313,6 +350,7 @@ export class GameSession {
       canRewind: this.canRewind(),
       cardNames: this.getCardNames(),
       purge: {
+        batch: this.agg.getPurgeBatch(),
         candidates: this.agg.getPurgeCandidates(),
         permanentCandidates: this.agg.getPurgePermanentCandidates(),
         selectedIds: this.agg.getSelectedPurgeIds(),
@@ -360,7 +398,7 @@ export class GameSession {
   }
 
   private dispatch(command: GameCommand): void {
-    if (!isFlowCommandAllowed(command, this.agg.getGameState())) return;
+    if (!isFlowCommandAllowed(command, this.agg.getGameState(), this.agg.isLastRound())) return;
     switch (command.type) {
       case 'startRound':
         return this.sync(this.agg.roundStarted());
@@ -418,12 +456,14 @@ export class GameSession {
 
   // ─── Game start ───────────────────────────────────────────────────────────
 
-  private makeAggregate(): GameAggregate {
+  /** A new game, or one resumed at a checkpoint (its earlier events are kept, not replayed). */
+  private makeAggregate(checkpoint?: GameCheckpoint, events: GameEvent[] = []): GameAggregate {
     return new GameAggregate(
       this.id,
-      cloneState(EMPTY_STATE),
+      cloneState(checkpoint?.state ?? EMPTY_STATE),
       this.catalog.cards,
       this.catalog.stickers,
+      events.slice(0, checkpoint?.seq ?? 0),
     );
   }
 
@@ -517,7 +557,7 @@ export class GameSession {
 
   private endRound(): void {
     const gs = this.agg.getGameState();
-    if (gs.phase === Phase.ROUND_END && gs.isLastRound) {
+    if (gs.phase === Phase.ROUND_END && this.agg.isLastRound()) {
       this.sync(this.agg.endGame());
       return;
     }
@@ -710,6 +750,7 @@ export class GameSession {
     if (this.tutorial) return false;
     const lastEvent = this.agg.getEvents().at(-1);
     if (!lastEvent) return false;
+    if (this.checkpoint && this.agg.getEvents().length <= this.checkpoint.seq) return false;
     if (this.options.unrestrictedRewind) return true;
     return !eventDrewCards(lastEvent);
   }
@@ -718,8 +759,9 @@ export class GameSession {
     if (!this.canRewind()) return;
     if (!this.agg.undoLastEvent()) {
       // Only an unrestricted (development) rewind goes back past a draw: replay the log.
-      const agg = this.makeAggregate();
-      agg.loadFromHistory(this.agg.getEvents().slice(0, -1));
+      const events = this.agg.getEvents().slice(0, -1);
+      const agg = this.makeAggregate(this.checkpoint, events);
+      agg.loadFromHistory(events.slice(this.checkpoint?.seq ?? 0));
       this.agg = agg;
     }
     this.pendingUpgrade = null;

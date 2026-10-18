@@ -49,7 +49,7 @@ type DragHandleContextValue = {
   isMoving: boolean;
 };
 
-const DragHandleContext = createContext<DragHandleContextValue | null>(null);
+export const DragHandleContext = createContext<DragHandleContextValue | null>(null);
 
 // `cursor: grab` is web only and missing from the React Native style types.
 const webCursor = (cursor: string) =>

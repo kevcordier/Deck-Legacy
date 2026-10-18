@@ -10,6 +10,7 @@ import { AdvanceStoryStrategy } from './AdvanceStoryStrategy';
 import { BlockCardStrategy } from './BlockCardStrategy';
 import type { CardActionStrategy } from './CardActionStrategy';
 import { ChoseStateStrategy } from './ChoseStateStrategy';
+import { DefeatCardStrategy } from './DefeatCardStrategy';
 import { DestroyCardStrategy } from './DestroyCardStrategy';
 import { DiscardCardStrategy } from './DiscardCardStrategy';
 import { DiscoverCardStrategy } from './DiscoverCardStrategy';
@@ -35,6 +36,7 @@ export class CardActionContext {
       [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs),
       [ActionEffectType.ADVANCE_STORY]: new AdvanceStoryStrategy(cardDefs),
       [ActionEffectType.DESTROY_CARD]: new DestroyCardStrategy(),
+      [ActionEffectType.DEFEAT_CARD]: new DefeatCardStrategy(cardDefs),
       [ActionEffectType.UPGRADE_CARD]: new UpgradeCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.PLACE_CARD_IN_PILE]: new PlaceCardInPileStrategy(),
       [ActionEffectType.BLOCK_CARD]: new BlockCardStrategy(),

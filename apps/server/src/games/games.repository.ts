@@ -1,12 +1,13 @@
-import type { Prisma } from '../generated/prisma/client';
+import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import type { CampaignSegmentScore, GameSummary } from '@deck-legacy/api-contract';
-import type { GameEvent } from '@deck-legacy/engine/domain/types';
+import type { GameCheckpoint, GameEvent, GameState } from '@deck-legacy/engine/domain/types';
 import { ConflictException, Injectable } from '@nestjs/common';
 
 export type GameMeta = {
   userId: string;
   version: number;
+  checkpoint: GameCheckpoint | null;
 };
 
 export type StoredGame = {
@@ -16,6 +17,7 @@ export type StoredGame = {
   version: number;
   cardNames: Record<string, string>;
   events: GameEvent[];
+  checkpoint: GameCheckpoint | null;
   updatedAt: Date;
 };
 
@@ -31,6 +33,8 @@ export type GameSnapshot = {
    */
   verified?: boolean;
   events: GameEvent[];
+  /** State kept at the start of the last round (EDR-052); `null` when there is none yet. */
+  checkpoint: GameCheckpoint | null;
 };
 
 export type Transaction = Prisma.TransactionClient;
@@ -72,6 +76,19 @@ function eventRows(gameId: string, events: GameEvent[], fromSeq: number) {
     type: event.type,
     payload: event as unknown as Prisma.InputJsonValue,
   }));
+}
+
+function toCheckpoint(seq: number | null, state: Prisma.JsonValue): GameCheckpoint | null {
+  return seq === null || state === null ? null : { seq, state: state as unknown as GameState };
+}
+
+function checkpointColumns(checkpoint: GameCheckpoint | null) {
+  return {
+    checkpointSeq: checkpoint?.seq ?? null,
+    checkpointState: checkpoint
+      ? (checkpoint.state as unknown as Prisma.InputJsonValue)
+      : Prisma.DbNull,
+  };
 }
 
 function toSummary(row: GameRow): GameSummary {
@@ -138,12 +155,15 @@ export class GamesRepository {
     );
   }
 
-  /** Owner and version of a game, whatever its status. */
+  /** Owner, version and checkpoint of a game, whatever its status. */
   async getMeta(gameId: string): Promise<GameMeta | null> {
-    return this.prisma.game.findUnique({
+    const row = await this.prisma.game.findUnique({
       where: { id: gameId },
-      select: { userId: true, version: true },
+      select: { userId: true, version: true, checkpointSeq: true, checkpointState: true },
     });
+    if (!row) return null;
+    const { checkpointSeq, checkpointState, ...meta } = row;
+    return { ...meta, checkpoint: toCheckpoint(checkpointSeq, checkpointState) };
   }
 
   async getEventIds(gameId: string): Promise<string[]> {
@@ -179,6 +199,7 @@ export class GamesRepository {
       version: game.version,
       cardNames: toCardNames(game.cardNames),
       events: game.events.map(row => row.payload as unknown as GameEvent),
+      checkpoint: toCheckpoint(game.checkpointSeq, game.checkpointState),
       updatedAt: game.updatedAt,
     };
   }
@@ -207,6 +228,7 @@ export class GamesRepository {
           segments: snapshot.segments,
           status: snapshot.finished ? 'FINISHED' : 'ACTIVE',
           verified: snapshot.verified ?? false,
+          ...checkpointColumns(snapshot.checkpoint),
         },
       });
       await tx.gameEvent.createMany({ data: eventRows(gameId, snapshot.events, 0) });
@@ -243,6 +265,7 @@ export class GamesRepository {
           segments: snapshot.segments,
           status: snapshot.finished ? 'FINISHED' : 'ACTIVE',
           verified: snapshot.verified,
+          ...checkpointColumns(snapshot.checkpoint),
         },
       });
       await tx.gameEvent.deleteMany({ where: { gameId, seq: { gte: fromSeq } } });

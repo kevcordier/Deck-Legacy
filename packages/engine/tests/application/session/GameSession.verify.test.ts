@@ -1,14 +1,20 @@
 import { DEFAULT_OPTIONS, makeCatalog } from './fixtures';
 import { eventDrewCards } from '@engine/application/aggregates/GameAggregate';
 import { shuffle } from '@engine/application/random';
-import { GameSession, UnverifiedGameError } from '@engine/application/session/GameSession';
+import {
+  GameSession,
+  UnverifiedGameError,
+  checkpointSeq,
+} from '@engine/application/session/GameSession';
 import { ActionEffectType, GameEventType, Phase, Trigger } from '@engine/domain/enums';
 import type {
   CardActionEvent,
   GameCatalog,
+  GameCheckpoint,
   GameEvent,
   ResolvedActionEffect,
   RoundStartedEvent,
+  TurnStartedEvent,
 } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -253,5 +259,88 @@ describe('GameSession.verify', () => {
     const { seed: _seed, ...legacyStart } = session.getEvents()[0] as GameEvent & { seed?: string };
 
     expect(verify([legacyStart, ...session.getEvents().slice(1)])).toBeNull();
+  });
+});
+
+describe('checkpoints', () => {
+  /** A game through several rounds and the checkpoint the server would keep for it. */
+  function playedWithCheckpoint(): { events: GameEvent[]; checkpoint: GameCheckpoint } {
+    const session = GameSession.start('g', catalog(), DEFAULT_OPTIONS);
+    play(session, 120);
+    const events = session.getEvents();
+    const seq = checkpointSeq(events);
+    const state = GameSession.restore('g', events.slice(0, seq), catalog(), DEFAULT_OPTIONS);
+    // As read back from the database: a JSON copy.
+    return { events, checkpoint: JSON.parse(JSON.stringify({ seq, state: state.getState() })) };
+  }
+
+  it('are placed after the first draw of the last round, before a recorded command', () => {
+    const { events, checkpoint } = playedWithCheckpoint();
+    const firstTurns = events
+      .slice(0, checkpoint.seq)
+      .filter(
+        event =>
+          event.type === GameEventType.TURN_STARTED && (event as TurnStartedEvent).turn === 1,
+      );
+
+    expect(checkpoint.seq).toBeGreaterThan(0);
+    expect(events[checkpoint.seq].commands).toBeDefined();
+    expect(firstTurns).toHaveLength(checkpoint.state.round);
+    expect(checkpointSeq(events.slice(0, 3))).toBe(0);
+  });
+
+  it('let verify run only the commands after them, with the same result', () => {
+    const { events, checkpoint } = playedWithCheckpoint();
+
+    const resumed = GameSession.verify('g', stored(events), catalog(), checkpoint);
+
+    expect(resumed?.getEvents()).toHaveLength(events.length);
+    expect(resumed?.getScore()).toBe(verify(events)?.getScore());
+    expect(resumed?.getState()).toEqual(verify(events)?.getState());
+  });
+
+  it('still refuse forged events after them', () => {
+    const { events, checkpoint } = playedWithCheckpoint();
+    const forged = stored(events);
+    const last = forged.findLastIndex(event => event.type === GameEventType.CARD_ACTION);
+    (forged[last] as CardActionEvent).gameStateChanges = { resources: { gold: 99 } };
+
+    expect(last).toBeGreaterThanOrEqual(checkpoint.seq);
+    expect(() => GameSession.verify('g', forged, catalog(), checkpoint)).toThrow(
+      UnverifiedGameError,
+    );
+  });
+
+  it('must end before a recorded command', () => {
+    const { events, checkpoint } = playedWithCheckpoint();
+
+    expect(() =>
+      GameSession.verify('g', stored(events), catalog(), {
+        ...checkpoint,
+        seq: checkpoint.seq - 1,
+      }),
+    ).toThrow(UnverifiedGameError);
+  });
+
+  it('let restore resume from a corrected state', () => {
+    const { events, checkpoint } = playedWithCheckpoint();
+    const corrected = { ...checkpoint, state: { ...checkpoint.state, isLastRound: true } };
+
+    const restored = GameSession.restore('g', events, catalog(), DEFAULT_OPTIONS, {}, corrected);
+
+    expect(restored.getEvents()).toHaveLength(events.length);
+    expect(restored.getState().isLastRound).toBe(true);
+  });
+
+  it('never let a rewind go back before them, even an unrestricted one', () => {
+    const { events, checkpoint } = playedWithCheckpoint();
+    const corrected = { ...checkpoint, state: { ...checkpoint.state, isLastRound: true } };
+    const options = { ...DEFAULT_OPTIONS, unrestrictedRewind: true };
+    const restored = GameSession.restore('g', events, catalog(), options, {}, corrected);
+
+    while (restored.canRewind()) restored.execute({ type: 'rewind' });
+
+    expect(restored.getEvents()).toHaveLength(checkpoint.seq);
+    expect(restored.getState()).toEqual(corrected.state);
   });
 });

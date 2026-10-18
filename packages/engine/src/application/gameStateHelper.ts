@@ -1,9 +1,25 @@
 import { type Options, PassiveType, type ResourceType, Trigger } from '../domain/enums';
-import type { CardDef, GameState, Passive, Resources, Sticker } from '../domain/types';
+import type {
+  CardDef,
+  GameParameters,
+  GameState,
+  Passive,
+  Resources,
+  Sticker,
+} from '../domain/types';
 import { getActiveState, getInstancesTriggerEffects } from './cardHelpers';
 import { cardSelector } from './cardSelector';
 
 export { mergeResources } from './resources';
+
+/**
+ * The round just played is the last one: marked as such, or (two packs, EDR-045) the campaign
+ * pile holds fewer cards than the next round discovers.
+ */
+export const isLastRound = (gameState: GameState, parameters: GameParameters): boolean =>
+  gameState.isLastRound ||
+  (gameState.discoverablePile !== undefined &&
+    gameState.discoveryPile.length < parameters.discoverPerRound);
 
 export const pickPermanentBoardEffects = (
   boardEffects: Record<number, Passive[]>,

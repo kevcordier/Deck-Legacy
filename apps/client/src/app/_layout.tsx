@@ -1,4 +1,5 @@
 import { ErrorBoundary } from '@components/ui/ErrorBoundary/ErrorBoundary';
+import { SafeAreaToast } from '@components/ui/Modal/Modal';
 import { AuthProvider } from '@contexts/AuthProvider';
 import { GameUIProvider } from '@contexts/GameUIProvider';
 import { bootstrapStorage } from '@helpers/bootstrap';
@@ -14,7 +15,6 @@ import { StatusBar } from 'expo-status-bar';
 import { type ReactNode, useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Toast from 'react-native-toast-message';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -74,7 +74,7 @@ export default function RootLayout() {
           </GameUIProvider>
         </WithAuth>
       </ErrorBoundary>
-      <Toast />
+      <SafeAreaToast />
     </SafeAreaProvider>
   );
 }
