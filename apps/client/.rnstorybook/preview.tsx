@@ -1,5 +1,6 @@
 import { ButtonGroup } from '@components/ui/ButtonGroup/ButtonGroup';
 import { TextStyle } from '@components/ui/Text/TextStyle';
+import { AppServicesProvider } from '@composition/AppServicesProvider';
 import { useAppFonts } from '@hooks/useAppFonts';
 import { initI18n } from '@infrastructure/i18n/initI18n';
 import type { Preview } from '@storybook/react-native';
@@ -38,12 +39,14 @@ function StoryShell({ children }: { readonly children: ReactNode }) {
 
   return (
     <SafeAreaProvider>
-      <I18nextProvider i18n={i18n}>
-        <View className="bg-background flex-1 p-3">
-          <StoryToolbar />
-          <TextStyle className="text-ink font-body">{children}</TextStyle>
-        </View>
-      </I18nextProvider>
+      <AppServicesProvider>
+        <I18nextProvider i18n={i18n}>
+          <View className="bg-background flex-1 p-3">
+            <StoryToolbar />
+            <TextStyle className="text-ink font-body">{children}</TextStyle>
+          </View>
+        </I18nextProvider>
+      </AppServicesProvider>
     </SafeAreaProvider>
   );
 }

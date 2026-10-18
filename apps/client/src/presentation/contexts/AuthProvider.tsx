@@ -1,59 +1,39 @@
-import { AuthContext, type AuthContextType, type AuthStatus, type AuthUser } from './AuthContext';
-import { syncService } from '@composition/syncService';
-import { accessToken } from '@infrastructure/api/accessToken';
-import { api } from '@infrastructure/api/api';
-import { getSupabase } from '@infrastructure/supabase/getSupabase';
-import type { Session } from '@supabase/supabase-js';
+import { AuthContext, type AuthContextType, type AuthStatus } from './AuthContext';
+import type { AuthUser } from '@domain/account/AuthUser';
+import { useAppServices } from '@hooks/useAppServices';
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 const SESSION_RETRY_MS = 30_000;
 
-function toAuthUser(session: Session | null): AuthUser | null {
-  if (!session) return null;
-  return {
-    id: session.user.id,
-    email: session.user.email ?? null,
-    isAnonymous: session.user.is_anonymous === true,
-  };
+function sameUser(a: AuthUser | null, b: AuthUser | null): boolean {
+  return a?.id === b?.id && a?.email === b?.email && a?.isAnonymous === b?.isAnonymous;
 }
 
 /**
- * Restores the Supabase session saved on the device, if any. Without an account, no session is
- * opened and games are only saved on the device; signing in or creating an account syncs them.
- * Guest sessions opened by older versions are kept (so they can still become an account) but
- * never synced (EDR-050).
+ * Restores the session saved on the device, if any. Without an account, no session is opened
+ * and games are only saved on the device; signing in or creating an account syncs them. Guest
+ * sessions opened by older versions are kept (so they can still become an account) but never
+ * synced (EDR-050).
  */
 export function AuthProvider({ children }: { readonly children: ReactNode }) {
+  const { auth, accountApi, sync } = useAppServices();
   const [status, setStatus] = useState<AuthStatus>('loading');
   const [user, setUser] = useState<AuthUser | null>(null);
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    const supabase = getSupabase();
-    accessToken.provide(async () => {
-      const { data } = await supabase.auth.getSession();
-      return data.session?.access_token ?? null;
-    });
-
     let cancelled = false;
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (cancelled || !session) return;
-      setUser(previous => {
-        const next = toAuthUser(session);
-        const unchanged =
-          previous?.id === next?.id &&
-          previous?.email === next?.email &&
-          previous?.isAnonymous === next?.isAnonymous;
-        return unchanged ? previous : next;
-      });
+    const unsubscribe = auth.onUserChange(next => {
+      if (cancelled) return;
+      setUser(previous => (sameUser(previous, next) ? previous : next));
     });
 
     void (async () => {
       try {
-        const { data } = await supabase.auth.getSession();
+        const current = await auth.currentUser();
         if (cancelled) return;
-        setUser(toAuthUser(data.session));
+        setUser(current);
         setStatus('ready');
       } catch (error) {
         // Usually offline: the game stays playable, the session is retried later.
@@ -67,53 +47,37 @@ export function AuthProvider({ children }: { readonly children: ReactNode }) {
     return () => {
       cancelled = true;
       if (retryTimer) clearTimeout(retryTimer);
-      subscription.subscription.unsubscribe();
+      unsubscribe();
     };
-  }, [attempt]);
+  }, [attempt, auth]);
 
-  const createAccount = useCallback(async (email: string, password: string) => {
-    const supabase = getSupabase();
-    const { data: current } = await supabase.auth.getSession();
-    if (!current.session?.user.is_anonymous) {
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) throw error;
-      setUser(toAuthUser(data.session));
-      return;
-    }
-    // Guest session from an older version: email and password in one request, Supabase accepts
-    // a password for a guest only with it.
-    const { error } = await supabase.auth.updateUser({ email, password });
-    if (error) throw error;
-    // The current access token still describes a guest: refresh it so the API sees the account.
-    const { data, error: refreshError } = await supabase.auth.refreshSession();
-    if (refreshError) throw refreshError;
-    setUser(toAuthUser(data.session));
-  }, []);
+  const createAccount = useCallback(
+    async (email: string, password: string) => {
+      setUser(await auth.createAccount(email, password));
+    },
+    [auth],
+  );
 
-  const setPassword = useCallback(async (password: string) => {
-    const { error } = await getSupabase().auth.updateUser({ password });
-    if (error) throw error;
-  }, []);
+  const setPassword = useCallback((password: string) => auth.setPassword(password), [auth]);
 
-  const signIn = useCallback(async (email: string, password: string) => {
-    const { error } = await getSupabase().auth.signInWithPassword({ email, password });
-    if (error) throw error;
-  }, []);
+  const signIn = useCallback(
+    (email: string, password: string) => auth.signIn(email, password),
+    [auth],
+  );
 
   const signOut = useCallback(async () => {
-    await getSupabase().auth.signOut();
-    syncService.forgetAccountKingdoms();
+    await auth.signOut();
+    sync.forgetAccountKingdoms();
     setUser(null);
-  }, []);
+  }, [auth, sync]);
 
   const deleteAccount = useCallback(async () => {
-    await api.deleteMe();
-    const supabase = getSupabase();
+    await accountApi.deleteMe();
     // The user no longer exists on the server: only forget the local session.
-    await supabase.auth.signOut({ scope: 'local' });
-    syncService.forgetAccountKingdoms();
+    await auth.forgetSession();
+    sync.forgetAccountKingdoms();
     setUser(null);
-  }, []);
+  }, [accountApi, auth, sync]);
 
   const retry = useCallback(() => setAttempt(a => a + 1), []);
 

@@ -1,5 +1,6 @@
 import { ErrorBoundary } from '@components/ui/ErrorBoundary/ErrorBoundary';
 import { SafeAreaToast } from '@components/ui/Modal/SafeAreaToast';
+import { AppServicesProvider } from '@composition/AppServicesProvider';
 import { bootstrapStorage } from '@composition/bootstrapStorage';
 import { syncService } from '@composition/syncService';
 import { AuthProvider } from '@contexts/AuthProvider';
@@ -63,17 +64,19 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <StatusBar style="auto" />
-      <ErrorBoundary>
-        <WithAuth>
-          <GameUIProvider>
-            <AccountSync />
-            <Stack screenOptions={{ headerShown: false }}>
-              {/* The left edge swipe opens the draw pile there, not the iOS back gesture. */}
-              <Stack.Screen name="game/[kingdom]" options={{ gestureEnabled: false }} />
-            </Stack>
-          </GameUIProvider>
-        </WithAuth>
-      </ErrorBoundary>
+      <AppServicesProvider>
+        <ErrorBoundary>
+          <WithAuth>
+            <GameUIProvider>
+              <AccountSync />
+              <Stack screenOptions={{ headerShown: false }}>
+                {/* The left edge swipe opens the draw pile there, not the iOS back gesture. */}
+                <Stack.Screen name="game/[kingdom]" options={{ gestureEnabled: false }} />
+              </Stack>
+            </GameUIProvider>
+          </WithAuth>
+        </ErrorBoundary>
+      </AppServicesProvider>
       <SafeAreaToast />
     </SafeAreaProvider>
   );

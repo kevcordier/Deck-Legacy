@@ -6,6 +6,8 @@ import type { SyncInfo } from '@domain/kingdom/SyncInfo';
 
 /** The kingdoms and saves of this device. */
 export interface KingdomRepository {
+  /** Subscribes to changes of the kingdom index (for `useSyncExternalStore`). */
+  subscribe(listener: () => void): () => void;
   list(): KingdomMeta[];
   get(id: string): KingdomMeta | null;
   upsert(kingdom: KingdomMeta): void;

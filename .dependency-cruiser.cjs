@@ -84,6 +84,17 @@ module.exports = {
       },
     },
     {
+      name: 'client-presentation-no-adapters',
+      comment:
+        'The UI gets services from AppServicesProvider; only the root layout composes the app',
+      severity: 'error',
+      from: {
+        path: '^apps/client/src/(presentation|app)/',
+        pathNot: '^apps/client/src/app/_layout\\.tsx$',
+      },
+      to: { path: '^apps/client/src/(infrastructure|composition)/' },
+    },
+    {
       name: 'client-infrastructure-no-ui',
       comment: 'Adapters never depend on the UI or the composition root',
       severity: 'error',

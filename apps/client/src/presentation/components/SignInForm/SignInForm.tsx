@@ -5,9 +5,8 @@ import { PasswordStrength } from '@components/ui/PasswordStrength/PasswordStreng
 import { Tabs } from '@components/ui/Tabs/Tabs';
 import { Text } from '@components/ui/Text/Text';
 import { checkPassword } from '@domain/password/checkPassword';
+import { useAppServices } from '@hooks/useAppServices';
 import { useAuth } from '@hooks/useAuth';
-import { api } from '@infrastructure/api/api';
-import { toast } from '@infrastructure/toast/toast';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -35,6 +34,7 @@ const MIN_NAME = 2;
  * the current guest account, whose kingdoms are kept.
  */
 export function SignInForm({ tone = 'theme' }: { readonly tone?: 'theme' | 'card' }) {
+  const { accountApi, notifier } = useAppServices();
   const { t } = useTranslation();
   const colors = TONES[tone];
   const { createAccount, signIn } = useAuth();
@@ -54,9 +54,9 @@ export function SignInForm({ tone = 'theme' }: { readonly tone?: 'theme' | 'card
     setWorking(true);
     try {
       await task();
-      if (success) toast.success(t(success));
+      if (success) notifier.success(t(success));
     } catch (error) {
-      toast.error(error instanceof Error ? t(error.message) : t('errors.unknown'));
+      notifier.error(error instanceof Error ? t(error.message) : t('errors.unknown'));
     } finally {
       setWorking(false);
     }
@@ -65,7 +65,7 @@ export function SignInForm({ tone = 'theme' }: { readonly tone?: 'theme' | 'card
   const create = () =>
     run(async () => {
       await createAccount(email.trim(), password);
-      await api.updateMe(displayName.trim());
+      await accountApi.updateMe(displayName.trim());
     }, 'account.accountCreated');
 
   const tabs: { id: Tab; label: string }[] = [

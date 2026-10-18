@@ -2,13 +2,11 @@ import { Button } from '@components/ui/Button/Button';
 import { ErrorBoundary } from '@components/ui/ErrorBoundary/ErrorBoundary';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
-import { kingdomStore } from '@composition/kingdomStore';
-import { syncService } from '@composition/syncService';
 import { GameProvider } from '@contexts/GameProvider';
+import { useAppServices } from '@hooks/useAppServices';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useKingdoms } from '@hooks/useKingdoms';
 import { useSyncStatus } from '@hooks/useSyncStatus';
-import { toast } from '@infrastructure/toast/toast';
 import { Game } from '@pages/Game/Game';
 import { kingdomIdFromParam } from '@presentation/routing/kingdomIdFromParam';
 import { Redirect, useLocalSearchParams } from 'expo-router';
@@ -21,9 +19,10 @@ import { View } from 'react-native';
  * with the seed given at its creation (`?seed=`).
  */
 function KingdomGame({ kingdomId }: { readonly kingdomId: string }) {
+  const { kingdoms } = useAppServices();
   const { tutorialEnabled } = useGameUI();
   const { seed } = useLocalSearchParams<{ seed?: string }>();
-  const [save] = useState(() => kingdomStore.loadSave(kingdomId));
+  const [save] = useState(() => kingdoms.loadSave(kingdomId));
   const [tutorial] = useState(() => tutorialEnabled && save === null);
 
   return (
@@ -36,13 +35,14 @@ function KingdomGame({ kingdomId }: { readonly kingdomId: string }) {
 /** Another device synced this kingdom while this one has unsynced changes: keep one version. */
 function ConflictModal({ kingdomId }: { readonly kingdomId: string }) {
   const { t } = useTranslation();
+  const { kingdoms, sync } = useAppServices();
   const status = useSyncStatus();
   const [busy, setBusy] = useState(false);
-  if (status !== 'conflict' || !kingdomStore.loadSave(kingdomId)?.sync.conflict) return null;
+  if (status !== 'conflict' || !kingdoms.loadSave(kingdomId)?.sync.conflict) return null;
 
   const keep = (version: 'server' | 'mine') => {
     setBusy(true);
-    void syncService.resolveConflict(kingdomId, version).finally(() => setBusy(false));
+    void sync.resolveConflict(kingdomId, version).finally(() => setBusy(false));
   };
 
   return (
@@ -76,17 +76,18 @@ export default function GameRoute() {
   const kingdomId = kingdomIdFromParam(param);
   const kingdoms = useKingdoms();
   const { t } = useTranslation();
+  const { sync, notifier } = useAppServices();
   const [revision, setRevision] = useState(0);
 
   // The sync downloaded a newer version of this kingdom (played on another device).
   useEffect(
     () =>
-      syncService.subscribeSaveReplaced(id => {
+      sync.subscribeSaveReplaced(id => {
         if (id !== kingdomId) return;
         setRevision(r => r + 1);
-        toast.info(t('sync.updatedElsewhere'));
+        notifier.info(t('sync.updatedElsewhere'));
       }),
-    [kingdomId, t],
+    [kingdomId, notifier, sync, t],
   );
 
   if (!kingdomId || !kingdoms.some(k => k.id === kingdomId)) return <Redirect href="/" />;
