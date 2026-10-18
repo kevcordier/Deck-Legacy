@@ -65,6 +65,32 @@ module.exports = {
       to: { path: '^apps/server/src/[^/]+/infrastructure/' },
     },
 
+    // ── Client: domain ← application ← infrastructure / presentation (EDR-057) ──
+    {
+      name: 'client-domain-pure',
+      comment: 'Client domain rules only use the engine and game data',
+      severity: 'error',
+      from: { path: '^apps/client/src/domain/' },
+      to: { path: '^apps/client/src/(application|infrastructure|presentation|composition|app)/' },
+    },
+    {
+      name: 'client-application-no-adapters',
+      comment: 'Use cases depend on ports; only the generated API types come from infrastructure',
+      severity: 'error',
+      from: { path: '^apps/client/src/application/' },
+      to: {
+        path: '^apps/client/src/(infrastructure|presentation|composition|app)/',
+        pathNot: '^apps/client/src/infrastructure/api/generated/',
+      },
+    },
+    {
+      name: 'client-infrastructure-no-ui',
+      comment: 'Adapters never depend on the UI or the composition root',
+      severity: 'error',
+      from: { path: '^apps/client/src/infrastructure/' },
+      to: { path: '^apps/client/src/(presentation|composition|app)/' },
+    },
+
     // ── Apps share code only through packages ────────────────────────────────
     {
       name: 'apps-isolated',

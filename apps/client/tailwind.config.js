@@ -1,7 +1,7 @@
 /* global module, require */
 /**
  * Design tokens. Page colors (`background`, `ink`, `border`, `primary`) are CSS variables
- * declared in `src/styles/global.css`; the app has a single (dark) theme.
+ * declared in `src/presentation/styles/global.css`; the app has a single (dark) theme.
  * @type {import('tailwindcss').Config}
  */
 module.exports = {

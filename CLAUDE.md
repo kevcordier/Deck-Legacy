@@ -33,14 +33,14 @@ scripts/dev.mjs       `pnpm dev` launcher; docker-compose.yml = local PostgreSQL
 
 **Where things go.**
 
-| To change…         | Edit…                                                                                                                  |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| A card             | `packages/game-data/src/cards/<id>.ts` + `src/locales/cards.{en,fr}.json` (skill `add-card`)                           |
-| An expansion card  | `packages/game-data/src/expansions/<name>/cards/<id>.ts` + its `deck.json` + its `locales/` (EDR-042, 043)             |
-| A card effect type | new strategy in `packages/engine/src/application/cardAction/`, registered in `CardActionContext`                       |
-| A player action    | `GameCommand` → `GameSession.dispatch` → tests → client `GameProvider`                                                 |
-| The UI             | `apps/client/src/components/<Component>/` + Storybook story                                                            |
-| An API route       | Server DTO + controller, then `pnpm generate:api` (openapi.json + client types), then the client `services/` (EDR-056) |
+| To change…         | Edit…                                                                                                                            |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| A card             | `packages/game-data/src/cards/<id>.ts` + `src/locales/cards.{en,fr}.json` (skill `add-card`)                                     |
+| An expansion card  | `packages/game-data/src/expansions/<name>/cards/<id>.ts` + its `deck.json` + its `locales/` (EDR-042, 043)                       |
+| A card effect type | new strategy in `packages/engine/src/application/cardAction/`, registered in `CardActionContext`                                 |
+| A player action    | `GameCommand` → `GameSession.dispatch` → tests → client `GameProvider`                                                           |
+| The UI             | `apps/client/src/presentation/components/<Component>/` + Storybook story                                                         |
+| An API route       | Server DTO + controller, then `pnpm generate:api` (openapi.json + client types), then the client `infrastructure/api/` (EDR-056) |
 
 ## 3. How
 
@@ -75,7 +75,7 @@ pnpm --filter <workspace> <script>   # one workspace: @deck-legacy/{client,serve
 
 - Card file `cards/<id>.ts` exporting a camelCase `CardDef`; state ids from 1; action ids `<cardId>-<stateId>-<n>`; effect ids numeric from 1. Ids are never renumbered.
 - Illustrations `apps/client/assets/cards/<id>_<stateId>.jpg`, then `pnpm --filter @deck-legacy/client generate:illustrations`.
-- One folder per component (`components/CardTrack/CardTrack.tsx`); strategies `<Name>Strategy.ts`; tests in `<workspace>/tests/**/*.test.ts`.
+- One folder per component (`presentation/components/CardTrack/CardTrack.tsx`); strategies `<Name>Strategy.ts`; tests in `<workspace>/tests/**/*.test.ts`.
 - **One public export per file** (class, function, component, hook or constant, plus its own types), named after it; only a file of related constants may export several. No `helpers/`, `utils/` or `common/` folders. Server files are kebab-case with their Nest role (`sync-game.use-case.ts`); client files are named like their export (`SyncService.ts`, `useGame.ts`, `slugify.ts`) (EDR-057).
 
 **Tests.** Vitest. Coverage: engine 80 % everywhere; server 80 % (60 % branches). Every new function or branch in `packages/engine/src` is covered. Engine tests use minimal fixtures (`packages/engine/tests/application/fixtures.ts`, `…/session/fixtures.ts`), never real game data. A bug found while playing becomes a failing test before it is fixed (a `GameSession` scenario, or the event log from `GET /games/:id/export`). Cards with triggers or several states get a `GameSession` scenario test.

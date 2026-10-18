@@ -1,5 +1,5 @@
 import { KingdomViewer } from '@components/KingdomViewer/KingdomViewer';
-import { EMPTY_SUMMARY } from '@services/persistence';
+import { EMPTY_SUMMARY } from '@domain/kingdom/emptySummary';
 import type { Meta, StoryObj } from '@storybook/react-native';
 
 const meta: Meta<typeof KingdomViewer> = {

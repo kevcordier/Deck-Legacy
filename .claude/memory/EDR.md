@@ -1538,7 +1538,7 @@ Décision
 - Le serveur est la source du contrat : un DTO zod par fichier (`createZodDto` de `nestjs-zod`) dans `apps/server/src/<module>/application/dto/`, pour les requêtes comme pour les réponses. Les corps sont validés par `ZodValidationPipe` avec `Dto.schema` ; le format `ApiErrorBody` ne change pas.
 - `@nestjs/swagger` (v11, compatible NestJS 11) décrit l'API : Swagger UI sur `/docs`, JSON sur `/docs-json`, public et en lecture seule. Le document OpenAPI 3.0 est commité dans `apps/server/openapi.json` ; le test e2e le compare au document servi (`toMatchFileSnapshot`).
 - Le client génère ses types depuis `openapi.json` avec `openapi-typescript` (`src/infrastructure/api/generated/schema.d.ts`, commité) et appelle l'API avec `openapi-fetch`. La CI vérifie que les types générés sont à jour. `pnpm generate:api` régénère les deux.
-- Les événements et le checkpoint sont décrits comme des objets JSON ; le client les type avec le moteur, à un seul endroit (`services/apiTypes.ts`), et le serveur les valide par réexécution (EDR-051).
+- Les événements et le checkpoint sont décrits comme des objets JSON ; le client les type avec le moteur, à un seul endroit (`application/ports/apiTypes.ts`), et le serveur les valide par réexécution (EDR-051).
 - Les limites des royaumes (`KINGDOM_NAME_MAX_LENGTH`, `kingdomLimit`) vont dans `@deck-legacy/engine/domain/kingdomLimits`, seule source pour le client et le serveur.
 - Un champ `string | null` utilise `nullableStringSchema` : `@nestjs/swagger` lit le `type: ['string', 'null']` de zod comme un tableau.
 

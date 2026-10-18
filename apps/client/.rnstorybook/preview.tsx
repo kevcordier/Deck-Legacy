@@ -1,7 +1,7 @@
 import { ButtonGroup } from '@components/ui/ButtonGroup/ButtonGroup';
-import { TextStyle } from '@components/ui/Text/Text';
-import { useAppFonts } from '@helpers/fonts';
-import { initI18n } from '@helpers/i18n';
+import { TextStyle } from '@components/ui/Text/TextStyle';
+import { useAppFonts } from '@hooks/useAppFonts';
+import { initI18n } from '@infrastructure/i18n/initI18n';
 import type { Preview } from '@storybook/react-native';
 import type { ReactNode } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';

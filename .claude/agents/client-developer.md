@@ -23,7 +23,7 @@ Read `.claude/contracts.md` before starting, then `apps/client/CLAUDE.md` (styli
 
 ## Workflow
 
-1. Find the existing component / primitive to extend (`src/components/ui/`) before creating one.
+1. Find the existing component / primitive to extend (`src/presentation/components/ui/`) before creating one.
 2. Implement with React Native primitives and NativeWind classes; add UI strings to both `en.json` and `fr.json`.
 3. Add or update a Storybook story for visual components.
 4. Run `pnpm --filter @deck-legacy/client typecheck` and `pnpm --filter @deck-legacy/client test`.
@@ -42,7 +42,7 @@ ESCALATION: <question + options> (only if STATUS=ESCALATE)
 ## Never
 
 - Put game logic in components, hooks or providers; it belongs in the engine (`rules-engineer`).
-- Use DOM elements (`div`, `span`, `button`…) or create CSS files other than `src/styles/global.css`.
+- Use DOM elements (`div`, `span`, `button`…) or create CSS files other than `src/presentation/styles/global.css`.
 - Build Tailwind class names by string concatenation, or reorder classes by hand.
 - Edit `packages/*` or `apps/server`.
 - Save or sync tutorial sessions.
