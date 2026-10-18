@@ -1,5 +1,5 @@
-import { ScoresController } from './scores.controller';
-import { ScoresService } from './scores.service';
+import { ScoresService } from './application/scores.service';
+import { ScoresController } from './presentation/scores.controller';
 import { Module } from '@nestjs/common';
 
 @Module({

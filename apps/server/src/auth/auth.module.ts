@@ -1,11 +1,10 @@
-import { APP_CONFIG, type AppConfig } from '../config/env';
+import { APP_CONFIG } from '../config/app-config.token';
+import { type AppConfig } from '../config/env';
 import { UsersModule } from '../users/users.module';
 import { AuthGuard } from './auth.guard';
-import {
-  SUPABASE_JWKS,
-  SupabaseTokenVerifier,
-  remoteSupabaseJwks,
-} from './supabase-token.verifier';
+import { remoteSupabaseJwks } from './remote-supabase-jwks';
+import { SUPABASE_JWKS } from './supabase-jwks.token';
+import { SupabaseTokenVerifier } from './supabase-token.verifier';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 

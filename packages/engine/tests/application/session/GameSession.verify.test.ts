@@ -1,12 +1,9 @@
 import { DEFAULT_OPTIONS, makeCatalog } from './fixtures';
 import { eventDrewCards } from '@engine/application/aggregates/GameAggregate';
 import { shuffle } from '@engine/application/random';
-import {
-  GameSession,
-  UnverifiedGameError,
-  checkpointSeq,
-} from '@engine/application/session/GameSession';
+import { GameSession, checkpointSeq } from '@engine/application/session/GameSession';
 import { ActionEffectType, GameEventType, Phase, Trigger } from '@engine/domain/enums';
+import { UnverifiedGameError } from '@engine/domain/errors/UnverifiedGameError';
 import type {
   CardActionEvent,
   GameCatalog,

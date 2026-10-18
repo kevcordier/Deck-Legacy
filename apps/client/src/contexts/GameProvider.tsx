@@ -2,11 +2,11 @@ import { GameContext, type GameContextType } from '@contexts/GameContext';
 import { TUTORIAL_DRAW_ORDER } from '@contexts/TutorialContext';
 import { DEFAULT_PARAMETERS, EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
 import {
-  CorruptedGameError,
   GameSession,
   type GameSessionOptions,
 } from '@deck-legacy/engine/application/session/GameSession';
 import { Phase } from '@deck-legacy/engine/domain/enums';
+import { CorruptedGameError } from '@deck-legacy/engine/domain/errors/CorruptedGameError';
 import { CorruptedSaveError } from '@deck-legacy/engine/domain/errors/CorruptedSaveError';
 import type {
   CardDef,

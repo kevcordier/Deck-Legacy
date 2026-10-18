@@ -68,6 +68,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-054 | 2026-10-18 | Fin de campagne vérifiée en fin de manche    | Active                                  |
 | EDR-055 | 2026-10-18 | Graine visible et choisie par le joueur      | Active                                  |
 | EDR-056 | 2026-10-18 | Contrat HTTP OpenAPI, types client générés   | Active                                  |
+| EDR-057 | 2026-10-18 | Couches et un export public par fichier      | Active                                  |
 
 ---
 
@@ -1534,7 +1535,7 @@ Comment décrire l'API une seule fois, la documenter et donner au client des typ
 
 Décision
 
-- Le serveur est la source du contrat : un DTO zod par fichier (`createZodDto` de `nestjs-zod`) dans `apps/server/src/<module>/presentation/dto/`, pour les requêtes comme pour les réponses. Les corps sont validés par `ZodValidationPipe` avec `Dto.schema` ; le format `ApiErrorBody` ne change pas.
+- Le serveur est la source du contrat : un DTO zod par fichier (`createZodDto` de `nestjs-zod`) dans `apps/server/src/<module>/application/dto/`, pour les requêtes comme pour les réponses. Les corps sont validés par `ZodValidationPipe` avec `Dto.schema` ; le format `ApiErrorBody` ne change pas.
 - `@nestjs/swagger` (v11, compatible NestJS 11) décrit l'API : Swagger UI sur `/docs`, JSON sur `/docs-json`, public et en lecture seule. Le document OpenAPI 3.0 est commité dans `apps/server/openapi.json` ; le test e2e le compare au document servi (`toMatchFileSnapshot`).
 - Le client génère ses types depuis `openapi.json` avec `openapi-typescript` (`src/infrastructure/api/generated/schema.d.ts`, commité) et appelle l'API avec `openapi-fetch`. La CI vérifie que les types générés sont à jour. `pnpm generate:api` régénère les deux.
 - Les événements et le checkpoint sont décrits comme des objets JSON ; le client les type avec le moteur, à un seul endroit (`services/apiTypes.ts`), et le serveur les valide par réexécution (EDR-051).
@@ -1552,3 +1553,36 @@ Conséquences
 - Une route change en trois temps : DTO et contrôleur côté serveur, `pnpm generate:api`, puis l'appel côté client.
 - `openapi-typescript` 7 déclare `typescript ^5` en dépendance pair ; il fonctionne avec TypeScript 6.
 - Le script de build `@scarf/scarf` (télémétrie de swagger-ui) est refusé dans `pnpm-workspace.yaml`.
+
+---
+
+ID : EDR-057
+Date : 2026-10-18
+Titre : Couches et un export public par fichier
+Statut : Active
+Complète : EDR-014
+
+Contexte
+Plusieurs fichiers du client et du serveur mélangeaient beaucoup de responsabilités : `services/persistence.ts` (24 exports), `services/sync.ts`, `helpers/cardI18n.ts`, `GamesService` (validation, verrou, cinq opérations), `games.repository.ts` (types, mappers, dépôt). Le dossier `helpers/` du client servait de fourre-tout. Seul le moteur avait des couches contrôlées (EDR-014).
+
+Problème
+Comment rendre chaque fichier simple à lire et placer chaque morceau de code à un endroit prévisible ?
+
+Décision
+
+- **Un export public par fichier** : une classe, une fonction, un composant, un hook ou une constante, plus ses propres types. Seule exception : un fichier de constantes liées (`*Constants.ts`, `*.constants.ts`). ESLint impose `max-classes-per-file: 1`.
+- **Nommage** : le nom du fichier est celui de son export. Client : `PascalCase.tsx` pour un composant (dans son dossier), `useThing.ts` pour un hook, `camelCase.ts` pour une fonction, `PascalCase.ts` pour une classe ou un type. Serveur : `kebab-case` avec le rôle Nest (`*.use-case.ts`, `*.repository.ts`, `*.controller.ts`, `*.dto.ts`, `*.schema.ts`, `*.token.ts`, `*.error.ts`). Aucun dossier `helpers/`, `utils/` ou `common/`.
+- **Serveur**, par module fonctionnel (`games`, `users`, `scores`) : `domain/` (types et fonctions pures, sans Nest, zod ni Prisma), `application/` (cas d'usage, services, ports en classes abstraites servant de jeton d'injection, `dto/`), `infrastructure/` (Prisma), `presentation/` (contrôleurs). Le code transverse va dans `config/`, `auth/`, `prisma/` et `shared/`.
+- **Client** : `app/` (routes expo-router et racine de composition), `domain/` (règles du client, pures), `application/` (cas d'usage et ports), `infrastructure/` (API, stockage, Supabase, configuration), `presentation/` (composants, pages, hooks, contextes, i18n, styles).
+- dependency-cruiser interdit les imports qui remontent les couches ; ESLint interdit Nest, zod et Prisma dans `domain/` côté serveur.
+- Les erreurs du moteur déclarées dans `GameSession.ts` vont dans `packages/engine/src/domain/errors/` (une classe par fichier).
+
+Alternatives rejetées
+
+- Un symbole strict par fichier, sous-composants privés compris : beaucoup de fichiers minuscules sans gain de lecture.
+- Couches au niveau de l'application plutôt que par module serveur : sépare des fichiers qui changent ensemble.
+
+Conséquences
+
+- Plus de fichiers, chacun plus court ; les imports changent de chemin (les alias du client absorbent l'essentiel).
+- `users` et `scores` gardent un service chacun : les découper en cas d'usage n'apporterait rien à leur taille.

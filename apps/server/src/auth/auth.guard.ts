@@ -1,7 +1,8 @@
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/application/users.service';
 import type { AuthenticatedRequest } from './current-user.decorator';
+import { InvalidTokenError } from './invalid-token.error';
 import { IS_PUBLIC } from './public.decorator';
-import { InvalidTokenError, SupabaseTokenVerifier } from './supabase-token.verifier';
+import { SupabaseTokenVerifier } from './supabase-token.verifier';
 import {
   type CanActivate,
   type ExecutionContext,

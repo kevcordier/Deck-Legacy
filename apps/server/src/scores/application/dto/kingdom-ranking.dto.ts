@@ -1,5 +1,5 @@
-import { nullableStringSchema } from '../../../common/nullable-string.schema';
-import { campaignSegmentScoreSchema } from '../../../games/presentation/dto/campaign-segment-score.schema';
+import { campaignSegmentScoreSchema } from '../../../games/application/dto/campaign-segment-score.schema';
+import { nullableStringSchema } from '../../../shared/http/nullable-string.schema';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
