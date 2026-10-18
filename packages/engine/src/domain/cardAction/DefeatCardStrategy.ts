@@ -1,4 +1,5 @@
 import { ActionEffectType, TargetScope } from '../enums';
+import { environment } from '../environment/environment';
 import type { ActionEffect, CardAction, CardDef, GameState, ResolvedActionEffect } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 import { getDefeatAction } from './getDefeatAction';
@@ -25,7 +26,7 @@ export class DefeatCardStrategy implements CardActionStrategy {
       const effectDef: CardAction = destroysItself
         ? { ...rest, actionEffects: [DESTROY_SELF, ...rest.actionEffects] }
         : rest;
-      gs.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId: instanceId };
+      gs.triggerPile[environment.newId()] = { effectDef, sourceInstanceId: instanceId };
     }
     return gs;
   }

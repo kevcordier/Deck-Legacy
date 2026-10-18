@@ -100,6 +100,29 @@ export default tseslint.config(
     },
   },
   {
+    // Engine: the game rules and the session never depend on a UI, server or validation library.
+    files: ['packages/engine/src/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: ['react', 'react-native', '@nestjs/*', 'zod', 'expo-*'] },
+      ],
+    },
+  },
+  {
+    // Engine domain: time, ids and randomness come from `environment` (EDR-058).
+    files: ['packages/engine/src/domain/**/*.ts'],
+    ignores: ['packages/engine/src/domain/environment/**'],
+    rules: {
+      'no-restricted-properties': [
+        'error',
+        { object: 'Date', property: 'now', message: 'Use environment.now() (EDR-058).' },
+        { object: 'Math', property: 'random', message: 'Use environment.random() (EDR-058).' },
+        { object: 'crypto', message: 'Use environment.newId() (EDR-058).' },
+      ],
+    },
+  },
+  {
     // Server domain: plain types and functions (dependency-cruiser checks the other layers).
     files: ['apps/server/src/*/domain/**/*.ts'],
     rules: {

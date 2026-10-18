@@ -7,6 +7,8 @@ import { getProductionChoicesForAction } from '../../domain/cards/getProductionC
 import { getActiveState } from '../../domain/cards/selection/getActiveState';
 import { resolveCost } from '../../domain/costResolver';
 import { ActionEffectType, GameEventType, PendingChoiceType, Phase } from '../../domain/enums';
+import type { EngineEnvironment } from '../../domain/environment/EngineEnvironment';
+import { environment } from '../../domain/environment/environment';
 import { ActionCancelledError } from '../../domain/errors/ActionCancelledError';
 import { CorruptedGameError } from '../../domain/errors/CorruptedGameError';
 import { CostResolutionError } from '../../domain/errors/CostResolutionError';
@@ -35,12 +37,15 @@ import { isFlowCommandAllowed } from './input/isFlowCommandAllowed';
 import { isInPlay } from './input/isInPlay';
 import { sanitizeChoice } from './input/sanitizeChoice';
 import { sanitizeCost } from './input/sanitizeCost';
+import { systemEnvironment } from './systemEnvironment';
 
 export type GameSessionOptions = {
   /** Development only: rewind any event, even ones that revealed cards. */
   unrestrictedRewind: boolean;
   /** Development only: accept `cheat` commands. */
   allowCheats: boolean;
+  /** Clock, ids and randomness of the rules (EDR-058); the system ones by default. */
+  environment?: EngineEnvironment;
 };
 
 type PendingUpgrade = {
@@ -158,6 +163,7 @@ export class GameSession {
     private readonly options: GameSessionOptions,
     cardNames: Record<string, string>,
   ) {
+    this.activate();
     this.agg = this.makeAggregate();
     this.cardNames = { ...cardNames };
   }
@@ -174,10 +180,10 @@ export class GameSession {
     options: GameSessionOptions,
     mode: 'standard' | 'tutorial' = 'standard',
     firstDrawPile?: number[],
-    seed: string = crypto.randomUUID(),
+    seed?: string,
   ): GameSession {
     const session = new GameSession(id, mode === 'tutorial', catalog, options, {});
-    session.startNewGame(firstDrawPile, seed);
+    session.startNewGame(firstDrawPile, seed ?? environment.newId());
     session.finalize();
     return session;
   }
@@ -315,6 +321,7 @@ export class GameSession {
   }
 
   toView(): GameView {
+    this.activate();
     const gameState = this.agg.getGameState();
     return {
       id: this.id,
@@ -344,6 +351,7 @@ export class GameSession {
    * pending action and are returned so the client can display them.
    */
   execute(command: GameCommand): CommandError | undefined {
+    this.activate();
     if (command.type === 'cheat' && !this.options.allowCheats) {
       throw new ForbiddenCommandError('Cheat commands are disabled');
     }
@@ -432,6 +440,14 @@ export class GameSession {
   }
 
   // ─── Game start ───────────────────────────────────────────────────────────
+
+  /**
+   * Installs this session's environment for the rules: the engine is synchronous, so it stays
+   * active for the whole call even when several sessions exist (client viewer, server syncs).
+   */
+  private activate(): void {
+    environment.use(this.options.environment ?? systemEnvironment);
+  }
 
   /** A new game, or one resumed at a checkpoint (its earlier events are kept, not replayed). */
   private makeAggregate(checkpoint?: GameCheckpoint, events: GameEvent[] = []): GameAggregate {

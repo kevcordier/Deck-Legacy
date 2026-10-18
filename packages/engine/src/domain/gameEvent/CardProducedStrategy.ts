@@ -1,5 +1,6 @@
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { Trigger } from '../enums';
+import { environment } from '../environment/environment';
 import { mergeResources } from '../resources/mergeResources';
 import { discardCards } from '../state/discardCards';
 import type { CardDef, CardProducedEvent, GameEvent, GameState, Sticker } from '../types';
@@ -25,7 +26,7 @@ export class CardProducedStrategy implements GameEventStrategy {
       Trigger.ON_PRODUCE,
       withResources,
     ).forEach(({ effectDef, sourceInstanceId }) => {
-      withResources.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+      withResources.triggerPile[environment.newId()] = { effectDef, sourceInstanceId };
     });
 
     return {

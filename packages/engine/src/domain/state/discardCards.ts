@@ -1,5 +1,6 @@
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { Trigger } from '../enums';
+import { environment } from '../environment/environment';
 import type { CardDef, GameState, Sticker } from '../types';
 import { removeFromDiscovery } from './removeFromDiscovery';
 
@@ -18,7 +19,7 @@ export const discardCards = (
     Trigger.ON_DISCARD,
     gameState,
   ).forEach(({ effectDef, sourceInstanceId }) => {
-    gameState.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+    gameState.triggerPile[environment.newId()] = { effectDef, sourceInstanceId };
   });
   cardIds.forEach(cardId => {
     if (gameState.destroyedPile.includes(cardId)) {

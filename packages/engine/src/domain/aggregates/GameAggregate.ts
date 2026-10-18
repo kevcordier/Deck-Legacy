@@ -16,6 +16,7 @@ import {
   TargetScope,
   Trigger,
 } from '../enums';
+import { environment } from '../environment/environment';
 import { ActionCancelledError } from '../errors/ActionCancelledError';
 import { GameEventContext } from '../gameEvent/GameEventContext';
 import { shuffle } from '../random';
@@ -122,9 +123,9 @@ export class GameAggregate {
     seed?: string,
   ): GameState {
     const event: GameStartedEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.GAME_STARTED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       initialDeck,
       deck,
       stickerStock,
@@ -298,9 +299,9 @@ export class GameAggregate {
   public saveCampaignScore(openExpansionChoice = true): GameState {
     const segment = this.gameState.activeExpansion ?? 'base';
     const event: CampaignScoreSavedEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.CAMPAIGN_SCORE_SAVED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       segment,
       score: this.getScore(),
       openExpansionChoice,
@@ -325,9 +326,9 @@ export class GameAggregate {
     ]);
 
     const event: ExpansionSelectedEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.EXPANSION_SELECTED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       expansionName,
       expansionMaxRound,
       deckEntries: [...expansion.campaign, ...(expansion.discoverable ?? [])],
@@ -356,9 +357,9 @@ export class GameAggregate {
     }
 
     const event: PurgeCardSelectedEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.PURGE_CARD_SELECTED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       instanceId,
       batchStart: currentBatch.batchStart,
     };
@@ -379,9 +380,9 @@ export class GameAggregate {
     }
 
     const event: PurgePermanentSelectedEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.PURGE_PERMANENT_SELECTED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       instanceId,
     };
 
@@ -409,16 +410,16 @@ export class GameAggregate {
         ...this.getPurgeSelectionTriggers(selectedIds),
       ].reduce(
         (acc, { effectDef, sourceInstanceId }) => {
-          acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+          acc[environment.newId()] = { effectDef, sourceInstanceId };
           return acc;
         },
         {} as Record<string, TriggerEntry>,
       );
 
       const triggeredEvent: PurgeOnTriggeredEvent = {
-        id: crypto.randomUUID(),
+        id: environment.newId(),
         type: GameEventType.PURGE_ON_TRIGGERED,
-        timestamp: Date.now(),
+        timestamp: environment.now(),
         triggers,
       };
 
@@ -445,9 +446,9 @@ export class GameAggregate {
     }, 0);
 
     const finalizedEvent: PurgeFinalizedEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.PURGE_FINALIZED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       purgedIds,
       glory,
       onStartDiscoverIds: purgeState.onStartDiscoverIds,
@@ -474,16 +475,16 @@ export class GameAggregate {
       this.gameState,
     ).reduce(
       (acc, { effectDef, sourceInstanceId }) => {
-        acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+        acc[environment.newId()] = { effectDef, sourceInstanceId };
         return acc;
       },
       {} as Record<string, TriggerEntry>,
     );
 
     const event: RoundEndedEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.ROUND_ENDED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       round: this.gameState.round,
       endRoundTriggers: triggers,
     };
@@ -511,9 +512,9 @@ export class GameAggregate {
 
   public endGame(): GameState {
     const event: GameEndedEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.GAME_ENDED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
     };
 
     this.apply(event);
@@ -540,9 +541,9 @@ export class GameAggregate {
 
       if (cardDef.parchmentCard) {
         const parchEvent: ParchmentCardDiscoveredEvent = {
-          id: crypto.randomUUID(),
+          id: environment.newId(),
           type: GameEventType.PARCHMENT_CARD_DISCOVERED,
-          timestamp: Date.now(),
+          timestamp: environment.now(),
           cardInstanceId: cardId,
         };
         this.apply(parchEvent);
@@ -554,9 +555,9 @@ export class GameAggregate {
     }
 
     const event: RoundStartedEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.ROUND_STARTED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       round,
       // With two packs, the discovery is its own event (STORY_ADVANCED) below.
       lastAddedCards: twoPacks ? [] : lastAddedCards,
@@ -574,9 +575,9 @@ export class GameAggregate {
 
     if (twoPacks && lastAddedCards.length > 0) {
       const storyEvent: StoryAdvancedEvent = {
-        id: crypto.randomUUID(),
+        id: environment.newId(),
         type: GameEventType.STORY_ADVANCED,
-        timestamp: Date.now(),
+        timestamp: environment.now(),
         discoveredIds: lastAddedCards,
       };
       this.apply(storyEvent);
@@ -597,9 +598,9 @@ export class GameAggregate {
     );
 
     const event: TurnStartedEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.TURN_STARTED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       turn,
       turnCards,
     };
@@ -620,16 +621,16 @@ export class GameAggregate {
       this.gameState,
     ).reduce(
       (acc, { effectDef, sourceInstanceId }) => {
-        acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+        acc[environment.newId()] = { effectDef, sourceInstanceId };
         return acc;
       },
       {} as Record<string, TriggerEntry>,
     );
 
     const event: TurnEndedEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.TURN_ENDED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       endTurnTrigger: triggers,
     };
     this.apply(event);
@@ -700,9 +701,9 @@ export class GameAggregate {
 
   public cardProduced(cardInstanceId: number, productions: Record<string, number>): GameState {
     const event: CardProducedEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.CARD_PRODUCED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       cardInstanceId,
       productions,
     };
@@ -741,9 +742,9 @@ export class GameAggregate {
     );
 
     const event: AdvanceEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.ADVANCE,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       turnCards,
     };
     this.apply(event);
@@ -775,16 +776,16 @@ export class GameAggregate {
       this.gameState,
     ).reduce(
       (acc, { effectDef, sourceInstanceId }) => {
-        acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+        acc[environment.newId()] = { effectDef, sourceInstanceId };
         return acc;
       },
       {} as Record<string, TriggerEntry>,
     );
 
     const event: UpgradeCardEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.UPGRADE_CARD,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       cardInstanceId,
       stateId,
       cost,
@@ -799,9 +800,9 @@ export class GameAggregate {
 
   public chooseState(cardInstanceId: number, stateId: number): GameState {
     const event: ChooseStateEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.CHOOSE_STATE,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       cardInstanceId,
       stateId,
     };
@@ -905,7 +906,7 @@ export class GameAggregate {
         newGameState,
       ).reduce(
         (acc, { effectDef, sourceInstanceId }) => {
-          acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+          acc[environment.newId()] = { effectDef, sourceInstanceId };
           return acc;
         },
         {} as Record<string, TriggerEntry>,
@@ -913,9 +914,9 @@ export class GameAggregate {
     }
 
     const event: CardActionEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.CARD_ACTION,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       gameStateChanges: computeGameStateDiff(this.gameState, newGameState),
       sourceInstanceId: currentCardAction.getSourceInstanceId(),
       actionId: currentCardAction.getActionId(),
@@ -931,9 +932,9 @@ export class GameAggregate {
       this.gameState.onGoingParchment === sourceInstanceId
     ) {
       const event: RoundStartedEvent = {
-        id: crypto.randomUUID(),
+        id: environment.newId(),
         type: GameEventType.ROUND_STARTED,
-        timestamp: Date.now(),
+        timestamp: environment.now(),
         round: this.gameState.round,
         lastAddedCards: this.gameState.lastAddedCards,
         newDrawPile: this.shuffle([
@@ -955,9 +956,9 @@ export class GameAggregate {
       throw new Error(`Trigger with id ${triggerId} not found in trigger pile`);
     }
     const event: SkipTriggerEvent = {
-      id: crypto.randomUUID(),
+      id: environment.newId(),
       type: GameEventType.SKIP_TRIGGER,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       triggerId,
       sourceInstanceId: entry.sourceInstanceId,
       actionId: entry.effectDef.id,

@@ -1,6 +1,7 @@
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { Trigger } from '../enums';
+import { environment } from '../environment/environment';
 import type { CardDef, GameState, Sticker } from '../types';
 import { discardCardsMissingRequirement } from './discardCardsMissingRequirement';
 
@@ -20,7 +21,7 @@ export const drawCards = (
     Trigger.ON_PLAY,
     gameState,
   ).forEach(({ effectDef, sourceInstanceId }) => {
-    gameState.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+    gameState.triggerPile[environment.newId()] = { effectDef, sourceInstanceId };
   });
   turnCards.forEach(instanceId => {
     const passives = getActiveState(gameState.instances[instanceId], cardDefs)?.passives;

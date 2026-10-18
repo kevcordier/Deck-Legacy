@@ -2,6 +2,7 @@ import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects'
 import { getActiveState } from '../cards/selection/getActiveState';
 import { isPermanent } from '../cards/selection/isPermanent';
 import { Trigger } from '../enums';
+import { environment } from '../environment/environment';
 import { discardCards } from '../state/discardCards';
 import { syncInstancePassivesInBoardEffects } from '../state/syncInstancePassivesInBoardEffects';
 import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '../types';
@@ -32,7 +33,7 @@ export class UpgradeCardStrategy implements CardActionStrategy {
       Trigger.ON_UPGRADE,
       gs,
     ).forEach(({ effectDef, sourceInstanceId }) => {
-      gs.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+      gs.triggerPile[environment.newId()] = { effectDef, sourceInstanceId };
     });
     gs.instances[instanceId].stateId = targetStateId;
     const syncedState = syncInstancePassivesInBoardEffects(gs, instanceId, this.cardDefs);

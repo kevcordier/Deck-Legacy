@@ -1,7 +1,9 @@
+import { environment } from './environment/environment';
+
 /**
  * Shuffles. A game started with a seed (EDR-051) shuffles deterministically from the seed and a
  * salt naming the shuffle, so the server can recompute every shuffle; older games use
- * `Math.random`.
+ * `environment.random` (`Math.random` in a `GameSession`).
  */
 
 /** 32-bit FNV-1a hash of a string. */
@@ -31,7 +33,7 @@ function mulberry32(state: number): () => number {
  */
 export function shuffle<T extends number | string>(arr: T[], seed?: string, salt = ''): T[] {
   const random =
-    seed === undefined ? Math.random : mulberry32(hash(`${seed}|${salt}|${arr.join(',')}`));
+    seed === undefined ? environment.random : mulberry32(hash(`${seed}|${salt}|${arr.join(',')}`));
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));

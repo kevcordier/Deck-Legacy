@@ -1,5 +1,6 @@
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { Trigger } from '../enums';
+import { environment } from '../environment/environment';
 import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 
@@ -31,7 +32,7 @@ export class TrackAdvanceStrategy implements CardActionStrategy {
         Trigger.ON_TRACK_END,
         gs,
       ).forEach(({ effectDef, sourceInstanceId }) => {
-        gs.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+        gs.triggerPile[environment.newId()] = { effectDef, sourceInstanceId };
       });
     }
 
