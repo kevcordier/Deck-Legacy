@@ -1133,6 +1133,26 @@ describe('cardIsBlocked', () => {
 // ─── getInstancesTriggerEffects ───────────────────────────────────────────────
 
 describe('getInstancesTriggerEffects', () => {
+  it('ignores the triggers of a blocked card', () => {
+    const action = { id: 'a1', actionEffects: [], trigger: Trigger.END_OF_TURN };
+    const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'C', states: [{ id: 1, name: 'S', actions: [action] }] },
+    };
+    const gs = makeState({
+      board: [1, 2],
+      boardEffects: { 2: [{ id: 'block', type: PassiveType.BLOCK, cards: { ids: [1] } }] },
+    });
+    const result = getInstancesTriggerEffects(
+      [inst],
+      defs,
+      makeStickerDefs(),
+      Trigger.END_OF_TURN,
+      gs,
+    );
+    expect(result).toHaveLength(0);
+  });
+
   it('returns empty when no instances have matching triggers', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const defs: Record<number, CardDef> = {
