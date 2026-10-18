@@ -1,5 +1,6 @@
-import { campaignSegmentScoreSchema } from '../../../games/application/dto/campaign-segment-score.schema';
-import { nullableStringSchema } from '../../../shared/http/nullable-string.schema';
+import { campaignSegmentScoreSchema } from '../../../games/presentation/dto/campaign-segment-score.schema';
+import { nullableStringSchema } from '../../../shared/presentation/http/nullable-string.schema';
+import type { KingdomRanking } from '../../application/models/kingdom-ranking';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
@@ -11,7 +12,5 @@ export class KingdomRankingDto extends createZodDto(
     displayName: nullableStringSchema,
     score: z.number(),
     segments: z.array(campaignSegmentScoreSchema),
-  }),
+  }) satisfies z.ZodType<KingdomRanking>,
 ) {}
-
-export type KingdomRanking = z.output<typeof KingdomRankingDto.schema>;

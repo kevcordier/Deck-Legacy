@@ -1,3 +1,4 @@
+import type { GameExport } from '../../application/models/game-export';
 import { gameCheckpointSchema } from './game-checkpoint.schema';
 import { gameEventSchema } from './game-event.schema';
 import { createZodDto } from 'nestjs-zod';
@@ -18,7 +19,5 @@ export class GameExportDto extends createZodDto(
      * the game from it. Missing from servers older than EDR-053.
      */
     checkpoint: gameCheckpointSchema.nullable().optional(),
-  }),
+  }) satisfies z.ZodType<GameExport>,
 ) {}
-
-export type GameExport = z.output<typeof GameExportDto.schema>;

@@ -1,4 +1,5 @@
-import { nullableStringSchema } from '../../../shared/http/nullable-string.schema';
+import { nullableStringSchema } from '../../../shared/presentation/http/nullable-string.schema';
+import type { UserProfile } from '../../application/models/user-profile';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
@@ -8,7 +9,5 @@ export class UserProfileDto extends createZodDto(
     displayName: nullableStringSchema,
     isAnonymous: z.boolean(),
     email: nullableStringSchema,
-  }),
+  }) satisfies z.ZodType<UserProfile>,
 ) {}
-
-export type UserProfile = z.output<typeof UserProfileDto.schema>;

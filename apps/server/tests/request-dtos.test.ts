@@ -1,5 +1,5 @@
-import { SyncGameRequestDto } from '../src/games/application/dto/sync-game-request.dto';
-import { UpdateProfileRequestDto } from '../src/users/application/dto/update-profile-request.dto';
+import { SyncGameRequestDto } from '../src/games/presentation/dto/sync-game-request.dto';
+import { UpdateProfileRequestDto } from '../src/users/presentation/dto/update-profile-request.dto';
 import { describe, expect, it } from 'vitest';
 
 const syncSchema = SyncGameRequestDto.schema;

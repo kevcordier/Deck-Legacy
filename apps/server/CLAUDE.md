@@ -35,20 +35,20 @@ apps/server/
 │   ├── auth/              # Supabase JWT verification, global AuthGuard, @Public, @CurrentUser
 │   ├── games/             # Game sync (feature module, layered as below)
 │   │   ├── domain/        # Plain types and pure functions (GameSnapshot, firstDifference, usesCheats…): no Nest, no zod, no Prisma
-│   │   ├── application/   # Use cases (sync, list, export, abandon…), GameValidator (replay), GameLock, ports (GamesRepository), dto/
+│   │   ├── application/   # Use cases (sync, list, export, abandon…), GameValidator (replay), GameLock, ports (GamesRepository), models/ (plain TS input/output types)
 │   │   ├── infrastructure/# PrismaGamesRepository (implements the GamesRepository port)
-│   │   ├── presentation/  # GamesController (HTTP + Swagger decorators only)
+│   │   ├── presentation/  # GamesController (HTTP + Swagger decorators), dto/ (zod schemas that `satisfies` the models)
 │   │   └── games.module.ts
-│   ├── users/  scores/    # Same layout: application/ (service + dto/), presentation/ (controller)
+│   ├── users/  scores/    # Same layout: application/ (service + models/), presentation/ (controller + dto/)
 │   ├── prisma/            # PrismaService (pg adapter), Transaction type, JSON mappers shared by modules
-│   ├── shared/            # http/ (ZodValidationPipe, ApiExceptionFilter, ApiErrorDto, nullableStringSchema), trim-trailing-slashes
+│   ├── shared/            # presentation/http/ (ZodValidationPipe, ApiExceptionFilter, ApiErrorDto, nullableStringSchema), trim-trailing-slashes
 │   └── generated/prisma   # GENERATED Prisma client (gitignored, `prisma generate`)
 ├── prisma/                # schema.prisma + migrations
 ├── openapi.json           # HTTP contract (GENERATED, committed; checked by tests/games.e2e.test.ts)
 └── tests/                 # Unit + e2e tests
 ```
 
-Imports inside the server are relative; shared code comes from `@deck-legacy/engine/*` and `@deck-legacy/game-data`. Request and response DTOs live in `<module>/application/dto/`, one per file (EDR-056).
+Imports inside the server are relative; shared code comes from `@deck-legacy/engine/*` and `@deck-legacy/game-data`. Request and response DTOs live in `<module>/presentation/dto/`, one per file (EDR-056, 058). Use cases take and return the plain types of `<module>/application/models/`; each DTO schema `satisfies z.ZodType<Model>`, so the compiler keeps the HTTP contract and the models in line without mapping code.
 
 **Structure rules (EDR-057).** One public export per file (a class, a function or a constant, plus its own types); file names are kebab-case with the Nest role suffix (`sync-game.use-case.ts`, `prisma-games.repository.ts`, `games.controller.ts`, `game-summary.dto.ts`, `game-lock.ts`); no `common/`/`helpers/`/`utils/` folders. Layers inside a feature module: `presentation → application → domain`, `infrastructure → application`; a use case depends on a port (abstract class used as the injection token), never on Prisma code of its module. dependency-cruiser enforces the layers, ESLint forbids Nest, zod and Prisma in `domain/` and more than one class per file.
 
@@ -85,7 +85,7 @@ Imports inside the server are relative; shared code comes from `@deck-legacy/eng
 | `GET /scores/kingdoms?limit=`      | public | Kingdoms of registered players with the best total score |
 
 - Every route requires a token unless decorated with `@Public()` (global `AuthGuard`).
-- Each body and response is a zod DTO (`createZodDto` from `nestjs-zod`) in `<module>/application/dto/`. Validate bodies with `new ZodValidationPipe(Dto.schema)`; document responses with `@ApiOkResponse({ type: Dto })`. Use `nullableStringSchema` for `string | null` (swagger reads zod's `['string', 'null']` as an array).
+- Each body and response is a zod DTO (`createZodDto` from `nestjs-zod`) in `<module>/presentation/dto/`. Validate bodies with `new ZodValidationPipe(Dto.schema)`; document responses with `@ApiOkResponse({ type: Dto })`. Use `nullableStringSchema` for `string | null` (swagger reads zod's `['string', 'null']` as an array).
 - After any route or DTO change, run `pnpm generate:api`: it rewrites `openapi.json` and the client types (`apps/client/src/infrastructure/api/generated`). CI fails when either is stale.
 - Swagger UI: `/docs` (JSON: `/docs-json`), public.
 - Errors always use the `ApiErrorBody` shape (`ApiExceptionFilter`).

@@ -1,7 +1,7 @@
 import type { AppConfig } from './config/env';
 import { isAllowedOrigin } from './is-allowed-origin';
 import { createOpenApiDocument } from './openapi';
-import { ApiExceptionFilter } from './shared/http/api-exception.filter';
+import { ApiExceptionFilter } from './shared/presentation/http/api-exception.filter';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule } from '@nestjs/swagger';
 

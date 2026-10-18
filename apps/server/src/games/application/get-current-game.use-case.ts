@@ -1,5 +1,5 @@
-import type { GameSummary } from './dto/game-summary.dto';
 import { GamesRepository } from './games.repository';
+import type { GameSummary } from './models/game-summary';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 /**

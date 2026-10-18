@@ -1,4 +1,4 @@
-import { errorMessage } from '../src/shared/http/error-message';
+import { errorMessage } from '../src/shared/presentation/http/error-message';
 import { describe, expect, it } from 'vitest';
 
 describe('errorMessage', () => {

@@ -6,5 +6,3 @@ export class UpdateProfileRequestDto extends createZodDto(
     displayName: z.string().trim().min(2).max(32),
   }),
 ) {}
-
-export type UpdateProfileRequest = z.output<typeof UpdateProfileRequestDto.schema>;
