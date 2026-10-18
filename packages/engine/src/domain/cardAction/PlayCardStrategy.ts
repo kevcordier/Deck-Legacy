@@ -1,6 +1,7 @@
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { Trigger } from '../enums';
+import { environment } from '../environment/environment';
 import { removeFromDiscovery } from '../state/removeFromDiscovery';
 import type { CardDef, GameState, Passive, ResolvedActionEffect, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
@@ -25,7 +26,7 @@ export class PlayCardStrategy implements CardActionStrategy {
     );
     if (triggerEffects.length > 0) {
       triggerEffects.forEach(effect => {
-        gs.triggerPile[crypto.randomUUID()] = effect;
+        gs.triggerPile[environment.newId()] = effect;
       });
     }
 

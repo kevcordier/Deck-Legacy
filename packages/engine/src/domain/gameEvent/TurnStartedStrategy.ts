@@ -1,5 +1,6 @@
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { Phase, Trigger } from '../enums';
+import { environment } from '../environment/environment';
 import { drawCards } from '../state/drawCards';
 import type {
   CardDef,
@@ -33,7 +34,7 @@ export class TurnStartedStrategy implements GameEventStrategy {
       afterDraw,
     ).reduce(
       (acc, { effectDef, sourceInstanceId }) => {
-        acc[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+        acc[environment.newId()] = { effectDef, sourceInstanceId };
         return acc;
       },
       {} as Record<string, TriggerEntry>,

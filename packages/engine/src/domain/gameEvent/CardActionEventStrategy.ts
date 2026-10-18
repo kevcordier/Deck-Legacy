@@ -1,4 +1,5 @@
 import { GameEventType } from '../enums';
+import { environment } from '../environment/environment';
 import type { CardActionEvent, CardDef, GameEvent, GameState, Sticker } from '../types';
 import type { GameEventStrategy } from './GameEventStrategy';
 import { RoundEndedStrategy } from './RoundEndedStrategy';
@@ -28,7 +29,7 @@ export class CardActionEventStrategy implements GameEventStrategy {
       return new TurnEndedStrategy(this.cardDefs, this.stickerDefs).apply(newState, {
         id: '',
         type: GameEventType.TURN_ENDED,
-        timestamp: Date.now(),
+        timestamp: environment.now(),
         endTurnTrigger: e.triggers,
       } as GameEvent);
     }
@@ -37,7 +38,7 @@ export class CardActionEventStrategy implements GameEventStrategy {
       return new RoundEndedStrategy().apply(newState, {
         id: '',
         type: GameEventType.ROUND_ENDED,
-        timestamp: Date.now(),
+        timestamp: environment.now(),
         endRoundTriggers: e.triggers,
       } as GameEvent);
     }

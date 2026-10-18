@@ -2,6 +2,7 @@ import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects'
 import { getActiveState } from '../cards/selection/getActiveState';
 import { isPermanent } from '../cards/selection/isPermanent';
 import { GameEventType, Trigger } from '../enums';
+import { environment } from '../environment/environment';
 import { destroyCards } from '../state/destroyCards';
 import { discardCards } from '../state/discardCards';
 import { spendResources } from '../state/spendResources';
@@ -38,7 +39,7 @@ export class UpgradeCardEventStrategy implements GameEventStrategy {
         ? (() => {
             const gs = JSON.parse(JSON.stringify(afterCostState)) as GameState;
             onUpgradeTriggers.forEach(({ effectDef, sourceInstanceId }) => {
-              gs.triggerPile[crypto.randomUUID()] = { effectDef, sourceInstanceId };
+              gs.triggerPile[environment.newId()] = { effectDef, sourceInstanceId };
             });
             return gs;
           })()
@@ -71,7 +72,7 @@ export class UpgradeCardEventStrategy implements GameEventStrategy {
     return new TurnEndedStrategy(this.cardDefs, this.stickerDefs).apply(newState, {
       id: '',
       type: GameEventType.TURN_ENDED,
-      timestamp: Date.now(),
+      timestamp: environment.now(),
       endTurnTrigger: e.endTurnTrigger,
     } as GameEvent);
   }

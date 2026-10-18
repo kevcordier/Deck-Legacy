@@ -10,6 +10,7 @@ import { isPermanent } from '../cards/selection/isPermanent';
 import { resolveCost } from '../costResolver';
 import { resolveActionEffect } from '../effects/resolveActionEffect';
 import { ActionEffectType, PendingChoiceType, Phase, Trigger } from '../enums';
+import { environment } from '../environment/environment';
 import { CardChoiceStrategy } from '../playerChoice/CardChoiceStrategy';
 import { ChooseActionEffectStrategy } from '../playerChoice/ChooseActionEffectStrategy';
 import type { PlayerChoiceStrategy } from '../playerChoice/PlayerChoiceStrategy';
@@ -467,7 +468,7 @@ export class CardActionAggregate {
       Trigger.ON_DEFEAT,
       this.gameState,
     ).forEach(entry => {
-      this.gameState.triggerPile[crypto.randomUUID()] = entry;
+      this.gameState.triggerPile[environment.newId()] = entry;
     });
   }
 
