@@ -1,9 +1,9 @@
-import { EMPTY_STATE } from '@engine/application/emptyState';
 import {
   isFlowCommandAllowed,
   sanitizeChoice,
   sanitizeCost,
 } from '@engine/application/session/playerInput';
+import { EMPTY_STATE } from '@engine/domain/emptyState';
 import { ActionEffectType, PendingChoiceType, Phase } from '@engine/domain/enums';
 import type { GameState, PendingChoice, ResolvedActionEffect } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';

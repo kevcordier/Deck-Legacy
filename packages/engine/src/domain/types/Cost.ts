@@ -1,4 +1,4 @@
-import type { CardSelector, ResourceCost, Resources } from './';
+import type { CardSelector, ResourceCost, Resources } from '.';
 
 export type Cost = {
   /** Resource costs: `resources[0]` = fixed cost, subsequent indices are reserved for variants. */

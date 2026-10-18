@@ -9,7 +9,7 @@ import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { PassifIcon } from '@components/ui/Icon/icons/PassifIcon';
 import { Text } from '@components/ui/Text/Text';
 import { TutorialContext } from '@contexts/TutorialContext';
-import { cardSelector } from '@deck-legacy/engine/application/cardSelector';
+import { cardSelector } from '@deck-legacy/engine/domain/cardSelector';
 import { PassiveType } from '@deck-legacy/engine/domain/enums';
 import type {
   CardDef,

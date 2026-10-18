@@ -33,7 +33,7 @@ module.exports = {
       comment: 'Card definitions may only use engine domain types and enums',
       severity: 'error',
       from: { path: '^packages/game-data/src' },
-      to: { pathNot: '^packages/(game-data|engine/src/domain)/' },
+      to: { pathNot: '^packages/(game-data|engine/src/domain/(types|enums))/' },
     },
 
     // ── Server: layers inside each feature module (games, users, scores) ─────

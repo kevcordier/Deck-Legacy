@@ -8,9 +8,15 @@ paths:
 
 Detailed reference for `packages/engine` and `packages/game-data`. Repository-wide rules are in the root `CLAUDE.md`. When this file and the code disagree, the code wins: check `packages/engine/src/domain/types` and `enums`.
 
+## Layers (EDR-058)
+
+- `domain/` — the game rules: types, enums, errors, `aggregates/` (`GameAggregate` replays events), `gameEvent/` (one strategy per event), `cardAction/` (one strategy per effect), `playerChoice/`, resolvers, selectors, resources, `random`, `factory`, `emptyState`. Pure: no I/O, no framework.
+- `application/` — `session/`: `GameSession` (commands → events, pending choices in memory, `verify`, `restore`) and `playerInput` (input checks).
+- dependency-cruiser: the domain imports only itself; the application imports only the domain.
+
 ## Event Sourcing
 
-The game state is derived by replaying an ordered list of `GameEvent` objects. `GameAggregate` (`packages/engine/src/application/aggregates/GameAggregate.ts`) holds the events and reconstructs `GameState` on demand. Randomness (shuffles) happens when a command runs and its result is stored in the event, so replays are deterministic. Games started since EDR-051 carry a `seed` in `GAME_STARTED`: every shuffle comes from `application/random.ts` (seed + salt + shuffled cards), so running the same commands again gives the same events. Never use `Math.random`, `Date.now()` or the order of random keys in game logic.
+The game state is derived by replaying an ordered list of `GameEvent` objects. `GameAggregate` (`packages/engine/src/domain/aggregates/GameAggregate.ts`) holds the events and reconstructs `GameState` on demand. Randomness (shuffles) happens when a command runs and its result is stored in the event, so replays are deterministic. Games started since EDR-051 carry a `seed` in `GAME_STARTED`: every shuffle comes from `domain/random.ts` (seed + salt + shuffled cards), so running the same commands again gives the same events. Never use `Math.random`, `Date.now()` or the order of random keys in game logic.
 
 - **Never mutate `GameState` directly.** Always dispatch a new event.
 - `GameSession` (`packages/engine/src/application/session/GameSession.ts`) wraps the aggregate and turns player commands (`GameCommand`) into events: guards (unknown or blocked cards are ignored), multi-step cost payment, parchment cards, automatic campaign score at game over, rewind, development cheats. It returns a `GameView` for the UI and a translatable `CommandError` for rule errors. Mid-action state (pending choices, pending upgrade) lives only in memory, never in the event log.
@@ -194,7 +200,7 @@ This lets expansion-specific round limits (`expansionMaxRound`) be evaluated fro
 
 ## Strategy Pattern (Card Actions)
 
-`packages/engine/src/application/cardAction/` contains one strategy per `ActionEffectType` implementing `CardActionStrategy` (AddResource, AddSticker, AddBoardEffect, AddCumulated, AddGlory, AddToPurge, BlockCard, ChoseState, DefeatCard, DestroyCard, DiscardCard, DiscoverCard, EndGame, PlaceCardInDrawPile, PlayCard, RemoveResourceOnCard, SaveFromPurge, SetCumulated, ShuffleDeck, TrackAdvance, UpgradeCard), registered in `CardActionContext`.
+`packages/engine/src/domain/cardAction/` contains one strategy per `ActionEffectType` implementing `CardActionStrategy` (AddResource, AddSticker, AddBoardEffect, AddCumulated, AddGlory, AddToPurge, BlockCard, ChoseState, DefeatCard, DestroyCard, DiscardCard, DiscoverCard, EndGame, PlaceCardInDrawPile, PlayCard, RemoveResourceOnCard, SaveFromPurge, SetCumulated, ShuffleDeck, TrackAdvance, UpgradeCard), registered in `CardActionContext`.
 
 When adding new action types, add a new strategy file and register it in `CardActionContext`.
 

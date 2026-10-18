@@ -1,3 +1,4 @@
+import type { Cost, GameParameters, Resources } from '.';
 import type {
   ActionEffectType,
   CardTag,
@@ -6,7 +7,6 @@ import type {
   TargetScope,
   Trigger,
 } from '../enums';
-import type { Cost, GameParameters, Resources } from './';
 
 export type Condition =
   | { type: 'cardCount'; cards: CardSelector; min?: number; max?: number }

@@ -23,9 +23,9 @@ import {
   getEffectiveUpgradeCost,
   getProductionChoicesForAction,
   tagBorderClass,
-} from '@deck-legacy/engine/application/cardHelpers';
-import { canUseOptions } from '@deck-legacy/engine/application/gameStateHelper';
+} from '@deck-legacy/engine/domain/cardHelpers';
 import { Options, PassiveType, TargetScope } from '@deck-legacy/engine/domain/enums';
+import { canUseOptions } from '@deck-legacy/engine/domain/gameStateHelper';
 import type { CardAction, CardInstance, StepDef } from '@deck-legacy/engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import { tCardName } from '@i18n/card/tCardName';

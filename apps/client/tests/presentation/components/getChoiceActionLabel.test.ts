@@ -1,6 +1,6 @@
 import { getChoiceActionLabel } from '@components/PendingChoiceModal/getChoiceActionLabel';
-import { createInstance } from '@deck-legacy/engine/application/factory';
 import { ActionEffectType, PendingChoiceType } from '@deck-legacy/engine/domain/enums';
+import { createInstance } from '@deck-legacy/engine/domain/factory';
 import type { PendingChoice } from '@deck-legacy/engine/domain/types';
 import { cardTexts } from '@deck-legacy/game-data';
 import { catalog } from '@infrastructure/catalog/catalog';

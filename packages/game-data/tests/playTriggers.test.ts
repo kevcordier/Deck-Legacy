@@ -1,10 +1,10 @@
 import { loadGameCatalog } from '../src';
-import { GameAggregate } from '@deck-legacy/engine/application/aggregates/GameAggregate';
-import { getActiveState } from '@deck-legacy/engine/application/cardHelpers';
-import { EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
-import { createInstance } from '@deck-legacy/engine/application/factory';
-import { discardCards } from '@deck-legacy/engine/application/gameStateHelper';
+import { GameAggregate } from '@deck-legacy/engine/domain/aggregates/GameAggregate';
+import { getActiveState } from '@deck-legacy/engine/domain/cardHelpers';
+import { EMPTY_STATE } from '@deck-legacy/engine/domain/emptyState';
 import { ActionEffectType, PendingChoiceType, Phase } from '@deck-legacy/engine/domain/enums';
+import { createInstance } from '@deck-legacy/engine/domain/factory';
+import { discardCards } from '@deck-legacy/engine/domain/gameStateHelper';
 import type { GameState } from '@deck-legacy/engine/domain/types';
 import { describe, expect, it } from 'vitest';
 

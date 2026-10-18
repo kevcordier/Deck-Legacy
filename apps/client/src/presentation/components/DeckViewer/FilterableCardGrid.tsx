@@ -9,7 +9,7 @@ import {
   getActiveState,
   getEffectiveGlory,
   getProductionChoicesForAction,
-} from '@deck-legacy/engine/application/cardHelpers';
+} from '@deck-legacy/engine/domain/cardHelpers';
 import { type CardTag, PassiveType, ResourceType } from '@deck-legacy/engine/domain/enums';
 import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import { useGame } from '@hooks/useGame';

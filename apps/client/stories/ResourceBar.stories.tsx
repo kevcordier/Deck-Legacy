@@ -1,6 +1,6 @@
 import { StoryProviders } from './StoryProviders';
 import { ResourceBar } from '@components/ResourceBar/ResourceBar';
-import { EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
+import { EMPTY_STATE } from '@deck-legacy/engine/domain/emptyState';
 import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import type { Meta, StoryObj } from '@storybook/react-native';
 

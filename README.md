@@ -107,7 +107,7 @@ apps/
     ├── src/scores/      # Final scores and leaderboard
     └── prisma/          # Database schema and migrations
 packages/
-├── engine/              # Game engine: domain + application layers, GameSession (event sourcing)
+├── engine/              # Game engine: domain (game rules, event sourcing) + application (GameSession)
 ├── game-data/           # Card, sticker and deck definitions
 ```
 

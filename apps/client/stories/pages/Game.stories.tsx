@@ -1,7 +1,7 @@
 import { baseInstances, makeInstance } from '../storyCatalog';
 import { GameProvider } from '@contexts/GameProvider';
 import { GameUIProvider } from '@contexts/GameUIProvider';
-import { EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
+import { EMPTY_STATE } from '@deck-legacy/engine/domain/emptyState';
 import { Phase } from '@deck-legacy/engine/domain/enums';
 import type { GameState } from '@deck-legacy/engine/domain/types';
 import { Game } from '@pages/Game/Game';

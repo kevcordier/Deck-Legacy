@@ -1,5 +1,5 @@
-import { getActiveState } from '@deck-legacy/engine/application/cardHelpers';
 import { GameSession } from '@deck-legacy/engine/application/session/GameSession';
+import { getActiveState } from '@deck-legacy/engine/domain/cardHelpers';
 import type {
   GameCommand,
   PendingChoice,
