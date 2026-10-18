@@ -2,7 +2,7 @@ import { Button } from '@components/ui/Button/Button';
 import { TextInput } from '@components/ui/Input/TextInput';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
-import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/api-contract';
+import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/engine/domain/kingdomLimits';
 import { type KingdomMeta, renameKingdom } from '@services/persistence';
 import { scheduleSync } from '@services/sync';
 import { useState } from 'react';

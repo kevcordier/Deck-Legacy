@@ -5,6 +5,7 @@ packages:
 allowBuilds:
   '@nestjs/core': true
   '@prisma/engines': true
+  '@scarf/scarf': false # swagger-ui telemetry
   '@swc/core': true
   esbuild: true
   prisma: true

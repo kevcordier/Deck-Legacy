@@ -1,4 +1,4 @@
-import type { ApiErrorBody, ApiErrorCode } from '@deck-legacy/api-contract';
+import type { ApiErrorBody, ApiErrorCode } from './api-error.dto';
 import {
   type ArgumentsHost,
   Catch,

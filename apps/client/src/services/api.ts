@@ -1,3 +1,4 @@
+import type { paths } from '../infrastructure/api/generated/schema';
 import type {
   ApiErrorBody,
   GameExport,
@@ -5,8 +6,9 @@ import type {
   KingdomRanking,
   SyncGameRequest,
   UserProfile,
-} from '@deck-legacy/api-contract';
+} from '@services/apiTypes';
 import { config } from '@services/config';
+import createClient from 'openapi-fetch';
 
 /** Error returned by the API (or a network failure, with `status` 0). */
 export class ApiError extends Error {
@@ -32,44 +34,52 @@ export function setAccessTokenProvider(provider: TokenProvider): void {
   getAccessToken = provider;
 }
 
-async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
-  const token = await getAccessToken();
-  const headers: Record<string, string> = {};
-  if (token) headers.Authorization = `Bearer ${token}`;
-  if (body !== undefined) headers['Content-Type'] = 'application/json';
+// `fetch` is looked up on each call (not captured at import) so tests can stub it.
+const client = createClient<paths>({ baseUrl: config.apiUrl, fetch: request => fetch(request) });
+client.use({
+  async onRequest({ request }) {
+    const token = await getAccessToken();
+    if (token) request.headers.set('Authorization', `Bearer ${token}`);
+    return request;
+  },
+});
 
-  let response: Response;
+type Result<T> = { data?: T; error?: unknown; response: Response };
+
+/** Unwraps an openapi-fetch call: the data, or an `ApiError` (status 0 when the network fails). */
+async function call<T>(promise: Promise<Result<T>>): Promise<T> {
+  let result: Result<T>;
   try {
-    response = await fetch(`${config.apiUrl}${path}`, {
-      method,
-      headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
-    });
+    result = await promise;
   } catch {
     throw new ApiError(0, null);
   }
-
-  if (response.status === 204) return undefined as T;
-  const payload: unknown = await response.json().catch(() => null);
-  if (!response.ok) {
-    throw new ApiError(response.status, payload as ApiErrorBody | null);
+  if (!result.response.ok) {
+    throw new ApiError(result.response.status, (result.error as ApiErrorBody | undefined) ?? null);
   }
-  return payload as T;
+  return result.data as T;
 }
+
+const byId = (id: string) => ({ params: { path: { id } } });
+
+// The API documents events as plain JSON objects: `syncGame` and `exportGame` cast them to the
+// engine types (`apiTypes.ts`), which the server replay validates.
 
 export const api = {
   /** The account's kingdoms (non-abandoned games), most recently synced first. */
-  listGames: () => request<GameSummary[]>('GET', '/games'),
+  listGames: () => call<GameSummary[]>(client.GET('/games')),
   syncGame: (id: string, body: SyncGameRequest) =>
-    request<GameSummary>('PUT', `/games/${id}`, body),
-  exportGame: (id: string) => request<GameExport>('GET', `/games/${id}/export`),
-  abandonGame: (id: string) => request<undefined>('DELETE', `/games/${id}`),
+    call<GameSummary>(client.PUT('/games/{id}', { ...byId(id), body: body as never })),
+  exportGame: (id: string) =>
+    call(client.GET('/games/{id}/export', byId(id))) as unknown as Promise<GameExport>,
+  abandonGame: (id: string) => call<undefined>(client.DELETE('/games/{id}', byId(id))),
 
-  getMe: () => request<UserProfile>('GET', '/me'),
-  updateMe: (displayName: string) => request<UserProfile>('PATCH', '/me', { displayName }),
+  getMe: () => call<UserProfile>(client.GET('/me')),
+  updateMe: (displayName: string) =>
+    call<UserProfile>(client.PATCH('/me', { body: { displayName } })),
   /** Deletes the account and all its data (kingdoms, scores). */
-  deleteMe: () => request<undefined>('DELETE', '/me'),
+  deleteMe: () => call<undefined>(client.DELETE('/me')),
 
   /** Kingdoms of registered players with the best total score. */
-  kingdomLeaderboard: () => request<KingdomRanking[]>('GET', '/scores/kingdoms'),
+  kingdomLeaderboard: () => call<KingdomRanking[]>(client.GET('/scores/kingdoms')),
 };

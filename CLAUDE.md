@@ -24,24 +24,23 @@ Deck-Legacy turns an existing solo legacy deck-building board game into a free d
 
 ```text
 apps/client/          @deck-legacy/client — Expo / React Native app (runs the engine, saves locally, syncs)
-apps/server/          @deck-legacy/server — NestJS API (verifies synced games by re-execution, stores them, scores)
+apps/server/          @deck-legacy/server — NestJS API (verifies synced games by re-execution, stores them, scores); openapi.json = HTTP contract
 packages/engine/      @deck-legacy/engine — pure game engine (domain = types, application = logic)
 packages/game-data/   @deck-legacy/game-data — card definitions, stickers, deck.json, expansions/<name>/ (cards + deck.json)
-packages/api-contract/ @deck-legacy/api-contract — HTTP DTOs + zod schemas
 .claude/              agents, contracts.md, memory/EDR.md (decisions), memory/INSIGHTS.md (lessons), rules, skills
 scripts/dev.mjs       `pnpm dev` launcher; docker-compose.yml = local PostgreSQL
 ```
 
 **Where things go.**
 
-| To change…         | Edit…                                                                                                      |
-| ------------------ | ---------------------------------------------------------------------------------------------------------- |
-| A card             | `packages/game-data/src/cards/<id>.ts` + `src/locales/cards.{en,fr}.json` (skill `add-card`)               |
-| An expansion card  | `packages/game-data/src/expansions/<name>/cards/<id>.ts` + its `deck.json` + its `locales/` (EDR-042, 043) |
-| A card effect type | new strategy in `packages/engine/src/application/cardAction/`, registered in `CardActionContext`           |
-| A player action    | `GameCommand` → `GameSession.dispatch` → tests → client `GameProvider`                                     |
-| The UI             | `apps/client/src/components/<Component>/` + Storybook story                                                |
-| An API route       | `packages/api-contract` first, then `apps/server`, then the client `services/`                             |
+| To change…         | Edit…                                                                                                                  |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| A card             | `packages/game-data/src/cards/<id>.ts` + `src/locales/cards.{en,fr}.json` (skill `add-card`)                           |
+| An expansion card  | `packages/game-data/src/expansions/<name>/cards/<id>.ts` + its `deck.json` + its `locales/` (EDR-042, 043)             |
+| A card effect type | new strategy in `packages/engine/src/application/cardAction/`, registered in `CardActionContext`                       |
+| A player action    | `GameCommand` → `GameSession.dispatch` → tests → client `GameProvider`                                                 |
+| The UI             | `apps/client/src/components/<Component>/` + Storybook story                                                            |
+| An API route       | Server DTO + controller, then `pnpm generate:api` (openapi.json + client types), then the client `services/` (EDR-056) |
 
 ## 3. How
 
@@ -55,7 +54,8 @@ pnpm test                # all unit tests (test:coverage with thresholds)
 pnpm lint / typecheck / depcruise / format:check   # individual quality gates
 pnpm verify              # format + lint:fix + typecheck + depcruise + test:coverage — run before every commit
 pnpm build:packages      # rebuild shared packages (the server runs their dist/)
-pnpm --filter <workspace> <script>   # one workspace: @deck-legacy/{client,server,engine,game-data,api-contract}
+pnpm generate:api        # regenerate apps/server/openapi.json and the client API types
+pnpm --filter <workspace> <script>   # one workspace: @deck-legacy/{client,server,engine,game-data}
 ```
 
 **Git workflow.**
@@ -125,7 +125,7 @@ Major decisions already taken (details and rejected alternatives in `.claude/mem
 | Layers        | Domain imports nothing; application imports domain only; packages never import apps; game-data imports only engine domain types and enums; enforced by dependency-cruiser                                                            | 014                |
 | Repository    | pnpm monorepo; packages export TS sources (`source` condition) and CommonJS `dist/` for the server runtime; client and server must run the same engine and game data                                                                 | 022                |
 | Client        | Expo SDK 57 / React Native 0.86 + react-native-web; expo-router (`/`, `/game/{slug}-{id}`); NativeWind 4 (Tailwind v3 syntax); i18next EN/FR                                                                                         | 020, 021, 006, 038 |
-| API           | NestJS 11 in CommonJS (v12 is ESM-only, incompatible with the engine); contract-first with zod                                                                                                                                       | 026                |
+| API           | NestJS 11 in CommonJS (v12 is ESM-only, incompatible with the engine); zod DTOs → Swagger `openapi.json` → generated client types                                                                                                    | 026, 056           |
 | Data          | PostgreSQL + Prisma 7; events stored as `jsonb`, compared by content, never by serialised string                                                                                                                                     | 027                |
 | Auth          | Supabase Auth; without an account, no session and no API call (local saves only); sync starts at sign-in or sign-up                                                                                                                  | 050, 030           |
 | Sync          | Last writer wins per kingdom; a kingdom = one save, up to 10 per account and 1 without; per-game in-memory lock → a single API instance                                                                                              | 029, 038           |

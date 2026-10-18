@@ -1,6 +1,7 @@
 import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import type { CampaignSegmentScore, GameSummary } from '@deck-legacy/api-contract';
+import type { CampaignSegmentScore } from './presentation/dto/campaign-segment-score.schema';
+import type { GameSummary } from './presentation/dto/game-summary.dto';
 import type { GameCheckpoint, GameEvent, GameState } from '@deck-legacy/engine/domain/types';
 import { ConflictException, Injectable } from '@nestjs/common';
 

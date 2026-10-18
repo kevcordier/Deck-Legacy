@@ -1,6 +1,8 @@
 import { ApiExceptionFilter } from './common/api-exception.filter';
 import type { AppConfig } from './config/env';
+import { createOpenApiDocument } from './openapi';
 import type { NestExpressApplication } from '@nestjs/platform-express';
+import { SwaggerModule } from '@nestjs/swagger';
 
 /**
  * Origins allowed to call the API: the configured list (all origins when empty), plus any
@@ -27,4 +29,6 @@ export function configureApp(app: NestExpressApplication, config: AppConfig): vo
   app.useBodyParser('json', { limit: '20mb' });
   app.useGlobalFilters(new ApiExceptionFilter());
   app.enableShutdownHooks();
+  // Read-only API description (Swagger UI on /docs, JSON on /docs-json); outside the auth guard.
+  SwaggerModule.setup('docs', app, createOpenApiDocument(app));
 }
