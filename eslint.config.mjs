@@ -22,6 +22,7 @@ export default tseslint.config(
       '**/.expo',
       'apps/client/.rnstorybook/storybook.requires.ts',
       'apps/server/src/generated',
+      'apps/client/src/infrastructure/api/generated',
     ],
   }, // Base JS rules
   js.configs.recommended,

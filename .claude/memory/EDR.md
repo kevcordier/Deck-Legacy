@@ -39,7 +39,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-023 | 2026-10-10 | Moteur de jeu côté serveur uniquement        | Dépréciée par EDR-024                   |
 | EDR-024 | 2026-10-10 | Local-first, serveur valide par rejeu        | En partie remplacée par EDR-051         |
 | EDR-025 | 2026-10-10 | Compatibilité ascendante des rejeux          | Active                                  |
-| EDR-026 | 2026-10-10 | API NestJS 11 en CommonJS                    | Active                                  |
+| EDR-026 | 2026-10-10 | API NestJS 11 en CommonJS                    | En partie remplacée par EDR-056         |
 | EDR-027 | 2026-10-10 | PostgreSQL et Prisma pour la persistance     | Active                                  |
 | EDR-028 | 2026-10-10 | Supabase Auth avec invités anonymes          | Dépréciée par EDR-050                   |
 | EDR-029 | 2026-10-10 | Synchronisation : dernier écrivain gagne     | En partie remplacée par EDR-038, 041    |
@@ -67,6 +67,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-053 | 2026-10-17 | Le client reprend la partie au checkpoint    | Active                                  |
 | EDR-054 | 2026-10-18 | Fin de campagne vérifiée en fin de manche    | Active                                  |
 | EDR-055 | 2026-10-18 | Graine visible et choisie par le joueur      | Active                                  |
+| EDR-056 | 2026-10-18 | Contrat HTTP OpenAPI, types client générés   | Active                                  |
 
 ---
 
@@ -705,7 +706,7 @@ Conséquences
 ID : EDR-026
 Date : 2026-10-10
 Titre : API NestJS 11 en CommonJS
-Statut : Active
+Statut : En partie remplacée par EDR-056 (contrat HTTP)
 
 Contexte
 Le serveur de synchronisation consomme les paquets du monorepo, dont le moteur, qui utilise des imports sans extension.
@@ -1516,3 +1517,38 @@ Conséquences
 
 - Un joueur peut relancer des royaumes jusqu'à un départ favorable puis le classer : accepté.
 - La graine n'est lue qu'à la création : une sauvegarde existante garde la sienne, `?seed=` est ignoré.
+
+---
+
+ID : EDR-056
+Date : 2026-10-18
+Titre : Contrat HTTP OpenAPI, types client générés
+Statut : Active
+Remplace en partie : EDR-026 (contrat zod dans `@deck-legacy/api-contract`)
+
+Contexte
+Le contrat HTTP vivait dans `packages/api-contract` : schémas zod pour les requêtes, types de réponse écrits à la main, partagés au build par le client et le serveur. Rien ne garantissait que les types de réponse correspondaient à ce que le serveur renvoyait, et l'API n'avait aucune documentation consultable.
+
+Problème
+Comment décrire l'API une seule fois, la documenter et donner au client des types fidèles, sans paquet partagé écrit à la main ?
+
+Décision
+
+- Le serveur est la source du contrat : un DTO zod par fichier (`createZodDto` de `nestjs-zod`) dans `apps/server/src/<module>/presentation/dto/`, pour les requêtes comme pour les réponses. Les corps sont validés par `ZodValidationPipe` avec `Dto.schema` ; le format `ApiErrorBody` ne change pas.
+- `@nestjs/swagger` (v11, compatible NestJS 11) décrit l'API : Swagger UI sur `/docs`, JSON sur `/docs-json`, public et en lecture seule. Le document OpenAPI 3.0 est commité dans `apps/server/openapi.json` ; le test e2e le compare au document servi (`toMatchFileSnapshot`).
+- Le client génère ses types depuis `openapi.json` avec `openapi-typescript` (`src/infrastructure/api/generated/schema.d.ts`, commité) et appelle l'API avec `openapi-fetch`. La CI vérifie que les types générés sont à jour. `pnpm generate:api` régénère les deux.
+- Les événements et le checkpoint sont décrits comme des objets JSON ; le client les type avec le moteur, à un seul endroit (`services/apiTypes.ts`), et le serveur les valide par réexécution (EDR-051).
+- Les limites des royaumes (`KINGDOM_NAME_MAX_LENGTH`, `kingdomLimit`) vont dans `@deck-legacy/engine/domain/kingdomLimits`, seule source pour le client et le serveur.
+- Un champ `string | null` utilise `nullableStringSchema` : `@nestjs/swagger` lit le `type: ['string', 'null']` de zod comme un tableau.
+
+Alternatives rejetées
+
+- Garder `api-contract` : types de réponse sans vérification, aucune documentation.
+- DTO en classes `class-validator` et client complet généré (orval, hey-api) : réécrit la validation existante et génère beaucoup plus de code pour cinq appels.
+- OpenAPI 3.1 : `nestjs-zod` y produit encore des tableaux à la place des types nullables.
+
+Conséquences
+
+- Une route change en trois temps : DTO et contrôleur côté serveur, `pnpm generate:api`, puis l'appel côté client.
+- `openapi-typescript` 7 déclare `typescript ^5` en dépendance pair ; il fonctionne avec TypeScript 6.
+- Le script de build `@scarf/scarf` (télémétrie de swagger-ui) est refusé dans `pnpm-workspace.yaml`.

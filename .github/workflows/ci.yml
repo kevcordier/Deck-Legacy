@@ -35,6 +35,11 @@ jobs:
         run: pnpm depcruise
       - name: 🧪 Tests
         run: pnpm test:coverage
+      # openapi.json is checked by the server e2e test; the client types must match it.
+      - name: 📜 Client API types up to date
+        run: |
+          pnpm --filter @deck-legacy/client generate:api
+          git diff --exit-code -- apps/client/src/infrastructure/api/generated
       - name: 📦 Build server
         run: pnpm build:server
       - name: 📊 Report engine coverage

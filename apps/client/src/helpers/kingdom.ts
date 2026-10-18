@@ -1,6 +1,6 @@
-import { kingdomLimit } from '@deck-legacy/api-contract';
 import type { GameSession } from '@deck-legacy/engine/application/session/GameSession';
 import { Phase } from '@deck-legacy/engine/domain/enums';
+import { kingdomLimit } from '@deck-legacy/engine/domain/kingdomLimits';
 import type { KingdomSummary } from '@services/persistence';
 
 const UUID_LENGTH = 36;

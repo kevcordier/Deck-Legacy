@@ -1,7 +1,7 @@
 import { BadRequestException, type PipeTransform } from '@nestjs/common';
 import type { ZodType } from 'zod';
 
-/** Validates a request body against a zod schema from `@deck-legacy/api-contract`. */
+/** Validates a request body against a zod schema (a DTO's `schema`). */
 export class ZodValidationPipe<T> implements PipeTransform<unknown, T> {
   constructor(private readonly schema: ZodType<T>) {}
 

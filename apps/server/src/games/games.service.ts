@@ -2,12 +2,9 @@ import type { AuthUser } from '../auth/auth-user';
 import { APP_CONFIG, type AppConfig } from '../config/env';
 import { ScoresService } from '../scores/scores.service';
 import { type GameSnapshot, GamesRepository } from './games.repository';
-import {
-  type GameExport,
-  type GameSummary,
-  type SyncGameRequest,
-  kingdomLimit,
-} from '@deck-legacy/api-contract';
+import type { GameExport } from './presentation/dto/game-export.dto';
+import type { GameSummary } from './presentation/dto/game-summary.dto';
+import type { SyncGameRequest } from './presentation/dto/sync-game-request.dto';
 import {
   CorruptedGameError,
   GameSession,
@@ -15,6 +12,7 @@ import {
   checkpointSeq,
 } from '@deck-legacy/engine/application/session/GameSession';
 import { GameEventType, Phase } from '@deck-legacy/engine/domain/enums';
+import { kingdomLimit } from '@deck-legacy/engine/domain/kingdomLimits';
 import type {
   CardActionEvent,
   GameCatalog,
