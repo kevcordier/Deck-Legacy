@@ -1,6 +1,9 @@
 import { ActionEffectType, GameEventType, PendingChoiceType, Phase } from '../../domain/enums';
 import { ActionCancelledError } from '../../domain/errors/ActionCancelledError';
+import { CorruptedGameError } from '../../domain/errors/CorruptedGameError';
 import { CostResolutionError } from '../../domain/errors/CostResolutionError';
+import { ForbiddenCommandError } from '../../domain/errors/ForbiddenCommandError';
+import { UnverifiedGameError } from '../../domain/errors/UnverifiedGameError';
 import type {
   CardAction,
   CardDef,
@@ -43,15 +46,6 @@ type PendingUpgrade = {
   upgradeTo: number;
   resolvedCost: ResolvedCost;
 };
-
-/** Thrown when the session cannot be rebuilt from its persisted events. */
-export class CorruptedGameError extends Error {}
-
-/** Thrown for commands that are not allowed in the current context. */
-export class ForbiddenCommandError extends Error {}
-
-/** Thrown by `verify()` when the event log is not what the recorded commands produce. */
-export class UnverifiedGameError extends Error {}
 
 /** Commands that change nothing in the log are not recorded (rewinds remove events instead). */
 const UNRECORDED = new Set<GameCommand['type']>(['rewind', 'setCardName']);

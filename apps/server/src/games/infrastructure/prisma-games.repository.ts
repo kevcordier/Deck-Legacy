@@ -1,44 +1,14 @@
-import { Prisma } from '../generated/prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
-import type { CampaignSegmentScore } from './presentation/dto/campaign-segment-score.schema';
-import type { GameSummary } from './presentation/dto/game-summary.dto';
+import { Prisma } from '../../generated/prisma/client';
+import { PrismaService } from '../../prisma/prisma.service';
+import { toSegments } from '../../prisma/to-segments';
+import type { Transaction } from '../../prisma/transaction';
+import type { GameSummary } from '../application/dto/game-summary.dto';
+import { GamesRepository } from '../application/games.repository';
+import type { GameMeta } from '../domain/game-meta';
+import type { GameSnapshot } from '../domain/game-snapshot';
+import type { StoredGame } from '../domain/stored-game';
 import type { GameCheckpoint, GameEvent, GameState } from '@deck-legacy/engine/domain/types';
 import { ConflictException, Injectable } from '@nestjs/common';
-
-export type GameMeta = {
-  userId: string;
-  version: number;
-  checkpoint: GameCheckpoint | null;
-};
-
-export type StoredGame = {
-  id: string;
-  userId: string;
-  name: string;
-  version: number;
-  cardNames: Record<string, string>;
-  events: GameEvent[];
-  checkpoint: GameCheckpoint | null;
-  updatedAt: Date;
-};
-
-export type GameSnapshot = {
-  name: string;
-  cardNames: Record<string, string>;
-  score: number;
-  segments: CampaignSegmentScore[];
-  finished: boolean;
-  /**
-   * The log was produced by the player's commands (EDR-051). `undefined`: a log without a seed,
-   * which cannot be verified: a new game is stored unverified, a stored one keeps its flag.
-   */
-  verified?: boolean;
-  events: GameEvent[];
-  /** State kept at the start of the last round (EDR-052); `null` when there is none yet. */
-  checkpoint: GameCheckpoint | null;
-};
-
-export type Transaction = Prisma.TransactionClient;
 
 type GameRow = {
   id: string;
@@ -58,15 +28,6 @@ function toCardNames(value: Prisma.JsonValue): Record<string, string> {
     if (typeof name === 'string') names[key] = name;
   }
   return names;
-}
-
-export function toSegments(value: Prisma.JsonValue): CampaignSegmentScore[] {
-  if (!Array.isArray(value)) return [];
-  return value.flatMap(item => {
-    if (typeof item !== 'object' || item === null || Array.isArray(item)) return [];
-    const { segment, score } = item;
-    return typeof segment === 'string' && typeof score === 'number' ? [{ segment, score }] : [];
-  });
 }
 
 function eventRows(gameId: string, events: GameEvent[], fromSeq: number) {
@@ -127,8 +88,10 @@ const SUMMARY_SELECT = {
 } as const;
 
 @Injectable()
-export class GamesRepository {
-  constructor(private readonly prisma: PrismaService) {}
+export class PrismaGamesRepository extends GamesRepository {
+  constructor(private readonly prisma: PrismaService) {
+    super();
+  }
 
   /** Latest non-abandoned game of a player. */
   async findCurrent(userId: string): Promise<GameSummary | null> {

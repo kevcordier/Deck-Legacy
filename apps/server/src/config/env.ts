@@ -34,8 +34,6 @@ const envSchema = z
 
 export type AppConfig = z.infer<typeof envSchema>;
 
-export const APP_CONFIG = Symbol('APP_CONFIG');
-
 /** Parses and validates environment variables; throws with a readable message when invalid. */
 export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
   const result = envSchema.safeParse(source);

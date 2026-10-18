@@ -70,6 +70,7 @@ export default tseslint.config(
 
       // General
       'max-params': ['error', 7],
+      'max-classes-per-file': ['error', 1],
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'prefer-const': 'error',
       'no-var': 'error',
@@ -96,6 +97,16 @@ export default tseslint.config(
       '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
       // `useFactory`, `useValue`… are NestJS provider keys, not React hooks.
       '@eslint-react/no-unnecessary-use-prefix': 'off',
+    },
+  },
+  {
+    // Server domain: plain types and functions (dependency-cruiser checks the other layers).
+    files: ['apps/server/src/*/domain/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: ['@nestjs/*', 'zod', '**/generated/**', '**/prisma/**'] },
+      ],
     },
   },
 );

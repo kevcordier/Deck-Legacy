@@ -1,4 +1,5 @@
-import { APP_CONFIG, type AppConfig } from '../config/env';
+import { APP_CONFIG } from '../config/app-config.token';
+import { type AppConfig } from '../config/env';
 import { PrismaClient } from '../generated/prisma/client';
 import { Inject, Injectable, type OnModuleDestroy } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';

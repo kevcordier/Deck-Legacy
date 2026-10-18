@@ -1,28 +1,17 @@
-import { trimTrailingSlashes } from '../common/url';
-import { APP_CONFIG, type AppConfig } from '../config/env';
+import { APP_CONFIG } from '../config/app-config.token';
+import type { AppConfig } from '../config/env';
 import type { AuthUser } from './auth-user';
+import { InvalidTokenError } from './invalid-token.error';
+import { supabaseIssuer } from './supabase-issuer';
+import { SUPABASE_JWKS } from './supabase-jwks.token';
 import { Inject, Injectable } from '@nestjs/common';
-import { type JWTPayload, type JWTVerifyGetKey, createRemoteJWKSet, jwtVerify } from 'jose';
+import { type JWTPayload, type JWTVerifyGetKey, jwtVerify } from 'jose';
 
 type SupabaseClaims = JWTPayload & {
   email?: string;
   is_anonymous?: boolean;
   role?: string;
 };
-
-export class InvalidTokenError extends Error {}
-
-/** Provider of the keys that sign Supabase access tokens (the project JWKS). */
-export const SUPABASE_JWKS = Symbol('SUPABASE_JWKS');
-
-export function supabaseIssuer(config: AppConfig): string {
-  return `${trimTrailingSlashes(config.SUPABASE_URL)}/auth/v1`;
-}
-
-/** The project's public signing keys, fetched from Supabase and cached by `jose`. */
-export function remoteSupabaseJwks(config: AppConfig): JWTVerifyGetKey {
-  return createRemoteJWKSet(new URL(`${supabaseIssuer(config)}/.well-known/jwks.json`));
-}
 
 /** Verifies Supabase Auth access tokens against the project's JWKS (asymmetric signing keys). */
 @Injectable()

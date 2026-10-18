@@ -1,11 +1,15 @@
-import type { AuthUser } from '../auth/auth-user';
-import { CurrentUser } from '../auth/current-user.decorator';
-import { ApiErrorDto } from '../common/api-error.dto';
-import { ZodValidationPipe } from '../common/zod-validation.pipe';
-import { GamesService } from './games.service';
-import { type GameExport, GameExportDto } from './presentation/dto/game-export.dto';
-import { type GameSummary, GameSummaryDto } from './presentation/dto/game-summary.dto';
-import { SyncGameRequestDto } from './presentation/dto/sync-game-request.dto';
+import type { AuthUser } from '../../auth/auth-user';
+import { CurrentUser } from '../../auth/current-user.decorator';
+import { ApiErrorDto } from '../../shared/http/api-error.dto';
+import { ZodValidationPipe } from '../../shared/http/zod-validation.pipe';
+import { AbandonGameUseCase } from '../application/abandon-game.use-case';
+import { type GameExport, GameExportDto } from '../application/dto/game-export.dto';
+import { type GameSummary, GameSummaryDto } from '../application/dto/game-summary.dto';
+import { SyncGameRequestDto } from '../application/dto/sync-game-request.dto';
+import { ExportGameUseCase } from '../application/export-game.use-case';
+import { GetCurrentGameUseCase } from '../application/get-current-game.use-case';
+import { ListGamesUseCase } from '../application/list-games.use-case';
+import { SyncGameUseCase } from '../application/sync-game.use-case';
 import {
   Body,
   Controller,
@@ -13,7 +17,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Put,
@@ -31,13 +34,19 @@ import {
 @ApiDefaultResponse({ type: ApiErrorDto })
 @Controller('games')
 export class GamesController {
-  constructor(private readonly games: GamesService) {}
+  constructor(
+    private readonly listGames: ListGamesUseCase,
+    private readonly getCurrentGame: GetCurrentGameUseCase,
+    private readonly syncGame: SyncGameUseCase,
+    private readonly exportGame: ExportGameUseCase,
+    private readonly abandonGame: AbandonGameUseCase,
+  ) {}
 
   /** The player's kingdoms (non-abandoned games), most recently synced first. */
   @Get()
   @ApiOkResponse({ type: [GameSummaryDto] })
   list(@CurrentUser() user: AuthUser): Promise<GameSummary[]> {
-    return this.games.list(user.id);
+    return this.listGames.execute(user.id);
   }
 
   /**
@@ -46,17 +55,15 @@ export class GamesController {
    */
   @Get('current')
   @ApiOkResponse({ type: GameSummaryDto })
-  async current(@CurrentUser() user: AuthUser): Promise<GameSummary> {
-    const game = await this.games.getCurrent(user.id);
-    if (!game) throw new NotFoundException('No current game');
-    return game;
+  current(@CurrentUser() user: AuthUser): Promise<GameSummary> {
+    return this.getCurrentGame.execute(user.id);
   }
 
   @Delete('current')
   @ApiNoContentResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
   async abandonCurrent(@CurrentUser() user: AuthUser): Promise<void> {
-    await this.games.abandonCurrent(user.id);
+    await this.abandonGame.current(user.id);
   }
 
   /**
@@ -70,7 +77,7 @@ export class GamesController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body(new ZodValidationPipe(SyncGameRequestDto.schema)) body: SyncGameRequestDto,
   ): Promise<GameSummary> {
-    return this.games.sync(user, id, body);
+    return this.syncGame.execute(user, id, body);
   }
 
   @Get(':id/export')
@@ -79,7 +86,7 @@ export class GamesController {
     @CurrentUser() user: AuthUser,
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<GameExport> {
-    return this.games.exportGame(user.id, id);
+    return this.exportGame.execute(user.id, id);
   }
 
   @Delete(':id')
@@ -89,6 +96,6 @@ export class GamesController {
     @CurrentUser() user: AuthUser,
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<void> {
-    return this.games.abandon(user.id, id);
+    return this.abandonGame.execute(user.id, id);
   }
 }

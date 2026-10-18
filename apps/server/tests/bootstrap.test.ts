@@ -1,4 +1,4 @@
-import { isAllowedOrigin } from '../src/bootstrap';
+import { isAllowedOrigin } from '../src/is-allowed-origin';
 import { testConfig } from './helpers';
 import { describe, expect, it } from 'vitest';
 
