@@ -1,7 +1,7 @@
 import { PassiveType, TargetScope } from '../enums';
 import type { CardDef, CardInstance, GameState, Resources, Sticker } from '../types';
-import { sanitizeResources } from './getEffectiveUpgradeCost';
 import { keepGainableResources } from './keepGainableResources';
+import { sanitizeResources } from './sanitizeResources';
 import { cardSelector } from './selection/cardSelector';
 import { getActiveState } from './selection/getActiveState';
 import { getEffectiveProductions } from './selection/getEffectiveProductions';

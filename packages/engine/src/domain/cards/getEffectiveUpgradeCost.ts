@@ -3,18 +3,9 @@ import { fixResources } from '../resources/fixResources';
 import { mergeResources } from '../resources/mergeResources';
 import type { CardDef, Cost, GameState, Resources, Sticker } from '../types';
 import { removeResourceKeysFromCost } from './removeResourceKeysFromCost';
+import { sanitizeResources } from './sanitizeResources';
 import { cardSelector } from './selection/cardSelector';
 import { getRemovedResourcesForState } from './selection/getRemovedResourcesForState';
-
-export function sanitizeResources(resources: Resources): Resources {
-  return Object.entries(resources).reduce<Resources>((acc, [key, value]) => {
-    const clampedValue = Math.max(0, Number(value) || 0);
-    if (clampedValue > 0) {
-      acc[key as keyof Resources] = clampedValue;
-    }
-    return acc;
-  }, {});
-}
 
 export function getEffectiveUpgradeCost(
   baseCost: Cost,
