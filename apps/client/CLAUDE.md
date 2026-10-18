@@ -31,11 +31,11 @@ apps/client/
 ├── scripts/               # generate-illustrations.mjs, spa-fallback.mjs (dist/404.html for deep links)
 ├── src/
 │   ├── app/               # expo-router routes only: _layout.tsx (storage, fonts, i18n, auth, sync), index.tsx (home), scoreboard.tsx, game/[kingdom].tsx
-│   ├── composition/       # Wiring: kingdomStore, syncService singletons, bootstrapStorage (startup)
-│   ├── domain/            # Pure client rules: kingdom/ (types, slugify, kingdomPath…), card/ (cardNumber, findUpgradeReveal…), password/
-│   ├── application/       # Use cases and ports: ports/ (GameApi, KingdomRepository, ApiError, apiTypes), sync/SyncService, kingdom/summarizeSession
+│   ├── composition/       # Wiring: kingdomStore, syncService, kingdomUseCases singletons, bootstrapStorage (startup)
+│   ├── domain/            # Pure client rules: kingdom/ (types, commonPrefix, maxKingdoms…), card/ (cardNumber, expansionOfInstance), password/
+│   ├── application/       # Use cases and ports: ports/ (GameApi, KingdomRepository, ApiError, apiTypes), sync/SyncService, kingdom/ (CreateKingdom, RenameKingdom, AbandonKingdom, SaveGame, DiscardLocalSave, MigrateLegacySave, summarizeSession)
 │   ├── infrastructure/    # Adapters: api/ (openapi-fetch client, generated/ = GENERATED types), storage/ (storage, LocalKingdomStore), supabase/, config/, i18n/, catalog/, illustrations/, toast/
-│   ├── presentation/      # components/, contexts/, hooks/, pages/, i18n/ (card text helpers), styles/ (global.css, interop.ts, text/ defaults, themeColors…)
+│   ├── presentation/      # components/, contexts/, hooks/, pages/, routing/ (slugify, kingdomPath, kingdomIdFromParam), board/ (mergeOrder, findDrawnCards, findUpgradeReveal), i18n/, styles/
 │   ├── data/              # locales/ (EN/FR UI strings, card texts, rules), illustrations.ts (GENERATED), scenarios/
 │   └── polyfills.ts       # crypto.randomUUID on Hermes (the engine needs it)
 ├── stories/               # Storybook stories (+ storyCatalog.ts)
@@ -51,7 +51,7 @@ apps/client/
 
 `_layout.tsx` hydrates the storage and the kingdom saves (`composition/bootstrapStorage.ts`, which also migrates the single save of older versions into a kingdom), loads fonts and i18n, then renders the pages **immediately**, whatever the network. In parallel, `AuthProvider` opens a Supabase session when it can; once a user is known, `reconcile()` aligns the local kingdoms with the server. It runs again when the app comes back to the foreground and every minute, so a kingdom played on another device is picked up.
 
-- `/` — `presentation/pages/Home/Home.tsx`: without an account, a welcome screen (sign in, or play without an account, remembered in `deck_legacy_offline`); then the **kingdoms** table (`KingdomTable`: name, round and turn, total, base game, each expansion played in order with its logo and cumulative score, and a "⋮" popover menu (`Tooltip interactive`) to view the kingdom — `KingdomViewer` replays the local save in a read-only `GameProvider` and lists all its cards in one list sorted by id, with the deck viewer's search and tag filter (`FilterableCardGrid`) —, rename it (`renameKingdom` marks the save dirty so the name is pushed) or delete it) and "New kingdom" (`NewKingdomModal`: name, tutorial, optional seed — disabled with the tutorial, whose first round is scripted —, a test scenario in `__DEV__`, rules; the seed goes to the game page as `?seed=` and to `GameSession.start`, EDR-055). A kingdom is one save (EDR-038): up to 10 with an account, 1 without (`maxKingdoms`).
+- `/` — `presentation/pages/Home/Home.tsx`: without an account, a welcome screen (sign in, or play without an account, remembered in `deck_legacy_offline`); then the **kingdoms** table (`KingdomTable`: name, round and turn, total, base game, each expansion played in order with its logo and cumulative score, and a "⋮" popover menu (`Tooltip interactive`) to view the kingdom — `KingdomViewer` replays the local save in a read-only `GameProvider` and lists all its cards in one list sorted by id, with the deck viewer's search and tag filter (`FilterableCardGrid`) —, rename it (`RenameKingdom` marks the save dirty and schedules a push of the name) or delete it) and "New kingdom" (`NewKingdomModal`: name, tutorial, optional seed — disabled with the tutorial, whose first round is scripted —, a test scenario in `__DEV__`, rules; the seed goes to the game page as `?seed=` and to `GameSession.start`, EDR-055). A kingdom is one save (EDR-038): up to 10 with an account, 1 without (`maxKingdoms`).
 - `/scoreboard` — `presentation/pages/Scoreboard/Scoreboard.tsx`, opened from the home header's 🏆 button (only when accounts are available): the kingdoms of registered players with the best total score (`GET /scores/kingdoms`), shown in `KingdomTable` with `ranking` (player instead of round and turn, no open or delete). Needs the network; offline it shows `errors.network`.
 - `/game/{slug}-{id}` — `app/game/[kingdom].tsx`: opens the kingdom's save (only the trailing id of the URL counts, `kingdomIdFromParam`). A new kingdom starts its first game, or the tutorial when it was chosen. The page remounts with an info toast when the sync downloads a newer version of the kingdom, and shows a conflict modal (keep the online version or overwrite it) when both devices changed it. Unknown kingdoms redirect to `/`. The header shows the kingdom name in its center: it opens the same `KingdomMenu` popover (view the kingdom with `KingdomCards`, its destroyed cards, rename it with `RenameKingdomModal`).
 - Navigation uses the static `router` from `expo-router` (works outside a navigator, e.g. Storybook). Build paths with `kingdomPath()`.
@@ -108,20 +108,21 @@ setCardName(instanceId, name)  getCardName(instanceId)
 
 ### Path Aliases (apps/client/tsconfig.json)
 
-| Alias               | Maps to                         |
-| ------------------- | ------------------------------- |
-| `@domain/*`         | `src/domain/*`                  |
-| `@application/*`    | `src/application/*`             |
-| `@infrastructure/*` | `src/infrastructure/*`          |
-| `@composition/*`    | `src/composition/*`             |
-| `@components/*`     | `src/presentation/components/*` |
-| `@contexts/*`       | `src/presentation/contexts/*`   |
-| `@hooks/*`          | `src/presentation/hooks/*`      |
-| `@pages/*`          | `src/presentation/pages/*`      |
-| `@styles/*`         | `src/presentation/styles/*`     |
-| `@i18n/*`           | `src/presentation/i18n/*`       |
-| `@data/*`           | `src/data/*`                    |
-| `@assets/*`         | `assets/*`                      |
+| Alias               | Maps to                                 |
+| ------------------- | --------------------------------------- |
+| `@domain/*`         | `src/domain/*`                          |
+| `@application/*`    | `src/application/*`                     |
+| `@infrastructure/*` | `src/infrastructure/*`                  |
+| `@composition/*`    | `src/composition/*`                     |
+| `@components/*`     | `src/presentation/components/*`         |
+| `@contexts/*`       | `src/presentation/contexts/*`           |
+| `@hooks/*`          | `src/presentation/hooks/*`              |
+| `@pages/*`          | `src/presentation/pages/*`              |
+| `@styles/*`         | `src/presentation/styles/*`             |
+| `@i18n/*`           | `src/presentation/i18n/*`               |
+| `@presentation/*`   | `src/presentation/*` (routing/, board/) |
+| `@data/*`           | `src/data/*`                            |
+| `@assets/*`         | `assets/*`                              |
 
 **Layers (EDR-057).** `domain` imports only the engine and game data; `application` imports `domain` and its ports (plus the generated API types); `infrastructure` implements the ports and never imports the UI; `presentation` uses `application`, `domain`, the `composition` singletons and platform adapters of `infrastructure` (storage preferences, toast, catalog, API). dependency-cruiser enforces it. One public export per file, named after it (`SyncService.ts`, `useGame.ts`, `slugify.ts`); a file of related constants (`*Constants.ts`) is the only exception. No `helpers/` or `services/` folder.
 

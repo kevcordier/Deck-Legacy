@@ -2,8 +2,7 @@ import { Button } from '@components/ui/Button/Button';
 import { TextInput } from '@components/ui/Input/TextInput';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
-import { kingdomStore } from '@composition/kingdomStore';
-import { syncService } from '@composition/syncService';
+import { kingdomUseCases } from '@composition/kingdomUseCases';
 import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/engine/domain/kingdom/kingdomConstants';
 import type { KingdomMeta } from '@domain/kingdom/KingdomMeta';
 import { useState } from 'react';
@@ -23,8 +22,7 @@ export function RenameKingdomModal({ kingdom, onClose }: RenameKingdomModalProps
 
   const confirm = () => {
     if (trimmed.length === 0) return;
-    kingdomStore.rename(kingdom.id, trimmed);
-    syncService.schedule();
+    kingdomUseCases.rename.execute(kingdom.id, trimmed);
     onClose();
   };
 

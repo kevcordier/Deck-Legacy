@@ -1,6 +1,6 @@
 import { EMPTY_STATE } from '@deck-legacy/engine/domain/state/emptyState';
 import type { GameState } from '@deck-legacy/engine/domain/types';
-import { findDrawnCards } from '@domain/card/findDrawnCards';
+import { findDrawnCards } from '@presentation/board/findDrawnCards';
 import { describe, expect, it } from 'vitest';
 
 const state = (piles: Partial<GameState>): GameState => ({ ...EMPTY_STATE, ...piles });

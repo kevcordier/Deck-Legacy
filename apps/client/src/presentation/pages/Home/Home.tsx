@@ -13,19 +13,17 @@ import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
 import { TextStyle } from '@components/ui/Text/TextStyle';
 import { Title } from '@components/ui/Title/Title';
-import { kingdomStore } from '@composition/kingdomStore';
-import { syncService } from '@composition/syncService';
+import { kingdomUseCases } from '@composition/kingdomUseCases';
 import type { Scenario } from '@data/scenarios';
 import type { KingdomMeta } from '@domain/kingdom/KingdomMeta';
-import { kingdomPath } from '@domain/kingdom/kingdomPath';
 import { maxKingdoms } from '@domain/kingdom/maxKingdoms';
 import { useAuth } from '@hooks/useAuth';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useKingdoms } from '@hooks/useKingdoms';
 import { storage } from '@infrastructure/storage/storage';
 import { STORAGE_KEYS } from '@infrastructure/storage/storageKeys';
+import { kingdomPath } from '@presentation/routing/kingdomPath';
 import { FULL_SIZE, PAGE_BACKGROUND, PAGE_EDGES } from '@styles/pageConstants';
-import { randomUUID } from 'expo-crypto';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -90,18 +88,9 @@ export function Home() {
 
   const create = (name: string, tutorial: boolean, seed?: string, scenario?: Scenario) => {
     if (atLimit) return;
-    const kingdom = kingdomStore.create(randomUUID(), name);
+    const kingdom = kingdomUseCases.create.execute(name, scenario);
     setCreating(false);
     if (scenario) {
-      // The saved game opens instead of a new one; its events carry no game id.
-      kingdomStore.writeSave({
-        id: kingdom.id,
-        events: scenario.events,
-        cardNames: {},
-        savedAt: Date.now(),
-        sync: { dirty: true },
-        ...(scenario.checkpoint ? { checkpoint: scenario.checkpoint } : {}),
-      });
       router.push(kingdomPath(kingdom));
       return;
     }
@@ -111,8 +100,7 @@ export function Home() {
 
   const confirmDelete = () => {
     if (!toDelete) return;
-    kingdomStore.abandon(toDelete.id);
-    syncService.schedule();
+    kingdomUseCases.abandon.execute(toDelete.id);
     setToDelete(null);
   };
 

@@ -16,7 +16,8 @@
       "@i18n/*": ["./src/presentation/i18n/*"],
       "@data/*": ["./src/data/*"],
       "@services/*": ["./src/services/*"],
-      "@assets/*": ["./assets/*"]
+      "@assets/*": ["./assets/*"],
+      "@presentation/*": ["./src/presentation/*"]
     }
   },
   "include": [

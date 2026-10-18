@@ -10,7 +10,7 @@ import type {
   Sticker,
   TriggerEntry,
 } from '@deck-legacy/engine/domain/types';
-import type { UpgradeReveal } from '@domain/card/findUpgradeReveal';
+import type { UpgradeReveal } from '@presentation/board/findUpgradeReveal';
 import { createContext } from 'react';
 
 export type GameContextType = {
