@@ -2,7 +2,7 @@ import { StoryProviders } from './StoryProviders';
 import { baseInstances } from './storyCatalog';
 import { CardStateTooltip } from '@components/CardStateTooltip/CardStateTooltip';
 import { GameCard } from '@components/GameCard/GameCard';
-import { UpgradeIcon } from '@components/ui/Icon/icon';
+import { UpgradeIcon } from '@components/ui/Icon/icons/UpgradeIcon';
 import { Text } from '@components/ui/Text/Text';
 import { EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
 import type { Meta, StoryObj } from '@storybook/react-native';

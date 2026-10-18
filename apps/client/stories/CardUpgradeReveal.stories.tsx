@@ -1,10 +1,8 @@
 import { Dismissible } from './Dismissible';
 import { StoryProviders } from './StoryProviders';
 import { makeInstance } from './storyCatalog';
-import {
-  CardUpgradeFlip,
-  CardUpgradeReveal,
-} from '@components/CardUpgradeReveal/CardUpgradeReveal';
+import { CardUpgradeFlip } from '@components/CardUpgradeReveal/CardUpgradeFlip';
+import { CardUpgradeReveal } from '@components/CardUpgradeReveal/CardUpgradeReveal';
 import type { Meta, StoryObj } from '@storybook/react-native';
 
 const meta: Meta<typeof CardUpgradeReveal> = {

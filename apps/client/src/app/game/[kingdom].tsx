@@ -2,15 +2,15 @@ import { Button } from '@components/ui/Button/Button';
 import { ErrorBoundary } from '@components/ui/ErrorBoundary/ErrorBoundary';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
+import { kingdomStore } from '@composition/kingdomStore';
+import { syncService } from '@composition/syncService';
 import { GameProvider } from '@contexts/GameProvider';
-import { kingdomIdFromParam } from '@helpers/kingdom';
-import { toast } from '@helpers/toast';
+import { kingdomIdFromParam } from '@domain/kingdom/kingdomIdFromParam';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useKingdoms } from '@hooks/useKingdoms';
 import { useSyncStatus } from '@hooks/useSyncStatus';
+import { toast } from '@infrastructure/toast/toast';
 import { Game } from '@pages/Game/Game';
-import { loadSave } from '@services/persistence';
-import { resolveConflict, subscribeSaveReplaced } from '@services/sync';
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,7 @@ import { View } from 'react-native';
 function KingdomGame({ kingdomId }: { readonly kingdomId: string }) {
   const { tutorialEnabled } = useGameUI();
   const { seed } = useLocalSearchParams<{ seed?: string }>();
-  const [save] = useState(() => loadSave(kingdomId));
+  const [save] = useState(() => kingdomStore.loadSave(kingdomId));
   const [tutorial] = useState(() => tutorialEnabled && save === null);
 
   return (
@@ -38,11 +38,11 @@ function ConflictModal({ kingdomId }: { readonly kingdomId: string }) {
   const { t } = useTranslation();
   const status = useSyncStatus();
   const [busy, setBusy] = useState(false);
-  if (status !== 'conflict' || !loadSave(kingdomId)?.sync.conflict) return null;
+  if (status !== 'conflict' || !kingdomStore.loadSave(kingdomId)?.sync.conflict) return null;
 
   const keep = (version: 'server' | 'mine') => {
     setBusy(true);
-    void resolveConflict(kingdomId, version).finally(() => setBusy(false));
+    void syncService.resolveConflict(kingdomId, version).finally(() => setBusy(false));
   };
 
   return (
@@ -81,7 +81,7 @@ export default function GameRoute() {
   // The sync downloaded a newer version of this kingdom (played on another device).
   useEffect(
     () =>
-      subscribeSaveReplaced(id => {
+      syncService.subscribeSaveReplaced(id => {
         if (id !== kingdomId) return;
         setRevision(r => r + 1);
         toast.info(t('sync.updatedElsewhere'));

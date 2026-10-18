@@ -1,12 +1,12 @@
 import { ErrorBoundary } from '@components/ui/ErrorBoundary/ErrorBoundary';
-import { SafeAreaToast } from '@components/ui/Modal/Modal';
+import { SafeAreaToast } from '@components/ui/Modal/SafeAreaToast';
+import { bootstrapStorage } from '@composition/bootstrapStorage';
+import { syncService } from '@composition/syncService';
 import { AuthProvider } from '@contexts/AuthProvider';
 import { GameUIProvider } from '@contexts/GameUIProvider';
-import { bootstrapStorage } from '@helpers/bootstrap';
-import { useAppFonts } from '@helpers/fonts';
+import { useAppFonts } from '@hooks/useAppFonts';
 import { useAuth } from '@hooks/useAuth';
-import { isAuthConfigured } from '@services/config';
-import { reconcile, setSyncUser } from '@services/sync';
+import { isAuthConfigured } from '@infrastructure/config/isAuthConfigured';
 import '@styles/global.css';
 import '@styles/interop';
 import { Stack } from 'expo-router';
@@ -24,14 +24,14 @@ function AccountSync() {
   const userId = user && !user.isAnonymous ? user.id : null;
 
   useEffect(() => {
-    setSyncUser(userId);
-    if (userId) void reconcile(userId);
+    syncService.setUser(userId);
+    if (userId) void syncService.reconcile(userId);
   }, [userId]);
 
   // Back on the app: push local changes and pick up what other devices synced.
   useEffect(() => {
     const subscription = AppState.addEventListener('change', state => {
-      if (state === 'active' && userId) void reconcile(userId);
+      if (state === 'active' && userId) void syncService.reconcile(userId);
     });
     return () => subscription.remove();
   }, [userId]);

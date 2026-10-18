@@ -1,6 +1,6 @@
 import { createInstance } from '@deck-legacy/engine/application/factory';
 import type { CardInstance, GameCatalog } from '@deck-legacy/engine/domain/types';
-import { catalog } from '@helpers/catalog';
+import { catalog } from '@infrastructure/catalog/catalog';
 
 /** Game definitions bundled with the app. */
 export function getStoryCatalog(): GameCatalog {

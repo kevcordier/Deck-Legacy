@@ -28,7 +28,10 @@ for (const file of fs
 }
 config.cacheVersion = `${config.cacheVersion ?? ''}-md-${mdHash.digest('hex')}`;
 
-module.exports = withStorybook(withNativeWind(config, { input: './src/styles/global.css' }), {
-  enabled: process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true',
-  configPath: './.rnstorybook',
-});
+module.exports = withStorybook(
+  withNativeWind(config, { input: './src/presentation/styles/global.css' }),
+  {
+    enabled: process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true',
+    configPath: './.rnstorybook',
+  },
+);

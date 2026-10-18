@@ -1,5 +1,5 @@
 import { ExpansionChoice } from '@components/ExpansionChoice/ExpansionChoice';
-import { catalog } from '@helpers/catalog';
+import { catalog } from '@infrastructure/catalog/catalog';
 import type { Meta, StoryObj } from '@storybook/react-native';
 import { View } from 'react-native';
 
