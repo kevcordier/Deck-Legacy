@@ -1,11 +1,11 @@
 import type { AuthUser } from '../../auth/auth-user';
 import { ScoresService } from '../../scores/application/scores.service';
 import { firstDifference } from '../domain/first-difference';
-import type { GameSummary } from './dto/game-summary.dto';
-import type { SyncGameRequest } from './dto/sync-game-request.dto';
 import { GameLock } from './game-lock';
 import { GameValidator } from './game-validator';
 import { GamesRepository } from './games.repository';
+import type { GameSummary } from './models/game-summary';
+import type { SyncGameCommand } from './models/sync-game-command';
 import { staleVersionException } from './stale-version.exception';
 import { kingdomLimit } from '@deck-legacy/engine/domain/kingdom/kingdomLimit';
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -28,7 +28,7 @@ export class SyncGameUseCase {
     private readonly scores: ScoresService,
   ) {}
 
-  execute(user: AuthUser, gameId: string, body: SyncGameRequest): Promise<GameSummary> {
+  execute(user: AuthUser, gameId: string, body: SyncGameCommand): Promise<GameSummary> {
     const userId = user.id;
     const limit = kingdomLimit(user.isAnonymous);
     return this.lock.run(gameId, async () => {

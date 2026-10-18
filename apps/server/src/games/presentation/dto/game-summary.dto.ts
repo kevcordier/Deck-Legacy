@@ -1,3 +1,4 @@
+import type { GameSummary } from '../../application/models/game-summary';
 import { campaignSegmentScoreSchema } from './campaign-segment-score.schema';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
@@ -17,7 +18,5 @@ export class GameSummaryDto extends createZodDto(
     finished: z.boolean(),
     /** ISO date of the last accepted sync. */
     updatedAt: z.string(),
-  }),
+  }) satisfies z.ZodType<GameSummary>,
 ) {}
-
-export type GameSummary = z.output<typeof GameSummaryDto.schema>;

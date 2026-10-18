@@ -1,10 +1,11 @@
 import type { AuthUser } from '../../auth/auth-user';
 import { CurrentUser } from '../../auth/current-user.decorator';
-import { ApiErrorDto } from '../../shared/http/api-error.dto';
-import { ZodValidationPipe } from '../../shared/http/zod-validation.pipe';
-import { UpdateProfileRequestDto } from '../application/dto/update-profile-request.dto';
-import { type UserProfile, UserProfileDto } from '../application/dto/user-profile.dto';
+import { ApiErrorDto } from '../../shared/presentation/http/api-error.dto';
+import { ZodValidationPipe } from '../../shared/presentation/http/zod-validation.pipe';
+import type { UserProfile } from '../application/models/user-profile';
 import { UsersService } from '../application/users.service';
+import { UpdateProfileRequestDto } from './dto/update-profile-request.dto';
+import { UserProfileDto } from './dto/user-profile.dto';
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Patch } from '@nestjs/common';
 import {
   ApiBearerAuth,

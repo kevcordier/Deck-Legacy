@@ -2,7 +2,7 @@ import type { Transaction } from '../../prisma/transaction';
 import type { GameMeta } from '../domain/game-meta';
 import type { GameSnapshot } from '../domain/game-snapshot';
 import type { StoredGame } from '../domain/stored-game';
-import type { GameSummary } from './dto/game-summary.dto';
+import type { GameSummary } from './models/game-summary';
 import type { GameEvent } from '@deck-legacy/engine/domain/types';
 
 /** Storage of synced games; the Nest injection token is the class itself. */

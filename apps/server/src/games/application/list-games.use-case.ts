@@ -1,5 +1,5 @@
-import type { GameSummary } from './dto/game-summary.dto';
 import { GamesRepository } from './games.repository';
+import type { GameSummary } from './models/game-summary';
 import { Injectable } from '@nestjs/common';
 
 /** The player's kingdoms (non-abandoned games), most recently synced first. */

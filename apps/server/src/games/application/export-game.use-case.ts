@@ -1,5 +1,5 @@
-import type { GameExport } from './dto/game-export.dto';
 import { GamesRepository } from './games.repository';
+import type { GameExport } from './models/game-export';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 /** Full event log of a kingdom, to resume it on another device. */

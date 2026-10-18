@@ -1,7 +1,7 @@
 import { APP_CONFIG } from '../../config/app-config.token';
 import { type AppConfig } from '../../config/env';
 import { usesCheats } from '../domain/uses-cheats';
-import type { SyncGameRequest } from './dto/sync-game-request.dto';
+import type { SyncGameCommand } from './models/sync-game-command';
 import type { ValidatedGame } from './validated-game';
 import { GameSession } from '@deck-legacy/engine/application/session/GameSession';
 import { Phase } from '@deck-legacy/engine/domain/enums';
@@ -28,7 +28,7 @@ export class GameValidator {
   }
 
   /** Replays the events with the engine; rejects logs that cannot be replayed. */
-  validate(body: SyncGameRequest, checkpoint?: GameCheckpoint): ValidatedGame {
+  validate(body: SyncGameCommand, checkpoint?: GameCheckpoint): ValidatedGame {
     if (body.events.length === 0) {
       throw new UnprocessableEntityException('Empty event log');
     }

@@ -1,3 +1,4 @@
+import type { SyncGameCommand } from '../../application/models/sync-game-command';
 import { gameEventSchema } from './game-event.schema';
 import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/engine/domain/kingdom/kingdomConstants';
 import { createZodDto } from 'nestjs-zod';
@@ -18,7 +19,5 @@ export class SyncGameRequestDto extends createZodDto(
     cardNames: z.record(z.string(), z.string().max(60)).default({}),
     /** Kingdom name chosen by the player; metadata outside the event log. */
     name: z.string().trim().max(KINGDOM_NAME_MAX_LENGTH).default(''),
-  }),
+  }) satisfies z.ZodType<SyncGameCommand>,
 ) {}
-
-export type SyncGameRequest = z.output<typeof SyncGameRequestDto.schema>;

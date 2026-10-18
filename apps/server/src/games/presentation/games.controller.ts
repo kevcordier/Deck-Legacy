@@ -1,15 +1,17 @@
 import type { AuthUser } from '../../auth/auth-user';
 import { CurrentUser } from '../../auth/current-user.decorator';
-import { ApiErrorDto } from '../../shared/http/api-error.dto';
-import { ZodValidationPipe } from '../../shared/http/zod-validation.pipe';
+import { ApiErrorDto } from '../../shared/presentation/http/api-error.dto';
+import { ZodValidationPipe } from '../../shared/presentation/http/zod-validation.pipe';
 import { AbandonGameUseCase } from '../application/abandon-game.use-case';
-import { type GameExport, GameExportDto } from '../application/dto/game-export.dto';
-import { type GameSummary, GameSummaryDto } from '../application/dto/game-summary.dto';
-import { SyncGameRequestDto } from '../application/dto/sync-game-request.dto';
 import { ExportGameUseCase } from '../application/export-game.use-case';
 import { GetCurrentGameUseCase } from '../application/get-current-game.use-case';
 import { ListGamesUseCase } from '../application/list-games.use-case';
+import type { GameExport } from '../application/models/game-export';
+import type { GameSummary } from '../application/models/game-summary';
 import { SyncGameUseCase } from '../application/sync-game.use-case';
+import { GameExportDto } from './dto/game-export.dto';
+import { GameSummaryDto } from './dto/game-summary.dto';
+import { SyncGameRequestDto } from './dto/sync-game-request.dto';
 import {
   Body,
   Controller,

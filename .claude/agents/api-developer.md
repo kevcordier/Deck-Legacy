@@ -22,7 +22,7 @@ Read `.claude/contracts.md` before starting, then `apps/server/CLAUDE.md` and th
 
 ## Workflow
 
-1. Change the contract first: zod DTO in `<module>/application/dto/` (one per file), then `pnpm generate:api`.
+1. Change the contract first: application model in `<module>/application/models/`, zod DTO in `<module>/presentation/dto/` that `satisfies` it (one per file), then `pnpm generate:api`.
 2. Implement the server side: controller with `ZodValidationPipe(Dto.schema)` and `@ApiOkResponse`, service, repository; errors as `ApiErrorBody`.
 3. Schema change: edit `schema.prisma` and create a new migration with `pnpm db:migrate` (requires `pnpm db:up`).
 4. Run `pnpm --filter @deck-legacy/server test` (coverage thresholds apply; the e2e test checks `openapi.json`).
