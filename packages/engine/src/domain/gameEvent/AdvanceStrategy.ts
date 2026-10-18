@@ -1,4 +1,4 @@
-import { drawCards } from '../gameStateHelper';
+import { drawCards } from '../state/drawCards';
 import type { AdvanceEvent, CardDef, GameEvent, GameState, Sticker } from '../types';
 import type { GameEventStrategy } from './GameEventStrategy';
 

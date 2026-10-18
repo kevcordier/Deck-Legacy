@@ -8,7 +8,8 @@ module.exports = {
   content: [
     './src/**/*.{ts,tsx}',
     // Tag colour classes are built by the engine (`tagClass`, `tagBorderClass`).
-    '../../packages/engine/src/domain/cardHelpers.ts',
+    '../../packages/engine/src/domain/cards/tagClass.ts',
+    '../../packages/engine/src/domain/cards/tagBorderClass.ts',
     './stories/**/*.{ts,tsx}',
     './.rnstorybook/**/*.{ts,tsx}',
   ],

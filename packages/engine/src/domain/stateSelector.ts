@@ -1,7 +1,5 @@
-import { matchHaving } from './cardSelector';
+import { matchHaving } from './cards/selection/matchHaving';
 import type { CardDef, GameState, StateSelector, Sticker } from './types';
-
-export { matchHaving } from './cardSelector';
 
 export function stateSelector(
   selector: StateSelector,

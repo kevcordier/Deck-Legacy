@@ -1,5 +1,5 @@
 import { Phase } from '../enums';
-import { clearCampaignPile } from '../gameStateHelper';
+import { clearCampaignPile } from '../state/clearCampaignPile';
 import type { GameEvent, GameState } from '../types';
 import type { GameEventStrategy } from './GameEventStrategy';
 

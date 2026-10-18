@@ -1,24 +1,23 @@
-import { getDefeatAction } from './cardAction/DefeatCardStrategy';
-import {
-  canAffordCost,
-  getActiveState,
-  getAffectedCardsByBoardEffects,
-  getEffectiveActionCost,
-  getEffectiveProductions,
-  getEffectiveUpgradeCost,
-  getTotalProduction,
-} from './cardHelpers';
-import { cardSelector, countValuePerElement } from './cardSelector';
+import { getDefeatAction } from '../cardAction/getDefeatAction';
+import { canAffordCost } from '../cards/canAffordCost';
+import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
+import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
+import { cardSelector } from '../cards/selection/cardSelector';
+import { countValuePerElement } from '../cards/selection/countValuePerElement';
+import { getActiveState } from '../cards/selection/getActiveState';
+import { getAffectedCardsByBoardEffects } from '../cards/selection/getAffectedCardsByBoardEffects';
+import { getEffectiveProductions } from '../cards/selection/getEffectiveProductions';
+import { getTotalProduction } from '../cards/selection/getTotalProduction';
 import {
   ActionEffectType,
   PassiveType,
   PendingChoiceType,
   ResourceType,
   TargetScope,
-} from './enums';
-import { CardChoiceStrategy } from './playerChoice/CardChoiceStrategy';
-import { fixResources } from './resources';
-import { stateSelector } from './stateSelector';
+} from '../enums';
+import { CardChoiceStrategy } from '../playerChoice/CardChoiceStrategy';
+import { fixResources } from '../resources/fixResources';
+import { stateSelector } from '../stateSelector';
 import type {
   ActionEffect,
   CardDef,
@@ -33,9 +32,8 @@ import type {
   StateSelector,
   Sticker,
   StickerSelector,
-} from './types';
-
-export { countValuePerElement } from './cardSelector';
+} from '../types';
+import { getPickNumbers } from './getPickNumbers';
 
 const STICKER_PRODUCTION_CAP = 9;
 
@@ -57,27 +55,6 @@ interface ResolveContext {
   stickerDefs: Record<number, Sticker>;
   lastSelectedIds?: number[];
   resourceScopes?: RemovedResourceScope[];
-}
-
-export function getPickNumbers(
-  picks: {
-    pickNumber?: number;
-    pickMin?: number;
-    pickMax?: number;
-  },
-  choiceNumber?: number,
-): { pickMin: number; pickMax: number } {
-  let min = 1;
-  let max = 1;
-  if (!!picks.pickNumber || !!picks.pickMin || !!picks.pickMax) {
-    min = picks.pickMin ?? picks.pickNumber ?? min;
-    max = picks.pickMax ?? picks.pickNumber ?? max;
-  }
-
-  return {
-    pickMin: min,
-    pickMax: Math.min(max, choiceNumber ?? max),
-  };
 }
 
 function resolveTrackAdvanceEffect(

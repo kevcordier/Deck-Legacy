@@ -1,5 +1,5 @@
 import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
-import * as cardHelpers from '@engine/domain/cardHelpers';
+import * as activeState from '@engine/domain/cards/selection/getActiveState';
 import { GameEventType, Phase } from '@engine/domain/enums';
 import { GameEventContext } from '@engine/domain/gameEvent/GameEventContext';
 import type {
@@ -13,7 +13,10 @@ import type {
   TurnStartedEvent,
   UpgradeCardEvent,
 } from '@engine/domain/types';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+// Spies replace module exports shared by the code under test: restore them after each test.
+afterEach(() => vi.restoreAllMocks());
 
 const defs = {
   1: {
@@ -113,7 +116,7 @@ describe('GameEventContext', () => {
     const ctx = new GameEventContext(defs, makeStickerDefs());
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], instances: { 1: inst } });
-    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S' });
+    vi.spyOn(activeState, 'getActiveState').mockReturnValue({ id: 2, name: 'S' });
     const result = ctx.apply(gs, {
       id: 'e1',
       type: GameEventType.UPGRADE_CARD,

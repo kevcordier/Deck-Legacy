@@ -1,21 +1,8 @@
-import { PassiveType } from './enums';
-import type { CardDef, GameState, Resources, Sticker } from './types';
-
-type ResourceKey = keyof Resources;
-
-export type ResourceEquivalence = {
-  groups: ResourceKey[][];
-};
-
-function sanitizeResources(resources: Resources): Resources {
-  return Object.entries(resources).reduce<Resources>((acc, [key, value]) => {
-    const amount = Math.max(0, Number(value) || 0);
-    if (amount > 0) {
-      acc[key as ResourceKey] = amount;
-    }
-    return acc;
-  }, {});
-}
+import type { Resources } from '../types';
+import type { ResourceEquivalence } from './ResourceEquivalence';
+import type { ResourceKey } from './ResourceKey';
+import { dedupeResourceOptions } from './dedupeResourceOptions';
+import { sanitizeResources } from './sanitizeResources';
 
 function mergeResources(base: Resources, extra: Resources): Resources {
   const merged: Resources = { ...base };
@@ -24,50 +11,6 @@ function mergeResources(base: Resources, extra: Resources): Resources {
     merged[key as ResourceKey] = (merged[key as ResourceKey] ?? 0) + value;
   });
   return merged;
-}
-
-function resourceSignature(resources: Resources): string {
-  return Object.entries(resources)
-    .filter(([, value]) => value > 0)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, value]) => `${key}:${value}`)
-    .join('|');
-}
-
-export function dedupeResourceOptions(options: Resources[]): Resources[] {
-  const seen = new Set<string>();
-  return options.reduce<Resources[]>((acc, option) => {
-    const normalized = sanitizeResources(option);
-    const signature = resourceSignature(normalized);
-    if (!signature || seen.has(signature)) return acc;
-    seen.add(signature);
-    return [...acc, normalized];
-  }, []);
-}
-
-function getEquivalenceResources(passive: { resources?: Partial<Resources> }): ResourceKey[] {
-  if (!passive.resources) return [];
-  return Object.entries(passive.resources)
-    .filter(([, value]) => (value ?? 0) > 0)
-    .map(([resource]) => resource as ResourceKey);
-}
-
-export function getSourceResourceEquivalence(
-  _sourceInstanceId: number,
-  gameState: GameState,
-  _defs: Record<number, CardDef>,
-  _stickerDefs: Record<number, Sticker>,
-): ResourceEquivalence | undefined {
-  const groups = Object.entries(gameState.boardEffects).flatMap(([, passives]) =>
-    passives
-      .filter(passive => passive.type === PassiveType.RESOURCE_EQUIVALENCE)
-      .map(getEquivalenceResources)
-      .filter(resources => resources.length >= 2),
-  );
-
-  if (groups.length === 0) return undefined;
-
-  return { groups };
 }
 
 function buildGroupAllocations(

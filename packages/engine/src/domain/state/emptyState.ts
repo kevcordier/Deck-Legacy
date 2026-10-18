@@ -1,5 +1,5 @@
-import { Phase } from './enums';
-import type { GameParameters, GameState } from './types';
+import { Phase } from '../enums';
+import type { GameState } from '../types';
 
 /** Blank game state, used before a game starts and as the base for replays. */
 export const EMPTY_STATE: GameState = {
@@ -25,12 +25,4 @@ export const EMPTY_STATE: GameState = {
   campaignScores: {},
   purgedCards: [],
   purgedGlory: [],
-};
-
-/** Base game parameters, before board effects and expansion overrides. */
-export const DEFAULT_PARAMETERS: GameParameters = {
-  displayedDrawDeckCards: 1,
-  advanceCardDrawn: 2,
-  turnCardDrawn: 4,
-  discoverPerRound: 2,
 };

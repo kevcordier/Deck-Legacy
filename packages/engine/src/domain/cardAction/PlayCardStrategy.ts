@@ -1,6 +1,7 @@
-import { getActiveState, getInstancesTriggerEffects } from '../cardHelpers';
+import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
+import { getActiveState } from '../cards/selection/getActiveState';
 import { Trigger } from '../enums';
-import { removeFromDiscovery } from '../gameStateHelper';
+import { removeFromDiscovery } from '../state/removeFromDiscovery';
 import type { CardDef, GameState, Passive, ResolvedActionEffect, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 

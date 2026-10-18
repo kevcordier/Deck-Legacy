@@ -11,8 +11,9 @@ Detailed reference for `packages/engine` and `packages/game-data`. Repository-wi
 ## Layers (EDR-058)
 
 - `domain/` — the game rules: types, enums, errors, `aggregates/` (`GameAggregate` replays events), `gameEvent/` (one strategy per event), `cardAction/` (one strategy per effect), `playerChoice/`, resolvers, selectors, resources, `random`, `factory`, `emptyState`. Pure: no I/O, no framework.
-- `application/` — `session/`: `GameSession` (commands → events, pending choices in memory, `verify`, `restore`) and `playerInput` (input checks).
+- `application/` — `session/`: `GameSession` (commands → events, pending choices in memory, `verify`, `restore`) and `input/` (one guard per file: `isFlowCommandAllowed`, `isInPlay`, `sanitizeChoice`, `sanitizeCost`).
 - dependency-cruiser: the domain imports only itself; the application imports only the domain.
+- One public export per file (EDR-057): `domain/cards/` (costs, affordability, triggers, tag classes), `domain/cards/selection/` (card selector, active state, productions, glory, conditions), `domain/state/` (draw, discard, destroy, spend, empty state, `checkpointSeq`), `domain/resources/`, `domain/effects/`, `domain/kingdom/`.
 
 ## Event Sourcing
 
@@ -22,11 +23,11 @@ The game state is derived by replaying an ordered list of `GameEvent` objects. `
 - `GameSession` (`packages/engine/src/application/session/GameSession.ts`) wraps the aggregate and turns player commands (`GameCommand`) into events: guards (unknown or blocked cards are ignored), multi-step cost payment, parchment cards, automatic campaign score at game over, rewind, development cheats. It returns a `GameView` for the UI and a translatable `CommandError` for rule errors. Mid-action state (pending choices, pending upgrade) lives only in memory, never in the event log.
 - The client runs `GameSession` to play; the server uses `GameSession.verify()` to check synced logs and compute scores (`restore()` only for older games without a seed).
 - **Recorded commands (EDR-051).** `execute()` sets the commands run since the previous event on the first event they produce (`GameEvent.commands`; trigger ids become `@<source>|<actionId>|<rank>`). `verify()` restarts the game from the seed, runs them again and compares the events (ids, timestamps and random trigger keys aside), rewinding the events the player rewound.
-- **Player input is checked** in `session/playerInput.ts`: flow commands only in the phases the UI offers them, choices and cost payments rebuilt from the pending choice (offered values, pick bounds), card actions and upgrades only for cards in play, productions only for a card in play whose production gains something (and an offered choice), mandatory triggers cannot be skipped. A new command or choice type needs its check there, or a modified client can send it.
+- **Player input is checked** in `session/input/`: flow commands only in the phases the UI offers them, choices and cost payments rebuilt from the pending choice (offered values, pick bounds), card actions and upgrades only for cards in play, productions only for a card in play whose production gains something (and an offered choice), mandatory triggers cannot be skipped. A new command or choice type needs its check there, or a modified client can send it.
 - Tutorial games are real games whose first draw order is imposed (`GameSession.start(…, 'tutorial', firstDrawPile)`); the order is stored in `ROUND_STARTED` like a shuffle. They are not saved until the player keeps them (EDR-040).
 - Undo (`rewind` command) pops the last event and replays the remainder.
 - **Checkpoints (EDR-052).** `checkpointSeq(events)` gives where the server keeps a checkpoint (after the commands that drew the first turn of the last round). `GameSession.verify(…, checkpoint)` and `GameSession.restore(…, checkpoint)` start from its state and only run what follows; the earlier events stay in the log (shuffle salts use the log position). A session resumed at a checkpoint never rewinds before it (EDR-053).
-- To add a player action: add it to `GameCommand` (`domain/types/GameSession.ts`), handle it in `GameSession.dispatch`, guard it in `playerInput.ts`, test it (including `GameSession.verify`), then expose it in the client `GameProvider`.
+- To add a player action: add it to `GameCommand` (`domain/types/GameSession.ts`), handle it in `GameSession.dispatch`, guard it in `session/input/`, test it (including `GameSession.verify`), then expose it in the client `GameProvider`.
 
 ## Key Domain Types (packages/engine/src/domain/)
 

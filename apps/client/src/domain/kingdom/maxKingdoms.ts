@@ -1,4 +1,4 @@
-import { kingdomLimit } from '@deck-legacy/engine/domain/kingdomLimits';
+import { kingdomLimit } from '@deck-legacy/engine/domain/kingdom/kingdomLimit';
 
 /** Maximum number of kingdoms: one without an account, ten with a registered account. */
 export function maxKingdoms(user: { readonly isAnonymous: boolean } | null): number {

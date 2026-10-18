@@ -1,6 +1,9 @@
-import { getActiveState, getInstancesTriggerEffects, isPermanent } from '../cardHelpers';
+import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
+import { getActiveState } from '../cards/selection/getActiveState';
+import { isPermanent } from '../cards/selection/isPermanent';
 import { Trigger } from '../enums';
-import { discardCards, syncInstancePassivesInBoardEffects } from '../gameStateHelper';
+import { discardCards } from '../state/discardCards';
+import { syncInstancePassivesInBoardEffects } from '../state/syncInstancePassivesInBoardEffects';
 import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 

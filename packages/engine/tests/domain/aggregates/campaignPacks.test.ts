@@ -3,7 +3,7 @@ import { GameAggregate } from '@engine/domain/aggregates/GameAggregate';
 import { AdvanceStoryStrategy } from '@engine/domain/cardAction/AdvanceStoryStrategy';
 import { DiscoverCardStrategy } from '@engine/domain/cardAction/DiscoverCardStrategy';
 import { EndGameStrategy } from '@engine/domain/cardAction/EndGameStrategy';
-import { cardSelector } from '@engine/domain/cardSelector';
+import { cardSelector } from '@engine/domain/cards/selection/cardSelector';
 import { ActionEffectType, GameEventType, Phase, TargetScope } from '@engine/domain/enums';
 import { ExpansionSelectedStrategy } from '@engine/domain/gameEvent/ExpansionSelectedStrategy';
 import { GameEndedStrategy } from '@engine/domain/gameEvent/GameEndedStrategy';

@@ -6,7 +6,7 @@ import { TextInput } from '@components/ui/Input/TextInput';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
 import { SCENARIOS, type Scenario } from '@data/scenarios';
-import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/engine/domain/kingdomLimits';
+import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/engine/domain/kingdom/kingdomConstants';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';

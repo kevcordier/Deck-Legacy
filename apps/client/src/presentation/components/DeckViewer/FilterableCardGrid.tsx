@@ -5,11 +5,9 @@ import { ChevronDownIcon } from '@components/ui/Icon/icons/ChevronDownIcon';
 import { SelectInput } from '@components/ui/Input/SelectInput';
 import { TextInput } from '@components/ui/Input/TextInput';
 import { Text } from '@components/ui/Text/Text';
-import {
-  getActiveState,
-  getEffectiveGlory,
-  getProductionChoicesForAction,
-} from '@deck-legacy/engine/domain/cardHelpers';
+import { getProductionChoicesForAction } from '@deck-legacy/engine/domain/cards/getProductionChoicesForAction';
+import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
+import { getEffectiveGlory } from '@deck-legacy/engine/domain/cards/selection/getEffectiveGlory';
 import { type CardTag, PassiveType, ResourceType } from '@deck-legacy/engine/domain/enums';
 import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import { useGame } from '@hooks/useGame';

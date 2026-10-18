@@ -1,8 +1,8 @@
 import { baseInstances, makeInstance } from '../storyCatalog';
 import { GameProvider } from '@contexts/GameProvider';
 import { GameUIProvider } from '@contexts/GameUIProvider';
-import { EMPTY_STATE } from '@deck-legacy/engine/domain/emptyState';
 import { Phase } from '@deck-legacy/engine/domain/enums';
+import { EMPTY_STATE } from '@deck-legacy/engine/domain/state/emptyState';
 import type { GameState } from '@deck-legacy/engine/domain/types';
 import { Game } from '@pages/Game/Game';
 import type { Meta, StoryObj } from '@storybook/react-native';

@@ -1,4 +1,4 @@
-import { getActiveState } from '../cardHelpers';
+import { getActiveState } from '../cards/selection/getActiveState';
 import type { CardDef, GameState, PendingChoice, ResolvedActionEffect } from '../types';
 import type { PlayerChoiceStrategy } from './PlayerChoiceStrategy';
 

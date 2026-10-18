@@ -1,4 +1,4 @@
-import { mergeResources } from '../gameStateHelper';
+import { mergeResources } from '../resources/mergeResources';
 import type { GameState, PendingChoice, ResolvedActionEffect } from '../types';
 import type { PlayerChoiceStrategy } from './PlayerChoiceStrategy';
 

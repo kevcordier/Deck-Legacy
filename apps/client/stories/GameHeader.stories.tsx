@@ -1,6 +1,6 @@
 import { StoryProviders } from './StoryProviders';
 import { GameHeader } from '@components/GameHeader/GameHeader';
-import { EMPTY_STATE } from '@deck-legacy/engine/domain/emptyState';
+import { EMPTY_STATE } from '@deck-legacy/engine/domain/state/emptyState';
 import type { Meta, StoryObj } from '@storybook/react-native';
 
 type GameHeaderProps = {

@@ -1,6 +1,6 @@
-import { getInstancesTriggerEffects } from '../cardHelpers';
+import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { Phase, Trigger } from '../enums';
-import { drawCards } from '../gameStateHelper';
+import { drawCards } from '../state/drawCards';
 import type {
   CardDef,
   GameEvent,

@@ -62,7 +62,7 @@ Imports inside the server are relative; shared code comes from `@deck-legacy/eng
 - The score, the finished flag and `gameState.campaignScores` come from the server's own run (re-execution, or replay for unverified games), never from the client. Campaign scores are mirrored into `Score` in the same transaction. `Game.segments` stores the segment scores in the order they were played (`GameSession.getCampaignSegments()`), for the client's home page.
 - The repository rewrites the stored log from the first event that differs (`firstDifference`), so rewinds and appends only touch the changed tail. Each accepted sync bumps `Game.version`.
 - **Optimistic versioning** (EDR-041): a device that is behind gets `409 STALE_VERSION` and the player chooses which version to keep (see `apps/client/CLAUDE.md`). Syncs of the same game are serialised by an in-memory lock (`GameLock`), which assumes a **single server instance**.
-- Re-execution proves every move was legal for the engine, not that the player did not know the seed (it is in the log). It is only as strong as the engine's input checks (`packages/engine/src/application/session/playerInput.ts`). `tests/verification.fuzz.test.ts` plays random games on the real data and must keep verifying them.
+- Re-execution proves every move was legal for the engine, not that the player did not know the seed (it is in the log). It is only as strong as the engine's input checks (`packages/engine/src/application/session/input/`). `tests/verification.fuzz.test.ts` plays random games on the real data and must keep verifying them.
 - Engine or game-data changes must keep old event logs replayable, or synced games will be refused.
 
 ---

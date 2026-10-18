@@ -20,19 +20,17 @@ import { StickerDisplay } from '@components/ui/StickerDisplay/StickerDisplay';
 import { Tag } from '@components/ui/Tag/Tag';
 import { Text } from '@components/ui/Text/Text';
 import { TextStyle } from '@components/ui/Text/TextStyle';
-import {
-  canAffordCost,
-  cardIsBlocked,
-  getActiveState,
-  getEffectiveGlory,
-  getEffectiveUpgradeCost,
-  getProductionChoicesForAction,
-  isPermanent,
-  tagClass,
-} from '@deck-legacy/engine/domain/cardHelpers';
-import { getPickNumbers } from '@deck-legacy/engine/domain/effectResolver';
+import { canAffordCost } from '@deck-legacy/engine/domain/cards/canAffordCost';
+import { cardIsBlocked } from '@deck-legacy/engine/domain/cards/cardIsBlocked';
+import { getEffectiveUpgradeCost } from '@deck-legacy/engine/domain/cards/getEffectiveUpgradeCost';
+import { getProductionChoicesForAction } from '@deck-legacy/engine/domain/cards/getProductionChoicesForAction';
+import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
+import { getEffectiveGlory } from '@deck-legacy/engine/domain/cards/selection/getEffectiveGlory';
+import { isPermanent } from '@deck-legacy/engine/domain/cards/selection/isPermanent';
+import { tagClass } from '@deck-legacy/engine/domain/cards/tagClass';
+import { getPickNumbers } from '@deck-legacy/engine/domain/effects/getPickNumbers';
 import { Options } from '@deck-legacy/engine/domain/enums';
-import { canUseOptions } from '@deck-legacy/engine/domain/gameStateHelper';
+import { canUseOptions } from '@deck-legacy/engine/domain/state/canUseOptions';
 import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import { cardNumber } from '@domain/card/cardNumber';
 import { useGame } from '@hooks/useGame';

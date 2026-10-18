@@ -1,5 +1,5 @@
 import { gameEventSchema } from './game-event.schema';
-import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/engine/domain/kingdomLimits';
+import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/engine/domain/kingdom/kingdomConstants';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 

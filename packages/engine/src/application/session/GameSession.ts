@@ -1,20 +1,20 @@
-import { GameAggregate, eventDrewCards } from '../../domain/aggregates/GameAggregate';
+import { GameAggregate } from '../../domain/aggregates/GameAggregate';
+import { eventDrewCards } from '../../domain/aggregates/eventDrewCards';
 import { type CampaignSegment, getCampaignSegments } from '../../domain/campaignSegments';
-import {
-  cardIsBlocked,
-  getActiveState,
-  getEffectiveUpgradeCost,
-  getProductionChoicesForAction,
-} from '../../domain/cardHelpers';
+import { cardIsBlocked } from '../../domain/cards/cardIsBlocked';
+import { getEffectiveUpgradeCost } from '../../domain/cards/getEffectiveUpgradeCost';
+import { getProductionChoicesForAction } from '../../domain/cards/getProductionChoicesForAction';
+import { getActiveState } from '../../domain/cards/selection/getActiveState';
 import { resolveCost } from '../../domain/costResolver';
-import { EMPTY_STATE } from '../../domain/emptyState';
 import { ActionEffectType, GameEventType, PendingChoiceType, Phase } from '../../domain/enums';
 import { ActionCancelledError } from '../../domain/errors/ActionCancelledError';
 import { CorruptedGameError } from '../../domain/errors/CorruptedGameError';
 import { CostResolutionError } from '../../domain/errors/CostResolutionError';
 import { ForbiddenCommandError } from '../../domain/errors/ForbiddenCommandError';
 import { UnverifiedGameError } from '../../domain/errors/UnverifiedGameError';
-import { mergeResources } from '../../domain/gameStateHelper';
+import { mergeResources } from '../../domain/resources/mergeResources';
+import { EMPTY_STATE } from '../../domain/state/emptyState';
+import { nextRecordedEvent } from '../../domain/state/nextRecordedEvent';
 import type {
   CardAction,
   CardDef,
@@ -30,9 +30,11 @@ import type {
   PendingChoice,
   ResolvedActionEffect,
   ResolvedCost,
-  TurnStartedEvent,
 } from '../../domain/types';
-import { isFlowCommandAllowed, isInPlay, sanitizeChoice, sanitizeCost } from './playerInput';
+import { isFlowCommandAllowed } from './input/isFlowCommandAllowed';
+import { isInPlay } from './input/isInPlay';
+import { sanitizeChoice } from './input/sanitizeChoice';
+import { sanitizeCost } from './input/sanitizeCost';
 
 export type GameSessionOptions = {
   /** Development only: rewind any event, even ones that revealed cards. */
@@ -49,6 +51,7 @@ type PendingUpgrade = {
 
 /** Commands that change nothing in the log are not recorded (rewinds remove events instead). */
 const UNRECORDED = new Set<GameCommand['type']>(['rewind', 'setCardName']);
+
 const TRIGGER_REF = '@';
 
 /**
@@ -110,26 +113,6 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function eventContent(event: GameEvent): string {
   const { id: _id, timestamp: _timestamp, commands: _commands, ...rest } = event;
   return JSON.stringify(canonical(JSON.parse(JSON.stringify(rest))));
-}
-
-function nextRecordedEvent(events: GameEvent[], from: number): number {
-  let index = from;
-  while (index < events.length && !events[index].commands) index += 1;
-  return index;
-}
-
-/**
- * Where the server may keep a checkpoint (EDR-052): after the commands that drew the first turn of
- * the last round (a normal rewind never goes back past a draw), when later commands follow them.
- * Returns 0 when there is no such point yet.
- */
-export function checkpointSeq(events: GameEvent[]): number {
-  const firstTurn = events.findLastIndex(
-    event => event.type === GameEventType.TURN_STARTED && (event as TurnStartedEvent).turn === 1,
-  );
-  if (firstTurn < 0) return 0;
-  const seq = nextRecordedEvent(events, firstTurn + 1);
-  return seq < events.length ? seq : 0;
 }
 
 const CHOICE_TYPES = new Set<string>(Object.values(PendingChoiceType));

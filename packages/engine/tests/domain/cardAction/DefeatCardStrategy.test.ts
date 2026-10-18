@@ -1,7 +1,7 @@
 import { makeInstance, makeState } from '../fixtures';
 import { GameAggregate } from '@engine/domain/aggregates/GameAggregate';
 import { DefeatCardStrategy } from '@engine/domain/cardAction/DefeatCardStrategy';
-import { resolveActionEffect } from '@engine/domain/effectResolver';
+import { resolveActionEffect } from '@engine/domain/effects/resolveActionEffect';
 import { ActionEffectType, CardTag, Phase, TargetScope, Trigger } from '@engine/domain/enums';
 import type { CardDef, GameState } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';

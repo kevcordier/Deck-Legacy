@@ -1,9 +1,7 @@
 import { makeInstance, makeState, makeStickerDefs } from './fixtures';
-import {
-  countValuePerElement,
-  getPickNumbers,
-  resolveActionEffect,
-} from '@engine/domain/effectResolver';
+import { countValuePerElement } from '@engine/domain/cards/selection/countValuePerElement';
+import { getPickNumbers } from '@engine/domain/effects/getPickNumbers';
+import { resolveActionEffect } from '@engine/domain/effects/resolveActionEffect';
 import { ActionEffectType, PassiveType, ResourceType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, RemovedResourceScope, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';

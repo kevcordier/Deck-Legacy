@@ -9,7 +9,3 @@ export const MAX_KINGDOMS_PER_ACCOUNT = 10;
 
 /** Maximum number of kingdoms for a guest (anonymous) or offline player. */
 export const MAX_KINGDOMS_PER_GUEST = 1;
-
-export function kingdomLimit(isAnonymous: boolean): number {
-  return isAnonymous ? MAX_KINGDOMS_PER_GUEST : MAX_KINGDOMS_PER_ACCOUNT;
-}

@@ -1,5 +1,5 @@
 import { makeInstance, makeState } from './fixtures';
-import { getTotalResourceProduction } from '@engine/domain/cardHelpers';
+import { getTotalResourceProduction } from '@engine/domain/cards/selection/getTotalResourceProduction';
 import { ResourceType } from '@engine/domain/enums';
 import type { CardDef, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';

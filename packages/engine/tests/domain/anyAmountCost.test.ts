@@ -1,8 +1,10 @@
 import { makeInstance, makeState } from './fixtures';
 import { GameAggregate } from '@engine/domain/aggregates/GameAggregate';
-import { canAffordCost, getEffectiveActionCost } from '@engine/domain/cardHelpers';
+import { canAffordCost } from '@engine/domain/cards/canAffordCost';
+import { getEffectiveActionCost } from '@engine/domain/cards/getEffectiveActionCost';
 import { ActionEffectType, CardTag, Phase, ResourceType, TargetScope } from '@engine/domain/enums';
-import { fixResources, hasAnyAmountCost } from '@engine/domain/resources';
+import { fixResources } from '@engine/domain/resources/fixResources';
+import { hasAnyAmountCost } from '@engine/domain/resources/hasAnyAmountCost';
 import type { CardAction, CardDef, GameState } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 

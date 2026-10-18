@@ -4,7 +4,7 @@ import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
 import { kingdomStore } from '@composition/kingdomStore';
 import { syncService } from '@composition/syncService';
-import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/engine/domain/kingdomLimits';
+import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/engine/domain/kingdom/kingdomConstants';
 import type { KingdomMeta } from '@domain/kingdom/KingdomMeta';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
