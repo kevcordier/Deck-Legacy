@@ -20,7 +20,8 @@
       "@data/*": ["./apps/client/src/data/*"],
       "@services/*": ["./apps/client/src/services/*"],
       "@assets/*": ["./apps/client/assets/*"],
-      "@engine/*": ["./packages/engine/src/*"]
+      "@engine/*": ["./packages/engine/src/*"],
+      "@presentation/*": ["./apps/client/src/presentation/*"]
     }
   },
   "include": ["apps/*/src/**/*", "packages/*/src/**/*"]

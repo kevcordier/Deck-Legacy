@@ -1,4 +1,4 @@
-import { mergeOrder } from '@domain/card/mergeOrder';
+import { mergeOrder } from '@presentation/board/mergeOrder';
 import { describe, expect, it } from 'vitest';
 
 describe('mergeOrder', () => {

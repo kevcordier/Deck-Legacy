@@ -1,7 +1,6 @@
-import { kingdomIdFromParam } from '@domain/kingdom/kingdomIdFromParam';
-import { kingdomPath } from '@domain/kingdom/kingdomPath';
-import { maxKingdoms } from '@domain/kingdom/maxKingdoms';
-import { slugify } from '@domain/kingdom/slugify';
+import { kingdomIdFromParam } from '@presentation/routing/kingdomIdFromParam';
+import { kingdomPath } from '@presentation/routing/kingdomPath';
+import { slugify } from '@presentation/routing/slugify';
 import { describe, expect, it } from 'vitest';
 
 const ID = '9c1e7d24-6b8a-4c3f-8e21-7a5d3f9b0c42';
@@ -31,13 +30,5 @@ describe('kingdom paths', () => {
     expect(kingdomIdFromParam(undefined)).toBeNull();
     expect(kingdomIdFromParam('avalon')).toBeNull();
     expect(kingdomIdFromParam(`avalon-${ID.slice(0, -1)}z`)).toBeNull();
-  });
-});
-
-describe('maxKingdoms', () => {
-  it('allows ten kingdoms with an account and one otherwise', () => {
-    expect(maxKingdoms({ isAnonymous: false })).toBe(10);
-    expect(maxKingdoms({ isAnonymous: true })).toBe(1);
-    expect(maxKingdoms(null)).toBe(1);
   });
 });

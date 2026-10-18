@@ -1,6 +1,6 @@
 import { Button } from '@components/ui/Button/Button';
 import { EmptyState } from '@components/ui/EmptyState/EmptyState';
-import { kingdomStore } from '@composition/kingdomStore';
+import { kingdomUseCases } from '@composition/kingdomUseCases';
 import { CorruptedSaveError } from '@deck-legacy/engine/domain/errors/CorruptedSaveError';
 import { reloadAppAsync } from 'expo';
 import type { ReactNode } from 'react';
@@ -23,8 +23,7 @@ function ErrorFallback({ error, kingdomId }: Readonly<FallbackProps & { kingdomI
   };
 
   const clearSaveAndReload = () => {
-    // Only the local copy is removed: the server copy (validated on sync) can be restored.
-    if (kingdomId) kingdomStore.delete(kingdomId);
+    if (kingdomId) kingdomUseCases.discardLocalSave.execute(kingdomId);
     void reloadAppAsync();
   };
 

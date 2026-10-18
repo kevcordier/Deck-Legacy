@@ -1,7 +1,7 @@
 import { GameEventType } from '@deck-legacy/engine/domain/enums';
 import { EMPTY_STATE } from '@deck-legacy/engine/domain/state/emptyState';
 import type { CardInstance, GameEvent, GameState } from '@deck-legacy/engine/domain/types';
-import { findUpgradeReveal } from '@domain/card/findUpgradeReveal';
+import { findUpgradeReveal } from '@presentation/board/findUpgradeReveal';
 import { describe, expect, it } from 'vitest';
 
 const instance = (id: number, stateId: number): CardInstance => ({

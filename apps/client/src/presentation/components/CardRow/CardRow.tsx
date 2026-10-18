@@ -18,9 +18,9 @@ import type {
   Passive,
   Sticker,
 } from '@deck-legacy/engine/domain/types';
-import { mergeOrder } from '@domain/card/mergeOrder';
 import { useGame } from '@hooks/useGame';
 import { useIsDesktop } from '@hooks/useIsDesktop';
+import { mergeOrder } from '@presentation/board/mergeOrder';
 import { type ReactNode, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type LayoutChangeEvent, View } from 'react-native';

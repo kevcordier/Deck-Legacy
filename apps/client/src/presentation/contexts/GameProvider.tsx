@@ -1,7 +1,5 @@
 import { GameContext, type GameContextType } from './GameContext';
-import { summarizeSession } from '@application/kingdom/summarizeSession';
-import { kingdomStore } from '@composition/kingdomStore';
-import { syncService } from '@composition/syncService';
+import { kingdomUseCases } from '@composition/kingdomUseCases';
 import {
   GameSession,
   type GameSessionOptions,
@@ -19,11 +17,11 @@ import type {
   GameView,
 } from '@deck-legacy/engine/domain/types';
 import { TUTORIAL_DRAW_ORDER } from '@deck-legacy/game-data';
-import { findDrawnCards } from '@domain/card/findDrawnCards';
-import { type UpgradeReveal, findUpgradeReveal } from '@domain/card/findUpgradeReveal';
 import type { SaveData } from '@domain/kingdom/SaveData';
 import { catalog } from '@infrastructure/catalog/catalog';
 import { toast } from '@infrastructure/toast/toast';
+import { findDrawnCards } from '@presentation/board/findDrawnCards';
+import { type UpgradeReveal, findUpgradeReveal } from '@presentation/board/findUpgradeReveal';
 import { randomUUID } from 'expo-crypto';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -148,13 +146,7 @@ export function GameProvider({
     const signature = signatureOf(session);
     if (signature === persistedRef.current) return;
     persistedRef.current = signature;
-    kingdomStore.saveGame(
-      session.id,
-      session.getEvents(),
-      session.getCardNames(),
-      summarizeSession(session),
-    );
-    syncService.schedule();
+    kingdomUseCases.saveGame.execute(session);
   }, []);
 
   useEffect(() => {
