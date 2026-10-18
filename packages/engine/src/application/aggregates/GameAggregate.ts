@@ -54,7 +54,7 @@ import {
 import { cardSelector } from '../cardSelector';
 import { DEFAULT_PARAMETERS } from '../emptyState';
 import { GameEventContext } from '../gameEvent/GameEventContext';
-import { canUseOptions, computeGameStateDiff } from '../gameStateHelper';
+import { canUseOptions, computeGameStateDiff, isLastRound } from '../gameStateHelper';
 import { shuffle } from '../random';
 import { CardActionAggregate } from './CardActionAggregate';
 
@@ -116,9 +116,10 @@ export class GameAggregate {
     return true;
   }
 
+  /** Replays events after the ones already in the log. */
   public loadFromHistory(events: GameEvent[]): GameState {
     events.forEach(event => this.apply(event));
-    this.events = events;
+    this.events = [...this.events, ...events];
     return this.gameState;
   }
 
@@ -228,7 +229,11 @@ export class GameAggregate {
     return focused.length > 0 ? focused : candidates;
   }
 
-  private getCurrentBatchStartAndCandidates(): { batchStart: number; candidates: number[] } | null {
+  private getCurrentBatchStartAndCandidates(): {
+    batchStart: number;
+    batch: number[];
+    candidates: number[];
+  } | null {
     const purgeState = this.gameState.purgeState;
     if (!purgeState) return null;
 
@@ -239,16 +244,16 @@ export class GameAggregate {
         continue;
       }
 
-      const batch = purgeState.shuffledPool.slice(batchStart, batchStart + purgeState.batchSize);
-      const candidates = batch.filter(
-        id =>
-          !purgeState.selectedCardIds.includes(id) &&
-          !this.gameState.purgedCards.includes(id) &&
-          !this.isNegative(id),
-      );
+      const batch = purgeState.shuffledPool
+        .slice(batchStart, batchStart + purgeState.batchSize)
+        .filter(
+          id =>
+            !purgeState.selectedCardIds.includes(id) && !this.gameState.purgedCards.includes(id),
+        );
+      const candidates = batch.filter(id => !this.isNegative(id));
 
       if (candidates.length > 0) {
-        return { batchStart, candidates: this.applyPurgeFocus(candidates) };
+        return { batchStart, batch, candidates: this.applyPurgeFocus(candidates) };
       }
 
       batchStart += purgeState.batchSize;
@@ -259,6 +264,11 @@ export class GameAggregate {
 
   public getPurgeCandidates(): number[] {
     return this.getCurrentBatchStartAndCandidates()?.candidates ?? [];
+  }
+
+  /** Unselected cards of the current batch, including those the player cannot pick. */
+  public getPurgeBatch(): number[] {
+    return this.getCurrentBatchStartAndCandidates()?.batch ?? [];
   }
 
   public getPurgePermanentCandidates(): number[] {
@@ -502,7 +512,7 @@ export class GameAggregate {
       Object.keys(this.gameState.triggerPile).length === 0 &&
       this.gameState.phase === Phase.ROUND_END &&
       hasCards &&
-      !this.gameState.isLastRound
+      !this.isLastRound()
     ) {
       return this.roundStarted();
     }
@@ -528,8 +538,8 @@ export class GameAggregate {
     const cardNumberToDiscover = round > 1 ? this.getParameters().discoverPerRound : 0;
     // A game started with a single discovery pile keeps the former rules (EDR-045).
     const twoPacks = this.gameState.discoverablePile !== undefined;
-    if (twoPacks && cardNumberToDiscover > 0 && this.gameState.discoveryPile.length === 0) {
-      // Nothing left to discover in the campaign pile: the campaign ends.
+    if (twoPacks && this.gameState.discoveryPile.length < cardNumberToDiscover) {
+      // Not enough cards left to discover in the campaign pile: the campaign ends.
       return this.endGame();
     }
     const lastAddedCards: number[] = [];
@@ -712,6 +722,10 @@ export class GameAggregate {
     return this.gameState;
   }
 
+  public isLastRound(): boolean {
+    return isLastRound(this.gameState, this.getParameters());
+  }
+
   public getParameters(): GameParameters {
     return Object.values(this.gameState.boardEffects)
       .flat()
@@ -762,8 +776,10 @@ export class GameAggregate {
     const allRoundInstances = [...this.gameState.permanents, ...this.gameState.board].map(
       id => this.gameState.instances[id],
     );
+    // Cards paid for the upgrade leave play before the turn ends: their triggers do not fire.
+    const leavingIds = new Set([cardInstanceId, ...discardedCardIds, ...destroyedCardIds]);
     const triggers = getInstancesTriggerEffects(
-      allRoundInstances.filter(instance => instance.id !== cardInstanceId),
+      allRoundInstances.filter(instance => !leavingIds.has(instance.id)),
       this.cardDefs,
       this.stickerDefs,
       Trigger.END_OF_TURN,

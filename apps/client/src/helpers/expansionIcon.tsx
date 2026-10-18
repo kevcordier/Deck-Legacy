@@ -5,6 +5,7 @@ import {
   RiddingTheWoodsIcon,
   WaterMillIcon,
 } from '@components/ui/Icon/icon';
+import { IconColors } from '@components/ui/Icon/iconColors';
 import type { CardInstance, ExpansionConfig } from '@deck-legacy/engine/domain/types';
 import type { ComponentType } from 'react';
 
@@ -19,9 +20,17 @@ const EXPANSION_ICONS: Record<string, ComponentType<IconProps>> = {
   'Ridding the Woods': RiddingTheWoodsIcon,
 };
 
-export function ExpansionIcon({ expansion, ...props }: IconProps & { readonly expansion: string }) {
+/** Colors replacing a logo's own on a dark page background (logos are drawn for the card parchment). */
+const ON_DARK_COLORS: Record<string, string> = { 'The Water Mill': IconColors.woodLight };
+
+export function ExpansionIcon({
+  expansion,
+  onDark = false,
+  ...props
+}: IconProps & { readonly expansion: string; readonly onDark?: boolean }) {
   const Icon = EXPANSION_ICONS[expansion];
-  return Icon ? <Icon {...props} /> : null;
+  const color = onDark ? ON_DARK_COLORS[expansion] : undefined;
+  return Icon ? <Icon color={color} {...props} /> : null;
 }
 
 /** Name of the expansion that brings the card instance into the game, if any (base deck otherwise). */

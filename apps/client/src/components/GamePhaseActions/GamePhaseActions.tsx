@@ -4,9 +4,9 @@ import { Checkbox } from '@components/ui/Checkbox/Checkbox';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
 import { GameUIContext } from '@contexts/GameUIContext';
-import { canUseOptions } from '@deck-legacy/engine/application/gameStateHelper';
+import { canUseOptions, isLastRound } from '@deck-legacy/engine/application/gameStateHelper';
 import { Options, Phase } from '@deck-legacy/engine/domain/enums';
-import type { GameState } from '@deck-legacy/engine/domain/types/GameState';
+import type { GameParameters, GameState } from '@deck-legacy/engine/domain/types/GameState';
 import { use, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -15,7 +15,7 @@ interface GamePhaseActionsProps {
   readonly gameState: GameState;
   readonly deckEmpty: boolean;
   readonly haveChoiceToDo: boolean;
-  readonly parameters: { advanceCardDrawn: number; displayedDrawDeckCards: number };
+  readonly parameters: GameParameters;
   readonly progress: () => void;
   readonly endTurnVoluntary: () => void;
   readonly startTurn: () => void;
@@ -160,7 +160,7 @@ export function GamePhaseActions({
 
   const action = getPhaseAction(
     gameState.phase,
-    gameState.isLastRound,
+    isLastRound(gameState, parameters),
     gameState.drawPile.length,
     t,
     startTurn,

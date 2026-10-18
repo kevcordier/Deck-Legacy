@@ -5,7 +5,7 @@ import {
   GameSession,
 } from '@engine/application/session/GameSession';
 import { GameEventType, Phase } from '@engine/domain/enums';
-import type { GameEvent } from '@engine/domain/types';
+import type { GameEvent, GameState } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
 function startGame(options = DEFAULT_OPTIONS) {
@@ -108,6 +108,58 @@ describe('GameSession commands', () => {
     session.execute({ type: 'resolveUpgrade', instanceId, upgradeTo: 2 });
 
     expect(session.getState().instances[instanceId].stateId).toBe(1);
+  });
+
+  describe('production of a card that produces nothing', () => {
+    const WORKSHOP = 9;
+    const PERMANENT_WORKSHOP = 10;
+
+    /** Workshops (no production): one on the board, one in the permanents. */
+    function withWorkshops(): GameSession {
+      const state = JSON.parse(JSON.stringify(startGame().getState())) as GameState;
+      const moved = new Set([WORKSHOP, PERMANENT_WORKSHOP]);
+      state.drawPile = state.drawPile.filter(id => !moved.has(id));
+      state.discardPile = state.discardPile.filter(id => !moved.has(id));
+      state.board = [...state.board.filter(id => !moved.has(id)), WORKSHOP];
+      state.permanents = [PERMANENT_WORKSHOP];
+      return GameSession.restore(
+        'game-1',
+        [],
+        makeCatalog(),
+        DEFAULT_OPTIONS,
+        {},
+        { seq: 0, state },
+      );
+    }
+
+    it('ignores it on the board', () => {
+      const session = withWorkshops();
+      session.execute({ type: 'resolveProduction', instanceId: WORKSHOP, choiceIndex: 0 });
+
+      expect(session.getEvents()).toHaveLength(0);
+      expect(session.getState().board).toContain(WORKSHOP);
+    });
+
+    it('ignores it in the permanents, which would put the card in two piles', () => {
+      const session = withWorkshops();
+      session.execute({
+        type: 'resolveProduction',
+        instanceId: PERMANENT_WORKSHOP,
+        choiceIndex: 0,
+      });
+
+      expect(session.getEvents()).toHaveLength(0);
+      expect(session.getState().discardPile).not.toContain(PERMANENT_WORKSHOP);
+    });
+
+    it('ignores a production choice the card does not offer', () => {
+      const session = withWorkshops();
+      const field = boardCard(session);
+      session.execute({ type: 'resolveProduction', instanceId: field, choiceIndex: 5 });
+
+      expect(session.getEvents()).toHaveLength(0);
+      expect(session.getState().board).toContain(field);
+    });
   });
 
   it('ignores actions that do not exist on the card', () => {

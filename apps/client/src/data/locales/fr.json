@@ -247,9 +247,9 @@
   },
   "campaign": {
     "chooseExpansionTitle": "Choisissez une extension",
-    "chooseExpansionDescription": "Enregistrez le score de ce segment, choisissez une extension, puis effectuez la purge avant la prochaine manche.",
+    "chooseExpansionDescription": "Le score de ce segment est enregistré. Choisissez la prochaine extension, puis effectuez la purge avant sa première manche. À la fin, son score s'ajoute à votre score précédent.",
     "purgeTitle": "Purge du royaume",
-    "purgeDescription": "Pour chaque lot de 12 cartes, choisissez 1 carte alliée à purger. Ensuite, purgez les permanentes alliées requises.",
+    "purgeDescription": "Pour chaque lot de {{size}} cartes, choisissez 1 carte alliée à purger.",
     "purgeBatchLabel": "Choisissez une carte alliée dans le lot courant",
     "purgePermanentLabel": "Choisissez une carte permanente alliée à purger",
     "purgeSelected": "Cartes sélectionnées pour la purge : {{count}}",
@@ -258,20 +258,41 @@
     "expansions": {
       "Prosperity": {
         "title": "Prospérité",
-        "description": "Cette mini-extension introduit la carte permanente #136 (Prospérité). Elle vous guide à travers 4 manches de jeu supplémentaires. Vous effectuerez une purge de 12 cartes et une purge d'une carte permanente. Dans ces extensions, vous ne découvrez PAS 2 nouvelles cartes au début de la manche. Une fois terminé, ajoutez le score de ce segment à votre score précédent, puis choisissez la prochaine extension."
+        "description": "Cette mini-extension introduit la carte permanente #136 (Prospérité) dans votre royaume.",
+        "rules": "Dans ces extensions, vous ne découvrez PAS 2 nouvelles cartes au début de la manche."
       },
       "The Water Mill": {
         "title": "Le Moulin à Eau",
-        "description": "Cette mini-extension introduit la carte permanente #137 (Le Moulin à Eau). Elle vous guide à travers 4 manches de jeu supplémentaires. Vous effectuerez une purge de 12 cartes et une purge d'une carte permanente. Dans ces extensions, vous ne découvrez PAS 2 nouvelles cartes au début de la manche. Une fois terminé, ajoutez le score de ce segment à votre score précédent, puis choisissez la prochaine extension."
+        "description": "Cette mini-extension introduit la carte permanente #137 (Le Moulin à Eau) dans votre royaume.",
+        "rules": "Dans ces extensions, vous ne découvrez PAS 2 nouvelles cartes au début de la manche."
       },
       "Border Dispute": {
         "title": "Conflit frontalier",
-        "description": "Cette mini-extension introduit la carte permanente #138 (Conflit frontalier). Elle vous guide à travers 4 manches de jeu supplémentaires. Vous effectuerez une purge de 12 cartes et une purge d'une carte permanente. Dans ces extensions, vous ne découvrez PAS 2 nouvelles cartes au début de la manche. Une fois terminé, ajoutez le score de ce segment à votre score précédent, puis choisissez la prochaine extension."
+        "description": "Cette mini-extension introduit la carte permanente #138 (Conflit frontalier) dans votre royaume.",
+        "rules": "Dans ces extensions, vous ne découvrez PAS 2 nouvelles cartes au début de la manche."
       },
       "Ridding the Woods": {
         "title": "Débarrasser les bois",
-        "description": "Des brigands se sont installés dans les bois autour de votre royaume. Vous effectuerez une purge 8 (focus 2 bois : tant que moins de 2 cartes purgées produisent du bois, choisissez une carte qui en produit quand le lot en contient) et purgerez 2 cartes permanentes, puis jouerez 5 manches supplémentaires. Au début de chaque manche, découvrez 5 cartes de cette extension au lieu de 2. Vainquez les ennemis et enfermez les prisonniers. Ajoutez 6 autocollants « +5 Gloire » et 2 autocollants « Gloire vide » à votre réserve. À la fin, ajoutez le score de ce segment à votre score précédent, puis choisissez l'extension suivante."
+        "description": "Des brigands se sont installés dans les bois autour de votre royaume.",
+        "campaign": "Vainquez les ennemis et enfermez les prisonniers.",
+        "rules": "Au début de chaque manche, découvrez 5 cartes de cette extension au lieu de 2. Ajoutez 6 autocollants « +5 Gloire » et 2 autocollants « Gloire vide » à votre réserve."
       }
+    },
+    "details": {
+      "expansion": "L'extension",
+      "campaign": "La campagne",
+      "overview": "Aperçu",
+      "rounds": "Manches",
+      "discoverPerRound": "Cartes découvertes par manche",
+      "cards": "Cartes de l'extension",
+      "purge": "Purge",
+      "purgeBatch_one": "Purgez 1 carte alliée par lot de {{count}} carte.",
+      "purgeBatch_other": "Purgez 1 carte alliée par lot de {{count}} cartes.",
+      "purgePermanent_one": "Puis purgez {{count}} carte permanente alliée.",
+      "purgePermanent_other": "Puis purgez {{count}} cartes permanentes alliées.",
+      "purgeFocus": "Focus {{count}} {{resource}} : tant que moins de {{count}} cartes purgées produisent du {{resource}}, choisissez une carte qui en produit quand le lot en contient.",
+      "rules": "Règles supplémentaires",
+      "start": "Jouer cette extension"
     }
   },
   "rules": {
@@ -292,7 +313,8 @@
     "fr": "Français",
     "tutorial": "Activer le tutoriel",
     "backHome": "Retour à mes royaumes",
-    "resourceWarning": "Prévenir avant d'avancer avec des ressources en jeu"
+    "resourceWarning": "Prévenir avant d'avancer avec des ressources en jeu",
+    "seed": "Graine : {{seed}}"
   },
   "progressWarning": {
     "title": "Des ressources vont être perdues",
@@ -460,6 +482,8 @@
     "newTitle": "Fonder un nouveau royaume",
     "nameLabel": "Nom du royaume",
     "namePlaceholder": "ex. Avalon",
+    "seedLabel": "Seed (facultatif)",
+    "seedPlaceholder": "Même seed, mêmes parties",
     "rulesHint": "Nouveau dans le jeu ? Lisez les règles avant de commencer.",
     "validate": "Fonder le royaume",
     "cancel": "Annuler",

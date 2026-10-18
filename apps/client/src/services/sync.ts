@@ -252,6 +252,7 @@ async function adoptServerKingdom(account: string, remote: GameSummary): Promise
       serverVersion: remote.version,
       syncedUpTo: exported.events.length,
     },
+    ...(exported.checkpoint ? { checkpoint: exported.checkpoint } : {}),
   });
   upsertKingdom(meta);
   return true;

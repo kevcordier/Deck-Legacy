@@ -87,6 +87,11 @@ export enum ActionEffectType {
   ADD_TO_PURGE = 'ADD_TO_PURGE',
   /** Discovers the next `value` cards of the campaign pile (EDR-046). */
   ADVANCE_STORY = 'ADVANCE_STORY',
+  /**
+   * Defeats the chosen enemies: each one's `defeat` action is queued as a mandatory trigger,
+   * free except its "destroy this card" cost.
+   */
+  DEFEAT_CARD = 'DEFEAT_CARD',
 }
 
 export enum PassiveType {

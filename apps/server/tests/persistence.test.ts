@@ -1,5 +1,6 @@
 import { GamesRepository } from '../src/games/games.repository';
 import { firstDifference } from '../src/games/games.service';
+import { Prisma } from '../src/generated/prisma/client';
 import type { PrismaService } from '../src/prisma/prisma.service';
 import { ScoresService } from '../src/scores/scores.service';
 import { UsersService } from '../src/users/users.service';
@@ -58,6 +59,7 @@ const snapshot = (count: number) => ({
   finished: false,
   verified: true,
   events: events(count),
+  checkpoint: null,
 });
 
 const summaryRow = {
@@ -189,6 +191,8 @@ describe('GamesRepository reads and creation', () => {
       cardNames: { 1: 'Bessie', 2: 42 },
       updatedAt,
       events: events(2).map(payload => ({ payload })),
+      checkpointSeq: 1,
+      checkpointState: { round: 1 },
     });
 
     const game = await new GamesRepository(prisma).load(GAME);
@@ -200,6 +204,7 @@ describe('GamesRepository reads and creation', () => {
       version: 3,
       cardNames: { '1': 'Bessie' },
       events: events(2),
+      checkpoint: { seq: 1, state: { round: 1 } },
       updatedAt,
     });
   });
@@ -241,11 +246,46 @@ describe('GamesRepository reads and creation', () => {
   it('reads metadata and event ids', async () => {
     const { prisma, tx } = fakePrisma();
     const repository = new GamesRepository(prisma);
-    tx.game.findUnique.mockResolvedValueOnce({ userId: USER, version: 2 });
+    tx.game.findUnique.mockResolvedValueOnce({
+      userId: USER,
+      version: 2,
+      checkpointSeq: null,
+      checkpointState: null,
+    });
     tx.gameEvent.findMany.mockResolvedValueOnce([{ eventId: 'e0' }, { eventId: 'e1' }]);
 
-    await expect(repository.getMeta(GAME)).resolves.toEqual({ userId: USER, version: 2 });
+    await expect(repository.getMeta(GAME)).resolves.toEqual({
+      userId: USER,
+      version: 2,
+      checkpoint: null,
+    });
     await expect(repository.getEventIds(GAME)).resolves.toEqual(['e0', 'e1']);
+    await expect(repository.getMeta(GAME)).resolves.toBeNull();
+  });
+
+  it('reads and writes the checkpoint of a game', async () => {
+    const { prisma, tx } = fakePrisma();
+    const repository = new GamesRepository(prisma);
+    const checkpoint = { seq: 12, state: { round: 2 } as never };
+    tx.game.findUnique.mockResolvedValueOnce({
+      userId: USER,
+      version: 2,
+      checkpointSeq: 12,
+      checkpointState: { round: 2 },
+    });
+
+    await expect(repository.getMeta(GAME)).resolves.toMatchObject({ checkpoint });
+    await repository.save(GAME, USER, 10, 0, { ...snapshot(1), checkpoint });
+    await repository.create(GAME, USER, 10, snapshot(1));
+
+    expect(tx.game.update.mock.calls[0][0].data).toMatchObject({
+      checkpointSeq: 12,
+      checkpointState: { round: 2 },
+    });
+    expect(tx.game.create.mock.calls[0][0].data).toMatchObject({
+      checkpointSeq: null,
+      checkpointState: Prisma.DbNull,
+    });
   });
 
   it('reads the stored events before a sequence number', async () => {

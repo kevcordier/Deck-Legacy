@@ -13,14 +13,18 @@ import type {
  */
 
 /** Phases in which the UI offers each turn flow command (`GamePhaseActions`). */
-export function isFlowCommandAllowed(command: GameCommand, state: GameState): boolean {
+export function isFlowCommandAllowed(
+  command: GameCommand,
+  state: GameState,
+  lastRound: boolean,
+): boolean {
   switch (command.type) {
     case 'startRound':
-      return state.phase === Phase.ROUND_END && !state.isLastRound;
+      return state.phase === Phase.ROUND_END && !lastRound;
     case 'endRound':
       return (
         (state.phase === Phase.TURN_END && state.drawPile.length === 0) ||
-        (state.phase === Phase.ROUND_END && state.isLastRound)
+        (state.phase === Phase.ROUND_END && lastRound)
       );
     case 'startTurn':
       return state.phase === Phase.ROUND_START || state.phase === Phase.TURN_END;

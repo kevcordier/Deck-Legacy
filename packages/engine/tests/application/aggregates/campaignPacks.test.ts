@@ -63,6 +63,33 @@ describe('campaign and discoverable packs', () => {
     expect(agg.getGameState().phase).toBe(Phase.GAME_OVER);
   });
 
+  it('ends the campaign when the campaign pile holds fewer cards than a round discovers', () => {
+    const agg = between({ discoveryPile: [3], discoverablePile: [6] });
+
+    agg.roundStarted();
+
+    expect(types(agg.getEvents())).toEqual([GameEventType.GAME_ENDED]);
+  });
+
+  it('makes the round just ended the last one when the campaign pile runs short', () => {
+    const playing = { phase: Phase.TURN_END, discardPile: [], board: [1, 2] };
+    const short = between({ ...playing, discoveryPile: [3], discoverablePile: [6] });
+
+    short.roundEnded();
+
+    expect(types(short.getEvents())).toEqual([GameEventType.ROUND_ENDED]);
+    expect(short.getGameState().phase).toBe(Phase.ROUND_END);
+    expect(short.isLastRound()).toBe(true);
+
+    const enough = between({ ...playing, discoveryPile: [3, 4], discoverablePile: [6] });
+    expect(enough.isLastRound()).toBe(false);
+    enough.roundEnded();
+    expect(enough.getGameState().phase).toBe(Phase.ROUND_START);
+
+    const singlePile = between({ ...playing, discoveryPile: [], discoverablePile: undefined });
+    expect(singlePile.isLastRound()).toBe(false);
+  });
+
   it('keeps the former rules in a game started with a single discovery pile', () => {
     const agg = between({ discoveryPile: [3, 4, 5], discoverablePile: undefined });
 

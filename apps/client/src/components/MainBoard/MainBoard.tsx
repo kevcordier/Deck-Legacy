@@ -11,6 +11,7 @@ import { MarkdownText } from '@components/ui/MarkdownText/MarckdownText';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Section } from '@components/ui/Section/Section';
 import { getActiveState } from '@deck-legacy/engine/application/cardHelpers';
+import { isLastRound } from '@deck-legacy/engine/application/gameStateHelper';
 import { CardTag, Phase } from '@deck-legacy/engine/domain/enums';
 import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import { tCardName, tCardParchmentText } from '@helpers/cardI18n';
@@ -116,6 +117,7 @@ export function MainBoard() {
     c => getActiveState(gameState.instances[c], defs)?.tags?.includes(CardTag.GOAL) ?? false,
   );
   const permanents = gameState.permanents.filter(c => !goals.includes(c));
+  const lastRound = isLastRound(gameState, parameters);
 
   const zoomControls = isDesktop ? (
     <View className="flex-row">
@@ -213,7 +215,7 @@ export function MainBoard() {
         />
       )}
 
-      {gameState.phase === Phase.ROUND_END && !gameState.isLastRound && (
+      {gameState.phase === Phase.ROUND_END && !lastRound && (
         <EmptyState
           title={t('roundpreview.title', { round: gameState.round })}
           action={
@@ -224,7 +226,7 @@ export function MainBoard() {
         />
       )}
 
-      {gameState.phase === Phase.ROUND_END && gameState.isLastRound && (
+      {gameState.phase === Phase.ROUND_END && lastRound && (
         <EmptyState
           title={t('lastRound.title', { round: gameState.round })}
           subtitle={t('lastRound.subtitle')}

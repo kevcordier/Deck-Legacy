@@ -1,3 +1,4 @@
+import { ExpansionChoice } from '@components/ExpansionChoice/ExpansionChoice';
 import { GameBoard } from '@components/GameBoard/GameBoard';
 import { GameHeader } from '@components/GameHeader/GameHeader';
 import { OptionsModal } from '@components/OptionsModal/OptionsModal';
@@ -6,11 +7,10 @@ import { ResourceBar } from '@components/ResourceBar/ResourceBar';
 import { RulesModal } from '@components/RulesModal/RulesModal';
 import { TutorialOverlay } from '@components/Tutorial/TutorialOverlay';
 import { TutorialStage } from '@components/Tutorial/TutorialStage';
-import { Button } from '@components/ui/Button/Button';
 import { GameOverScreen } from '@components/ui/GameOverScreen/GameOverScreen';
-import { Text } from '@components/ui/Text/Text';
 import { TutorialProvider } from '@contexts/TutorialProvider';
 import { Phase } from '@deck-legacy/engine/domain/enums';
+import { catalog } from '@helpers/catalog';
 import {
   FULL_SIZE,
   PAGE_BACKGROUND,
@@ -22,8 +22,7 @@ import { useGameUI } from '@hooks/useGameInterface';
 import { useIsDesktop } from '@hooks/useIsDesktop';
 import { syncNow } from '@services/sync';
 import { router } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { ImageBackground, ScrollView, View } from 'react-native';
+import { ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export function Game() {
@@ -35,6 +34,7 @@ export function Game() {
     availableExpansions,
     continueCampaign,
     selectExpansion,
+    purgeBatch,
     purgeCandidates,
     purgePermanentCandidates,
     selectedPurgeIds,
@@ -44,7 +44,6 @@ export function Game() {
     selectPurgePermanent,
     finalizePurge,
   } = useGame();
-  const { t } = useTranslation();
   const { setOptionsOpen, setRulesOpen, optionsOpen, rulesOpen } = useGameUI();
   const isDesktop = useIsDesktop();
 
@@ -86,41 +85,20 @@ export function Game() {
           )}
 
           {gameState.phase === Phase.EXPANSION_CHOICE && (
-            <View className="bg-background/75 absolute inset-0 z-50 items-center justify-center p-4">
-              <View className="bg-card border-border max-h-full w-full max-w-3xl rounded-lg border p-6">
-                <ScrollView contentContainerClassName="gap-4">
-                  <Text className="font-display text-base-primary text-2xl">
-                    {t('campaign.chooseExpansionTitle')}
-                  </Text>
-                  <Text className="text-ink-card text-sm">
-                    {t('campaign.chooseExpansionDescription')}
-                  </Text>
-                  {availableExpansions.map(expansion => (
-                    <View key={expansion} className="gap-1 sm:flex-row sm:items-start sm:gap-4">
-                      <View className="items-start sm:w-48">
-                        <Button
-                          onPress={() => selectExpansion(expansion)}
-                          color="base-primary"
-                          size="md"
-                          variant="link"
-                        >
-                          {t(`campaign.expansions.${expansion}.title`)}
-                        </Button>
-                      </View>
-                      <Text className="text-ink-card flex-1 text-sm">
-                        {t(`campaign.expansions.${expansion}.description`)}
-                      </Text>
-                    </View>
-                  ))}
-                </ScrollView>
-              </View>
-            </View>
+            <ExpansionChoice
+              expansions={availableExpansions}
+              configs={catalog.expansions}
+              onSelect={selectExpansion}
+            />
           )}
 
           {gameState.phase === Phase.PURGE && (
             <PurgeModal
               defs={defs}
               instances={gameState.instances}
+              batchSize={gameState.purgeState?.batchSize ?? 0}
+              permanentToPurge={gameState.purgeState?.permanentToPurge ?? 0}
+              purgeBatch={purgeBatch}
               purgeCandidates={purgeCandidates}
               purgePermanentCandidates={purgePermanentCandidates}
               selectedPurgeIds={selectedPurgeIds}
@@ -134,7 +112,13 @@ export function Game() {
 
           {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}
 
-          {optionsOpen && <OptionsModal onClose={() => setOptionsOpen(false)} onGoHome={goHome} />}
+          {optionsOpen && (
+            <OptionsModal
+              onClose={() => setOptionsOpen(false)}
+              onGoHome={goHome}
+              seed={gameState.seed}
+            />
+          )}
         </SafeAreaView>
         <TutorialStage />
         <TutorialOverlay />

@@ -16,9 +16,10 @@ The game state is derived by replaying an ordered list of `GameEvent` objects. `
 - `GameSession` (`packages/engine/src/application/session/GameSession.ts`) wraps the aggregate and turns player commands (`GameCommand`) into events: guards (unknown or blocked cards are ignored), multi-step cost payment, parchment cards, automatic campaign score at game over, rewind, development cheats. It returns a `GameView` for the UI and a translatable `CommandError` for rule errors. Mid-action state (pending choices, pending upgrade) lives only in memory, never in the event log.
 - The client runs `GameSession` to play; the server uses `GameSession.verify()` to check synced logs and compute scores (`restore()` only for older games without a seed).
 - **Recorded commands (EDR-051).** `execute()` sets the commands run since the previous event on the first event they produce (`GameEvent.commands`; trigger ids become `@<source>|<actionId>|<rank>`). `verify()` restarts the game from the seed, runs them again and compares the events (ids, timestamps and random trigger keys aside), rewinding the events the player rewound.
-- **Player input is checked** in `session/playerInput.ts`: flow commands only in the phases the UI offers them, choices and cost payments rebuilt from the pending choice (offered values, pick bounds), card actions and upgrades only for cards in play, mandatory triggers cannot be skipped. A new command or choice type needs its check there, or a modified client can send it.
+- **Player input is checked** in `session/playerInput.ts`: flow commands only in the phases the UI offers them, choices and cost payments rebuilt from the pending choice (offered values, pick bounds), card actions and upgrades only for cards in play, productions only for a card in play whose production gains something (and an offered choice), mandatory triggers cannot be skipped. A new command or choice type needs its check there, or a modified client can send it.
 - Tutorial games are real games whose first draw order is imposed (`GameSession.start(…, 'tutorial', firstDrawPile)`); the order is stored in `ROUND_STARTED` like a shuffle. They are not saved until the player keeps them (EDR-040).
 - Undo (`rewind` command) pops the last event and replays the remainder.
+- **Checkpoints (EDR-052).** `checkpointSeq(events)` gives where the server keeps a checkpoint (after the commands that drew the first turn of the last round). `GameSession.verify(…, checkpoint)` and `GameSession.restore(…, checkpoint)` start from its state and only run what follows; the earlier events stay in the log (shuffle salts use the log position). A session resumed at a checkpoint never rewinds before it (EDR-053).
 - To add a player action: add it to `GameCommand` (`domain/types/GameSession.ts`), handle it in `GameSession.dispatch`, guard it in `playerInput.ts`, test it (including `GameSession.verify`), then expose it in the client `GameProvider`.
 
 ## Key Domain Types (packages/engine/src/domain/)
@@ -95,7 +96,7 @@ ActionEffect {
                                 // BLOCK_CARD | PLAY_CARD | ADD_STICKER | CHOOSE_STATE | BOOST_CARD |
                                 // COST | ADD_CUMULATED | SET_CUMULATED | TRACK_ADVANCE |
                                 // ADD_BOARD_EFFECT | CHOOSE_EFFECT | END_GAME | SHUFFLE_DECK | ADD_GLORY |
-                                // SAVE_FROM_PURGE | ADD_TO_PURGE | ADVANCE_STORY
+                                // SAVE_FROM_PURGE | ADD_TO_PURGE | ADVANCE_STORY | DEFEAT_CARD
   cards?: CardSelector          // target card filter (scope, tags, ids…)
   resources?: ResourceSelector  // target resource filter
   states?: StateSelector        // state ids choice
@@ -193,7 +194,7 @@ This lets expansion-specific round limits (`expansionMaxRound`) be evaluated fro
 
 ## Strategy Pattern (Card Actions)
 
-`packages/engine/src/application/cardAction/` contains one strategy per `ActionEffectType` implementing `CardActionStrategy` (AddResource, AddSticker, AddBoardEffect, AddCumulated, AddGlory, AddToPurge, BlockCard, ChoseState, DestroyCard, DiscardCard, DiscoverCard, EndGame, PlaceCardInDrawPile, PlayCard, RemoveResourceOnCard, SaveFromPurge, SetCumulated, ShuffleDeck, TrackAdvance, UpgradeCard), registered in `CardActionContext`.
+`packages/engine/src/application/cardAction/` contains one strategy per `ActionEffectType` implementing `CardActionStrategy` (AddResource, AddSticker, AddBoardEffect, AddCumulated, AddGlory, AddToPurge, BlockCard, ChoseState, DefeatCard, DestroyCard, DiscardCard, DiscoverCard, EndGame, PlaceCardInDrawPile, PlayCard, RemoveResourceOnCard, SaveFromPurge, SetCumulated, ShuffleDeck, TrackAdvance, UpgradeCard), registered in `CardActionContext`.
 
 When adding new action types, add a new strategy file and register it in `CardActionContext`.
 
@@ -202,6 +203,7 @@ When adding new action types, add a new strategy file and register it in `CardAc
 ## Triggers and passives added for Ridding the Woods
 
 - `Trigger.ON_DEFEAT`: fired on the cards in play (board + permanents) after an action with `defeat: true`.
+- `ActionEffectType.DEFEAT_CARD` (Trebuchet): the player picks among the `cards` that have a `defeat` action; each one's defeat is queued as a mandatory trigger of that enemy, without its cost. A "destroy this card" cost becomes a first `DESTROY_CARD` self effect (a cost is paid from cards in play, and the enemy may be in the discard pile). The card using it carries no `defeat` flag: the enemy's action fires `ON_DEFEAT`.
 - `Trigger.ON_PURGE_SELECTION`: fired by the unselected cards of the purge pool when the purge is finalised; identical copies (same `actionEffects`) fire once. Used with `ADD_TO_PURGE` (adds cards to `purgeState.selectedCardIds`).
 - Negative cards are never purge candidates (batches and permanents).
 - `ExpansionConfig.purge.focus` (`{ resource, count }`, copied into `EXPANSION_SELECTED.purgeFocus` then `purgeState.focus`): while fewer than `count` selected cards produce `resource`, the batch candidates are limited to those producers when the batch has any.
@@ -211,7 +213,7 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - `TargetScope.STAYING`: keeps the selected cards that stay in play (use with `BOARD`).
 - `ValuePerElement.ownProduction`: counts the total production of the card itself. For effects other than `TRACK_ADVANCE`, `value` = (`value` ?? 1) × `amount` × count (`REMOVE_RESOURCE_ON_CARD` crosses out `value` times; `ADD_STICKER` stickers every chosen card).
 - `LAST_SELECTED` alone picks all last selected cards, unless `pickNumber`/`pickMax` asks the player to choose among them.
-- Two packs (EDR-045): `campaign` and `discoverable` in each `deck.json`. At round start `STORY_ADVANCED` discovers the first `discoverPerRound` cards of `discoveryPile` (campaign); an empty campaign pile then ends the campaign (`GAME_ENDED`), which empties it. Effects discover from both piles; `ADVANCE_STORY` (`value` cards, EDR-046) discovers the first cards of the campaign pile. A discoverable card already in the game (another campaign of the same expansion) is neither recreated nor put back at `EXPANSION_SELECTED`. Games without `discoverablePile` keep the single-pile rules.
+- Two packs (EDR-045): `campaign` and `discoverable` in each `deck.json`. At round start `STORY_ADVANCED` discovers the first `discoverPerRound` cards of `discoveryPile` (campaign); when a round ends with fewer than `discoverPerRound` cards in it, that round is the last (`isLastRound(state, parameters)`, EDR-054) and the campaign ends (`GAME_ENDED`), which empties it. Effects discover from both piles; `ADVANCE_STORY` (`value` cards, EDR-046) discovers the first cards of the campaign pile. A discoverable card already in the game (another campaign of the same expansion) is neither recreated nor put back at `EXPANSION_SELECTED`. Games without `discoverablePile` keep the single-pile rules.
 - `EXPANSION_SELECTED.expansionDiscoveryFirst` (always set by new events): expansion cards go before the remaining base cards in the discovery pile; `onStart.discover.ids` gives the first round its discoveries.
 - `PassiveType.RESTRICT_SPEND` (`resources` = reserved types): they pay only upgrade costs (`Cost.forUpgrade`, set by `getEffectiveUpgradeCost`), never action, step or discover costs.
 

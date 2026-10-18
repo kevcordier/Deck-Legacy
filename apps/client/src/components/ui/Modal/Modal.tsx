@@ -70,6 +70,12 @@ function ModalHeader({ title, subtitle, onClose, label }: ModalHeaderProps) {
   );
 }
 
+/** Toast kept below the status bar and the notch (the default offset ignores them). */
+export function SafeAreaToast() {
+  const { top } = useSafeAreaInsets();
+  return <Toast topOffset={top + 16} />;
+}
+
 function PeekButton({
   peeking,
   onPress,
@@ -171,6 +177,8 @@ export function Modal({
         <ModalDepthContext value={depth}>
           <View
             className="flex-1 items-center justify-center bg-black/60"
+            // The centred panel stays clear of the status bar and the home indicator.
+            style={side ? undefined : { paddingTop: insets.top, paddingBottom: insets.bottom }}
             // On web, the anchor's onLayout only fires on a size change: it moves without resizing
             // when the window does, while this full-screen view resizes.
             onLayout={onPeekToggle ? measurePeekAnchor : undefined}
@@ -225,7 +233,7 @@ export function Modal({
             <TutorialOverlay />
           </View>
           {/* Toasts must be rendered inside the native modal to appear above it. */}
-          <Toast />
+          <SafeAreaToast />
         </ModalDepthContext>
       </RNModal>
     </>

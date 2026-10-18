@@ -5,6 +5,7 @@ export * from './AddStickerStrategy';
 export * from './BlockCardStrategy';
 export * from './CardActionContext';
 export * from './CardActionStrategy';
+export * from './DefeatCardStrategy';
 export * from './DestroyCardStrategy';
 export * from './DiscardCardStrategy';
 export * from './PlaceCardInDrawPileStrategy';

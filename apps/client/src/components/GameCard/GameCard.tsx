@@ -1,5 +1,5 @@
 import { CardAction } from '@components/CardAction/CardAction';
-import { CardDragHandle } from '@components/CardRow/SortableCardGrid';
+import { CardDragHandle, DragHandleContext } from '@components/CardRow/SortableCardGrid';
 import { CardStatePreview } from '@components/CardStatePreview/CardStatePreview';
 import { CardStateTooltip, cardTextTokens } from '@components/CardStateTooltip/CardStateTooltip';
 import { CardIllustration } from '@components/CardTilt/CardIllustration';
@@ -181,7 +181,12 @@ export function GameCard({
   const illustration = getIllustrationSource(cs.illustration);
   const { expansion, number } = cardNumber(instance.id, catalog.expansions, instance);
   const tourId = (id: string) => (tourTarget ? id : undefined);
-  const renderPreview = (i: CardInstance) => <GameCard instance={i} hideStatePreview />;
+  // The preview must not share the board card's drag gesture: one gesture per GestureDetector.
+  const renderPreview = (i: CardInstance) => (
+    <DragHandleContext value={null}>
+      <GameCard instance={i} hideStatePreview />
+    </DragHandleContext>
+  );
 
   const emptyGloryBlock =
     (cs.glory?.emptyValues ?? 0) +
@@ -217,7 +222,10 @@ export function GameCard({
         <TextStyle className="text-ink-card font-body">
           <View className={`border-b border-black/10 bg-black/5 ${sizes.header}`}>
             <View className="flex-row items-start justify-between gap-2">
-              <CardDragHandle className="min-w-0 flex-1 flex-row items-center gap-1">
+              {/* An editable name stays out of the drag handle: its gesture takes the input's press. */}
+              <CardDragHandle
+                className={`min-w-0 flex-row items-center gap-1 ${canChooseName ? '' : 'flex-1'}`}
+              >
                 {expansion && (
                   <ExpansionIcon
                     expansion={expansion}
@@ -233,28 +241,31 @@ export function GameCard({
                     <Text className={`font-body-bold ${sizes.nameText}`}>#{number}</Text>
                   </TutorialTarget>
                 )}
-                <TutorialTarget id={tourId('card-name')} className="min-w-0 flex-1">
-                  {canChooseName ? (
-                    <View className="flex-row flex-wrap items-baseline gap-1">
-                      <Text className={`font-display ${sizes.nameText}`}>{namePrefix}</Text>
-                      <TextInput
-                        value={name ?? ''}
-                        onChangeText={setName}
-                        onBlur={() => setCardName(instance.id, name ?? '')}
-                        className={`text-ink-card font-display w-0 min-w-8 flex-1 p-0 ${sizes.nameText} ${name ? '' : 'border-ink-card border-b'}`}
-                        accessibilityLabel={t('card.name')}
-                      />
-                      <Text className={`font-display ${sizes.nameText}`}>{nameSuffix}</Text>
-                    </View>
-                  ) : (
+                {!canChooseName && (
+                  <TutorialTarget id={tourId('card-name')} className="min-w-0 flex-1">
                     <Text
                       className={`font-display ${sizes.nameText} ${isEnemy ? 'text-tag-enemy' : ''}`}
                     >
                       {tCardName(t, cs.name || '')}
                     </Text>
-                  )}
-                </TutorialTarget>
+                  </TutorialTarget>
+                )}
               </CardDragHandle>
+              {canChooseName && (
+                <TutorialTarget id={tourId('card-name')} className="min-w-0 flex-1">
+                  <View className="flex-row flex-wrap items-baseline gap-1">
+                    <Text className={`font-display ${sizes.nameText}`}>{namePrefix}</Text>
+                    <TextInput
+                      value={name ?? ''}
+                      onChangeText={setName}
+                      onBlur={() => setCardName(instance.id, name ?? '')}
+                      className={`text-ink-card font-display w-0 min-w-8 flex-1 p-0 ${sizes.nameText} ${name ? '' : 'border-ink-card border-b'}`}
+                      accessibilityLabel={t('card.name')}
+                    />
+                    <Text className={`font-display ${sizes.nameText}`}>{nameSuffix}</Text>
+                  </View>
+                </TutorialTarget>
+              )}
               {!hideStatePreview && (
                 <TutorialTarget id={tourId('card-state-preview')}>
                   <CardStatePreview instance={instance} defs={defs} renderCard={renderPreview} />

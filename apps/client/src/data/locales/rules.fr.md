@@ -18,7 +18,7 @@ Développez votre royaume en améliorant vos cartes, manche après manche. Vous 
 
 ## Un nouveau royaume
 
-Chaque partie est un **royaume**. Sur la page d'accueil, touchez **Nouveau royaume**, donnez-lui un nom et choisissez de commencer ou non par le tutoriel. Votre royaume commence avec les cartes **1 à 10**, mélangées pour former votre deck ; les autres cartes attendent d'être découvertes.
+Chaque partie est un **royaume**. Sur la page d'accueil, touchez **Nouveau royaume**, donnez-lui un nom et choisissez de commencer ou non par le tutoriel. Vous pouvez aussi saisir une **seed** : deux royaumes avec la même seed ont les mêmes mélanges, pour rejouer une partie ou défier un ami. La seed de votre partie est affichée dans les options. Votre royaume commence avec les cartes **1 à 10**, mélangées pour former votre deck ; les autres cartes attendent d'être découvertes.
 
 Le tutoriel vous guide pendant une première manche ; à la fin, vous pouvez garder cette partie ou en commencer une nouvelle. Vos royaumes sont listés sur la page d'accueil avec leur score total, le score du jeu de base et le score après chaque extension. Vous pouvez garder **un royaume** sans compte et jusqu'à **10** avec un compte.
 
@@ -31,7 +31,7 @@ Une **manche** est une suite de tours qui se termine quand votre deck est vide.
 - Les cartes forment deux paquets. Le **paquet de campagne** (cartes **1 à 70** dans le jeu de base) raconte l'histoire ; le **paquet de cartes découvrables** (au-delà du n° 70) contient les cartes que seuls des effets de cartes découvrent.
 - Au début de chaque manche (à partir de la 2e), **l'histoire avance** : les **2 cartes** suivantes du paquet de campagne, dans l'ordre des numéros, sont **découvertes** et rejoignent votre deck. Si la première est une **carte parchemin**, ses instructions s'appliquent immédiatement, puis elle est détruite.
 - L'aperçu de manche montre les cartes que vous venez de découvrir ; touchez **▶︎ Commencer la manche** pour mélanger toutes vos cartes en un nouveau deck et jouer le premier tour.
-- La partie se termine après la manche où vous découvrez la carte **n° 70**. Si le paquet de campagne est vide quand l'histoire doit avancer, la campagne se termine ; les cartes qu'il contient encore à la fin de la partie ne seront jamais découvertes.
+- La partie se termine après la manche où vous découvrez la carte **n° 70**. Si, à la fin d'une manche, le paquet de campagne contient moins de cartes que la manche suivante doit en découvrir, cette manche est la dernière et la campagne se termine ; les cartes qu'il contient encore à la fin de la partie ne seront jamais découvertes.
 
 ---
 
@@ -151,7 +151,7 @@ Certains effets ajoutent un **onglet** à une carte avec un autocollant : une ca
 
 Les cartes rouges sont **négatives**, en général des cartes _Ennemi_ ou _Événement_ ; toutes les autres cartes sont **alliées**. Les cartes négatives ne peuvent pas être purgées normalement.
 
-- **Vaincre :** la plupart des ennemis indiquent comment les vaincre : ils sont détruits, tournés, ou une case est marquée. Un ennemi sans instruction de défaite ne peut pas être vaincu. Certaines cartes réagissent **quand vous vainquez un ennemi** (par exemple en vous laissant les améliorer) : vous devez déjà avoir les ressources demandées.
+- **Vaincre :** la plupart des ennemis indiquent comment les vaincre : ils sont détruits, tournés, ou une case est marquée. Un ennemi sans instruction de défaite ne peut pas être vaincu. Une carte qui vainc un ennemi pour vous (comme le Trébuchet) applique gratuitement la défaite de cet ennemi : vous n'en payez pas le coût, mais un ennemi détruit quand il est vaincu est quand même détruit. Certaines cartes réagissent **quand vous vainquez un ennemi** (par exemple en vous laissant les améliorer) : vous devez déjà avoir les ressources demandées.
 - Certains ennemis **limitent vos ressources** tant qu'ils sont en jeu : vous ne pouvez gagner que des {{weapon}}, ou vous ne pouvez utiliser les {{weapon}} que pour améliorer des cartes (pas pour les effets, les pistes ni les effets {{time}}).
 - Les **Prisonniers** sont des ennemis vaincus. Ils sont aussi négatifs, mais après avoir choisi les cartes d'une purge, vous pouvez y ajouter jusqu'à 2 Prisonniers.
 

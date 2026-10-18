@@ -247,9 +247,9 @@
   },
   "campaign": {
     "chooseExpansionTitle": "Choose an expansion",
-    "chooseExpansionDescription": "Save your score for this segment, choose one expansion, then complete the purge before the next round.",
+    "chooseExpansionDescription": "Your score for this segment is saved. Choose the next expansion, then complete the purge before its first round. When it ends, its score is added to your previous score.",
     "purgeTitle": "Purge your kingdom",
-    "purgeDescription": "For each batch of 12 cards, choose 1 allied card to purge. Then purge allied permanents if required.",
+    "purgeDescription": "For each batch of {{size}} cards, choose 1 allied card to purge.",
     "purgeBatchLabel": "Choose one allied card from the current batch",
     "purgePermanentLabel": "Choose one allied permanent card to purge",
     "purgeSelected": "Cards selected for purge: {{count}}",
@@ -258,20 +258,41 @@
     "expansions": {
       "Prosperity": {
         "title": "Prosperity",
-        "description": "This mini expansion introduces permanent card #136 (Prosperity). It guiding you through 4 additional game rounds. You will perform a purge 12 and purge 1 permanent card. In these expansions, you do NOT discover 2 new cards at the start of the round. When done, add the score of this segment to your previous score, then choose the next expansion."
+        "description": "This mini expansion introduces permanent card #136 (Prosperity) into your kingdom.",
+        "rules": "In these expansions, you do NOT discover 2 new cards at the start of the round."
       },
       "The Water Mill": {
         "title": "The Water Mill",
-        "description": "This mini expansion introduces permanent card #137 (The Water Mill). It guiding you through 4 additional game rounds. You will perform a purge 12 and purge 1 permanent card. In these expansions, you do NOT discover 2 new cards at the start of the round. When done, add the score of this segment to your previous score, then choose the next expansion."
+        "description": "This mini expansion introduces permanent card #137 (The Water Mill) into your kingdom.",
+        "rules": "In these expansions, you do NOT discover 2 new cards at the start of the round."
       },
       "Border Dispute": {
         "title": "Border Dispute",
-        "description": "This mini expansion introduces permanent card #138 (Border Dispute). It guiding you through 4 additional game rounds. You will perform a purge 12 and purge 1 permanent card. In these expansions, you do NOT discover 2 new cards at the start of the round. When done, add the score of this segment to your previous score, then choose the next expansion."
+        "description": "This mini expansion introduces permanent card #138 (Border Dispute) into your kingdom.",
+        "rules": "In these expansions, you do NOT discover 2 new cards at the start of the round."
       },
       "Ridding the Woods": {
         "title": "Ridding the Woods",
-        "description": "Robbers have settled in the woods around your kingdom. You will perform a purge 8 (focus 2 wood: while fewer than 2 purged cards produce wood, pick a wood producer when the batch has one) and purge 2 permanent cards, then play 5 additional rounds. At the start of each round, discover 5 cards from this expansion instead of 2. Defeat the enemies and lock up the prisoners. Add 6 \"+5 Glory\" stickers and 2 \"Empty Glory\" stickers to your stock. When done, add the score of this segment to your previous score, then choose the next expansion."
+        "description": "Robbers have settled in the woods around your kingdom.",
+        "campaign": "Defeat the enemies and lock up the prisoners.",
+        "rules": "At the start of each round, discover 5 cards from this expansion instead of 2. Add 6 \"+5 Glory\" stickers and 2 \"Empty Glory\" stickers to your stock."
       }
+    },
+    "details": {
+      "expansion": "The expansion",
+      "campaign": "The campaign",
+      "overview": "Overview",
+      "rounds": "Rounds",
+      "discoverPerRound": "Cards discovered per round",
+      "cards": "Expansion cards",
+      "purge": "Purge",
+      "purgeBatch_one": "Purge 1 allied card per batch of {{count}} card.",
+      "purgeBatch_other": "Purge 1 allied card per batch of {{count}} cards.",
+      "purgePermanent_one": "Then purge {{count}} allied permanent card.",
+      "purgePermanent_other": "Then purge {{count}} allied permanent cards.",
+      "purgeFocus": "Focus {{count}} {{resource}}: while fewer than {{count}} purged cards produce {{resource}}, pick a card that produces it when the batch has one.",
+      "rules": "Additional rules",
+      "start": "Play this expansion"
     }
   },
   "rules": {
@@ -292,7 +313,8 @@
     "fr": "French",
     "tutorial": "Enable tutorial",
     "backHome": "Back to my kingdoms",
-    "resourceWarning": "Warn before progressing with resources in play"
+    "resourceWarning": "Warn before progressing with resources in play",
+    "seed": "Seed: {{seed}}"
   },
   "progressWarning": {
     "title": "Resources will be lost",
@@ -460,6 +482,8 @@
     "newTitle": "Found a new kingdom",
     "nameLabel": "Name of the kingdom",
     "namePlaceholder": "e.g. Avalon",
+    "seedLabel": "Seed (optional)",
+    "seedPlaceholder": "Same seed, same shuffles",
     "rulesHint": "New to the game? Read the rules before you start.",
     "validate": "Found the kingdom",
     "cancel": "Cancel",

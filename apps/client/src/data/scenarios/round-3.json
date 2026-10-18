@@ -1,0 +1,735 @@
+[
+  {
+    "id": "5283f219-49de-4e5d-bc57-65b2ea73a2d5",
+    "type": "GAME_STARTED",
+    "timestamp": 1792313579869,
+    "initialDeck": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "deck": [
+      {
+        "id": 1,
+        "cardId": 1
+      },
+      {
+        "id": 2,
+        "cardId": 1
+      },
+      {
+        "id": 3,
+        "cardId": 1
+      },
+      {
+        "id": 4,
+        "cardId": 1
+      },
+      {
+        "id": 5,
+        "cardId": 2
+      },
+      {
+        "id": 6,
+        "cardId": 2
+      },
+      {
+        "id": 7,
+        "cardId": 3
+      },
+      {
+        "id": 8,
+        "cardId": 3
+      },
+      {
+        "id": 9,
+        "cardId": 4
+      },
+      {
+        "id": 10,
+        "cardId": 5
+      },
+      {
+        "id": 11,
+        "cardId": 6
+      },
+      {
+        "id": 12,
+        "cardId": 7
+      },
+      {
+        "id": 13,
+        "cardId": 8
+      },
+      {
+        "id": 14,
+        "cardId": 9
+      },
+      {
+        "id": 15,
+        "cardId": 2
+      },
+      {
+        "id": 16,
+        "cardId": 10
+      },
+      {
+        "id": 17,
+        "cardId": 11
+      },
+      {
+        "id": 18,
+        "cardId": 12
+      },
+      {
+        "id": 19,
+        "cardId": 3
+      },
+      {
+        "id": 20,
+        "cardId": 13
+      },
+      {
+        "id": 21,
+        "cardId": 13
+      },
+      {
+        "id": 22,
+        "cardId": 14
+      },
+      {
+        "id": 23,
+        "cardId": 15
+      },
+      {
+        "id": 24,
+        "cardId": 16
+      },
+      {
+        "id": 25,
+        "cardId": 17
+      },
+      {
+        "id": 26,
+        "cardId": 18
+      },
+      {
+        "id": 27,
+        "cardId": 19
+      },
+      {
+        "id": 28,
+        "cardId": 20
+      },
+      {
+        "id": 29,
+        "cardId": 21
+      },
+      {
+        "id": 30,
+        "cardId": 22
+      },
+      {
+        "id": 31,
+        "cardId": 23
+      },
+      {
+        "id": 32,
+        "cardId": 24
+      },
+      {
+        "id": 33,
+        "cardId": 25
+      },
+      {
+        "id": 34,
+        "cardId": 26
+      },
+      {
+        "id": 35,
+        "cardId": 2
+      },
+      {
+        "id": 36,
+        "cardId": 27
+      },
+      {
+        "id": 37,
+        "cardId": 28
+      },
+      {
+        "id": 38,
+        "cardId": 29
+      },
+      {
+        "id": 39,
+        "cardId": 30
+      },
+      {
+        "id": 40,
+        "cardId": 31
+      },
+      {
+        "id": 41,
+        "cardId": 32
+      },
+      {
+        "id": 42,
+        "cardId": 33
+      },
+      {
+        "id": 43,
+        "cardId": 34
+      },
+      {
+        "id": 44,
+        "cardId": 35
+      },
+      {
+        "id": 45,
+        "cardId": 36
+      },
+      {
+        "id": 46,
+        "cardId": 37
+      },
+      {
+        "id": 47,
+        "cardId": 38
+      },
+      {
+        "id": 48,
+        "cardId": 39
+      },
+      {
+        "id": 49,
+        "cardId": 40
+      },
+      {
+        "id": 50,
+        "cardId": 41
+      },
+      {
+        "id": 51,
+        "cardId": 42
+      },
+      {
+        "id": 52,
+        "cardId": 43
+      },
+      {
+        "id": 53,
+        "cardId": 44
+      },
+      {
+        "id": 54,
+        "cardId": 45
+      },
+      {
+        "id": 55,
+        "cardId": 46
+      },
+      {
+        "id": 56,
+        "cardId": 47
+      },
+      {
+        "id": 57,
+        "cardId": 48
+      },
+      {
+        "id": 58,
+        "cardId": 49
+      },
+      {
+        "id": 59,
+        "cardId": 50
+      },
+      {
+        "id": 60,
+        "cardId": 51
+      },
+      {
+        "id": 61,
+        "cardId": 52
+      },
+      {
+        "id": 62,
+        "cardId": 37
+      },
+      {
+        "id": 63,
+        "cardId": 53
+      },
+      {
+        "id": 64,
+        "cardId": 54
+      },
+      {
+        "id": 65,
+        "cardId": 55
+      },
+      {
+        "id": 66,
+        "cardId": 56
+      },
+      {
+        "id": 67,
+        "cardId": 57
+      },
+      {
+        "id": 68,
+        "cardId": 58
+      },
+      {
+        "id": 69,
+        "cardId": 59
+      },
+      {
+        "id": 70,
+        "cardId": 60
+      },
+      {
+        "id": 71,
+        "cardId": 2
+      },
+      {
+        "id": 72,
+        "cardId": 3
+      },
+      {
+        "id": 73,
+        "cardId": 61
+      },
+      {
+        "id": 74,
+        "cardId": 62
+      },
+      {
+        "id": 75,
+        "cardId": 62
+      },
+      {
+        "id": 76,
+        "cardId": 63
+      },
+      {
+        "id": 77,
+        "cardId": 64
+      },
+      {
+        "id": 78,
+        "cardId": 65
+      },
+      {
+        "id": 79,
+        "cardId": 66
+      },
+      {
+        "id": 80,
+        "cardId": 67
+      },
+      {
+        "id": 81,
+        "cardId": 68
+      },
+      {
+        "id": 82,
+        "cardId": 69
+      },
+      {
+        "id": 83,
+        "cardId": 69
+      },
+      {
+        "id": 84,
+        "cardId": 70
+      },
+      {
+        "id": 85,
+        "cardId": 70
+      },
+      {
+        "id": 86,
+        "cardId": 71
+      },
+      {
+        "id": 87,
+        "cardId": 72
+      },
+      {
+        "id": 88,
+        "cardId": 73
+      },
+      {
+        "id": 89,
+        "cardId": 74
+      },
+      {
+        "id": 90,
+        "cardId": 75
+      },
+      {
+        "id": 91,
+        "cardId": 76
+      },
+      {
+        "id": 92,
+        "cardId": 77
+      },
+      {
+        "id": 93,
+        "cardId": 78
+      },
+      {
+        "id": 94,
+        "cardId": 79
+      },
+      {
+        "id": 95,
+        "cardId": 80
+      },
+      {
+        "id": 96,
+        "cardId": 81
+      },
+      {
+        "id": 97,
+        "cardId": 82
+      },
+      {
+        "id": 98,
+        "cardId": 83
+      },
+      {
+        "id": 99,
+        "cardId": 84
+      },
+      {
+        "id": 100,
+        "cardId": 85
+      },
+      {
+        "id": 101,
+        "cardId": 86
+      },
+      {
+        "id": 102,
+        "cardId": 87
+      },
+      {
+        "id": 103,
+        "cardId": 88
+      },
+      {
+        "id": 104,
+        "cardId": 89
+      },
+      {
+        "id": 105,
+        "cardId": 90
+      },
+      {
+        "id": 106,
+        "cardId": 91
+      },
+      {
+        "id": 107,
+        "cardId": 60
+      },
+      {
+        "id": 108,
+        "cardId": 92
+      },
+      {
+        "id": 109,
+        "cardId": 93
+      },
+      {
+        "id": 110,
+        "cardId": 94
+      },
+      {
+        "id": 111,
+        "cardId": 95
+      },
+      {
+        "id": 112,
+        "cardId": 96
+      },
+      {
+        "id": 113,
+        "cardId": 97
+      },
+      {
+        "id": 114,
+        "cardId": 98
+      },
+      {
+        "id": 115,
+        "cardId": 99
+      },
+      {
+        "id": 116,
+        "cardId": 100
+      },
+      {
+        "id": 117,
+        "cardId": 101
+      },
+      {
+        "id": 118,
+        "cardId": 102
+      },
+      {
+        "id": 119,
+        "cardId": 5
+      },
+      {
+        "id": 120,
+        "cardId": 103
+      },
+      {
+        "id": 121,
+        "cardId": 104
+      },
+      {
+        "id": 122,
+        "cardId": 105
+      },
+      {
+        "id": 123,
+        "cardId": 106
+      },
+      {
+        "id": 124,
+        "cardId": 107
+      },
+      {
+        "id": 125,
+        "cardId": 108
+      },
+      {
+        "id": 126,
+        "cardId": 109
+      },
+      {
+        "id": 127,
+        "cardId": 110
+      },
+      {
+        "id": 128,
+        "cardId": 111
+      },
+      {
+        "id": 129,
+        "cardId": 112
+      },
+      {
+        "id": 130,
+        "cardId": 113
+      },
+      {
+        "id": 131,
+        "cardId": 114
+      },
+      {
+        "id": 132,
+        "cardId": 115
+      },
+      {
+        "id": 133,
+        "cardId": 116
+      },
+      {
+        "id": 134,
+        "cardId": 117
+      },
+      {
+        "id": 135,
+        "cardId": 118
+      }
+    ],
+    "stickerStock": {
+      "1": 10,
+      "2": 10,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 2,
+      "8": 5,
+      "10": 5,
+      "11": 1,
+      "16": 5
+    },
+    "discoveryPile": [
+      11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
+      34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56,
+      57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70
+    ],
+    "discoverablePile": [
+      71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93,
+      94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113,
+      114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132,
+      133, 134, 135
+    ],
+    "seed": "scenario-round-3"
+  },
+  {
+    "id": "03f2fb28-5deb-452f-823c-a58e44474b95",
+    "type": "ROUND_STARTED",
+    "timestamp": 1792313579869,
+    "round": 1,
+    "lastAddedCards": [],
+    "newDrawPile": [1, 4, 10, 6, 3, 8, 2, 9, 7, 5]
+  },
+  {
+    "id": "5517e28c-7465-4bca-a999-dea072f620f6",
+    "type": "TURN_STARTED",
+    "timestamp": 1792313579870,
+    "turn": 1,
+    "turnCards": [1, 4, 10, 6]
+  },
+  {
+    "id": "db95b3ff-1712-48b6-9727-68c322143692",
+    "type": "ADVANCE",
+    "timestamp": 1792313579871,
+    "turnCards": [3, 8],
+    "commands": [
+      {
+        "type": "progress"
+      }
+    ]
+  },
+  {
+    "id": "8cb6c0f6-a799-4d21-a0a1-aa3c6fcfbd3a",
+    "type": "TURN_ENDED",
+    "timestamp": 1792313579871,
+    "endTurnTrigger": {},
+    "commands": [
+      {
+        "type": "endTurn"
+      }
+    ]
+  },
+  {
+    "id": "e1c682d4-f811-408d-968e-d08e2f928d51",
+    "type": "TURN_STARTED",
+    "timestamp": 1792313579872,
+    "turn": 2,
+    "turnCards": [2, 9, 7, 5]
+  },
+  {
+    "id": "60d35545-11d7-42f5-893c-df7692729e31",
+    "type": "TURN_ENDED",
+    "timestamp": 1792313579872,
+    "endTurnTrigger": {},
+    "commands": [
+      {
+        "type": "endTurn"
+      }
+    ]
+  },
+  {
+    "id": "faac6ba3-dab0-4a27-980c-67d8d48b6963",
+    "type": "ROUND_ENDED",
+    "timestamp": 1792313579873,
+    "round": 1,
+    "endRoundTriggers": {}
+  },
+  {
+    "id": "290ee83b-b3ba-4d51-b59a-6c962529bcba",
+    "type": "ROUND_STARTED",
+    "timestamp": 1792313579873,
+    "round": 2,
+    "lastAddedCards": [],
+    "newDrawPile": [4, 8, 2, 3, 12, 9, 6, 7, 5, 10, 11, 1]
+  },
+  {
+    "id": "e06b59de-2616-4b62-be18-6bf6527f83ba",
+    "type": "STORY_ADVANCED",
+    "timestamp": 1792313579873,
+    "discoveredIds": [11, 12]
+  },
+  {
+    "id": "4afc5455-9435-4c6a-b10e-2507913c9819",
+    "type": "TURN_STARTED",
+    "timestamp": 1792313579874,
+    "turn": 1,
+    "turnCards": [4, 8, 2, 3],
+    "commands": [
+      {
+        "type": "startTurn"
+      }
+    ]
+  },
+  {
+    "id": "7b40c2f8-de73-4650-b32a-38d21b650730",
+    "type": "ADVANCE",
+    "timestamp": 1792313579874,
+    "turnCards": [12, 9],
+    "commands": [
+      {
+        "type": "progress"
+      }
+    ]
+  },
+  {
+    "id": "4d165fe4-1009-4fb4-816b-1a295509253e",
+    "type": "TURN_ENDED",
+    "timestamp": 1792313579875,
+    "endTurnTrigger": {},
+    "commands": [
+      {
+        "type": "endTurn"
+      }
+    ]
+  },
+  {
+    "id": "88352cbf-644f-4070-a262-cac93abff688",
+    "type": "TURN_STARTED",
+    "timestamp": 1792313579875,
+    "turn": 2,
+    "turnCards": [6, 7, 5, 10]
+  },
+  {
+    "id": "3a9023a0-24f7-4e5c-8746-c3e8b13f107e",
+    "type": "ADVANCE",
+    "timestamp": 1792313579876,
+    "turnCards": [11, 1],
+    "commands": [
+      {
+        "type": "progress"
+      }
+    ]
+  },
+  {
+    "id": "9f0e5968-edb1-4746-9eb7-1c886e8b8b68",
+    "type": "TURN_ENDED",
+    "timestamp": 1792313579876,
+    "endTurnTrigger": {},
+    "commands": [
+      {
+        "type": "endTurn"
+      }
+    ]
+  },
+  {
+    "id": "64b230ac-dc4f-48d6-a116-ea2b8b40f193",
+    "type": "ROUND_ENDED",
+    "timestamp": 1792313579876,
+    "round": 2,
+    "endRoundTriggers": {}
+  },
+  {
+    "id": "c6e11492-b594-47f9-af81-7e79c25586d5",
+    "type": "ROUND_STARTED",
+    "timestamp": 1792313579876,
+    "round": 3,
+    "lastAddedCards": [],
+    "newDrawPile": [7, 13, 4, 10, 12, 9, 2, 5, 3, 14, 8, 6, 11, 1]
+  },
+  {
+    "id": "26d14ee0-2f22-4c2f-8d5d-8315fb8b465c",
+    "type": "STORY_ADVANCED",
+    "timestamp": 1792313579877,
+    "discoveredIds": [13, 14]
+  }
+]

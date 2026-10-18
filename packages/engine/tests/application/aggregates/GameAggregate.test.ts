@@ -620,6 +620,40 @@ describe('GameAggregate.upgradeCard', () => {
     expect(gs.instances[1].stateId).toBe(2);
     expect(Object.keys(gs.triggerPile).length).toBeGreaterThan(0);
   });
+
+  it('does not fire the end-of-turn triggers of cards paid for the upgrade', () => {
+    const defUpgrade: CardDef = {
+      id: 1,
+      name: 'U',
+      states: [
+        { id: 1, name: 'S1' },
+        { id: 2, name: 'S2' },
+      ],
+    };
+    const state = makeState({
+      board: [1, 2, 3],
+      instances: {
+        1: makeInstance({ id: 1, cardId: 1, stateId: 1 }),
+        2: makeInstance({ id: 2, cardId: 6, stateId: 1 }),
+        3: makeInstance({ id: 3, cardId: 6, stateId: 1 }),
+      },
+      phase: Phase.PLAYING,
+      round: 1,
+      turn: 1,
+      triggerPile: {},
+    });
+
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      state,
+      { 1: defUpgrade, 6: endOfTurnDef },
+      {},
+      [],
+    );
+    const gs = agg.upgradeCard(1, 2, {}, [2], [3]);
+
+    expect(gs.triggerPile).toEqual({});
+  });
 });
 
 // ─── cardAction ───────────────────────────────────────────────────────────────

@@ -35,23 +35,30 @@ describe('isFlowCommandAllowed', () => {
   it('only allows the turn flow commands the UI offers in each phase', () => {
     const roundEnd = state({ phase: Phase.ROUND_END });
 
-    expect(isFlowCommandAllowed({ type: 'startRound' }, roundEnd)).toBe(true);
-    expect(isFlowCommandAllowed({ type: 'startRound' }, state({ phase: Phase.PLAYING }))).toBe(
-      false,
-    );
-    expect(isFlowCommandAllowed({ type: 'endRound' }, roundEnd)).toBe(false);
-    expect(isFlowCommandAllowed({ type: 'endRound' }, { ...roundEnd, isLastRound: true })).toBe(
-      true,
-    );
+    expect(isFlowCommandAllowed({ type: 'startRound' }, roundEnd, false)).toBe(true);
     expect(
-      isFlowCommandAllowed({ type: 'endRound' }, state({ phase: Phase.TURN_END, drawPile: [1] })),
+      isFlowCommandAllowed({ type: 'startRound' }, state({ phase: Phase.PLAYING }), false),
     ).toBe(false);
-    expect(isFlowCommandAllowed({ type: 'startTurn' }, state({ phase: Phase.PLAYING }))).toBe(
+    expect(isFlowCommandAllowed({ type: 'endRound' }, roundEnd, false)).toBe(false);
+    expect(isFlowCommandAllowed({ type: 'startRound' }, roundEnd, true)).toBe(false);
+    expect(isFlowCommandAllowed({ type: 'endRound' }, roundEnd, true)).toBe(true);
+    expect(
+      isFlowCommandAllowed(
+        { type: 'endRound' },
+        state({ phase: Phase.TURN_END, drawPile: [1] }),
+        false,
+      ),
+    ).toBe(false);
+    expect(
+      isFlowCommandAllowed({ type: 'startTurn' }, state({ phase: Phase.PLAYING }), false),
+    ).toBe(false);
+    expect(isFlowCommandAllowed({ type: 'endTurn' }, state({ phase: Phase.TURN_END }), false)).toBe(
       false,
     );
-    expect(isFlowCommandAllowed({ type: 'endTurn' }, state({ phase: Phase.TURN_END }))).toBe(false);
-    expect(isFlowCommandAllowed({ type: 'selectExpansion', name: 'x' }, roundEnd)).toBe(false);
-    expect(isFlowCommandAllowed({ type: 'skipChoice' }, roundEnd)).toBe(true);
+    expect(isFlowCommandAllowed({ type: 'selectExpansion', name: 'x' }, roundEnd, false)).toBe(
+      false,
+    );
+    expect(isFlowCommandAllowed({ type: 'skipChoice' }, roundEnd, false)).toBe(true);
   });
 });
 

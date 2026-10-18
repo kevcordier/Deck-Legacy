@@ -66,10 +66,21 @@ export type GameView = {
   canRewind: boolean;
   cardNames: Record<string, string>;
   purge: {
+    /** Unselected cards of the current batch; only `candidates` can be picked. */
+    batch: number[];
     candidates: number[];
     permanentCandidates: number[];
     selectedIds: number[];
     canSelectPermanent: boolean;
     isSelectionComplete: boolean;
   };
+};
+
+/**
+ * State of a game after its first `seq` events, kept by the server so that a sync starts from it
+ * instead of running the whole log again (EDR-052).
+ */
+export type GameCheckpoint = {
+  seq: number;
+  state: GameState;
 };

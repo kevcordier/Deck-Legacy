@@ -96,7 +96,7 @@ export const engineer: CardDef = {
       actions: [
         {
           id: '25-2-1',
-          defeat: true,
+          // No `defeat` flag: the enemy's own defeat action fires the ON_DEFEAT triggers.
           cost: {
             destroy: {
               scope: [TargetScope.SELF],
@@ -105,7 +105,7 @@ export const engineer: CardDef = {
           actionEffects: [
             {
               id: 1,
-              type: ActionEffectType.DESTROY_CARD,
+              type: ActionEffectType.DEFEAT_CARD,
               cards: {
                 tags: [CardTag.ENEMY],
                 scope: [TargetScope.BOARD, TargetScope.DISCARD, TargetScope.PERMANENTS],

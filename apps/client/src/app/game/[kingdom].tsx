@@ -16,14 +16,18 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-/** Opens the kingdom's local save; a new kingdom starts with the tutorial when it was chosen. */
+/**
+ * Opens the kingdom's local save; a new kingdom starts with the tutorial when it was chosen, and
+ * with the seed given at its creation (`?seed=`).
+ */
 function KingdomGame({ kingdomId }: { readonly kingdomId: string }) {
   const { tutorialEnabled } = useGameUI();
+  const { seed } = useLocalSearchParams<{ seed?: string }>();
   const [save] = useState(() => loadSave(kingdomId));
   const [tutorial] = useState(() => tutorialEnabled && save === null);
 
   return (
-    <GameProvider kingdomId={kingdomId} initialSave={save} startTutorial={tutorial}>
+    <GameProvider kingdomId={kingdomId} initialSave={save} startTutorial={tutorial} seed={seed}>
       <Game />
     </GameProvider>
   );
