@@ -2,9 +2,9 @@ import { Button } from '@components/ui/Button/Button';
 import { TextInput } from '@components/ui/Input/TextInput';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
-import { kingdomUseCases } from '@composition/kingdomUseCases';
 import { KINGDOM_NAME_MAX_LENGTH } from '@deck-legacy/engine/domain/kingdom/kingdomConstants';
 import type { KingdomMeta } from '@domain/kingdom/KingdomMeta';
+import { useAppServices } from '@hooks/useAppServices';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -16,6 +16,7 @@ type RenameKingdomModalProps = {
 
 /** Renames a kingdom on this device and pushes the new name at the next sync. */
 export function RenameKingdomModal({ kingdom, onClose }: RenameKingdomModalProps) {
+  const { kingdomUseCases } = useAppServices();
   const { t } = useTranslation();
   const [name, setName] = useState(kingdom.name);
   const trimmed = name.trim();

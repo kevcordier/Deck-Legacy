@@ -1,31 +1,26 @@
 import { GameUIContext } from './GameUIContext';
-import { storage } from '@infrastructure/storage/storage';
-import { STORAGE_KEYS } from '@infrastructure/storage/storageKeys';
+import { useAppServices } from '@hooks/useAppServices';
 import { type ReactNode, useState } from 'react';
 
-function getInitialTutorial(): boolean {
-  return storage.getItem(STORAGE_KEYS.tutorial) !== 'false';
-}
-
-function getInitialResourceWarning(): boolean {
-  return storage.getItem(STORAGE_KEYS.resourceWarning) !== 'false';
-}
-
 export function GameUIProvider({ children }: { readonly children: ReactNode }) {
+  const { preferences } = useAppServices();
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [rulesOpen, setRulesOpen] = useState(false);
   const [stickerStockOpen, setStickerStockOpen] = useState(false);
-  const [tutorialEnabled, setTutorialEnabled] = useState<boolean>(getInitialTutorial);
-  const [resourceWarningEnabled, setResourceWarningEnabled] =
-    useState<boolean>(getInitialResourceWarning);
+  const [tutorialEnabled, setTutorialEnabled] = useState<boolean>(
+    () => preferences.get('tutorial') !== 'false',
+  );
+  const [resourceWarningEnabled, setResourceWarningEnabled] = useState<boolean>(
+    () => preferences.get('resourceWarning') !== 'false',
+  );
 
   const handleTutorialChange = (enabled: boolean) => {
-    storage.setItem(STORAGE_KEYS.tutorial, String(enabled));
+    preferences.set('tutorial', String(enabled));
     setTutorialEnabled(enabled);
   };
 
   const handleResourceWarningChange = (enabled: boolean) => {
-    storage.setItem(STORAGE_KEYS.resourceWarning, String(enabled));
+    preferences.set('resourceWarning', String(enabled));
     setResourceWarningEnabled(enabled);
   };
 

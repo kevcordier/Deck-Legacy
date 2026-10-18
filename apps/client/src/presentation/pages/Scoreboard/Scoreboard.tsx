@@ -7,7 +7,7 @@ import { Button } from '@components/ui/Button/Button';
 import { Text } from '@components/ui/Text/Text';
 import { TextStyle } from '@components/ui/Text/TextStyle';
 import { Title } from '@components/ui/Title/Title';
-import { api } from '@infrastructure/api/api';
+import { useAppServices } from '@hooks/useAppServices';
 import { FULL_SIZE, PAGE_BACKGROUND, PAGE_EDGES } from '@styles/pageConstants';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 /** Scoreboard page: the kingdoms of registered players with the best total score (needs the API). */
 export function Scoreboard() {
+  const { accountApi } = useAppServices();
   const { t } = useTranslation();
   const [kingdoms, setKingdoms] = useState<KingdomRow[] | null>(null);
   const [failed, setFailed] = useState(false);
@@ -25,7 +26,7 @@ export function Scoreboard() {
 
   useEffect(() => {
     let cancelled = false;
-    api.kingdomLeaderboard().then(
+    accountApi.kingdomLeaderboard().then(
       entries => {
         if (cancelled) return;
         setKingdoms(
@@ -44,7 +45,7 @@ export function Scoreboard() {
     return () => {
       cancelled = true;
     };
-  }, [t]);
+  }, [accountApi, t]);
 
   const goHome = () => {
     if (router.canGoBack()) router.back();

@@ -1,10 +1,5 @@
+import type { AuthUser } from '@domain/account/AuthUser';
 import { createContext } from 'react';
-
-export type AuthUser = {
-  id: string;
-  email: string | null;
-  isAnonymous: boolean;
-};
 
 /**
  * `disabled`: Supabase is not configured (offline-only build). `offline`: no session could be

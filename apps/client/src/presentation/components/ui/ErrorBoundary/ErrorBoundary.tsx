@@ -1,7 +1,7 @@
 import { Button } from '@components/ui/Button/Button';
 import { EmptyState } from '@components/ui/EmptyState/EmptyState';
-import { kingdomUseCases } from '@composition/kingdomUseCases';
 import { CorruptedSaveError } from '@deck-legacy/engine/domain/errors/CorruptedSaveError';
+import { useAppServices } from '@hooks/useAppServices';
 import { reloadAppAsync } from 'expo';
 import type { ReactNode } from 'react';
 import { type FallbackProps, ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
@@ -15,6 +15,7 @@ type ErrorBoundaryProps = {
 };
 
 function ErrorFallback({ error, kingdomId }: Readonly<FallbackProps & { kingdomId?: string }>) {
+  const { kingdomUseCases } = useAppServices();
   const { t } = useTranslation();
   const canClearSave = error instanceof CorruptedSaveError && kingdomId !== undefined;
 

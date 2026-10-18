@@ -1,8 +1,9 @@
-import { kingdomStore } from '@composition/kingdomStore';
+import { useAppServices } from './useAppServices';
 import type { KingdomMeta } from '@domain/kingdom/KingdomMeta';
 import { useSyncExternalStore } from 'react';
 
 /** Kingdoms saved on this device, most recently created first. */
 export function useKingdoms(): KingdomMeta[] {
-  return useSyncExternalStore(kingdomStore.subscribe, kingdomStore.list, kingdomStore.list);
+  const { kingdoms } = useAppServices();
+  return useSyncExternalStore(kingdoms.subscribe, kingdoms.list, kingdoms.list);
 }
