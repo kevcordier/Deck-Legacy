@@ -33,6 +33,7 @@ import { Options } from '@deck-legacy/engine/domain/enums';
 import { canUseOptions } from '@deck-legacy/engine/domain/state/canUseOptions';
 import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import { cardNumber } from '@domain/card/cardNumber';
+import { useAppServices } from '@hooks/useAppServices';
 import { useGame } from '@hooks/useGame';
 import { tCardActionLabel } from '@i18n/card/tCardActionLabel';
 import { tCardGloryLabel } from '@i18n/card/tCardGloryLabel';
@@ -40,8 +41,7 @@ import { tCardName } from '@i18n/card/tCardName';
 import { tCardParchmentText } from '@i18n/card/tCardParchmentText';
 import { tCardPassiveLabel } from '@i18n/card/tCardPassiveLabel';
 import { tCardTag } from '@i18n/card/tCardTag';
-import { catalog } from '@infrastructure/catalog/catalog';
-import { getIllustrationSource } from '@infrastructure/illustrations/getIllustrationSource';
+import { getIllustrationSource } from '@presentation/assets/getIllustrationSource';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -144,6 +144,7 @@ export function GameCard({
   onPress,
   onActionTriggered,
 }: GameCardProps) {
+  const { catalog } = useAppServices();
   const { t } = useTranslation();
   const {
     gameState,

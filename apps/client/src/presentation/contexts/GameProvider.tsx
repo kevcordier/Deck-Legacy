@@ -1,5 +1,4 @@
 import { GameContext, type GameContextType } from './GameContext';
-import { kingdomUseCases } from '@composition/kingdomUseCases';
 import {
   GameSession,
   type GameSessionOptions,
@@ -12,14 +11,14 @@ import { EMPTY_STATE } from '@deck-legacy/engine/domain/state/emptyState';
 import type {
   CardDef,
   CheatCommand,
+  GameCatalog,
   GameCommand,
   GameState,
   GameView,
 } from '@deck-legacy/engine/domain/types';
 import { TUTORIAL_DRAW_ORDER } from '@deck-legacy/game-data';
 import type { SaveData } from '@domain/kingdom/SaveData';
-import { catalog } from '@infrastructure/catalog/catalog';
-import { toast } from '@infrastructure/toast/toast';
+import { useAppServices } from '@hooks/useAppServices';
 import { findDrawnCards } from '@presentation/board/findDrawnCards';
 import { type UpgradeReveal, findUpgradeReveal } from '@presentation/board/findUpgradeReveal';
 import { randomUUID } from 'expo-crypto';
@@ -58,6 +57,7 @@ function signatureOf(session: GameSession): string {
  * when the player keeps it) or starts the kingdom's first game.
  */
 function initialSession(
+  catalog: GameCatalog,
   kingdomId: string | undefined,
   save: SaveData | null | undefined,
   tutorial: boolean,
@@ -121,9 +121,10 @@ export function GameProvider({
   readonly seed?: string;
 }) {
   const { t } = useTranslation();
+  const { catalog, kingdomUseCases, notifier } = useAppServices();
   const { cards: defs, stickers: stickerDefs, expansions } = catalog;
   const [firstSession] = useState(() =>
-    initialSession(kingdomId, initialSave, tutorialAtStart, seed),
+    initialSession(catalog, kingdomId, initialSave, tutorialAtStart, seed),
   );
   const sessionRef = useRef<GameSession | null>(firstSession);
   const [view, setView] = useState<GameView | null>(() => firstSession?.toView() ?? null);
@@ -141,13 +142,16 @@ export function GameProvider({
   // ─── Session plumbing ─────────────────────────────────────────────────────
 
   /** Saves locally when the event log or card names changed, then schedules a sync. */
-  const persist = useCallback((session: GameSession) => {
-    if (session.tutorial) return;
-    const signature = signatureOf(session);
-    if (signature === persistedRef.current) return;
-    persistedRef.current = signature;
-    kingdomUseCases.saveGame.execute(session);
-  }, []);
+  const persist = useCallback(
+    (session: GameSession) => {
+      if (session.tutorial) return;
+      const signature = signatureOf(session);
+      if (signature === persistedRef.current) return;
+      persistedRef.current = signature;
+      kingdomUseCases.saveGame.execute(session);
+    },
+    [kingdomUseCases],
+  );
 
   useEffect(() => {
     if (firstSession) persist(firstSession);
@@ -187,10 +191,10 @@ export function GameProvider({
       publish(session);
       if (error) {
         if (error.code === 'ENGINE_ERROR') console.error(error.message);
-        toast.error(t(error.message));
+        notifier.error(t(error.message));
       }
     },
-    [publish, t],
+    [notifier, publish, t],
   );
 
   // ─── Lifecycle ────────────────────────────────────────────────────────────
@@ -208,7 +212,7 @@ export function GameProvider({
     );
     sessionRef.current = session;
     publish(session);
-  }, [kingdomId, publish, seed]);
+  }, [catalog, kingdomId, publish, seed]);
 
   /** Keeps the tutorial game: replayed as a standard session, so it is saved and synced. */
   const continueGame = useCallback(() => {
@@ -223,7 +227,7 @@ export function GameProvider({
     );
     sessionRef.current = session;
     publish(session);
-  }, [kingdomId, publish]);
+  }, [catalog, kingdomId, publish]);
 
   // ─── Development tools ────────────────────────────────────────────────────
 

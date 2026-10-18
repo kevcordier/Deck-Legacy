@@ -13,15 +13,13 @@ import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
 import { TextStyle } from '@components/ui/Text/TextStyle';
 import { Title } from '@components/ui/Title/Title';
-import { kingdomUseCases } from '@composition/kingdomUseCases';
 import type { Scenario } from '@data/scenarios';
 import type { KingdomMeta } from '@domain/kingdom/KingdomMeta';
 import { maxKingdoms } from '@domain/kingdom/maxKingdoms';
+import { useAppServices } from '@hooks/useAppServices';
 import { useAuth } from '@hooks/useAuth';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useKingdoms } from '@hooks/useKingdoms';
-import { storage } from '@infrastructure/storage/storage';
-import { STORAGE_KEYS } from '@infrastructure/storage/storageKeys';
 import { kingdomPath } from '@presentation/routing/kingdomPath';
 import { FULL_SIZE, PAGE_BACKGROUND, PAGE_EDGES } from '@styles/pageConstants';
 import { router } from 'expo-router';
@@ -61,13 +59,12 @@ function Welcome({ onPlayOffline }: { readonly onPlayOffline: () => void }) {
  * up to ten with an account, one without.
  */
 export function Home() {
+  const { kingdomUseCases, preferences } = useAppServices();
   const { t } = useTranslation();
   const { status, user } = useAuth();
   const { tutorialEnabled, setTutorialEnabled } = useGameUI();
   const kingdoms = useKingdoms();
-  const [offlineChosen, setOfflineChosen] = useState(
-    () => storage.getItem(STORAGE_KEYS.offline) === 'true',
-  );
+  const [offlineChosen, setOfflineChosen] = useState(() => preferences.get('offline') === 'true');
   const [creating, setCreating] = useState(false);
   const [toDelete, setToDelete] = useState<KingdomMeta | null>(null);
   const [viewing, setViewing] = useState<KingdomMeta | null>(null);
@@ -82,7 +79,7 @@ export function Home() {
   const atLimit = kingdoms.length >= limit;
 
   const playOffline = () => {
-    storage.setItem(STORAGE_KEYS.offline, 'true');
+    preferences.set('offline', 'true');
     setOfflineChosen(true);
   };
 

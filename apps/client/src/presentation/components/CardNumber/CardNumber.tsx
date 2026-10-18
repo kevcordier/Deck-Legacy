@@ -1,8 +1,8 @@
 import { ExpansionIcon } from '@components/ExpansionIcon/ExpansionIcon';
 import { Text } from '@components/ui/Text/Text';
 import { cardNumber } from '@domain/card/cardNumber';
+import { useAppServices } from '@hooks/useAppServices';
 import { useGame } from '@hooks/useGame';
-import { catalog } from '@infrastructure/catalog/catalog';
 import { useTranslation } from 'react-i18next';
 
 type CardNumberProps = {
@@ -18,6 +18,7 @@ export function CardNumber({
   className = '',
   iconClassName = 'size-3',
 }: CardNumberProps) {
+  const { catalog } = useAppServices();
   const { t } = useTranslation();
   const { gameState } = useGame();
   const { expansion, number } = cardNumber(

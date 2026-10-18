@@ -8,10 +8,9 @@ import { PasswordStrength } from '@components/ui/PasswordStrength/PasswordStreng
 import { Text } from '@components/ui/Text/Text';
 import { Title } from '@components/ui/Title/Title';
 import { checkPassword } from '@domain/password/checkPassword';
+import { useAppServices } from '@hooks/useAppServices';
 import { useAuth } from '@hooks/useAuth';
 import { useSyncStatus } from '@hooks/useSyncStatus';
-import { api } from '@infrastructure/api/api';
-import { toast } from '@infrastructure/toast/toast';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -26,6 +25,7 @@ interface AccountPanelProps {
  * status.
  */
 export function AccountPanel({ onDone }: AccountPanelProps) {
+  const { accountApi, notifier } = useAppServices();
   const { t } = useTranslation();
   const { status, user, setPassword, signOut, deleteAccount } = useAuth();
   const syncStatus = useSyncStatus();
@@ -39,24 +39,24 @@ export function AccountPanel({ onDone }: AccountPanelProps) {
     let cancelled = false;
     // Without a registered account, nothing is sent to the API (EDR-050).
     if (!user || user.isAnonymous) return;
-    api.getMe().then(
+    accountApi.getMe().then(
       me => {
         if (!cancelled) setDisplayName(me.displayName ?? '');
       },
-      () => toast.error(t('errors.network')),
+      () => notifier.error(t('errors.network')),
     );
     return () => {
       cancelled = true;
     };
-  }, [t, user]);
+  }, [accountApi, notifier, t, user]);
 
   const run = async (task: () => Promise<void>, success?: string) => {
     setWorking(true);
     try {
       await task();
-      if (success) toast.success(t(success));
+      if (success) notifier.success(t(success));
     } catch (error) {
-      toast.error(error instanceof Error ? t(error.message) : t('errors.unknown'));
+      notifier.error(error instanceof Error ? t(error.message) : t('errors.unknown'));
     } finally {
       setWorking(false);
     }
@@ -108,7 +108,7 @@ export function AccountPanel({ onDone }: AccountPanelProps) {
               disabled={working || displayName.trim().length < 2}
               onPress={() =>
                 void run(async () => {
-                  const me = await api.updateMe(displayName.trim());
+                  const me = await accountApi.updateMe(displayName.trim());
                   setDisplayName(me.displayName ?? '');
                 }, 'account.saved')
               }

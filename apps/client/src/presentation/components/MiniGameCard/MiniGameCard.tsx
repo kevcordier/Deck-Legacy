@@ -28,7 +28,7 @@ import type { CardAction, CardInstance, StepDef } from '@deck-legacy/engine/doma
 import { useGame } from '@hooks/useGame';
 import { tCardName } from '@i18n/card/tCardName';
 import { tCardPassiveLabel } from '@i18n/card/tCardPassiveLabel';
-import { getIllustrationSource } from '@infrastructure/illustrations/getIllustrationSource';
+import { getIllustrationSource } from '@presentation/assets/getIllustrationSource';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Fragment, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -2,8 +2,8 @@ import { KingdomCards } from './KingdomCards';
 import type { KingdomViewerProps } from './KingdomViewerProps';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
-import { kingdomStore } from '@composition/kingdomStore';
 import { GameProvider } from '@contexts/GameProvider';
+import { useAppServices } from '@hooks/useAppServices';
 import { useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
@@ -13,8 +13,9 @@ import { useTranslation } from 'react-i18next';
  * it (nothing is saved). A kingdom without a save shows empty zones.
  */
 export function KingdomViewer({ kingdom, onClose }: KingdomViewerProps) {
+  const { kingdoms } = useAppServices();
   const { t } = useTranslation();
-  const [save] = useState(() => kingdomStore.loadSave(kingdom.id));
+  const [save] = useState(() => kingdoms.loadSave(kingdom.id));
   return (
     <ErrorBoundary
       fallback={

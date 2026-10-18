@@ -8,13 +8,12 @@ import { RulesModal } from '@components/RulesModal/RulesModal';
 import { TutorialOverlay } from '@components/Tutorial/TutorialOverlay';
 import { TutorialStage } from '@components/Tutorial/TutorialStage';
 import { GameOverScreen } from '@components/ui/GameOverScreen/GameOverScreen';
-import { syncService } from '@composition/syncService';
 import { TutorialProvider } from '@contexts/TutorialProvider';
 import { Phase } from '@deck-legacy/engine/domain/enums';
+import { useAppServices } from '@hooks/useAppServices';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useIsDesktop } from '@hooks/useIsDesktop';
-import { catalog } from '@infrastructure/catalog/catalog';
 import {
   FULL_SIZE,
   PAGE_BACKGROUND,
@@ -26,6 +25,7 @@ import { ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export function Game() {
+  const { catalog, sync } = useAppServices();
   const {
     id,
     defs,
@@ -55,7 +55,7 @@ export function Game() {
   /** Back to the kingdoms: the save is already local, push it now when online. */
   const goHome = () => {
     setOptionsOpen(false);
-    void syncService.syncNow();
+    void sync.syncNow();
     if (router.canGoBack()) router.back();
     else router.replace('/');
   };
