@@ -119,7 +119,7 @@ Ask if unclear. A deck entry has three ids (EDR-047):
 
 If the card needs a mechanic the engine lacks (new `ActionEffectType`, `PassiveType`,
 `Trigger`, `TargetScope`…), stop and tell the user: that is an engine change requiring a
-new strategy in `packages/engine/src/application/cardAction/`, registration in `CardActionContext`,
+new strategy in `packages/engine/src/domain/cardAction/`, registration in `CardActionContext`,
 and full test coverage in `packages/engine/tests/application/`. Do it only with their agreement.
 
 ## 8. Verify

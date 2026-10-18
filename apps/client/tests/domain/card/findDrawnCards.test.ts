@@ -1,4 +1,4 @@
-import { EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
+import { EMPTY_STATE } from '@deck-legacy/engine/domain/emptyState';
 import type { GameState } from '@deck-legacy/engine/domain/types';
 import { findDrawnCards } from '@domain/card/findDrawnCards';
 import { describe, expect, it } from 'vitest';

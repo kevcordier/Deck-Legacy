@@ -4,7 +4,7 @@ import { Divider } from '@components/ui/Divider/Divider';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
 import { Title } from '@components/ui/Title/Title';
-import { getActiveState } from '@deck-legacy/engine/application/cardHelpers';
+import { getActiveState } from '@deck-legacy/engine/domain/cardHelpers';
 import { GameEventType } from '@deck-legacy/engine/domain/enums';
 import type {
   AdvanceEvent,

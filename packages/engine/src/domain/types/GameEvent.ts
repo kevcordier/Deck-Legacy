@@ -1,4 +1,3 @@
-import type { GameEventType } from '../enums';
 import type {
   ExpansionDeckEntry,
   GameParameters,
@@ -7,7 +6,8 @@ import type {
   Resources,
   StickerStock,
   TriggerEntry,
-} from './';
+} from '.';
+import type { GameEventType } from '../enums';
 import type { GameCommand } from './GameSession';
 
 export interface GameEvent {

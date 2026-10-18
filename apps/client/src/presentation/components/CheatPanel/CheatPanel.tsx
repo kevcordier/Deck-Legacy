@@ -1,7 +1,7 @@
 import { SelectInput } from '@components/ui/Input/SelectInput';
 import { TextInput } from '@components/ui/Input/TextInput';
 import { Text } from '@components/ui/Text/Text';
-import { getActiveState } from '@deck-legacy/engine/application/cardHelpers';
+import { getActiveState } from '@deck-legacy/engine/domain/cardHelpers';
 import { ResourceType } from '@deck-legacy/engine/domain/enums';
 import { useGame } from '@hooks/useGame';
 import { tCardName } from '@i18n/card/tCardName';

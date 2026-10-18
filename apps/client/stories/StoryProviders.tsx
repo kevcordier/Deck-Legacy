@@ -1,7 +1,7 @@
 import { GameProvider } from '@contexts/GameProvider';
 import { GameUIProvider } from '@contexts/GameUIProvider';
 import { TutorialProvider } from '@contexts/TutorialProvider';
-import { EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
+import { EMPTY_STATE } from '@deck-legacy/engine/domain/emptyState';
 import type { GameState } from '@deck-legacy/engine/domain/types';
 import type { ReactNode } from 'react';
 

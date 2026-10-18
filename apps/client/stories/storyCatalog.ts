@@ -1,4 +1,4 @@
-import { createInstance } from '@deck-legacy/engine/application/factory';
+import { createInstance } from '@deck-legacy/engine/domain/factory';
 import type { CardInstance, GameCatalog } from '@deck-legacy/engine/domain/types';
 import { catalog } from '@infrastructure/catalog/catalog';
 

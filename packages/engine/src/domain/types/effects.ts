@@ -1,5 +1,5 @@
+import type { Passive } from '.';
 import { PassiveType, TargetScope } from '../enums';
-import type { Passive } from './';
 
 export const CardPassives: Record<string, Passive> = {
   [PassiveType.STAY_IN_PLAY]: {

@@ -1,4 +1,4 @@
-import { EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
+import { EMPTY_STATE } from '@deck-legacy/engine/domain/emptyState';
 import { GameEventType } from '@deck-legacy/engine/domain/enums';
 import type { CardInstance, GameEvent, GameState } from '@deck-legacy/engine/domain/types';
 import { findUpgradeReveal } from '@domain/card/findUpgradeReveal';

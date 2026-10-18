@@ -2,7 +2,7 @@ import { getStoryCatalog, makeInstance } from './storyCatalog';
 import { GameCard } from '@components/GameCard/GameCard';
 import { Grid } from '@components/ui/Grid/Grid';
 import { GameProvider } from '@contexts/GameProvider';
-import { EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
+import { EMPTY_STATE } from '@deck-legacy/engine/domain/emptyState';
 import type { ExpansionDeckEntry } from '@deck-legacy/engine/domain/types';
 import { CardPassives } from '@deck-legacy/engine/domain/types/effects';
 import { baseCampaignNames } from '@deck-legacy/game-data';

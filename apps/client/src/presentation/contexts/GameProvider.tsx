@@ -2,11 +2,11 @@ import { GameContext, type GameContextType } from './GameContext';
 import { summarizeSession } from '@application/kingdom/summarizeSession';
 import { kingdomStore } from '@composition/kingdomStore';
 import { syncService } from '@composition/syncService';
-import { DEFAULT_PARAMETERS, EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
 import {
   GameSession,
   type GameSessionOptions,
 } from '@deck-legacy/engine/application/session/GameSession';
+import { DEFAULT_PARAMETERS, EMPTY_STATE } from '@deck-legacy/engine/domain/emptyState';
 import { Phase } from '@deck-legacy/engine/domain/enums';
 import { CorruptedGameError } from '@deck-legacy/engine/domain/errors/CorruptedGameError';
 import { CorruptedSaveError } from '@deck-legacy/engine/domain/errors/CorruptedSaveError';

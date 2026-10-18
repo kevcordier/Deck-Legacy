@@ -1,7 +1,7 @@
 import { StoryProviders } from './StoryProviders';
 import { baseInstances } from './storyCatalog';
 import { DeckViewer } from '@components/DeckViewer/DeckViewer';
-import { EMPTY_STATE } from '@deck-legacy/engine/application/emptyState';
+import { EMPTY_STATE } from '@deck-legacy/engine/domain/emptyState';
 import type { Meta, StoryObj } from '@storybook/react-native';
 
 const meta: Meta<typeof DeckViewer> = {

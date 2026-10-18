@@ -2,7 +2,7 @@
   "name": "@deck-legacy/engine",
   "private": true,
   "version": "1.0.0",
-  "description": "Deck-Legacy game engine: domain types and the event-sourced application layer.",
+  "description": "Deck-Legacy game engine: game rules (domain) and the game session (application).",
   "exports": {
     "./domain/types": {
       "source": "./src/domain/types/index.ts",
@@ -14,15 +14,15 @@
       "types": "./dist/domain/enums/index.d.ts",
       "default": "./dist/domain/enums/index.js"
     },
-    "./application/cardAction": {
-      "source": "./src/application/cardAction/index.ts",
-      "types": "./dist/application/cardAction/index.d.ts",
-      "default": "./dist/application/cardAction/index.js"
+    "./domain/cardAction": {
+      "source": "./src/domain/cardAction/index.ts",
+      "types": "./dist/domain/cardAction/index.d.ts",
+      "default": "./dist/domain/cardAction/index.js"
     },
-    "./application/gameEvent": {
-      "source": "./src/application/gameEvent/index.ts",
-      "types": "./dist/application/gameEvent/index.d.ts",
-      "default": "./dist/application/gameEvent/index.js"
+    "./domain/gameEvent": {
+      "source": "./src/domain/gameEvent/index.ts",
+      "types": "./dist/domain/gameEvent/index.d.ts",
+      "default": "./dist/domain/gameEvent/index.js"
     },
     "./*": {
       "source": "./src/*.ts",

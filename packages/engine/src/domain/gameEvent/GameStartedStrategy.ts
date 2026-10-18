@@ -1,0 +1,45 @@
+import { Phase } from '../enums';
+import { createInstance } from '../factory';
+import type { CardDef, GameEvent, GameStartedEvent, GameState } from '../types';
+import type { GameEventStrategy } from './GameEventStrategy';
+
+export class GameStartedStrategy implements GameEventStrategy {
+  constructor(private readonly defs: Record<number, CardDef>) {}
+  apply(gameState: GameState, event: GameEvent): GameState {
+    const e = event as GameStartedEvent;
+    const inGame = new Set([...e.initialDeck, ...e.discoveryPile, ...(e.discoverablePile ?? [])]);
+    return {
+      ...gameState,
+      seed: e.seed,
+      instances: Object.fromEntries(
+        e.deck
+          .filter(entry => inGame.has(entry.id))
+          .map(entry => [
+            entry.id,
+            createInstance(entry.id, entry.cardId, this.defs[entry.cardId].states[0].id, this.defs),
+          ]),
+      ),
+      drawPile: e.initialDeck,
+      discardPile: [],
+      board: [],
+      permanents: [],
+      destroyedPile: [],
+      triggerPile: {},
+      boardEffects: {},
+      resources: {},
+      stickerStock: e.stickerStock,
+      discoveryPile: e.discoveryPile,
+      discoverablePile: e.discoverablePile,
+      parameterOverrides: {},
+      campaignScores: {},
+      activeExpansion: undefined,
+      purgedCards: [],
+      purgedGlory: [],
+      purgeState: undefined,
+      round: 0,
+      turn: 0,
+      isLastRound: false,
+      phase: Phase.PRE_GAME,
+    };
+  }
+}

@@ -14,10 +14,10 @@ import {
   canAffordTrackAdvanceCost,
   evaluateCondition,
   getEffectiveActionCost,
-} from '@deck-legacy/engine/application/cardHelpers';
-import { canUseOptions } from '@deck-legacy/engine/application/gameStateHelper';
-import { hasAnyAmountCost } from '@deck-legacy/engine/application/resources';
+} from '@deck-legacy/engine/domain/cardHelpers';
 import { Options, Phase, type ResourceType, TargetScope } from '@deck-legacy/engine/domain/enums';
+import { canUseOptions } from '@deck-legacy/engine/domain/gameStateHelper';
+import { hasAnyAmountCost } from '@deck-legacy/engine/domain/resources';
 import type { CardAction, CardInstance } from '@deck-legacy/engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import { type ReactNode, useState } from 'react';

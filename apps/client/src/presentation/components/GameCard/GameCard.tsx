@@ -29,10 +29,10 @@ import {
   getProductionChoicesForAction,
   isPermanent,
   tagClass,
-} from '@deck-legacy/engine/application/cardHelpers';
-import { getPickNumbers } from '@deck-legacy/engine/application/effectResolver';
-import { canUseOptions } from '@deck-legacy/engine/application/gameStateHelper';
+} from '@deck-legacy/engine/domain/cardHelpers';
+import { getPickNumbers } from '@deck-legacy/engine/domain/effectResolver';
 import { Options } from '@deck-legacy/engine/domain/enums';
+import { canUseOptions } from '@deck-legacy/engine/domain/gameStateHelper';
 import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import { cardNumber } from '@domain/card/cardNumber';
 import { useGame } from '@hooks/useGame';
