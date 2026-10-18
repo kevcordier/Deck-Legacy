@@ -128,7 +128,7 @@ describe('verification of random games', () => {
         tutorial ? 'tutorial' : 'standard',
         tutorial ? catalog.tutorialDrawOrder : undefined,
       );
-      for (let step = 0; step < 1500; step++) {
+      for (let step = 0; step < 3000; step++) {
         session.execute(pick(commands(session, pick)));
       }
 

@@ -604,8 +604,11 @@ export class GameSession {
     const productionChoices = baseProductions.flatMap(base =>
       getProductionChoicesForAction(base, gs, cards, inst, stickers),
     );
-    const resourcesGained = (productionChoices[choiceIndex] ?? {}) as Record<string, number>;
-    this.sync(this.agg.cardProduced(instanceId, resourcesGained));
+    const chosen = productionChoices[choiceIndex];
+    // Like the UI: only a card with a production that gains something produces (a permanent
+    // without production would be discarded while staying a permanent).
+    if (!chosen || !productionChoices.some(choice => Object.keys(choice).length > 0)) return;
+    this.sync(this.agg.cardProduced(instanceId, chosen));
   }
 
   private resolveAction(

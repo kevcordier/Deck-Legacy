@@ -52,6 +52,8 @@ function play(session: GameSession, steps: number): void {
   for (let step = 0; step < steps; step++) {
     const state = session.getState();
     const [triggerId] = Object.keys(state.triggerPile);
+    // Only fields produce: workshops have no production to resolve.
+    const field = state.board.find(id => state.instances[id].cardId === 1);
     if (state.phase === Phase.GAME_OVER) return;
     if (triggerId) {
       const entry = state.triggerPile[triggerId];
@@ -65,8 +67,8 @@ function play(session: GameSession, steps: number): void {
               triggerId,
             },
       );
-    } else if (state.phase === Phase.PLAYING && state.board.length > 1) {
-      session.execute({ type: 'resolveProduction', instanceId: state.board[0], choiceIndex: 0 });
+    } else if (state.phase === Phase.PLAYING && state.board.length > 1 && field !== undefined) {
+      session.execute({ type: 'resolveProduction', instanceId: field, choiceIndex: 0 });
     } else if (state.phase === Phase.PLAYING) {
       session.execute({ type: 'endTurn' });
     } else if (state.phase === Phase.TURN_END) {
