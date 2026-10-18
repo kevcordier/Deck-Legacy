@@ -32,14 +32,15 @@ apps/server/
 │   ├── main.ts / bootstrap.ts / app.module.ts   # Bootstrap; configureApp() = CORS, body size, error filter, Swagger on /docs
 │   ├── is-allowed-origin.ts / openapi.ts        # CORS check; OpenAPI document (served on /docs, written to openapi.json)
 │   ├── config/            # Env validation (zod, env.ts) + APP_CONFIG token
-│   ├── auth/              # Supabase JWT verification, global AuthGuard, @Public, @CurrentUser
+│   ├── auth/              # domain/ (AuthUser), application/ (TokenVerifier port, InvalidTokenError), infrastructure/ (SupabaseTokenVerifier, JWKS), presentation/ (global AuthGuard, @Public, @CurrentUser)
 │   ├── games/             # Game sync (feature module, layered as below)
 │   │   ├── domain/        # Plain types and pure functions (GameSnapshot, firstDifference, usesCheats…): no Nest, no zod, no Prisma
 │   │   ├── application/   # Use cases (sync, list, export, abandon…), GameValidator (replay), GameLock, ports (GamesRepository), models/ (plain TS input/output types)
 │   │   ├── infrastructure/# PrismaGamesRepository (implements the GamesRepository port)
 │   │   ├── presentation/  # GamesController (HTTP + Swagger decorators), dto/ (zod schemas that `satisfies` the models)
 │   │   └── games.module.ts
-│   ├── users/  scores/    # Same layout: application/ (service + models/), presentation/ (controller + dto/)
+│   ├── users/             # application/ (EnsureUser, GetProfile, UpdateDisplayName, DeleteAccount; ports UsersRepository, IdentityAdmin), infrastructure/ (Prisma, Supabase admin API), presentation/
+│   ├── scores/            # application/ (leaderboard use cases; port ScoresRepository), infrastructure/ (PrismaScoresRepository, PrismaScoreMirror implementing games' ScoreMirror port), presentation/
 │   ├── prisma/            # PrismaService (pg adapter), Transaction type, JSON mappers shared by modules
 │   ├── shared/            # presentation/http/ (ZodValidationPipe, ApiExceptionFilter, ApiErrorDto, nullableStringSchema), trim-trailing-slashes
 │   └── generated/prisma   # GENERATED Prisma client (gitignored, `prisma generate`)
@@ -95,8 +96,8 @@ Imports inside the server are relative; shared code comes from `@deck-legacy/eng
 
 ## Authentication
 
-- `SupabaseTokenVerifier` checks the access token: issuer `${SUPABASE_URL}/auth/v1`, audience and role `authenticated`. It uses the project JWKS (`SUPABASE_JWKS` provider; Supabase signs with ES256), never a shared secret.
-- `AuthGuard` then calls `UsersService.ensureUser`, which upserts the `User` row (id = Supabase `sub`, email, `isAnonymous`) and caches it in memory to avoid one write per request.
+- `SupabaseTokenVerifier` (implements the `TokenVerifier` port) checks the access token: issuer `${SUPABASE_URL}/auth/v1`, audience and role `authenticated`. It uses the project JWKS (`SUPABASE_JWKS` provider; Supabase signs with ES256), never a shared secret.
+- `AuthGuard` then calls `EnsureUserUseCase`, which upserts (through `UsersRepository`) the `User` row (id = Supabase `sub`, email, `isAnonymous`) and caches it in memory to avoid one write per request.
 - Anonymous (guest) users can sync games and have scores, but are excluded from the leaderboard.
 - `DELETE /me` deletes the Supabase user through the admin API, then the `User` row; games, events and scores follow by cascade.
 

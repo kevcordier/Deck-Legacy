@@ -1,4 +1,4 @@
-import { Public } from './auth/public.decorator';
+import { Public } from './auth/presentation/public.decorator';
 import { Controller, Get } from '@nestjs/common';
 
 @Controller('health')

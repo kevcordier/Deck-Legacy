@@ -1,11 +1,12 @@
-import type { AuthUser } from '../../auth/auth-user';
-import { ScoresService } from '../../scores/application/scores.service';
+import type { AuthUser } from '../../auth/domain/auth-user';
+import type { Transaction } from '../../prisma/transaction';
 import { firstDifference } from '../domain/first-difference';
 import { GameLock } from './game-lock';
 import { GameValidator } from './game-validator';
 import { GamesRepository } from './games.repository';
 import type { GameSummary } from './models/game-summary';
 import type { SyncGameCommand } from './models/sync-game-command';
+import { ScoreMirror } from './score-mirror';
 import { staleVersionException } from './stale-version.exception';
 import { kingdomLimit } from '@deck-legacy/engine/domain/kingdom/kingdomLimit';
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -25,7 +26,7 @@ export class SyncGameUseCase {
     private readonly repository: GamesRepository,
     private readonly validator: GameValidator,
     private readonly lock: GameLock,
-    private readonly scores: ScoresService,
+    private readonly scores: ScoreMirror,
   ) {}
 
   execute(user: AuthUser, gameId: string, body: SyncGameCommand): Promise<GameSummary> {
@@ -48,8 +49,8 @@ export class SyncGameUseCase {
         meta?.checkpoint && meta.checkpoint.seq <= firstChange ? meta.checkpoint : undefined;
       const snapshot = this.validator.validate({ ...body, events }, checkpoint);
 
-      const mirrorScores = (tx: Parameters<ScoresService['syncGameScores']>[0]) =>
-        this.scores.syncGameScores(tx, userId, gameId, snapshot.campaignScores);
+      const mirrorScores = (tx: Transaction) =>
+        this.scores.mirror(tx, userId, gameId, snapshot.campaignScores);
 
       if (meta) {
         await this.repository.save(gameId, userId, limit, firstChange, snapshot, mirrorScores);

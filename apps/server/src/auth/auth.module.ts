@@ -1,10 +1,11 @@
 import { APP_CONFIG } from '../config/app-config.token';
 import { type AppConfig } from '../config/env';
 import { UsersModule } from '../users/users.module';
-import { AuthGuard } from './auth.guard';
-import { remoteSupabaseJwks } from './remote-supabase-jwks';
-import { SUPABASE_JWKS } from './supabase-jwks.token';
-import { SupabaseTokenVerifier } from './supabase-token.verifier';
+import { TokenVerifier } from './application/token-verifier';
+import { remoteSupabaseJwks } from './infrastructure/remote-supabase-jwks';
+import { SUPABASE_JWKS } from './infrastructure/supabase-jwks.token';
+import { SupabaseTokenVerifier } from './infrastructure/supabase-token.verifier';
+import { AuthGuard } from './presentation/auth.guard';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 
@@ -16,9 +17,9 @@ import { APP_GUARD } from '@nestjs/core';
       inject: [APP_CONFIG],
       useFactory: (config: AppConfig) => remoteSupabaseJwks(config),
     },
-    SupabaseTokenVerifier,
+    { provide: TokenVerifier, useClass: SupabaseTokenVerifier },
     { provide: APP_GUARD, useClass: AuthGuard },
   ],
-  exports: [SupabaseTokenVerifier],
+  exports: [TokenVerifier],
 })
 export class AuthModule {}
