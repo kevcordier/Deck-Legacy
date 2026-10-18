@@ -12,63 +12,64 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 
 ## Index
 
-| ID      | Date       | Titre                                        | Statut                                  |
-| ------- | ---------- | -------------------------------------------- | --------------------------------------- |
-| EDR-001 | 2026-03-22 | Jeu solo de deck-building médiéval           | Active                                  |
-| EDR-002 | 2026-03-22 | Application web React + Vite                 | Dépréciée par EDR-020                   |
-| EDR-003 | 2026-03-22 | État de jeu par event sourcing               | Active                                  |
-| EDR-004 | 2026-03-22 | Cartes décrites en données déclaratives      | Active                                  |
-| EDR-005 | 2026-03-22 | TypeScript strict, zéro warning              | Active                                  |
-| EDR-006 | 2026-03-24 | Jeu bilingue anglais et français             | Active                                  |
-| EDR-007 | 2026-04-02 | Une stratégie par type d'effet               | Active                                  |
-| EDR-008 | 2026-04-02 | Tests Vitest, couverture moteur 80 %         | Active                                  |
-| EDR-009 | 2026-04-02 | Storybook comme catalogue de composants      | Active                                  |
-| EDR-010 | 2026-04-02 | Documentation dédiée aux assistants IA       | Active                                  |
-| EDR-011 | 2026-04-02 | Client web hébergé sur GitHub Pages          | Active, en partie remplacée par EDR-039 |
-| EDR-012 | 2026-04-05 | Hook pre-commit bloquant (Husky)             | Active                                  |
-| EDR-013 | 2026-04-09 | Styles Tailwind CSS v4                       | Dépréciée par EDR-021                   |
-| EDR-014 | 2026-04-10 | Couches imposées par dependency-cruiser      | Active                                  |
-| EDR-015 | 2026-04-12 | Analyse qualité continue SonarCloud          | Active                                  |
-| EDR-016 | 2026-05-01 | Dépendances suivies par Dependabot           | Active                                  |
-| EDR-017 | 2026-05-13 | Tutoriel hors du journal d'événements        | Dépréciée par EDR-040                   |
-| EDR-018 | 2026-05-17 | Versions bêta en semver                      | Dépréciée par EDR-049                   |
-| EDR-019 | 2026-05-19 | Illustrations hébergées dans le dépôt        | Active                                  |
-| EDR-020 | 2026-10-10 | Client Expo / React Native multiplateforme   | Active                                  |
-| EDR-021 | 2026-10-10 | Styles NativeWind (syntaxe Tailwind v3)      | Active                                  |
-| EDR-022 | 2026-10-10 | Monorepo pnpm avec paquets partagés          | Active                                  |
-| EDR-023 | 2026-10-10 | Moteur de jeu côté serveur uniquement        | Dépréciée par EDR-024                   |
-| EDR-024 | 2026-10-10 | Local-first, serveur valide par rejeu        | En partie remplacée par EDR-051         |
-| EDR-025 | 2026-10-10 | Compatibilité ascendante des rejeux          | Active                                  |
-| EDR-026 | 2026-10-10 | API NestJS 11 en CommonJS                    | En partie remplacée par EDR-056         |
-| EDR-027 | 2026-10-10 | PostgreSQL et Prisma pour la persistance     | Active                                  |
-| EDR-028 | 2026-10-10 | Supabase Auth avec invités anonymes          | Dépréciée par EDR-050                   |
-| EDR-029 | 2026-10-10 | Synchronisation : dernier écrivain gagne     | En partie remplacée par EDR-038, 041    |
-| EDR-030 | 2026-10-10 | Scores issus du rejeu, classement inscrits   | Active                                  |
-| EDR-031 | 2026-10-10 | Code et documentation du dépôt en anglais    | Active                                  |
-| EDR-032 | 2026-10-10 | Système d'agents spécialisés et contrats     | Active                                  |
-| EDR-033 | 2026-10-10 | Projet personnel gratuit, hors stores        | Active                                  |
-| EDR-034 | 2026-10-10 | Serveur hébergé sur Supabase                 | Dépréciée par EDR-035                   |
-| EDR-035 | 2026-10-10 | API sur Cloud Run, données Supabase          | Active                                  |
-| EDR-036 | 2026-10-10 | Anciennes règles pour parties commencées     | Active                                  |
-| EDR-037 | 2026-10-10 | Fusion soumise à la relecture du mainteneur  | Active                                  |
-| EDR-038 | 2026-10-10 | Plusieurs royaumes par joueur                | Active                                  |
-| EDR-039 | 2026-10-11 | Déploiement déclenché par un tag de version  | Active                                  |
-| EDR-040 | 2026-10-11 | Tutoriel joué comme une vraie partie         | Active                                  |
-| EDR-041 | 2026-10-13 | Synchronisation incrémentale et versionnée   | Active                                  |
-| EDR-044 | 2026-10-14 | Numéros de cartes propres à chaque extension | Dépréciée par EDR-047                   |
-| EDR-045 | 2026-10-14 | Paquet de campagne et paquet découvrable     | En partie remplacée par EDR-054         |
-| EDR-046 | 2026-10-14 | Effet « avancer dans l'histoire »            | Active                                  |
-| EDR-047 | 2026-10-14 | Trois identifiants par carte d'extension     | Active                                  |
-| EDR-048 | 2026-10-14 | Suppression de l'effet « dernière manche »   | Active                                  |
-| EDR-049 | 2026-10-15 | Critère de sortie de la 1.0.0                | Active                                  |
-| EDR-050 | 2026-10-17 | Sans compte, aucun appel à l'API             | Active                                  |
-| EDR-051 | 2026-10-17 | Parties vérifiées par réexécution            | Active                                  |
-| EDR-052 | 2026-10-17 | État de début de manche gardé par le serveur | En partie remplacée par EDR-053         |
-| EDR-053 | 2026-10-17 | Le client reprend la partie au checkpoint    | Active                                  |
-| EDR-054 | 2026-10-18 | Fin de campagne vérifiée en fin de manche    | Active                                  |
-| EDR-055 | 2026-10-18 | Graine visible et choisie par le joueur      | Active                                  |
-| EDR-056 | 2026-10-18 | Contrat HTTP OpenAPI, types client générés   | Active                                  |
-| EDR-057 | 2026-10-18 | Couches et un export public par fichier      | Active                                  |
+| ID      | Date       | Titre                                            | Statut                                  |
+| ------- | ---------- | ------------------------------------------------ | --------------------------------------- |
+| EDR-001 | 2026-03-22 | Jeu solo de deck-building médiéval               | Active                                  |
+| EDR-002 | 2026-03-22 | Application web React + Vite                     | Dépréciée par EDR-020                   |
+| EDR-003 | 2026-03-22 | État de jeu par event sourcing                   | Active                                  |
+| EDR-004 | 2026-03-22 | Cartes décrites en données déclaratives          | Active                                  |
+| EDR-005 | 2026-03-22 | TypeScript strict, zéro warning                  | Active                                  |
+| EDR-006 | 2026-03-24 | Jeu bilingue anglais et français                 | Active                                  |
+| EDR-007 | 2026-04-02 | Une stratégie par type d'effet                   | Active                                  |
+| EDR-008 | 2026-04-02 | Tests Vitest, couverture moteur 80 %             | Active                                  |
+| EDR-009 | 2026-04-02 | Storybook comme catalogue de composants          | Active                                  |
+| EDR-010 | 2026-04-02 | Documentation dédiée aux assistants IA           | Active                                  |
+| EDR-011 | 2026-04-02 | Client web hébergé sur GitHub Pages              | Active, en partie remplacée par EDR-039 |
+| EDR-012 | 2026-04-05 | Hook pre-commit bloquant (Husky)                 | Active                                  |
+| EDR-013 | 2026-04-09 | Styles Tailwind CSS v4                           | Dépréciée par EDR-021                   |
+| EDR-014 | 2026-04-10 | Couches imposées par dependency-cruiser          | En partie remplacée par EDR-058         |
+| EDR-015 | 2026-04-12 | Analyse qualité continue SonarCloud              | Active                                  |
+| EDR-016 | 2026-05-01 | Dépendances suivies par Dependabot               | Active                                  |
+| EDR-017 | 2026-05-13 | Tutoriel hors du journal d'événements            | Dépréciée par EDR-040                   |
+| EDR-018 | 2026-05-17 | Versions bêta en semver                          | Dépréciée par EDR-049                   |
+| EDR-019 | 2026-05-19 | Illustrations hébergées dans le dépôt            | Active                                  |
+| EDR-020 | 2026-10-10 | Client Expo / React Native multiplateforme       | Active                                  |
+| EDR-021 | 2026-10-10 | Styles NativeWind (syntaxe Tailwind v3)          | Active                                  |
+| EDR-022 | 2026-10-10 | Monorepo pnpm avec paquets partagés              | Active                                  |
+| EDR-023 | 2026-10-10 | Moteur de jeu côté serveur uniquement            | Dépréciée par EDR-024                   |
+| EDR-024 | 2026-10-10 | Local-first, serveur valide par rejeu            | En partie remplacée par EDR-051         |
+| EDR-025 | 2026-10-10 | Compatibilité ascendante des rejeux              | Active                                  |
+| EDR-026 | 2026-10-10 | API NestJS 11 en CommonJS                        | En partie remplacée par EDR-056         |
+| EDR-027 | 2026-10-10 | PostgreSQL et Prisma pour la persistance         | Active                                  |
+| EDR-028 | 2026-10-10 | Supabase Auth avec invités anonymes              | Dépréciée par EDR-050                   |
+| EDR-029 | 2026-10-10 | Synchronisation : dernier écrivain gagne         | En partie remplacée par EDR-038, 041    |
+| EDR-030 | 2026-10-10 | Scores issus du rejeu, classement inscrits       | Active                                  |
+| EDR-031 | 2026-10-10 | Code et documentation du dépôt en anglais        | Active                                  |
+| EDR-032 | 2026-10-10 | Système d'agents spécialisés et contrats         | Active                                  |
+| EDR-033 | 2026-10-10 | Projet personnel gratuit, hors stores            | Active                                  |
+| EDR-034 | 2026-10-10 | Serveur hébergé sur Supabase                     | Dépréciée par EDR-035                   |
+| EDR-035 | 2026-10-10 | API sur Cloud Run, données Supabase              | Active                                  |
+| EDR-036 | 2026-10-10 | Anciennes règles pour parties commencées         | Active                                  |
+| EDR-037 | 2026-10-10 | Fusion soumise à la relecture du mainteneur      | Active                                  |
+| EDR-038 | 2026-10-10 | Plusieurs royaumes par joueur                    | Active                                  |
+| EDR-039 | 2026-10-11 | Déploiement déclenché par un tag de version      | Active                                  |
+| EDR-040 | 2026-10-11 | Tutoriel joué comme une vraie partie             | Active                                  |
+| EDR-041 | 2026-10-13 | Synchronisation incrémentale et versionnée       | Active                                  |
+| EDR-044 | 2026-10-14 | Numéros de cartes propres à chaque extension     | Dépréciée par EDR-047                   |
+| EDR-045 | 2026-10-14 | Paquet de campagne et paquet découvrable         | En partie remplacée par EDR-054         |
+| EDR-046 | 2026-10-14 | Effet « avancer dans l'histoire »                | Active                                  |
+| EDR-047 | 2026-10-14 | Trois identifiants par carte d'extension         | Active                                  |
+| EDR-048 | 2026-10-14 | Suppression de l'effet « dernière manche »       | Active                                  |
+| EDR-049 | 2026-10-15 | Critère de sortie de la 1.0.0                    | Active                                  |
+| EDR-050 | 2026-10-17 | Sans compte, aucun appel à l'API                 | Active                                  |
+| EDR-051 | 2026-10-17 | Parties vérifiées par réexécution                | Active                                  |
+| EDR-052 | 2026-10-17 | État de début de manche gardé par le serveur     | En partie remplacée par EDR-053         |
+| EDR-053 | 2026-10-17 | Le client reprend la partie au checkpoint        | Active                                  |
+| EDR-054 | 2026-10-18 | Fin de campagne vérifiée en fin de manche        | Active                                  |
+| EDR-055 | 2026-10-18 | Graine visible et choisie par le joueur          | Active                                  |
+| EDR-056 | 2026-10-18 | Contrat HTTP OpenAPI, types client générés       | Active                                  |
+| EDR-057 | 2026-10-18 | Couches et un export public par fichier          | En partie remplacée par EDR-058         |
+| EDR-058 | 2026-10-18 | Clean architecture : le domaine porte les règles | Active                                  |
 
 ---
 
@@ -403,7 +404,7 @@ Conséquences
 ID : EDR-014
 Date : 2026-04-10
 Titre : Couches imposées par dependency-cruiser
-Statut : Active
+Statut : En partie remplacée par EDR-058
 
 Contexte
 Le moteur doit rester pur et réutilisable. Depuis le monorepo, il tourne à la fois dans le client (React Native) et dans le serveur (Node).
@@ -1559,7 +1560,7 @@ Conséquences
 ID : EDR-057
 Date : 2026-10-18
 Titre : Couches et un export public par fichier
-Statut : Active
+Statut : En partie remplacée par EDR-058
 Complète : EDR-014
 
 Contexte
@@ -1586,3 +1587,44 @@ Conséquences
 
 - Plus de fichiers, chacun plus court ; les imports changent de chemin (les alias du client absorbent l'essentiel).
 - `users` et `scores` gardent un service chacun : les découper en cas d'usage n'apporterait rien à leur taille.
+
+---
+
+ID : EDR-058
+Date : 2026-10-18
+Titre : Clean architecture : le domaine porte les règles
+Statut : Active
+Remplace en partie : EDR-014 (rôle des couches du moteur), EDR-057 (rôle des couches du client et du serveur, emplacement des DTO)
+
+Contexte
+Le moteur range ses types dans `domain/` et toutes les règles du jeu dans `application/` (« domaine = types, application = logique »). EDR-057 a calqué le client et le serveur sur une autre lecture : leurs `domain/` contiennent des fonctions, dont certaines ne sont pas du métier (routage `slugify`/`kingdomPath`, animations `findDrawnCards`/`findUpgradeReveal`, ordre du glisser-déposer `mergeOrder`). Les DTO HTTP sont dans `application/`, les services `users` et `scores` appellent Prisma directement, et la présentation du client importe l'infrastructure (toast, préférences, catalogue, API). Les trois projets n'appliquent donc pas la même définition des couches.
+
+Problème
+Quelle définition unique des couches appliquer au moteur, au serveur et au client ?
+
+Décision
+
+- **Une seule définition, quatre couches** (plus une racine de composition), testées par une question :
+  - `domain/` — ce qui est vrai sans application : entités, objets-valeurs et **règles métier pures (types et fonctions)**. N'importe que lui-même (et le domaine du moteur, noyau partagé). Ni framework, ni I/O, ni horloge, ni aléa non déterministe.
+  - `application/` — les scénarios déclenchés par un acteur : cas d'usage, état de session, **ports** (interfaces vers l'extérieur) et leurs modèles d'entrée/sortie. N'importe que `domain/`.
+  - `infrastructure/` — implémentations des ports (Prisma, Supabase, AsyncStorage, openapi-fetch, i18next). Importe `application/` et `domain/`, jamais la présentation.
+  - `presentation/` — ce qui n'existe que pour l'affichage ou le protocole : composants React, routage, animations, contrôleurs Nest, gardes, filtres, **DTO HTTP** (zod + Swagger) et leur conversion vers les modèles d'application. Importe `application/` et `domain/`, **jamais `infrastructure/`**.
+  - Racine de composition (`main.ts` et modules Nest ; `composition/` et un `AppServicesProvider` React côté client) : seul endroit qui branche les implémentations sur les ports.
+- **Moteur** : les règles du jeu (`aggregates/`, `gameEvent/`, `cardAction/`, `playerChoice/`, résolveurs, sélecteurs, ressources, `random`, `factory`, `emptyState`, `campaignSegments`) passent dans `domain/` ; `application/` garde `session/` (`GameSession`, `playerInput`). L'horloge et les identifiants (`Date.now`, `crypto.randomUUID`) deviennent des ports injectés, avec les mêmes valeurs par défaut.
+- **Serveur** : DTO dans `presentation/dto/`, cas d'usage avec des modèles propres ; `users`, `scores` et `auth` passent par des ports (`UsersRepository`, `ScoresRepository`, `IdentityAdmin`, `TokenVerifier`).
+- **Client** : routage, animations et ordre d'affichage passent dans `presentation/` ; les opérations sur les royaumes deviennent des cas d'usage ; toast, préférences, catalogue, authentification et API sont des ports injectés par contexte React (Storybook et les tests fournissent de faux services).
+- Les autres règles d'EDR-014 (paquets sans `apps/`, client et serveur séparés, `game-data` limité aux types du domaine, pas d'API navigateur dans les paquets) et d'EDR-057 (un export public par fichier, nommage) restent valables, moteur compris.
+- dependency-cruiser impose les couches pour les trois projets ; ESLint interdit dans `domain/` et `application/` React, React Native, Nest, zod, Prisma, et dans `domain/` `Date.now`, `Math.random` et `crypto`.
+- Migration en sept PR (`docs/clean-architecture-migration.md`), le moteur d'abord. Chaque PR du moteur est relue par `replay-guardian`.
+
+Alternatives rejetées
+
+- Garder « domaine = types » pour tout le dépôt : le domaine n'est qu'un dictionnaire de types et la logique métier se mêle à l'orchestration dans `application/`.
+- Accepter des définitions différentes selon les projets : chaque contributeur (humain ou agent) doit réapprendre où ranger le code.
+- Laisser la présentation importer l'infrastructure : composants non testables sans mocks de modules, et Storybook dépend des vraies implémentations.
+
+Conséquences
+
+- Gros diffs de déplacement, surtout dans le moteur (environ 70 fichiers de sources et autant de tests) ; le rejeu n'est pas touché tant que seuls des fichiers bougent. L'injection de l'horloge et des identifiants garde les valeurs actuelles et reste couverte par `GameSession.verify` (qui ignore déjà identifiants et horodatages).
+- Les chemins publics du moteur changent (`@deck-legacy/engine/application/emptyState` → `…/domain/…`) : le client, le serveur et `game-data` sont mis à jour dans la même PR.
+- Les `CLAUDE.md`, `.claude/rules/engine-reference.md`, `.claude/contracts.md` et les agents décrivent la nouvelle répartition.

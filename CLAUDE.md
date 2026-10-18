@@ -89,7 +89,7 @@ pnpm --filter <workspace> <script>   # one workspace: @deck-legacy/{client,serve
 **Documentation and memory.**
 
 - A change of convention, format or structure updates the relevant `CLAUDE.md` in the same commit. When docs and code disagree, the code wins.
-- Structural decisions: [`.claude/memory/EDR.md`](.claude/memory/EDR.md). Read it before proposing a structural change; record new decisions there.
+- Structural decisions: [`.claude/memory/EDR.md`](.claude/memory/EDR.md). Read it before proposing a structural change; record new decisions there. The clean architecture migration in progress (EDR-058) is planned in [`docs/clean-architecture-migration.md`](docs/clean-architecture-migration.md).
 - Lessons learned: [`.claude/memory/INSIGHTS.md`](.claude/memory/INSIGHTS.md). Read the relevant entries before fixing a card, changing the UI or the CI.
 - Known pitfalls: [`.claude/memory/FRICTIONS.md`](.claude/memory/FRICTIONS.md). Read it before touching the CI, the card model, expansions, sync or the architecture; never delete an entry.
 - Claude Code subagents live in `.claude/agents/`; their ownership and validation rules are in [`.claude/contracts.md`](.claude/contracts.md).
