@@ -1,11 +1,13 @@
-import type { AuthUser } from '../../auth/auth-user';
-import { CurrentUser } from '../../auth/current-user.decorator';
-import { Public } from '../../auth/public.decorator';
+import type { AuthUser } from '../../auth/domain/auth-user';
+import { CurrentUser } from '../../auth/presentation/current-user.decorator';
+import { Public } from '../../auth/presentation/public.decorator';
 import { ApiErrorDto } from '../../shared/presentation/http/api-error.dto';
+import { GetKingdomLeaderboardUseCase } from '../application/get-kingdom-leaderboard.use-case';
+import { GetLeaderboardUseCase } from '../application/get-leaderboard.use-case';
+import { GetMyScoresUseCase } from '../application/get-my-scores.use-case';
 import type { KingdomRanking } from '../application/models/kingdom-ranking';
 import type { Leaderboard } from '../application/models/leaderboard';
 import type { ScoreEntry } from '../application/models/score-entry';
-import { ScoresService } from '../application/scores.service';
 import { KingdomRankingDto } from './dto/kingdom-ranking.dto';
 import { LeaderboardDto } from './dto/leaderboard.dto';
 import { ScoreEntryDto } from './dto/score-entry.dto';
@@ -24,7 +26,11 @@ const MAX_LEADERBOARD_SIZE = 100;
 @ApiDefaultResponse({ type: ApiErrorDto })
 @Controller('scores')
 export class ScoresController {
-  constructor(private readonly scores: ScoresService) {}
+  constructor(
+    private readonly getLeaderboard: GetLeaderboardUseCase,
+    private readonly getKingdomLeaderboard: GetKingdomLeaderboardUseCase,
+    private readonly getMyScores: GetMyScoresUseCase,
+  ) {}
 
   @Public()
   @Get('leaderboard')
@@ -35,7 +41,7 @@ export class ScoresController {
     @Query('segment', new DefaultValuePipe('base')) segment: string,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ): Promise<Leaderboard> {
-    return this.scores.leaderboard(segment, Math.min(Math.max(limit, 1), MAX_LEADERBOARD_SIZE));
+    return this.getLeaderboard.execute(segment, Math.min(Math.max(limit, 1), MAX_LEADERBOARD_SIZE));
   }
 
   @Public()
@@ -45,13 +51,13 @@ export class ScoresController {
   kingdoms(
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
   ): Promise<KingdomRanking[]> {
-    return this.scores.kingdomLeaderboard(Math.min(Math.max(limit, 1), MAX_LEADERBOARD_SIZE));
+    return this.getKingdomLeaderboard.execute(Math.min(Math.max(limit, 1), MAX_LEADERBOARD_SIZE));
   }
 
   @Get('me')
   @ApiBearerAuth()
   @ApiOkResponse({ type: [ScoreEntryDto] })
   mine(@CurrentUser() user: AuthUser): Promise<ScoreEntry[]> {
-    return this.scores.forUser(user.id);
+    return this.getMyScores.execute(user.id);
   }
 }

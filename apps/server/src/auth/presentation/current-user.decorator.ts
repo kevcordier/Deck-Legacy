@@ -1,4 +1,4 @@
-import type { AuthUser } from './auth-user';
+import type { AuthUser } from '../domain/auth-user';
 import { type ExecutionContext, createParamDecorator } from '@nestjs/common';
 import type { Request } from 'express';
 

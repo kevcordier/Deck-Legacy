@@ -2,8 +2,13 @@ import { firstDifference } from '../src/games/domain/first-difference';
 import { PrismaGamesRepository } from '../src/games/infrastructure/prisma-games.repository';
 import { Prisma } from '../src/generated/prisma/client';
 import type { PrismaService } from '../src/prisma/prisma.service';
-import { ScoresService } from '../src/scores/application/scores.service';
-import { UsersService } from '../src/users/application/users.service';
+import { PrismaScoreMirror } from '../src/scores/infrastructure/prisma-score-mirror';
+import { PrismaScoresRepository } from '../src/scores/infrastructure/prisma-scores.repository';
+import { DeleteAccountUseCase } from '../src/users/application/delete-account.use-case';
+import { EnsureUserUseCase } from '../src/users/application/ensure-user.use-case';
+import { UpdateDisplayNameUseCase } from '../src/users/application/update-display-name.use-case';
+import { PrismaUsersRepository } from '../src/users/infrastructure/prisma-users.repository';
+import { SupabaseIdentityAdmin } from '../src/users/infrastructure/supabase-identity-admin';
 import { testConfig } from './helpers';
 import type { GameEvent } from '@deck-legacy/engine/domain/types';
 import { describe, expect, it, vi } from 'vitest';
@@ -309,11 +314,11 @@ describe('GamesRepository reads and creation', () => {
   });
 });
 
-describe('ScoresService', () => {
+describe('Prisma scores', () => {
   it('mirrors campaign scores and drops rewound segments', async () => {
-    const { prisma, tx } = fakePrisma();
+    const { tx } = fakePrisma();
 
-    await new ScoresService(prisma).syncGameScores(tx as never, USER, GAME, { base: 31 });
+    await new PrismaScoreMirror().mirror(tx as never, USER, GAME, { base: 31 });
 
     expect(tx.score.deleteMany).toHaveBeenCalledWith({
       where: { gameId: GAME, segment: { notIn: ['base'] } },
@@ -338,7 +343,7 @@ describe('ScoresService', () => {
       },
     ]);
 
-    const board = await new ScoresService(prisma).leaderboard('base', 5);
+    const board = await new PrismaScoresRepository(prisma).leaderboard('base', 5);
 
     expect(tx.score.findMany.mock.calls[0][0].where).toEqual({
       segment: 'base',
@@ -367,7 +372,7 @@ describe('ScoresService', () => {
       },
     ]);
 
-    const board = await new ScoresService(prisma).kingdomLeaderboard(5);
+    const board = await new PrismaScoresRepository(prisma).kingdomLeaderboard(5);
 
     expect(tx.game.findMany.mock.calls[0][0].where).toEqual({
       status: { in: ['ACTIVE', 'FINISHED'] },
@@ -388,23 +393,38 @@ describe('ScoresService', () => {
   it("lists a player's own scores", async () => {
     const { prisma, tx } = fakePrisma();
 
-    await expect(new ScoresService(prisma).forUser(USER)).resolves.toEqual([]);
+    await expect(new PrismaScoresRepository(prisma).forUser(USER)).resolves.toEqual([]);
     expect(tx.score.findMany.mock.calls[0][0].where).toEqual({ userId: USER });
   });
 });
 
-describe('UsersService', () => {
+/** The users use cases wired on a mocked Prisma client, as `UsersModule` does. */
+function usersWith(prisma: PrismaService, config = testConfig()) {
+  const repository = new PrismaUsersRepository(prisma);
+  const ensureUser = new EnsureUserUseCase(repository);
+  return {
+    ensureUser,
+    updateDisplayName: new UpdateDisplayNameUseCase(repository),
+    deleteAccount: new DeleteAccountUseCase(
+      new SupabaseIdentityAdmin(config),
+      repository,
+      ensureUser,
+    ),
+  };
+}
+
+describe('users', () => {
   const identity = { id: USER, email: 'a@b.c', isAnonymous: false };
 
   it('upserts a user once until their identity changes', async () => {
     const { prisma, tx } = fakePrisma();
-    const users = new UsersService(prisma, testConfig());
+    const { ensureUser } = usersWith(prisma);
 
-    await users.ensureUser(identity);
-    await users.ensureUser(identity);
+    await ensureUser.execute(identity);
+    await ensureUser.execute(identity);
     expect(tx.user.upsert).toHaveBeenCalledOnce();
 
-    await users.ensureUser({ ...identity, email: 'new@b.c' });
+    await ensureUser.execute({ ...identity, email: 'new@b.c' });
     expect(tx.user.upsert).toHaveBeenCalledTimes(2);
   });
 
@@ -417,7 +437,7 @@ describe('UsersService', () => {
       email: 'a@b.c',
     });
 
-    const profile = await new UsersService(prisma, testConfig()).updateDisplayName(USER, 'Ally');
+    const profile = await usersWith(prisma).updateDisplayName.execute(USER, 'Ally');
 
     expect(tx.user.update).toHaveBeenCalledWith({
       where: { id: USER },
@@ -427,13 +447,13 @@ describe('UsersService', () => {
   });
 });
 
-describe('UsersService.deleteAccount', () => {
+describe('account deletion', () => {
   const withKey = () => testConfig({ SUPABASE_SERVICE_ROLE_KEY: 'service-key' });
 
   it('is unavailable without the service role key', async () => {
     const { prisma, tx } = fakePrisma();
 
-    await expect(new UsersService(prisma, testConfig()).deleteAccount(USER)).rejects.toThrow(
+    await expect(usersWith(prisma, testConfig()).deleteAccount.execute(USER)).rejects.toThrow(
       'errors.accountDeletionUnavailable',
     );
     expect(tx.user.deleteMany).not.toHaveBeenCalled();
@@ -443,7 +463,7 @@ describe('UsersService.deleteAccount', () => {
     const { prisma, tx } = fakePrisma();
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null));
 
-    await new UsersService(prisma, withKey()).deleteAccount(USER);
+    await usersWith(prisma, withKey()).deleteAccount.execute(USER);
 
     expect(fetchMock).toHaveBeenCalledWith(
       `https://project.supabase.test/auth/v1/admin/users/${USER}`,
@@ -461,7 +481,7 @@ describe('UsersService.deleteAccount', () => {
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null));
     const config = testConfig({ SUPABASE_SERVICE_ROLE_KEY: 'sb_secret_key' });
 
-    await new UsersService(prisma, config).deleteAccount(USER);
+    await usersWith(prisma, config).deleteAccount.execute(USER);
 
     expect(fetchMock).toHaveBeenCalledWith(
       expect.any(String),
@@ -476,7 +496,7 @@ describe('UsersService.deleteAccount', () => {
       .spyOn(globalThis, 'fetch')
       .mockResolvedValue(new Response(null, { status: 404 }));
 
-    await new UsersService(prisma, withKey()).deleteAccount(USER);
+    await usersWith(prisma, withKey()).deleteAccount.execute(USER);
 
     expect(tx.user.deleteMany).toHaveBeenCalledOnce();
     fetchMock.mockRestore();
@@ -488,7 +508,7 @@ describe('UsersService.deleteAccount', () => {
       .spyOn(globalThis, 'fetch')
       .mockResolvedValue(new Response(null, { status: 500 }));
 
-    await expect(new UsersService(prisma, withKey()).deleteAccount(USER)).rejects.toThrow(
+    await expect(usersWith(prisma, withKey()).deleteAccount.execute(USER)).rejects.toThrow(
       'errors.accountDeletionFailed',
     );
     expect(tx.user.deleteMany).not.toHaveBeenCalled();

@@ -1,11 +1,10 @@
 import { PrismaService } from '../../prisma/prisma.service';
 import { toSegments } from '../../prisma/to-segments';
-import type { KingdomRanking } from './models/kingdom-ranking';
-import type { Leaderboard } from './models/leaderboard';
-import type { ScoreEntry } from './models/score-entry';
+import type { KingdomRanking } from '../application/models/kingdom-ranking';
+import type { Leaderboard } from '../application/models/leaderboard';
+import type { ScoreEntry } from '../application/models/score-entry';
+import { ScoresRepository } from '../application/scores.repository';
 import { Injectable } from '@nestjs/common';
-
-type ScoreWriter = Pick<PrismaService, 'score'>;
 
 type ScoreRow = {
   id: string;
@@ -28,29 +27,9 @@ function toEntry(row: ScoreRow): ScoreEntry {
 }
 
 @Injectable()
-export class ScoresService {
-  constructor(private readonly prisma: PrismaService) {}
-
-  /**
-   * Mirrors the campaign scores of a game (one per finished segment) into the Score table.
-   * Segments that disappeared (after a rewind) are removed.
-   */
-  async syncGameScores(
-    db: ScoreWriter,
-    userId: string,
-    gameId: string,
-    campaignScores: Record<string, number>,
-  ): Promise<void> {
-    const segments = Object.keys(campaignScores);
-    await db.score.deleteMany({ where: { gameId, segment: { notIn: segments } } });
-    for (const segment of segments) {
-      const score = campaignScores[segment];
-      await db.score.upsert({
-        where: { gameId_segment: { gameId, segment } },
-        create: { userId, gameId, segment, score },
-        update: { score },
-      });
-    }
+export class PrismaScoresRepository extends ScoresRepository {
+  constructor(private readonly prisma: PrismaService) {
+    super();
   }
 
   /** Best scores of registered (non-anonymous) players for a campaign segment, verified games only. */

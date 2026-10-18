@@ -1,8 +1,8 @@
-import { UsersService } from '../users/application/users.service';
+import { EnsureUserUseCase } from '../../users/application/ensure-user.use-case';
+import { InvalidTokenError } from '../application/invalid-token.error';
+import { TokenVerifier } from '../application/token-verifier';
 import type { AuthenticatedRequest } from './current-user.decorator';
-import { InvalidTokenError } from './invalid-token.error';
 import { IS_PUBLIC } from './public.decorator';
-import { SupabaseTokenVerifier } from './supabase-token.verifier';
 import {
   type CanActivate,
   type ExecutionContext,
@@ -16,8 +16,8 @@ import { Reflector } from '@nestjs/core';
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly verifier: SupabaseTokenVerifier,
-    private readonly users: UsersService,
+    private readonly verifier: TokenVerifier,
+    private readonly ensureUser: EnsureUserUseCase,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -36,7 +36,7 @@ export class AuthGuard implements CanActivate {
 
     try {
       const user = await this.verifier.verify(token);
-      await this.users.ensureUser(user);
+      await this.ensureUser.execute(user);
       request.user = user;
       return true;
     } catch (error) {

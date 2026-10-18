@@ -1,13 +1,13 @@
 import { AppModule } from '../src/app.module';
-import { SUPABASE_JWKS } from '../src/auth/supabase-jwks.token';
+import { SUPABASE_JWKS } from '../src/auth/infrastructure/supabase-jwks.token';
 import { configureApp } from '../src/bootstrap';
 import { APP_CONFIG } from '../src/config/app-config.token';
 import { GamesRepository } from '../src/games/application/games.repository';
 import type { GameSummary } from '../src/games/application/models/game-summary';
+import { ScoreMirror } from '../src/games/application/score-mirror';
 import type { GameSnapshot } from '../src/games/domain/game-snapshot';
 import { PrismaService } from '../src/prisma/prisma.service';
-import { ScoresService } from '../src/scores/application/scores.service';
-import { UsersService } from '../src/users/application/users.service';
+import { EnsureUserUseCase } from '../src/users/application/ensure-user.use-case';
 import { signToken, testConfig, testJwks } from './helpers';
 import { GameSession } from '@deck-legacy/engine/application/session/GameSession';
 import { Phase } from '@deck-legacy/engine/domain/enums';
@@ -243,20 +243,16 @@ describe('Games sync API (e2e, in-memory storage)', () => {
       .useValue({})
       .overrideProvider(GamesRepository)
       .useValue(repository)
-      .overrideProvider(UsersService)
+      .overrideProvider(EnsureUserUseCase)
       .useValue({
-        ensureUser: async (u: { id: string }) => {
+        execute: async (u: { id: string }) => {
           ensured.push(u.id);
         },
+        forget: () => undefined,
       })
-      .overrideProvider(ScoresService)
+      .overrideProvider(ScoreMirror)
       .useValue({
-        syncGameScores: async (
-          _tx: unknown,
-          _u: string,
-          _g: string,
-          scores: Record<string, number>,
-        ) => {
+        mirror: async (_tx: unknown, _u: string, _g: string, scores: Record<string, number>) => {
           syncedScores.push(scores);
         },
       })
