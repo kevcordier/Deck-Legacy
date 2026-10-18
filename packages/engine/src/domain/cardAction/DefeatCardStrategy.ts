@@ -1,7 +1,7 @@
-import { getActiveState } from '../cardHelpers';
 import { ActionEffectType, TargetScope } from '../enums';
 import type { ActionEffect, CardAction, CardDef, GameState, ResolvedActionEffect } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
+import { getDefeatAction } from './getDefeatAction';
 
 // Effect ids start at 1: 0 cannot collide with the enemy's own effects.
 const DESTROY_SELF: ActionEffect = {
@@ -9,19 +9,6 @@ const DESTROY_SELF: ActionEffect = {
   type: ActionEffectType.DESTROY_CARD,
   cards: { scope: [TargetScope.SELF] },
 };
-
-/** The `defeat` action of an enemy, the one a defeat effect makes it resolve. */
-export function getDefeatAction(
-  gameState: GameState,
-  instanceId: number,
-  cardDefs: Record<number, CardDef>,
-): CardAction | undefined {
-  const instance = gameState.instances[instanceId];
-  if (!instance) return undefined;
-  return getActiveState(instance, cardDefs).actions?.find(
-    action => action.defeat && !action.trigger,
-  );
-}
 
 export class DefeatCardStrategy implements CardActionStrategy {
   constructor(private readonly cardDefs: Record<number, CardDef>) {}

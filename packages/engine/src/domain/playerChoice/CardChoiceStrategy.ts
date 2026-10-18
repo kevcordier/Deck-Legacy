@@ -1,12 +1,10 @@
-import {
-  getActiveState,
-  getEffectiveActionCost,
-  getEffectiveProductions,
-  getEffectiveUpgradeCost,
-} from '../cardHelpers';
+import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
+import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
+import { getActiveState } from '../cards/selection/getActiveState';
+import { getEffectiveProductions } from '../cards/selection/getEffectiveProductions';
 import { ActionEffectType, PendingChoiceType } from '../enums';
-import { mergeResources } from '../gameStateHelper';
-import { fixResources } from '../resources';
+import { fixResources } from '../resources/fixResources';
+import { mergeResources } from '../resources/mergeResources';
 import type {
   CardDef,
   Cost,

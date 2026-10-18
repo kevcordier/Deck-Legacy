@@ -1,5 +1,5 @@
 import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
-import * as cardHelpers from '@engine/domain/cardHelpers';
+import * as activeState from '@engine/domain/cards/selection/getActiveState';
 import {
   ActionEffectType,
   CardTag,
@@ -9,7 +9,10 @@ import {
 } from '@engine/domain/enums';
 import { UpgradeCardEventStrategy } from '@engine/domain/gameEvent/UpgradeCardEventStrategy';
 import type { UpgradeCardEvent } from '@engine/domain/types';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+// Spies replace module exports shared by the code under test: restore them after each test.
+afterEach(() => vi.restoreAllMocks());
 
 describe('UpgradeCardEventStrategy', () => {
   const multiStateDefs = {
@@ -28,7 +31,7 @@ describe('UpgradeCardEventStrategy', () => {
   it('updates stateId on the instance', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], instances: { 1: inst }, resources: { gold: 5 } });
-    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 3, name: 'S' });
+    vi.spyOn(activeState, 'getActiveState').mockReturnValue({ id: 3, name: 'S' });
     const result = strategy.apply(gs, {
       id: 'e1',
       type: GameEventType.UPGRADE_CARD,
@@ -47,7 +50,7 @@ describe('UpgradeCardEventStrategy', () => {
   it('move card to permanent area', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], instances: { 1: inst } });
-    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({
+    vi.spyOn(activeState, 'getActiveState').mockReturnValue({
       id: 3,
       name: 'S',
       tags: [CardTag.PERMANENT],
@@ -81,7 +84,7 @@ describe('UpgradeCardEventStrategy', () => {
       },
     });
 
-    vi.spyOn(cardHelpers, 'getActiveState').mockImplementation(instance =>
+    vi.spyOn(activeState, 'getActiveState').mockImplementation(instance =>
       instance.stateId === 1
         ? {
             id: 1,
@@ -137,7 +140,7 @@ describe('UpgradeCardEventStrategy', () => {
       instances: { 1: inst1, 2: inst2, 3: inst3 },
       resources: { gold: 5 },
     });
-    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S' });
+    vi.spyOn(activeState, 'getActiveState').mockReturnValue({ id: 2, name: 'S' });
     const result = strategy.apply(gs, {
       id: 'e1',
       type: GameEventType.UPGRADE_CARD,
@@ -205,7 +208,7 @@ describe('UpgradeCardEventStrategy', () => {
   it('removes upgraded card from permanents when new state is not permanent', () => {
     const inst = makeInstance({ id: 1, cardId: 1, stateId: 1 });
     const gs = makeState({ board: [1], permanents: [1, 2], instances: { 1: inst } });
-    vi.spyOn(cardHelpers, 'getActiveState').mockReturnValue({ id: 2, name: 'S' });
+    vi.spyOn(activeState, 'getActiveState').mockReturnValue({ id: 2, name: 'S' });
     const result = strategy.apply(gs, {
       id: 'e1',
       type: GameEventType.UPGRADE_CARD,

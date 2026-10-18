@@ -1,15 +1,12 @@
-import {
-  canAffordCost,
-  canAffordTrackAdvanceCost,
-  cardIsBlocked,
-  getActiveState,
-  getEffectiveActionCost,
-  getEffectiveGlory,
-  getInstancesTriggerEffects,
-  isPermanent,
-} from '../cardHelpers';
-import { cardSelector } from '../cardSelector';
-import { DEFAULT_PARAMETERS } from '../emptyState';
+import { canAffordCost } from '../cards/canAffordCost';
+import { canAffordTrackAdvanceCost } from '../cards/canAffordTrackAdvanceCost';
+import { cardIsBlocked } from '../cards/cardIsBlocked';
+import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
+import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
+import { cardSelector } from '../cards/selection/cardSelector';
+import { getActiveState } from '../cards/selection/getActiveState';
+import { getEffectiveGlory } from '../cards/selection/getEffectiveGlory';
+import { isPermanent } from '../cards/selection/isPermanent';
 import {
   GameEventType,
   Options,
@@ -21,8 +18,11 @@ import {
 } from '../enums';
 import { ActionCancelledError } from '../errors/ActionCancelledError';
 import { GameEventContext } from '../gameEvent/GameEventContext';
-import { canUseOptions, computeGameStateDiff, isLastRound } from '../gameStateHelper';
 import { shuffle } from '../random';
+import { canUseOptions } from '../state/canUseOptions';
+import { computeGameStateDiff } from '../state/computeGameStateDiff';
+import { DEFAULT_PARAMETERS } from '../state/defaultParameters';
+import { isLastRound } from '../state/isLastRound';
 import type {
   AdvanceEvent,
   CampaignScoreSavedEvent,
@@ -57,18 +57,7 @@ import type {
   UpgradeCardEvent,
 } from '../types';
 import { CardActionAggregate } from './CardActionAggregate';
-
-export { EMPTY_STATE } from '../emptyState';
-
-/** Events that revealed cards: a normal rewind cannot go back past them. */
-export function eventDrewCards(event: GameEvent): boolean {
-  if (event.type === GameEventType.TURN_STARTED || event.type === GameEventType.ADVANCE) {
-    return true;
-  }
-  if (event.type !== GameEventType.CARD_ACTION) return false;
-  const changes = (event as { gameStateChanges?: Partial<GameState> }).gameStateChanges;
-  return !changes || Object.hasOwn(changes, 'drawPile');
-}
+import { eventDrewCards } from './eventDrewCards';
 
 export class GameAggregate {
   private events: GameEvent[];

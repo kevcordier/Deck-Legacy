@@ -1,25 +1,23 @@
 import { makeInstance, makeState, makeStickerDefs } from './fixtures';
-import {
-  canAffordCost,
-  canAffordResources,
-  canAffordTrackAdvanceCost,
-  cardIsBlocked,
-  cardShouldStayInPlay,
-  evaluateCondition,
-  getActiveState,
-  getAffectedCardsByBoardEffects,
-  getEffectiveActionCost,
-  getEffectiveGlory,
-  getEffectiveProductions,
-  getEffectiveUpgradeCost,
-  getFirstAvailableTrackStep,
-  getInstancesTriggerEffects,
-  getProductionChoicesForAction,
-  getTotalProduction,
-  getTotalResourceProduction,
-  tagBorderClass,
-  tagClass,
-} from '@engine/domain/cardHelpers';
+import { canAffordCost } from '@engine/domain/cards/canAffordCost';
+import { canAffordResources } from '@engine/domain/cards/canAffordResources';
+import { canAffordTrackAdvanceCost } from '@engine/domain/cards/canAffordTrackAdvanceCost';
+import { cardIsBlocked } from '@engine/domain/cards/cardIsBlocked';
+import { getEffectiveActionCost } from '@engine/domain/cards/getEffectiveActionCost';
+import { getEffectiveUpgradeCost } from '@engine/domain/cards/getEffectiveUpgradeCost';
+import { getFirstAvailableTrackStep } from '@engine/domain/cards/getFirstAvailableTrackStep';
+import { getInstancesTriggerEffects } from '@engine/domain/cards/getInstancesTriggerEffects';
+import { getProductionChoicesForAction } from '@engine/domain/cards/getProductionChoicesForAction';
+import { cardShouldStayInPlay } from '@engine/domain/cards/selection/cardShouldStayInPlay';
+import { evaluateCondition } from '@engine/domain/cards/selection/evaluateCondition';
+import { getActiveState } from '@engine/domain/cards/selection/getActiveState';
+import { getAffectedCardsByBoardEffects } from '@engine/domain/cards/selection/getAffectedCardsByBoardEffects';
+import { getEffectiveGlory } from '@engine/domain/cards/selection/getEffectiveGlory';
+import { getEffectiveProductions } from '@engine/domain/cards/selection/getEffectiveProductions';
+import { getTotalProduction } from '@engine/domain/cards/selection/getTotalProduction';
+import { getTotalResourceProduction } from '@engine/domain/cards/selection/getTotalResourceProduction';
+import { tagBorderClass } from '@engine/domain/cards/tagBorderClass';
+import { tagClass } from '@engine/domain/cards/tagClass';
 import {
   ActionEffectType,
   CardTag,

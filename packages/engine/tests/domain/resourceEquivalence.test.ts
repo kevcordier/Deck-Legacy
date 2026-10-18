@@ -1,10 +1,8 @@
 import { makeState } from './fixtures';
 import { PassiveType, ResourceType } from '@engine/domain/enums';
-import {
-  dedupeResourceOptions,
-  getPayableResourceCostVariants,
-  getSourceResourceEquivalence,
-} from '@engine/domain/resourceEquivalence';
+import { dedupeResourceOptions } from '@engine/domain/resources/dedupeResourceOptions';
+import { getPayableResourceCostVariants } from '@engine/domain/resources/getPayableResourceCostVariants';
+import { getSourceResourceEquivalence } from '@engine/domain/resources/getSourceResourceEquivalence';
 import { describe, expect, it } from 'vitest';
 
 describe('resourceEquivalence', () => {

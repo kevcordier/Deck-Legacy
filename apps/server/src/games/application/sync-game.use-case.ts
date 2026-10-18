@@ -7,7 +7,7 @@ import { GameLock } from './game-lock';
 import { GameValidator } from './game-validator';
 import { GamesRepository } from './games.repository';
 import { staleVersionException } from './stale-version.exception';
-import { kingdomLimit } from '@deck-legacy/engine/domain/kingdomLimits';
+import { kingdomLimit } from '@deck-legacy/engine/domain/kingdom/kingdomLimit';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 /**

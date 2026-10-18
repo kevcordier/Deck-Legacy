@@ -1,5 +1,5 @@
 import { makeInstance, makeState, makeStickerDefs } from './fixtures';
-import { cardSelector } from '@engine/domain/cardSelector';
+import { cardSelector } from '@engine/domain/cards/selection/cardSelector';
 import { CardTag, PassiveType, TargetScope } from '@engine/domain/enums';
 import type { CardDef, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';

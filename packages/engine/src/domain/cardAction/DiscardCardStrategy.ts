@@ -1,4 +1,4 @@
-import { discardCards } from '../gameStateHelper';
+import { discardCards } from '../state/discardCards';
 import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 

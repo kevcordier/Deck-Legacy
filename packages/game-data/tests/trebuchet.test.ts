@@ -1,8 +1,8 @@
 import { loadGameCatalog } from '../src';
 import { GameSession } from '@deck-legacy/engine/application/session/GameSession';
-import { EMPTY_STATE } from '@deck-legacy/engine/domain/emptyState';
 import { Phase } from '@deck-legacy/engine/domain/enums';
 import { createInstance } from '@deck-legacy/engine/domain/factory';
+import { EMPTY_STATE } from '@deck-legacy/engine/domain/state/emptyState';
 import type { GameState } from '@deck-legacy/engine/domain/types';
 import { describe, expect, it } from 'vitest';
 

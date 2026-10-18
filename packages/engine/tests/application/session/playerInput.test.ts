@@ -1,10 +1,8 @@
-import {
-  isFlowCommandAllowed,
-  sanitizeChoice,
-  sanitizeCost,
-} from '@engine/application/session/playerInput';
-import { EMPTY_STATE } from '@engine/domain/emptyState';
+import { isFlowCommandAllowed } from '@engine/application/session/input/isFlowCommandAllowed';
+import { sanitizeChoice } from '@engine/application/session/input/sanitizeChoice';
+import { sanitizeCost } from '@engine/application/session/input/sanitizeCost';
 import { ActionEffectType, PendingChoiceType, Phase } from '@engine/domain/enums';
+import { EMPTY_STATE } from '@engine/domain/state/emptyState';
 import type { GameState, PendingChoice, ResolvedActionEffect } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 

@@ -1,6 +1,7 @@
-import { getInstancesTriggerEffects } from '../cardHelpers';
+import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { Trigger } from '../enums';
-import { discardCards, mergeResources } from '../gameStateHelper';
+import { mergeResources } from '../resources/mergeResources';
+import { discardCards } from '../state/discardCards';
 import type { CardDef, CardProducedEvent, GameEvent, GameState, Sticker } from '../types';
 import type { GameEventStrategy } from './GameEventStrategy';
 

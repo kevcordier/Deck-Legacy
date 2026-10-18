@@ -1,5 +1,5 @@
 import { makeDefs, makeInstance, makeState, makeStickerDefs } from '../fixtures';
-import { EMPTY_STATE, GameAggregate } from '@engine/domain/aggregates/GameAggregate';
+import { GameAggregate } from '@engine/domain/aggregates/GameAggregate';
 import {
   ActionEffectType,
   CardTag,
@@ -12,6 +12,7 @@ import {
 } from '@engine/domain/enums';
 import { ActionCancelledError } from '@engine/domain/errors/ActionCancelledError';
 import { ChooseActionEffectStrategy } from '@engine/domain/playerChoice/ChooseActionEffectStrategy';
+import { EMPTY_STATE } from '@engine/domain/state/emptyState';
 import type {
   CardDef,
   ExpansionConfig,

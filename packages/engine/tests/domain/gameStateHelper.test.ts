@@ -1,16 +1,14 @@
 import { makeDefs, makeInstance, makeState, makeStickerDefs } from './fixtures';
 import { Options, PassiveType } from '@engine/domain/enums';
-import {
-  canUseOptions,
-  computeGameStateDiff,
-  destroyCards,
-  discardCards,
-  drawCards,
-  mergeResources,
-  pickPermanentBoardEffects,
-  spendResources,
-  syncInstancePassivesInBoardEffects,
-} from '@engine/domain/gameStateHelper';
+import { mergeResources } from '@engine/domain/resources/mergeResources';
+import { canUseOptions } from '@engine/domain/state/canUseOptions';
+import { computeGameStateDiff } from '@engine/domain/state/computeGameStateDiff';
+import { destroyCards } from '@engine/domain/state/destroyCards';
+import { discardCards } from '@engine/domain/state/discardCards';
+import { drawCards } from '@engine/domain/state/drawCards';
+import { pickPermanentBoardEffects } from '@engine/domain/state/pickPermanentBoardEffects';
+import { spendResources } from '@engine/domain/state/spendResources';
+import { syncInstancePassivesInBoardEffects } from '@engine/domain/state/syncInstancePassivesInBoardEffects';
 import type { CardDef } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 

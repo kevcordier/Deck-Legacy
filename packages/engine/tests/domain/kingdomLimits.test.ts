@@ -1,8 +1,8 @@
 import {
   MAX_KINGDOMS_PER_ACCOUNT,
   MAX_KINGDOMS_PER_GUEST,
-  kingdomLimit,
-} from '@engine/domain/kingdomLimits';
+} from '@engine/domain/kingdom/kingdomConstants';
+import { kingdomLimit } from '@engine/domain/kingdom/kingdomLimit';
 import { describe, expect, it } from 'vitest';
 
 describe('kingdomLimit', () => {

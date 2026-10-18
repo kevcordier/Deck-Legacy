@@ -1,5 +1,5 @@
 import { Phase } from '../enums';
-import { pickPermanentBoardEffects } from '../gameStateHelper';
+import { pickPermanentBoardEffects } from '../state/pickPermanentBoardEffects';
 import type { GameEvent, GameState, RoundStartedEvent } from '../types';
 import type { GameEventStrategy } from './GameEventStrategy';
 

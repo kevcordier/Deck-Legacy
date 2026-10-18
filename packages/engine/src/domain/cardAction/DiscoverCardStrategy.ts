@@ -1,5 +1,6 @@
-import { getActiveState, isPermanent } from '../cardHelpers';
-import { removeFromDiscovery } from '../gameStateHelper';
+import { getActiveState } from '../cards/selection/getActiveState';
+import { isPermanent } from '../cards/selection/isPermanent';
+import { removeFromDiscovery } from '../state/removeFromDiscovery';
 import type { CardDef, GameState, ResolvedActionEffect } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 

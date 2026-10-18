@@ -1,6 +1,7 @@
-import { getActiveState, isPermanent } from '../cardHelpers';
+import { getActiveState } from '../cards/selection/getActiveState';
+import { isPermanent } from '../cards/selection/isPermanent';
 import { Phase } from '../enums';
-import { syncInstancePassivesInBoardEffects } from '../gameStateHelper';
+import { syncInstancePassivesInBoardEffects } from '../state/syncInstancePassivesInBoardEffects';
 import type { CardDef, GameEvent, GameState, PurgeFinalizedEvent } from '../types';
 import type { GameEventStrategy } from './GameEventStrategy';
 

@@ -1,11 +1,11 @@
-import { getActiveState, getInstancesTriggerEffects, isPermanent } from '../cardHelpers';
+import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
+import { getActiveState } from '../cards/selection/getActiveState';
+import { isPermanent } from '../cards/selection/isPermanent';
 import { GameEventType, Trigger } from '../enums';
-import {
-  destroyCards,
-  discardCards,
-  spendResources,
-  syncInstancePassivesInBoardEffects,
-} from '../gameStateHelper';
+import { destroyCards } from '../state/destroyCards';
+import { discardCards } from '../state/discardCards';
+import { spendResources } from '../state/spendResources';
+import { syncInstancePassivesInBoardEffects } from '../state/syncInstancePassivesInBoardEffects';
 import type { CardDef, GameEvent, GameState, Sticker, UpgradeCardEvent } from '../types';
 import type { GameEventStrategy } from './GameEventStrategy';
 import { TurnEndedStrategy } from './TurnEndedStrategy';

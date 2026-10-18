@@ -1,25 +1,15 @@
 import { CardActionContext } from '../cardAction';
-import {
-  canAffordTrackAdvanceCost,
-  cardIsBlocked,
-  evaluateCondition,
-  getActiveState,
-  getEffectiveActionCost,
-  getEffectiveUpgradeCost,
-  getInstancesTriggerEffects,
-  isPermanent,
-} from '../cardHelpers';
+import { canAffordTrackAdvanceCost } from '../cards/canAffordTrackAdvanceCost';
+import { cardIsBlocked } from '../cards/cardIsBlocked';
+import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
+import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
+import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
+import { evaluateCondition } from '../cards/selection/evaluateCondition';
+import { getActiveState } from '../cards/selection/getActiveState';
+import { isPermanent } from '../cards/selection/isPermanent';
 import { resolveCost } from '../costResolver';
-import { resolveActionEffect } from '../effectResolver';
+import { resolveActionEffect } from '../effects/resolveActionEffect';
 import { ActionEffectType, PendingChoiceType, Phase, Trigger } from '../enums';
-import {
-  destroyCards,
-  discardCards,
-  discardCardsMissingRequirement,
-  mergeResources,
-  removeFromDiscovery,
-  spendResources,
-} from '../gameStateHelper';
 import { CardChoiceStrategy } from '../playerChoice/CardChoiceStrategy';
 import { ChooseActionEffectStrategy } from '../playerChoice/ChooseActionEffectStrategy';
 import type { PlayerChoiceStrategy } from '../playerChoice/PlayerChoiceStrategy';
@@ -27,7 +17,13 @@ import { ResourceChoiceStrategy } from '../playerChoice/ResourceChoiceStrategy';
 import { StateChoiceStrategy } from '../playerChoice/StateChoiceStrategy';
 import { StepChoiceStrategy } from '../playerChoice/StepChoiceStrategy';
 import { StickerChoiceStrategy } from '../playerChoice/StickerChoiceStrategy';
-import { hasAnyAmountCost } from '../resources';
+import { hasAnyAmountCost } from '../resources/hasAnyAmountCost';
+import { mergeResources } from '../resources/mergeResources';
+import { destroyCards } from '../state/destroyCards';
+import { discardCards } from '../state/discardCards';
+import { discardCardsMissingRequirement } from '../state/discardCardsMissingRequirement';
+import { removeFromDiscovery } from '../state/removeFromDiscovery';
+import { spendResources } from '../state/spendResources';
 import type {
   ActionEffect,
   CardAction,

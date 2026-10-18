@@ -3,7 +3,7 @@ import { Button } from '@components/ui/Button/Button';
 import { Grid } from '@components/ui/Grid/Grid';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
-import { getActiveState } from '@deck-legacy/engine/domain/cardHelpers';
+import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
 import { PassiveType } from '@deck-legacy/engine/domain/enums';
 import type { CardDef, CardInstance } from '@deck-legacy/engine/domain/types';
 import { useIsDesktop } from '@hooks/useIsDesktop';

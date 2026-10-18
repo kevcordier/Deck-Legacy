@@ -1,7 +1,7 @@
-import { keepGainableResources } from '../cardHelpers';
-import { cardSelector } from '../cardSelector';
+import { keepGainableResources } from '../cards/keepGainableResources';
+import { cardSelector } from '../cards/selection/cardSelector';
 import { type ActionEffectType, PassiveType, TargetScope } from '../enums';
-import { mergeResources } from '../gameStateHelper';
+import { mergeResources } from '../resources/mergeResources';
 import type { CardDef, GameState, Resources, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 

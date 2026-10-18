@@ -9,15 +9,13 @@ import { UnlimitedIcon } from '@components/ui/Icon/icons/UnlimitedIcon';
 import { TextInput } from '@components/ui/Input/TextInput';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
-import {
-  canAffordCost,
-  canAffordTrackAdvanceCost,
-  evaluateCondition,
-  getEffectiveActionCost,
-} from '@deck-legacy/engine/domain/cardHelpers';
+import { canAffordCost } from '@deck-legacy/engine/domain/cards/canAffordCost';
+import { canAffordTrackAdvanceCost } from '@deck-legacy/engine/domain/cards/canAffordTrackAdvanceCost';
+import { getEffectiveActionCost } from '@deck-legacy/engine/domain/cards/getEffectiveActionCost';
+import { evaluateCondition } from '@deck-legacy/engine/domain/cards/selection/evaluateCondition';
 import { Options, Phase, type ResourceType, TargetScope } from '@deck-legacy/engine/domain/enums';
-import { canUseOptions } from '@deck-legacy/engine/domain/gameStateHelper';
-import { hasAnyAmountCost } from '@deck-legacy/engine/domain/resources';
+import { hasAnyAmountCost } from '@deck-legacy/engine/domain/resources/hasAnyAmountCost';
+import { canUseOptions } from '@deck-legacy/engine/domain/state/canUseOptions';
 import type { CardAction, CardInstance } from '@deck-legacy/engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import { type ReactNode, useState } from 'react';

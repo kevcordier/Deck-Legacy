@@ -1,6 +1,6 @@
-import { cardShouldStayInPlay } from '../cardHelpers';
+import { cardShouldStayInPlay } from '../cards/selection/cardShouldStayInPlay';
 import { PassiveType, Phase } from '../enums';
-import { discardCards } from '../gameStateHelper';
+import { discardCards } from '../state/discardCards';
 import type { CardDef, GameEvent, GameState, Passive, Sticker, TurnEndedEvent } from '../types';
 import type { GameEventStrategy } from './GameEventStrategy';
 

@@ -1,4 +1,4 @@
-import { getActiveState } from '../cardHelpers';
+import { getActiveState } from '../cards/selection/getActiveState';
 import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 

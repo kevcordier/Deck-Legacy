@@ -12,20 +12,18 @@ import { ResourceChoice } from '@components/ui/ResourceChoice/ResourceChoice';
 import { StickerDisplay } from '@components/ui/StickerDisplay/StickerDisplay';
 import { Tag } from '@components/ui/Tag/Tag';
 import { Text } from '@components/ui/Text/Text';
-import {
-  canAffordCost,
-  canAffordTrackAdvanceCost,
-  cardIsBlocked,
-  evaluateCondition,
-  getActiveState,
-  getEffectiveActionCost,
-  getEffectiveGlory,
-  getEffectiveUpgradeCost,
-  getProductionChoicesForAction,
-  tagBorderClass,
-} from '@deck-legacy/engine/domain/cardHelpers';
+import { canAffordCost } from '@deck-legacy/engine/domain/cards/canAffordCost';
+import { canAffordTrackAdvanceCost } from '@deck-legacy/engine/domain/cards/canAffordTrackAdvanceCost';
+import { cardIsBlocked } from '@deck-legacy/engine/domain/cards/cardIsBlocked';
+import { getEffectiveActionCost } from '@deck-legacy/engine/domain/cards/getEffectiveActionCost';
+import { getEffectiveUpgradeCost } from '@deck-legacy/engine/domain/cards/getEffectiveUpgradeCost';
+import { getProductionChoicesForAction } from '@deck-legacy/engine/domain/cards/getProductionChoicesForAction';
+import { evaluateCondition } from '@deck-legacy/engine/domain/cards/selection/evaluateCondition';
+import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
+import { getEffectiveGlory } from '@deck-legacy/engine/domain/cards/selection/getEffectiveGlory';
+import { tagBorderClass } from '@deck-legacy/engine/domain/cards/tagBorderClass';
 import { Options, PassiveType, TargetScope } from '@deck-legacy/engine/domain/enums';
-import { canUseOptions } from '@deck-legacy/engine/domain/gameStateHelper';
+import { canUseOptions } from '@deck-legacy/engine/domain/state/canUseOptions';
 import type { CardAction, CardInstance, StepDef } from '@deck-legacy/engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import { tCardName } from '@i18n/card/tCardName';

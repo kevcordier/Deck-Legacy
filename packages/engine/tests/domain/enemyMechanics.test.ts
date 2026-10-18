@@ -4,18 +4,17 @@ import { GameAggregate } from '@engine/domain/aggregates/GameAggregate';
 import { AddResourceStrategy } from '@engine/domain/cardAction/AddResourceStrategy';
 import { AddStickerStrategy } from '@engine/domain/cardAction/AddStickerStrategy';
 import { RemoveResourceOnCardStrategy } from '@engine/domain/cardAction/RemoveResourceOnCardStrategy';
-import {
-  canAffordCost,
-  evaluateCondition,
-  getEffectiveUpgradeCost,
-  getInstancesTriggerEffects,
-  getProductionChoicesForAction,
-  getSpendableResources,
-  keepGainableResources,
-} from '@engine/domain/cardHelpers';
-import { cardSelector } from '@engine/domain/cardSelector';
+import { canAffordCost } from '@engine/domain/cards/canAffordCost';
+import { getEffectiveUpgradeCost } from '@engine/domain/cards/getEffectiveUpgradeCost';
+import { getInstancesTriggerEffects } from '@engine/domain/cards/getInstancesTriggerEffects';
+import { getProductionChoicesForAction } from '@engine/domain/cards/getProductionChoicesForAction';
+import { getSpendableResources } from '@engine/domain/cards/getSpendableResources';
+import { keepGainableResources } from '@engine/domain/cards/keepGainableResources';
+import { cardSelector } from '@engine/domain/cards/selection/cardSelector';
+import { countValuePerElement } from '@engine/domain/cards/selection/countValuePerElement';
+import { evaluateCondition } from '@engine/domain/cards/selection/evaluateCondition';
 import { resolveCost } from '@engine/domain/costResolver';
-import { countValuePerElement, resolveActionEffect } from '@engine/domain/effectResolver';
+import { resolveActionEffect } from '@engine/domain/effects/resolveActionEffect';
 import {
   ActionEffectType,
   CardTag,

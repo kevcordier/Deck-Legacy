@@ -1,4 +1,4 @@
-import { getInstancesTriggerEffects } from '../cardHelpers';
+import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { Trigger } from '../enums';
 import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';

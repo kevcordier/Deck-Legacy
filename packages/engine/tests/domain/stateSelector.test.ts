@@ -1,5 +1,6 @@
 import { makeInstance, makeState, makeStickerDefs } from './fixtures';
-import { matchHaving, stateSelector } from '@engine/domain/stateSelector';
+import { matchHaving } from '@engine/domain/cards/selection/matchHaving';
+import { stateSelector } from '@engine/domain/stateSelector';
 import type { CardDef, Sticker } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 

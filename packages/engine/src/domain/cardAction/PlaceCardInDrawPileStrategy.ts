@@ -1,4 +1,4 @@
-import { removeFromDiscovery } from '../gameStateHelper';
+import { removeFromDiscovery } from '../state/removeFromDiscovery';
 import type { GameState, ResolvedActionEffect } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 

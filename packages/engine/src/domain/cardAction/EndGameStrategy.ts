@@ -1,5 +1,5 @@
 import { Phase } from '../enums';
-import { clearCampaignPile } from '../gameStateHelper';
+import { clearCampaignPile } from '../state/clearCampaignPile';
 import type { GameState } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 

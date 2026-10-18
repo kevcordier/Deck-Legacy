@@ -1,4 +1,4 @@
-import { destroyCards } from '../gameStateHelper';
+import { destroyCards } from '../state/destroyCards';
 import type { GameState, ResolvedActionEffect } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 
