@@ -3,11 +3,11 @@ import { SUPABASE_JWKS } from '../src/auth/supabase-token.verifier';
 import { configureApp } from '../src/bootstrap';
 import { APP_CONFIG } from '../src/config/env';
 import { type GameSnapshot, GamesRepository } from '../src/games/games.repository';
+import type { GameSummary } from '../src/games/presentation/dto/game-summary.dto';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { ScoresService } from '../src/scores/scores.service';
 import { UsersService } from '../src/users/users.service';
 import { signToken, testConfig, testJwks } from './helpers';
-import type { GameSummary } from '@deck-legacy/api-contract';
 import { GameSession, checkpointSeq } from '@deck-legacy/engine/application/session/GameSession';
 import { Phase } from '@deck-legacy/engine/domain/enums';
 import type { GameCheckpoint, GameEvent, GameStartedEvent } from '@deck-legacy/engine/domain/types';
@@ -280,6 +280,14 @@ describe('Games sync API (e2e, in-memory storage)', () => {
   it('serves health without a token', async () => {
     const response = await request(app.getHttpServer()).get('/health').expect(200);
     expect(response.body).toEqual({ status: 'ok' });
+  });
+
+  // `pnpm --filter @deck-legacy/server generate:openapi` rewrites openapi.json when the API changes.
+  it('serves the OpenAPI document without a token, matching openapi.json', async () => {
+    const response = await request(app.getHttpServer()).get('/docs-json').expect(200);
+    await expect(`${JSON.stringify(response.body, null, 2)}\n`).toMatchFileSnapshot(
+      '../openapi.json',
+    );
   });
 
   it('requires a token for games', async () => {

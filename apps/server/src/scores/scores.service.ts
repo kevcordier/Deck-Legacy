@@ -1,6 +1,8 @@
 import { toSegments } from '../games/games.repository';
 import { PrismaService } from '../prisma/prisma.service';
-import type { KingdomRanking, LeaderboardResponse, ScoreEntry } from '@deck-legacy/api-contract';
+import type { KingdomRanking } from './presentation/dto/kingdom-ranking.dto';
+import type { Leaderboard } from './presentation/dto/leaderboard.dto';
+import type { ScoreEntry } from './presentation/dto/score-entry.dto';
 import { Injectable } from '@nestjs/common';
 
 type ScoreWriter = Pick<PrismaService, 'score'>;
@@ -52,7 +54,7 @@ export class ScoresService {
   }
 
   /** Best scores of registered (non-anonymous) players for a campaign segment, verified games only. */
-  async leaderboard(segment: string, limit: number): Promise<LeaderboardResponse> {
+  async leaderboard(segment: string, limit: number): Promise<Leaderboard> {
     const rows = await this.prisma.score.findMany({
       where: { segment, user: { isAnonymous: false }, game: { verified: true } },
       orderBy: [{ score: 'desc' }, { createdAt: 'asc' }],

@@ -17,6 +17,7 @@ pnpm dev:server                             # Build packages, generate Prisma cl
 pnpm build:server                           # Packages + server → apps/server/dist
 pnpm --filter @deck-legacy/server test      # Unit + e2e tests (no database or Supabase needed)
 pnpm --filter @deck-legacy/server prisma:deploy   # Apply migrations (production)
+pnpm generate:api                           # Rewrite openapi.json (via the e2e test) and the client API types
 ```
 
 NestJS stays on **v11 (CommonJS)**: v12 is ESM-only, which the extensionless imports of the engine package do not support.
@@ -28,20 +29,22 @@ NestJS stays on **v11 (CommonJS)**: v12 is ESM-only, which the extensionless imp
 ```text
 apps/server/
 ├── src/
-│   ├── main.ts / bootstrap.ts / app.module.ts   # Bootstrap; configureApp() = CORS, body size, error filter
+│   ├── main.ts / bootstrap.ts / app.module.ts   # Bootstrap; configureApp() = CORS, body size, error filter, Swagger on /docs
+│   ├── openapi.ts         # OpenAPI document (served on /docs, written to openapi.json)
 │   ├── config/            # Env validation (zod) → APP_CONFIG
 │   ├── auth/              # Supabase JWT verification, global AuthGuard, @Public, @CurrentUser
 │   ├── users/             # GET/PATCH /me
 │   ├── games/             # GamesService (validation by replay, per-game lock), repository, controller
 │   ├── scores/            # Score mirroring, leaderboard
 │   ├── prisma/            # PrismaService (pg adapter)
-│   ├── common/            # ZodValidationPipe, ApiExceptionFilter, helpers
+│   ├── common/            # ZodValidationPipe, ApiExceptionFilter, ApiErrorDto, nullableStringSchema, helpers
 │   └── generated/prisma   # GENERATED Prisma client (gitignored, `prisma generate`)
 ├── prisma/                # schema.prisma + migrations
+├── openapi.json           # HTTP contract (GENERATED, committed; checked by tests/games.e2e.test.ts)
 └── tests/                 # Unit + e2e tests
 ```
 
-Imports inside the server are relative; shared code comes from `@deck-legacy/engine/*`, `@deck-legacy/game-data` and `@deck-legacy/api-contract`.
+Imports inside the server are relative; shared code comes from `@deck-legacy/engine/*` and `@deck-legacy/game-data`. Request and response DTOs live in `<module>/presentation/dto/`, one per file (EDR-056).
 
 ---
 
@@ -76,7 +79,9 @@ Imports inside the server are relative; shared code comes from `@deck-legacy/eng
 | `GET /scores/kingdoms?limit=`      | public | Kingdoms of registered players with the best total score |
 
 - Every route requires a token unless decorated with `@Public()` (global `AuthGuard`).
-- Validate bodies with `new ZodValidationPipe(schema)` using the schemas of `@deck-legacy/api-contract`.
+- Each body and response is a zod DTO (`createZodDto` from `nestjs-zod`) in `<module>/presentation/dto/`. Validate bodies with `new ZodValidationPipe(Dto.schema)`; document responses with `@ApiOkResponse({ type: Dto })`. Use `nullableStringSchema` for `string | null` (swagger reads zod's `['string', 'null']` as an array).
+- After any route or DTO change, run `pnpm generate:api`: it rewrites `openapi.json` and the client types (`apps/client/src/infrastructure/api/generated`). CI fails when either is stale.
+- Swagger UI: `/docs` (JSON: `/docs-json`), public.
 - Errors always use the `ApiErrorBody` shape (`ApiExceptionFilter`).
 - CORS: `CORS_ORIGINS`, plus any `localhost` port outside production (`isAllowedOrigin` in `bootstrap.ts`). The JSON body limit is 20 MB (long games produce large logs).
 

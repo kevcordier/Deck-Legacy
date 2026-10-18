@@ -1,3 +1,5 @@
 pnpm-lock.yaml
 apps/server/prisma/migrations
 apps/client/.rnstorybook/storybook.requires.ts
+apps/server/openapi.json
+apps/client/src/infrastructure/api/generated

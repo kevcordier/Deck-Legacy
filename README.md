@@ -109,7 +109,6 @@ apps/
 packages/
 ├── engine/              # Game engine: domain + application layers, GameSession (event sourcing)
 ├── game-data/           # Card, sticker and deck definitions
-└── api-contract/        # HTTP contract: zod schemas and DTO types
 ```
 
 **Local-first** — The engine runs on the device: every action is executed locally and the event log is saved on the device, so the game works offline. When online, the log is synced to the server (`PUT /games/:id`), which replays it with the same engine to validate it, stores it in PostgreSQL and records final scores. A game can be resumed on another device signed in to the same account.

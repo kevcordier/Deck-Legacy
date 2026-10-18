@@ -8,8 +8,8 @@
  * unsynced changes for them. When both moved, the server refuses the push and the kingdom is
  * in `conflict` until the player keeps one version (`resolveConflict`).
  */
-import type { GameSummary } from '@deck-legacy/api-contract';
 import { ApiError, api } from '@services/api';
+import type { GameSummary } from '@services/apiTypes';
 import {
   type KingdomMeta,
   type SaveData,

@@ -8,8 +8,8 @@
  * any (the game resumes from it, EDR-053). Saves written by older versions have no `sync` field
  * and are treated as not yet synced.
  */
-import type { CampaignSegmentScore } from '@deck-legacy/api-contract';
 import type { GameCheckpoint, GameEvent, GameState } from '@deck-legacy/engine/domain/types';
+import type { CampaignSegmentScore } from '@services/apiTypes';
 import { STORAGE_KEYS, hydrateKeys, saveKey, storage } from '@services/storage';
 
 export type SyncInfo = {

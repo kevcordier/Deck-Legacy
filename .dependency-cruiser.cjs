@@ -51,7 +51,12 @@ module.exports = {
       path: 'node_modules',
     },
     exclude: {
-      path: ['node_modules', '/dist/', 'apps/server/src/generated'],
+      path: [
+        'node_modules',
+        '/dist/',
+        'apps/server/src/generated',
+        'apps/client/src/infrastructure/api/generated',
+      ],
     },
     tsPreCompilationDeps: true,
     tsConfig: {

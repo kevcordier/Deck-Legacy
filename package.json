@@ -23,6 +23,7 @@
     "test": "pnpm -r test",
     "test:coverage": "pnpm -r test:coverage",
     "depcruise": "depcruise apps packages --config .dependency-cruiser.cjs",
+    "generate:api": "pnpm --filter @deck-legacy/server generate:openapi && pnpm --filter @deck-legacy/client generate:api",
     "verify": "pnpm format && pnpm lint:fix && pnpm typecheck && pnpm depcruise && pnpm test:coverage"
   },
   "devDependencies": {

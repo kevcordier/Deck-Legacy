@@ -4,15 +4,15 @@ Interaction rules between the project subagents defined in `.claude/agents/`. Ev
 
 ## Agents
 
-| Agent                | Kind            | Domain                                                         |
-| -------------------- | --------------- | -------------------------------------------------------------- |
-| `rules-engineer`     | writer + triage | Engine (`packages/engine`), diagnosis of every rule/card bug   |
-| `card-designer`      | writer          | Game data (`packages/game-data`) + card texts (`cards.*.json`) |
-| `client-developer`   | writer          | Expo app (`apps/client`), except card texts                    |
-| `api-developer`      | writer          | API (`apps/server`) + HTTP contract (`packages/api-contract`)  |
-| `dependency-steward` | writer          | Dependencies, lockfile, CI, repository configs                 |
-| `replay-guardian`    | read-only, veto | Compatibility of event logs with the current engine and data   |
-| `quality-gate`       | read-only, veto | typecheck, lint, format, depcruise, tests + coverage           |
+| Agent                | Kind            | Domain                                                           |
+| -------------------- | --------------- | ---------------------------------------------------------------- |
+| `rules-engineer`     | writer + triage | Engine (`packages/engine`), diagnosis of every rule/card bug     |
+| `card-designer`      | writer          | Game data (`packages/game-data`) + card texts (`cards.*.json`)   |
+| `client-developer`   | writer          | Expo app (`apps/client`), except card texts                      |
+| `api-developer`      | writer          | API (`apps/server`) + HTTP contract (`apps/server/openapi.json`) |
+| `dependency-steward` | writer          | Dependencies, lockfile, CI, repository configs                   |
+| `replay-guardian`    | read-only, veto | Compatibility of event logs with the current engine and data     |
+| `quality-gate`       | read-only, veto | typecheck, lint, format, depcruise, tests + coverage             |
 
 The **user** is the final authority: game rules, breaking changes, migrations, major upgrades, commits and pushes. Every merge into `main` requires the maintainer's review and approval (EDR-037).
 
@@ -27,7 +27,6 @@ One owner per path. An agent never edits a path it does not own; it reports the 
 | `packages/game-data/src/locales/cards.{en,fr}.json`, `packages/game-data/src/expansions/*/locales/cards.{en,fr}.json`                                     | `card-designer`                                                       |
 | `apps/client/src/data/illustrations.ts` (generated)                                                                                                       | `card-designer` (via `generate:illustrations`)                        |
 | `apps/client/**` (everything else)                                                                                                                        | `client-developer`                                                    |
-| `packages/api-contract/**`                                                                                                                                | `api-developer`                                                       |
 | `apps/server/**` (incl. `prisma/`)                                                                                                                        | `api-developer`                                                       |
 | `package.json` files, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `.nvmrc`                                                                                   | `dependency-steward`                                                  |
 | `.github/**`, `.husky/**`, `eslint.config.mjs`, `.prettierrc`, `.dependency-cruiser.cjs`, `tsconfig*.json`, `vitest.config.mts`, Babel/Metro/Expo configs | `dependency-steward`                                                  |
@@ -80,7 +79,7 @@ Dependency upgrade
 Hard ordering rules:
 
 1. `rules-engineer` triage comes before any fix of a rule/card bug.
-2. The contract (`packages/api-contract`) is changed before the server and the client.
+2. The contract (server DTOs → `openapi.json`, `pnpm generate:api`) is changed before the client.
 3. An engine command/view change lands before the client consumes it.
 4. `replay-guardian` reviews **every** diff touching `packages/engine`, `packages/game-data` or the `GameEvent` Prisma model, before `quality-gate`.
 5. `quality-gate` always runs last, on the final state of the working tree.

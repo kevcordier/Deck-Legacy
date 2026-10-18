@@ -19,10 +19,10 @@
     "storybook:android": "EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start --android",
     "storybook:web": "EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start --web",
     "storybook:generate": "sb-rn-get-stories --config-path .rnstorybook",
-    "generate:illustrations": "node scripts/generate-illustrations.mjs"
+    "generate:illustrations": "node scripts/generate-illustrations.mjs",
+    "generate:api": "openapi-typescript ../server/openapi.json --default-non-nullable false -o src/infrastructure/api/generated/schema.d.ts"
   },
   "dependencies": {
-    "@deck-legacy/api-contract": "workspace:*",
     "@deck-legacy/engine": "workspace:*",
     "@deck-legacy/game-data": "workspace:*",
     "@expo-google-fonts/cinzel": "^0.4.2",
@@ -43,6 +43,7 @@
     "expo-status-bar": "~57.0.1",
     "i18next": "^26.4.4",
     "nativewind": "4.2.7",
+    "openapi-fetch": "^0.17.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-error-boundary": "^6.1.6",
@@ -66,6 +67,7 @@
     "@storybook/react-native": "^10.6.0",
     "@types/react": "~19.2.2",
     "babel-plugin-inline-import": "^3.0.0",
+    "openapi-typescript": "^7.13.0",
     "react-native-gesture-handler": "~2.32.0",
     "storybook": "^10.6.0",
     "tailwindcss": "^3.4.19"
