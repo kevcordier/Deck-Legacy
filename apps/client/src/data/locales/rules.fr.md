@@ -18,7 +18,7 @@ Développez votre royaume en améliorant vos cartes, manche après manche. Vous 
 
 ## Un nouveau royaume
 
-Chaque partie est un **royaume**. Sur la page d'accueil, touchez **Nouveau royaume**, donnez-lui un nom et choisissez de commencer ou non par le tutoriel. Vous pouvez aussi saisir une **graine** : deux royaumes avec la même graine ont les mêmes mélanges, pour rejouer une partie ou défier un ami. La graine de votre partie est affichée dans les options. Votre royaume commence avec les cartes **1 à 10**, mélangées pour former votre deck ; les autres cartes attendent d'être découvertes.
+Chaque partie est un **royaume**. Sur la page d'accueil, touchez **Nouveau royaume**, donnez-lui un nom et choisissez de commencer ou non par le tutoriel. Vous pouvez aussi saisir une **seed** : deux royaumes avec la même seed ont les mêmes mélanges, pour rejouer une partie ou défier un ami. La seed de votre partie est affichée dans les options. Votre royaume commence avec les cartes **1 à 10**, mélangées pour former votre deck ; les autres cartes attendent d'être découvertes.
 
 Le tutoriel vous guide pendant une première manche ; à la fin, vous pouvez garder cette partie ou en commencer une nouvelle. Vos royaumes sont listés sur la page d'accueil avec leur score total, le score du jeu de base et le score après chaque extension. Vous pouvez garder **un royaume** sans compte et jusqu'à **10** avec un compte.
 

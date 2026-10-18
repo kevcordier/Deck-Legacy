@@ -161,13 +161,33 @@ class InMemoryGamesRepository {
   }
 }
 
-/** Plays a few commands with the real engine, as the client does. */
+/** A board card with a production: the engine ignores the production of the others. */
+function producingCard(session: GameSession): number {
+  const { board, instances } = session.getState();
+  const { cards } = loadGameCatalog();
+  const id = board.find(cardId => {
+    const { cardId: defId, stateId } = instances[cardId];
+    const state = cards[defId].states.find(candidate => candidate.id === stateId);
+    return state?.productions?.some(production => Object.keys(production).length > 0);
+  });
+  if (id === undefined) throw new Error('No card with a production on the board');
+  return id;
+}
+
+/** Plays a few productions with the real engine, as the client does (fixed seed: same draws). */
 function playedGame(commands = 1) {
-  const session = GameSession.start(randomUUID(), loadGameCatalog(), OPTIONS);
+  const session = GameSession.start(
+    randomUUID(),
+    loadGameCatalog(),
+    OPTIONS,
+    'standard',
+    undefined,
+    'e2e',
+  );
   for (let i = 0; i < commands; i += 1) {
     session.execute({
       type: 'resolveProduction',
-      instanceId: session.getState().board[0],
+      instanceId: producingCard(session),
       choiceIndex: 0,
     });
   }
@@ -284,7 +304,7 @@ describe('Games sync API (e2e, in-memory storage)', () => {
 
     session.execute({
       type: 'resolveProduction',
-      instanceId: session.getState().board[0],
+      instanceId: producingCard(session),
       choiceIndex: 0,
     });
     const updated = await put(aliceToken, session.id, {
@@ -308,7 +328,7 @@ describe('Games sync API (e2e, in-memory storage)', () => {
     await put(aliceToken, session.id, { events: first }).expect(200);
     session.execute({
       type: 'resolveProduction',
-      instanceId: session.getState().board[0],
+      instanceId: producingCard(session),
       choiceIndex: 0,
     });
 
