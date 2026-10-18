@@ -1,4 +1,4 @@
-import { nullableStringSchema } from '../../../common/nullable-string.schema';
+import { nullableStringSchema } from '../../../shared/http/nullable-string.schema';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 

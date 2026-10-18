@@ -1,6 +1,7 @@
 import { AppModule } from './app.module';
 import { configureApp } from './bootstrap';
-import { APP_CONFIG, type AppConfig } from './config/env';
+import { APP_CONFIG } from './config/app-config.token';
+import { type AppConfig } from './config/env';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';

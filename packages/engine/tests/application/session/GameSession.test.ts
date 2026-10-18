@@ -1,10 +1,8 @@
 import { DEFAULT_OPTIONS, makeCatalog } from './fixtures';
-import {
-  CorruptedGameError,
-  ForbiddenCommandError,
-  GameSession,
-} from '@engine/application/session/GameSession';
+import { GameSession } from '@engine/application/session/GameSession';
 import { GameEventType, Phase } from '@engine/domain/enums';
+import { CorruptedGameError } from '@engine/domain/errors/CorruptedGameError';
+import { ForbiddenCommandError } from '@engine/domain/errors/ForbiddenCommandError';
 import type { GameEvent, GameState } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 

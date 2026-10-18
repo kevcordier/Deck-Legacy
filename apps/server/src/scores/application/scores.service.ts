@@ -1,8 +1,8 @@
-import { toSegments } from '../games/games.repository';
-import { PrismaService } from '../prisma/prisma.service';
-import type { KingdomRanking } from './presentation/dto/kingdom-ranking.dto';
-import type { Leaderboard } from './presentation/dto/leaderboard.dto';
-import type { ScoreEntry } from './presentation/dto/score-entry.dto';
+import { PrismaService } from '../../prisma/prisma.service';
+import { toSegments } from '../../prisma/to-segments';
+import type { KingdomRanking } from './dto/kingdom-ranking.dto';
+import type { Leaderboard } from './dto/leaderboard.dto';
+import type { ScoreEntry } from './dto/score-entry.dto';
 import { Injectable } from '@nestjs/common';
 
 type ScoreWriter = Pick<PrismaService, 'score'>;

@@ -1,7 +1,8 @@
-import type { AuthUser } from '../auth/auth-user';
-import { APP_CONFIG, type AppConfig } from '../config/env';
-import { PrismaService } from '../prisma/prisma.service';
-import type { UserProfile } from './presentation/dto/user-profile.dto';
+import type { AuthUser } from '../../auth/auth-user';
+import { APP_CONFIG } from '../../config/app-config.token';
+import { type AppConfig } from '../../config/env';
+import { PrismaService } from '../../prisma/prisma.service';
+import type { UserProfile } from './dto/user-profile.dto';
 import {
   BadGatewayException,
   Inject,

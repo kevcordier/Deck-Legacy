@@ -1,11 +1,11 @@
-import type { AuthUser } from '../auth/auth-user';
-import { CurrentUser } from '../auth/current-user.decorator';
-import { Public } from '../auth/public.decorator';
-import { ApiErrorDto } from '../common/api-error.dto';
-import { type KingdomRanking, KingdomRankingDto } from './presentation/dto/kingdom-ranking.dto';
-import { type Leaderboard, LeaderboardDto } from './presentation/dto/leaderboard.dto';
-import { type ScoreEntry, ScoreEntryDto } from './presentation/dto/score-entry.dto';
-import { ScoresService } from './scores.service';
+import type { AuthUser } from '../../auth/auth-user';
+import { CurrentUser } from '../../auth/current-user.decorator';
+import { Public } from '../../auth/public.decorator';
+import { ApiErrorDto } from '../../shared/http/api-error.dto';
+import { type KingdomRanking, KingdomRankingDto } from '../application/dto/kingdom-ranking.dto';
+import { type Leaderboard, LeaderboardDto } from '../application/dto/leaderboard.dto';
+import { type ScoreEntry, ScoreEntryDto } from '../application/dto/score-entry.dto';
+import { ScoresService } from '../application/scores.service';
 import { Controller, DefaultValuePipe, Get, ParseIntPipe, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,

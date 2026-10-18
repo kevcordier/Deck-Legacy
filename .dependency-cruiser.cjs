@@ -36,6 +36,35 @@ module.exports = {
       to: { pathNot: '^packages/(game-data|engine/src/domain)/' },
     },
 
+    // ── Server: layers inside each feature module (games, users, scores) ─────
+    {
+      name: 'server-domain-pure',
+      comment:
+        'A server domain does not use its adapters or Prisma (ESLint forbids Nest and zod there)',
+      severity: 'error',
+      from: { path: '^apps/server/src/[^/]+/domain/' },
+      to: {
+        path: [
+          '^apps/server/src/[^/]+/(application|infrastructure|presentation)/',
+          '^apps/server/src/(prisma|generated)/',
+        ],
+      },
+    },
+    {
+      name: 'server-application-no-adapters',
+      comment: 'Use cases depend on ports, never on infrastructure or controllers',
+      severity: 'error',
+      from: { path: '^apps/server/src/[^/]+/application/' },
+      to: { path: '^apps/server/src/[^/]+/(infrastructure|presentation)/' },
+    },
+    {
+      name: 'server-presentation-no-infrastructure',
+      comment: 'Controllers call use cases, never repositories',
+      severity: 'error',
+      from: { path: '^apps/server/src/[^/]+/presentation/' },
+      to: { path: '^apps/server/src/[^/]+/infrastructure/' },
+    },
+
     // ── Apps share code only through packages ────────────────────────────────
     {
       name: 'apps-isolated',

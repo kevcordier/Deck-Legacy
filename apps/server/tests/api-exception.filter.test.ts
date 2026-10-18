@@ -1,4 +1,4 @@
-import { errorMessage } from '../src/common/api-exception.filter';
+import { errorMessage } from '../src/shared/http/error-message';
 import { describe, expect, it } from 'vitest';
 
 describe('errorMessage', () => {

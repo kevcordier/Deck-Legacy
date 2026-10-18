@@ -1,9 +1,9 @@
-import { GamesRepository } from '../src/games/games.repository';
-import { firstDifference } from '../src/games/games.service';
+import { firstDifference } from '../src/games/domain/first-difference';
+import { PrismaGamesRepository } from '../src/games/infrastructure/prisma-games.repository';
 import { Prisma } from '../src/generated/prisma/client';
 import type { PrismaService } from '../src/prisma/prisma.service';
-import { ScoresService } from '../src/scores/scores.service';
-import { UsersService } from '../src/users/users.service';
+import { ScoresService } from '../src/scores/application/scores.service';
+import { UsersService } from '../src/users/application/users.service';
 import { testConfig } from './helpers';
 import type { GameEvent } from '@deck-legacy/engine/domain/types';
 import { describe, expect, it, vi } from 'vitest';
@@ -77,7 +77,7 @@ describe('GamesRepository.save', () => {
   it('rewrites the log from the first differing event and bumps the version', async () => {
     const { prisma, tx } = fakePrisma();
 
-    await new GamesRepository(prisma).save(GAME, USER, 10, 3, snapshot(5));
+    await new PrismaGamesRepository(prisma).save(GAME, USER, 10, 3, snapshot(5));
 
     expect(tx.game.update.mock.calls[0][0].data.version).toEqual({ increment: 1 });
     expect(tx.gameEvent.deleteMany).toHaveBeenCalledWith({
@@ -90,7 +90,7 @@ describe('GamesRepository.save', () => {
   it('only truncates when the new log is a prefix of the stored one', async () => {
     const { prisma, tx } = fakePrisma();
 
-    await new GamesRepository(prisma).save(GAME, USER, 10, 4, snapshot(4));
+    await new PrismaGamesRepository(prisma).save(GAME, USER, 10, 4, snapshot(4));
 
     expect(tx.gameEvent.deleteMany).toHaveBeenCalledOnce();
     expect(tx.gameEvent.createMany).not.toHaveBeenCalled();
@@ -100,7 +100,7 @@ describe('GamesRepository.save', () => {
     const { prisma } = fakePrisma();
     const afterWrite = vi.fn().mockResolvedValue(undefined);
 
-    await new GamesRepository(prisma).save(GAME, USER, 10, 4, snapshot(4), afterWrite);
+    await new PrismaGamesRepository(prisma).save(GAME, USER, 10, 4, snapshot(4), afterWrite);
 
     expect(afterWrite).toHaveBeenCalledOnce();
   });
@@ -108,7 +108,7 @@ describe('GamesRepository.save', () => {
   it('stores the kingdom name and ordered segments', async () => {
     const { prisma, tx } = fakePrisma();
 
-    await new GamesRepository(prisma).save(GAME, USER, 10, 0, snapshot(1));
+    await new PrismaGamesRepository(prisma).save(GAME, USER, 10, 0, snapshot(1));
 
     expect(tx.game.update.mock.calls[0][0].data).toMatchObject({
       name: 'Avalon',
@@ -119,7 +119,7 @@ describe('GamesRepository.save', () => {
 
   it('revives an abandoned game only within the kingdom limit', async () => {
     const { prisma, tx } = fakePrisma();
-    const repository = new GamesRepository(prisma);
+    const repository = new PrismaGamesRepository(prisma);
     tx.game.findUniqueOrThrow.mockResolvedValue({ status: 'ABANDONED' });
 
     await repository.save(GAME, USER, 10, 0, snapshot(1));
@@ -137,7 +137,7 @@ describe('GamesRepository reads and creation', () => {
     const { prisma, tx } = fakePrisma();
     const afterWrite = vi.fn().mockResolvedValue(undefined);
 
-    await new GamesRepository(prisma).create(
+    await new PrismaGamesRepository(prisma).create(
       GAME,
       USER,
       10,
@@ -163,9 +163,9 @@ describe('GamesRepository reads and creation', () => {
     const { prisma, tx } = fakePrisma();
     tx.game.count.mockResolvedValue(1);
 
-    await expect(new GamesRepository(prisma).create(GAME, USER, 1, snapshot(1))).rejects.toThrow(
-      'errors.kingdomLimit',
-    );
+    await expect(
+      new PrismaGamesRepository(prisma).create(GAME, USER, 1, snapshot(1)),
+    ).rejects.toThrow('errors.kingdomLimit');
     expect(tx.game.create).not.toHaveBeenCalled();
   });
 
@@ -173,7 +173,7 @@ describe('GamesRepository reads and creation', () => {
     const { prisma, tx } = fakePrisma();
     tx.game.findMany.mockResolvedValueOnce([summaryRow]);
 
-    const list = await new GamesRepository(prisma).list(USER);
+    const list = await new PrismaGamesRepository(prisma).list(USER);
 
     expect(list).toHaveLength(1);
     expect(list[0].segments).toEqual([{ segment: 'base', score: 12 }]);
@@ -195,7 +195,7 @@ describe('GamesRepository reads and creation', () => {
       checkpointState: { round: 1 },
     });
 
-    const game = await new GamesRepository(prisma).load(GAME);
+    const game = await new PrismaGamesRepository(prisma).load(GAME);
 
     expect(game).toEqual({
       id: GAME,
@@ -211,7 +211,7 @@ describe('GamesRepository reads and creation', () => {
 
   it('hides abandoned and missing games', async () => {
     const { prisma, tx } = fakePrisma();
-    const repository = new GamesRepository(prisma);
+    const repository = new PrismaGamesRepository(prisma);
 
     tx.game.findUnique.mockResolvedValueOnce(null);
     await expect(repository.load(GAME)).resolves.toBeNull();
@@ -222,7 +222,7 @@ describe('GamesRepository reads and creation', () => {
 
   it('summarises the current game', async () => {
     const { prisma, tx } = fakePrisma();
-    const repository = new GamesRepository(prisma);
+    const repository = new PrismaGamesRepository(prisma);
 
     tx.game.findFirst.mockResolvedValueOnce(summaryRow);
     await expect(repository.findCurrent(USER)).resolves.toEqual({
@@ -245,7 +245,7 @@ describe('GamesRepository reads and creation', () => {
 
   it('reads metadata and event ids', async () => {
     const { prisma, tx } = fakePrisma();
-    const repository = new GamesRepository(prisma);
+    const repository = new PrismaGamesRepository(prisma);
     tx.game.findUnique.mockResolvedValueOnce({
       userId: USER,
       version: 2,
@@ -265,7 +265,7 @@ describe('GamesRepository reads and creation', () => {
 
   it('reads and writes the checkpoint of a game', async () => {
     const { prisma, tx } = fakePrisma();
-    const repository = new GamesRepository(prisma);
+    const repository = new PrismaGamesRepository(prisma);
     const checkpoint = { seq: 12, state: { round: 2 } as never };
     tx.game.findUnique.mockResolvedValueOnce({
       userId: USER,
@@ -290,7 +290,7 @@ describe('GamesRepository reads and creation', () => {
 
   it('reads the stored events before a sequence number', async () => {
     const { prisma, tx } = fakePrisma();
-    const repository = new GamesRepository(prisma);
+    const repository = new PrismaGamesRepository(prisma);
     tx.gameEvent.findMany.mockResolvedValueOnce([{ payload: { id: 'e0' } }]);
 
     await expect(repository.getEventPayloads(GAME, 1)).resolves.toEqual([{ id: 'e0' }]);
@@ -301,7 +301,7 @@ describe('GamesRepository reads and creation', () => {
 
   it('reports whether a game was abandoned', async () => {
     const { prisma, tx } = fakePrisma();
-    const repository = new GamesRepository(prisma);
+    const repository = new PrismaGamesRepository(prisma);
 
     await expect(repository.abandon(GAME, USER)).resolves.toBe(true);
     tx.game.updateMany.mockResolvedValueOnce({ count: 0 });
