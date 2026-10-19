@@ -61,6 +61,7 @@ export const powerfulPrince: CardDef = {
         {
           id: '135-2-2',
           endsTurn: true,
+          limitedTime: 1,
           // Treasury (Ridding the Woods 28)
           actionEffects: [{ id: 1, type: ActionEffectType.DISCOVER_CARD, cards: { ids: [166] } }],
         },

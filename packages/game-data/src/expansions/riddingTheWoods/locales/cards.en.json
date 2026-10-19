@@ -78,6 +78,7 @@
   },
   "glory": {
     "129-3": "This card is worth 2 {{glory}} per accumulation.",
+    "130-1": "This card is worth -1 {{glory}} per marked step.",
     "140-2": "This card is worth 2 {{glory}} per marked step.",
     "148-1": "This card is worth the highest {{glory}} marked.",
     "148-2": "This card is worth 50{{glory}} + the highest {{glory}} marked."

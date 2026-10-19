@@ -2,6 +2,7 @@ import { loadGameCatalog } from '../src';
 import { GameAggregate } from '@deck-legacy/engine/domain/aggregates/GameAggregate';
 import { getProductionChoicesForAction } from '@deck-legacy/engine/domain/cards/getProductionChoicesForAction';
 import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
+import { getEffectiveGlory } from '@deck-legacy/engine/domain/cards/selection/getEffectiveGlory';
 import { ActionEffectType, PendingChoiceType, Phase } from '@deck-legacy/engine/domain/enums';
 import { createInstance } from '@deck-legacy/engine/domain/factory';
 import { EMPTY_STATE } from '@deck-legacy/engine/domain/state/emptyState';
@@ -250,7 +251,12 @@ describe('Tax Collector', () => {
     const agg = makeGame({ board: [TAX_COLLECTOR] });
     agg.cardProduced(TAX_COLLECTOR, { gold: 4 });
     resolveTrigger(agg, '130-1-1');
-    expect(agg.getGameState().instances[TAX_COLLECTOR].glories).toEqual([-1]);
+    const state = agg.getGameState();
+    const instance = state.instances[TAX_COLLECTOR];
+    expect(instance.cumulated).toBe(1);
+    expect(
+      getEffectiveGlory(getActiveState(instance, catalog.cards), state, catalog.cards, instance),
+    ).toBe(-1);
   });
 });
 

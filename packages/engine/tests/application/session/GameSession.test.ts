@@ -185,6 +185,18 @@ describe('GameSession commands', () => {
     expect(session.getEvents()).toHaveLength(before);
   });
 
+  it('chooses the state of a card discovered during a turn', () => {
+    const catalog = makeCatalog();
+    catalog.cards[1] = { ...catalog.cards[1], chooseState: [1, 2] };
+    const session = GameSession.start('game-1', catalog, { ...DEFAULT_OPTIONS, allowCheats: true });
+    session.execute({ type: 'cheat', cheat: { op: 'discoverCard', instanceIds: [11] } });
+
+    session.execute({ type: 'chooseState', instanceId: 11, stateId: 2 });
+
+    expect(session.getState().phase).toBe(Phase.PLAYING);
+    expect(session.getState().instances[11].stateId).toBe(2);
+  });
+
   it('reports an invalid choice type as a cancelled action', () => {
     const session = startGame();
 

@@ -573,12 +573,15 @@ export class GameSession {
     this.sync(this.agg.selectExpansion(name, expansion));
   }
 
-  /** The state of a card just discovered, among the ones its definition offers. */
+  /**
+   * The state of a card just discovered, among the ones its definition offers: at round start,
+   * after an expansion's purge or during a turn (discovered by a card effect).
+   */
   private chooseState(instanceId: number, stateId: number): void {
     const gs = this.agg.getGameState();
     const inst = gs.instances[instanceId];
     if (
-      gs.phase !== Phase.ROUND_START ||
+      gs.phase === Phase.GAME_OVER ||
       !inst ||
       !gs.lastAddedCards.includes(instanceId) ||
       !this.catalog.cards[inst.cardId].chooseState?.includes(stateId)
