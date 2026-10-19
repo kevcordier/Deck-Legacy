@@ -55,6 +55,7 @@ export const terrifiedTown: CardDef = {
       actions: [
         {
           id: '126-3-1',
+          limitedTime: 1,
           cost: { resources: [{ [ResourceType.WOOD]: 4 }] },
           // Outpost Construction (Ridding the Woods 29)
           actionEffects: [{ id: 1, type: ActionEffectType.DISCOVER_CARD, cards: { ids: [167] } }],
@@ -74,6 +75,7 @@ export const terrifiedTown: CardDef = {
         {
           id: '126-4-1',
           endsTurn: true,
+          limitedTime: 1,
           // Sheriff (Ridding the Woods 27)
           actionEffects: [{ id: 1, type: ActionEffectType.DISCOVER_CARD, cards: { ids: [165] } }],
         },
