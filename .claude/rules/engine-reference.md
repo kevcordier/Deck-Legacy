@@ -224,6 +224,11 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - `EXPANSION_SELECTED.expansionDiscoveryFirst` (always set by new events): expansion cards go before the remaining base cards in the discovery pile; `onStart.discover.ids` gives the first round its discoveries.
 - `PassiveType.RESTRICT_SPEND` (`resources` = reserved types): they pay only upgrade costs (`Cost.forUpgrade`, set by `getEffectiveUpgradeCost`), never action, step or discover costs.
 
+## Mechanics added for Merchants
+
+- A card's own `DESACTIVATE_OPTION` never blocks its own actions or upgrades (`canUseOptions(state, option, instanceId)`): Brigands forbids "other {{time}} effects". `Options.PLAY_CARD` also stops `PLAY_CARD` effects ("you cannot play cards").
+- Sticker `effectId: 'starts_in_play'` (sticker 17): the card joins the first draw of each round (`GameAggregate.turnStarted`, recorded in `TURN_STARTED.turnCards`). `Sticker.action` (sticker 18) gives the card an action: read a card's actions with `getStateActions(instance, defs, stickerDefs)`, never `state.actions` alone.
+
 ## Engine pitfalls
 
 - **Card costs (`discard`/`destroy`) are paid from cards in play (`board + permanents`)** — do not assume `board` only when evaluating affordability or building pending choices.

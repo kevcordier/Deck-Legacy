@@ -1,4 +1,5 @@
 import { Glory } from '@components/ui/Glory/Glory';
+import { ActivatedIcon } from '@components/ui/Icon/icons/ActivatedIcon';
 import { PassifIcon } from '@components/ui/Icon/icons/PassifIcon';
 import { ResourcePill } from '@components/ui/ResourcePill/ResourcePill';
 import { Tag } from '@components/ui/Tag/Tag';
@@ -40,13 +41,26 @@ export const StickerDisplay = ({ sticker, className = 'size-10', large = false }
       </View>
     );
   }
-  if (sticker.effectId === 'stays_in_play') {
+  if (sticker.effectId === 'stays_in_play' || sticker.effectId === 'starts_in_play') {
     return (
       <View className={`${STICKER_CLASS} flex-row items-center gap-1 px-2 py-1`}>
         <PassifIcon className={large ? 'size-6 text-ink-card' : 'size-3 text-ink-card'} />
         <Text className={`text-ink-card ${large ? 'text-lg' : 'text-xs'}`}>
-          {t('passives.stay_in_play', { ns: 'cards' })}
+          {t(
+            `passives.${sticker.effectId === 'stays_in_play' ? 'stay_in_play' : 'starts_in_play'}`,
+            {
+              ns: 'cards',
+            },
+          )}
         </Text>
+      </View>
+    );
+  }
+  // An action sticker shows as the action on the card: the sticker itself only marks it.
+  if (sticker.action) {
+    return (
+      <View className={`${STICKER_CLASS} px-2 py-1`}>
+        <ActivatedIcon className={large ? 'size-6 text-ink-card' : 'size-3 text-ink-card'} />
       </View>
     );
   }

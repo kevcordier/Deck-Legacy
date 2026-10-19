@@ -592,10 +592,15 @@ export class GameAggregate {
     }
 
     const turn = this.gameState.turn + 1;
-    const turnCards: number[] = this.gameState.drawPile.slice(
-      0,
-      this.getParameters().turnCardDrawn,
-    );
+    // "Starts in play" cards begin the round in play: they join the first draw of the round.
+    const startingCards =
+      turn === 1 ? this.gameState.drawPile.filter(id => this.startsInPlay(id)) : [];
+    const turnCards: number[] = [
+      ...startingCards,
+      ...this.gameState.drawPile
+        .filter(id => !startingCards.includes(id))
+        .slice(0, this.getParameters().turnCardDrawn),
+    ];
 
     const event: TurnStartedEvent = {
       id: environment.newId(),
@@ -607,6 +612,13 @@ export class GameAggregate {
     this.apply(event);
     this.events.push(event);
     return this.gameState;
+  }
+
+  private startsInPlay(instanceId: number): boolean {
+    const instance = this.gameState.instances[instanceId];
+    return (instance?.stickers[instance.stateId] ?? []).some(
+      stickerId => this.stickerDefs[stickerId]?.effectId === 'starts_in_play',
+    );
   }
 
   public turnEnded(): GameState {

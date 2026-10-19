@@ -26,6 +26,7 @@ import { getEffectiveUpgradeCost } from '@deck-legacy/engine/domain/cards/getEff
 import { getProductionChoicesForAction } from '@deck-legacy/engine/domain/cards/getProductionChoicesForAction';
 import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
 import { getEffectiveGlory } from '@deck-legacy/engine/domain/cards/selection/getEffectiveGlory';
+import { getStateActions } from '@deck-legacy/engine/domain/cards/selection/getStateActions';
 import { isPermanent } from '@deck-legacy/engine/domain/cards/selection/isPermanent';
 import { tagClass } from '@deck-legacy/engine/domain/cards/tagClass';
 import { getPickNumbers } from '@deck-legacy/engine/domain/effects/getPickNumbers';
@@ -169,7 +170,7 @@ export function GameCard({
   const hasProductions = productions?.some(prod => Object.keys(prod).length > 0) ?? false;
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
-  const actions = (cs.actions ?? []).filter(
+  const actions = getStateActions(instance, defs, stickerDefs).filter(
     action =>
       action.limitedTime === undefined ||
       instance.usedActionIds.filter(usedId => usedId === action.id).length < action.limitedTime,
