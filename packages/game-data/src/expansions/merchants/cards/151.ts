@@ -17,6 +17,7 @@ export const camelStates = (cardId: number, pairOfCamelsIds: number[]): CardStat
     id: 1,
     name: 'Pair of Camels',
     tags: [CardTag.LIVESTOCK],
+    illustration: 'cards/151_1.jpg',
     productions: [{ [ResourceType.GOLD]: 1 }],
     upgrade: [{ cost: gold(2), upgradeTo: 2 }],
   },
@@ -24,6 +25,7 @@ export const camelStates = (cardId: number, pairOfCamelsIds: number[]): CardStat
     id: 2,
     name: 'Camels',
     tags: [CardTag.LIVESTOCK],
+    illustration: 'cards/151_2.jpg',
     productions: [{ [ResourceType.GOLD]: 2 }],
     glory: { amount: 1 },
     upgrade: [{ cost: gold(3), upgradeTo: 3 }],
@@ -32,6 +34,7 @@ export const camelStates = (cardId: number, pairOfCamelsIds: number[]): CardStat
     id: 3,
     name: 'Camel Herd',
     tags: [CardTag.LIVESTOCK],
+    illustration: 'cards/151_3.jpg',
     productions: [{ [ResourceType.GOLD]: 2 }],
     glory: { amount: 3 },
     actions: [
@@ -59,6 +62,7 @@ export const camelStates = (cardId: number, pairOfCamelsIds: number[]): CardStat
     id: 4,
     name: 'Camel Caravan',
     tags: [CardTag.LIVESTOCK],
+    illustration: 'cards/151_4.jpg',
     productions: [{ [ResourceType.GOLD]: 2, [ResourceType.GOODS]: 1 }],
     glory: { amount: 5 },
     actions: [

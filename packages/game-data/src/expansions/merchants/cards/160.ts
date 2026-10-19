@@ -27,6 +27,7 @@ export const chickenStates = (cardId: number, chickenIds: number[]): CardState[]
     id: 1,
     name: 'Chicken',
     tags: [CardTag.LIVESTOCK],
+    illustration: 'cards/160_1.jpg',
     actions: [spendTo(`${cardId}-1-1`, 2, 2)],
     upgrade: [{ cost: gold(1), upgradeTo: 2 }],
   },
@@ -34,6 +35,7 @@ export const chickenStates = (cardId: number, chickenIds: number[]): CardState[]
     id: 2,
     name: 'Chicken Group',
     tags: [CardTag.LIVESTOCK],
+    illustration: 'cards/160_2.jpg',
     actions: [spendTo(`${cardId}-2-1`, 2, 3)],
     upgrade: [{ cost: gold(1), upgradeTo: 3 }],
   },
@@ -41,6 +43,7 @@ export const chickenStates = (cardId: number, chickenIds: number[]): CardState[]
     id: 3,
     name: 'Lots of Chicken',
     tags: [CardTag.LIVESTOCK],
+    illustration: 'cards/160_3.jpg',
     productions: [{ [ResourceType.GOLD]: 1 }],
     actions: [spendTo(`${cardId}-3-1`, 3, 4)],
     upgrade: [{ cost: gold(2), upgradeTo: 4 }],
@@ -49,6 +52,7 @@ export const chickenStates = (cardId: number, chickenIds: number[]): CardState[]
     id: 4,
     name: 'Chicken Farm',
     tags: [CardTag.LIVESTOCK],
+    illustration: 'cards/160_4.jpg',
     productions: [{ [ResourceType.GOODS]: 1 }],
     actions: [
       {
