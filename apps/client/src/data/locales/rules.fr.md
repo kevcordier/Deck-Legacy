@@ -131,6 +131,15 @@ Certaines cartes ont une rangée de **cases** à marquer. Marquer une case peut 
 
 Certains effets ajoutent des **autocollants** sur une carte : production, Gloire ou rester en jeu. Les autocollants viennent de votre **réserve d'autocollants** : s'il n'en reste plus, l'effet est ignoré. **Renforcer** une carte signifie lui ajouter un autocollant d'une ressource qu'elle produit déjà, pour qu'elle en produise 1 de plus.
 
+- **Commence en jeu :** la carte commence chaque manche déjà en jeu, en plus des cartes du premier tour.
+- Certains autocollants donnent un effet à la carte, affiché avec ses autres effets.
+
+### Autres effets
+
+- **Utiliser l'effet d'une carte :** certains effets vous permettent d'utiliser l'effet activé ou {{time}} d'une carte en jeu. Vous payez son coût et le résolvez, mais cette carte reste en jeu et votre tour ne se termine pas.
+- **Perdre des ressources :** « perdez les 3 prochaines ressources que vous gagnez ce tour » s'applique aux productions comme aux effets. Dans un même gain, elles sont perdues dans cet ordre : {{gold}}, {{wood}}, {{stone}}, {{iron}}, {{weapon}}, {{goods}}.
+- **Vous ne pouvez pas jouer de cartes :** vous ne pouvez ni avancer ni jouer de cartes avec un effet, par exemple depuis votre défausse.
+
 ### Équipements
 
 Certaines cartes ont un troisième bandeau, rouge, qui commence par **« Équiper »** suivi d'un mot-clé : ce sont des **équipements**, destinés à être attachés à une carte qui a ce mot-clé.
@@ -172,7 +181,7 @@ Les cartes rouges sont **négatives**, en général des cartes _Ennemi_ ou _Év�
 
 ## Extensions
 
-Une fois le jeu de base terminé, vous pouvez poursuivre votre royaume avec des **extensions**, une à la fois : chacune ajoute des manches, et souvent de nouvelles cartes et de nouveaux concepts. Chaque royaume ne peut jouer chaque extension qu'une seule fois. Les mini-extensions ajoutent 4 manches sans découvrir de nouvelles cartes à chaque manche ; les grandes extensions ajoutent des manches et beaucoup de nouvelles cartes, avec leur propre paquet de campagne et leur paquet de cartes découvrables (Ridding the Woods : cartes 1 à 25 et 26 à 29).
+Une fois le jeu de base terminé, vous pouvez poursuivre votre royaume avec des **extensions**, une à la fois : chacune ajoute des manches, et souvent de nouvelles cartes et de nouveaux concepts. Chaque royaume ne peut jouer chaque extension qu'une seule fois. Les mini-extensions ajoutent 4 manches sans découvrir de nouvelles cartes à chaque manche ; les grandes extensions ajoutent des manches et beaucoup de nouvelles cartes, avec leur propre paquet de campagne et leur paquet de cartes découvrables (Ridding the Woods : cartes 1 à 25 et 26 à 29). Marchands ne découvre aucune carte au début de ses 4 manches : ses deux cartes permanentes Marchands proposent à la place des cartes à acheter.
 
 ### Purge
 

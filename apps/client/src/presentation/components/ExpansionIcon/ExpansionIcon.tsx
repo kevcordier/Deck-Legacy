@@ -1,6 +1,7 @@
 import type { IconProps } from '@components/ui/Icon/IconProps';
 import { IconColors } from '@components/ui/Icon/iconColors';
 import { BorderDisputeIcon } from '@components/ui/Icon/icons/BorderDisputeIcon';
+import { MerchantsIcon } from '@components/ui/Icon/icons/MerchantsIcon';
 import { ProsperityIcon } from '@components/ui/Icon/icons/ProsperityIcon';
 import { RiddingTheWoodsIcon } from '@components/ui/Icon/icons/RiddingTheWoodsIcon';
 import { WaterMillIcon } from '@components/ui/Icon/icons/WaterMillIcon';
@@ -15,6 +16,7 @@ const EXPANSION_ICONS: Record<string, ComponentType<IconProps>> = {
   'The Water Mill': WaterMillIcon,
   'Border Dispute': BorderDisputeIcon,
   'Ridding the Woods': RiddingTheWoodsIcon,
+  Merchants: MerchantsIcon,
 };
 
 /** Colors replacing a logo's own on a dark page background (logos are drawn for the card parchment). */

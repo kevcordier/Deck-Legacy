@@ -8,6 +8,7 @@ import { GloryIcon } from '@components/ui/Icon/icons/GloryIcon';
 import { GoldIcon } from '@components/ui/Icon/icons/GoldIcon';
 import { GoodsIcon } from '@components/ui/Icon/icons/GoodsIcon';
 import { IronIcon } from '@components/ui/Icon/icons/IronIcon';
+import { MerchantsIcon } from '@components/ui/Icon/icons/MerchantsIcon';
 import { PassifIcon } from '@components/ui/Icon/icons/PassifIcon';
 import { PencilIcon } from '@components/ui/Icon/icons/PencilIcon';
 import { ProsperityIcon } from '@components/ui/Icon/icons/ProsperityIcon';
@@ -56,6 +57,7 @@ const ICONS = [
   { name: 'The Water Mill', Component: WaterMillIcon, color: IconColors.wood },
   { name: 'Border Dispute', Component: BorderDisputeIcon, color: IconColors.iron },
   { name: 'Ridding the Woods', Component: RiddingTheWoodsIcon, color: IconColors.wood },
+  { name: 'Merchants', Component: MerchantsIcon, color: IconColors.gold },
   { name: 'Time', Component: TimeIcon, color: 'currentColor' },
   { name: 'Trigger', Component: TriggerIcon, color: 'currentColor' },
 ];

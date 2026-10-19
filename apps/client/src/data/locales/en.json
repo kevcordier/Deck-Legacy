@@ -277,6 +277,12 @@
         "description": "Robbers have settled in the woods around your kingdom.",
         "campaign": "Defeat the enemies and lock up the prisoners.",
         "rules": "At the start of each round, discover 5 cards from this expansion instead of 2. Add 6 \"+5 Glory\" stickers and 2 \"Empty Glory\" stickers to your stock."
+      },
+      "Merchants": {
+        "title": "Merchants",
+        "description": "Merchants from distant lands come to trade with your kingdom.",
+        "campaign": "Buy the goods they offer before they leave.",
+        "rules": "Do not discover cards at the start of each round: for 4 rounds, the two permanent Merchants cards let you buy the cards they offer. Add 5 \"+1 Gold\", 10 \"+1 Goods\", 1 \"Stays in Play\", 1 \"Empty Glory\", 1 \"Starts in Play\" and 1 \"Place this at the bottom of your deck\" stickers to your stock."
       }
     },
     "details": {

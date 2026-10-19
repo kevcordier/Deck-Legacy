@@ -277,6 +277,12 @@
         "description": "Des brigands se sont installés dans les bois autour de votre royaume.",
         "campaign": "Vainquez les ennemis et enfermez les prisonniers.",
         "rules": "Au début de chaque manche, découvrez 5 cartes de cette extension au lieu de 2. Ajoutez 6 autocollants « +5 Gloire » et 2 autocollants « Gloire vide » à votre réserve."
+      },
+      "Merchants": {
+        "title": "Marchands",
+        "description": "Des marchands venus de terres lointaines viennent commercer avec votre royaume.",
+        "campaign": "Achetez les marchandises qu'ils proposent avant leur départ.",
+        "rules": "Ne découvrez pas de cartes au début de chaque manche : pendant 4 manches, les deux cartes permanentes Marchands vous permettent d'acheter les cartes qu'elles proposent. Ajoutez 5 autocollants « +1 Or », 10 « +1 Marchandise », 1 « Reste en jeu », 1 « Gloire vide », 1 « Commence en jeu » et 1 « Placez ceci sous votre deck » à votre réserve."
       }
     },
     "details": {
