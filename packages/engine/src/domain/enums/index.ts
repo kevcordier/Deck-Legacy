@@ -92,6 +92,11 @@ export enum ActionEffectType {
    * free except its "destroy this card" cost.
    */
   DEFEAT_CARD = 'DEFEAT_CARD',
+  /**
+   * Uses the activated or time effect of a chosen card (`usedAction` once chosen): its effects
+   * resolve for that card, which stays in play, and the turn does not end.
+   */
+  USE_CARD_ACTION = 'USE_CARD_ACTION',
 }
 
 export enum PassiveType {

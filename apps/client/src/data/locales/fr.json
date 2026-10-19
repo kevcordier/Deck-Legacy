@@ -150,7 +150,8 @@
       "PLAY_CARD": "Choisissez une carte à jouer",
       "PLAY_CARD_other": "Choisissez {{count}} cartes à jouer",
       "PLACE_CARD_IN_PILE": "Choisissez une carte à placer dans la pile",
-      "REMOVE_RESOURCE_ON_CARD": "Choisissez une carte pour retirer une ressource"
+      "REMOVE_RESOURCE_ON_CARD": "Choisissez une carte pour retirer une ressource",
+      "USE_CARD_ACTION": "Choisissez une carte pour utiliser son effet"
     },
     "chooseActionEffect": "Choisissez un effet à résoudre",
     "chooseStep": "Choisir une étape",

@@ -23,6 +23,7 @@ import { SetCumulatedStrategy } from './SetCumulatedStrategy';
 import { ShuffleDeckStrategy } from './ShuffleDeckStrategy';
 import { TrackAdvanceStrategy } from './TrackAdvanceStrategy';
 import { UpgradeCardStrategy } from './UpgradeCardStrategy';
+import { UseCardActionStrategy } from './UseCardActionStrategy';
 
 export class CardActionContext {
   private readonly strategies: Partial<Record<ActionEffectType, CardActionStrategy>>;
@@ -53,6 +54,7 @@ export class CardActionContext {
       [ActionEffectType.ADD_GLORY]: new AddGloryStrategy(cardDefs, stickerDefs),
       [ActionEffectType.SAVE_FROM_PURGE]: new SaveFromPurgeStrategy(),
       [ActionEffectType.ADD_TO_PURGE]: new AddToPurgeStrategy(),
+      [ActionEffectType.USE_CARD_ACTION]: new UseCardActionStrategy(),
     };
   }
 

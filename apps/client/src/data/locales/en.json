@@ -150,7 +150,8 @@
       "PLAY_CARD": "Choose a card to play",
       "PLAY_CARD_other": "Choose {{count}} cards to play",
       "PLACE_CARD_IN_PILE": "Choose a card to place in the pile",
-      "REMOVE_RESOURCE_ON_CARD": "Choose a card to remove a resource from"
+      "REMOVE_RESOURCE_ON_CARD": "Choose a card to remove a resource from",
+      "USE_CARD_ACTION": "Choose a card to use its effect"
     },
     "chooseActionEffect": "Choose an effect to resolve",
     "chooseStep": "Choose a track step",

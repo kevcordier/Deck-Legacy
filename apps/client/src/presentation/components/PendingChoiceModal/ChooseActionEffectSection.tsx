@@ -19,9 +19,11 @@ export function ChooseActionEffectSection(props: Readonly<ChoiceSectionProps>) {
     <View className="gap-4">
       {choice.choices.map((actionEffect, index) => {
         // Find the action that contains this effect
-        const effectId = (actionEffect as ActionEffect).id;
+        const { id: effectId, usedAction } = actionEffect as ActionEffect;
         let actionLabelId = `${choice.actionId}-${effectId}`;
         if (fallbackAction) actionLabelId = `${fallbackAction.id}-${effectId}`;
+        // "Use the effect of a card": each choice is one of that card's actions.
+        if (usedAction) actionLabelId = usedAction.actionId;
 
         return (
           <View

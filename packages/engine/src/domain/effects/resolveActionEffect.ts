@@ -7,6 +7,7 @@ import { countValuePerElement } from '../cards/selection/countValuePerElement';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getAffectedCardsByBoardEffects } from '../cards/selection/getAffectedCardsByBoardEffects';
 import { getEffectiveProductions } from '../cards/selection/getEffectiveProductions';
+import { getStateActions } from '../cards/selection/getStateActions';
 import { getTotalProduction } from '../cards/selection/getTotalProduction';
 import {
   ActionEffectType,
@@ -33,6 +34,7 @@ import type {
   Sticker,
   StickerSelector,
 } from '../types';
+import { chooseUsedAction } from './chooseUsedAction';
 import { getPickNumbers } from './getPickNumbers';
 
 const STICKER_PRODUCTION_CAP = 9;
@@ -149,6 +151,47 @@ function resolveChooseActionEffect(
     isMandatory: true,
   });
   return [resolverAction, pendingChoices];
+}
+
+/** USE_CARD_ACTION: the chosen action's effects follow, resolved for the card that owns it. */
+function resolveUseCardAction(
+  resolverAction: ResolvedActionEffect,
+  ctx: ResolveContext,
+  action: ActionEffect,
+  cards: CardSelector | undefined,
+): [ResolvedActionEffect, PendingChoice[]] {
+  const { gameState, defs, stickerDefs } = ctx;
+  if (action.usedAction) {
+    const { instanceId, actionId } = action.usedAction;
+    const used = getStateActions(gameState.instances[instanceId], defs, stickerDefs).find(
+      a => a.id === actionId,
+    );
+    resolverAction.instanceIds = [instanceId];
+    resolverAction.newActionEffects = (used?.actionEffects ?? []).map(effect => ({
+      ...effect,
+      sourceInstanceId: instanceId,
+    }));
+    return [resolverAction, []];
+  }
+  if (!cards) return [resolverAction, []];
+  const [targeted, pendingChoices] = resolveCardTarget(resolverAction, [], ctx, cards);
+  if (pendingChoices.length > 0 || targeted.unresolvable) return [targeted, pendingChoices];
+  return chooseUsedAction(
+    targeted,
+    targeted.instanceIds?.[0],
+    {
+      id: `${ctx.instanceId}-${ctx.effectId}`,
+      actionId: ctx.parentActionId,
+      effectId: ctx.effectId,
+      sourceStepId: ctx.sourceStepId,
+      kind: ctx.actionType,
+      sourceInstanceId: ctx.instanceId,
+      isMandatory: ctx.isMandatory,
+    },
+    gameState,
+    defs,
+    stickerDefs,
+  );
 }
 
 function resolveCardTarget(
@@ -782,6 +825,37 @@ function upgradeLegacyEffect(action: ActionEffect): ActionEffect {
   return { id: action.id, type: ActionEffectType.ADVANCE_STORY, value: action.cards?.pickNumber };
 }
 
+function resolveTrackAdvance(
+  action: ActionEffect,
+  cards: CardSelector,
+  resolverAction: ResolvedActionEffect,
+  ctx: ResolveContext,
+): [ResolvedActionEffect, PendingChoice[]] {
+  const { instanceId, gameState, defs, stickerDefs, lastSelectedIds } = ctx;
+  resolverAction.payingCost = action.payingCost ?? resolverAction.payingCost;
+  const trackCards: CardSelector = { ...cards, lastSelectedIds };
+  const steps = action.steps ?? {};
+  if (action.valuePerElement) {
+    const derivedPick = Math.floor(
+      countValuePerElement(
+        action.valuePerElement,
+        gameState,
+        instanceId,
+        defs,
+        stickerDefs,
+        lastSelectedIds,
+      ) * action.valuePerElement.amount,
+    );
+
+    steps.pickNumber = derivedPick;
+  }
+  // Populate instanceIds from the card selector before delegating — preserved as fallback when
+  // the target has no track or all steps are complete.
+  const targetIds = cardSelector(trackCards, instanceId, gameState, defs, stickerDefs);
+  if (targetIds.length > 0) resolverAction.instanceIds = [targetIds[0]];
+  return resolveTrackAdvanceEffect(resolverAction, [], ctx, trackCards, steps);
+}
+
 export function resolveActionEffect(
   storedAction: ActionEffect,
   instanceId: number,
@@ -815,28 +889,11 @@ export function resolveActionEffect(
   });
 
   if (action.type === ActionEffectType.TRACK_ADVANCE && action.cards) {
-    resolverAction.payingCost = action.payingCost ?? resolverAction.payingCost;
-    const trackCards: CardSelector = { ...action.cards, lastSelectedIds };
-    const steps = action.steps ?? {};
-    if (action.valuePerElement) {
-      const derivedPick = Math.floor(
-        countValuePerElement(
-          action.valuePerElement,
-          gameState,
-          instanceId,
-          defs,
-          stickerDefs,
-          lastSelectedIds,
-        ) * action.valuePerElement.amount,
-      );
+    return resolveTrackAdvance(action, action.cards, resolverAction, ctx);
+  }
 
-      steps.pickNumber = derivedPick;
-    }
-    // Populate instanceIds from the card selector before delegating — preserved as fallback when
-    // the target has no track or all steps are complete.
-    const targetIds = cardSelector(trackCards, instanceId, gameState, defs, stickerDefs);
-    if (targetIds.length > 0) resolverAction.instanceIds = [targetIds[0]];
-    return resolveTrackAdvanceEffect(resolverAction, pendingChoices, ctx, trackCards, steps);
+  if (action.type === ActionEffectType.USE_CARD_ACTION) {
+    return resolveUseCardAction(resolverAction, ctx, action, enrichedCards);
   }
 
   if (action.type === ActionEffectType.CHOOSE_EFFECT && action.effects) {
