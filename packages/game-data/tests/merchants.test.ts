@@ -121,6 +121,64 @@ describe('starting Merchants', () => {
   });
 });
 
+/** A finished base game kingdom of 10 Wild Grass: selecting the expansion creates its cards. */
+function finishedKingdom() {
+  const ids = Array.from({ length: 10 }, (_, i) => i + 1);
+  return new GameAggregate(
+    'game',
+    {
+      ...(JSON.parse(JSON.stringify(EMPTY_STATE)) as GameState),
+      phase: Phase.GAME_OVER,
+      drawPile: ids,
+      discoverablePile: [],
+      campaignScores: { base: 0 },
+      instances: Object.fromEntries(ids.map(id => [id, createInstance(id, 1, 1, catalog.cards)])),
+    },
+    catalog.cards,
+    catalog.stickers,
+  );
+}
+
+describe('a Merchants campaign', () => {
+  it('lasts 4 rounds, guided by the two Merchants cards', () => {
+    const agg = finishedKingdom();
+    agg.selectExpansion(EXPANSION, catalog.expansions[EXPANSION]);
+    while (agg.getPurgeCandidates().length > 0) agg.selectPurgeCard(agg.getPurgeCandidates()[0]);
+    agg.finalizePurge();
+
+    const merchantsByRound: string[] = [];
+    for (let guard = 0; guard < 100 && agg.getGameState().phase !== Phase.GAME_OVER; guard++) {
+      const gs = agg.getGameState();
+      const [triggerId, entry] = Object.entries(gs.triggerPile)[0] ?? [];
+      if (triggerId && entry) {
+        agg.cardAction(entry.effectDef, entry.sourceInstanceId, triggerId);
+      } else if (gs.phase === Phase.ROUND_END) {
+        // What the "end round" command does (GameSession.endRound).
+        if (agg.isLastRound()) {
+          agg.endGame();
+        } else {
+          agg.roundStarted();
+          agg.turnStarted();
+        }
+      } else {
+        if (gs.turn === 1)
+          merchantsByRound.push(
+            gs.permanents.map(id => `${id}-${gs.instances[id].stateId}`).join(),
+          );
+        agg.turnEnded();
+      }
+    }
+
+    const gs = agg.getGameState();
+    expect(gs.phase).toBe(Phase.GAME_OVER);
+    expect(gs.round).toBe(4);
+    expect(merchantsByRound).toEqual(['168-1', '168-2', '177-1', '177-2']);
+    expect(gs.destroyedPile).toEqual(expect.arrayContaining([MERCHANTS, SECOND_MERCHANTS]));
+    // Brigands came at the end of round 1; nothing else was bought.
+    expect([...gs.drawPile, ...gs.discardPile, ...gs.board]).toContain(BRIGANDS);
+  });
+});
+
 describe('Merchants', () => {
   it('discovers the card paid for, then no longer offers it', () => {
     const agg = makeGame({ permanents: [MERCHANTS], board: [WILD_GRASS], resources: { gold: 7 } });
