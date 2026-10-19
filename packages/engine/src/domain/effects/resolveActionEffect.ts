@@ -18,6 +18,7 @@ import {
 } from '../enums';
 import { CardChoiceStrategy } from '../playerChoice/CardChoiceStrategy';
 import { fixResources } from '../resources/fixResources';
+import { mergeResources } from '../resources/mergeResources';
 import { stateSelector } from '../stateSelector';
 import type {
   ActionEffect,
@@ -327,6 +328,8 @@ function resolveResourceTarget(
     );
     if (choices.length === 0) {
       resolverAction.resources = {};
+    } else if (resources.cards.autoPick) {
+      return gainEveryProduction(resolverAction, pendingChoices, ctx, choices);
     } else if (choices.length === 1) {
       const state = getActiveState(gameState.instances[choices[0]], defs);
       if (state.productions && state.productions.length > 1) {
@@ -381,6 +384,42 @@ function resolveResourceTarget(
     return [resolverAction, pendingChoices];
   }
   resolverAction.resources = extractResources(resources);
+  return [resolverAction, pendingChoices];
+}
+
+/** "Gain each person's production": every card's production, its choice when it has several. */
+function gainEveryProduction(
+  resolverAction: ResolvedActionEffect,
+  pendingChoices: PendingChoice[],
+  ctx: ResolveContext,
+  instanceIds: number[],
+): [ResolvedActionEffect, PendingChoice[]] {
+  const { gameState, defs, stickerDefs } = ctx;
+  let resources: Resources = {};
+  instanceIds.forEach(id => {
+    const instance = gameState.instances[id];
+    const productions = (getActiveState(instance, defs).productions ?? []).map(p =>
+      getEffectiveProductions(p, gameState, defs, instance, stickerDefs),
+    );
+    if (productions.length === 1) resources = mergeResources(resources, productions[0]);
+    if (productions.length > 1) {
+      pendingChoices.push({
+        id: `${ctx.instanceId}-${ctx.effectId}-${id}`,
+        actionId: ctx.parentActionId,
+        effectId: ctx.effectId,
+        sourceStepId: ctx.sourceStepId,
+        kind: ctx.actionType,
+        type: PendingChoiceType.CHOOSE_RESOURCE,
+        sourceInstanceId: ctx.instanceId,
+        targetInstanceId: id,
+        choices: productions,
+        pickMin: 1,
+        pickMax: 1,
+        isMandatory: ctx.isMandatory,
+      });
+    }
+  });
+  resolverAction.resources = resources;
   return [resolverAction, pendingChoices];
 }
 

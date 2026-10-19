@@ -230,6 +230,7 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - Sticker `effectId: 'starts_in_play'` (sticker 17): the card joins the first draw of each round (`GameAggregate.turnStarted`, recorded in `TURN_STARTED.turnCards`). `Sticker.action` (sticker 18) gives the card an action: read a card's actions with `getStateActions(instance, defs, stickerDefs)`, never `state.actions` alone.
 - `ActionEffectType.USE_CARD_ACTION` (Turmeric, `cards` = the cards whose effect can be used): the player picks the card, then one of its usable non-trigger actions (`getUsableActionEffects`, a `CHOOSE_ACTION_EFFECT` of `usedAction` effects). The used action's cost is paid and its effects resolve for its card (`ActionEffect.sourceInstanceId`, inherited by the effects they add); that card is not discarded and the turn does not end.
 - `ActionEffectType.LOSE_NEXT_RESOURCES` (Too Much Mead, `value` units): adds to `GameState.resourcesToLose`, which `ADD_RESOURCES` and `CARD_PRODUCED` take their units from (`loseGainedResources`, in resource order within one gain); `TURN_STARTED` clears it.
+- `ADD_RESOURCES` with `resources.cards.autoPick` (Mead: "gain each person's production") gains the production of every matching card; a card with several productions asks which one.
 
 ## Engine pitfalls
 
