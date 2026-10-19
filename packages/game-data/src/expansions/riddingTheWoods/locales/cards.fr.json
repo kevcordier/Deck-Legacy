@@ -1,6 +1,6 @@
 {
   "actions": {
-    "122-1-1": "Quand cette carte ou un ennemi est joué : marquez 1 étape par ennemi en jeu avec cette carte. Après Débarrasser les bois, cet effet ne s'applique plus.",
+    "122-1-1": "Quand cette carte ou un ennemi est joué : marquez 1 étape par ennemi en jeu avec cette carte. Après La forêt des Brigands, cet effet ne s'applique plus.",
     "122-2-1": "Carte jouée : rayez 1 production de {{gold}} sur 1 carte en jeu. Si vous le faites, marquez 1 étape.",
     "123-1-2": "Dépensez {{weapon}}{{weapon}}{{weapon}} pour vaincre (marquez 1 étape).",
     "123-1-3": "Piste complète : si Une certaine dame est dans votre deck, votre défausse ou en jeu, détruisez-la et {{upgrade}}. Sinon, {{destroy}}.",

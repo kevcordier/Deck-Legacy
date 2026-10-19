@@ -172,7 +172,7 @@ Les cartes rouges sont **négatives**, en général des cartes _Ennemi_ ou _Év�
 
 ## Extensions
 
-Une fois le jeu de base terminé, vous pouvez poursuivre votre royaume avec des **extensions**, une à la fois : chacune ajoute des manches, et souvent de nouvelles cartes et de nouveaux concepts. Chaque royaume ne peut jouer chaque extension qu'une seule fois. Les mini-extensions ajoutent 4 manches sans découvrir de nouvelles cartes à chaque manche ; les grandes extensions ajoutent des manches et beaucoup de nouvelles cartes, avec leur propre paquet de campagne et leur paquet de cartes découvrables (Ridding the Woods : cartes 1 à 25 et 26 à 29).
+Une fois le jeu de base terminé, vous pouvez poursuivre votre royaume avec des **extensions**, une à la fois : chacune ajoute des manches, et souvent de nouvelles cartes et de nouveaux concepts. Chaque royaume ne peut jouer chaque extension qu'une seule fois. Les mini-extensions ajoutent 4 manches sans découvrir de nouvelles cartes à chaque manche ; les grandes extensions ajoutent des manches et beaucoup de nouvelles cartes, avec leur propre paquet de campagne et leur paquet de cartes découvrables (La forêt des Brigands : cartes 1 à 25 et 26 à 29).
 
 ### Purge
 
