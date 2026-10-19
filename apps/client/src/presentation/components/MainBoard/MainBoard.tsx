@@ -1,24 +1,19 @@
+import { NewCardSelection } from './NewCardSelection';
 import { type BoardZoomLevel, CardRow } from '@components/CardRow/CardRow';
 import { RaiseOnDrag } from '@components/CardRow/RaiseOnDrag';
-import { CardViewerModal } from '@components/CardViewerModal/CardViewerModal';
 import { PileTop } from '@components/DeckViewer/PileTop';
-import { GameCard } from '@components/GameCard/GameCard';
-import { MiniGameCard } from '@components/MiniGameCard/MiniGameCard';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
 import { EmptyState } from '@components/ui/EmptyState/EmptyState';
 import { ZoomInIcon } from '@components/ui/Icon/icons/ZoomInIcon';
 import { ZoomOutIcon } from '@components/ui/Icon/icons/ZoomOutIcon';
 import { MarkdownText } from '@components/ui/MarkdownText/MarkdownText';
-import { Modal } from '@components/ui/Modal/Modal';
 import { Section } from '@components/ui/Section/Section';
 import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
 import { CardTag, Phase } from '@deck-legacy/engine/domain/enums';
 import { isLastRound } from '@deck-legacy/engine/domain/state/isLastRound';
-import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import { useIsDesktop } from '@hooks/useIsDesktop';
-import { tCardName } from '@i18n/card/tCardName';
 import { tCardParchmentText } from '@i18n/card/tCardParchmentText';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,77 +21,6 @@ import { View } from 'react-native';
 
 const MIN_ZOOM: BoardZoomLevel = 0;
 const MAX_ZOOM: BoardZoomLevel = 1;
-
-function NewCardSelection({
-  cardIds,
-  chooseState,
-}: {
-  readonly cardIds: number[];
-  readonly chooseState: (id: number, stateId: number) => void;
-}) {
-  const { gameState, defs } = useGame();
-  const { t } = useTranslation();
-  const isDesktop = useIsDesktop();
-  const [viewerCardId, setViewerCardId] = useState<number | null>(null);
-  // Fixed width on desktop: the modal is auto-sized, so a percentage would resolve against its own
-  // content and shrink the card. Two mini cards on phones, where a tap opens the card in large.
-  const itemClass = isDesktop ? 'w-64' : 'w-[48%] max-w-56';
-  const card = (inst: CardInstance) =>
-    isDesktop ? (
-      <GameCard instance={inst} />
-    ) : (
-      <MiniGameCard instance={inst} onPress={() => setViewerCardId(inst.id)} />
-    );
-
-  return (
-    <View className="w-full flex-row flex-wrap items-end justify-center gap-2 lg:gap-4">
-      {cardIds.map((id: number) => {
-        const inst = gameState.instances[id];
-        if (!inst) return null;
-        const chooseStateIds = defs[inst.cardId].chooseState ?? [];
-
-        if (chooseStateIds.length > 0) {
-          return (
-            <View key={id} className={`min-w-0 gap-1 ${itemClass}`}>
-              <View className="mb-2 w-full gap-2">
-                {chooseStateIds.map(stateId => {
-                  const stateDef = defs[inst.cardId].states.find(s => s.id === stateId);
-                  const isCurrent = inst.stateId === stateId;
-                  return (
-                    <Button
-                      key={`${id}-${stateId}`}
-                      color={isCurrent ? 'base-primary' : 'danger'}
-                      size="sm"
-                      onPress={() => chooseState(inst.id, stateId)}
-                    >
-                      {stateDef?.name
-                        ? tCardName(t, stateDef.name)
-                        : `${t('roundpreview.switchState')} ${stateId}`}
-                    </Button>
-                  );
-                })}
-              </View>
-              {card(inst)}
-            </View>
-          );
-        }
-
-        return (
-          <View key={id} className={itemClass}>
-            {card(inst)}
-          </View>
-        );
-      })}
-      {viewerCardId !== null && (
-        <CardViewerModal
-          cardIds={cardIds}
-          initialId={viewerCardId}
-          onClose={() => setViewerCardId(null)}
-        />
-      )}
-    </View>
-  );
-}
 
 export function MainBoard() {
   const {
@@ -106,8 +30,6 @@ export function MainBoard() {
     endRound,
     startRound,
     chooseState,
-    displayNewCards,
-    setDisplayNewCards,
     defs,
     parchmentTextPending,
     dismissParchmentText,
@@ -146,11 +68,6 @@ export function MainBoard() {
       </Button>
     </View>
   ) : null;
-
-  // A card whose state must be chosen needs the selection buttons, which the viewer lacks.
-  const hasStateChoice = gameState.lastAddedCards.some(
-    id => (defs[gameState.instances[id]?.cardId]?.chooseState?.length ?? 0) > 0,
-  );
 
   const isBoardPhase = [Phase.PLAYING, Phase.TURN_END].includes(gameState.phase);
 
@@ -290,26 +207,6 @@ export function MainBoard() {
           </Section>
         </RaiseOnDrag>
       )}
-
-      {[Phase.PLAYING, Phase.TURN_END, Phase.ROUND_END].includes(gameState.phase) &&
-        Object.keys(gameState.triggerPile).length === 0 &&
-        gameState.lastAddedCards.length > 0 &&
-        displayNewCards &&
-        (hasStateChoice ? (
-          <Modal
-            title={t('cardAdded.title', { count: gameState.lastAddedCards.length })}
-            onClose={() => setDisplayNewCards(false)}
-          >
-            <NewCardSelection cardIds={gameState.lastAddedCards} chooseState={chooseState} />
-          </Modal>
-        ) : (
-          <CardViewerModal
-            cardIds={gameState.lastAddedCards}
-            initialId={gameState.lastAddedCards[0]}
-            title={t('cardAdded.title', { count: gameState.lastAddedCards.length })}
-            onClose={() => setDisplayNewCards(false)}
-          />
-        ))}
     </View>
   );
 }
