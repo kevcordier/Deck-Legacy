@@ -9,6 +9,8 @@ import { glory2 } from './8';
 import { glory5 } from './10';
 import { knight } from './11';
 import { emptyValue } from './16';
+import { startsInPlay } from './17';
+import { bottomOfDeck } from './18';
 import type { Sticker } from '@deck-legacy/engine/domain/types';
 
 export const stickerData: Sticker[] = [
@@ -23,4 +25,6 @@ export const stickerData: Sticker[] = [
   glory5,
   knight,
   emptyValue,
+  startsInPlay,
+  bottomOfDeck,
 ];
