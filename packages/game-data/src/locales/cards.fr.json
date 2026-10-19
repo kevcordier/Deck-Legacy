@@ -340,7 +340,8 @@
     "92-1-1": "Cette carte ne peut pas être détruite. L'effet de cet artefact magique reste à découvrir.",
     "119-1-1": "Toutes les cartes alliées ont +1 {{gold}} de production.",
     "120-3-1": "Les terrains qui produisent {{gold}} peuvent produire {{goods}} à la place.",
-    "121-1-1": "Les terrains restent en jeu."
+    "121-1-1": "Les terrains restent en jeu.",
+    "starts_in_play": "Commence en jeu"
   },
   "tracks": {
     "19-1-1": "Autocollant {{gold}}/{{wood}}/{{stone}} sur 1 terrain.",

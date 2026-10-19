@@ -122,6 +122,8 @@ export type ActionEffect = {
   sourceStepId?: number;
   repeat?: number | 'accumulation'; // number of times this action will be repeated
   condition?: Condition; // checked when the effect resolves: skipped when it does not hold
+  sourceInstanceId?: number; // card the effect resolves for, when not the acting card (USE_CARD_ACTION)
+  usedAction?: { instanceId: number; actionId: string }; // USE_CARD_ACTION: the chosen action
 };
 
 export type Passive = {

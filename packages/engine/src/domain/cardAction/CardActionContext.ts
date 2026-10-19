@@ -15,6 +15,7 @@ import { DestroyCardStrategy } from './DestroyCardStrategy';
 import { DiscardCardStrategy } from './DiscardCardStrategy';
 import { DiscoverCardStrategy } from './DiscoverCardStrategy';
 import { EndGameStrategy } from './EndGameStrategy';
+import { LoseNextResourcesStrategy } from './LoseNextResourcesStrategy';
 import { PlaceCardInPileStrategy } from './PlaceCardInDrawPileStrategy';
 import { PlayCardStrategy } from './PlayCardStrategy';
 import { RemoveResourceOnCardStrategy } from './RemoveResourceOnCardStrategy';
@@ -23,6 +24,7 @@ import { SetCumulatedStrategy } from './SetCumulatedStrategy';
 import { ShuffleDeckStrategy } from './ShuffleDeckStrategy';
 import { TrackAdvanceStrategy } from './TrackAdvanceStrategy';
 import { UpgradeCardStrategy } from './UpgradeCardStrategy';
+import { UseCardActionStrategy } from './UseCardActionStrategy';
 
 export class CardActionContext {
   private readonly strategies: Partial<Record<ActionEffectType, CardActionStrategy>>;
@@ -53,6 +55,8 @@ export class CardActionContext {
       [ActionEffectType.ADD_GLORY]: new AddGloryStrategy(cardDefs, stickerDefs),
       [ActionEffectType.SAVE_FROM_PURGE]: new SaveFromPurgeStrategy(),
       [ActionEffectType.ADD_TO_PURGE]: new AddToPurgeStrategy(),
+      [ActionEffectType.USE_CARD_ACTION]: new UseCardActionStrategy(),
+      [ActionEffectType.LOSE_NEXT_RESOURCES]: new LoseNextResourcesStrategy(),
     };
   }
 

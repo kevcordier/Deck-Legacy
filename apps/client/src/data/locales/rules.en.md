@@ -131,6 +131,15 @@ Some cards have a row of **boxes** to mark. Marking a box may cost resources and
 
 Some effects add **stickers** to a card: production, Glory or staying in play. Stickers come from your **sticker stock**: if none is left, the effect is ignored. **Boosting** a card means adding a sticker of a resource it already produces, so it produces 1 more.
 
+- **Starts in play:** the card starts each round already in play, in addition to the cards of the first turn.
+- Some stickers give the card an effect, shown with its other effects.
+
+### Other Effects
+
+- **Using a card's effect:** some effects let you use the activated or {{time}} effect of a card in play. You pay its cost and resolve it, but that card stays in play and your turn does not end.
+- **Losing resources:** "lose the next 3 resources you gain this turn" applies to productions and to effects alike. Within one gain, they are lost in this order: {{gold}}, {{wood}}, {{stone}}, {{iron}}, {{weapon}}, {{goods}}.
+- **You cannot play cards:** you can neither advance nor play cards with an effect, for example from your discard pile.
+
 ### Equipment
 
 Some cards have a third, red banner starting with **"Equip"** followed by a keyword: they are **equipment**, meant to be attached to a card with that keyword.
@@ -172,7 +181,7 @@ Red cards are **negative**, usually _Enemy_ or _Event_ cards; every other card i
 
 ## Expansions
 
-Once you finish the base game, you can continue your kingdom with **expansions**, one at a time: each one adds rounds and often new cards and concepts. Each kingdom may play each expansion only once. Mini expansions add 4 rounds without discovering new cards each round; larger expansions add rounds and many new cards, with their own campaign pack and discoverable pack (Ridding the Woods: cards 1–25 and 26–29).
+Once you finish the base game, you can continue your kingdom with **expansions**, one at a time: each one adds rounds and often new cards and concepts. Each kingdom may play each expansion only once. Mini expansions add 4 rounds without discovering new cards each round; larger expansions add rounds and many new cards, with their own campaign pack and discoverable pack (Ridding the Woods: cards 1–25 and 26–29). Merchants discovers no card at the start of its 4 rounds: its two permanent Merchants cards offer cards to buy instead.
 
 ### Purge
 

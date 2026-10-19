@@ -5,6 +5,7 @@ import { cardIsBlocked } from '../../domain/cards/cardIsBlocked';
 import { getEffectiveUpgradeCost } from '../../domain/cards/getEffectiveUpgradeCost';
 import { getProductionChoicesForAction } from '../../domain/cards/getProductionChoicesForAction';
 import { getActiveState } from '../../domain/cards/selection/getActiveState';
+import { getStateActions } from '../../domain/cards/selection/getStateActions';
 import { resolveCost } from '../../domain/costResolver';
 import { ActionEffectType, GameEventType, PendingChoiceType, Phase } from '../../domain/enums';
 import type { EngineEnvironment } from '../../domain/environment/EngineEnvironment';
@@ -615,13 +616,17 @@ export class GameSession {
   ): void {
     if (!this.isPlayable(instanceId)) return;
     const gs = this.agg.getGameState();
-    const cs = getActiveState(gs.instances[instanceId], this.catalog.cards);
+    const actions = getStateActions(
+      gs.instances[instanceId],
+      this.catalog.cards,
+      this.catalog.stickers,
+    );
     const triggerEntry = triggerId ? gs.triggerPile[triggerId] : undefined;
     const isMatchingTrigger =
       triggerEntry?.sourceInstanceId === instanceId && triggerEntry?.effectDef.id === actionId;
     const action =
       (isMatchingTrigger ? triggerEntry?.effectDef : undefined) ??
-      cs.actions?.find(ce => ce.id === actionId && !ce.trigger);
+      actions.find(ce => ce.id === actionId && !ce.trigger);
     if (!action) return;
     // A card action (not a trigger): from a card in play, during the turn unless unlimited.
     if (

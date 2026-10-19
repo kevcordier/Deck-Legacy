@@ -40,9 +40,10 @@ export class TurnStartedStrategy implements GameEventStrategy {
       {} as Record<string, TriggerEntry>,
     );
 
+    // Losses of a turn (Too Much Mead) end with it.
+    const { resourcesToLose: _lost, ...withoutLoss } = { ...gameState, ...afterDraw };
     return {
-      ...gameState,
-      ...afterDraw,
+      ...withoutLoss,
       turn: e.turn,
       resources: {},
       triggerPile: {

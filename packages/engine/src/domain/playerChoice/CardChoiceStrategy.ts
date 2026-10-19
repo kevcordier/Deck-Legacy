@@ -2,6 +2,7 @@ import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getEffectiveProductions } from '../cards/selection/getEffectiveProductions';
+import { chooseUsedAction } from '../effects/chooseUsedAction';
 import { ActionEffectType, PendingChoiceType } from '../enums';
 import { fixResources } from '../resources/fixResources';
 import { mergeResources } from '../resources/mergeResources';
@@ -393,6 +394,20 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
       );
     } else if (choice.type === ActionEffectType.UPGRADE_CARD) {
       return this.setUpgradeStateFromCardChoice(choice, resolvedAction, gs, pendingChoices);
+    } else if (choice.type === ActionEffectType.USE_CARD_ACTION && pendingChoices.length > 0) {
+      const [
+        { type: _type, choices: _choices, pickMin: _min, pickMax: _max, ...template },
+        ...rest
+      ] = pendingChoices;
+      const [resolved, actionChoices] = chooseUsedAction(
+        resolvedAction,
+        choice.instanceIds[0],
+        template,
+        gs,
+        this.defs,
+        this.stickerDefs,
+      );
+      return [resolved, [...actionChoices, ...rest]];
     } else if (choice.type === ActionEffectType.REMOVE_RESOURCE_ON_CARD) {
       return this.filterRemoveResourceChoicesByEffectiveProduction(
         choice,

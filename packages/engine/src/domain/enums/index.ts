@@ -92,6 +92,13 @@ export enum ActionEffectType {
    * free except its "destroy this card" cost.
    */
   DEFEAT_CARD = 'DEFEAT_CARD',
+  /**
+   * Uses the activated or time effect of a chosen card (`usedAction` once chosen): its effects
+   * resolve for that card, which stays in play, and the turn does not end.
+   */
+  USE_CARD_ACTION = 'USE_CARD_ACTION',
+  /** The next `value` resource units gained this turn are lost. */
+  LOSE_NEXT_RESOURCES = 'LOSE_NEXT_RESOURCES',
 }
 
 export enum PassiveType {
@@ -117,6 +124,8 @@ export enum Options {
   UPGRADE = 'upgrade',
   ACTION = 'action',
   END_TURN_ACTION = 'end_turn_action',
+  /** Playing cards with an effect (PLAY_CARD), e.g. from the discard pile. */
+  PLAY_CARD = 'play_card',
 }
 
 export enum ResourceType {

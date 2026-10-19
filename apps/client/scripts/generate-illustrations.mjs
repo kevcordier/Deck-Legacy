@@ -14,7 +14,7 @@ const files = readdirSync(imagesDir)
   .filter(file => /\.(jpe?g|png|webp)$/i.test(file))
   .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
 
-const lines = files.map(file => `  'cards/${file}': require('../../assets/cards/${file}'),`);
+const lines = files.map(file => `  'cards/${file}': require('@assets/cards/${file}'),`);
 
 writeFileSync(
   output,

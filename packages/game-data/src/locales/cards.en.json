@@ -340,7 +340,8 @@
     "117-1-1": "Cannot be destroyed unless Lord Nimrod has been destroyed.",
     "119-1-1": "All friendly cards have +1 {{gold}} production.",
     "120-3-1": "Land that produce {{gold}} may produce {{goods}} instead.",
-    "121-1-1": "Lands stay in play."
+    "121-1-1": "Lands stay in play.",
+    "starts_in_play": "Starts in play"
   },
   "tracks": {
     "19-1-1": "Sticker {{gold}}/{{wood}}/{{stone}} on 1 land.",

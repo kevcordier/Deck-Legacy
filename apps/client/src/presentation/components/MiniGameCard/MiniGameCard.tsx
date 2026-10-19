@@ -21,6 +21,7 @@ import { getProductionChoicesForAction } from '@deck-legacy/engine/domain/cards/
 import { evaluateCondition } from '@deck-legacy/engine/domain/cards/selection/evaluateCondition';
 import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
 import { getEffectiveGlory } from '@deck-legacy/engine/domain/cards/selection/getEffectiveGlory';
+import { getStateActions } from '@deck-legacy/engine/domain/cards/selection/getStateActions';
 import { tagBorderClass } from '@deck-legacy/engine/domain/cards/tagBorderClass';
 import { Options, PassiveType, TargetScope } from '@deck-legacy/engine/domain/enums';
 import { canUseOptions } from '@deck-legacy/engine/domain/state/canUseOptions';
@@ -207,7 +208,7 @@ export function MiniGameCard({
   const glory = getEffectiveGlory(cs, gameState, defs, instance, stickerDefs);
   const hasGlory = cs.glory !== undefined && (cs.glory.amount !== 0 || !!cs.glory.valuePerElement);
 
-  const canUpgrade = !isBlocked && canUseOptions(gameState, Options.UPGRADE);
+  const canUpgrade = !isBlocked && canUseOptions(gameState, Options.UPGRADE, instance.id);
   const upgrades: MiniUpgrade[] = (cs.upgrade ?? []).map(upg => {
     const cost = getEffectiveUpgradeCost(upg.cost, gameState, defs, stickerDefs, instance.id);
     return {
@@ -217,7 +218,7 @@ export function MiniGameCard({
     };
   });
 
-  const actions = (cs.actions ?? []).filter(
+  const actions = getStateActions(instance, defs, stickerDefs).filter(
     action =>
       action.limitedTime === undefined ||
       instance.usedActionIds.filter(usedId => usedId === action.id).length < action.limitedTime,
@@ -226,6 +227,7 @@ export function MiniGameCard({
     const optionDisabled = !canUseOptions(
       gameState,
       action.endsTurn ? Options.END_TURN_ACTION : Options.ACTION,
+      instance.id,
     );
     if (optionDisabled) return false;
     const cost = getEffectiveActionCost(action.cost, instance);

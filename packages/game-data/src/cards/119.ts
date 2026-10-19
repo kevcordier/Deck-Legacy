@@ -32,7 +32,7 @@ export const prosperity: CardDef = {
       id: 1,
       name: 'Prosperity',
       tags: [CardTag.EVENT, CardTag.PERMANENT],
-      illustration: 'cards/119_1.webp',
+      illustration: 'cards/119_1.jpg',
       passives: [
         {
           id: '119-1-1',
@@ -151,7 +151,7 @@ export const prosperity: CardDef = {
       id: 4,
       name: 'Royal Decree',
       tags: [CardTag.EVENT, CardTag.PERMANENT],
-      illustration: 'cards/119_4.webp',
+      illustration: 'cards/119_4.jpg',
       actions: [
         {
           id: '119-4-1',
