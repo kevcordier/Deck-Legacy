@@ -10,7 +10,12 @@ import type { CardDef, StepDef } from '@deck-legacy/engine/domain/types';
 const minusOneGloryStep = (id: number): StepDef => ({
   id,
   effects: [
-    { id: 1, type: ActionEffectType.ADD_GLORY, cards: { scope: [TargetScope.SELF] }, value: -1 },
+    {
+      id: 1,
+      type: ActionEffectType.ADD_CUMULATED,
+      cards: { scope: [TargetScope.SELF] },
+      value: 1,
+    },
   ],
 });
 
@@ -24,6 +29,7 @@ export const taxCollector: CardDef = {
       tags: [CardTag.PERSON],
       illustration: 'cards/130_1.jpg',
       productions: [{ [ResourceType.GOLD]: 4 }],
+      glory: { amount: 0, valuePerElement: { amount: -1, accumulation: true } },
       actions: [
         {
           id: '130-1-1',
