@@ -759,7 +759,7 @@ export class GameAggregate {
     discardedCardIds: number[] = [],
     destroyedCardIds: number[] = [],
   ): GameState {
-    if (!canUseOptions(this.gameState, Options.UPGRADE)) {
+    if (!canUseOptions(this.gameState, Options.UPGRADE, cardInstanceId)) {
       return this.gameState;
     }
 
@@ -820,7 +820,11 @@ export class GameAggregate {
     amount?: number,
   ): GameState {
     if (
-      !canUseOptions(this.gameState, action.endsTurn ? Options.END_TURN_ACTION : Options.ACTION)
+      !canUseOptions(
+        this.gameState,
+        action.endsTurn ? Options.END_TURN_ACTION : Options.ACTION,
+        instanceId,
+      )
     ) {
       return this.gameState;
     }

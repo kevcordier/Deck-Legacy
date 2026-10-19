@@ -117,6 +117,8 @@ export enum Options {
   UPGRADE = 'upgrade',
   ACTION = 'action',
   END_TURN_ACTION = 'end_turn_action',
+  /** Playing cards with an effect (PLAY_CARD), e.g. from the discard pile. */
+  PLAY_CARD = 'play_card',
 }
 
 export enum ResourceType {

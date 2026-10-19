@@ -207,7 +207,7 @@ export function MiniGameCard({
   const glory = getEffectiveGlory(cs, gameState, defs, instance, stickerDefs);
   const hasGlory = cs.glory !== undefined && (cs.glory.amount !== 0 || !!cs.glory.valuePerElement);
 
-  const canUpgrade = !isBlocked && canUseOptions(gameState, Options.UPGRADE);
+  const canUpgrade = !isBlocked && canUseOptions(gameState, Options.UPGRADE, instance.id);
   const upgrades: MiniUpgrade[] = (cs.upgrade ?? []).map(upg => {
     const cost = getEffectiveUpgradeCost(upg.cost, gameState, defs, stickerDefs, instance.id);
     return {
@@ -226,6 +226,7 @@ export function MiniGameCard({
     const optionDisabled = !canUseOptions(
       gameState,
       action.endsTurn ? Options.END_TURN_ACTION : Options.ACTION,
+      instance.id,
     );
     if (optionDisabled) return false;
     const cost = getEffectiveActionCost(action.cost, instance);

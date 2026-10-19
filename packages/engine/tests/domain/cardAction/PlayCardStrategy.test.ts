@@ -1,6 +1,6 @@
 import { makeInstance, makeState, makeStickerDefs } from '../fixtures';
 import { PlayCardStrategy } from '@engine/domain/cardAction/PlayCardStrategy';
-import { ActionEffectType, Trigger } from '@engine/domain/enums';
+import { ActionEffectType, Options, PassiveType, Trigger } from '@engine/domain/enums';
 import type { CardDef } from '@engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
@@ -18,6 +18,24 @@ const onPlayDef: CardDef = {
 };
 
 describe('PlayCardStrategy', () => {
+  it('plays nothing while a card forbids playing cards', () => {
+    const strategy = new PlayCardStrategy({ 1: plainDef }, makeStickerDefs());
+    const gs = makeState({
+      instances: { 1: makeInstance({ id: 1 }) },
+      discardPile: [1],
+      boardEffects: {
+        9: [{ id: 'no-play', type: PassiveType.DESACTIVATE_OPTION, options: [Options.PLAY_CARD] }],
+      },
+    });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLAY_CARD,
+      sourceInstanceId: 2,
+      instanceIds: [1],
+    });
+    expect(result).toBe(gs);
+  });
+
   it('returns state unchanged when instanceIds missing', () => {
     const strategy = new PlayCardStrategy({}, makeStickerDefs());
     const gs = makeState();

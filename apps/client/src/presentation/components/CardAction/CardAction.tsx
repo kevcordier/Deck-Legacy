@@ -144,6 +144,7 @@ export function CardAction({
   const optionDisabled = !canUseOptions(
     gameState,
     action.endsTurn ? Options.END_TURN_ACTION : Options.ACTION,
+    instance.id,
   );
   const isActionInPlay = (action.unlimited ?? false) || gameState.phase === Phase.PLAYING;
   const affordable =

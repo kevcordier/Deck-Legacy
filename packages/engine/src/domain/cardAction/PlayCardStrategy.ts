@@ -1,7 +1,8 @@
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { getActiveState } from '../cards/selection/getActiveState';
-import { Trigger } from '../enums';
+import { Options, Trigger } from '../enums';
 import { environment } from '../environment/environment';
+import { canUseOptions } from '../state/canUseOptions';
 import { removeFromDiscovery } from '../state/removeFromDiscovery';
 import type { CardDef, GameState, Passive, ResolvedActionEffect, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
@@ -15,6 +16,7 @@ export class PlayCardStrategy implements CardActionStrategy {
   apply(gameState: GameState, payload: ResolvedActionEffect): GameState {
     const instanceIds = payload.instanceIds;
     if (!instanceIds || instanceIds.length === 0) return gameState;
+    if (!canUseOptions(gameState, Options.PLAY_CARD)) return gameState;
     const gs = JSON.parse(JSON.stringify(gameState)) as GameState;
     gs.lastDrawnCards = instanceIds;
     const triggerEffects = getInstancesTriggerEffects(

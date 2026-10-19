@@ -407,7 +407,7 @@ export function GameCard({
                     defs,
                     stickerDefs,
                   );
-                  const optionDisabled = !canUseOptions(gameState, Options.UPGRADE);
+                  const optionDisabled = !canUseOptions(gameState, Options.UPGRADE, instance.id);
                   const targetState = def?.states.find(s => s.id === upg.upgradeTo);
                   const cardText = ({ name, tags }: { name?: string; tags?: string[] }) => {
                     if (name) return t(`names.${name}`, { ns: 'cards' });

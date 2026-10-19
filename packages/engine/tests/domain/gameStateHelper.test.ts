@@ -273,6 +273,16 @@ describe('canUseOptions', () => {
     expect(canUseOptions(gs, Options.ACTION)).toBe(false);
   });
 
+  it("ignores the card's own DESACTIVATE_OPTION", () => {
+    const gs = makeState({
+      boardEffects: {
+        1: [{ id: 'da', type: PassiveType.DESACTIVATE_OPTION, options: [Options.END_TURN_ACTION] }],
+      },
+    });
+    expect(canUseOptions(gs, Options.END_TURN_ACTION, 1)).toBe(true);
+    expect(canUseOptions(gs, Options.END_TURN_ACTION, 2)).toBe(false);
+  });
+
   it('returns true when DESACTIVATE_OPTION blocks a different option', () => {
     const gs = makeState({
       boardEffects: {
