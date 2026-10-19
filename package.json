@@ -27,7 +27,7 @@
     "verify": "pnpm format && pnpm lint:fix && pnpm typecheck && pnpm depcruise && pnpm test:coverage"
   },
   "devDependencies": {
-    "@eslint-react/eslint-plugin": "^5.19.1",
+    "@eslint-react/eslint-plugin": "^5.28.0",
     "@eslint/js": "^10.0.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/node": "^24.19.2",
