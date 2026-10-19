@@ -1,6 +1,7 @@
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { Trigger } from '../enums';
 import { environment } from '../environment/environment';
+import { loseGainedResources } from '../resources/loseGainedResources';
 import { mergeResources } from '../resources/mergeResources';
 import { discardCards } from '../state/discardCards';
 import type { CardDef, CardProducedEvent, GameEvent, GameState, Sticker } from '../types';
@@ -14,9 +15,10 @@ export class CardProducedStrategy implements GameEventStrategy {
 
   apply(gameState: GameState, event: GameEvent): GameState {
     const e = event as CardProducedEvent;
+    const { gained, gameState: afterLoss } = loseGainedResources(gameState, e.productions);
     const withResources = {
-      ...gameState,
-      resources: mergeResources(gameState.resources, e.productions),
+      ...afterLoss,
+      resources: mergeResources(gameState.resources, gained),
     };
     const instance = withResources.instances[e.cardInstanceId];
     getInstancesTriggerEffects(

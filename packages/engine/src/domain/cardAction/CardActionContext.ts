@@ -15,6 +15,7 @@ import { DestroyCardStrategy } from './DestroyCardStrategy';
 import { DiscardCardStrategy } from './DiscardCardStrategy';
 import { DiscoverCardStrategy } from './DiscoverCardStrategy';
 import { EndGameStrategy } from './EndGameStrategy';
+import { LoseNextResourcesStrategy } from './LoseNextResourcesStrategy';
 import { PlaceCardInPileStrategy } from './PlaceCardInDrawPileStrategy';
 import { PlayCardStrategy } from './PlayCardStrategy';
 import { RemoveResourceOnCardStrategy } from './RemoveResourceOnCardStrategy';
@@ -55,6 +56,7 @@ export class CardActionContext {
       [ActionEffectType.SAVE_FROM_PURGE]: new SaveFromPurgeStrategy(),
       [ActionEffectType.ADD_TO_PURGE]: new AddToPurgeStrategy(),
       [ActionEffectType.USE_CARD_ACTION]: new UseCardActionStrategy(),
+      [ActionEffectType.LOSE_NEXT_RESOURCES]: new LoseNextResourcesStrategy(),
     };
   }
 

@@ -1,6 +1,7 @@
 import { keepGainableResources } from '../cards/keepGainableResources';
 import { cardSelector } from '../cards/selection/cardSelector';
 import { type ActionEffectType, PassiveType, TargetScope } from '../enums';
+import { loseGainedResources } from '../resources/loseGainedResources';
 import { mergeResources } from '../resources/mergeResources';
 import type { CardDef, GameState, Resources, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
@@ -63,12 +64,10 @@ export class AddResourceStrategy implements CardActionStrategy {
       resources,
     );
 
-    return {
-      ...gameState,
-      resources: mergeResources(
-        gameState.resources,
-        keepGainableResources(adjustedResources, gameState),
-      ),
-    };
+    const { gained, gameState: afterLoss } = loseGainedResources(
+      gameState,
+      keepGainableResources(adjustedResources, gameState),
+    );
+    return { ...afterLoss, resources: mergeResources(gameState.resources, gained) };
   }
 }

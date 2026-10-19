@@ -97,6 +97,8 @@ export enum ActionEffectType {
    * resolve for that card, which stays in play, and the turn does not end.
    */
   USE_CARD_ACTION = 'USE_CARD_ACTION',
+  /** The next `value` resource units gained this turn are lost. */
+  LOSE_NEXT_RESOURCES = 'LOSE_NEXT_RESOURCES',
 }
 
 export enum PassiveType {

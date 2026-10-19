@@ -93,6 +93,8 @@ export type GameState = {
   purgedCards: number[];
   purgedGlory: number[];
   purgeState?: PurgeState;
+  /** Resource units the next gains of this turn lose (Too Much Mead). */
+  resourcesToLose?: number;
 };
 
 export type GameParameters = {
