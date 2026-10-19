@@ -49,7 +49,7 @@ export const waterMill: CardDef = {
       id: 2,
       name: 'Efficient Farming',
       tags: [CardTag.EVENT, CardTag.PERMANENT],
-      illustration: 'cards/120_2.webp',
+      illustration: 'cards/120_2.jpg',
       actions: [
         {
           id: '120-2-1',
