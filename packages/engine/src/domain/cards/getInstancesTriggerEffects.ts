@@ -2,6 +2,7 @@ import type { Trigger } from '../enums';
 import type { CardAction, CardDef, CardInstance, GameState, Sticker, TriggerEntry } from '../types';
 import { canAffordCost } from './canAffordCost';
 import { canAffordTrackAdvanceCost } from './canAffordTrackAdvanceCost';
+import { cardIsBlocked } from './cardIsBlocked';
 import { cardSelector } from './selection/cardSelector';
 import { evaluateCondition } from './selection/evaluateCondition';
 import { getActiveState } from './selection/getActiveState';
@@ -38,8 +39,10 @@ export function getInstancesTriggerEffects(
   effect: Trigger,
   gameState: GameState,
 ): TriggerEntry[] {
+  // A blocked card counts as absent: its triggers do not fire.
   const canFire = (ce: CardAction, instance: CardInstance) =>
     ce.trigger === effect &&
+    !cardIsBlocked(instance.id, gameState) &&
     (!ce.condition || evaluateCondition(ce.condition, gameState, instance.id, defs, stickerDefs)) &&
     canAffordCost(ce.cost, instance.id, gameState, defs, stickerDefs) &&
     canAffordTrackAdvanceCost(ce, instance, gameState, defs, stickerDefs) &&

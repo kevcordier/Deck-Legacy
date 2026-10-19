@@ -38,6 +38,7 @@ export const hilltop: CardDef = {
         {
           id: '145-3-1',
           endsTurn: true,
+          limitedTime: 1,
           cost: { resources: [{ [ResourceType.GOODS]: 4 }] },
           // Keeper of Secrets (Ridding the Woods 26)
           actionEffects: [{ id: 1, type: ActionEffectType.DISCOVER_CARD, cards: { ids: [164] } }],

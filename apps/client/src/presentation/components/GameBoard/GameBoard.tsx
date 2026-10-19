@@ -1,9 +1,11 @@
 import { CardUpgradeReveal } from '@components/CardUpgradeReveal/CardUpgradeReveal';
+import { CardViewerModal } from '@components/CardViewerModal/CardViewerModal';
 import { CheatPanel } from '@components/CheatPanel/CheatPanel';
 import { DeckViewer } from '@components/DeckViewer/DeckViewer';
 import { FilterableCardGrid } from '@components/DeckViewer/FilterableCardGrid';
 import { GamePhaseActions } from '@components/GamePhaseActions/GamePhaseActions';
 import { MainBoard } from '@components/MainBoard/MainBoard';
+import { NewCardSelection } from '@components/MainBoard/NewCardSelection';
 import { PendingChoiceModal } from '@components/PendingChoiceModal/PendingChoiceModal';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
@@ -76,6 +78,9 @@ export function GameBoard() {
     parameters,
     upgradeReveal,
     dismissUpgradeReveal,
+    chooseState,
+    displayNewCards,
+    setDisplayNewCards,
   } = useGame();
   const { drawPile, discardPile, instances } = gameState;
 
@@ -131,6 +136,17 @@ export function GameBoard() {
   const haveChoiceToDo =
     (!!pendingChoices && pendingChoices.length > 0) ||
     (!!triggerPile && Object.keys(triggerPile).length > 0);
+
+  const { lastAddedCards } = gameState;
+  // Cards discovered by a card action: shown as soon as they are, over the pending choices.
+  const showNewCards =
+    displayNewCards &&
+    lastAddedCards.length > 0 &&
+    [Phase.PLAYING, Phase.TURN_END, Phase.ROUND_END].includes(gameState.phase);
+  // A card whose state must be chosen needs the selection buttons, which the viewer lacks.
+  const hasStateChoice = lastAddedCards.some(
+    id => (defs[instances[id]?.cardId]?.chooseState?.length ?? 0) > 0,
+  );
 
   const openDraw = () => setOpenSheet('draw');
   const openDiscard = () => setOpenSheet('discard');
@@ -262,6 +278,24 @@ export function GameBoard() {
           onSkipChoice={skipChoice}
         />
       )}
+
+      {/* Mounted after the pending choice so they stay on top of it. */}
+      {showNewCards &&
+        (hasStateChoice ? (
+          <Modal
+            title={t('cardAdded.title', { count: lastAddedCards.length })}
+            onClose={() => setDisplayNewCards(false)}
+          >
+            <NewCardSelection cardIds={lastAddedCards} chooseState={chooseState} />
+          </Modal>
+        ) : (
+          <CardViewerModal
+            cardIds={lastAddedCards}
+            initialId={lastAddedCards[0]}
+            title={t('cardAdded.title', { count: lastAddedCards.length })}
+            onClose={() => setDisplayNewCards(false)}
+          />
+        ))}
 
       {/* Mounted after the other game modals so it stays on top of the triggers and the turn end. */}
       {upgradeReveal && (

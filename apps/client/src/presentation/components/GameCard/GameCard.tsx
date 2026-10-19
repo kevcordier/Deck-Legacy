@@ -156,7 +156,9 @@ export function GameCard({
     getCardName,
   } = useGame();
   const [width, setWidth] = useState(0);
-  const [name, setName] = useState(() => getCardName(instance.id));
+  // Draft only while typing: otherwise show the saved name, which another view may change.
+  const [draftName, setDraftName] = useState<string | null>(null);
+  const name = draftName ?? getCardName(instance.id);
   const isBlocked = isOnBoard && cardIsBlocked(instance.id, gameState);
   const cs = getActiveState(instance, defs);
   const def = defs[instance.cardId];
@@ -258,8 +260,11 @@ export function GameCard({
                     <Text className={`font-display ${sizes.nameText}`}>{namePrefix}</Text>
                     <TextInput
                       value={name ?? ''}
-                      onChangeText={setName}
-                      onBlur={() => setCardName(instance.id, name ?? '')}
+                      onChangeText={setDraftName}
+                      onBlur={() => {
+                        if (draftName !== null) setCardName(instance.id, draftName);
+                        setDraftName(null);
+                      }}
                       className={`text-ink-card font-display w-0 min-w-8 flex-1 p-0 ${sizes.nameText} ${name ? '' : 'border-ink-card border-b'}`}
                       accessibilityLabel={t('card.name')}
                     />

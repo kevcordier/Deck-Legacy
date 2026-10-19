@@ -34,6 +34,17 @@ describe('findUpgradeReveal', () => {
     });
   });
 
+  it('returns a card whose state a card action changed', () => {
+    const previous = state(instance(1, 1), instance(2, 1));
+    const next = state(instance(1, 1), instance(2, 2));
+    const action = { type: GameEventType.CARD_ACTION } as unknown as GameEvent;
+    expect(findUpgradeReveal(previous, next, [action])).toEqual({
+      before: instance(2, 1),
+      after: instance(2, 2),
+    });
+    expect(findUpgradeReveal(previous, previous, [action])).toBeNull();
+  });
+
   it('returns null without an upgrade (other commands, rewind)', () => {
     const current = state(instance(1, 1));
     const other = { type: GameEventType.TURN_ENDED } as unknown as GameEvent;
