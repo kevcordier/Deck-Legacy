@@ -80,7 +80,8 @@ function CardStatesModal({ instance, def, renderCard, onClose }: CardStatesModal
           return (
             <View
               key={s.id}
-              className={`max-w-80 rounded-xl ${isCurrent ? 'border-primary border-4' : ''}`}
+              // Same frame as a selected card in a choice (ChooseCardSection).
+              className={`max-w-80 rounded-2xl border-4 p-1 ${isCurrent ? 'border-primary bg-primary/30 shadow-lg' : 'border-transparent'}`}
             >
               {renderCard(fakeInstance)}
             </View>
