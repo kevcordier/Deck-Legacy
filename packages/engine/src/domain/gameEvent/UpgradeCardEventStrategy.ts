@@ -39,7 +39,7 @@ export class UpgradeCardEventStrategy implements GameEventStrategy {
         ? (() => {
             const gs = JSON.parse(JSON.stringify(afterCostState)) as GameState;
             onUpgradeTriggers.forEach(({ effectDef, sourceInstanceId }) => {
-              gs.triggerPile[environment.newId()] = { effectDef, sourceInstanceId };
+              gs.triggerPile[environment.newId()] = { effectDef, sourceInstanceId, endsTurn: true };
             });
             return gs;
           })()

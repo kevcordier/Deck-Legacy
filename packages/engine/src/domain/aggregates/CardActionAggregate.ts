@@ -102,9 +102,11 @@ export class CardActionAggregate {
       return [...acc, ...effectiveEffects];
     }, [] as ActionEffect[]);
     this.effects = Array.from({ length: Math.max(0, this.amount) }, () => effects).flat();
+    const triggerEntry = this.gameState.triggerPile[this.triggerId ?? ''];
     this.endTurn =
       !!this.action.endsTurn ||
-      this.gameState.triggerPile[this.triggerId ?? '']?.effectDef.trigger === Trigger.END_OF_TURN;
+      !!triggerEntry?.endsTurn ||
+      triggerEntry?.effectDef.trigger === Trigger.END_OF_TURN;
     this.endRound =
       this.gameState.triggerPile[this.triggerId ?? '']?.effectDef.trigger === Trigger.END_OF_ROUND;
   }

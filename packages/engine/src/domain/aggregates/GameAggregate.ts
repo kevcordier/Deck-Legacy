@@ -979,7 +979,7 @@ export class GameAggregate {
       triggerId,
       sourceInstanceId: entry.sourceInstanceId,
       actionId: entry.effectDef.id,
-      endTurn: entry.effectDef.trigger === Trigger.END_OF_TURN,
+      endTurn: !!entry.endsTurn || entry.effectDef.trigger === Trigger.END_OF_TURN,
       endRound: entry.effectDef.trigger === Trigger.END_OF_ROUND,
     };
     this.apply(event);
