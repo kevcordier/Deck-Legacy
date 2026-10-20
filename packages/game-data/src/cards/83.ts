@@ -3,6 +3,7 @@ import {
   CardTag,
   ResourceType,
   TargetScope,
+  Trigger,
 } from '@deck-legacy/engine/domain/enums';
 import type { CardAction, CardDef, StepDef } from '@deck-legacy/engine/domain/types';
 
@@ -18,35 +19,11 @@ const makeGoodsStep = (id: number): StepDef => ({
   ],
 });
 
-const makeGoldUpgradeStep = (id: number, upgradeTo: number): StepDef => ({
-  id,
-  effects: [
-    { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { [ResourceType.GOLD]: 1 } },
-    {
-      id: 2,
-      type: ActionEffectType.UPGRADE_CARD,
-      cards: { scope: [TargetScope.SELF] },
-      states: { ids: [upgradeTo] },
-    },
-  ],
-});
-
-const makeGoodsUpgradeStep = (id: number, upgradeTo: number): StepDef => ({
-  id,
-  effects: [
-    { id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { [ResourceType.GOODS]: 1 } },
-    {
-      id: 2,
-      type: ActionEffectType.UPGRADE_CARD,
-      cards: { scope: [TargetScope.SELF] },
-      states: { ids: [upgradeTo] },
-    },
-  ],
-});
-
-const makeUpgradeStep = (id: number, upgradeTo: number): StepDef => ({
-  id,
-  effects: [
+// The upgrade happens once the track is complete: an upgrade by an effect does not end the turn.
+const makeUpgradeOnTrackEnd = (actionId: string, upgradeTo: number): CardAction => ({
+  id: actionId,
+  trigger: Trigger.ON_TRACK_END,
+  actionEffects: [
     {
       id: 1,
       type: ActionEffectType.UPGRADE_CARD,
@@ -79,7 +56,6 @@ const makeDiscardToDeckStep = (id: number): StepDef => ({
 
 const makeSeafaringTrackAdvance = (actionId: string): CardAction => ({
   id: actionId,
-  endsTurn: true,
   actionEffects: [
     {
       id: 1,
@@ -88,6 +64,8 @@ const makeSeafaringTrackAdvance = (actionId: string): CardAction => ({
       valuePerElement: {
         amount: 1,
         cards: { scope: [TargetScope.BOARD], tags: [CardTag.SEAFARING] },
+        // "including this": the Compass is already discarded when its effect counts
+        includeSelf: true,
       },
     },
   ],
@@ -103,9 +81,9 @@ export const compass: CardDef = {
       tags: [CardTag.SEAFARING],
       illustration: 'cards/83_1.jpg',
       glory: { amount: 2 },
-      actions: [makeSeafaringTrackAdvance('83-1-1')],
+      actions: [makeSeafaringTrackAdvance('83-1-1'), makeUpgradeOnTrackEnd('83-1-2', 2)],
       track: {
-        inOrder: true,
+        inOrder: false,
         steps: [
           { id: 1 },
           { id: 2 },
@@ -114,7 +92,7 @@ export const compass: CardDef = {
           makeGoldStep(5),
           makeGoldStep(6),
           makeGoldStep(7),
-          makeGoldUpgradeStep(8, 2),
+          makeGoldStep(8),
         ],
       },
     },
@@ -124,9 +102,9 @@ export const compass: CardDef = {
       tags: [CardTag.SEAFARING],
       illustration: 'cards/83_2.jpg',
       glory: { amount: 8 },
-      actions: [makeSeafaringTrackAdvance('83-2-1')],
+      actions: [makeSeafaringTrackAdvance('83-2-1'), makeUpgradeOnTrackEnd('83-2-2', 3)],
       track: {
-        inOrder: true,
+        inOrder: false,
         steps: [
           makeGoldStep(9),
           makeGoldStep(10),
@@ -135,7 +113,7 @@ export const compass: CardDef = {
           makeGoodsStep(13),
           makeGoodsStep(14),
           makeGoodsStep(15),
-          makeGoodsUpgradeStep(16, 3),
+          makeGoodsStep(16),
         ],
       },
     },
@@ -145,9 +123,9 @@ export const compass: CardDef = {
       tags: [CardTag.SEAFARING],
       illustration: 'cards/83_3.jpg',
       glory: { amount: 15 },
-      actions: [makeSeafaringTrackAdvance('83-3-1')],
+      actions: [makeSeafaringTrackAdvance('83-3-1'), makeUpgradeOnTrackEnd('83-3-2', 4)],
       track: {
-        inOrder: true,
+        inOrder: false,
         steps: [
           { id: 17 },
           { id: 18 },
@@ -156,7 +134,7 @@ export const compass: CardDef = {
           { id: 21 },
           { id: 22 },
           { id: 23 },
-          makeUpgradeStep(24, 4),
+          { id: 24 },
         ],
       },
     },
@@ -180,7 +158,7 @@ export const compass: CardDef = {
         },
       ],
       track: {
-        inOrder: true,
+        inOrder: false,
         steps: [
           makeDiscardToDeckStep(25),
           makeDiscardToDeckStep(26),

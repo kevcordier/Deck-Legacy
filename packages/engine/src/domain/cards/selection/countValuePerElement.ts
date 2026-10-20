@@ -13,13 +13,14 @@ export function countValuePerElement(
 ): number {
   let count = 0;
   if (valuePerElement.cards) {
-    count = cardSelector(
+    const ids = cardSelector(
       { ...valuePerElement.cards, lastSelectedIds },
       instanceId,
       gameState,
       defs,
       stickerDefs,
-    ).length;
+    );
+    count = ids.length + (valuePerElement.includeSelf && !ids.includes(instanceId) ? 1 : 0);
   } else if (valuePerElement.accumulation && gameState.instances[instanceId].cumulated >= 1) {
     count = gameState.instances[instanceId].cumulated;
   } else if (valuePerElement.ownProduction) {
