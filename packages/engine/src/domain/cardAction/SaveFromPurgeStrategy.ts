@@ -1,3 +1,4 @@
+import { Trigger } from '../enums';
 import type { GameState, ResolvedActionEffect } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 
@@ -22,8 +23,18 @@ export class SaveFromPurgeStrategy implements CardActionStrategy {
 
     if (idsToSave.length === 0) return gameState;
 
+    // A saved card is no longer purged: its "when purged" effects do not happen.
+    const triggerPile = Object.fromEntries(
+      Object.entries(gameState.triggerPile).filter(
+        ([, entry]) =>
+          entry.effectDef.trigger !== Trigger.ON_PURGE ||
+          !idsToSave.includes(entry.sourceInstanceId),
+      ),
+    );
+
     return {
       ...gameState,
+      triggerPile,
       purgeState: {
         ...purgeState,
         selectedCardIds: removeFromArray(purgeState.selectedCardIds, idsToSave),
