@@ -544,3 +544,24 @@ Le moteur et la sauvegarde fonctionnaient ; seul le focus du champ était perdu,
 Action
 
 - Garder hors de `CardDragHandle` tout élément interactif (champ, bouton) : le nom éditable est maintenant à côté de la poignée.
+
+---
+
+ID : INS-025
+Date : 2026-10-19
+Titre : Payer un coût sans carte effaçait les cartes « venant d'être défaussées »
+Statut : Valide
+
+Découverte
+En écrivant la Peste noire (Foundations), le trigger « quand une personne infectée est défaussée » ne trouvait plus la personne au moment de sa résolution.
+
+Source
+`CardActionAggregate.payCost` appelait toujours `discardCards`, même avec une liste vide ; or `discardCards` remplace `lastDiscardedCards`. Chaque action, trigger compris, vidait donc la portée `DISCARDED` avant ses effets. L'Alchimiste (Healing Potion, « rejouez la personne défaussée ») n'a jamais rien rejoué.
+
+Impact
+Tout effet ciblant `TargetScope.DISCARDED` dans un trigger `ON_DISCARD` était inopérant. Corrigé avec l'accord de l'utilisateur : les parties synchronisées où le trigger de l'Alchimiste a été résolu peuvent être refusées à la vérification serveur.
+
+Action
+
+- Un helper d'état qui écrit un champ « dernier… » (`lastDiscardedCards`, `lastDrawnCards`) ne doit pas être appelé avec une liste vide « pour rien ».
+- Une carte dont le trigger lit `DISCARDED` ou `DRAWN` reçoit un scénario de test qui résout le trigger.
