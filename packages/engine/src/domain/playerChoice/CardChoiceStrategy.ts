@@ -1,3 +1,4 @@
+import { getCardProductionChoices } from '../cards/getCardProductionChoices';
 import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
 import { getActiveState } from '../cards/selection/getActiveState';
@@ -169,14 +170,20 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
   }
 
   private addResourceFromCardChoice(
-    productions: Resources[] | undefined,
     choice: ResolvedActionEffect,
     resolvedAction: ResolvedActionEffect,
     pendingChoices: PendingChoice[],
     gs: GameState,
     instanceId: number,
   ): [ResolvedActionEffect, PendingChoice[]] {
-    if (productions && productions.length > 0) {
+    // As the card would produce: stickers, passives and replacements included.
+    const productions = getCardProductionChoices(
+      gs.instances[instanceId],
+      gs,
+      this.defs,
+      this.stickerDefs,
+    );
+    if (productions.length > 0) {
       if (productions.length > 1) {
         const newPendingChoice = pendingChoices.slice(1);
         newPendingChoice.push({
@@ -184,9 +191,7 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
           type: PendingChoiceType.CHOOSE_RESOURCE,
           sourceInstanceId: choice.sourceInstanceId,
           kind: choice.type,
-          choices: productions.map(p =>
-            getEffectiveProductions(p, gs, this.defs, gs.instances[instanceId], this.stickerDefs),
-          ),
+          choices: productions,
           pickMin: 1,
           pickMax: 1,
           isMandatory: true,
@@ -198,16 +203,7 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
       return [
         {
           ...resolvedAction,
-          resources: mergeResources(
-            resolvedAction.resources ?? {},
-            getEffectiveProductions(
-              productions[0],
-              gs,
-              this.defs,
-              gs.instances[instanceId],
-              this.stickerDefs,
-            ),
-          ),
+          resources: mergeResources(resolvedAction.resources ?? {}, productions[0]),
         },
         pendingChoices.slice(1),
       ];
@@ -377,7 +373,6 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
     const state = getActiveState(gs.instances[choice.instanceIds[0]], this.defs);
     if (choice.type === ActionEffectType.ADD_RESOURCES) {
       return this.addResourceFromCardChoice(
-        state.productions,
         choice,
         resolvedAction,
         pendingChoices,
