@@ -19,7 +19,7 @@ import { useIsDesktop } from '@hooks/useIsDesktop';
 import { useTutorial } from '@hooks/useTutorial';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, View } from 'react-native';
+import { Platform, ScrollView, View, type ViewStyle } from 'react-native';
 import {
   Directions,
   Gesture,
@@ -27,6 +27,10 @@ import {
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+// Web: the scrollbar space is always kept, so the board width (and its columns) never changes
+// when the scrollbar appears, which made the layout flicker between two column counts.
+const STABLE_SCROLLBAR_STYLE = { scrollbarGutter: 'stable' } as unknown as ViewStyle;
 
 type SheetName = 'draw' | 'discard';
 
@@ -193,6 +197,7 @@ export function GameBoard() {
           }}
           scrollEventThrottle={16}
           className="flex-1"
+          style={Platform.OS === 'web' ? STABLE_SCROLLBAR_STYLE : undefined}
           contentContainerClassName="grow"
         >
           <View className="flex-1" style={lockedPointer}>
