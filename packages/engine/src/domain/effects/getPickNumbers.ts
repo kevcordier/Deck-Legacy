@@ -13,8 +13,7 @@ export function getPickNumbers(
     max = picks.pickMax ?? picks.pickNumber ?? max;
   }
 
-  return {
-    pickMin: min,
-    pickMax: Math.min(max, choiceNumber ?? max),
-  };
+  const pickMax = Math.min(max, choiceNumber ?? max);
+  // Fewer choices than asked: pick as many as possible (3 steps to mark, 1 left)
+  return { pickMin: Math.min(min, pickMax), pickMax };
 }

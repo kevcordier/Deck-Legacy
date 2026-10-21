@@ -16,9 +16,39 @@ describe('getPickNumbers', () => {
     expect(picks).toEqual({ pickMin: 2, pickMax: 4 });
   });
 
+  it('asks for no more picks than there are choices', () => {
+    expect(getPickNumbers({ pickNumber: 3 }, 1)).toEqual({ pickMin: 1, pickMax: 1 });
+  });
+
   it('keeps default pickMin when only pickMax is provided', () => {
     const picks = getPickNumbers({ pickMax: 2 }, 10);
     expect(picks).toEqual({ pickMin: 1, pickMax: 2 });
+  });
+});
+
+describe('resolveActionEffect – TRACK_ADVANCE in any order', () => {
+  it('asks to mark the steps left when the count is higher (Navigation, 1 step left)', () => {
+    const trackDefs: Record<number, CardDef> = {
+      1: {
+        id: 1,
+        name: 'T',
+        states: [{ id: 1, name: 'S', track: { inOrder: false, steps: [{ id: 1 }, { id: 2 }] } }],
+      },
+    };
+    const state = makeState({ instances: { 1: makeInstance({ id: 1, trackProgress: [1] }) } });
+    const [, pending] = resolveActionEffect(
+      {
+        id: 1,
+        type: ActionEffectType.TRACK_ADVANCE,
+        cards: { scope: [TargetScope.SELF] },
+        steps: { pickNumber: 3 },
+      },
+      1,
+      state,
+      trackDefs,
+      stickerDefs,
+    );
+    expect(pending[0]).toMatchObject({ choices: [2], pickMin: 1, pickMax: 1 });
   });
 });
 
