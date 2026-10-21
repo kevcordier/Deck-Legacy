@@ -102,9 +102,11 @@ export class CardActionAggregate {
       return [...acc, ...effectiveEffects];
     }, [] as ActionEffect[]);
     this.effects = Array.from({ length: Math.max(0, this.amount) }, () => effects).flat();
+    const triggerEntry = this.gameState.triggerPile[this.triggerId ?? ''];
     this.endTurn =
       !!this.action.endsTurn ||
-      this.gameState.triggerPile[this.triggerId ?? '']?.effectDef.trigger === Trigger.END_OF_TURN;
+      !!triggerEntry?.endsTurn ||
+      triggerEntry?.effectDef.trigger === Trigger.END_OF_TURN;
     this.endRound =
       this.gameState.triggerPile[this.triggerId ?? '']?.effectDef.trigger === Trigger.END_OF_ROUND;
   }
@@ -706,15 +708,13 @@ export class CardActionAggregate {
   }
 
   private payCost(cost: ResolvedCost) {
-    this.gameState = destroyCards(
-      discardCards(
-        spendResources(this.gameState, cost.resources),
-        cost.discardedCardIds,
-        this.cardDefs,
-        this.stickerDefs,
-      ),
-      cost.destroyedCardIds,
-    );
+    const paid = spendResources(this.gameState, cost.resources);
+    // Without a card to discard, the cards just discarded (read by ON_DISCARD triggers) stay known.
+    const afterDiscard =
+      cost.discardedCardIds.length > 0
+        ? discardCards(paid, cost.discardedCardIds, this.cardDefs, this.stickerDefs)
+        : paid;
+    this.gameState = destroyCards(afterDiscard, cost.destroyedCardIds);
   }
 
   /**

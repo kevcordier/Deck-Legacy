@@ -1,6 +1,6 @@
 import { makeState } from '../fixtures';
 import { SaveFromPurgeStrategy } from '@engine/domain/cardAction/SaveFromPurgeStrategy';
-import { ActionEffectType } from '@engine/domain/enums';
+import { ActionEffectType, Trigger } from '@engine/domain/enums';
 import { describe, expect, it } from 'vitest';
 
 describe('SaveFromPurgeStrategy', () => {
@@ -111,5 +111,34 @@ describe('SaveFromPurgeStrategy', () => {
     });
 
     expect(result).toBe(gs);
+  });
+
+  it('drops the "when purged" triggers of the cards it saves', () => {
+    const onPurge = { id: 'save', trigger: Trigger.ON_PURGE, actionEffects: [] };
+    const gs = makeState({
+      purgeState: {
+        batchSize: 2,
+        permanentToPurge: 0,
+        shuffledPool: [1, 2, 3],
+        completedBatchStarts: [],
+        selectedCardIds: [1, 2, 3],
+        selectedPermanentIds: [],
+        onPurgeTriggered: true,
+        onStartDiscoverIds: [],
+      },
+      triggerPile: {
+        t2: { effectDef: onPurge, sourceInstanceId: 2 },
+        t3: { effectDef: onPurge, sourceInstanceId: 3 },
+      },
+    });
+
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.SAVE_FROM_PURGE,
+      sourceInstanceId: 1,
+      instanceIds: [2],
+    });
+
+    expect(Object.keys(result.triggerPile)).toEqual(['t3']);
   });
 });

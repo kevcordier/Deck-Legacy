@@ -40,7 +40,6 @@ export const aethanEstate: CardDef = {
         {
           id: '68-2-1',
           trigger: Trigger.ON_PURGE,
-          optional: true,
           actionEffects: [
             {
               id: 1,
@@ -76,7 +75,6 @@ export const aethanEstate: CardDef = {
         {
           id: '68-3-1',
           trigger: Trigger.ON_PURGE,
-          optional: true,
           actionEffects: [
             {
               id: 1,
@@ -113,7 +111,6 @@ export const aethanEstate: CardDef = {
         {
           id: '68-4-1',
           trigger: Trigger.ON_PURGE,
-          optional: true,
           actionEffects: [
             {
               id: 1,

@@ -264,6 +264,8 @@ export function CardRow({ cardIds, zoom = 1 }: CardRowProps) {
   const blockedIds = new Set(Object.values(blockingMap).flat());
   const visibleCardIds = cardIds.filter(id => !blockedIds.has(id));
   const orderedCardIds = mergeOrder(order, visibleCardIds);
+  // Remember the shown order, so the next cards added to the row are recognized and come first.
+  if (orderedCardIds.join(',') !== order.join(',')) setOrder(orderedCardIds);
 
   const minItemWidth = isDesktop ? MIN_CARD_WIDTH_BY_ZOOM[zoom] : MIN_MINI_CARD_WIDTH;
   const gap = isDesktop ? 12 : 8;

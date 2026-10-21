@@ -275,7 +275,8 @@ export class GameAggregate {
 
   public canSelectPermanentForPurge(): boolean {
     const purgeState = this.gameState.purgeState;
-    if (!purgeState) return false;
+    // Once the "when purged" triggers fired, the selection is over: a saved permanent stays saved.
+    if (!purgeState || purgeState.onPurgeTriggered) return false;
     return purgeState.selectedPermanentIds.length < purgeState.permanentToPurge;
   }
 
@@ -978,7 +979,7 @@ export class GameAggregate {
       triggerId,
       sourceInstanceId: entry.sourceInstanceId,
       actionId: entry.effectDef.id,
-      endTurn: entry.effectDef.trigger === Trigger.END_OF_TURN,
+      endTurn: !!entry.endsTurn || entry.effectDef.trigger === Trigger.END_OF_TURN,
       endRound: entry.effectDef.trigger === Trigger.END_OF_ROUND,
     };
     this.apply(event);

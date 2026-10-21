@@ -1,5 +1,6 @@
 import { getDefeatAction } from '../cardAction/getDefeatAction';
 import { canAffordCost } from '../cards/canAffordCost';
+import { getCardProductionChoices } from '../cards/getCardProductionChoices';
 import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
 import { cardSelector } from '../cards/selection/cardSelector';
@@ -331,8 +332,13 @@ function resolveResourceTarget(
     } else if (resources.cards.autoPick) {
       return gainEveryProduction(resolverAction, pendingChoices, ctx, choices);
     } else if (choices.length === 1) {
-      const state = getActiveState(gameState.instances[choices[0]], defs);
-      if (state.productions && state.productions.length > 1) {
+      const productions = getCardProductionChoices(
+        gameState.instances[choices[0]],
+        gameState,
+        defs,
+        stickerDefs,
+      );
+      if (productions.length > 1) {
         pendingChoices.push({
           id: `${instanceId}-${effectId}`,
           actionId: parentActionId,
@@ -341,15 +347,7 @@ function resolveResourceTarget(
           kind: actionType,
           type: PendingChoiceType.CHOOSE_RESOURCE,
           sourceInstanceId: instanceId,
-          choices: state.productions.map(p =>
-            getEffectiveProductions(
-              p,
-              gameState,
-              defs,
-              gameState.instances[choices[0]],
-              stickerDefs,
-            ),
-          ),
+          choices: productions,
           resourceScopes: ctx.resourceScopes,
           ...picks,
           isMandatory,
@@ -398,9 +396,7 @@ function gainEveryProduction(
   let resources: Resources = {};
   instanceIds.forEach(id => {
     const instance = gameState.instances[id];
-    const productions = (getActiveState(instance, defs).productions ?? []).map(p =>
-      getEffectiveProductions(p, gameState, defs, instance, stickerDefs),
-    );
+    const productions = getCardProductionChoices(instance, gameState, defs, stickerDefs);
     if (productions.length === 1) resources = mergeResources(resources, productions[0]);
     if (productions.length > 1) {
       pendingChoices.push({

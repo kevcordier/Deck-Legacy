@@ -204,6 +204,35 @@ describe('GameAggregate purge branch coverage', () => {
     );
   });
 
+  it('keeps a permanent saved once the purge triggers fired', () => {
+    const defs: Record<number, CardDef> = {
+      1: { id: 1, name: 'Permanent', states: [{ id: 1, name: 'S', tags: [CardTag.PERMANENT] }] },
+    };
+
+    const state = makeState({
+      phase: Phase.PURGE,
+      permanents: [1],
+      instances: { 1: makeInstance({ id: 1, cardId: 1, stateId: 1 }) },
+      purgeState: {
+        batchSize: 1,
+        permanentToPurge: 1,
+        shuffledPool: [],
+        completedBatchStarts: [],
+        selectedCardIds: [],
+        // The permanent was selected, then saved by a "when purged" trigger.
+        selectedPermanentIds: [],
+        onPurgeTriggered: true,
+        onStartDiscoverIds: [],
+      },
+    });
+
+    const agg = new GameAggregate(crypto.randomUUID(), state, defs, {}, []);
+
+    expect(agg.canSelectPermanentForPurge()).toBe(false);
+    expect(agg.isPurgeSelectionComplete()).toBe(true);
+    expect(agg.finalizePurge().purgedCards).toEqual([]);
+  });
+
   it('returns early in finalizePurge when selection is incomplete', () => {
     const state = makeState({
       phase: Phase.PURGE,

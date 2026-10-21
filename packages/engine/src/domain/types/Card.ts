@@ -94,6 +94,7 @@ export type ValuePerElement = {
   accumulation?: boolean;
   ownProduction?: boolean; // total production of the card itself
   deficitTarget?: number; // count = max(0, deficitTarget - actual_count)
+  includeSelf?: boolean; // "including this": the card counts too, even once discarded by its action
 };
 
 export type RemovedResourceScope = 'production' | 'actionCost' | 'upgradeCost';

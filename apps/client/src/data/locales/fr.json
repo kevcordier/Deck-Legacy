@@ -151,7 +151,11 @@
       "PLAY_CARD_other": "Choisissez {{count}} cartes à jouer",
       "PLACE_CARD_IN_PILE": "Choisissez une carte à placer dans la pile",
       "REMOVE_RESOURCE_ON_CARD": "Choisissez une carte pour retirer une ressource",
-      "USE_CARD_ACTION": "Choisissez une carte pour utiliser son effet"
+      "USE_CARD_ACTION": "Choisissez une carte pour utiliser son effet",
+      "ADD_TO_PURGE": "Choisissez une carte à ajouter à la purge",
+      "ADD_TO_PURGE_other": "Choisissez {{count}} cartes à ajouter à la purge",
+      "DEFEAT_CARD": "Choisissez un ennemi à vaincre",
+      "DEFEAT_CARD_other": "Choisissez {{count}} ennemis à vaincre"
     },
     "chooseActionEffect": "Choisissez un effet à résoudre",
     "chooseStep": "Choisir une étape",

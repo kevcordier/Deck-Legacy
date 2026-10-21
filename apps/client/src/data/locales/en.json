@@ -151,7 +151,11 @@
       "PLAY_CARD_other": "Choose {{count}} cards to play",
       "PLACE_CARD_IN_PILE": "Choose a card to place in the pile",
       "REMOVE_RESOURCE_ON_CARD": "Choose a card to remove a resource from",
-      "USE_CARD_ACTION": "Choose a card to use its effect"
+      "USE_CARD_ACTION": "Choose a card to use its effect",
+      "ADD_TO_PURGE": "Choose a card to add to the purge",
+      "ADD_TO_PURGE_other": "Choose {{count}} cards to add to the purge",
+      "DEFEAT_CARD": "Choose an enemy to defeat",
+      "DEFEAT_CARD_other": "Choose {{count}} enemies to defeat"
     },
     "chooseActionEffect": "Choose an effect to resolve",
     "chooseStep": "Choose a track step",

@@ -7,6 +7,8 @@ import type { StickerStock } from './Sticker';
 export type TriggerEntry = {
   effectDef: CardAction;
   sourceInstanceId: number;
+  /** Queued by an upgrade the player made: resolving or skipping it ends the deferred turn. */
+  endsTurn?: boolean;
 };
 
 export type ExpansionDeckEntry = {
