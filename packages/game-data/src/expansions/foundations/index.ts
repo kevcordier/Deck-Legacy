@@ -96,6 +96,23 @@ import { goldenPillar } from './cards/289';
 import { pillarHall } from './cards/293';
 import { ring } from './cards/294';
 import { necklace } from './cards/295';
+import { noblesCover } from './cards/296';
+import { corruption } from './cards/297';
+import { nobleHouses } from './cards/298';
+import { valiantPrince } from './cards/299';
+import { idealServant } from './cards/300';
+import { craftsman } from './cards/301';
+import { steward } from './cards/302';
+import { chaliceOfMalice } from './cards/303';
+import { lordEdric } from './cards/304';
+import { countessAriadne } from './cards/305';
+import { earlAlistair } from './cards/306';
+import { viscountEemon } from './cards/307';
+import { baronArion } from './cards/308';
+import { baronRoderick } from './cards/309';
+import { ladyElara } from './cards/310';
+import { wealthContest } from './cards/311';
+import { growHouses } from './cards/312';
 import deck from './deck.json';
 import en from './locales/cards.en.json';
 import fr from './locales/cards.fr.json';
@@ -201,5 +218,22 @@ export const foundations: ExpansionPack = {
     pillarHall,
     ring,
     necklace,
+    noblesCover,
+    corruption,
+    nobleHouses,
+    valiantPrince,
+    idealServant,
+    craftsman,
+    steward,
+    chaliceOfMalice,
+    lordEdric,
+    countessAriadne,
+    earlAlistair,
+    viscountEemon,
+    baronArion,
+    baronRoderick,
+    ladyElara,
+    wealthContest,
+    growHouses,
   ],
 };

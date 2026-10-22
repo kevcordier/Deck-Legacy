@@ -71,6 +71,8 @@ export type PurgeState = {
   focus?: PurgeFocus;
   /** First batch: `picks` cards to choose among `ids` (the most glory, or cards with `tags`). */
   firstBatch?: PurgeFirstBatch;
+  /** Saved from the purge, but their glory still counts in it (Countess, Lady Elara). */
+  keptGloryIds?: number[];
 };
 
 export type PurgeFirstBatch = { ids: number[]; picks: number; tags?: CardTag[] };

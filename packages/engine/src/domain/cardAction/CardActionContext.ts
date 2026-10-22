@@ -11,6 +11,7 @@ import { BlockCardStrategy } from './BlockCardStrategy';
 import type { CardActionStrategy } from './CardActionStrategy';
 import { ChoseStateStrategy } from './ChoseStateStrategy';
 import { CrossOutActionStrategy } from './CrossOutActionStrategy';
+import { CrossOutGloryStrategy } from './CrossOutGloryStrategy';
 import { DefeatCardStrategy } from './DefeatCardStrategy';
 import { DestroyCardStrategy } from './DestroyCardStrategy';
 import { DiscardCardStrategy } from './DiscardCardStrategy';
@@ -38,7 +39,7 @@ export class CardActionContext {
   constructor(cardDefs: Record<number, CardDef>, stickerDefs: Record<number, Sticker>) {
     this.strategies = {
       [ActionEffectType.ADD_RESOURCES]: new AddResourceStrategy(cardDefs, stickerDefs),
-      [ActionEffectType.REMOVE_RESOURCE_ON_CARD]: new RemoveResourceOnCardStrategy(),
+      [ActionEffectType.REMOVE_RESOURCE_ON_CARD]: new RemoveResourceOnCardStrategy(stickerDefs),
       [ActionEffectType.DISCARD_CARD]: new DiscardCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs, stickerDefs),
       [ActionEffectType.ADVANCE_STORY]: new AdvanceStoryStrategy(cardDefs, stickerDefs),
@@ -70,6 +71,7 @@ export class CardActionContext {
       [ActionEffectType.END_TURN]: new UseCardActionStrategy(),
       [ActionEffectType.SEQUENCE]: new UseCardActionStrategy(),
       [ActionEffectType.EQUIP]: new EquipStrategy(),
+      [ActionEffectType.CROSS_OUT_GLORY]: new CrossOutGloryStrategy(),
     };
   }
 

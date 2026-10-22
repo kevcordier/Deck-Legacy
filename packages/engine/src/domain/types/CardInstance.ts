@@ -24,6 +24,8 @@ export type CardInstance = {
   removedResourcesByState?: Record<number, RemovedResourcesByScope>;
   /** Empty glory values */
   glories: number[];
+  /** States whose glory is crossed out (Lady Elara): they are worth 0. */
+  crossedOutGloryStates?: number[];
   /** Names written with the glory values (Famous Court: each name once). */
   writtenNames?: string[];
   /** Expansion that brought the card into the game; absent for the base game and its campaigns. */

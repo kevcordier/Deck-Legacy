@@ -270,3 +270,11 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - `GloryDef.gridBonus`: once 9 medals are written (in order), the bonus for each row, column and diagonal of 3 different values.
 - `PassiveType.UPGRADED_ON_TOP_OF_DECK` (Architect): an upgraded card it selects goes on top of the deck instead of the discard pile (`leaveUpgradedCard`).
 - A ✓ action discards its card before its effects: a card's own passive is gone while its ✓ effects resolve.
+
+## Mechanics added for Foundations: Nobles
+
+- Purge hooks: `SAVE_FROM_PURGE` with `keepGlory` keeps the card but counts its glory in the purge (`PurgeState.keptGloryIds`, Countess, Lady Elara); a purged `PURGE_MIN_GLORY` card makes each purged card worth at least its amount (Frostpeak, `getPurgeGlory`); `ADJUST_PURGE` passives of the permanents enlarge the purge batches when a campaign is selected (Starfall Castle).
+- `CROSS_OUT_GLORY`: the chosen cards' current state is worth 0 (`CardInstance.crossedOutGloryStates`, Lady Elara).
+- `REMOVE_RESOURCE_ON_CARD` with `stickerHere`: the source gets the sticker of the crossed out resource, from the stock (Lord Edric). `StickerSelector.producedByLastSelected` offers the stickers of what the last selected card produces (House of Stonehaven).
+- `ValuePerElement.markedSteps` (boxes marked on the current state) and `plus` (added to the count, "its glory +7").
+- `ActionEffect.keepSelection`: its target does not become `LAST_SELECTED`, so the next effects still act on the card chosen before (an effect on the card itself between them).

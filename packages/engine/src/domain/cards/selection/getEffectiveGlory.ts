@@ -9,6 +9,8 @@ export function getEffectiveGlory(
   instance: CardInstance,
   stickerDefs: Record<number, Sticker> = {},
 ): number {
+  // Crossed out (Lady Elara): this state is worth nothing
+  if (instance.crossedOutGloryStates?.includes(instance.stateId)) return 0;
   const conditionPasses =
     !activeState.glory?.condition ||
     evaluateCondition(activeState.glory.condition, gameState, instance.id, defs, stickerDefs);

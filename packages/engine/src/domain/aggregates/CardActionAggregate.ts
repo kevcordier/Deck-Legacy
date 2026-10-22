@@ -230,6 +230,7 @@ export class CardActionAggregate {
   }
 
   private updateLastSelectedIds(resolvedAction: ResolvedActionEffect) {
+    if (resolvedAction.keepSelection) return;
     if (resolvedAction.instanceIds && resolvedAction.instanceIds.length > 0) {
       this.lastSelectedIds = resolvedAction.instanceIds;
     }

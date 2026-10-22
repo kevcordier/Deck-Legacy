@@ -245,3 +245,10 @@ Added to the stock when the kingdom gets the foundation (or plays the campaign).
 - Jeweler: every iron gain (production and effects) may become goods while the Jeweler is in play.
 - Statues: medals are written in order (left to right, top to bottom), spending 2–20 stone (value 1–10).
 - Ether Pearl: the gain applies to the ✓ / ⌛ effects of the holder and of the holder's other equipment.
+
+## Answers (user, 2026-10-21) — Nobles
+
+- Valiant Prince (side B): for each marked box, gain 1 gold, wood or stone of your choice.
+- Windermere Estate: each land played is discarded; Windermere stays in play.
+- Liberation: destroys the cards with 6 or more production in the whole kingdom.
+- Lady Elara: only the fame of the person's current state is crossed out (an upgrade gets its fame).

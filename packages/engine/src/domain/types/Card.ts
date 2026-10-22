@@ -108,6 +108,8 @@ export type ValuePerElement = {
   per?: number; // "for every N": the count is divided by N (rounded down)
   glory?: boolean; // with `cards`: the total glory of the selected cards (Famous Court)
   paid?: boolean; // the amount paid for the action's 'any' resource cost (Statues)
+  markedSteps?: boolean; // the boxes marked on the card's current state (Valiant Prince)
+  plus?: number; // added to the count ("its glory +7")
 };
 
 export type RemovedResourceScope = 'production' | 'actionCost' | 'upgradeCost';
@@ -140,6 +142,9 @@ export type ActionEffect = {
   repeat?: number | 'accumulation' | 'valuePerElement';
   condition?: Condition; // checked when the effect resolves: skipped when it does not hold
   writeNames?: boolean; // ADD_GLORY: also writes the names of the `valuePerElement.cards` (Famous Court)
+  keepGlory?: boolean; // SAVE_FROM_PURGE: the saved card's glory still counts in the purge (Countess)
+  stickerHere?: boolean; // REMOVE_RESOURCE_ON_CARD: the source gets the crossed out resource's sticker
+  keepSelection?: boolean; // its target does not become LAST_SELECTED (the next effects keep the card)
   sourceInstanceId?: number; // card the effect resolves for, when not the acting card (USE_CARD_ACTION)
   usedAction?: { instanceId: number; actionId: string }; // USE_CARD_ACTION: the chosen action
   unlock?: Unlock; // UNLOCK: what a foundation brings
@@ -215,6 +220,7 @@ export type StickerSelector = {
   pickNumber?: number;
   pickMin?: number;
   pickMax?: number;
+  producedByLastSelected?: boolean; // the stickers of the resources the last selected card produces
 };
 
 export type StateSelector = {
@@ -243,4 +249,7 @@ export type ResolvedActionEffect = {
   unresolvable?: boolean;
   /** ADD_GLORY with `writeNames`: the names written with the value. */
   names?: string[];
+  keepGlory?: boolean;
+  stickerHere?: boolean;
+  keepSelection?: boolean;
 };

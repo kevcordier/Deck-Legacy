@@ -809,6 +809,28 @@ function buildResolveContext(params: {
   };
 }
 
+/** The flags an effect passes on to its strategy and to the action (keepGlory…). */
+function resolvedFlags(action: ActionEffect): Partial<ResolvedActionEffect> {
+  const { keepGlory, stickerHere, keepSelection } = action;
+  return Object.fromEntries(
+    Object.entries({ keepGlory, stickerHere, keepSelection }).filter(([, value]) => value),
+  );
+}
+
+/** The resource stickers of what the last selected card produces (House of Stonehaven). */
+function getStickersOfLastSelected(ctx: ResolveContext): number[] {
+  const instance = ctx.gameState.instances[ctx.lastSelectedIds?.[0] ?? -1];
+  if (!instance) return [];
+  const produced = new Set(
+    getCardProductionChoices(instance, ctx.gameState, ctx.defs, ctx.stickerDefs).flatMap(choice =>
+      Object.keys(choice).filter(type => (choice[type as keyof Resources] ?? 0) > 0),
+    ),
+  );
+  return Object.values(ctx.stickerDefs)
+    .filter(sticker => sticker.production && produced.has(sticker.production))
+    .map(sticker => sticker.id);
+}
+
 function resolveStickerTarget(
   resolverAction: ResolvedActionEffect,
   pendingChoices: PendingChoice[],
@@ -816,7 +838,10 @@ function resolveStickerTarget(
   stickers: StickerSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
   const { effectId, parentActionId, actionType, instanceId, isMandatory, gameState } = ctx;
-  const availableIds = (stickers.ids ?? []).filter(id => (gameState.stickerStock[id] ?? 0) > 0);
+  const offeredIds = stickers.producedByLastSelected
+    ? getStickersOfLastSelected(ctx)
+    : (stickers.ids ?? []);
+  const availableIds = offeredIds.filter(id => (gameState.stickerStock[id] ?? 0) > 0);
   const picks = getPickNumbers(stickers, availableIds.length);
   if (stickers.pickMin && availableIds.length < stickers.pickMin) {
     resolverAction.unresolvable = true;
@@ -1057,6 +1082,7 @@ export function resolveActionEffect(
     id: `${instanceId}-${action.id}`,
     type: action.type,
     sourceInstanceId: instanceId,
+    ...resolvedFlags(action),
   };
   let pendingChoices: PendingChoice[] = [];
   const enrichedCards = getEnrichedCardSelector(action, lastSelectedIds);

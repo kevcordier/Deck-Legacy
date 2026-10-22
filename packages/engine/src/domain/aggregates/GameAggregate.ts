@@ -8,6 +8,7 @@ import { cardSelector } from '../cards/selection/cardSelector';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getEffectiveGlory } from '../cards/selection/getEffectiveGlory';
 import { getHeldByPermanents } from '../cards/selection/getHeldByPermanents';
+import { getPurgeGlory } from '../cards/selection/getPurgeGlory';
 import { isPermanent } from '../cards/selection/isPermanent';
 import {
   GameEventType,
@@ -404,7 +405,7 @@ export class GameAggregate {
       deckEntries: [...expansion.campaign, ...(expansion.discoverable ?? [])],
       discoverableIds: expansion.discoverable?.map(entry => entry.id) ?? [],
       expansion: expansion.expansion,
-      purgeBatchSize: expansion.purge.purge,
+      purgeBatchSize: expansion.purge.purge + this.getPurgeAdjustment(),
       purgePermanentCount: expansion.purge.permanent,
       purgePool,
       parameterOverrides: expansion.parameters,
@@ -510,16 +511,13 @@ export class GameAggregate {
     }
 
     const purgedIds = this.getSelectedPurgeIds();
-    const glory = purgedIds.reduce((total, id) => {
-      const instance = this.gameState.instances[id];
-      if (!instance) return total;
-      const state = getActiveState(instance, this.cardDefs);
-      return (
-        total +
-        (state.glory?.whenPurged ??
-          getEffectiveGlory(state, this.gameState, this.cardDefs, instance, this.stickerDefs))
-      );
-    }, 0);
+    const glory = getPurgeGlory(
+      purgedIds,
+      purgeState.keptGloryIds ?? [],
+      this.gameState,
+      this.cardDefs,
+      this.stickerDefs,
+    );
 
     // Setup actions of the campaign, for the first card discovered on start (EDR-059).
     const [setupSource] = purgeState.onStartDiscoverIds;
@@ -932,6 +930,14 @@ export class GameAggregate {
           ).includes(cardInstanceId),
       ),
     );
+  }
+
+  /** ADJUST_PURGE passives of the permanents (Starfall Castle: a purge 8 becomes a purge 9). */
+  private getPurgeAdjustment(): number {
+    return this.gameState.permanents
+      .flatMap(id => getActiveState(this.gameState.instances[id], this.cardDefs).passives ?? [])
+      .filter(passive => passive.type === PassiveType.ADJUST_PURGE)
+      .reduce((total, passive) => total + (passive.amount ?? 0), 0);
   }
 
   public chooseState(cardInstanceId: number, stateId: number): GameState {

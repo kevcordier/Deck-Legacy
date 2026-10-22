@@ -129,6 +129,8 @@ export enum ActionEffectType {
   SEQUENCE = 'SEQUENCE',
   /** Places this equipment under the chosen card in play (`cards`). */
   EQUIP = 'EQUIP',
+  /** Crosses out the glory of the chosen cards' current state (Lady Elara). */
+  CROSS_OUT_GLORY = 'CROSS_OUT_GLORY',
 }
 
 export enum PassiveType {
@@ -163,6 +165,10 @@ export enum PassiveType {
   REPLACE_GAIN = 'REPLACE_GAIN',
   /** The selected cards, once upgraded, go on top of the deck instead of the discard (Architect). */
   UPGRADED_ON_TOP_OF_DECK = 'UPGRADED_ON_TOP_OF_DECK',
+  /** In the permanents when a campaign starts: its purge batches are `amount` cards larger. */
+  ADJUST_PURGE = 'ADJUST_PURGE',
+  /** Purged with this card, every purged card is worth at least `amount` glory (Frostpeak). */
+  PURGE_MIN_GLORY = 'PURGE_MIN_GLORY',
 }
 
 export enum Options {
