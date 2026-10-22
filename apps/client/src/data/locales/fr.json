@@ -304,6 +304,28 @@
         "description": "Des marchands venus de terres lointaines viennent commercer avec votre royaume.",
         "campaign": "Achetez les marchandises qu'ils proposent avant leur départ.",
         "rules": "Ne découvrez pas de cartes au début de chaque manche : pendant 4 manches, les deux cartes permanentes Marchands vous permettent d'acheter les cartes qu'elles proposent. Ajoutez 5 autocollants « +1 Or », 10 « +1 Marchandise », 1 « Reste en jeu », 1 « Gloire vide », 1 « Commence en jeu » et 1 « Placez ceci sous votre deck » à votre réserve."
+      },
+      "Foundations": {
+        "title": "Fondations",
+        "description": "Trois campagnes et six fondations qui façonnent votre royaume."
+      },
+      "The Black Plague": {
+        "title": "La Peste noire",
+        "description": "Une peste mortelle se répand dans votre royaume.",
+        "campaign": "Soignez les malades et mettez les infectés en quarantaine avant que la peste n'emporte tout le monde.",
+        "rules": "Ne découvrez pas de cartes au début de chaque manche : la carte permanente de la campagne avance sur sa piste de manches. À chaque case verte, découvrez la couverture d'une fondation pas encore jouée dans ce royaume. Ajoutez 35 autocollants « Infecté » et 35 « Marque d'infection » à votre réserve."
+      },
+      "Invasion": {
+        "title": "Invasion",
+        "description": "Une armée ennemie marche sur votre royaume.",
+        "campaign": "Vainquez ses troupes, ses archers et ses commandants avant qu'ils n'incendient votre cité.",
+        "rules": "Ne découvrez pas de cartes au début de chaque manche : la carte permanente de la campagne avance sur sa piste de manches. À chaque case verte, découvrez la couverture d'une fondation pas encore jouée dans ce royaume. Purge : purgez d'abord 2 de vos 5 cartes les plus glorieuses."
+      },
+      "Nature's Revenge": {
+        "title": "La Revanche de la nature",
+        "description": "La nature se retourne contre votre royaume.",
+        "campaign": "Survivez aux sécheresses, aux séismes et aux tempêtes, et levez la malédiction de vos terres.",
+        "rules": "Ne découvrez pas de cartes au début de chaque manche : la carte permanente de la campagne avance sur sa piste de manches. À chaque case verte, découvrez la couverture d'une fondation pas encore jouée dans ce royaume. Purge : purgez d'abord 2 événements alliés."
       }
     },
     "details": {

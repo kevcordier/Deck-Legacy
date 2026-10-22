@@ -304,6 +304,28 @@
         "description": "Merchants from distant lands come to trade with your kingdom.",
         "campaign": "Buy the goods they offer before they leave.",
         "rules": "Do not discover cards at the start of each round: for 4 rounds, the two permanent Merchants cards let you buy the cards they offer. Add 5 \"+1 Gold\", 10 \"+1 Goods\", 1 \"Stays in Play\", 1 \"Empty Glory\", 1 \"Starts in Play\" and 1 \"Place this at the bottom of your deck\" stickers to your stock."
+      },
+      "Foundations": {
+        "title": "Foundations",
+        "description": "Three campaigns and six foundations that shape your kingdom."
+      },
+      "The Black Plague": {
+        "title": "The Black Plague",
+        "description": "A deadly plague spreads through your kingdom.",
+        "campaign": "Treat the sick and quarantine the infected before the plague takes everyone.",
+        "rules": "Do not discover cards at the start of each round: the permanent campaign card advances its round track instead. At each green box, discover the cover of a foundation not yet played in this kingdom. Add 35 \"Infected\" and 35 \"Infection mark\" stickers to your stock."
+      },
+      "Invasion": {
+        "title": "Invasion",
+        "description": "An enemy army marches on your kingdom.",
+        "campaign": "Defeat its troops, archers and commanders before they burn your city.",
+        "rules": "Do not discover cards at the start of each round: the permanent campaign card advances its round track instead. At each green box, discover the cover of a foundation not yet played in this kingdom. Purge: first purge 2 of your 5 most glorious cards."
+      },
+      "Nature's Revenge": {
+        "title": "Nature's Revenge",
+        "description": "Nature strikes back at your kingdom.",
+        "campaign": "Survive droughts, earthquakes and storms, and lift the curse on your lands.",
+        "rules": "Do not discover cards at the start of each round: the permanent campaign card advances its round track instead. At each green box, discover the cover of a foundation not yet played in this kingdom. Purge: first purge 2 friendly events."
       }
     },
     "details": {
