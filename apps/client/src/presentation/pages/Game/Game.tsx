@@ -2,7 +2,7 @@ import { ExpansionChoice } from '@components/ExpansionChoice/ExpansionChoice';
 import { GameBoard } from '@components/GameBoard/GameBoard';
 import { GameHeader } from '@components/GameHeader/GameHeader';
 import { OptionsModal } from '@components/OptionsModal/OptionsModal';
-import { PurgeModal } from '@components/PurgeModal/PurgeModal';
+import { PurgeScreen } from '@components/PurgeScreen/PurgeScreen';
 import { ResourceBar } from '@components/ResourceBar/ResourceBar';
 import { RulesModal } from '@components/RulesModal/RulesModal';
 import { TutorialOverlay } from '@components/Tutorial/TutorialOverlay';
@@ -101,7 +101,7 @@ export function Game() {
           )}
 
           {gameState.phase === Phase.PURGE && (
-            <PurgeModal
+            <PurgeScreen
               defs={defs}
               instances={gameState.instances}
               batchSize={gameState.purgeState?.batchSize ?? 0}
