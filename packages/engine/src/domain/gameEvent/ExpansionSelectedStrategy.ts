@@ -89,6 +89,7 @@ export class ExpansionSelectedStrategy implements GameEventStrategy {
         selectedPermanentIds: [],
         onPurgeTriggered: false,
         onStartDiscoverIds: e.onStartDiscoverIds,
+        ...(e.onStartActions && { onStartActions: e.onStartActions }),
         focus: e.purgeFocus,
       },
       isLastRound: false,

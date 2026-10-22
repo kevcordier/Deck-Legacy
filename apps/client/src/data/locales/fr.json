@@ -91,7 +91,9 @@
     "stone": "Pierre",
     "iron": "Fer",
     "weapon": "Épée",
-    "goods": "Marchandise"
+    "goods": "Marchandise",
+    "science": "Science",
+    "herb": "Herbes"
   },
   "card": {
     "blocked": "Bloquée",

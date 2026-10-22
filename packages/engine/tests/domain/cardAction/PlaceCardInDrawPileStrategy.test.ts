@@ -142,6 +142,35 @@ describe('PlaceCardInPileStrategy', () => {
     expect(result.discoveryPile[result.discoveryPile.length - 1]).toBe(5);
   });
 
+  it('puts an undiscovered card back in id order in the campaign pile', () => {
+    const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
+    const gs = makeState({ board: [5], discoveryPile: [3, 7, 9], instances: { 5: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_PILE,
+      sourceInstanceId: 5,
+      instanceIds: [5],
+      deck: 'discovery',
+      position: 'index',
+    });
+    expect(result.discoveryPile).toEqual([3, 5, 7, 9]);
+    expect(result.board).not.toContain(5);
+  });
+
+  it('puts an undiscovered card last when no card has a higher id', () => {
+    const inst = makeInstance({ id: 12, cardId: 1, stateId: 1 });
+    const gs = makeState({ discoveryPile: [3, 7], instances: { 12: inst } });
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.PLACE_CARD_IN_PILE,
+      sourceInstanceId: 12,
+      instanceIds: [12],
+      deck: 'discovery',
+      position: 'index',
+    });
+    expect(result.discoveryPile).toEqual([3, 7, 12]);
+  });
+
   it('clears boardEffects for placed card', () => {
     const inst = makeInstance({ id: 5, cardId: 1, stateId: 1 });
     const gs = makeState({

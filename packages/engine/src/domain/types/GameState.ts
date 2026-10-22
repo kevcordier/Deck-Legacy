@@ -39,6 +39,11 @@ export type ExpansionConfig = {
     discover?: {
       ids: number[];
     };
+    /**
+     * Setup actions of the campaign (Foundations: choose a foundation), resolved for the first card
+     * of `discover.ids` before the first round starts (EDR-059).
+     */
+    actions?: CardAction[];
   };
 };
 
@@ -57,6 +62,7 @@ export type PurgeState = {
   selectedPermanentIds: number[];
   onPurgeTriggered: boolean;
   onStartDiscoverIds: number[];
+  onStartActions?: CardAction[];
   focus?: PurgeFocus;
 };
 
@@ -88,6 +94,8 @@ export type GameState = {
   isLastRound: boolean;
   phase: Phase;
   onGoingParchment?: number;
+  /** Phase to go back to once the ongoing parchment (discovered by an effect) is resolved. */
+  parchmentResumePhase?: Phase;
   parameterOverrides: Partial<GameParameters>;
   campaignScores: Record<string, number>;
   activeExpansion?: string;
@@ -95,6 +103,10 @@ export type GameState = {
   purgedCards: number[];
   purgedGlory: number[];
   purgeState?: PurgeState;
+  /** Resources offered beyond the six base ones once a foundation unlocks them (EDR-059). */
+  unlockedResources?: ResourceType[];
+  /** Actions with a `perTurn` limit used this turn (`instanceId|actionId`), cleared each turn. */
+  turnUsedActions?: string[];
   /** Resource units the next gains of this turn lose (Too Much Mead). */
   resourcesToLose?: number;
 };

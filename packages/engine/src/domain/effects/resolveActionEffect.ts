@@ -19,6 +19,7 @@ import {
 } from '../enums';
 import { CardChoiceStrategy } from '../playerChoice/CardChoiceStrategy';
 import { fixResources } from '../resources/fixResources';
+import { getOfferedResources } from '../resources/getOfferedResources';
 import { mergeResources } from '../resources/mergeResources';
 import { stateSelector } from '../stateSelector';
 import type {
@@ -293,7 +294,10 @@ function resolveResourceTarget(
   } = ctx;
 
   if (resources.choice && resources.choice.length > 0) {
-    const expandedChoices = expandResourceChoiceOptions(resources.choice);
+    const expandedChoices = expandResourceChoiceOptions(
+      resources.choice,
+      getOfferedResources(gameState),
+    );
     const picks = getPickNumbers(resources, expandedChoices.length);
 
     if (expandedChoices.length <= 1) {
@@ -529,7 +533,7 @@ function getAllowedResourceKeys(resources: ResourceSelector | undefined): Set<st
   if (!resources) return new Set();
 
   if (resources.choice?.length) {
-    const options = expandResourceChoiceOptions(resources.choice);
+    const options = expandResourceChoiceOptions(resources.choice, Object.values(ResourceType));
     const keys = options.flatMap(option =>
       Object.entries(option)
         .filter(([, value]) => (value ?? 0) > 0)
@@ -800,6 +804,7 @@ function extractResources(raw: NonNullable<ActionEffect['resources']>): Resource
 
 function expandResourceChoiceOptions(
   choices: NonNullable<NonNullable<ActionEffect['resources']>['choice']>,
+  offered: ResourceType[],
 ): Resources[] {
   return choices.flatMap(choice => {
     const { any, ...fixedResources } = choice;
@@ -810,7 +815,7 @@ function expandResourceChoiceOptions(
       return [base];
     }
 
-    return Object.values(ResourceType).map(resourceType => ({
+    return offered.map(resourceType => ({
       ...base,
       [resourceType]: (base[resourceType] ?? 0) + anyAmount,
     }));
@@ -821,6 +826,7 @@ function applyActionMetadata(resolverAction: ResolvedActionEffect, action: Actio
   if (action.payingCost !== undefined) resolverAction.payingCost = action.payingCost;
   if (action.value !== undefined) resolverAction.value = action.value;
   if (action.position !== undefined) resolverAction.position = action.position;
+  if (action.unlock) resolverAction.unlock = action.unlock;
   if (action.deck) {
     resolverAction.deck = action.deck;
   }

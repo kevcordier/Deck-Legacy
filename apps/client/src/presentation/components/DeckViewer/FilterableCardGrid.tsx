@@ -8,7 +8,8 @@ import { Text } from '@components/ui/Text/Text';
 import { getProductionChoicesForAction } from '@deck-legacy/engine/domain/cards/getProductionChoicesForAction';
 import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
 import { getEffectiveGlory } from '@deck-legacy/engine/domain/cards/selection/getEffectiveGlory';
-import { type CardTag, PassiveType, ResourceType } from '@deck-legacy/engine/domain/enums';
+import { type CardTag, PassiveType, type ResourceType } from '@deck-legacy/engine/domain/enums';
+import { getOfferedResources } from '@deck-legacy/engine/domain/resources/getOfferedResources';
 import type { CardInstance } from '@deck-legacy/engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import { tCardTag } from '@i18n/card/tCardTag';
@@ -149,7 +150,7 @@ export function FilterableCardGrid({
     }));
   const resourceOptions = [
     { label: t('cardList.allResources'), value: '' as const },
-    ...Object.values(ResourceType).map(value => ({ label: t(`resources.${value}`), value })),
+    ...getOfferedResources(gameState).map(value => ({ label: t(`resources.${value}`), value })),
   ];
   const featureOptions = [
     { label: t('cardList.feature.all'), value: '' as const },

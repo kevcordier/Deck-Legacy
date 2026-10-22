@@ -91,7 +91,9 @@
     "stone": "Stone",
     "iron": "Iron",
     "weapon": "Weapon",
-    "goods": "Goods"
+    "goods": "Goods",
+    "science": "Science",
+    "herb": "Herbs"
   },
   "card": {
     "blocked": "Blocked",

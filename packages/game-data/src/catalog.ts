@@ -1,6 +1,6 @@
 import { cardsData } from './cards';
 import deckData from './deck.json';
-import { expansionPacks } from './expansions';
+import { expansionPacks, packCampaigns } from './expansions';
 import stickerStockData from './stickerStock.json';
 import { stickerData } from './stickers';
 import type {
@@ -47,12 +47,7 @@ export function loadGameCatalog(): GameCatalog {
     discoverable: deck.discoverable,
     expansions: {
       ...deck.campaigns,
-      ...Object.fromEntries(
-        expansionPacks.map(({ deck: { name, ...config } }) => [
-          name,
-          { ...config, expansion: name },
-        ]),
-      ),
+      ...Object.fromEntries(expansionPacks.flatMap(packCampaigns)),
     },
     stickerStock: stickerStockData,
     tutorialDrawOrder: TUTORIAL_DRAW_ORDER,

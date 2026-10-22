@@ -18,6 +18,7 @@ import { cardIsBlocked } from '@deck-legacy/engine/domain/cards/cardIsBlocked';
 import { getEffectiveActionCost } from '@deck-legacy/engine/domain/cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '@deck-legacy/engine/domain/cards/getEffectiveUpgradeCost';
 import { getProductionChoicesForAction } from '@deck-legacy/engine/domain/cards/getProductionChoicesForAction';
+import { hasUsesLeft } from '@deck-legacy/engine/domain/cards/hasUsesLeft';
 import { evaluateCondition } from '@deck-legacy/engine/domain/cards/selection/evaluateCondition';
 import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
 import { getEffectiveGlory } from '@deck-legacy/engine/domain/cards/selection/getEffectiveGlory';
@@ -218,10 +219,8 @@ export function MiniGameCard({
     };
   });
 
-  const actions = getStateActions(instance, defs, stickerDefs).filter(
-    action =>
-      action.limitedTime === undefined ||
-      instance.usedActionIds.filter(usedId => usedId === action.id).length < action.limitedTime,
+  const actions = getStateActions(instance, defs, stickerDefs).filter(action =>
+    hasUsesLeft(action, instance, gameState),
   );
   const isActionAffordable = (action: CardAction) => {
     const optionDisabled = !canUseOptions(

@@ -26,6 +26,8 @@ const RESOURCE_LABELS: Record<ResourceType, string> = {
   [ResourceType.IRON]: 'fer',
   [ResourceType.WEAPON]: 'arme',
   [ResourceType.GOODS]: 'biens',
+  [ResourceType.SCIENCE]: 'science',
+  [ResourceType.HERB]: 'herbes',
 };
 
 function CheatButton({ label, onPress }: { readonly label: string; readonly onPress: () => void }) {

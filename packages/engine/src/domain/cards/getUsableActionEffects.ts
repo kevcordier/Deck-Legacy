@@ -4,6 +4,7 @@ import type { ActionEffect, CardDef, GameState, Sticker } from '../types';
 import { canAffordCost } from './canAffordCost';
 import { canAffordTrackAdvanceCost } from './canAffordTrackAdvanceCost';
 import { getEffectiveActionCost } from './getEffectiveActionCost';
+import { hasUsesLeft } from './hasUsesLeft';
 import { evaluateCondition } from './selection/evaluateCondition';
 import { getStateActions } from './selection/getStateActions';
 
@@ -22,8 +23,7 @@ export function getUsableActionEffects(
         !action.trigger &&
         // shortcut: an 'any' amount cost (Export) is not offered, until a used card needs it.
         !hasAnyAmountCost(action.cost) &&
-        (action.limitedTime === undefined ||
-          instance.usedActionIds.filter(id => id === action.id).length < action.limitedTime) &&
+        hasUsesLeft(action, instance, gameState) &&
         (!action.condition ||
           evaluateCondition(action.condition, gameState, instanceId, defs, stickerDefs)) &&
         canAffordCost(

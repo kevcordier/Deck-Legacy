@@ -4,10 +4,12 @@ import { cardIsBlocked } from '../cards/cardIsBlocked';
 import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
+import { hasUsesLeft } from '../cards/hasUsesLeft';
 import { evaluateCondition } from '../cards/selection/evaluateCondition';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getStateActions } from '../cards/selection/getStateActions';
 import { isPermanent } from '../cards/selection/isPermanent';
+import { turnUseKey } from '../cards/turnUseKey';
 import { resolveCost } from '../costResolver';
 import { resolveActionEffect } from '../effects/resolveActionEffect';
 import { ActionEffectType, PendingChoiceType, Phase, Trigger } from '../enums';
@@ -357,11 +359,8 @@ export class CardActionAggregate {
   }
 
   resolveAction() {
-    if (this.action.limitedTime !== undefined) {
-      const currentUsageCount = this.gameState.instances[this.instance.id].usedActionIds.filter(
-        usedId => usedId === this.action.id,
-      ).length;
-      if (currentUsageCount >= this.action.limitedTime) return;
+    if (!hasUsesLeft(this.action, this.gameState.instances[this.instance.id], this.gameState)) {
+      return;
     }
 
     if (!Number.isInteger(this.amount) || this.amount < 1) return;
@@ -482,6 +481,12 @@ export class CardActionAggregate {
 
     if (this.action.limitedTime !== undefined) {
       this.gameState.instances[this.instance.id].usedActionIds.push(this.action.id);
+    }
+    if (this.action.perTurn !== undefined) {
+      this.gameState.turnUsedActions = [
+        ...(this.gameState.turnUsedActions ?? []),
+        turnUseKey(this.instance.id, this.action.id),
+      ];
     }
 
     if (this.action.defeat) {

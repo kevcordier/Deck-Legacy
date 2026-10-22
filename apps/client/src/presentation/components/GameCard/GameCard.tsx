@@ -24,6 +24,7 @@ import { canAffordCost } from '@deck-legacy/engine/domain/cards/canAffordCost';
 import { cardIsBlocked } from '@deck-legacy/engine/domain/cards/cardIsBlocked';
 import { getEffectiveUpgradeCost } from '@deck-legacy/engine/domain/cards/getEffectiveUpgradeCost';
 import { getProductionChoicesForAction } from '@deck-legacy/engine/domain/cards/getProductionChoicesForAction';
+import { hasUsesLeft } from '@deck-legacy/engine/domain/cards/hasUsesLeft';
 import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
 import { getEffectiveGlory } from '@deck-legacy/engine/domain/cards/selection/getEffectiveGlory';
 import { getStateActions } from '@deck-legacy/engine/domain/cards/selection/getStateActions';
@@ -172,10 +173,8 @@ export function GameCard({
   const hasProductions = productions?.some(prod => Object.keys(prod).length > 0) ?? false;
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
-  const actions = getStateActions(instance, defs, stickerDefs).filter(
-    action =>
-      action.limitedTime === undefined ||
-      instance.usedActionIds.filter(usedId => usedId === action.id).length < action.limitedTime,
+  const actions = getStateActions(instance, defs, stickerDefs).filter(action =>
+    hasUsesLeft(action, instance, gameState),
   );
   const rawCardName = t(`names.${cs.name}`, { ns: 'cards' });
   const canChooseName = cs.chooseName === true && rawCardName.includes('_____');

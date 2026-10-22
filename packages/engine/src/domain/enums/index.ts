@@ -53,6 +53,7 @@ export enum GameEventType {
   SKIP_TRIGGER = 'SKIP_TRIGGER',
   CHOOSE_STATE = 'CHOOSE_STATE',
   PARCHMENT_CARD_DISCOVERED = 'PARCHMENT_CARD_DISCOVERED',
+  PARCHMENT_RESOLVED = 'PARCHMENT_RESOLVED',
   CAMPAIGN_SCORE_SAVED = 'CAMPAIGN_SCORE_SAVED',
   EXPANSION_SELECTED = 'EXPANSION_SELECTED',
   PURGE_CARD_SELECTED = 'PURGE_CARD_SELECTED',
@@ -99,6 +100,8 @@ export enum ActionEffectType {
   USE_CARD_ACTION = 'USE_CARD_ACTION',
   /** The next `value` resource units gained this turn are lost. */
   LOSE_NEXT_RESOURCES = 'LOSE_NEXT_RESOURCES',
+  /** Adds `unlock.stickers` to the sticker stock and offers `unlock.resources` (a foundation). */
+  UNLOCK = 'UNLOCK',
 }
 
 export enum PassiveType {
@@ -135,6 +138,9 @@ export enum ResourceType {
   IRON = 'iron',
   WEAPON = 'weapon',
   GOODS = 'goods',
+  /** Foundations: offered only once unlocked (`GameState.unlockedResources`, EDR-059). */
+  SCIENCE = 'science',
+  HERB = 'herb',
 }
 
 export enum TargetScope {

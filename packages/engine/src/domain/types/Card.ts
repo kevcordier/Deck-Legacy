@@ -1,4 +1,4 @@
-import type { Cost, GameParameters, Resources } from '.';
+import type { Cost, GameParameters, Resources, StickerStock } from '.';
 import type {
   ActionEffectType,
   CardTag,
@@ -80,6 +80,7 @@ export type CardAction = {
   trigger?: Trigger;
   optional?: boolean;
   limitedTime?: number; // max number of uses for this action
+  perTurn?: number; // max number of uses each turn ("once per turn")
   condition?: Condition; // checked when the trigger fires, or before the action is used
   defeat?: boolean; // the action defeats an enemy: fires ON_DEFEAT triggers once resolved
   // the trigger also fires while this card is in play when a card matching this selector causes
@@ -113,7 +114,7 @@ export type ActionEffect = {
   valuePerElement?: ValuePerElement;
   resourceScopes?: RemovedResourceScope[];
   effect?: Passive;
-  position?: number | 'top' | 'bottom';
+  position?: number | 'top' | 'bottom' | 'index'; // 'index': before the first card with a higher id ("undiscover")
   effects?: ActionEffect[];
   steps?: {
     pickNumber?: number;
@@ -125,6 +126,12 @@ export type ActionEffect = {
   condition?: Condition; // checked when the effect resolves: skipped when it does not hold
   sourceInstanceId?: number; // card the effect resolves for, when not the acting card (USE_CARD_ACTION)
   usedAction?: { instanceId: number; actionId: string }; // USE_CARD_ACTION: the chosen action
+  unlock?: Unlock; // UNLOCK: what a foundation brings
+};
+
+export type Unlock = {
+  stickers?: StickerStock;
+  resources?: ResourceType[];
 };
 
 export type Passive = {
@@ -132,14 +139,7 @@ export type Passive = {
   type: PassiveType;
   amount?: number;
   cards?: CardSelector;
-  resources?: {
-    gold?: number;
-    wood?: number;
-    stone?: number;
-    iron?: number;
-    weapon?: number;
-    goods?: number;
-  };
+  resources?: Resources;
   glory?: number;
   stickerIds?: number[];
   valuePerElement?: ValuePerElement;
@@ -172,22 +172,8 @@ export type CardSelector = {
   autoPick?: boolean;
 };
 
-export type ResourceSelector = {
-  gold?: number;
-  wood?: number;
-  stone?: number;
-  iron?: number;
-  weapon?: number;
-  goods?: number;
-  choice?: {
-    gold?: number;
-    wood?: number;
-    stone?: number;
-    iron?: number;
-    weapon?: number;
-    goods?: number;
-    any?: number;
-  }[];
+export type ResourceSelector = Resources & {
+  choice?: (Resources & { any?: number })[];
   cards?: CardSelector;
   pickNumber?: number;
   pickMin?: number;
@@ -217,10 +203,11 @@ export type ResolvedActionEffect = {
   resources?: Resources;
   stickerIds?: number[];
   stateId?: number;
-  position?: number | 'top' | 'bottom';
+  position?: number | 'top' | 'bottom' | 'index';
   stepIds?: number[];
   resourceScopes?: RemovedResourceScope[];
   newActionEffects?: ActionEffect[];
   value?: number;
+  unlock?: Unlock;
   unresolvable?: boolean;
 };

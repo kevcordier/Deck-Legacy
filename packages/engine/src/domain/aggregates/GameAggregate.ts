@@ -3,6 +3,7 @@ import { canAffordTrackAdvanceCost } from '../cards/canAffordTrackAdvanceCost';
 import { cardIsBlocked } from '../cards/cardIsBlocked';
 import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
+import { hasUsesLeft } from '../cards/hasUsesLeft';
 import { cardSelector } from '../cards/selection/cardSelector';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getEffectiveGlory } from '../cards/selection/getEffectiveGlory';
@@ -40,6 +41,7 @@ import type {
   GameStartedEvent,
   GameState,
   ParchmentCardDiscoveredEvent,
+  ParchmentResolvedEvent,
   PurgeCardSelectedEvent,
   PurgeFinalizedEvent,
   PurgeOnTriggeredEvent,
@@ -340,6 +342,7 @@ export class GameAggregate {
       purgePool,
       parameterOverrides: expansion.parameters,
       onStartDiscoverIds: expansion.onStart?.discover?.ids ?? [],
+      ...(expansion.onStart?.actions && { onStartActions: expansion.onStart.actions }),
       addedStickers: expansion.stickers,
       purgeFocus: expansion.purge.focus,
       expansionDiscoveryFirst: true,
@@ -446,6 +449,16 @@ export class GameAggregate {
       );
     }, 0);
 
+    // Setup actions of the campaign, for the first card discovered on start (EDR-059).
+    const [setupSource] = purgeState.onStartDiscoverIds;
+    const onStartTriggers: Record<string, TriggerEntry> = {};
+    if (purgeState.onStartDiscoverIds.length > 0) {
+      for (const effectDef of purgeState.onStartActions ?? []) {
+        onStartTriggers[environment.newId()] = { effectDef, sourceInstanceId: setupSource };
+      }
+    }
+    const hasSetup = Object.keys(onStartTriggers).length > 0;
+
     const finalizedEvent: PurgeFinalizedEvent = {
       id: environment.newId(),
       type: GameEventType.PURGE_FINALIZED,
@@ -453,10 +466,16 @@ export class GameAggregate {
       purgedIds,
       glory,
       onStartDiscoverIds: purgeState.onStartDiscoverIds,
+      ...(hasSetup && { onStartTriggers }),
     };
 
     this.apply(finalizedEvent);
     this.events.push(finalizedEvent);
+
+    // The player resolves the setup, then starts the round.
+    if (hasSetup) {
+      return this.gameState;
+    }
 
     this.roundStarted();
     this.turnStarted();
@@ -685,10 +704,7 @@ export class GameAggregate {
         state.actions?.some(action => {
           if (!action.unlimited || action.trigger) return false;
 
-          if (action.limitedTime !== undefined) {
-            const usageCount = instance.usedActionIds.filter(id => id === action.id).length;
-            if (usageCount >= action.limitedTime) return false;
-          }
+          if (!hasUsesLeft(action, instance, this.gameState)) return false;
 
           const effectiveCost = getEffectiveActionCost(action.cost, instance);
           return (
@@ -946,6 +962,14 @@ export class GameAggregate {
     this.events.push(event);
     if (
       this.gameState.phase === Phase.PARCHMENT &&
+      this.gameState.onGoingParchment === sourceInstanceId &&
+      this.gameState.parchmentResumePhase !== undefined
+    ) {
+      this.parchmentResolved();
+    } else if (this.discoveredExpansionParchment()) {
+      this.parchmentDiscoveredByEffect();
+    } else if (
+      this.gameState.phase === Phase.PARCHMENT &&
       this.gameState.onGoingParchment === sourceInstanceId
     ) {
       const event: RoundStartedEvent = {
@@ -965,6 +989,41 @@ export class GameAggregate {
     }
 
     return this.gameState;
+  }
+
+  /**
+   * An effect discovered an expansion parchment (a foundation cover): it is shown to the player
+   * before the game goes on. Base game parchments keep their former handling (EDR-059).
+   */
+  private discoveredExpansionParchment(): boolean {
+    const { onGoingParchment, phase, instances } = this.gameState;
+    return (
+      onGoingParchment !== undefined &&
+      phase !== Phase.PARCHMENT &&
+      instances[onGoingParchment]?.expansion !== undefined
+    );
+  }
+
+  private parchmentDiscoveredByEffect(): void {
+    const event: ParchmentCardDiscoveredEvent = {
+      id: environment.newId(),
+      type: GameEventType.PARCHMENT_CARD_DISCOVERED,
+      timestamp: environment.now(),
+      cardInstanceId: this.gameState.onGoingParchment as number,
+      resumePhase: this.gameState.phase,
+    };
+    this.apply(event);
+    this.events.push(event);
+  }
+
+  private parchmentResolved(): void {
+    const event: ParchmentResolvedEvent = {
+      id: environment.newId(),
+      type: GameEventType.PARCHMENT_RESOLVED,
+      timestamp: environment.now(),
+    };
+    this.apply(event);
+    this.events.push(event);
   }
 
   public skipTrigger(triggerId: string): GameState {

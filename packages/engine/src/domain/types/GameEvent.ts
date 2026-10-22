@@ -1,4 +1,5 @@
 import type {
+  CardAction,
   ExpansionDeckEntry,
   GameParameters,
   GameState,
@@ -7,7 +8,7 @@ import type {
   StickerStock,
   TriggerEntry,
 } from '.';
-import type { GameEventType } from '../enums';
+import type { GameEventType, Phase } from '../enums';
 import type { GameCommand } from './GameSession';
 
 export interface GameEvent {
@@ -63,6 +64,13 @@ export interface StoryAdvancedEvent extends GameEvent {
 export interface ParchmentCardDiscoveredEvent extends GameEvent {
   type: GameEventType.PARCHMENT_CARD_DISCOVERED;
   cardInstanceId: number;
+  /** Discovered by an effect: the phase the game goes back to once it is resolved (EDR-059). */
+  resumePhase?: Phase;
+}
+
+/** A parchment discovered by an effect is resolved: the game goes back to `resumePhase`. */
+export interface ParchmentResolvedEvent extends GameEvent {
+  type: GameEventType.PARCHMENT_RESOLVED;
 }
 
 export interface TurnStartedEvent extends GameEvent {
@@ -149,6 +157,7 @@ export interface ExpansionSelectedEvent extends GameEvent {
   onStartDiscoverIds: number[];
   addedStickers?: StickerStock;
   purgeFocus?: PurgeFocus;
+  onStartActions?: CardAction[];
   expansionDiscoveryFirst?: boolean; // expansion cards go before the remaining base cards
 }
 
@@ -173,4 +182,6 @@ export interface PurgeFinalizedEvent extends GameEvent {
   purgedIds: number[];
   glory: number;
   onStartDiscoverIds: number[];
+  /** Setup actions of the campaign, queued before the first round (EDR-059). */
+  onStartTriggers?: Record<string, TriggerEntry>;
 }

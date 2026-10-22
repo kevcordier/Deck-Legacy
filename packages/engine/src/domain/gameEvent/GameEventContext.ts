@@ -10,6 +10,7 @@ import { GameEndedStrategy } from './GameEndedStrategy';
 import type { GameEventStrategy } from './GameEventStrategy';
 import { GameStartedStrategy } from './GameStartedStrategy';
 import { ParchmentCardDiscoveredStrategy } from './ParchmentCardDiscoveredStrategy';
+import { ParchmentResolvedStrategy } from './ParchmentResolvedStrategy';
 import { PurgeCardSelectedStrategy } from './PurgeCardSelectedStrategy';
 import { PurgeFinalizedStrategy } from './PurgeFinalizedStrategy';
 import { PurgeOnTriggeredStrategy } from './PurgeOnTriggeredStrategy';
@@ -41,6 +42,7 @@ export class GameEventContext {
       [GameEventType.TURN_ENDED]: new TurnEndedStrategy(cardDefs, stickerDefs),
       [GameEventType.CHOOSE_STATE]: new ChooseStateEventStrategy(),
       [GameEventType.PARCHMENT_CARD_DISCOVERED]: new ParchmentCardDiscoveredStrategy(),
+      [GameEventType.PARCHMENT_RESOLVED]: new ParchmentResolvedStrategy(),
       [GameEventType.CAMPAIGN_SCORE_SAVED]: new CampaignScoreSavedStrategy(),
       [GameEventType.EXPANSION_SELECTED]: new ExpansionSelectedStrategy(cardDefs),
       [GameEventType.PURGE_CARD_SELECTED]: new PurgeCardSelectedStrategy(),
