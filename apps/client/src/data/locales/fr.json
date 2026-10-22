@@ -364,7 +364,8 @@
       "purgePermanent_other": "Puis purgez {{count}} cartes permanentes alliées.",
       "purgeFocus": "Focus {{count}} {{resource}} : tant que moins de {{count}} cartes purgées produisent du {{resource}}, choisissez une carte qui en produit quand le lot en contient.",
       "rules": "Règles supplémentaires",
-      "start": "Jouer cette extension"
+      "start": "Jouer cette extension",
+      "comingSoon": "Bientôt"
     }
   },
   "rules": {

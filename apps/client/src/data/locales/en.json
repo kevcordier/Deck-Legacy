@@ -364,7 +364,8 @@
       "purgePermanent_other": "Then purge {{count}} allied permanent cards.",
       "purgeFocus": "Focus {{count}} {{resource}}: while fewer than {{count}} purged cards produce {{resource}}, pick a card that produces it when the batch has one.",
       "rules": "Additional rules",
-      "start": "Play this expansion"
+      "start": "Play this expansion",
+      "comingSoon": "Coming soon"
     }
   },
   "rules": {

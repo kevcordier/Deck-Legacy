@@ -9,6 +9,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 
+/** Expansions not released yet: playable only in development builds. */
+const COMING_SOON = ['Foundations', 'Merchants'];
+
 type ExpansionChoiceProps = {
   /** Expansions not played yet in this campaign. */
   readonly expansions: string[];
@@ -23,6 +26,7 @@ export function ExpansionChoice({ expansions, configs, onSelect }: ExpansionChoi
   const config = configs[selected];
   const key = `campaign.expansions.${selected}`;
   const cardCount = config ? config.campaign.length + (config.discoverable?.length ?? 0) : 0;
+  const comingSoon = !__DEV__ && COMING_SOON.includes(config?.expansion ?? selected);
 
   return (
     <ScrollView contentContainerClassName="mx-auto w-full max-w-5xl gap-4 p-4">
@@ -119,9 +123,10 @@ export function ExpansionChoice({ expansions, configs, onSelect }: ExpansionChoi
                 variant="contained"
                 color="base-primary"
                 size="lg"
+                disabled={comingSoon}
                 onPress={() => onSelect(selected)}
               >
-                {t('campaign.details.start')}
+                {t(comingSoon ? 'campaign.details.comingSoon' : 'campaign.details.start')}
               </Button>
             </View>
           </View>
