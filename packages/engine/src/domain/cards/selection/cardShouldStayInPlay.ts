@@ -3,6 +3,7 @@ import type { CardDef, GameState } from '../../types';
 import { cardSelector } from './cardSelector';
 import { getActiveState } from './getActiveState';
 import { getAffectedCardsByBoardEffects } from './getAffectedCardsByBoardEffects';
+import { getHeldByPermanents } from './getHeldByPermanents';
 import { isPermanent } from './isPermanent';
 
 // Sticker ID for the 'stays_in_play' effect (see src/data/stickers.ts)
@@ -17,6 +18,21 @@ export function cardShouldStayInPlay(
   if (!instance) return false;
   const def = cardDefs[instance.cardId];
   if (isPermanent(getActiveState(instance, cardDefs))) return true;
+  // An equipment stays in play with its holder
+  const holder = gameState.equipped?.[instanceId];
+  if (holder !== undefined) return cardShouldStayInPlay(holder, gameState, cardDefs);
+  if (
+    Object.entries(gameState.boardEffects).some(([sourceId, passives]) =>
+      passives.some(
+        p =>
+          p.type === PassiveType.PREVENT_STAY_IN_PLAY &&
+          cardSelector(p.cards ?? {}, Number(sourceId), gameState, cardDefs, {}).includes(
+            instanceId,
+          ),
+      ),
+    )
+  )
+    return false;
   const state = def?.states.find(s => s.id === instance.stateId);
   if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
 
@@ -34,6 +50,7 @@ export function cardShouldStayInPlay(
   );
 
   if (stayInPlayTargets.has(instanceId)) return true;
+  if (getHeldByPermanents(gameState).includes(instanceId)) return true;
 
   if (
     Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))

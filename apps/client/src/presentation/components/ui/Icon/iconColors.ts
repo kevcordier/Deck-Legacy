@@ -7,6 +7,7 @@ export enum IconColors {
   // Blue steel: must not look like the grey stone.
   iron = '#5d7a96',
   leaf = '#5b8a3c',
+  science = '#3f8fd6',
   baseInk = '#664a26',
   basePrimary = '#c79233',
   tagEnemy = '#c10007',

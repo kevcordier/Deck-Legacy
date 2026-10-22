@@ -1,5 +1,5 @@
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
-import { getActiveState } from '../cards/selection/getActiveState';
+import { getActivePassives } from '../cards/selection/getActivePassives';
 import { Options, Trigger } from '../enums';
 import { environment } from '../environment/environment';
 import { canUseOptions } from '../state/canUseOptions';
@@ -33,8 +33,7 @@ export class PlayCardStrategy implements CardActionStrategy {
     }
 
     instanceIds.forEach(instanceId => {
-      const passives: Passive[] =
-        getActiveState(gs.instances[instanceId], this.cardDefs).passives ?? [];
+      const passives: Passive[] = getActivePassives(gs, instanceId, this.cardDefs);
       passives.forEach(passive => {
         gs.boardEffects[instanceId] = [...(gs.boardEffects[instanceId] ?? []), passive];
       });

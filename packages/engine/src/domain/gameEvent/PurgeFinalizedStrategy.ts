@@ -49,6 +49,7 @@ export class PurgeFinalizedStrategy implements GameEventStrategy {
 
     return {
       ...gameState,
+      triggerPile: { ...gameState.triggerPile, ...e.onStartTriggers },
       drawPile: removeIds(gameState.drawPile, e.purgedIds),
       discardPile: removeIds(newDiscard, e.purgedIds),
       board: removeIds(gameState.board, e.purgedIds),

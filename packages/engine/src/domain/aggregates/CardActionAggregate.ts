@@ -4,16 +4,21 @@ import { cardIsBlocked } from '../cards/cardIsBlocked';
 import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
+import { hasUsesLeft } from '../cards/hasUsesLeft';
+import { cardSelector } from '../cards/selection/cardSelector';
+import { countValuePerElement } from '../cards/selection/countValuePerElement';
 import { evaluateCondition } from '../cards/selection/evaluateCondition';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getStateActions } from '../cards/selection/getStateActions';
 import { isPermanent } from '../cards/selection/isPermanent';
+import { turnUseKey } from '../cards/turnUseKey';
 import { resolveCost } from '../costResolver';
 import { resolveActionEffect } from '../effects/resolveActionEffect';
-import { ActionEffectType, PendingChoiceType, Phase, Trigger } from '../enums';
+import { ActionEffectType, PassiveType, PendingChoiceType, Phase, Trigger } from '../enums';
 import { environment } from '../environment/environment';
 import { CardChoiceStrategy } from '../playerChoice/CardChoiceStrategy';
 import { ChooseActionEffectStrategy } from '../playerChoice/ChooseActionEffectStrategy';
+import { OrderChoiceStrategy } from '../playerChoice/OrderChoiceStrategy';
 import type { PlayerChoiceStrategy } from '../playerChoice/PlayerChoiceStrategy';
 import { ResourceChoiceStrategy } from '../playerChoice/ResourceChoiceStrategy';
 import { StateChoiceStrategy } from '../playerChoice/StateChoiceStrategy';
@@ -68,7 +73,7 @@ export class CardActionAggregate {
   private lastSelectedIds: number[] = [];
   private readonly selectedResourcesByChoiceKey: Record<string, Resources[]> = {};
   private readonly action: CardAction;
-  private readonly endTurn: boolean;
+  private endTurn: boolean;
   private readonly endRound: boolean;
   /** Amount paid for an `'any'` resource cost: the action's effects apply once per unit. */
   private readonly amount: number;
@@ -95,13 +100,22 @@ export class CardActionAggregate {
       [PendingChoiceType.CHOOSE_STICKER]: new StickerChoiceStrategy(),
       [PendingChoiceType.CHOOSE_STEP]: new StepChoiceStrategy(cardDefs),
       [PendingChoiceType.CHOOSE_ACTION_EFFECT]: new ChooseActionEffectStrategy(),
+      // A split is a cost: paid by resolveCostChoice, like the other cost choices.
+      [PendingChoiceType.SPLIT_RESOURCES]: new ResourceChoiceStrategy(),
+      [PendingChoiceType.ORDER_CARDS]: new OrderChoiceStrategy(),
     };
     this.amount = hasAnyAmountCost(this.action.cost) ? amount : 1;
     const effects = this.action.actionEffects.reduce((acc, effect) => {
       const effectiveEffects = this.getEffectiveActionEffects(effect);
       return [...acc, ...effectiveEffects];
     }, [] as ActionEffect[]);
-    this.effects = Array.from({ length: Math.max(0, this.amount) }, () => effects).flat();
+    // "For every N spent": the effects apply once per `amountPer` units paid
+    const per = this.action.amountPer === 'all' ? this.amount : (this.action.amountPer ?? 1);
+    const times = Math.floor(this.amount / per);
+    this.effects = [
+      ...this.getHolderActionBonus(),
+      ...Array.from({ length: Math.max(0, times) }, () => effects).flat(),
+    ];
     const triggerEntry = this.gameState.triggerPile[this.triggerId ?? ''];
     this.endTurn =
       !!this.action.endsTurn ||
@@ -111,9 +125,51 @@ export class CardActionAggregate {
       this.gameState.triggerPile[this.triggerId ?? '']?.effectDef.trigger === Trigger.END_OF_ROUND;
   }
 
+  /**
+   * GAIN_BEFORE_HOLDER_ACTION (Ether Pearl): before a ✓ / ⌛ effect of the holder or of its
+   * equipment, the passives of its equipment resolve their effects.
+   */
+  private getHolderActionBonus(): ActionEffect[] {
+    if (this.action.trigger || this.action.unlimited) return [];
+    const equipped = this.gameState.equipped ?? {};
+    const holder = equipped[this.instance.id] ?? this.instance.id;
+    return Object.entries(equipped)
+      .filter(([, holderId]) => holderId === holder)
+      .flatMap(([equipmentId]) => this.gameState.boardEffects[Number(equipmentId)] ?? [])
+      .filter(passive => passive.type === PassiveType.GAIN_BEFORE_HOLDER_ACTION)
+      .flatMap(passive => passive.actionEffects ?? []);
+  }
+
   private getEffectiveActionEffects(effect: ActionEffect): ActionEffect[] {
+    if (effect.cards?.each) {
+      // "Cross out 1 production on each land in play": one copy for each card.
+      const { each: _each, ...cards } = effect.cards;
+      return cardSelector(
+        cards,
+        this.instance.id,
+        this.gameState,
+        this.cardDefs,
+        this.stickerDefs,
+      ).map(id => ({ ...effect, cards: { ...cards, ids: [id] } }));
+    }
     if (!effect.repeat) {
       return [effect];
+    }
+
+    if (effect.repeat === 'valuePerElement') {
+      // "For every 3 enemies, cross out 1 production": each copy picks its own card.
+      const { valuePerElement, repeat: _repeat, ...single } = effect;
+      const count = valuePerElement
+        ? valuePerElement.amount *
+          countValuePerElement(
+            valuePerElement,
+            this.gameState,
+            this.instance.id,
+            this.cardDefs,
+            this.stickerDefs,
+          )
+        : 0;
+      return new Array(Math.max(0, count)).fill(single);
     }
 
     const repeat =
@@ -176,6 +232,7 @@ export class CardActionAggregate {
   }
 
   private updateLastSelectedIds(resolvedAction: ResolvedActionEffect) {
+    if (resolvedAction.keepSelection) return;
     if (resolvedAction.instanceIds && resolvedAction.instanceIds.length > 0) {
       this.lastSelectedIds = resolvedAction.instanceIds;
     }
@@ -357,11 +414,8 @@ export class CardActionAggregate {
   }
 
   resolveAction() {
-    if (this.action.limitedTime !== undefined) {
-      const currentUsageCount = this.gameState.instances[this.instance.id].usedActionIds.filter(
-        usedId => usedId === this.action.id,
-      ).length;
-      if (currentUsageCount >= this.action.limitedTime) return;
+    if (!hasUsesLeft(this.action, this.gameState.instances[this.instance.id], this.gameState)) {
+      return;
     }
 
     if (!Number.isInteger(this.amount) || this.amount < 1) return;
@@ -451,6 +505,7 @@ export class CardActionAggregate {
           isMandatory: true,
           parentActionId: this.action.id,
           lastSelectedIds: this.lastSelectedIds,
+          paidAmount: this.amount,
         },
       );
 
@@ -482,6 +537,12 @@ export class CardActionAggregate {
 
     if (this.action.limitedTime !== undefined) {
       this.gameState.instances[this.instance.id].usedActionIds.push(this.action.id);
+    }
+    if (this.action.perTurn !== undefined) {
+      this.gameState.turnUsedActions = [
+        ...(this.gameState.turnUsedActions ?? []),
+        turnUseKey(this.instance.id, this.action.id),
+      ];
     }
 
     if (this.action.defeat) {
@@ -523,6 +584,9 @@ export class CardActionAggregate {
     resolvedAction: ResolvedActionEffect,
     index: number,
   ): 'wait' | 'next' {
+    if (resolvedAction.type === ActionEffectType.END_TURN) {
+      this.endTurn = true;
+    }
     if (resolvedAction.newActionEffects) {
       this.insertEffects(index, resolvedAction.newActionEffects);
     }
@@ -727,18 +791,16 @@ export class CardActionAggregate {
       return;
     }
 
+    // An equipment's effect counts as its holder's: the holder is discarded (and it with it)
+    const usedId = this.gameState.equipped?.[this.instance.id] ?? this.instance.id;
+    const used = this.gameState.instances[usedId];
     if (
       !this.triggerId &&
       !this.action.unlimited &&
-      !isPermanent(getActiveState(this.instance, this.cardDefs)) &&
+      !isPermanent(getActiveState(used, this.cardDefs)) &&
       !this.def.parchmentCard
     ) {
-      this.gameState = discardCards(
-        this.gameState,
-        [this.instance.id],
-        this.cardDefs,
-        this.stickerDefs,
-      );
+      this.gameState = discardCards(this.gameState, [usedId], this.cardDefs, this.stickerDefs);
     }
 
     this.payCost(this.resolvedCost);

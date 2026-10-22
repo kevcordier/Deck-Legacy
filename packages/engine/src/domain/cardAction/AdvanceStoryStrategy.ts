@@ -1,4 +1,4 @@
-import type { CardDef, GameState, ResolvedActionEffect } from '../types';
+import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 import { DiscoverCardStrategy } from './DiscoverCardStrategy';
 
@@ -6,8 +6,8 @@ import { DiscoverCardStrategy } from './DiscoverCardStrategy';
 export class AdvanceStoryStrategy implements CardActionStrategy {
   private readonly discover: DiscoverCardStrategy;
 
-  constructor(cardDefs: Record<number, CardDef>) {
-    this.discover = new DiscoverCardStrategy(cardDefs);
+  constructor(cardDefs: Record<number, CardDef>, stickerDefs: Record<number, Sticker> = {}) {
+    this.discover = new DiscoverCardStrategy(cardDefs, stickerDefs);
   }
 
   apply(gameState: GameState, payload: ResolvedActionEffect): GameState {

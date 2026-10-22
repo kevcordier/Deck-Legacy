@@ -12,7 +12,10 @@ export function getCardProductionChoices(
   defs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
 ): Resources[] {
-  const bases = getActiveState(instance, defs).productions ?? [{}];
+  const state = getActiveState(instance, defs);
+  // An equipment never produces itself: its holder does, once it is equipped
+  if (state.equip) return [];
+  const bases = state.productions ?? [{}];
   const unique = new Map<string, Resources>();
   for (const base of bases) {
     for (const choice of getProductionChoicesForAction(

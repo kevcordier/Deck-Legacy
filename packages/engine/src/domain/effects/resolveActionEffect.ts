@@ -5,6 +5,7 @@ import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
 import { cardSelector } from '../cards/selection/cardSelector';
 import { countValuePerElement } from '../cards/selection/countValuePerElement';
+import { evaluateCondition } from '../cards/selection/evaluateCondition';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getAffectedCardsByBoardEffects } from '../cards/selection/getAffectedCardsByBoardEffects';
 import { getEffectiveProductions } from '../cards/selection/getEffectiveProductions';
@@ -18,7 +19,9 @@ import {
   TargetScope,
 } from '../enums';
 import { CardChoiceStrategy } from '../playerChoice/CardChoiceStrategy';
+import { shuffle } from '../random';
 import { fixResources } from '../resources/fixResources';
+import { getOfferedResources } from '../resources/getOfferedResources';
 import { mergeResources } from '../resources/mergeResources';
 import { stateSelector } from '../stateSelector';
 import type {
@@ -36,8 +39,10 @@ import type {
   Sticker,
   StickerSelector,
 } from '../types';
+import { chooseCrossedOutAction } from './chooseCrossedOutAction';
 import { chooseUsedAction } from './chooseUsedAction';
 import { getPickNumbers } from './getPickNumbers';
+import { withGainReplacement } from './withGainReplacement';
 
 const STICKER_PRODUCTION_CAP = 9;
 
@@ -45,6 +50,8 @@ export interface ResolveActionEffectOptions {
   isMandatory?: boolean;
   parentActionId?: string;
   lastSelectedIds?: number[];
+  /** The amount paid for the action's 'any' resource cost. */
+  paidAmount?: number;
 }
 
 interface ResolveContext {
@@ -58,7 +65,10 @@ interface ResolveContext {
   defs: Record<number, CardDef>;
   stickerDefs: Record<number, Sticker>;
   lastSelectedIds?: number[];
+  paidAmount?: number;
   resourceScopes?: RemovedResourceScope[];
+  /** The effect adds production: the rule of nine keeps it off cards producing 9 or more. */
+  addsProduction?: boolean;
 }
 
 function resolveTrackAdvanceEffect(
@@ -66,7 +76,7 @@ function resolveTrackAdvanceEffect(
   pendingChoices: PendingChoice[],
   ctx: ResolveContext,
   cards: CardSelector,
-  steps: { pickNumber?: number; pickMin?: number; pickMax?: number },
+  steps: { pickNumber?: number; pickMin?: number; pickMax?: number; ids?: number[] },
 ): [ResolvedActionEffect, PendingChoice[]] {
   const {
     effectId,
@@ -94,7 +104,9 @@ function resolveTrackAdvanceEffect(
   resolverAction.instanceIds = [targetId];
 
   if (track.inOrder) {
-    const sortedSteps = [...availableSteps].sort((a, b) => a.id - b.id);
+    const sortedSteps = availableSteps
+      .filter(s => !steps.ids || steps.ids.includes(s.id))
+      .sort((a, b) => a.id - b.id);
     resolverAction.stepIds = sortedSteps.slice(0, steps.pickNumber ?? 1).map(s => s.id);
     resolverAction.newActionEffects = resolverAction.stepIds.flatMap(stepId =>
       (track.steps.find(s => s.id === stepId)?.effects ?? []).map(e => ({
@@ -108,6 +120,7 @@ function resolveTrackAdvanceEffect(
       .filter(
         s =>
           !targetInst.trackProgress.includes(s.id) &&
+          (!steps.ids || steps.ids.includes(s.id)) &&
           canAffordCost(s.cost, instanceId, gameState, defs, stickerDefs),
       )
       .map(s => s.id);
@@ -139,6 +152,12 @@ function resolveChooseActionEffect(
 ): [ResolvedActionEffect, PendingChoice[]] {
   const { instanceId, effectId, parentActionId, sourceStepId, actionType } = ctx;
   const choiceId = `${instanceId}-${effectId}`;
+  // An option whose condition does not hold is not offered (a new Archbishop each round).
+  const offered = effects.filter(
+    e =>
+      !e.condition ||
+      evaluateCondition(e.condition, ctx.gameState, instanceId, ctx.defs, ctx.stickerDefs),
+  );
   pendingChoices.push({
     id: choiceId,
     actionId: parentActionId,
@@ -147,12 +166,78 @@ function resolveChooseActionEffect(
     kind: actionType,
     type: PendingChoiceType.CHOOSE_ACTION_EFFECT,
     sourceInstanceId: instanceId,
-    choices: effects,
+    choices: offered,
     pickMin: 1,
     pickMax: 1,
     isMandatory: true,
   });
   return [resolverAction, pendingChoices];
+}
+
+/** The effect's value times its count of elements; ADD_GLORY `writeNames` keeps their names. */
+function applyValuePerElement(
+  resolverAction: ResolvedActionEffect,
+  action: ActionEffect,
+  ctx: ResolveContext,
+): void {
+  const valuePerElement = action.valuePerElement;
+  if (!valuePerElement) return;
+  const { instanceId, gameState, defs, stickerDefs, lastSelectedIds } = ctx;
+  const count = valuePerElement.paid
+    ? Math.floor((ctx.paidAmount ?? 0) / (valuePerElement.per ?? 1))
+    : countValuePerElement(
+        valuePerElement,
+        gameState,
+        instanceId,
+        defs,
+        stickerDefs,
+        lastSelectedIds,
+      );
+  resolverAction.value = (resolverAction.value ?? 1) * valuePerElement.amount * count;
+  if (action.writeNames) resolverAction.names = getWrittenNames(action, ctx);
+}
+
+/** ADD_GLORY with `writeNames`: the names of the cards counted by `valuePerElement.cards`. */
+function getWrittenNames(action: ActionEffect, ctx: ResolveContext): string[] {
+  const cards = action.valuePerElement?.cards;
+  if (!cards) return [];
+  const { instanceId, gameState, defs, stickerDefs, lastSelectedIds } = ctx;
+  return cardSelector({ ...cards, lastSelectedIds }, instanceId, gameState, defs, stickerDefs).map(
+    id => getActiveState(gameState.instances[id], defs).name,
+  );
+}
+
+/** CROSS_OUT_ACTION: once the action is chosen (`usedAction`), it is crossed out. */
+function resolveCrossOutAction(
+  resolverAction: ResolvedActionEffect,
+  ctx: ResolveContext,
+  action: ActionEffect,
+  cards: CardSelector | undefined,
+): [ResolvedActionEffect, PendingChoice[]] {
+  if (action.usedAction) {
+    resolverAction.instanceIds = [action.usedAction.instanceId];
+    resolverAction.crossedOutAction = action.usedAction;
+    return [resolverAction, []];
+  }
+  if (!cards) return [resolverAction, []];
+  const [targeted, pendingChoices] = resolveCardTarget(resolverAction, [], ctx, cards);
+  if (pendingChoices.length > 0 || targeted.unresolvable) return [targeted, pendingChoices];
+  return chooseCrossedOutAction(
+    targeted,
+    targeted.instanceIds?.[0],
+    {
+      id: `${ctx.instanceId}-${ctx.effectId}`,
+      actionId: ctx.parentActionId,
+      effectId: ctx.effectId,
+      sourceStepId: ctx.sourceStepId,
+      kind: ctx.actionType,
+      sourceInstanceId: ctx.instanceId,
+      isMandatory: ctx.isMandatory,
+    },
+    ctx.gameState,
+    ctx.defs,
+    ctx.stickerDefs,
+  );
 }
 
 /** USE_CARD_ACTION: the chosen action's effects follow, resolved for the card that owns it. */
@@ -213,8 +298,6 @@ function resolveCardTarget(
     stickerDefs,
   } = ctx;
 
-  const isStickerAction =
-    actionType === ActionEffectType.ADD_STICKER || actionType === ActionEffectType.BOOST_CARD;
   const cantBeDestroyedInstanceIds =
     actionType === ActionEffectType.DESTROY_CARD
       ? new Set(
@@ -226,13 +309,23 @@ function resolveCardTarget(
 
   const choices = cardSelector(cards, instanceId, gameState, defs, stickerDefs).filter(
     id =>
-      (!isStickerAction ||
+      (!ctx.addsProduction ||
         getTotalProduction(id, gameState, defs, stickerDefs) < STICKER_PRODUCTION_CAP) &&
       (actionType !== ActionEffectType.DESTROY_CARD || !cantBeDestroyedInstanceIds?.has(id)) &&
       // Only an enemy with a defeat action can be defeated.
       (actionType !== ActionEffectType.DEFEAT_CARD ||
         getDefeatAction(gameState, id, defs) !== undefined),
   );
+
+  if (cards.random) {
+    // Seeded: the server replays the same draw.
+    resolverAction.instanceIds = shuffle(
+      choices,
+      gameState.seed,
+      `${instanceId}|${parentActionId ?? ''}|${effectId}`,
+    ).slice(0, cards.pickNumber ?? 1);
+    return [resolverAction, pendingChoices];
+  }
 
   const picks = getPickNumbers(cards, choices.length);
   if (cards.pickMin && choices.length < cards.pickMin) {
@@ -293,7 +386,10 @@ function resolveResourceTarget(
   } = ctx;
 
   if (resources.choice && resources.choice.length > 0) {
-    const expandedChoices = expandResourceChoiceOptions(resources.choice);
+    const expandedChoices = expandResourceChoiceOptions(
+      resources.choice,
+      getOfferedResources(gameState),
+    );
     const picks = getPickNumbers(resources, expandedChoices.length);
 
     if (expandedChoices.length <= 1) {
@@ -529,7 +625,7 @@ function getAllowedResourceKeys(resources: ResourceSelector | undefined): Set<st
   if (!resources) return new Set();
 
   if (resources.choice?.length) {
-    const options = expandResourceChoiceOptions(resources.choice);
+    const options = expandResourceChoiceOptions(resources.choice, Object.values(ResourceType));
     const keys = options.flatMap(option =>
       Object.entries(option)
         .filter(([, value]) => (value ?? 0) > 0)
@@ -542,6 +638,40 @@ function getAllowedResourceKeys(resources: ResourceSelector | undefined): Set<st
     .filter(([, value]) => (value ?? 0) > 0)
     .map(([resourceKey]) => resourceKey);
   return new Set(keys);
+}
+
+/**
+ * The card is already known (a single target, "each land"): only the resources it has can be
+ * crossed out; a single one is crossed out directly, none leaves the effect without target.
+ */
+function filterResourceChoiceOfKnownTarget(
+  resolverAction: ResolvedActionEffect,
+  pendingChoices: PendingChoice[],
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+  resourceScopes: RemovedResourceScope[] | undefined,
+): [ResolvedActionEffect, PendingChoice[]] {
+  const [targetId] = resolverAction.instanceIds ?? [];
+  const resourceIndex = pendingChoices.findIndex(
+    choice =>
+      choice.type === PendingChoiceType.CHOOSE_RESOURCE &&
+      choice.kind === ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+  );
+  if (resolverAction.instanceIds?.length !== 1 || resourceIndex === -1) {
+    return [resolverAction, pendingChoices];
+  }
+  const keys = getCandidateResourceKeys(targetId, gameState, defs, stickerDefs, resourceScopes);
+  const options = (pendingChoices[resourceIndex].choices as Resources[]).filter(option =>
+    Object.entries(option).every(([key, value]) => (value ?? 0) <= 0 || keys.has(key)),
+  );
+  const others = pendingChoices.filter((_, index) => index !== resourceIndex);
+  if (options.length <= 1) {
+    return [{ ...resolverAction, resources: options[0] ?? {} }, others];
+  }
+  const nextPendingChoices = [...pendingChoices];
+  nextPendingChoices[resourceIndex] = { ...pendingChoices[resourceIndex], choices: options };
+  return [resolverAction, nextPendingChoices];
 }
 
 function filterRemoveResourceCardChoices(
@@ -562,7 +692,16 @@ function filterRemoveResourceCardChoices(
       choice.kind === ActionEffectType.REMOVE_RESOURCE_ON_CARD,
   );
 
-  if (targetChoiceIndex === -1) return [resolverAction, pendingChoices];
+  if (targetChoiceIndex === -1) {
+    return filterResourceChoiceOfKnownTarget(
+      resolverAction,
+      pendingChoices,
+      gameState,
+      defs,
+      stickerDefs,
+      resourceScopes,
+    );
+  }
 
   const targetChoice = pendingChoices[targetChoiceIndex];
   const filteredIds = targetChoice.choices.filter((option): option is number => {
@@ -634,6 +773,7 @@ function buildResolveContext(params: {
   isMandatory: boolean;
   parentActionId?: string;
   lastSelectedIds?: number[];
+  paidAmount?: number;
 }): ResolveContext {
   const {
     action,
@@ -644,10 +784,12 @@ function buildResolveContext(params: {
     isMandatory,
     parentActionId,
     lastSelectedIds,
+    paidAmount,
   } = params;
 
   return {
     effectId: action.id,
+    paidAmount,
     parentActionId,
     sourceStepId: action.sourceStepId,
     actionType: action.type,
@@ -659,7 +801,115 @@ function buildResolveContext(params: {
     lastSelectedIds,
     resourceScopes:
       action.type === ActionEffectType.REMOVE_RESOURCE_ON_CARD ? action.resourceScopes : undefined,
+    addsProduction:
+      action.type === ActionEffectType.BOOST_CARD ||
+      (action.type === ActionEffectType.ADD_STICKER &&
+        (!action.stickers?.ids ||
+          action.stickers.ids.some(id => !stickerDefs[id] || stickerDefs[id].production))),
   };
+}
+
+/** The effects resolved by their own function: tracks, orders, used actions, sequences… */
+function resolveEffectApart(
+  action: ActionEffect,
+  resolverAction: ResolvedActionEffect,
+  ctx: ResolveContext,
+  enrichedCards: CardSelector | undefined,
+): [ResolvedActionEffect, PendingChoice[]] | null {
+  switch (action.type) {
+    case ActionEffectType.TRACK_ADVANCE:
+      return action.cards ? resolveTrackAdvance(action, action.cards, resolverAction, ctx) : null;
+    case ActionEffectType.ORDER_CARDS:
+      return resolveOrderCardsEffect(action, resolverAction, ctx);
+    case ActionEffectType.USE_CARD_ACTION:
+      return resolveUseCardAction(resolverAction, ctx, action, enrichedCards);
+    case ActionEffectType.SEQUENCE:
+      resolverAction.newActionEffects = action.effects ?? [];
+      return [resolverAction, []];
+    case ActionEffectType.CROSS_OUT_ACTION:
+      return resolveCrossOutAction(resolverAction, ctx, action, enrichedCards);
+    default:
+      return null;
+  }
+}
+
+/** ORDER_CARDS: its count from `value` or `valuePerElement` (the persons discarded). */
+function resolveOrderCardsEffect(
+  action: ActionEffect,
+  resolverAction: ResolvedActionEffect,
+  ctx: ResolveContext,
+): [ResolvedActionEffect, PendingChoice[]] {
+  if (action.valuePerElement) applyValuePerElement(resolverAction, action, ctx);
+  return resolveOrderCards(resolverAction, ctx, resolverAction.value ?? action.value ?? 1);
+}
+
+/** ORDER_CARDS: the next `count` cards of the box to put in order; 1 of them may be destroyed. */
+function resolveOrderCards(
+  resolverAction: ResolvedActionEffect,
+  ctx: ResolveContext,
+  count: number,
+): [ResolvedActionEffect, PendingChoice[]] {
+  const box = ctx.gameState.discoverablePile ?? ctx.gameState.discoveryPile;
+  const ids = box.slice(0, Math.max(0, count));
+  if (ids.length === 0) return [resolverAction, []];
+  return [
+    resolverAction,
+    [
+      {
+        id: `${ctx.instanceId}-${ctx.effectId}`,
+        actionId: ctx.parentActionId,
+        effectId: ctx.effectId,
+        kind: ctx.actionType,
+        type: PendingChoiceType.ORDER_CARDS,
+        sourceInstanceId: ctx.instanceId,
+        choices: ids,
+        pickMin: 0,
+        pickMax: 1,
+        isMandatory: ctx.isMandatory,
+      },
+    ],
+  ];
+}
+
+/** The flags an effect passes on to its strategy and to the action (keepGlory…). */
+function resolvedFlags(
+  action: ActionEffect,
+  lastSelectedIds?: number[],
+): Partial<ResolvedActionEffect> {
+  const { keepGlory, keepSelection, usableActions } = action;
+  const flags: Partial<ResolvedActionEffect> = Object.fromEntries(
+    Object.entries({ keepGlory, keepSelection, usableActions }).filter(([, value]) => value),
+  );
+  if (action.stickerHere) {
+    flags.stickerHere = true;
+    // 'lastSelected' (Wheelbarrow): the card chosen before gets the sticker
+    if (action.stickerHere === 'lastSelected') flags.stickerTargetId = lastSelectedIds?.[0];
+  }
+  return flags;
+}
+
+/** The stickers an ADD_STICKER offers: its ids, those just added here, or the last card's. */
+function getOfferedStickers(stickers: StickerSelector, ctx: ResolveContext): number[] {
+  if (stickers.producedByLastSelected) return getStickersOfLastSelected(ctx);
+  if (stickers.lastAdded) {
+    const added = ctx.gameState.lastAddedStickers?.[ctx.instanceId] ?? [];
+    return added.filter(id => !stickers.ids || stickers.ids.includes(id));
+  }
+  return stickers.ids ?? [];
+}
+
+/** The resource stickers of what the last selected card produces (House of Stonehaven). */
+function getStickersOfLastSelected(ctx: ResolveContext): number[] {
+  const instance = ctx.gameState.instances[ctx.lastSelectedIds?.[0] ?? -1];
+  if (!instance) return [];
+  const produced = new Set(
+    getCardProductionChoices(instance, ctx.gameState, ctx.defs, ctx.stickerDefs).flatMap(choice =>
+      Object.keys(choice).filter(type => (choice[type as keyof Resources] ?? 0) > 0),
+    ),
+  );
+  return Object.values(ctx.stickerDefs)
+    .filter(sticker => sticker.production && produced.has(sticker.production))
+    .map(sticker => sticker.id);
 }
 
 function resolveStickerTarget(
@@ -669,7 +919,8 @@ function resolveStickerTarget(
   stickers: StickerSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
   const { effectId, parentActionId, actionType, instanceId, isMandatory, gameState } = ctx;
-  const availableIds = (stickers.ids ?? []).filter(id => (gameState.stickerStock[id] ?? 0) > 0);
+  const offeredIds = getOfferedStickers(stickers, ctx);
+  const availableIds = offeredIds.filter(id => (gameState.stickerStock[id] ?? 0) > 0);
   const picks = getPickNumbers(stickers, availableIds.length);
   if (stickers.pickMin && availableIds.length < stickers.pickMin) {
     resolverAction.unresolvable = true;
@@ -800,6 +1051,7 @@ function extractResources(raw: NonNullable<ActionEffect['resources']>): Resource
 
 function expandResourceChoiceOptions(
   choices: NonNullable<NonNullable<ActionEffect['resources']>['choice']>,
+  offered: ResourceType[],
 ): Resources[] {
   return choices.flatMap(choice => {
     const { any, ...fixedResources } = choice;
@@ -810,7 +1062,7 @@ function expandResourceChoiceOptions(
       return [base];
     }
 
-    return Object.values(ResourceType).map(resourceType => ({
+    return offered.map(resourceType => ({
       ...base,
       [resourceType]: (base[resourceType] ?? 0) + anyAmount,
     }));
@@ -821,6 +1073,7 @@ function applyActionMetadata(resolverAction: ResolvedActionEffect, action: Actio
   if (action.payingCost !== undefined) resolverAction.payingCost = action.payingCost;
   if (action.value !== undefined) resolverAction.value = action.value;
   if (action.position !== undefined) resolverAction.position = action.position;
+  if (action.unlock) resolverAction.unlock = action.unlock;
   if (action.deck) {
     resolverAction.deck = action.deck;
   }
@@ -899,7 +1152,7 @@ export function resolveActionEffect(
   stickerDefs: Record<number, Sticker>,
   options: ResolveActionEffectOptions = {},
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const action = upgradeLegacyEffect(storedAction);
+  const action = withGainReplacement(upgradeLegacyEffect(storedAction), gameState);
   const isMandatory = options.isMandatory ?? false;
   const parentActionId = options.parentActionId;
   const lastSelectedIds = options.lastSelectedIds;
@@ -908,6 +1161,7 @@ export function resolveActionEffect(
     id: `${instanceId}-${action.id}`,
     type: action.type,
     sourceInstanceId: instanceId,
+    ...resolvedFlags(action, lastSelectedIds),
   };
   let pendingChoices: PendingChoice[] = [];
   const enrichedCards = getEnrichedCardSelector(action, lastSelectedIds);
@@ -921,15 +1175,11 @@ export function resolveActionEffect(
     isMandatory,
     parentActionId,
     lastSelectedIds,
+    paidAmount: options.paidAmount,
   });
 
-  if (action.type === ActionEffectType.TRACK_ADVANCE && action.cards) {
-    return resolveTrackAdvance(action, action.cards, resolverAction, ctx);
-  }
-
-  if (action.type === ActionEffectType.USE_CARD_ACTION) {
-    return resolveUseCardAction(resolverAction, ctx, action, enrichedCards);
-  }
+  const resolvedApart = resolveEffectApart(action, resolverAction, ctx, enrichedCards);
+  if (resolvedApart) return resolvedApart;
 
   if (action.type === ActionEffectType.CHOOSE_EFFECT && action.effects) {
     [resolverAction, pendingChoices] = resolveChooseActionEffect(
@@ -940,19 +1190,7 @@ export function resolveActionEffect(
     );
   }
 
-  if (action.valuePerElement) {
-    resolverAction.value =
-      (resolverAction.value ?? 1) *
-      action.valuePerElement.amount *
-      countValuePerElement(
-        action.valuePerElement,
-        gameState,
-        instanceId,
-        defs,
-        stickerDefs,
-        lastSelectedIds,
-      );
-  }
+  if (action.valuePerElement) applyValuePerElement(resolverAction, action, ctx);
 
   if (enrichedCards) {
     [resolverAction, pendingChoices] = resolveCardTarget(
@@ -987,7 +1225,10 @@ export function resolveActionEffect(
     return [resolverAction, pendingChoices];
   }
 
-  if (action.stickers) {
+  if (action.type === ActionEffectType.REMOVE_STICKER) {
+    // The stickers to take off the chosen cards: never read from the stock.
+    resolverAction.stickerIds = action.stickers?.ids ?? [];
+  } else if (action.stickers) {
     [resolverAction, pendingChoices] = resolveStickerTarget(
       resolverAction,
       pendingChoices,

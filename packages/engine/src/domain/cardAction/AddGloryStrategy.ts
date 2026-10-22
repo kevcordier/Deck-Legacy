@@ -24,6 +24,7 @@ export class AddGloryStrategy implements CardActionStrategy {
     if (emptyValues && emptyValues <= instance.glories.length) return gameState;
 
     instance.glories.push(payload.value);
+    if (payload.names) instance.writtenNames = [...(instance.writtenNames ?? []), ...payload.names];
     return { ...gs };
   }
 }

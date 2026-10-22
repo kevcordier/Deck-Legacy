@@ -91,7 +91,9 @@
     "stone": "Pierre",
     "iron": "Fer",
     "weapon": "Épée",
-    "goods": "Marchandise"
+    "goods": "Marchandise",
+    "science": "Science",
+    "herb": "Herbes"
   },
   "card": {
     "blocked": "Bloquée",
@@ -109,7 +111,9 @@
     "cost": {
       "discard": "Défaussez {{count}} {{type}}",
       "destroy": "Détruisez {{count}} {{type}}",
-      "cards": "cartes"
+      "cards": "cartes",
+      "anyResources_one": "{{count}} ressource au choix",
+      "anyResources_other": "{{count}} ressources au choix"
     },
     "deposit": {
       "title": "Combien en déposer ?",
@@ -155,7 +159,23 @@
       "ADD_TO_PURGE": "Choisissez une carte à ajouter à la purge",
       "ADD_TO_PURGE_other": "Choisissez {{count}} cartes à ajouter à la purge",
       "DEFEAT_CARD": "Choisissez un ennemi à vaincre",
-      "DEFEAT_CARD_other": "Choisissez {{count}} ennemis à vaincre"
+      "DEFEAT_CARD_other": "Choisissez {{count}} ennemis à vaincre",
+      "REMOVE_STICKER": "Choisissez une carte dont retirer le sticker",
+      "REMOVE_STICKER_other": "Choisissez {{count}} cartes dont retirer le sticker",
+      "UPGRADE_CARD": "Choisissez une carte à améliorer",
+      "UPGRADE_CARD_other": "Choisissez {{count}} cartes à améliorer",
+      "ADD_CUMULATED": "Choisissez une carte",
+      "ADD_CUMULATED_other": "Choisissez {{count}} cartes",
+      "SAVE_FROM_PURGE": "Choisissez une carte à sauver de la purge",
+      "SAVE_FROM_PURGE_other": "Choisissez {{count}} cartes à sauver de la purge",
+      "UNBLOCK_CARD": "Choisissez une carte à libérer",
+      "UNBLOCK_CARD_other": "Choisissez {{count}} cartes à libérer",
+      "EQUIP": "Choisissez la carte à équiper",
+      "EQUIP_other": "Choisissez la carte à équiper",
+      "CROSS_OUT_GLORY": "Choisissez une carte dont vous rayez la gloire",
+      "CROSS_OUT_GLORY_other": "Choisissez {{count}} cartes dont vous rayez la gloire",
+      "CROSS_OUT_ACTION": "Choisissez une carte pour rayer un de ses effets",
+      "CROSS_OUT_ACTION_other": "Choisissez {{count}} cartes pour rayer un de leurs effets"
     },
     "chooseActionEffect": "Choisissez un effet à résoudre",
     "chooseStep": "Choisir une étape",
@@ -168,7 +188,22 @@
     "cancel": "Annuler",
     "confirm": "Confirmer ({{selected}})",
     "select": "Sélectionner",
-    "deselect": "Désélectionner"
+    "deselect": "Désélectionner",
+    "split": {
+      "title_one": "Dépensez {{count}} ressource au choix",
+      "title_other": "Dépensez {{count}} ressources au choix",
+      "less": "Un(e) {{resource}} de moins",
+      "more": "Un(e) {{resource}} de plus",
+      "confirm": "Payer ({{paid}}/{{total}})"
+    },
+    "order": {
+      "title": "Réordonnez les cartes",
+      "hint": "Faites glisser les cartes dans l'ordre voulu (la première vient en premier). Déposez une carte à droite pour la détruire.",
+      "first": "Première",
+      "destroy": "Détruire",
+      "dropHere": "Déposez une carte ici pour la détruire",
+      "confirm": "Confirmer"
+    }
   },
   "triggerPile": {
     "title": "Effets en attente",
@@ -243,8 +278,6 @@
     "purgedGlory": "Gloire purgée",
     "rounds": "Manches",
     "viewKingdom": "Visualiser le royaume",
-    "kingdomTitle": "Royaume final",
-    "kingdomEmpty": "Aucune carte dans le royaume",
     "continueCampaign": "Continuer avec une extension",
     "saveScore": "Enregistrer le score",
     "descriptionEndGame": "Vous avez atteint la fin de votre aventure. Notez votre gloire pour le comparer à vos amis. Vous pouvez ensuite recommencer une nouvelle partie pour améliorer votre performance, ou continuer avec une extension de campagne pour affronter de nouveaux défis tout en conservant une partie de votre royaume actuel.",
@@ -256,6 +289,10 @@
     "purgeTitle": "Purge du royaume",
     "purgeDescription": "Pour chaque lot de {{size}} cartes, choisissez 1 carte alliée à purger.",
     "purgeBatchLabel": "Choisissez une carte alliée dans le lot courant",
+    "purgeTopGloryLabel_one": "Choisissez encore 1 de vos cartes les plus glorieuses à purger",
+    "purgeTopGloryLabel_other": "Choisissez {{count}} de vos cartes les plus glorieuses à purger",
+    "purgeTagsLabel_one": "Choisissez encore 1 carte alliée ({{tags}}) à purger",
+    "purgeTagsLabel_other": "Choisissez {{count}} cartes alliées ({{tags}}) à purger",
     "purgePermanentLabel": "Choisissez une carte permanente alliée à purger",
     "purgeSelected": "Cartes sélectionnées pour la purge : {{count}}",
     "purge": "Purger",
@@ -287,6 +324,28 @@
         "description": "Des marchands venus de terres lointaines viennent commercer avec votre royaume.",
         "campaign": "Achetez les marchandises qu'ils proposent avant leur départ.",
         "rules": "Ne découvrez pas de cartes au début de chaque manche : pendant 4 manches, les deux cartes permanentes Marchands vous permettent d'acheter les cartes qu'elles proposent. Ajoutez 5 autocollants « +1 Or », 10 « +1 Marchandise », 1 « Reste en jeu », 1 « Gloire vide », 1 « Commence en jeu » et 1 « Placez ceci sous votre deck » à votre réserve."
+      },
+      "Foundations": {
+        "title": "Fondations",
+        "description": "Trois campagnes et six fondations qui façonnent votre royaume."
+      },
+      "The Black Plague": {
+        "title": "La Peste noire",
+        "description": "Une peste mortelle se répand dans votre royaume.",
+        "campaign": "Soignez les malades et mettez les infectés en quarantaine avant que la peste n'emporte tout le monde.",
+        "rules": "Ne découvrez pas de cartes au début de chaque manche : la carte permanente de la campagne avance sur sa piste de manches. À chaque case verte, découvrez la couverture d'une fondation pas encore jouée dans ce royaume. Ajoutez 35 autocollants « Infecté » et 35 « Marque d'infection » à votre réserve."
+      },
+      "Invasion": {
+        "title": "Invasion",
+        "description": "Une armée ennemie marche sur votre royaume.",
+        "campaign": "Vainquez ses troupes, ses archers et ses commandants avant qu'ils n'incendient votre cité.",
+        "rules": "Ne découvrez pas de cartes au début de chaque manche : la carte permanente de la campagne avance sur sa piste de manches. À chaque case verte, découvrez la couverture d'une fondation pas encore jouée dans ce royaume. Purge : purgez d'abord 2 de vos 5 cartes les plus glorieuses."
+      },
+      "Nature's Revenge": {
+        "title": "La Revanche de la nature",
+        "description": "La nature se retourne contre votre royaume.",
+        "campaign": "Survivez aux sécheresses, aux séismes et aux tempêtes, et levez la malédiction de vos terres.",
+        "rules": "Ne découvrez pas de cartes au début de chaque manche : la carte permanente de la campagne avance sur sa piste de manches. À chaque case verte, découvrez la couverture d'une fondation pas encore jouée dans ce royaume. Purge : purgez d'abord 2 événements alliés."
       }
     },
     "details": {
@@ -303,7 +362,8 @@
       "purgePermanent_other": "Puis purgez {{count}} cartes permanentes alliées.",
       "purgeFocus": "Focus {{count}} {{resource}} : tant que moins de {{count}} cartes purgées produisent du {{resource}}, choisissez une carte qui en produit quand le lot en contient.",
       "rules": "Règles supplémentaires",
-      "start": "Jouer cette extension"
+      "start": "Jouer cette extension",
+      "comingSoon": "Bientôt"
     }
   },
   "rules": {
@@ -324,8 +384,7 @@
     "fr": "Français",
     "tutorial": "Activer le tutoriel",
     "backHome": "Retour à mes royaumes",
-    "resourceWarning": "Prévenir avant d'avancer avec des ressources en jeu",
-    "seed": "Graine : {{seed}}"
+    "resourceWarning": "Prévenir avant d'avancer avec des ressources en jeu"
   },
   "progressWarning": {
     "title": "Des ressources vont être perdues",
@@ -509,7 +568,9 @@
     "renameTitle": "Renommer le royaume",
     "renameConfirm": "Renommer",
     "titleOf": "Royaume de {{name}}",
-    "destroyedCards": "Cartes détruites"
+    "destroyedCards": "Cartes détruites",
+    "seed": "Graine : {{seed}}",
+    "seedCopied": "Graine copiée dans le presse-papier"
   },
   "scoreboard": {
     "title": "Classement",

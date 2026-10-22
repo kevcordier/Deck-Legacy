@@ -91,7 +91,9 @@
     "stone": "Stone",
     "iron": "Iron",
     "weapon": "Weapon",
-    "goods": "Goods"
+    "goods": "Goods",
+    "science": "Science",
+    "herb": "Herbs"
   },
   "card": {
     "blocked": "Blocked",
@@ -109,7 +111,9 @@
     "cost": {
       "discard": "Discard {{count}} {{type}}",
       "destroy": "Destroy {{count}} {{type}}",
-      "cards": "cards"
+      "cards": "cards",
+      "anyResources_one": "{{count}} resource of your choice",
+      "anyResources_other": "{{count}} resources of your choice"
     },
     "deposit": {
       "title": "How many to deposit?",
@@ -155,7 +159,23 @@
       "ADD_TO_PURGE": "Choose a card to add to the purge",
       "ADD_TO_PURGE_other": "Choose {{count}} cards to add to the purge",
       "DEFEAT_CARD": "Choose an enemy to defeat",
-      "DEFEAT_CARD_other": "Choose {{count}} enemies to defeat"
+      "DEFEAT_CARD_other": "Choose {{count}} enemies to defeat",
+      "REMOVE_STICKER": "Choose a card to remove the sticker from",
+      "REMOVE_STICKER_other": "Choose {{count}} cards to remove the sticker from",
+      "UPGRADE_CARD": "Choose a card to upgrade",
+      "UPGRADE_CARD_other": "Choose {{count}} cards to upgrade",
+      "ADD_CUMULATED": "Choose a card",
+      "ADD_CUMULATED_other": "Choose {{count}} cards",
+      "SAVE_FROM_PURGE": "Choose a card to save from the purge",
+      "SAVE_FROM_PURGE_other": "Choose {{count}} cards to save from the purge",
+      "UNBLOCK_CARD": "Choose a card to release",
+      "UNBLOCK_CARD_other": "Choose {{count}} cards to release",
+      "EQUIP": "Choose the card to equip",
+      "EQUIP_other": "Choose the card to equip",
+      "CROSS_OUT_GLORY": "Choose a card whose glory you cross out",
+      "CROSS_OUT_GLORY_other": "Choose {{count}} cards whose glory you cross out",
+      "CROSS_OUT_ACTION": "Choose a card to cross out one of its effects",
+      "CROSS_OUT_ACTION_other": "Choose {{count}} cards to cross out one of their effects"
     },
     "chooseActionEffect": "Choose an effect to resolve",
     "chooseStep": "Choose a track step",
@@ -168,7 +188,22 @@
     "cancel": "Cancel",
     "confirm": "Confirm ({{selected}})",
     "select": "Select",
-    "deselect": "Deselect"
+    "deselect": "Deselect",
+    "split": {
+      "title_one": "Spend {{count}} resource of your choice",
+      "title_other": "Spend {{count}} resources of your choice",
+      "less": "One {{resource}} less",
+      "more": "One {{resource}} more",
+      "confirm": "Pay ({{paid}}/{{total}})"
+    },
+    "order": {
+      "title": "Re-arrange the cards",
+      "hint": "Drag the cards into the order you want (the first one comes first). Drop one card on the right to destroy it.",
+      "first": "First",
+      "destroy": "Destroy",
+      "dropHere": "Drop a card here to destroy it",
+      "confirm": "Confirm"
+    }
   },
   "triggerPile": {
     "title": "Pending effects",
@@ -243,8 +278,6 @@
     "purgedGlory": "Purged glory",
     "rounds": "Rounds",
     "viewKingdom": "View kingdom",
-    "kingdomTitle": "Final kingdom",
-    "kingdomEmpty": "No cards in the kingdom",
     "continueCampaign": "Continue with expansion",
     "saveScore": "Save score",
     "descriptionEndGame": "You have reached the end of your adventure. Record your glory to compare it with your friends. You can then start a new game to improve your performance, or continue with a campaign expansion to face new challenges while keeping part of your current kingdom.",
@@ -256,6 +289,10 @@
     "purgeTitle": "Purge your kingdom",
     "purgeDescription": "For each batch of {{size}} cards, choose 1 allied card to purge.",
     "purgeBatchLabel": "Choose one allied card from the current batch",
+    "purgeTopGloryLabel_one": "Choose 1 more of your cards with the most glory to purge",
+    "purgeTopGloryLabel_other": "Choose {{count}} of your cards with the most glory to purge",
+    "purgeTagsLabel_one": "Choose 1 more friendly card ({{tags}}) to purge",
+    "purgeTagsLabel_other": "Choose {{count}} friendly cards ({{tags}}) to purge",
     "purgePermanentLabel": "Choose one allied permanent card to purge",
     "purgeSelected": "Cards selected for purge: {{count}}",
     "purge": "Purge",
@@ -287,6 +324,28 @@
         "description": "Merchants from distant lands come to trade with your kingdom.",
         "campaign": "Buy the goods they offer before they leave.",
         "rules": "Do not discover cards at the start of each round: for 4 rounds, the two permanent Merchants cards let you buy the cards they offer. Add 5 \"+1 Gold\", 10 \"+1 Goods\", 1 \"Stays in Play\", 1 \"Empty Glory\", 1 \"Starts in Play\" and 1 \"Place this at the bottom of your deck\" stickers to your stock."
+      },
+      "Foundations": {
+        "title": "Foundations",
+        "description": "Three campaigns and six foundations that shape your kingdom."
+      },
+      "The Black Plague": {
+        "title": "The Black Plague",
+        "description": "A deadly plague spreads through your kingdom.",
+        "campaign": "Treat the sick and quarantine the infected before the plague takes everyone.",
+        "rules": "Do not discover cards at the start of each round: the permanent campaign card advances its round track instead. At each green box, discover the cover of a foundation not yet played in this kingdom. Add 35 \"Infected\" and 35 \"Infection mark\" stickers to your stock."
+      },
+      "Invasion": {
+        "title": "Invasion",
+        "description": "An enemy army marches on your kingdom.",
+        "campaign": "Defeat its troops, archers and commanders before they burn your city.",
+        "rules": "Do not discover cards at the start of each round: the permanent campaign card advances its round track instead. At each green box, discover the cover of a foundation not yet played in this kingdom. Purge: first purge 2 of your 5 most glorious cards."
+      },
+      "Nature's Revenge": {
+        "title": "Nature's Revenge",
+        "description": "Nature strikes back at your kingdom.",
+        "campaign": "Survive droughts, earthquakes and storms, and lift the curse on your lands.",
+        "rules": "Do not discover cards at the start of each round: the permanent campaign card advances its round track instead. At each green box, discover the cover of a foundation not yet played in this kingdom. Purge: first purge 2 friendly events."
       }
     },
     "details": {
@@ -303,7 +362,8 @@
       "purgePermanent_other": "Then purge {{count}} allied permanent cards.",
       "purgeFocus": "Focus {{count}} {{resource}}: while fewer than {{count}} purged cards produce {{resource}}, pick a card that produces it when the batch has one.",
       "rules": "Additional rules",
-      "start": "Play this expansion"
+      "start": "Play this expansion",
+      "comingSoon": "Coming soon"
     }
   },
   "rules": {
@@ -324,8 +384,7 @@
     "fr": "French",
     "tutorial": "Enable tutorial",
     "backHome": "Back to my kingdoms",
-    "resourceWarning": "Warn before progressing with resources in play",
-    "seed": "Seed: {{seed}}"
+    "resourceWarning": "Warn before progressing with resources in play"
   },
   "progressWarning": {
     "title": "Resources will be lost",
@@ -509,7 +568,9 @@
     "renameTitle": "Rename the kingdom",
     "renameConfirm": "Rename",
     "titleOf": "Kingdom of {{name}}",
-    "destroyedCards": "Destroyed cards"
+    "destroyedCards": "Destroyed cards",
+    "seed": "Seed: {{seed}}",
+    "seedCopied": "Seed copied to the clipboard"
   },
   "scoreboard": {
     "title": "Scoreboard",

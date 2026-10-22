@@ -21,7 +21,11 @@ export function isFlowCommandAllowed(
         (state.phase === Phase.ROUND_END && lastRound)
       );
     case 'startTurn':
-      return state.phase === Phase.ROUND_START || state.phase === Phase.TURN_END;
+      // "Start of round" effects resolve before the first turn (Haunted Souls).
+      return (
+        (state.phase === Phase.ROUND_START && Object.keys(state.triggerPile).length === 0) ||
+        state.phase === Phase.TURN_END
+      );
     case 'progress':
     case 'endTurn':
       return state.phase === Phase.PLAYING;

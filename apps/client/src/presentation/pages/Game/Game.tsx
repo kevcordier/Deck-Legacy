@@ -2,7 +2,7 @@ import { ExpansionChoice } from '@components/ExpansionChoice/ExpansionChoice';
 import { GameBoard } from '@components/GameBoard/GameBoard';
 import { GameHeader } from '@components/GameHeader/GameHeader';
 import { OptionsModal } from '@components/OptionsModal/OptionsModal';
-import { PurgeModal } from '@components/PurgeModal/PurgeModal';
+import { PurgeScreen } from '@components/PurgeScreen/PurgeScreen';
 import { ResourceBar } from '@components/ResourceBar/ResourceBar';
 import { RulesModal } from '@components/RulesModal/RulesModal';
 import { TutorialOverlay } from '@components/Tutorial/TutorialOverlay';
@@ -10,6 +10,7 @@ import { TutorialStage } from '@components/Tutorial/TutorialStage';
 import { GameOverScreen } from '@components/ui/GameOverScreen/GameOverScreen';
 import { TutorialProvider } from '@contexts/TutorialProvider';
 import { Phase } from '@deck-legacy/engine/domain/enums';
+import type { GameState } from '@deck-legacy/engine/domain/types';
 import { useAppServices } from '@hooks/useAppServices';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
@@ -23,6 +24,13 @@ import {
 import { router } from 'expo-router';
 import { ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+/** Cards still to choose in the first purge batch (Invasion, Nature's Revenge). */
+function firstBatchPicksLeft(purgeState: GameState['purgeState']): number {
+  const first = purgeState?.firstBatch;
+  if (!first) return 0;
+  return first.picks - first.ids.filter(id => purgeState.selectedCardIds.includes(id)).length;
+}
 
 export function Game() {
   const { catalog, sync } = useAppServices();
@@ -93,11 +101,13 @@ export function Game() {
           )}
 
           {gameState.phase === Phase.PURGE && (
-            <PurgeModal
+            <PurgeScreen
               defs={defs}
               instances={gameState.instances}
               batchSize={gameState.purgeState?.batchSize ?? 0}
               permanentToPurge={gameState.purgeState?.permanentToPurge ?? 0}
+              firstBatch={gameState.purgeState?.firstBatch}
+              firstBatchPicksLeft={firstBatchPicksLeft(gameState.purgeState)}
               purgeBatch={purgeBatch}
               purgeCandidates={purgeCandidates}
               purgePermanentCandidates={purgePermanentCandidates}
@@ -112,13 +122,7 @@ export function Game() {
 
           {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}
 
-          {optionsOpen && (
-            <OptionsModal
-              onClose={() => setOptionsOpen(false)}
-              onGoHome={goHome}
-              seed={gameState.seed}
-            />
-          )}
+          {optionsOpen && <OptionsModal onClose={() => setOptionsOpen(false)} onGoHome={goHome} />}
         </SafeAreaView>
         <TutorialStage />
         <TutorialOverlay />

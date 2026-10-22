@@ -3,7 +3,7 @@ import React from 'react';
 
 // Detects tokens like {{gold}}, {{wood}}, etc. in translated texts
 const ICON_TOKEN =
-  /\{\{(gold|wood|stone|iron|weapon|goods|glory|action|time|passif|unlimited|destroy|trigger|optionalTrigger|upgrade|discovered)\}\}/g;
+  /\{\{(gold|wood|stone|iron|weapon|goods|science|herb|glory|action|time|passif|unlimited|destroy|trigger|optionalTrigger|upgrade|discovered)\}\}/g;
 
 /**
  * Replaces {{resource}} tokens in a text with the corresponding SVG icon.

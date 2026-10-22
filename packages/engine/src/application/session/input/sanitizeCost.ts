@@ -1,6 +1,7 @@
 import { ActionEffectType, PendingChoiceType } from '../../../domain/enums';
 import type { PendingChoice, ResolvedCost } from '../../../domain/types';
 import { isValidSelection } from './isValidSelection';
+import { isValidSplit } from './isValidSplit';
 import { sameValue } from './sameValue';
 
 /** A cost payment: one offered resource option, or offered cards to discard (or destroy). */
@@ -9,6 +10,11 @@ export function sanitizeCost(
   pending: PendingChoice | undefined,
 ): ResolvedCost | null {
   if (pending?.kind !== ActionEffectType.COST) return null;
+  if (pending.type === PendingChoiceType.SPLIT_RESOURCES) {
+    return isValidSplit(resolved.resources, pending)
+      ? { resources: resolved.resources, discardedCardIds: [], destroyedCardIds: [] }
+      : null;
+  }
   if (pending.type === PendingChoiceType.CHOOSE_RESOURCE) {
     const offered = pending.choices.some(resources => sameValue(resources, resolved.resources));
     return offered

@@ -24,6 +24,7 @@ import { canAffordCost } from '@deck-legacy/engine/domain/cards/canAffordCost';
 import { cardIsBlocked } from '@deck-legacy/engine/domain/cards/cardIsBlocked';
 import { getEffectiveUpgradeCost } from '@deck-legacy/engine/domain/cards/getEffectiveUpgradeCost';
 import { getProductionChoicesForAction } from '@deck-legacy/engine/domain/cards/getProductionChoicesForAction';
+import { hasUsesLeft } from '@deck-legacy/engine/domain/cards/hasUsesLeft';
 import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
 import { getEffectiveGlory } from '@deck-legacy/engine/domain/cards/selection/getEffectiveGlory';
 import { getStateActions } from '@deck-legacy/engine/domain/cards/selection/getStateActions';
@@ -172,10 +173,8 @@ export function GameCard({
   const hasProductions = productions?.some(prod => Object.keys(prod).length > 0) ?? false;
   const canActivate = isOnBoard && !isBlocked;
   const upgrades = cs.upgrade ?? [];
-  const actions = getStateActions(instance, defs, stickerDefs).filter(
-    action =>
-      action.limitedTime === undefined ||
-      instance.usedActionIds.filter(usedId => usedId === action.id).length < action.limitedTime,
+  const actions = getStateActions(instance, defs, stickerDefs).filter(action =>
+    hasUsesLeft(action, instance, gameState),
   );
   const rawCardName = t(`names.${cs.name}`, { ns: 'cards' });
   const canChooseName = cs.chooseName === true && rawCardName.includes('_____');
@@ -437,15 +436,20 @@ export function GameCard({
                         }),
                       })
                     : '';
+                  const anyLabel = effectiveUpgradeCost.anyResources
+                    ? t('card.cost.anyResources', { count: effectiveUpgradeCost.anyResources })
+                    : '';
                   const disabled = !affordable || !canActivate || optionDisabled;
 
                   return (
                     <TutorialTarget
-                      key={upg.upgradeTo}
+                      key={`${upg.upgradeTo}-${JSON.stringify(upg.cost)}`}
                       id={index === 0 ? tourId('card-upgrade') : undefined}
                     >
                       <HoverPressable
-                        onPress={withCallback(() => resolveUpgrade(instance.id, upg.upgradeTo))}
+                        onPress={withCallback(() =>
+                          resolveUpgrade(instance.id, upg.upgradeTo, index),
+                        )}
                         disabled={disabled}
                         accessibilityRole="button"
                         accessibilityState={{ disabled }}
@@ -460,7 +464,9 @@ export function GameCard({
                             onTriggerPress={
                               disabled
                                 ? undefined
-                                : withCallback(() => resolveUpgrade(instance.id, upg.upgradeTo))
+                                : withCallback(() =>
+                                    resolveUpgrade(instance.id, upg.upgradeTo, index),
+                                  )
                             }
                           >
                             <Text className={sizes.actionText}>
@@ -471,7 +477,9 @@ export function GameCard({
                             </Text>
                           </CardStateTooltip>
                           {Boolean(
-                            effectiveUpgradeCost.resources?.[0] ?? discardLabel ?? destroyLabel,
+                            effectiveUpgradeCost.resources?.[0] ??
+                            discardLabel ??
+                            (destroyLabel || anyLabel),
                           ) && (
                             <Text>
                               {' '}
@@ -495,7 +503,8 @@ export function GameCard({
                                 },
                               )}{' '}
                               {discardLabel}
-                              {destroyLabel})
+                              {destroyLabel}
+                              {anyLabel})
                             </Text>
                           )}
                         </Text>

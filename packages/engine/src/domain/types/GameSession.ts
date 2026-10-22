@@ -30,7 +30,13 @@ export type GameCommand =
       /** Amount paid for an `'any'` resource cost (e.g. goods deposited on Export). */
       amount?: number;
     }
-  | { type: 'resolveUpgrade'; instanceId: number; upgradeTo: number }
+  | {
+      type: 'resolveUpgrade';
+      instanceId: number;
+      upgradeTo: number;
+      /** Which upgrade of the state, when several lead to `upgradeTo` (cost choice). */
+      upgradeIndex?: number;
+    }
   | { type: 'resolvePlayerChoice'; choice: ResolvedActionEffect; choiceType: string }
   | { type: 'resolvePayCost'; resolved: ResolvedCost }
   | { type: 'skipTrigger'; triggerId: string }

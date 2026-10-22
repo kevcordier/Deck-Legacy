@@ -1,5 +1,5 @@
 import { ActionEffectType, type ResourceType } from '../enums';
-import type { GameState, RemovedResourceScope, ResolvedActionEffect } from '../types';
+import type { GameState, RemovedResourceScope, ResolvedActionEffect, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
 
 const DEFAULT_SCOPES: RemovedResourceScope[] = ['production', 'actionCost', 'upgradeCost'];
@@ -11,6 +11,8 @@ function extractResourceKeys(payload: ResolvedActionEffect): ResourceType[] {
 }
 
 export class RemoveResourceOnCardStrategy implements CardActionStrategy {
+  constructor(private readonly stickerDefs: Record<number, Sticker> = {}) {}
+
   apply(gameState: GameState, payload: ResolvedActionEffect): GameState {
     if (payload.type !== ActionEffectType.REMOVE_RESOURCE_ON_CARD) return gameState;
     if (!payload.instanceIds?.length) return gameState;
@@ -40,9 +42,24 @@ export class RemoveResourceOnCardStrategy implements CardActionStrategy {
       });
     });
 
+    if (payload.stickerHere) {
+      this.addStickers(gs, payload.stickerTargetId ?? payload.sourceInstanceId, removedKeys);
+    }
     return {
       ...gs,
       instances: gs.instances,
     };
+  }
+
+  /** `stickerHere` (Lord Edric): the source gets the sticker of each resource crossed out. */
+  private addStickers(gs: GameState, sourceId: number, removedKeys: ResourceType[]): void {
+    const source = gs.instances[sourceId];
+    if (!source) return;
+    for (const key of removedKeys) {
+      const sticker = Object.values(this.stickerDefs).find(s => s.production === key);
+      if (!sticker || (gs.stickerStock[sticker.id] ?? 0) <= 0) continue;
+      gs.stickerStock[sticker.id] -= 1;
+      source.stickers[source.stateId] = [...(source.stickers[source.stateId] ?? []), sticker.id];
+    }
   }
 }

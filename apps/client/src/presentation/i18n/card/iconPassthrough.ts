@@ -7,6 +7,8 @@ export const ICON_PASSTHROUGH = {
   iron: '{{iron}}',
   weapon: '{{weapon}}',
   goods: '{{goods}}',
+  science: '{{science}}',
+  herb: '{{herb}}',
   glory: '{{glory}}',
   time: '{{time}}',
   passif: '{{passif}}',

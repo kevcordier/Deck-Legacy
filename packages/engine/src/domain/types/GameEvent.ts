@@ -1,13 +1,15 @@
 import type {
+  CardAction,
   ExpansionDeckEntry,
   GameParameters,
   GameState,
+  PurgeFirstBatch,
   PurgeFocus,
   Resources,
   StickerStock,
   TriggerEntry,
 } from '.';
-import type { GameEventType } from '../enums';
+import type { GameEventType, Phase } from '../enums';
 import type { GameCommand } from './GameSession';
 
 export interface GameEvent {
@@ -63,6 +65,13 @@ export interface StoryAdvancedEvent extends GameEvent {
 export interface ParchmentCardDiscoveredEvent extends GameEvent {
   type: GameEventType.PARCHMENT_CARD_DISCOVERED;
   cardInstanceId: number;
+  /** Discovered by an effect: the phase the game goes back to once it is resolved (EDR-059). */
+  resumePhase?: Phase;
+}
+
+/** A parchment discovered by an effect is resolved: the game goes back to `resumePhase`. */
+export interface ParchmentResolvedEvent extends GameEvent {
+  type: GameEventType.PARCHMENT_RESOLVED;
 }
 
 export interface TurnStartedEvent extends GameEvent {
@@ -90,6 +99,8 @@ export interface UpgradeCardEvent extends GameEvent {
   discardedCardIds?: number[];
   destroyedCardIds?: number[];
   endTurnTrigger: Record<string, TriggerEntry>;
+  /** The upgrade did not end the turn (Renowned School). Absent in older events. */
+  keepsTurn?: boolean;
 }
 
 export interface ChooseStateEvent extends GameEvent {
@@ -149,6 +160,9 @@ export interface ExpansionSelectedEvent extends GameEvent {
   onStartDiscoverIds: number[];
   addedStickers?: StickerStock;
   purgeFocus?: PurgeFocus;
+  /** The first purge batch, fixed when the expansion is selected (Invasion, Nature's Revenge). */
+  purgeFirstBatch?: PurgeFirstBatch;
+  onStartActions?: CardAction[];
   expansionDiscoveryFirst?: boolean; // expansion cards go before the remaining base cards
 }
 
@@ -173,4 +187,6 @@ export interface PurgeFinalizedEvent extends GameEvent {
   purgedIds: number[];
   glory: number;
   onStartDiscoverIds: number[];
+  /** Setup actions of the campaign, queued before the first round (EDR-059). */
+  onStartTriggers?: Record<string, TriggerEntry>;
 }

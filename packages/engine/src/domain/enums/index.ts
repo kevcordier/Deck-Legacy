@@ -22,6 +22,17 @@ export enum CardTag {
   LADY = 'lady',
   WAGON = 'wagon',
   PERMANENT = 'permanent',
+  MAGE = 'mage',
+  ANIMAL = 'animal',
+  OMEN = 'omen',
+  ARCHBISHOP = 'archbishop',
+  /** A blessed card (Church): the blessing sticker 38 or a printed blessing. */
+  BLESSED = 'blessed',
+  /** A lady's printed scarf, or a knight's scarf sticker (Romance). */
+  SCARF = 'scarf',
+  QUEST = 'quest',
+  CRAFTING = 'crafting',
+  FURNITURE = 'furniture',
 }
 
 export enum Trigger {
@@ -36,6 +47,12 @@ export enum Trigger {
   ON_TRACK_END = 'on_track_end',
   ON_DEFEAT = 'on_defeat',
   ON_PURGE_SELECTION = 'on_purge_selection',
+  /** When the card is discovered by an effect (Cursed Lands). */
+  ON_DISCOVER = 'on_discover',
+  /** Start of the round, after the shuffle: permanents (Haunted Souls). */
+  START_OF_ROUND = 'start_of_round',
+  /** Fired on a card when a sticker is added to it (Irrigation; `stickerAdded` condition). */
+  ON_STICKER_ADDED = 'on_sticker_added',
 }
 
 export enum GameEventType {
@@ -53,6 +70,7 @@ export enum GameEventType {
   SKIP_TRIGGER = 'SKIP_TRIGGER',
   CHOOSE_STATE = 'CHOOSE_STATE',
   PARCHMENT_CARD_DISCOVERED = 'PARCHMENT_CARD_DISCOVERED',
+  PARCHMENT_RESOLVED = 'PARCHMENT_RESOLVED',
   CAMPAIGN_SCORE_SAVED = 'CAMPAIGN_SCORE_SAVED',
   EXPANSION_SELECTED = 'EXPANSION_SELECTED',
   PURGE_CARD_SELECTED = 'PURGE_CARD_SELECTED',
@@ -99,6 +117,24 @@ export enum ActionEffectType {
   USE_CARD_ACTION = 'USE_CARD_ACTION',
   /** The next `value` resource units gained this turn are lost. */
   LOSE_NEXT_RESOURCES = 'LOSE_NEXT_RESOURCES',
+  /** Adds `unlock.stickers` to the sticker stock and offers `unlock.resources` (a foundation). */
+  UNLOCK = 'UNLOCK',
+  /** Takes `stickers.ids` off the chosen cards (curing an infection). */
+  REMOVE_STICKER = 'REMOVE_STICKER',
+  /** Crosses out an activated effect of the chosen card (`usedAction` once chosen). */
+  CROSS_OUT_ACTION = 'CROSS_OUT_ACTION',
+  /** Releases cards blocked by this card into play. */
+  UNBLOCK_CARD = 'UNBLOCK_CARD',
+  /** Ends the turn once the action is resolved ("immediately end your turn"). */
+  END_TURN = 'END_TURN',
+  /** Resolves `effects` in order: one option of a CHOOSE_EFFECT made of several effects. */
+  SEQUENCE = 'SEQUENCE',
+  /** Places this equipment under the chosen card in play (`cards`). */
+  EQUIP = 'EQUIP',
+  /** Crosses out the glory of the chosen cards' current state (Lady Elara). */
+  CROSS_OUT_GLORY = 'CROSS_OUT_GLORY',
+  /** Looks at the next `value` cards of the box, re-arranges them and may destroy 1 (Performance). */
+  ORDER_CARDS = 'ORDER_CARDS',
 }
 
 export enum PassiveType {
@@ -108,6 +144,8 @@ export enum PassiveType {
   ADJUST_PRODUCTION = 'ADJUST_PRODUCTION',
   DESACTIVATE_OPTION = 'DESACTIVATE_OPTION',
   COUNT_AS_2 = 'COUNT_AS_2',
+  /** The card counts as `amount` cards (an Enemy Troop counts as several enemies). */
+  COUNT_AS = 'COUNT_AS',
   ADJUST_ADD_RESOURCES = 'ADJUST_ADD_RESOURCES',
   ADJUST_UPDATE_COST = 'ADJUST_UPDATE_COST',
   REPLACE_RESOURCE_PRODUCTION = 'REPLACE_RESOURCE_PRODUCTION',
@@ -117,6 +155,26 @@ export enum PassiveType {
   RESTRICT_GAIN = 'RESTRICT_GAIN',
   RESTRICT_SPEND = 'RESTRICT_SPEND',
   REQUIRES_IN_PLAY = 'REQUIRES_IN_PLAY',
+  /** Each production of the selected cards gets one of `choices` on top ("+gold / science"). */
+  ADD_PRODUCTION_CHOICE = 'ADD_PRODUCTION_CHOICE',
+  /** The selected cards cannot stay in play (Skepticism), unless permanent. */
+  PREVENT_STAY_IN_PLAY = 'PREVENT_STAY_IN_PLAY',
+  /** Upgrading the selected cards does not end the turn (Renowned School). */
+  UPGRADE_KEEPS_TURN = 'UPGRADE_KEEPS_TURN',
+  /** The whole production of the selected cards is multiplied by `amount` (Guinevere). */
+  MULTIPLY_PRODUCTION = 'MULTIPLY_PRODUCTION',
+  /** Before a ✓ / ⌛ effect of the selected card (or of its equipment), `actionEffects` (Ether Pearl). */
+  GAIN_BEFORE_HOLDER_ACTION = 'GAIN_BEFORE_HOLDER_ACTION',
+  /** Every gain of `resources`' first type may be the second type instead (Jeweler: iron → goods). */
+  REPLACE_GAIN = 'REPLACE_GAIN',
+  /** The selected cards, once upgraded, go on top of the deck instead of the discard (Architect). */
+  UPGRADED_ON_TOP_OF_DECK = 'UPGRADED_ON_TOP_OF_DECK',
+  /** The selected cards, once upgraded, go to the bottom of the deck (Crane). */
+  UPGRADED_TO_BOTTOM_OF_DECK = 'UPGRADED_TO_BOTTOM_OF_DECK',
+  /** In the permanents when a campaign starts: its purge batches are `amount` cards larger. */
+  ADJUST_PURGE = 'ADJUST_PURGE',
+  /** Purged with this card, every purged card is worth at least `amount` glory (Frostpeak). */
+  PURGE_MIN_GLORY = 'PURGE_MIN_GLORY',
 }
 
 export enum Options {
@@ -135,6 +193,9 @@ export enum ResourceType {
   IRON = 'iron',
   WEAPON = 'weapon',
   GOODS = 'goods',
+  /** Foundations: offered only once unlocked (`GameState.unlockedResources`, EDR-059). */
+  SCIENCE = 'science',
+  HERB = 'herb',
 }
 
 export enum TargetScope {
@@ -153,12 +214,18 @@ export enum TargetScope {
   TOP_OF_DECK = 'top_of_deck',
   DRAWN = 'drawn',
   DISCARDED = 'discarded',
+  /** Cards just discarded from play or from a card in play blocking them (Quarantine). */
+  DISCARDED_FROM_PLAY = 'discarded_from_play',
   LAST_SELECTED = 'last_selected',
   TRIGGER_SOURCE = 'trigger_source',
   UPGRADABLE = 'upgradable',
   WITH_TRACK = 'with_track',
   PURGE_SELECTED = 'purge_selected',
   STAYING = 'staying',
+  /** The card the source is equipped to. */
+  HOLDER = 'holder',
+  /** The undiscovered cards of the box, in order (the discoverable pile). */
+  BOX = 'box',
 }
 
 export enum PendingChoiceType {
@@ -168,6 +235,10 @@ export enum PendingChoiceType {
   CHOOSE_STICKER = 'choose_sticker',
   CHOOSE_STEP = 'choose_step',
   CHOOSE_ACTION_EFFECT = 'choose_action_effect',
+  /** Pay `total` resources of any types: `choices[0]` = the resources the player can spend. */
+  SPLIT_RESOURCES = 'split_resources',
+  /** Put `choices` (cards) in a new order; up to `pickMax` of them may be destroyed. */
+  ORDER_CARDS = 'order_cards',
 }
 
 export enum Phase {

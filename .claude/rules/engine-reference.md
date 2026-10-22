@@ -238,3 +238,54 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - **`COUNT_AS_2` can affect selections outside `boardEffects`-only contexts** (e.g. discard-based selections): keep intrinsic passives and board effects aligned when filtering selectable cards.
 - **Cards reference each other by state name and by id** (selectors, `upgradeTo`, `states.ids`): a typo silently matches nothing. Check the target exists.
 - **The engine runs on Hermes, browsers and Node:** check that any global API (`crypto`, `structuredClone`, `Intl`…) exists on Hermes before using it.
+
+## Mechanics added for Foundations: Church
+
+- Blessed cards: `CardTag.BLESSED` (printed blessing) or the blessing sticker 38. Sticker tags are not read by selectors: match both with `{ tags: [CardTag.BLESSED], orStickerIds: [38] }` (`CardSelector.orStickerIds`).
+- `PassiveType.ADD_PRODUCTION_CHOICE` (`choices`): each production of the selected cards gets one of the bonuses on top (Archbishops' "+gold / science").
+- `PassiveType.PREVENT_STAY_IN_PLAY` (Skepticism): the selected cards cannot stay in play, unless permanent. `PassiveType.UPGRADE_KEEPS_TURN` (Renowned School): upgrading the selected cards does not end the turn (`UpgradeCardEvent.keepsTurn`).
+- A `CHOOSE_EFFECT` option with a `condition` is only offered when it holds (a new Archbishop each round: the last choice is kept in `cumulated`).
+- `PLACE_CARD_IN_PILE` with `deck: 'board'`: the cards start in play without being played (Silvanus).
+- `CardAction.amountPer` with an `'any'` resource cost: the effects apply once per `amountPer` units ("for every 3 science spent").
+- `ValuePerElement` with both `cards` and `productionTotal`: the total production of that resource on the selected cards.
+- Archbishops (Foundations 72–74): the 3 printed cards count as one permanent card, so one card (245) with a state per Archbishop; its round-start trigger turns it to a new state (`chooseArchbishop`), task step ids are unique on the card so marked tasks stay. Card 71 discovers it and stays as the rule reminder.
+
+## Mechanics added for Foundations: Romance
+
+- Sticker tags count in selectors: a person with the Knight sticker (11) is a knight for every effect, base game included (needs the sticker defs passed to `cardSelector`). Scarves 591–596 (printed 59a–f) carry the `scarf` tag; ladies have it printed.
+- `PassiveType.MULTIPLY_PRODUCTION` (`amount`): the whole production of the selected cards is multiplied (Guinevere).
+- Written medals (Famous Court): `ADD_GLORY` with `valuePerElement.glory` (the glory of the selected cards) and `writeNames` stores the names in `CardInstance.writtenNames`; `CardSelector.notWrittenHere` leaves those names out.
+- `TRACK_ADVANCE` on an `inOrder` track with `steps.ids` marks the next step among those ids (quests: green task boxes and red timer boxes on one track). `Condition.stepsMarked` holds once all its step ids are marked.
+- `CardSelector.notStaying`: cards that do not stay in play (Endurance).
+- Several `upgrade` entries to the same state are ways to pay it (The Round Table: a Craftsman or 4 persons): `resolveUpgrade` takes `upgradeIndex`, the entry the player chose; without it (older commands) the first entry to `upgradeTo` is used.
+- Quests (Foundations 99–104, `quest()`): rescued by a knight without a scarf, who gets the lady's scarf; the end-of-turn timer's last box destroys the quest. "Matching scarves" are one `CHOOSE_EFFECT` option per scarf whose knight and lady are in play (`matchingScarves`).
+
+## Mechanics added for Foundations: Artisans
+
+- Equipment: `CardState.equip` (the holder's keyword). Equipping is an `EQUIP` effect (an unlimited action, so the equipment is not discarded and the turn goes on); `GameState.equipped` maps equipment → holder while both are in play (`pruneEquipment` after each event). An equipped card is left out of selectors (except `equipped: true` or itself), produces nothing itself (`getCardProductionChoices` is empty for an `equip` state) and adds its production to its holder; its passives target `TargetScope.HOLDER`. It stays in play with its holder, is discarded / destroyed with it (`withEquipment`) and cannot be upgraded.
+- `ADD_PRODUCTION_CHOICE` `choices: 'produced'` (+1 of a resource the card produces) or `'any'`.
+- `PassiveType.GAIN_BEFORE_HOLDER_ACTION` (`actionEffects`, Ether Pearl): resolved before a ✓ / ⌛ action of the holder or of its equipment.
+- `PassiveType.REPLACE_GAIN` (Jeweler, `resources` = from, to): productions and fixed `ADD_RESOURCES` gains of the first resource may be the second (`withGainReplacement`).
+- `'any'` costs: `CardAction.amountLimits` (checked by the session) and `amountPer: 'all'` (the effects apply once); `ValuePerElement.paid` counts the amount paid (Statues: half the stone, `per: 2`).
+- `GloryDef.gridBonus`: once 9 medals are written (in order), the bonus for each row, column and diagonal of 3 different values.
+- `PassiveType.UPGRADED_ON_TOP_OF_DECK` (Architect): an upgraded card it selects goes on top of the deck instead of the discard pile (`leaveUpgradedCard`).
+- A ✓ action discards its card before its effects: a card's own passive is gone while its ✓ effects resolve.
+
+## Mechanics added for Foundations: Nobles
+
+- Purge hooks: `SAVE_FROM_PURGE` with `keepGlory` keeps the card but counts its glory in the purge (`PurgeState.keptGloryIds`, Countess, Lady Elara); a purged `PURGE_MIN_GLORY` card makes each purged card worth at least its amount (Frostpeak, `getPurgeGlory`); `ADJUST_PURGE` passives of the permanents enlarge the purge batches when a campaign is selected (Starfall Castle).
+- `CROSS_OUT_GLORY`: the chosen cards' current state is worth 0 (`CardInstance.crossedOutGloryStates`, Lady Elara).
+- `REMOVE_RESOURCE_ON_CARD` with `stickerHere`: the source gets the sticker of the crossed out resource, from the stock (Lord Edric). `StickerSelector.producedByLastSelected` offers the stickers of what the last selected card produces (House of Stonehaven).
+- `ValuePerElement.markedSteps` (boxes marked on the current state) and `plus` (added to the count, "its glory +7").
+- `ActionEffect.keepSelection`: its target does not become `LAST_SELECTED`, so the next effects still act on the card chosen before (an effect on the card itself between them).
+
+## Mechanics added for Foundations: Mechanics
+
+- Discounted costs: `ADJUST_UPDATE_COST` with `amount` sets `Cost.discount` (Crane: upgrading buildings costs 2 less); the player pays the rest of `resources[0]` through a `SPLIT_RESOURCES` choice capped by the cost (`getDiscountedPayment`).
+- Equipment: an equipment's passives apply only once equipped (`getActivePassives`; `EquipStrategy` adds them); using a ✓ effect of an equipment discards its holder (and the equipment with it).
+- `PassiveType.COUNT_AS` with `valuePerElement` (copies per element, Inventor Workshop: 1 invention per box) and `cards.tags` (only for the selections asking for these tags).
+- `Trigger.ON_STICKER_ADDED`: fired on the cards that got a sticker (`GameState.lastAddedStickers`, `Condition.stickerAdded`, `StickerSelector.lastAdded`; Irrigation, Mine Shaft).
+- `USE_CARD_ACTION` `usableActions`: 'activated' (✓ / ⌛, Breakthrough) or 'timed' (⌛, Industry).
+- Selectors: `TargetScope.BOX` (the undiscovered cards of the box, in order), `firstOnly`, `withoutTags`, `inPlayWhenInPlay` (Inventor Workshop's glory). `ValuePerElement.max` caps a count (Calculations).
+- `ORDER_CARDS` (Performance): the next `value` cards of the box are offered as a `PendingChoiceType.ORDER_CARDS`; the player answers the order (`instanceIds`) and at most one card to destroy (`destroyedIds`, checked by `isValidOrder`). The client shows a drag and drop sorting screen with a destroy slot.
+- `REMOVE_RESOURCE_ON_CARD` `stickerHere: 'lastSelected'`: the sticker goes to the card chosen before (Wheelbarrow). `UPGRADED_TO_BOTTOM_OF_DECK` (Crane).

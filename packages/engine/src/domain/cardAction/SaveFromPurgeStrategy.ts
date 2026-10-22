@@ -39,6 +39,9 @@ export class SaveFromPurgeStrategy implements CardActionStrategy {
         ...purgeState,
         selectedCardIds: removeFromArray(purgeState.selectedCardIds, idsToSave),
         selectedPermanentIds: removeFromArray(purgeState.selectedPermanentIds, idsToSave),
+        ...(payload.keepGlory && {
+          keptGloryIds: [...(purgeState.keptGloryIds ?? []), ...idsToSave],
+        }),
       },
     };
   }

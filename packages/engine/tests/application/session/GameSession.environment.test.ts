@@ -55,7 +55,7 @@ describe('GameSession environment', () => {
   it('draws the seed from the environment when none is given', () => {
     const events = play();
 
-    expect(events[0]).toMatchObject({ seed: '00000000-0000-4000-8000-000000000001' });
+    expect(events[0]).toMatchObject({ seed: '00000000' });
     expect(events).toEqual(play());
   });
 });

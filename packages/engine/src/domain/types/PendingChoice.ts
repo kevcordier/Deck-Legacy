@@ -14,6 +14,8 @@ export type PendingChoice = {
   choices: (number | string | Resources | ActionEffect)[];
   selectedChoices?: Resources[];
   resourceScopes?: RemovedResourceScope[];
+  /** SPLIT_RESOURCES: how many resources to pay in total. */
+  total?: number;
   pickMin: number;
   pickMax: number;
   isMandatory: boolean;

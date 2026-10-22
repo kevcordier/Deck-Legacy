@@ -53,7 +53,7 @@ apps/client/
 
 - `/` — `presentation/pages/Home/Home.tsx`: without an account, a welcome screen (sign in, or play without an account, remembered in `deck_legacy_offline`); then the **kingdoms** table (`KingdomTable`: name, round and turn, total, base game, each expansion played in order with its logo and cumulative score, and a "⋮" popover menu (`Tooltip interactive`) to view the kingdom — `KingdomViewer` replays the local save in a read-only `GameProvider` and lists all its cards in one list sorted by id, with the deck viewer's search and tag filter (`FilterableCardGrid`) —, rename it (`RenameKingdom` marks the save dirty and schedules a push of the name) or delete it) and "New kingdom" (`NewKingdomModal`: name, tutorial, optional seed — disabled with the tutorial, whose first round is scripted —, a test scenario in `__DEV__`, rules; the seed goes to the game page as `?seed=` and to `GameSession.start`, EDR-055). A kingdom is one save (EDR-038): up to 10 with an account, 1 without (`maxKingdoms`).
 - `/scoreboard` — `presentation/pages/Scoreboard/Scoreboard.tsx`, opened from the home header's 🏆 button (only when accounts are available): the kingdoms of registered players with the best total score (`GET /scores/kingdoms`), shown in `KingdomTable` with `ranking` (player instead of round and turn, no open or delete). Needs the network; offline it shows `errors.network`.
-- `/game/{slug}-{id}` — `app/game/[kingdom].tsx`: opens the kingdom's save (only the trailing id of the URL counts, `kingdomIdFromParam`). A new kingdom starts its first game, or the tutorial when it was chosen. The page remounts with an info toast when the sync downloads a newer version of the kingdom, and shows a conflict modal (keep the online version or overwrite it) when both devices changed it. Unknown kingdoms redirect to `/`. The header shows the kingdom name in its center: it opens the same `KingdomMenu` popover (view the kingdom with `KingdomCards`, its destroyed cards, rename it with `RenameKingdomModal`).
+- `/game/{slug}-{id}` — `app/game/[kingdom].tsx`: opens the kingdom's save (only the trailing id of the URL counts, `kingdomIdFromParam`). A new kingdom starts its first game, or the tutorial when it was chosen. The page remounts with an info toast when the sync downloads a newer version of the kingdom, and shows a conflict modal (keep the online version or overwrite it) when both devices changed it. Unknown kingdoms redirect to `/`. The header shows the kingdom name in its center: it opens the same `KingdomMenu` popover (view the kingdom with `KingdomCards`, its destroyed cards, rename it with `RenameKingdomModal`, copy the game's seed). The game over screen's "view the kingdom" button opens the same `KingdomCards`.
 - Navigation uses the static `router` from `expo-router` (works outside a navigator, e.g. Storybook). Build paths with `kingdomPath()`.
 
 ### useGame Hook
@@ -64,7 +64,7 @@ apps/client/
 isTutorial  startGame()  continueGame()  endRound()  startRound()  startTurn()
 resolveProduction(instanceId, choiceIndex)
 resolveAction(instanceId, actionId, triggerId?)
-resolveUpgrade(instanceId, upgradeTo?)
+resolveUpgrade(instanceId, upgradeTo?, upgradeIndex?)
 progress()  endTurnVoluntary()
 resolvePlayerChoice(choice, choiceType)  resolvePayCost(resolved)
 skipTrigger(uuid)  skipChoice()  dismissParchmentText()
@@ -77,7 +77,7 @@ setCardName(instanceId, name)  getCardName(instanceId)
 - The tutorial plays a scripted first round (`TUTORIAL_DRAW_ORDER`, steps in `TutorialProvider`, cards shown in large by `TutorialStage`). Its session is not saved until the end: `continueGame()` keeps it as the kingdom's game (replayed as a standard session), `startGame()` starts a new one.
 - `GameProvider initialState={…}` renders a static board without a session (Storybook).
 - Development builds (`__DEV__`) allow unrestricted rewind and the cheat panel (`globalThis.__cheat`). The server refuses cheated games unless it runs with `ALLOW_CHEATS=true`.
-- The game's seed is shown in the general options (`OptionsModal seed`).
+- The game's seed is shown in the header's kingdom menu (`KingdomMenu seed`); pressing it copies it to the clipboard (`expo-clipboard`).
 - Test scenarios: event logs in `src/data/scenarios/*.json`, listed in `src/data/scenarios/index.ts` and chosen in `NewKingdomModal` (`__DEV__` only): the kingdom opens that saved game. A scenario may hold a `checkpoint` (`{ seq: 0, state }`, the state at the start of a round) and only the events after it: it loads like a downloaded save (EDR-053) but the server cannot verify it. Export a game from the browser console with `copy(JSON.stringify(__cheat.getEvents(), null, 2))`.
 
 ### Local save and sync

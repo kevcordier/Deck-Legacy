@@ -6,8 +6,10 @@ import { DestroyIcon } from '@components/ui/Icon/icons/DestroyIcon';
 import { GloryIcon } from '@components/ui/Icon/icons/GloryIcon';
 import { GoldIcon } from '@components/ui/Icon/icons/GoldIcon';
 import { GoodsIcon } from '@components/ui/Icon/icons/GoodsIcon';
+import { HerbIcon } from '@components/ui/Icon/icons/HerbIcon';
 import { IronIcon } from '@components/ui/Icon/icons/IronIcon';
 import { PassifIcon } from '@components/ui/Icon/icons/PassifIcon';
+import { ScienceIcon } from '@components/ui/Icon/icons/ScienceIcon';
 import { StoneIcon } from '@components/ui/Icon/icons/StoneIcon';
 import { TimeIcon } from '@components/ui/Icon/icons/TimeIcon';
 import { TriggerIcon } from '@components/ui/Icon/icons/TriggerIcon';
@@ -31,6 +33,8 @@ const RESOURCE_META: Record<
   iron: { icon: IronIcon, label: 'resources.iron' },
   weapon: { icon: WeaponIcon, label: 'resources.weapon' },
   goods: { icon: GoodsIcon, label: 'resources.goods' },
+  science: { icon: ScienceIcon, label: 'resources.science' },
+  herb: { icon: HerbIcon, label: 'resources.herb' },
   glory: { icon: GloryIcon, label: 'resources.glory' },
   action: { icon: ActivatedIcon, color: 'green', label: 'resources.action' },
   time: { icon: TimeIcon, color: IconColors.baseInk, label: 'resources.time' },

@@ -36,6 +36,7 @@ import type {
 } from '../../domain/types';
 import { isFlowCommandAllowed } from './input/isFlowCommandAllowed';
 import { isInPlay } from './input/isInPlay';
+import { isWithinAmountLimits } from './input/isWithinAmountLimits';
 import { sanitizeChoice } from './input/sanitizeChoice';
 import { sanitizeCost } from './input/sanitizeCost';
 import { systemEnvironment } from './systemEnvironment';
@@ -184,7 +185,8 @@ export class GameSession {
     seed?: string,
   ): GameSession {
     const session = new GameSession(id, mode === 'tutorial', catalog, options, {});
-    session.startNewGame(firstDrawPile, seed ?? environment.newId());
+    // Short enough to read and share (32 random bits are plenty for the shuffles).
+    session.startNewGame(firstDrawPile, seed ?? environment.newId().slice(0, 8));
     session.finalize();
     return session;
   }
@@ -408,7 +410,7 @@ export class GameSession {
           command.amount,
         );
       case 'resolveUpgrade':
-        return this.resolveUpgrade(command.instanceId, command.upgradeTo);
+        return this.resolveUpgrade(command.instanceId, command.upgradeTo, command.upgradeIndex);
       case 'resolvePlayerChoice':
         return this.resolvePlayerChoice(command.choice, parseChoiceType(command.choiceType));
       case 'resolvePayCost':
@@ -627,7 +629,7 @@ export class GameSession {
     const action =
       (isMatchingTrigger ? triggerEntry?.effectDef : undefined) ??
       actions.find(ce => ce.id === actionId && !ce.trigger);
-    if (!action) return;
+    if (!action || !isWithinAmountLimits(action, amount)) return;
     // A card action (not a trigger): from a card in play, during the turn unless unlimited.
     if (
       !isMatchingTrigger &&
@@ -641,12 +643,18 @@ export class GameSession {
     this.sync(newState);
   }
 
-  private resolveUpgrade(instanceId: number, upgradeTo: number): void {
+  private resolveUpgrade(instanceId: number, upgradeTo: number, upgradeIndex?: number): void {
     if (!this.isPlayable(instanceId) || !isInPlay(this.agg.getGameState(), instanceId)) return;
     const gs = this.agg.getGameState();
-    const cs = getActiveState(gs.instances[instanceId], this.catalog.cards);
-    const upgrade = (cs.upgrade ?? []).find(u => u.upgradeTo === upgradeTo);
-    if (!upgrade) return;
+    // An equipped card cannot be upgraded
+    if (gs.equipped?.[instanceId] !== undefined) return;
+    const upgrades = getActiveState(gs.instances[instanceId], this.catalog.cards).upgrade ?? [];
+    // Several upgrades to the same state are ways to pay it (The Round Table): the index picks one.
+    const upgrade =
+      upgradeIndex === undefined
+        ? upgrades.find(u => u.upgradeTo === upgradeTo)
+        : upgrades[upgradeIndex];
+    if (upgrade?.upgradeTo !== upgradeTo) return;
 
     const effectiveCost = getEffectiveUpgradeCost(
       upgrade.cost,

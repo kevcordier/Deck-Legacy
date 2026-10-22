@@ -1,6 +1,6 @@
 import { indexById, loadGameCatalog } from '../src';
 import { cardsData } from '../src/cards';
-import { expansionPacks } from '../src/expansions';
+import { expansionPacks, packCampaigns } from '../src/expansions';
 import { stickerData } from '../src/stickers';
 import type { ExpansionConfig } from '@deck-legacy/engine/domain/types';
 import { describe, expect, it } from 'vitest';
@@ -29,13 +29,15 @@ describe('loadGameCatalog', () => {
     }
   });
 
-  it('registers every expansion folder under its name', () => {
+  it('registers every campaign of an expansion folder under its name', () => {
     const catalog = loadGameCatalog();
 
-    for (const { deck } of expansionPacks) {
-      const config = catalog.expansions[deck.name];
-      expect(config && entries(config)).toEqual(entries(deck));
-      expect(config?.expansion).toBe(deck.name);
+    for (const pack of expansionPacks) {
+      for (const [name, campaign] of packCampaigns(pack)) {
+        const config = catalog.expansions[name];
+        expect(config && entries(config)).toEqual(entries(campaign));
+        expect(config?.expansion).toBe(pack.deck.name);
+      }
     }
   });
 
@@ -76,11 +78,21 @@ describe('loadGameCatalog', () => {
 
   it('uses unique instance ids across the base deck and expansions', () => {
     const catalog = loadGameCatalog();
-    const ids = [entries(catalog), ...Object.values(catalog.expansions).map(entries)]
-      .flat()
-      .map(entry => entry.id);
-
-    expect(new Set(ids).size).toBe(ids.length);
+    // The campaigns of one expansion share its cards (EDR-059): an id belongs to one expansion.
+    const owners = new Map<number, string>();
+    const configs = Object.entries(catalog.expansions).map(
+      ([name, config]) => [config.expansion ?? name, config] as const,
+    );
+    for (const [owner, config] of [['base', catalog] as const, ...configs]) {
+      for (const { id } of entries(config)) {
+        expect(owners.get(id) ?? owner).toBe(owner);
+        owners.set(id, owner);
+      }
+    }
+    for (const config of Object.values(catalog.expansions)) {
+      const ids = entries(config).map(entry => entry.id);
+      expect(new Set(ids).size).toBe(ids.length);
+    }
   });
 });
 

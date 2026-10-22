@@ -70,6 +70,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-056 | 2026-10-18 | Contrat HTTP OpenAPI, types client générés       | Active                                  |
 | EDR-057 | 2026-10-18 | Couches et un export public par fichier          | En partie remplacée par EDR-058         |
 | EDR-058 | 2026-10-18 | Clean architecture : le domaine porte les règles | Active                                  |
+| EDR-059 | 2026-10-19 | Foundations : campagnes et fondations            | Active                                  |
 
 ---
 
@@ -1628,3 +1629,37 @@ Conséquences
 - Gros diffs de déplacement, surtout dans le moteur (environ 70 fichiers de sources et autant de tests) ; le rejeu n'est pas touché tant que seuls des fichiers bougent. L'injection de l'horloge et des identifiants garde les valeurs actuelles et reste couverte par `GameSession.verify` (qui ignore déjà identifiants et horodatages).
 - Les chemins publics du moteur changent (`@deck-legacy/engine/application/emptyState` → `…/domain/…`) : le client, le serveur et `game-data` sont mis à jour dans la même PR.
 - Les `CLAUDE.md`, `.claude/rules/engine-reference.md`, `.claude/contracts.md` et les agents décrivent la nouvelle répartition.
+
+---
+
+ID : EDR-059
+Date : 2026-10-19
+Titre : Foundations : campagnes et fondations
+Statut : Active
+
+Contexte
+L'extension Feudal Kingdom: Foundations (cartes 0–156, un seul logo) contient trois campagnes de 5 ou 6 manches (The Black Plague, Invasion, Nature's Revenge) et six fondations (Science, Church, Romance, Artisans, Nobles, Mechanics). Chaque carte de campagne porte une piste « découvrez N cartes au début de chaque manche » dont les cases vertes font découvrir une fondation ; un royaume joue chaque fondation une fois (2 par campagne). Inventaire : `docs/foundations-cards.md`, règles 2e édition utiles : `docs/foundations-expansion.md`.
+
+Problème
+Comment jouer une extension à plusieurs campagnes, faire choisir une fondation non jouée et découvrir un nombre de cartes variable par manche, sans casser le rejeu des parties existantes ?
+
+Décision
+
+- **Un dossier `expansions/foundations/`, trois campagnes.** Son `deck.json` déclare les trois campagnes (une `ExpansionConfig` chacune, même `expansion: "Foundations"` pour le logo et la numérotation). Les cartes des fondations sont dans le paquet `discoverable` des trois : une carte déjà dans la partie n'est pas recréée (EDR-045).
+- **La carte de campagne pilote les manches** (décision de l'utilisateur). `onStart.discover` découvre la carte de campagne (permanente, en premier) et les cartes de la manche 1 ; `onStart.actions` (le setup de la campagne, résolu pour cette carte) fait choisir la fondation de la manche 1. Sa piste avance par un trigger `END_OF_ROUND` ; chaque étape fait `ADVANCE_STORY N` et, sur une case verte, « découvrez 1 carte parmi les couvertures des fondations ». `expansionMaxRound` fixe la fin (6 ou 5 manches) au lieu de la fin du paquet de campagne (`discoverPerRound: 0`).
+- **Une fondation = une carte parchemin de couverture** dans le paquet `discoverable`. Une couverture déjà découverte n'est plus proposée, donc le choix porte toujours sur une fondation non jouée. Son action découvre les cartes de la fondation et débloque ses stickers et ses ressources (effet `UNLOCK`).
+- **Parchemin découvert par un effet** : il passe en phase `PARCHMENT`, puis la partie reprend sa phase précédente (événement `PARCHMENT_RESOLVED`). Les parchemins du jeu de base gardent leur comportement (EDR-036).
+- **Le setup de la campagne passe avant la première manche** : ses actions sont enregistrées dans `PURGE_FINALIZED.onStartTriggers` ; quand il y en a, la manche ne démarre pas automatiquement et le joueur la lance après les avoir résolues (aucune campagne existante n'en a : les anciennes parties ne changent pas).
+- **« Undiscover »** = `PLACE_CARD_IN_PILE` vers le paquet de campagne (`deck: 'discovery'`) avec `position: 'index'` : la carte revient avant la première carte d'id supérieur, et une étape suivante de la piste la redécouvre.
+- **Science et herbes** : deux nouvelles `ResourceType`. Elles ne sont proposées (choix « any », barre de ressources) que si le royaume les a débloquées (`GameState.unlockedResources`).
+
+Alternatives rejetées
+
+- Une piste de manches dans la configuration (`roundDiscoveries`, `foundationRounds`) lue par `STORY_ADVANCED` : l'utilisateur préfère une carte de campagne, comme le jeu de base.
+- Des parchemins de manche dans le paquet de campagne : une carte renvoyée dans la boîte peut passer devant le parchemin de la manche suivante.
+- Choisir les deux fondations au début de la campagne : la règle les découvre aux cases vertes.
+
+Conséquences
+
+- Nouveaux éléments du moteur : `ExpansionConfig.onStart.actions`, `position: 'index'`, `ActionEffectType.UNLOCK`, `ResourceType.SCIENCE` et `HERB`, événement `PARCHMENT_RESOLVED`, `GameState.unlockedResources`.
+- `ExpansionPack` accepte plusieurs campagnes ; le client affiche le logo de l'extension (`expansion`) pour chacune.

@@ -6,6 +6,8 @@ import { ChooseResourceSection } from './ChooseResourceSection';
 import { ChooseStateSection } from './ChooseStateSection';
 import { ChooseStepSection } from './ChooseStepSection';
 import { ChooseStickerSection } from './ChooseStickerSection';
+import { OrderCardsSection } from './OrderCardsSection';
+import { SplitResourcesSection } from './SplitResourcesSection';
 import { TriggerPileSection } from './TriggerPileSection';
 import { buildCardCostResolution } from './buildCardCostResolution';
 import { getChoiceActionLabel } from './getChoiceActionLabel';
@@ -120,6 +122,12 @@ function getChoiceSection(props: ChoiceSectionProps): ChoiceSection {
         subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t).value,
         content: <ChooseStateSection {...props} />,
       };
+    case PendingChoiceType.SPLIT_RESOURCES:
+      return {
+        title: props.t('pendingChoice.split.title', { count: props.choice.total }),
+        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t).value,
+        content: <SplitResourcesSection {...props} />,
+      };
     case PendingChoiceType.CHOOSE_RESOURCE:
       return {
         title: props.t('pendingChoice.chooseResource'),
@@ -137,6 +145,12 @@ function getChoiceSection(props: ChoiceSectionProps): ChoiceSection {
         title: props.t('pendingChoice.chooseSticker'),
         subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t).value,
         content: <ChooseStickerSection {...props} />,
+      };
+    case PendingChoiceType.ORDER_CARDS:
+      return {
+        title: props.t('pendingChoice.order.title'),
+        subtitle: getChoiceActionLabel(props.choice, props.instances, props.defs, props.t).value,
+        content: <OrderCardsSection {...props} />,
       };
   }
 }

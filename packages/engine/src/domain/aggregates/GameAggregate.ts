@@ -3,9 +3,12 @@ import { canAffordTrackAdvanceCost } from '../cards/canAffordTrackAdvanceCost';
 import { cardIsBlocked } from '../cards/cardIsBlocked';
 import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
+import { hasUsesLeft } from '../cards/hasUsesLeft';
 import { cardSelector } from '../cards/selection/cardSelector';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getEffectiveGlory } from '../cards/selection/getEffectiveGlory';
+import { getHeldByPermanents } from '../cards/selection/getHeldByPermanents';
+import { getPurgeGlory } from '../cards/selection/getPurgeGlory';
 import { isPermanent } from '../cards/selection/isPermanent';
 import {
   GameEventType,
@@ -24,6 +27,7 @@ import { canUseOptions } from '../state/canUseOptions';
 import { computeGameStateDiff } from '../state/computeGameStateDiff';
 import { DEFAULT_PARAMETERS } from '../state/defaultParameters';
 import { isLastRound } from '../state/isLastRound';
+import { pruneEquipment } from '../state/pruneEquipment';
 import type {
   AdvanceEvent,
   CampaignScoreSavedEvent,
@@ -40,8 +44,10 @@ import type {
   GameStartedEvent,
   GameState,
   ParchmentCardDiscoveredEvent,
+  ParchmentResolvedEvent,
   PurgeCardSelectedEvent,
   PurgeFinalizedEvent,
+  PurgeFirstBatch,
   PurgeOnTriggeredEvent,
   PurgePermanentSelectedEvent,
   ResolvedActionEffect,
@@ -59,6 +65,9 @@ import type {
 } from '../types';
 import { CardActionAggregate } from './CardActionAggregate';
 import { eventDrewCards } from './eventDrewCards';
+
+/** `batchStart` of the first purge batch (Invasion, Nature's Revenge). */
+const FIRST_BATCH = -1;
 
 export class GameAggregate {
   private events: GameEvent[];
@@ -84,9 +93,8 @@ export class GameAggregate {
 
   private apply(event: GameEvent) {
     const before = this.gameState;
-    this.gameState = this.gameEventContext.apply(
-      JSON.parse(JSON.stringify(before)) as GameState,
-      event,
+    this.gameState = pruneEquipment(
+      this.gameEventContext.apply(JSON.parse(JSON.stringify(before)) as GameState, event),
     );
     this.currentCardAction = null;
     if (eventDrewCards(event)) this.undoStates = [];
@@ -143,6 +151,12 @@ export class GameAggregate {
   /** Seeded by the game and the position in the log: a rewound shuffle comes out the same. */
   private shuffle(arr: number[]): number[] {
     return shuffle(arr, this.gameState.seed, String(this.events.length));
+  }
+
+  /** Cards in play that go back to the deck: not those a permanent blocks (EDR-059). */
+  private boardOutOfQuarantine(): number[] {
+    const held = getHeldByPermanents(this.gameState);
+    return this.gameState.board.filter(id => !held.includes(id));
   }
 
   private filterNonPermanentCardIds(cardIds: number[]): number[] {
@@ -219,6 +233,57 @@ export class GameAggregate {
     return focused.length > 0 ? focused : candidates;
   }
 
+  /** The `among` non-negative, non-permanent cards with the most glory, ties included. */
+  private mostGloriousCards(pool: number[], among: number): number[] {
+    const glories = pool
+      .filter(id => this.isPurgeEligible(id, false))
+      .map(id => {
+        const instance = this.gameState.instances[id];
+        const state = getActiveState(instance, this.cardDefs);
+        return {
+          id,
+          glory: getEffectiveGlory(
+            state,
+            this.gameState,
+            this.cardDefs,
+            instance,
+            this.stickerDefs,
+          ),
+        };
+      })
+      .sort((a, b) => b.glory - a.glory);
+    const threshold = glories[among - 1]?.glory;
+    return glories
+      .filter(({ glory }, index) => index < among || glory === threshold)
+      .map(({ id }) => id);
+  }
+
+  /** The first purge batch, fixed when the expansion is selected. */
+  private firstPurgeBatch(
+    pool: number[],
+    { picks, mostGlory, tags }: NonNullable<ExpansionConfig['purge']['firstBatch']>,
+  ): PurgeFirstBatch {
+    if (mostGlory !== undefined) return { ids: this.mostGloriousCards(pool, mostGlory), picks };
+    const ids = pool.filter(
+      id =>
+        this.isPurgeEligible(id, false) &&
+        (getActiveState(this.gameState.instances[id], this.cardDefs).tags ?? []).some(tag =>
+          tags?.includes(tag),
+        ),
+    );
+    return { ids, picks, tags };
+  }
+
+  /** The first batch while its picks are not all made. */
+  private getFirstBatch(): number[] | null {
+    const purgeState = this.gameState.purgeState;
+    const top = purgeState?.firstBatch;
+    if (!top) return null;
+    const picked = top.ids.filter(id => purgeState.selectedCardIds.includes(id)).length;
+    const remaining = top.ids.filter(id => !purgeState.selectedCardIds.includes(id));
+    return picked < top.picks && remaining.length > 0 ? remaining : null;
+  }
+
   private getCurrentBatchStartAndCandidates(): {
     batchStart: number;
     batch: number[];
@@ -226,6 +291,11 @@ export class GameAggregate {
   } | null {
     const purgeState = this.gameState.purgeState;
     if (!purgeState) return null;
+
+    const firstBatch = this.getFirstBatch();
+    if (firstBatch) {
+      return { batchStart: FIRST_BATCH, batch: firstBatch, candidates: firstBatch };
+    }
 
     let batchStart = 0;
     while (batchStart + purgeState.batchSize <= purgeState.shuffledPool.length) {
@@ -335,13 +405,17 @@ export class GameAggregate {
       deckEntries: [...expansion.campaign, ...(expansion.discoverable ?? [])],
       discoverableIds: expansion.discoverable?.map(entry => entry.id) ?? [],
       expansion: expansion.expansion,
-      purgeBatchSize: expansion.purge.purge,
+      purgeBatchSize: expansion.purge.purge + this.getPurgeAdjustment(),
       purgePermanentCount: expansion.purge.permanent,
       purgePool,
       parameterOverrides: expansion.parameters,
       onStartDiscoverIds: expansion.onStart?.discover?.ids ?? [],
+      ...(expansion.onStart?.actions && { onStartActions: expansion.onStart.actions }),
       addedStickers: expansion.stickers,
       purgeFocus: expansion.purge.focus,
+      ...(expansion.purge.firstBatch && {
+        purgeFirstBatch: this.firstPurgeBatch(purgePool, expansion.purge.firstBatch),
+      }),
       expansionDiscoveryFirst: true,
     };
 
@@ -437,14 +511,23 @@ export class GameAggregate {
     }
 
     const purgedIds = this.getSelectedPurgeIds();
-    const glory = purgedIds.reduce((total, id) => {
-      const instance = this.gameState.instances[id];
-      if (!instance) return total;
-      const state = getActiveState(instance, this.cardDefs);
-      return (
-        total + getEffectiveGlory(state, this.gameState, this.cardDefs, instance, this.stickerDefs)
-      );
-    }, 0);
+    const glory = getPurgeGlory(
+      purgedIds,
+      purgeState.keptGloryIds ?? [],
+      this.gameState,
+      this.cardDefs,
+      this.stickerDefs,
+    );
+
+    // Setup actions of the campaign, for the first card discovered on start (EDR-059).
+    const [setupSource] = purgeState.onStartDiscoverIds;
+    const onStartTriggers: Record<string, TriggerEntry> = {};
+    if (purgeState.onStartDiscoverIds.length > 0) {
+      for (const effectDef of purgeState.onStartActions ?? []) {
+        onStartTriggers[environment.newId()] = { effectDef, sourceInstanceId: setupSource };
+      }
+    }
+    const hasSetup = Object.keys(onStartTriggers).length > 0;
 
     const finalizedEvent: PurgeFinalizedEvent = {
       id: environment.newId(),
@@ -453,10 +536,16 @@ export class GameAggregate {
       purgedIds,
       glory,
       onStartDiscoverIds: purgeState.onStartDiscoverIds,
+      ...(hasSetup && { onStartTriggers }),
     };
 
     this.apply(finalizedEvent);
     this.events.push(finalizedEvent);
+
+    // The player resolves the setup, then starts the round.
+    if (hasSetup) {
+      return this.gameState;
+    }
 
     this.roundStarted();
     this.turnStarted();
@@ -567,7 +656,7 @@ export class GameAggregate {
         this.shuffle([
           ...this.gameState.drawPile,
           ...this.gameState.discardPile,
-          ...this.gameState.board,
+          ...this.boardOutOfQuarantine(),
           ...this.filterNonPermanentCardIds(lastAddedCards),
         ]),
     };
@@ -685,10 +774,7 @@ export class GameAggregate {
         state.actions?.some(action => {
           if (!action.unlimited || action.trigger) return false;
 
-          if (action.limitedTime !== undefined) {
-            const usageCount = instance.usedActionIds.filter(id => id === action.id).length;
-            if (usageCount >= action.limitedTime) return false;
-          }
+          if (!hasUsesLeft(action, instance, this.gameState)) return false;
 
           const effectiveCost = getEffectiveActionCost(action.cost, instance);
           return (
@@ -776,6 +862,24 @@ export class GameAggregate {
       return this.gameState;
     }
 
+    if (this.upgradeKeepsTurn(cardInstanceId)) {
+      const keptEvent: UpgradeCardEvent = {
+        id: environment.newId(),
+        type: GameEventType.UPGRADE_CARD,
+        timestamp: environment.now(),
+        cardInstanceId,
+        stateId,
+        cost,
+        discardedCardIds,
+        destroyedCardIds,
+        endTurnTrigger: {},
+        keepsTurn: true,
+      };
+      this.apply(keptEvent);
+      this.events.push(keptEvent);
+      return this.gameState;
+    }
+
     const allRoundInstances = [...this.gameState.permanents, ...this.gameState.board].map(
       id => this.gameState.instances[id],
     );
@@ -809,6 +913,31 @@ export class GameAggregate {
     this.apply(event);
     this.events.push(event);
     return this.gameState;
+  }
+
+  /** A passive in play lets this card be upgraded without ending the turn (Renowned School). */
+  private upgradeKeepsTurn(cardInstanceId: number): boolean {
+    return Object.entries(this.gameState.boardEffects).some(([sourceId, passives]) =>
+      passives.some(
+        passive =>
+          passive.type === PassiveType.UPGRADE_KEEPS_TURN &&
+          cardSelector(
+            passive.cards ?? {},
+            Number(sourceId),
+            this.gameState,
+            this.cardDefs,
+            this.stickerDefs,
+          ).includes(cardInstanceId),
+      ),
+    );
+  }
+
+  /** ADJUST_PURGE passives of the permanents (Starfall Castle: a purge 8 becomes a purge 9). */
+  private getPurgeAdjustment(): number {
+    return this.gameState.permanents
+      .flatMap(id => getActiveState(this.gameState.instances[id], this.cardDefs).passives ?? [])
+      .filter(passive => passive.type === PassiveType.ADJUST_PURGE)
+      .reduce((total, passive) => total + (passive.amount ?? 0), 0);
   }
 
   public chooseState(cardInstanceId: number, stateId: number): GameState {
@@ -946,6 +1075,14 @@ export class GameAggregate {
     this.events.push(event);
     if (
       this.gameState.phase === Phase.PARCHMENT &&
+      this.gameState.onGoingParchment === sourceInstanceId &&
+      this.gameState.parchmentResumePhase !== undefined
+    ) {
+      this.parchmentResolved();
+    } else if (this.discoveredExpansionParchment()) {
+      this.parchmentDiscoveredByEffect();
+    } else if (
+      this.gameState.phase === Phase.PARCHMENT &&
       this.gameState.onGoingParchment === sourceInstanceId
     ) {
       const event: RoundStartedEvent = {
@@ -957,7 +1094,7 @@ export class GameAggregate {
         newDrawPile: this.shuffle([
           ...this.gameState.drawPile,
           ...this.gameState.discardPile,
-          ...this.gameState.board,
+          ...this.boardOutOfQuarantine(),
         ]),
       };
       this.apply(event);
@@ -965,6 +1102,41 @@ export class GameAggregate {
     }
 
     return this.gameState;
+  }
+
+  /**
+   * An effect discovered an expansion parchment (a foundation cover): it is shown to the player
+   * before the game goes on. Base game parchments keep their former handling (EDR-059).
+   */
+  private discoveredExpansionParchment(): boolean {
+    const { onGoingParchment, phase, instances } = this.gameState;
+    return (
+      onGoingParchment !== undefined &&
+      phase !== Phase.PARCHMENT &&
+      instances[onGoingParchment]?.expansion !== undefined
+    );
+  }
+
+  private parchmentDiscoveredByEffect(): void {
+    const event: ParchmentCardDiscoveredEvent = {
+      id: environment.newId(),
+      type: GameEventType.PARCHMENT_CARD_DISCOVERED,
+      timestamp: environment.now(),
+      cardInstanceId: this.gameState.onGoingParchment as number,
+      resumePhase: this.gameState.phase,
+    };
+    this.apply(event);
+    this.events.push(event);
+  }
+
+  private parchmentResolved(): void {
+    const event: ParchmentResolvedEvent = {
+      id: environment.newId(),
+      type: GameEventType.PARCHMENT_RESOLVED,
+      timestamp: environment.now(),
+    };
+    this.apply(event);
+    this.events.push(event);
   }
 
   public skipTrigger(triggerId: string): GameState {

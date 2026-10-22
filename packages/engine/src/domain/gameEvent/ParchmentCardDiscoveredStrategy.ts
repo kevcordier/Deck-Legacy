@@ -9,6 +9,7 @@ export class ParchmentCardDiscoveredStrategy implements GameEventStrategy {
       ...gameState,
       lastAddedCards: [],
       onGoingParchment: e.cardInstanceId,
+      ...(e.resumePhase !== undefined && { parchmentResumePhase: e.resumePhase }),
       discoveryPile: gameState.discoveryPile.filter(id => id !== e.cardInstanceId),
       phase: Phase.PARCHMENT,
     };
