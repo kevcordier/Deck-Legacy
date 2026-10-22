@@ -5,6 +5,7 @@ import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { hasUsesLeft } from '../cards/hasUsesLeft';
+import { countValuePerElement } from '../cards/selection/countValuePerElement';
 import { evaluateCondition } from '../cards/selection/evaluateCondition';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getStateActions } from '../cards/selection/getStateActions';
@@ -116,6 +117,22 @@ export class CardActionAggregate {
   private getEffectiveActionEffects(effect: ActionEffect): ActionEffect[] {
     if (!effect.repeat) {
       return [effect];
+    }
+
+    if (effect.repeat === 'valuePerElement') {
+      // "For every 3 enemies, cross out 1 production": each copy picks its own card.
+      const { valuePerElement, repeat: _repeat, ...single } = effect;
+      const count = valuePerElement
+        ? valuePerElement.amount *
+          countValuePerElement(
+            valuePerElement,
+            this.gameState,
+            this.instance.id,
+            this.cardDefs,
+            this.stickerDefs,
+          )
+        : 0;
+      return new Array(Math.max(0, count)).fill(single);
     }
 
     const repeat =

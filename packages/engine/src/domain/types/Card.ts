@@ -96,6 +96,7 @@ export type ValuePerElement = {
   ownProduction?: boolean; // total production of the card itself
   deficitTarget?: number; // count = max(0, deficitTarget - actual_count)
   includeSelf?: boolean; // "including this": the card counts too, even once discarded by its action
+  per?: number; // "for every N": the count is divided by N (rounded down)
 };
 
 export type RemovedResourceScope = 'production' | 'actionCost' | 'upgradeCost';
@@ -120,9 +121,11 @@ export type ActionEffect = {
     pickNumber?: number;
     pickMin?: number;
     pickMax?: number;
+    ids?: number[]; // the steps that can be marked (Siege Tower: a green box)
   };
   sourceStepId?: number;
-  repeat?: number | 'accumulation'; // number of times this action will be repeated
+  // number of times this action will be repeated; 'valuePerElement': its count (the copies drop it)
+  repeat?: number | 'accumulation' | 'valuePerElement';
   condition?: Condition; // checked when the effect resolves: skipped when it does not hold
   sourceInstanceId?: number; // card the effect resolves for, when not the acting card (USE_CARD_ACTION)
   usedAction?: { instanceId: number; actionId: string }; // USE_CARD_ACTION: the chosen action
@@ -211,5 +214,6 @@ export type ResolvedActionEffect = {
   newActionEffects?: ActionEffect[];
   value?: number;
   unlock?: Unlock;
+  crossedOutAction?: { instanceId: number; actionId: string };
   unresolvable?: boolean;
 };

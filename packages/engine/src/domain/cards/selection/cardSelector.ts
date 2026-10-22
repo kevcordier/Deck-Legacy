@@ -152,6 +152,18 @@ function hasIntrinsicCountAs2(
   return state.passives.some(passive => passive.type === PassiveType.COUNT_AS_2);
 }
 
+/** Copies a card adds to a selection besides itself: "counts as N" (COUNT_AS, `amount` = N). */
+function intrinsicCountAsExtra(
+  id: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+): number {
+  const inst = gameState.instances[id];
+  const state = inst && defs[inst.cardId]?.states.find(s => s.id === inst.stateId);
+  const countAs = state?.passives?.find(passive => passive.type === PassiveType.COUNT_AS);
+  return countAs ? Math.max(0, (countAs.amount ?? 1) - 1) : 0;
+}
+
 function matchesStickers(
   stickers: number[],
   { stickerIds, withoutStickerIds }: CardSelector,
@@ -213,7 +225,14 @@ export function cardSelector(
     return selector.lastSelectedIds ?? [];
   }
   if (scope.includes(TargetScope.TOP_OF_DECK)) {
-    return gameState.drawPile.slice(0, selector.pickNumber ?? 1);
+    const top = gameState.drawPile.slice(0, selector.pickNumber ?? 1);
+    // "The top card of your deck (if friendly)" (Enemy Archer)
+    if (!scope.includes(TargetScope.FRIENDLY) && !scope.includes(TargetScope.ENEMY)) return top;
+    return top.filter(id => {
+      const inst = gameState.instances[id];
+      const negative = inst && defs[inst.cardId]?.states.find(s => s.id === inst.stateId)?.negative;
+      return scope.includes(TargetScope.FRIENDLY) ? !negative : !!negative;
+    });
   }
   if (scope.includes(TargetScope.TOP_OF_DISCARD)) {
     return gameState.discardPile.slice(-1);
@@ -265,6 +284,12 @@ export function cardSelector(
     const countsAs2 = countAs2InstanceIds.has(id) || hasIntrinsicCountAs2(id, gameState, defs);
     if (!seen.has(id) && countsAs2) {
       extraIds.push(id);
+      seen.add(id);
+    }
+    if (!seen.has(id)) {
+      extraIds.push(
+        ...Array.from({ length: intrinsicCountAsExtra(id, gameState, defs) }, () => id),
+      );
       seen.add(id);
     }
   });

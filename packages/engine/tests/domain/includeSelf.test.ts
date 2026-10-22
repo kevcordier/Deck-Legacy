@@ -30,3 +30,16 @@ describe('countValuePerElement with includeSelf', () => {
     expect(countValuePerElement(value, inPlay, 1, defs, {})).toBe(2);
   });
 });
+
+describe('countValuePerElement with per', () => {
+  it('counts "for every 3"', () => {
+    const state = makeState({
+      board: [1, 2, 3, 4, 5, 6, 7],
+      instances: Object.fromEntries(
+        [1, 2, 3, 4, 5, 6, 7].map(id => [id, makeInstance({ id, cardId: 1, stateId: 1 })]),
+      ),
+    });
+    const value = { amount: 1, cards: { scope: [TargetScope.BOARD] }, per: 3 };
+    expect(countValuePerElement(value, state, 99, defs, {})).toBe(2);
+  });
+});

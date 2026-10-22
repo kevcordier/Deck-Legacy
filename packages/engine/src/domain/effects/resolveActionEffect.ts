@@ -37,6 +37,7 @@ import type {
   Sticker,
   StickerSelector,
 } from '../types';
+import { chooseCrossedOutAction } from './chooseCrossedOutAction';
 import { chooseUsedAction } from './chooseUsedAction';
 import { getPickNumbers } from './getPickNumbers';
 
@@ -69,7 +70,7 @@ function resolveTrackAdvanceEffect(
   pendingChoices: PendingChoice[],
   ctx: ResolveContext,
   cards: CardSelector,
-  steps: { pickNumber?: number; pickMin?: number; pickMax?: number },
+  steps: { pickNumber?: number; pickMin?: number; pickMax?: number; ids?: number[] },
 ): [ResolvedActionEffect, PendingChoice[]] {
   const {
     effectId,
@@ -111,6 +112,7 @@ function resolveTrackAdvanceEffect(
       .filter(
         s =>
           !targetInst.trackProgress.includes(s.id) &&
+          (!steps.ids || steps.ids.includes(s.id)) &&
           canAffordCost(s.cost, instanceId, gameState, defs, stickerDefs),
       )
       .map(s => s.id);
@@ -156,6 +158,39 @@ function resolveChooseActionEffect(
     isMandatory: true,
   });
   return [resolverAction, pendingChoices];
+}
+
+/** CROSS_OUT_ACTION: once the action is chosen (`usedAction`), it is crossed out. */
+function resolveCrossOutAction(
+  resolverAction: ResolvedActionEffect,
+  ctx: ResolveContext,
+  action: ActionEffect,
+  cards: CardSelector | undefined,
+): [ResolvedActionEffect, PendingChoice[]] {
+  if (action.usedAction) {
+    resolverAction.instanceIds = [action.usedAction.instanceId];
+    resolverAction.crossedOutAction = action.usedAction;
+    return [resolverAction, []];
+  }
+  if (!cards) return [resolverAction, []];
+  const [targeted, pendingChoices] = resolveCardTarget(resolverAction, [], ctx, cards);
+  if (pendingChoices.length > 0 || targeted.unresolvable) return [targeted, pendingChoices];
+  return chooseCrossedOutAction(
+    targeted,
+    targeted.instanceIds?.[0],
+    {
+      id: `${ctx.instanceId}-${ctx.effectId}`,
+      actionId: ctx.parentActionId,
+      effectId: ctx.effectId,
+      sourceStepId: ctx.sourceStepId,
+      kind: ctx.actionType,
+      sourceInstanceId: ctx.instanceId,
+      isMandatory: ctx.isMandatory,
+    },
+    ctx.gameState,
+    ctx.defs,
+    ctx.stickerDefs,
+  );
 }
 
 /** USE_CARD_ACTION: the chosen action's effects follow, resolved for the card that owns it. */
@@ -940,6 +975,10 @@ export function resolveActionEffect(
 
   if (action.type === ActionEffectType.USE_CARD_ACTION) {
     return resolveUseCardAction(resolverAction, ctx, action, enrichedCards);
+  }
+
+  if (action.type === ActionEffectType.CROSS_OUT_ACTION) {
+    return resolveCrossOutAction(resolverAction, ctx, action, enrichedCards);
   }
 
   if (action.type === ActionEffectType.CHOOSE_EFFECT && action.effects) {

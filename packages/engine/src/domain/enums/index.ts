@@ -104,6 +104,8 @@ export enum ActionEffectType {
   UNLOCK = 'UNLOCK',
   /** Takes `stickers.ids` off the chosen cards (curing an infection). */
   REMOVE_STICKER = 'REMOVE_STICKER',
+  /** Crosses out an activated effect of the chosen card (`usedAction` once chosen). */
+  CROSS_OUT_ACTION = 'CROSS_OUT_ACTION',
 }
 
 export enum PassiveType {
@@ -113,6 +115,8 @@ export enum PassiveType {
   ADJUST_PRODUCTION = 'ADJUST_PRODUCTION',
   DESACTIVATE_OPTION = 'DESACTIVATE_OPTION',
   COUNT_AS_2 = 'COUNT_AS_2',
+  /** The card counts as `amount` cards (an Enemy Troop counts as several enemies). */
+  COUNT_AS = 'COUNT_AS',
   ADJUST_ADD_RESOURCES = 'ADJUST_ADD_RESOURCES',
   ADJUST_UPDATE_COST = 'ADJUST_UPDATE_COST',
   REPLACE_RESOURCE_PRODUCTION = 'REPLACE_RESOURCE_PRODUCTION',

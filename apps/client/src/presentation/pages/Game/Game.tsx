@@ -10,6 +10,7 @@ import { TutorialStage } from '@components/Tutorial/TutorialStage';
 import { GameOverScreen } from '@components/ui/GameOverScreen/GameOverScreen';
 import { TutorialProvider } from '@contexts/TutorialProvider';
 import { Phase } from '@deck-legacy/engine/domain/enums';
+import type { GameState } from '@deck-legacy/engine/domain/types';
 import { useAppServices } from '@hooks/useAppServices';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
@@ -23,6 +24,13 @@ import {
 import { router } from 'expo-router';
 import { ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+/** Cards still to choose in the first purge batch, the cards with the most glory (Invasion). */
+function topGloryPicksLeft(purgeState: GameState['purgeState']): number {
+  const top = purgeState?.topGlory;
+  if (!top) return 0;
+  return top.picks - top.ids.filter(id => purgeState.selectedCardIds.includes(id)).length;
+}
 
 export function Game() {
   const { catalog, sync } = useAppServices();
@@ -98,6 +106,7 @@ export function Game() {
               instances={gameState.instances}
               batchSize={gameState.purgeState?.batchSize ?? 0}
               permanentToPurge={gameState.purgeState?.permanentToPurge ?? 0}
+              topGloryPicksLeft={topGloryPicksLeft(gameState.purgeState)}
               purgeBatch={purgeBatch}
               purgeCandidates={purgeCandidates}
               purgePermanentCandidates={purgePermanentCandidates}

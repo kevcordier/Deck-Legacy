@@ -10,6 +10,7 @@ import { AdvanceStoryStrategy } from './AdvanceStoryStrategy';
 import { BlockCardStrategy } from './BlockCardStrategy';
 import type { CardActionStrategy } from './CardActionStrategy';
 import { ChoseStateStrategy } from './ChoseStateStrategy';
+import { CrossOutActionStrategy } from './CrossOutActionStrategy';
 import { DefeatCardStrategy } from './DefeatCardStrategy';
 import { DestroyCardStrategy } from './DestroyCardStrategy';
 import { DiscardCardStrategy } from './DiscardCardStrategy';
@@ -61,6 +62,7 @@ export class CardActionContext {
       [ActionEffectType.LOSE_NEXT_RESOURCES]: new LoseNextResourcesStrategy(),
       [ActionEffectType.UNLOCK]: new UnlockStrategy(),
       [ActionEffectType.REMOVE_STICKER]: new RemoveStickerStrategy(),
+      [ActionEffectType.CROSS_OUT_ACTION]: new CrossOutActionStrategy(),
     };
   }
 

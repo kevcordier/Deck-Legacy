@@ -133,3 +133,57 @@ describe('Parchment discovered by an effect (EDR-059)', () => {
     expect(agg.getEvents().map(event => event.type)).toEqual([GameEventType.CARD_ACTION]);
   });
 });
+
+describe('Purge of the cards with the most glory (Invasion)', () => {
+  const gloryDef = (id: number, amount: number, negative = false): CardDef => ({
+    id,
+    name: `G${id}`,
+    states: [{ id: 1, name: `G${id}`, glory: { amount }, negative }],
+  });
+  const gloryDefs = {
+    1: gloryDef(1, 9),
+    2: gloryDef(2, 8),
+    3: gloryDef(3, 7),
+    4: gloryDef(4, 5),
+    5: gloryDef(5, 5),
+    6: gloryDef(6, 1),
+    7: gloryDef(7, 20, true),
+  };
+  const ids = [1, 2, 3, 4, 5, 6, 7];
+
+  function selectInvasion() {
+    const state = makeState({
+      phase: Phase.GAME_OVER,
+      drawPile: ids,
+      instances: Object.fromEntries(
+        ids.map(id => [id, makeInstance({ id, cardId: id, stateId: 1 })]),
+      ),
+    });
+    const agg = new GameAggregate(crypto.randomUUID(), state, gloryDefs, {}, []);
+    agg.selectExpansion('Invasion', {
+      purge: { permanent: 0, purge: 7, topGlory: { among: 4, picks: 2 } },
+      campaign: [],
+    });
+    return agg;
+  }
+
+  it('offers the cards with the most glory first, ties included, negative cards aside', () => {
+    const agg = selectInvasion();
+    const top = agg.getGameState().purgeState?.topGlory;
+    expect(top?.picks).toBe(2);
+    expect([...(top?.ids ?? [])].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5]);
+    expect([...agg.getPurgeCandidates()].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  it('asks for 2 of them, then goes on with the usual batches', () => {
+    const agg = selectInvasion();
+    agg.selectPurgeCard(1);
+    expect([...agg.getPurgeCandidates()].sort((a, b) => a - b)).toEqual([2, 3, 4, 5]);
+    agg.selectPurgeCard(4);
+
+    const batch = agg.getPurgeBatch();
+    expect(batch).not.toContain(1);
+    expect(batch).not.toContain(4);
+    expect(agg.getGameState().purgeState?.selectedCardIds).toEqual([1, 4]);
+  });
+});

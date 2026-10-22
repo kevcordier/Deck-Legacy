@@ -33,5 +33,5 @@ export function countValuePerElement(
   if (valuePerElement.deficitTarget !== undefined) {
     return Math.max(0, valuePerElement.deficitTarget - count);
   }
-  return count;
+  return valuePerElement.per ? Math.floor(count / valuePerElement.per) : count;
 }

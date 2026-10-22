@@ -106,6 +106,112 @@
         }
       ],
       "discoverable": []
+    },
+    "Invasion": {
+      "expansionMaxRound": 5,
+      "purge": {
+        "permanent": 2,
+        "purge": 8,
+        "topGlory": {
+          "among": 5,
+          "picks": 2
+        }
+      },
+      "parameters": {
+        "discoverPerRound": 0
+      },
+      "onStart": {
+        "discover": {
+          "ids": [207]
+        },
+        "actions": [
+          {
+            "id": "189-1-2",
+            "actionEffects": [
+              {
+                "id": 1,
+                "type": "TRACK_ADVANCE",
+                "cards": {
+                  "scope": ["self"]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "campaign": [
+        {
+          "id": 207,
+          "cardId": 189,
+          "number": 16
+        },
+        {
+          "id": 208,
+          "cardId": 190,
+          "number": 17
+        },
+        {
+          "id": 209,
+          "cardId": 191,
+          "number": 18
+        },
+        {
+          "id": 210,
+          "cardId": 192,
+          "number": 19
+        },
+        {
+          "id": 211,
+          "cardId": 192,
+          "number": 20
+        },
+        {
+          "id": 212,
+          "cardId": 194,
+          "number": 21
+        },
+        {
+          "id": 213,
+          "cardId": 195,
+          "number": 22
+        },
+        {
+          "id": 214,
+          "cardId": 196,
+          "number": 23
+        },
+        {
+          "id": 215,
+          "cardId": 192,
+          "number": 24
+        },
+        {
+          "id": 216,
+          "cardId": 198,
+          "number": 25
+        },
+        {
+          "id": 217,
+          "cardId": 192,
+          "number": 26
+        },
+        {
+          "id": 218,
+          "cardId": 200,
+          "number": 27
+        },
+        {
+          "id": 219,
+          "cardId": 198,
+          "number": 28
+        },
+        {
+          "id": 220,
+          "cardId": 200,
+          "number": 29
+        }
+      ],
+      "discoverable": []
     }
   }
 }

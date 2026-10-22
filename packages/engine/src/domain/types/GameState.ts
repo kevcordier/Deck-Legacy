@@ -26,6 +26,8 @@ export type ExpansionConfig = {
     permanent: number;
     purge: number;
     focus?: PurgeFocus;
+    /** Before the batches: purge `picks` of the `among` non-permanent cards with the most glory. */
+    topGlory?: { among: number; picks: number };
   };
   parameters?: Partial<GameParameters>;
   /** Expansion that brings the deck (instances record it); absent for the base game campaigns. */
@@ -64,7 +66,11 @@ export type PurgeState = {
   onStartDiscoverIds: number[];
   onStartActions?: CardAction[];
   focus?: PurgeFocus;
+  /** First batch (Invasion): `picks` cards to choose among `ids`, the cards with the most glory. */
+  topGlory?: PurgeTopGlory;
 };
+
+export type PurgeTopGlory = { ids: number[]; picks: number };
 
 export type GameState = {
   /** Seed of the shuffles (EDR-051); absent in older games, which shuffle with `Math.random`. */

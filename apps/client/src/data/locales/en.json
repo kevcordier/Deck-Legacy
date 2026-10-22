@@ -260,6 +260,8 @@
     "purgeTitle": "Purge your kingdom",
     "purgeDescription": "For each batch of {{size}} cards, choose 1 allied card to purge.",
     "purgeBatchLabel": "Choose one allied card from the current batch",
+    "purgeTopGloryLabel_one": "Choose 1 more of your cards with the most glory to purge",
+    "purgeTopGloryLabel_other": "Choose {{count}} of your cards with the most glory to purge",
     "purgePermanentLabel": "Choose one allied permanent card to purge",
     "purgeSelected": "Cards selected for purge: {{count}}",
     "purge": "Purge",

@@ -3,6 +3,7 @@ import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getEffectiveProductions } from '../cards/selection/getEffectiveProductions';
+import { chooseCrossedOutAction } from '../effects/chooseCrossedOutAction';
 import { chooseUsedAction } from '../effects/chooseUsedAction';
 import { ActionEffectType, PendingChoiceType } from '../enums';
 import { fixResources } from '../resources/fixResources';
@@ -395,6 +396,20 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
         ...rest
       ] = pendingChoices;
       const [resolved, actionChoices] = chooseUsedAction(
+        resolvedAction,
+        choice.instanceIds[0],
+        template,
+        gs,
+        this.defs,
+        this.stickerDefs,
+      );
+      return [resolved, [...actionChoices, ...rest]];
+    } else if (choice.type === ActionEffectType.CROSS_OUT_ACTION && pendingChoices.length > 0) {
+      const [
+        { type: _type, choices: _choices, pickMin: _min, pickMax: _max, ...template },
+        ...rest
+      ] = pendingChoices;
+      const [resolved, actionChoices] = chooseCrossedOutAction(
         resolvedAction,
         choice.instanceIds[0],
         template,

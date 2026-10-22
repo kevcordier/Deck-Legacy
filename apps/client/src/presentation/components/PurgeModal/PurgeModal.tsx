@@ -16,6 +16,8 @@ interface PurgeModalProps {
   readonly batchSize: number;
   /** Allied permanents the expansion purges. */
   readonly permanentToPurge: number;
+  /** Cards still to choose among those with the most glory (Invasion), before the batches. */
+  readonly topGloryPicksLeft?: number;
   readonly purgeBatch: number[];
   readonly purgeCandidates: number[];
   readonly purgePermanentCandidates: number[];
@@ -61,6 +63,7 @@ export function PurgeModal({
   instances,
   batchSize,
   permanentToPurge,
+  topGloryPicksLeft = 0,
   purgeBatch,
   purgeCandidates,
   purgePermanentCandidates,
@@ -88,7 +91,11 @@ export function PurgeModal({
         <View className="gap-2">
           {purgeCandidates.length > 0 && (
             <>
-              <Text className="text-sm">{t('campaign.purgeBatchLabel')}</Text>
+              <Text className="text-sm">
+                {topGloryPicksLeft > 0
+                  ? t('campaign.purgeTopGloryLabel', { count: topGloryPicksLeft })
+                  : t('campaign.purgeBatchLabel')}
+              </Text>
               <Grid {...gridProps} maxColumns={5} className="p-2">
                 {purgeBatch.map(id => {
                   const instance = instances[id];

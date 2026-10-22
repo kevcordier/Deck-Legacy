@@ -260,6 +260,8 @@
     "purgeTitle": "Purge du royaume",
     "purgeDescription": "Pour chaque lot de {{size}} cartes, choisissez 1 carte alliée à purger.",
     "purgeBatchLabel": "Choisissez une carte alliée dans le lot courant",
+    "purgeTopGloryLabel_one": "Choisissez encore 1 de vos cartes les plus glorieuses à purger",
+    "purgeTopGloryLabel_other": "Choisissez {{count}} de vos cartes les plus glorieuses à purger",
     "purgePermanentLabel": "Choisissez une carte permanente alliée à purger",
     "purgeSelected": "Cartes sélectionnées pour la purge : {{count}}",
     "purge": "Purger",

@@ -63,6 +63,9 @@ import type {
 import { CardActionAggregate } from './CardActionAggregate';
 import { eventDrewCards } from './eventDrewCards';
 
+/** `batchStart` of the first purge batch, the cards with the most glory (Invasion). */
+const TOP_GLORY_BATCH = -1;
+
 export class GameAggregate {
   private events: GameEvent[];
   private gameState: GameState;
@@ -228,6 +231,41 @@ export class GameAggregate {
     return focused.length > 0 ? focused : candidates;
   }
 
+  /** The `among` non-negative, non-permanent cards with the most glory, ties included. */
+  private mostGloriousCards(pool: number[], among: number): number[] {
+    const glories = pool
+      .filter(id => this.isPurgeEligible(id, false))
+      .map(id => {
+        const instance = this.gameState.instances[id];
+        const state = getActiveState(instance, this.cardDefs);
+        return {
+          id,
+          glory: getEffectiveGlory(
+            state,
+            this.gameState,
+            this.cardDefs,
+            instance,
+            this.stickerDefs,
+          ),
+        };
+      })
+      .sort((a, b) => b.glory - a.glory);
+    const threshold = glories[among - 1]?.glory;
+    return glories
+      .filter(({ glory }, index) => index < among || glory === threshold)
+      .map(({ id }) => id);
+  }
+
+  /** The first batch (Invasion) while its picks are not all made. */
+  private getTopGloryBatch(): number[] | null {
+    const purgeState = this.gameState.purgeState;
+    const top = purgeState?.topGlory;
+    if (!top) return null;
+    const picked = top.ids.filter(id => purgeState.selectedCardIds.includes(id)).length;
+    const remaining = top.ids.filter(id => !purgeState.selectedCardIds.includes(id));
+    return picked < top.picks && remaining.length > 0 ? remaining : null;
+  }
+
   private getCurrentBatchStartAndCandidates(): {
     batchStart: number;
     batch: number[];
@@ -235,6 +273,11 @@ export class GameAggregate {
   } | null {
     const purgeState = this.gameState.purgeState;
     if (!purgeState) return null;
+
+    const topBatch = this.getTopGloryBatch();
+    if (topBatch) {
+      return { batchStart: TOP_GLORY_BATCH, batch: topBatch, candidates: topBatch };
+    }
 
     let batchStart = 0;
     while (batchStart + purgeState.batchSize <= purgeState.shuffledPool.length) {
@@ -352,6 +395,12 @@ export class GameAggregate {
       ...(expansion.onStart?.actions && { onStartActions: expansion.onStart.actions }),
       addedStickers: expansion.stickers,
       purgeFocus: expansion.purge.focus,
+      ...(expansion.purge.topGlory && {
+        purgeTopGlory: {
+          ids: this.mostGloriousCards(purgePool, expansion.purge.topGlory.among),
+          picks: expansion.purge.topGlory.picks,
+        },
+      }),
       expansionDiscoveryFirst: true,
     };
 

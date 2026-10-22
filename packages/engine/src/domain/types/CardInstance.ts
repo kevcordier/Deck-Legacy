@@ -18,6 +18,8 @@ export type CardInstance = {
   cumulated: number;
   /** Card action IDs already consumed by one-time actions */
   usedActionIds: string[];
+  /** Activated effects crossed out (Enemy Archer): the card no longer has them. */
+  crossedOutActionIds?: string[];
   /** Resource keys removed for each state and scope; duplicate keys reduce by 1 cumulatively. */
   removedResourcesByState?: Record<number, RemovedResourcesByScope>;
   /** Empty glory values */
