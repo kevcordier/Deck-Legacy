@@ -374,6 +374,24 @@ describe('GameAggregate campaign score branch coverage', () => {
     expect(result.purgeState?.onStartDiscoverIds).toEqual([]);
   });
 
+  it('records the discoverable cards of the expansion', () => {
+    const agg = new GameAggregate(
+      crypto.randomUUID(),
+      makeState(),
+      { 1: makeDef({ id: 1 }) },
+      {},
+      [],
+    );
+
+    agg.selectExpansion('x', {
+      campaign: [{ id: 10, cardId: 1 }],
+      discoverable: [{ id: 11, cardId: 1 }],
+      purge: { purge: 0, permanent: 0 },
+    });
+
+    expect(agg.getEvents().at(-1)).toMatchObject({ discoverableIds: [11] });
+  });
+
   it('saveCampaignScore uses base segment by default and opens expansion choice', () => {
     const scoringDef: CardDef = {
       id: 1,

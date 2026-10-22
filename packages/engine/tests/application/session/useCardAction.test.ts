@@ -44,7 +44,7 @@ const merchant: CardDef = {
       actions: [
         {
           id: 'trade',
-          cost: { resources: [{ gold: 1 }] },
+          cost: { resources: [{ gold: 1 }, { stone: 1 }] },
           actionEffects: [{ id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { wood: 2 } }],
         },
         {
@@ -175,5 +175,29 @@ describe('USE_CARD_ACTION', () => {
     expect(state.board).not.toContain(2);
     expect(state.phase).toBe(Phase.PLAYING);
     expect(state.turn).toBe(1);
+  });
+
+  it("asks how to pay the used action's cost when it can be paid several ways", () => {
+    const session = start([1, 2, 3, 5]);
+    session.execute({
+      type: 'cheat',
+      cheat: { op: 'addResources', resources: { gold: 1, stone: 1 } },
+    });
+
+    session.execute({ type: 'resolveAction', instanceId: 2, actionId: 'use' });
+    pickCard(session, 3);
+    pickAction(session, 'trade');
+    expect(pending(session)).toMatchObject({
+      kind: ActionEffectType.COST,
+      type: PendingChoiceType.CHOOSE_RESOURCE,
+    });
+    session.execute({
+      type: 'resolvePayCost',
+      resolved: { resources: { stone: 1 }, discardedCardIds: [], destroyedCardIds: [] },
+    });
+
+    const state = session.getState();
+    expect(state.resources).toMatchObject({ gold: 1, wood: 2 });
+    expect(state.resources.stone ?? 0).toBe(0);
   });
 });
