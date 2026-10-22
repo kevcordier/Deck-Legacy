@@ -95,6 +95,7 @@ export function GameHeader() {
             onView={() => setKingdomModal('view')}
             onViewDestroyed={() => setKingdomModal('destroyed')}
             onRename={() => setKingdomModal('rename')}
+            seed={gameState.seed}
             className="min-h-11 min-w-0 shrink items-center justify-center gap-1 px-2 active:opacity-70"
           >
             {/* Ellipsis (CSS `text-overflow` on the web) when the name is wider than the space. */}

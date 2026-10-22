@@ -122,13 +122,7 @@ export function Game() {
 
           {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}
 
-          {optionsOpen && (
-            <OptionsModal
-              onClose={() => setOptionsOpen(false)}
-              onGoHome={goHome}
-              seed={gameState.seed}
-            />
-          )}
+          {optionsOpen && <OptionsModal onClose={() => setOptionsOpen(false)} onGoHome={goHome} />}
         </SafeAreaView>
         <TutorialStage />
         <TutorialOverlay />

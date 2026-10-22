@@ -386,8 +386,7 @@
     "fr": "French",
     "tutorial": "Enable tutorial",
     "backHome": "Back to my kingdoms",
-    "resourceWarning": "Warn before progressing with resources in play",
-    "seed": "Seed: {{seed}}"
+    "resourceWarning": "Warn before progressing with resources in play"
   },
   "progressWarning": {
     "title": "Resources will be lost",
@@ -571,7 +570,9 @@
     "renameTitle": "Rename the kingdom",
     "renameConfirm": "Rename",
     "titleOf": "Kingdom of {{name}}",
-    "destroyedCards": "Destroyed cards"
+    "destroyedCards": "Destroyed cards",
+    "seed": "Seed: {{seed}}",
+    "seedCopied": "Seed copied to the clipboard"
   },
   "scoreboard": {
     "title": "Scoreboard",

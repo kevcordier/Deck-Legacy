@@ -185,7 +185,8 @@ export class GameSession {
     seed?: string,
   ): GameSession {
     const session = new GameSession(id, mode === 'tutorial', catalog, options, {});
-    session.startNewGame(firstDrawPile, seed ?? environment.newId());
+    // Short enough to read and share (32 random bits are plenty for the shuffles).
+    session.startNewGame(firstDrawPile, seed ?? environment.newId().slice(0, 8));
     session.finalize();
     return session;
   }

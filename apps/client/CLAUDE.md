@@ -77,7 +77,7 @@ setCardName(instanceId, name)  getCardName(instanceId)
 - The tutorial plays a scripted first round (`TUTORIAL_DRAW_ORDER`, steps in `TutorialProvider`, cards shown in large by `TutorialStage`). Its session is not saved until the end: `continueGame()` keeps it as the kingdom's game (replayed as a standard session), `startGame()` starts a new one.
 - `GameProvider initialState={…}` renders a static board without a session (Storybook).
 - Development builds (`__DEV__`) allow unrestricted rewind and the cheat panel (`globalThis.__cheat`). The server refuses cheated games unless it runs with `ALLOW_CHEATS=true`.
-- The game's seed is shown in the general options (`OptionsModal seed`).
+- The game's seed is shown in the header's kingdom menu (`KingdomMenu seed`); pressing it copies it to the clipboard (`expo-clipboard`).
 - Test scenarios: event logs in `src/data/scenarios/*.json`, listed in `src/data/scenarios/index.ts` and chosen in `NewKingdomModal` (`__DEV__` only): the kingdom opens that saved game. A scenario may hold a `checkpoint` (`{ seq: 0, state }`, the state at the start of a round) and only the events after it: it loads like a downloaded save (EDR-053) but the server cannot verify it. Export a game from the browser console with `copy(JSON.stringify(__cheat.getEvents(), null, 2))`.
 
 ### Local save and sync

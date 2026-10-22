@@ -386,8 +386,7 @@
     "fr": "Français",
     "tutorial": "Activer le tutoriel",
     "backHome": "Retour à mes royaumes",
-    "resourceWarning": "Prévenir avant d'avancer avec des ressources en jeu",
-    "seed": "Graine : {{seed}}"
+    "resourceWarning": "Prévenir avant d'avancer avec des ressources en jeu"
   },
   "progressWarning": {
     "title": "Des ressources vont être perdues",
@@ -571,7 +570,9 @@
     "renameTitle": "Renommer le royaume",
     "renameConfirm": "Renommer",
     "titleOf": "Royaume de {{name}}",
-    "destroyedCards": "Cartes détruites"
+    "destroyedCards": "Cartes détruites",
+    "seed": "Graine : {{seed}}",
+    "seedCopied": "Graine copiée dans le presse-papier"
   },
   "scoreboard": {
     "title": "Classement",

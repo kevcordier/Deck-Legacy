@@ -4,7 +4,6 @@ import { ButtonGroup } from '@components/ui/ButtonGroup/ButtonGroup';
 import { Checkbox } from '@components/ui/Checkbox/Checkbox';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Tabs } from '@components/ui/Tabs/Tabs';
-import { Text } from '@components/ui/Text/Text';
 import { GameUIContext } from '@contexts/GameUIContext';
 import { useAuth } from '@hooks/useAuth';
 import { use, useState } from 'react';
@@ -18,17 +17,10 @@ interface OptionsModalProps {
   /** Leaves the game for the kingdoms (home page); omitted on the home page itself. */
   readonly onGoHome?: () => void;
   readonly initialTab?: OptionsTab;
-  /** Seed of the game being played, shown so it can be shared; absent in older games. */
-  readonly seed?: string;
 }
 
 /** Options (language) and, when accounts are available, the account tab. */
-export function OptionsModal({
-  onClose,
-  onGoHome,
-  initialTab = 'general',
-  seed,
-}: OptionsModalProps) {
+export function OptionsModal({ onClose, onGoHome, initialTab = 'general' }: OptionsModalProps) {
   const { t } = useTranslation();
   const { status } = useAuth();
   const accountsAvailable = status !== 'disabled';
@@ -50,19 +42,13 @@ export function OptionsModal({
       {tab === 'account' ? (
         <AccountPanel onDone={onClose} />
       ) : (
-        <GeneralOptions onGoHome={onGoHome} seed={seed} />
+        <GeneralOptions onGoHome={onGoHome} />
       )}
     </Modal>
   );
 }
 
-function GeneralOptions({
-  onGoHome,
-  seed,
-}: {
-  readonly onGoHome?: () => void;
-  readonly seed?: string;
-}) {
+function GeneralOptions({ onGoHome }: { readonly onGoHome?: () => void }) {
   const { t, i18n } = useTranslation();
   const { resourceWarningEnabled, setResourceWarningEnabled } = use(GameUIContext);
 
@@ -85,12 +71,6 @@ function GeneralOptions({
         checked={resourceWarningEnabled}
         onChange={setResourceWarningEnabled}
       />
-
-      {seed && (
-        <Text selectable className="text-sm">
-          {t('options.seed', { seed })}
-        </Text>
-      )}
 
       {onGoHome && (
         <View className="items-start">
