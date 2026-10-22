@@ -20,7 +20,18 @@ export function countValuePerElement(
       defs,
       stickerDefs,
     );
-    count = ids.length + (valuePerElement.includeSelf && !ids.includes(instanceId) ? 1 : 0);
+    const { productionTotal } = valuePerElement;
+    if (productionTotal) {
+      // The total production of that resource on the selected cards
+      count = ids.reduce(
+        (sum, id) =>
+          sum + getTotalResourceProduction(id, productionTotal, gameState, defs, stickerDefs),
+        0,
+      );
+    } else {
+      const self = valuePerElement.includeSelf && !ids.includes(instanceId) ? 1 : 0;
+      count = ids.length + self;
+    }
   } else if (valuePerElement.accumulation && gameState.instances[instanceId].cumulated >= 1) {
     count = gameState.instances[instanceId].cumulated;
   } else if (valuePerElement.ownProduction) {

@@ -1,6 +1,8 @@
-import { RESOURCE_STICKERS, SCIENCE, SCIENCE_CARDS } from './scienceConstants';
+import { markPermanents } from './markPermanents';
+import { SCIENCE, SCIENCE_CARDS } from './scienceConstants';
 import { scienceGoal } from './scienceGoal';
 import { spendScience } from './spendScience';
+import { stickersOnOneCard } from './stickersOnOneCard';
 import { ActionEffectType, CardTag, TargetScope } from '@deck-legacy/engine/domain/enums';
 import type { ActionEffect, CardDef } from '@deck-legacy/engine/domain/types';
 
@@ -16,31 +18,6 @@ const discover = (id: number): ActionEffect => ({
   type: ActionEffectType.DISCOVER_CARD,
   cards: { ids: [id] },
 });
-
-/** Resource stickers on 1 card: the first effect picks the card, the next ones stick on it. */
-const stickersOnOneCard = (count: number, cards: ActionEffect['cards']): ActionEffect[] =>
-  Array.from({ length: count }, (_, index) => ({
-    id: index + 1,
-    type: ActionEffectType.ADD_STICKER,
-    cards: index === 0 ? cards : { scope: [TargetScope.LAST_SELECTED] },
-    stickers: { ids: RESOURCE_STICKERS, pickNumber: 1 },
-  }));
-
-/** Marks 1 box on permanent cards: a no-op effect picks the card, then its track advances. */
-const markPermanents = (count: number): ActionEffect[] =>
-  Array.from({ length: count }, (_, index) => [
-    {
-      id: index * 2 + 1,
-      type: ActionEffectType.ADD_CUMULATED,
-      value: 0,
-      cards: { scope: [TargetScope.PERMANENTS, TargetScope.WITH_TRACK], pickNumber: 1 },
-    },
-    {
-      id: index * 2 + 2,
-      type: ActionEffectType.TRACK_ADVANCE,
-      cards: { scope: [TargetScope.LAST_SELECTED] },
-    },
-  ]).flat();
 
 /** Science (Foundations 46): spend science, its goals are reached between rounds. */
 export const scienceTrack: CardDef = {

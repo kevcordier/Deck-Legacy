@@ -25,6 +25,9 @@ export enum CardTag {
   MAGE = 'mage',
   ANIMAL = 'animal',
   OMEN = 'omen',
+  ARCHBISHOP = 'archbishop',
+  /** A blessed card (Church): the blessing sticker 38 or a printed blessing. */
+  BLESSED = 'blessed',
 }
 
 export enum Trigger {
@@ -139,6 +142,12 @@ export enum PassiveType {
   RESTRICT_GAIN = 'RESTRICT_GAIN',
   RESTRICT_SPEND = 'RESTRICT_SPEND',
   REQUIRES_IN_PLAY = 'REQUIRES_IN_PLAY',
+  /** Each production of the selected cards gets one of `choices` on top ("+gold / science"). */
+  ADD_PRODUCTION_CHOICE = 'ADD_PRODUCTION_CHOICE',
+  /** The selected cards cannot stay in play (Skepticism), unless permanent. */
+  PREVENT_STAY_IN_PLAY = 'PREVENT_STAY_IN_PLAY',
+  /** Upgrading the selected cards does not end the turn (Renowned School). */
+  UPGRADE_KEEPS_TURN = 'UPGRADE_KEEPS_TURN',
 }
 
 export enum Options {

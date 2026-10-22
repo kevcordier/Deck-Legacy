@@ -99,6 +99,8 @@ export interface UpgradeCardEvent extends GameEvent {
   discardedCardIds?: number[];
   destroyedCardIds?: number[];
   endTurnTrigger: Record<string, TriggerEntry>;
+  /** The upgrade did not end the turn (Renowned School). Absent in older events. */
+  keepsTurn?: boolean;
 }
 
 export interface ChooseStateEvent extends GameEvent {

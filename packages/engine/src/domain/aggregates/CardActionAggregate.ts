@@ -107,7 +107,9 @@ export class CardActionAggregate {
       const effectiveEffects = this.getEffectiveActionEffects(effect);
       return [...acc, ...effectiveEffects];
     }, [] as ActionEffect[]);
-    this.effects = Array.from({ length: Math.max(0, this.amount) }, () => effects).flat();
+    // "For every N spent": the effects apply once per `amountPer` units paid
+    const times = Math.floor(this.amount / (this.action.amountPer ?? 1));
+    this.effects = Array.from({ length: Math.max(0, times) }, () => effects).flat();
     const triggerEntry = this.gameState.triggerPile[this.triggerId ?? ''];
     this.endTurn =
       !!this.action.endsTurn ||

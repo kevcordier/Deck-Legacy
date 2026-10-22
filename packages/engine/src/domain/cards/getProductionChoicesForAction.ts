@@ -1,4 +1,5 @@
 import { PassiveType, TargetScope } from '../enums';
+import { mergeResources } from '../resources/mergeResources';
 import type { CardDef, CardInstance, GameState, Resources, Sticker } from '../types';
 import { keepGainableResources } from './keepGainableResources';
 import { sanitizeResources } from './sanitizeResources';
@@ -60,6 +61,31 @@ function getApplicableReplaceResourceProductionPassives(
     });
 }
 
+/** The ADD_PRODUCTION_CHOICE passives on the card: each adds one of its bonuses (Archbishops). */
+function getProductionChoiceBonuses(
+  instance: CardInstance,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): Resources[][] {
+  return Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) =>
+    passives
+      .filter(
+        passive =>
+          passive.type === PassiveType.ADD_PRODUCTION_CHOICE &&
+          passive.choices &&
+          cardSelector(
+            passive.cards ?? { scope: [TargetScope.ANY] },
+            Number(sourceId),
+            gameState,
+            defs,
+            stickerDefs,
+          ).includes(instance.id),
+      )
+      .map(passive => passive.choices ?? []),
+  );
+}
+
 export function getProductionChoicesForAction(
   base: Resources,
   gameState: GameState,
@@ -91,6 +117,10 @@ export function getProductionChoicesForAction(
   replacements.forEach(({ from, to }) => {
     choices = choices.flatMap(choice => [choice, applyReplacementOnProduction(choice, from, to)]);
   });
+
+  for (const bonuses of getProductionChoiceBonuses(instance, gameState, defs, stickerDefs)) {
+    choices = choices.flatMap(choice => bonuses.map(bonus => mergeResources(choice, bonus)));
+  }
 
   choices.forEach(choice => {
     unique.set(serialize(choice), choice);

@@ -198,10 +198,12 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
   const { tags, produces, name } = ctx.selector;
 
   if (!matchesAlignmentAndName(state, ctx.isFriendly, ctx.isEnemy, name)) return false;
-  if (!matchesTags(state, tags)) return false;
+  const stickers = inst.stickers[inst.stateId] ?? [];
+  const taggedBySticker = ctx.selector.orStickerIds?.some(s => stickers.includes(s));
+  if (!matchesTags(state, tags) && !taggedBySticker) return false;
   if (!matchesProductions(id, state, produces, ctx)) return false;
   if (ctx.selector.ids && !ctx.selector.ids.includes(inst.id)) return false;
-  if (!matchesStickers(inst.stickers[inst.stateId] ?? [], ctx.selector)) return false;
+  if (!matchesStickers(stickers, ctx.selector)) return false;
   if (!matchesUpgrades(state, ctx)) return false;
   if (ctx.withTrack && !hasAvailableTrackStep(state, inst.trackProgress)) return false;
   if (

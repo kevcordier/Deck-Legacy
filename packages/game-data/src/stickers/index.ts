@@ -11,6 +11,7 @@ import { knight } from './11';
 import { emptyValue } from './16';
 import { startsInPlay } from './17';
 import { bottomOfDeck } from './18';
+import { blessing } from './38';
 import { tab } from './60';
 import { infected } from './61';
 import { science } from './62';
@@ -31,6 +32,7 @@ export const stickerData: Sticker[] = [
   emptyValue,
   startsInPlay,
   bottomOfDeck,
+  blessing,
   tab,
   infected,
   science,

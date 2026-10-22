@@ -689,8 +689,10 @@
   },
   "tags": {
     "animal": "Animal",
+    "archbishop": "Archbishop",
     "artifact": "Artifact",
     "bandit": "Bandit",
+    "blessed": "Blessed",
     "building": "Building",
     "elder": "Elder",
     "enemy": "Enemy",

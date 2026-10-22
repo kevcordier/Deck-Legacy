@@ -45,6 +45,25 @@ import { metallurgy } from './cards/233';
 import { aerostats } from './cards/234';
 import { stoneRoads } from './cards/235';
 import { appliedScience } from './cards/236';
+import { churchCover } from './cards/237';
+import { skepticism } from './cards/238';
+import { percival } from './cards/239';
+import { churchBells } from './cards/240';
+import { pilgrim } from './cards/241';
+import { overgrownChapel } from './cards/242';
+import { mountainConstruction } from './cards/243';
+import { archbishops } from './cards/244';
+import { archbishop } from './cards/245';
+import { monastery75 } from './cards/248';
+import { school76 } from './cards/249';
+import { mysticScholar } from './cards/250';
+import { pilgrimage } from './cards/253';
+import { newForest } from './cards/254';
+import { churchAuthority } from './cards/255';
+import { newParadigm } from './cards/256';
+import { experiment84 } from './cards/257';
+import { printingPress } from './cards/259';
+import { theologyOfScience } from './cards/260';
 import deck from './deck.json';
 import en from './locales/cards.en.json';
 import fr from './locales/cards.fr.json';
@@ -99,5 +118,24 @@ export const foundations: ExpansionPack = {
     aerostats,
     stoneRoads,
     appliedScience,
+    churchCover,
+    skepticism,
+    percival,
+    churchBells,
+    pilgrim,
+    overgrownChapel,
+    mountainConstruction,
+    archbishops,
+    archbishop,
+    monastery75,
+    school76,
+    mysticScholar,
+    pilgrimage,
+    newForest,
+    churchAuthority,
+    newParadigm,
+    experiment84,
+    printingPress,
+    theologyOfScience,
   ],
 };

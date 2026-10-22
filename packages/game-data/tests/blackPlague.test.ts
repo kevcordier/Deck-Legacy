@@ -105,6 +105,18 @@ describe('starting The Black Plague', () => {
     expect(agg.getGameState().phase).toBe(Phase.ROUND_END);
     expect(agg.getGameState().permanents).toEqual([CAMPAIGN_CARD]);
     resolveTriggers(agg, '175-1-2');
+    // The green box: the player picks the foundation to discover (Science)
+    const [foundation] = agg.getCurrentCardAction()?.getPendingChoices() ?? [];
+    expect(foundation.choices).toEqual([236, 255]);
+    agg.resolveCardActionChoice(
+      {
+        id: foundation.id,
+        type: foundation.kind,
+        sourceInstanceId: foundation.sourceInstanceId,
+        instanceIds: [236],
+      },
+      foundation.type,
+    );
 
     const gs = agg.getGameState();
     expect(gs.instances[CAMPAIGN_CARD].trackProgress).toEqual([1]);

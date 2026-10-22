@@ -69,6 +69,7 @@ export class UpgradeCardEventStrategy implements GameEventStrategy {
       };
     }
 
+    if (e.keepsTurn) return newState;
     return new TurnEndedStrategy(this.cardDefs, this.stickerDefs).apply(newState, {
       id: '',
       type: GameEventType.TURN_ENDED,

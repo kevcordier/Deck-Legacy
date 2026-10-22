@@ -689,8 +689,10 @@
   },
   "tags": {
     "animal": "Animal",
+    "archbishop": "Archevêque",
     "artifact": "Artéfact",
     "bandit": "Bandit",
+    "blessed": "Béni",
     "building": "Bâtiment",
     "elder": "Ancien",
     "enemy": "Ennemi",

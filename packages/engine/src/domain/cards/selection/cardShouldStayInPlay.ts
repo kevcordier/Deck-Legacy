@@ -18,6 +18,18 @@ export function cardShouldStayInPlay(
   if (!instance) return false;
   const def = cardDefs[instance.cardId];
   if (isPermanent(getActiveState(instance, cardDefs))) return true;
+  if (
+    Object.entries(gameState.boardEffects).some(([sourceId, passives]) =>
+      passives.some(
+        p =>
+          p.type === PassiveType.PREVENT_STAY_IN_PLAY &&
+          cardSelector(p.cards ?? {}, Number(sourceId), gameState, cardDefs, {}).includes(
+            instanceId,
+          ),
+      ),
+    )
+  )
+    return false;
   const state = def?.states.find(s => s.id === instance.stateId);
   if (state?.passives?.some(p => p.type === PassiveType.STAY_IN_PLAY)) return true;
 

@@ -238,3 +238,14 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - **`COUNT_AS_2` can affect selections outside `boardEffects`-only contexts** (e.g. discard-based selections): keep intrinsic passives and board effects aligned when filtering selectable cards.
 - **Cards reference each other by state name and by id** (selectors, `upgradeTo`, `states.ids`): a typo silently matches nothing. Check the target exists.
 - **The engine runs on Hermes, browsers and Node:** check that any global API (`crypto`, `structuredClone`, `Intl`…) exists on Hermes before using it.
+
+## Mechanics added for Foundations: Church
+
+- Blessed cards: `CardTag.BLESSED` (printed blessing) or the blessing sticker 38. Sticker tags are not read by selectors: match both with `{ tags: [CardTag.BLESSED], orStickerIds: [38] }` (`CardSelector.orStickerIds`).
+- `PassiveType.ADD_PRODUCTION_CHOICE` (`choices`): each production of the selected cards gets one of the bonuses on top (Archbishops' "+gold / science").
+- `PassiveType.PREVENT_STAY_IN_PLAY` (Skepticism): the selected cards cannot stay in play, unless permanent. `PassiveType.UPGRADE_KEEPS_TURN` (Renowned School): upgrading the selected cards does not end the turn (`UpgradeCardEvent.keepsTurn`).
+- A `CHOOSE_EFFECT` option with a `condition` is only offered when it holds (a new Archbishop each round: the last choice is kept in `cumulated`).
+- `PLACE_CARD_IN_PILE` with `deck: 'board'`: the cards start in play without being played (Silvanus).
+- `CardAction.amountPer` with an `'any'` resource cost: the effects apply once per `amountPer` units ("for every 3 science spent").
+- `ValuePerElement` with both `cards` and `productionTotal`: the total production of that resource on the selected cards.
+- Archbishops (Foundations 72–74): the 3 printed cards count as one permanent card, so one card (245) with a state per Archbishop; its round-start trigger turns it to a new state (`chooseArchbishop`), task step ids are unique on the card so marked tasks stay. Card 71 discovers it and stays as the rule reminder.

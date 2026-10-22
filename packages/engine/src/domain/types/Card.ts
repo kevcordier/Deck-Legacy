@@ -81,6 +81,7 @@ export type CardAction = {
   trigger?: Trigger;
   optional?: boolean;
   limitedTime?: number; // max number of uses for this action
+  amountPer?: number; // with an 'any' resource cost: the effects apply once per `amountPer` units
   perTurn?: number; // max number of uses each turn ("once per turn")
   condition?: Condition; // checked when the trigger fires, or before the action is used
   defeat?: boolean; // the action defeats an enemy: fires ON_DEFEAT triggers once resolved
@@ -101,7 +102,8 @@ export type ValuePerElement = {
 };
 
 export type RemovedResourceScope = 'production' | 'actionCost' | 'upgradeCost';
-export type DeckTarget = 'draw' | 'discard' | 'discovery';
+/** 'board': the cards start in play, without being played (Silvanus). */
+export type DeckTarget = 'draw' | 'discard' | 'discovery' | 'board';
 
 export type ActionEffect = {
   id: number;
@@ -150,6 +152,8 @@ export type Passive = {
   condition?: Condition;
   options?: unknown[];
   parameters?: Partial<GameParameters>;
+  /** ADD_PRODUCTION_CHOICE: the bonuses offered. */
+  choices?: Resources[];
 };
 
 export type Having = {
@@ -179,6 +183,7 @@ export type CardSelector = {
   fullyUpgraded?: boolean; // the card has no upgrade left
   topOfDeck?: number; // among the first cards of the deck, the player choosing (Air Balloons)
   stickerIds?: number[]; // the card carries one of these stickers (its current state)
+  orStickerIds?: number[]; // these stickers also match `tags` (blessing sticker 38 = blessed)
   withoutStickerIds?: number[]; // the card carries none of these stickers
 };
 

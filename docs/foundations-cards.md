@@ -224,3 +224,10 @@ Added to the stock when the kingdom gets the foundation (or plays the campaign).
 - Gray Mines and Bear Cub: 0 glory, except −5 when purged.
 - Only 2 foundations are discovered per campaign (6 for 3 campaigns), so the choice at a green box is never empty.
 - Card 28 is a copy of 25; Fancy Wagon is card 152; Aleta's fame is the sum of her medals not crossed out; Mosaics costs N of each; Golden Ring's "any" is chosen each time; Stone Roads is unlimited; Gregorius' ⌛ tasks are marked by ending the turn; Mystic Scholar upgrades by discarding 5 cards with production.
+
+## Answers (user, 2026-10-20) — Church
+
+- Archbishops: "a new Archbishop" = different from the previous round's (an earlier one may come back).
+- Archbishops: choosing one = choosing a card **and** its side; that card blocks the 2 other Archbishop cards for the round.
+- "Blessed cards have +X / Y production": each production of a blessed card gets +X or +Y (chosen when producing).
+- A blocked Archbishop keeps its marked tasks and its used one-time blessing; it just has no effect that round.

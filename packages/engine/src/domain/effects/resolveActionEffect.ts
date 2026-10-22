@@ -5,6 +5,7 @@ import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
 import { cardSelector } from '../cards/selection/cardSelector';
 import { countValuePerElement } from '../cards/selection/countValuePerElement';
+import { evaluateCondition } from '../cards/selection/evaluateCondition';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getAffectedCardsByBoardEffects } from '../cards/selection/getAffectedCardsByBoardEffects';
 import { getEffectiveProductions } from '../cards/selection/getEffectiveProductions';
@@ -145,6 +146,12 @@ function resolveChooseActionEffect(
 ): [ResolvedActionEffect, PendingChoice[]] {
   const { instanceId, effectId, parentActionId, sourceStepId, actionType } = ctx;
   const choiceId = `${instanceId}-${effectId}`;
+  // An option whose condition does not hold is not offered (a new Archbishop each round).
+  const offered = effects.filter(
+    e =>
+      !e.condition ||
+      evaluateCondition(e.condition, ctx.gameState, instanceId, ctx.defs, ctx.stickerDefs),
+  );
   pendingChoices.push({
     id: choiceId,
     actionId: parentActionId,
@@ -153,7 +160,7 @@ function resolveChooseActionEffect(
     kind: actionType,
     type: PendingChoiceType.CHOOSE_ACTION_EFFECT,
     sourceInstanceId: instanceId,
-    choices: effects,
+    choices: offered,
     pickMin: 1,
     pickMax: 1,
     isMandatory: true,

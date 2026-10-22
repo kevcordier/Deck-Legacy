@@ -34,6 +34,7 @@ export class PlaceCardInPileStrategy implements CardActionStrategy {
       let pile = gameState.drawPile;
       if (payload.deck === 'discovery') pile = gameState.discoveryPile;
       if (payload.deck === 'discard') pile = gameState.discardPile;
+      if (payload.deck === 'board') pile = gameState.board;
       pile.splice(insertionIndex(pile, instanceId, position), 0, instanceId);
     });
     return gameState;

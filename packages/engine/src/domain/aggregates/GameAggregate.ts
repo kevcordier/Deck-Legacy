@@ -864,6 +864,24 @@ export class GameAggregate {
       return this.gameState;
     }
 
+    if (this.upgradeKeepsTurn(cardInstanceId)) {
+      const keptEvent: UpgradeCardEvent = {
+        id: environment.newId(),
+        type: GameEventType.UPGRADE_CARD,
+        timestamp: environment.now(),
+        cardInstanceId,
+        stateId,
+        cost,
+        discardedCardIds,
+        destroyedCardIds,
+        endTurnTrigger: {},
+        keepsTurn: true,
+      };
+      this.apply(keptEvent);
+      this.events.push(keptEvent);
+      return this.gameState;
+    }
+
     const allRoundInstances = [...this.gameState.permanents, ...this.gameState.board].map(
       id => this.gameState.instances[id],
     );
@@ -897,6 +915,23 @@ export class GameAggregate {
     this.apply(event);
     this.events.push(event);
     return this.gameState;
+  }
+
+  /** A passive in play lets this card be upgraded without ending the turn (Renowned School). */
+  private upgradeKeepsTurn(cardInstanceId: number): boolean {
+    return Object.entries(this.gameState.boardEffects).some(([sourceId, passives]) =>
+      passives.some(
+        passive =>
+          passive.type === PassiveType.UPGRADE_KEEPS_TURN &&
+          cardSelector(
+            passive.cards ?? {},
+            Number(sourceId),
+            this.gameState,
+            this.cardDefs,
+            this.stickerDefs,
+          ).includes(cardInstanceId),
+      ),
+    );
   }
 
   public chooseState(cardInstanceId: number, stateId: number): GameState {
