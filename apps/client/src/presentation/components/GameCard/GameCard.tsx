@@ -436,6 +436,9 @@ export function GameCard({
                         }),
                       })
                     : '';
+                  const anyLabel = effectiveUpgradeCost.anyResources
+                    ? t('card.cost.anyResources', { count: effectiveUpgradeCost.anyResources })
+                    : '';
                   const disabled = !affordable || !canActivate || optionDisabled;
 
                   return (
@@ -470,7 +473,9 @@ export function GameCard({
                             </Text>
                           </CardStateTooltip>
                           {Boolean(
-                            effectiveUpgradeCost.resources?.[0] ?? discardLabel ?? destroyLabel,
+                            effectiveUpgradeCost.resources?.[0] ??
+                            discardLabel ??
+                            (destroyLabel || anyLabel),
                           ) && (
                             <Text>
                               {' '}
@@ -494,7 +499,8 @@ export function GameCard({
                                 },
                               )}{' '}
                               {discardLabel}
-                              {destroyLabel})
+                              {destroyLabel}
+                              {anyLabel})
                             </Text>
                           )}
                         </Text>

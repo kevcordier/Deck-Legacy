@@ -112,9 +112,9 @@
       "purge": {
         "permanent": 2,
         "purge": 8,
-        "topGlory": {
-          "among": 5,
-          "picks": 2
+        "firstBatch": {
+          "picks": 2,
+          "mostGlory": 5
         }
       },
       "parameters": {
@@ -209,6 +209,117 @@
           "id": 220,
           "cardId": 200,
           "number": 29
+        }
+      ],
+      "discoverable": []
+    },
+    "Nature's Revenge": {
+      "expansionMaxRound": 6,
+      "purge": {
+        "permanent": 2,
+        "purge": 7,
+        "firstBatch": {
+          "picks": 2,
+          "tags": ["event"]
+        }
+      },
+      "parameters": {
+        "discoverPerRound": 0
+      },
+      "onStart": {
+        "discover": {
+          "ids": [221]
+        },
+        "actions": [
+          {
+            "id": "203-1-2",
+            "actionEffects": [
+              {
+                "id": 1,
+                "type": "TRACK_ADVANCE",
+                "cards": {
+                  "scope": ["self"]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "campaign": [
+        {
+          "id": 221,
+          "cardId": 203,
+          "number": 30
+        },
+        {
+          "id": 222,
+          "cardId": 204,
+          "number": 31
+        },
+        {
+          "id": 223,
+          "cardId": 205,
+          "number": 32
+        },
+        {
+          "id": 224,
+          "cardId": 206,
+          "number": 33
+        },
+        {
+          "id": 225,
+          "cardId": 207,
+          "number": 34
+        },
+        {
+          "id": 226,
+          "cardId": 208,
+          "number": 35
+        },
+        {
+          "id": 227,
+          "cardId": 209,
+          "number": 36
+        },
+        {
+          "id": 228,
+          "cardId": 210,
+          "number": 37
+        },
+        {
+          "id": 229,
+          "cardId": 211,
+          "number": 38
+        },
+        {
+          "id": 230,
+          "cardId": 212,
+          "number": 39
+        },
+        {
+          "id": 231,
+          "cardId": 213,
+          "number": 40
+        },
+        {
+          "id": 232,
+          "cardId": 214,
+          "number": 41
+        },
+        {
+          "id": 233,
+          "cardId": 215,
+          "number": 42
+        },
+        {
+          "id": 234,
+          "cardId": 206,
+          "number": 43
+        },
+        {
+          "id": 235,
+          "cardId": 217,
+          "number": 44
         }
       ],
       "discoverable": []

@@ -111,7 +111,9 @@
     "cost": {
       "discard": "Défaussez {{count}} {{type}}",
       "destroy": "Détruisez {{count}} {{type}}",
-      "cards": "cartes"
+      "cards": "cartes",
+      "anyResources_one": "{{count}} ressource au choix",
+      "anyResources_other": "{{count}} ressources au choix"
     },
     "deposit": {
       "title": "Combien en déposer ?",
@@ -172,7 +174,14 @@
     "cancel": "Annuler",
     "confirm": "Confirmer ({{selected}})",
     "select": "Sélectionner",
-    "deselect": "Désélectionner"
+    "deselect": "Désélectionner",
+    "split": {
+      "title_one": "Dépensez {{count}} ressource au choix",
+      "title_other": "Dépensez {{count}} ressources au choix",
+      "less": "Un(e) {{resource}} de moins",
+      "more": "Un(e) {{resource}} de plus",
+      "confirm": "Payer ({{paid}}/{{total}})"
+    }
   },
   "triggerPile": {
     "title": "Effets en attente",
@@ -262,6 +271,8 @@
     "purgeBatchLabel": "Choisissez une carte alliée dans le lot courant",
     "purgeTopGloryLabel_one": "Choisissez encore 1 de vos cartes les plus glorieuses à purger",
     "purgeTopGloryLabel_other": "Choisissez {{count}} de vos cartes les plus glorieuses à purger",
+    "purgeTagsLabel_one": "Choisissez encore 1 carte alliée ({{tags}}) à purger",
+    "purgeTagsLabel_other": "Choisissez {{count}} cartes alliées ({{tags}}) à purger",
     "purgePermanentLabel": "Choisissez une carte permanente alliée à purger",
     "purgeSelected": "Cartes sélectionnées pour la purge : {{count}}",
     "purge": "Purger",

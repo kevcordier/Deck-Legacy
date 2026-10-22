@@ -25,6 +25,7 @@ import { SaveFromPurgeStrategy } from './SaveFromPurgeStrategy';
 import { SetCumulatedStrategy } from './SetCumulatedStrategy';
 import { ShuffleDeckStrategy } from './ShuffleDeckStrategy';
 import { TrackAdvanceStrategy } from './TrackAdvanceStrategy';
+import { UnblockCardStrategy } from './UnblockCardStrategy';
 import { UnlockStrategy } from './UnlockStrategy';
 import { UpgradeCardStrategy } from './UpgradeCardStrategy';
 import { UseCardActionStrategy } from './UseCardActionStrategy';
@@ -38,8 +39,8 @@ export class CardActionContext {
       [ActionEffectType.ADD_RESOURCES]: new AddResourceStrategy(cardDefs, stickerDefs),
       [ActionEffectType.REMOVE_RESOURCE_ON_CARD]: new RemoveResourceOnCardStrategy(),
       [ActionEffectType.DISCARD_CARD]: new DiscardCardStrategy(cardDefs, stickerDefs),
-      [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs),
-      [ActionEffectType.ADVANCE_STORY]: new AdvanceStoryStrategy(cardDefs),
+      [ActionEffectType.DISCOVER_CARD]: new DiscoverCardStrategy(cardDefs, stickerDefs),
+      [ActionEffectType.ADVANCE_STORY]: new AdvanceStoryStrategy(cardDefs, stickerDefs),
       [ActionEffectType.DESTROY_CARD]: new DestroyCardStrategy(),
       [ActionEffectType.DEFEAT_CARD]: new DefeatCardStrategy(cardDefs),
       [ActionEffectType.UPGRADE_CARD]: new UpgradeCardStrategy(cardDefs, stickerDefs),
@@ -63,6 +64,10 @@ export class CardActionContext {
       [ActionEffectType.UNLOCK]: new UnlockStrategy(),
       [ActionEffectType.REMOVE_STICKER]: new RemoveStickerStrategy(),
       [ActionEffectType.CROSS_OUT_ACTION]: new CrossOutActionStrategy(),
+      [ActionEffectType.UNBLOCK_CARD]: new UnblockCardStrategy(),
+      // Nothing to apply: END_TURN ends the action's turn, SEQUENCE inserts its effects.
+      [ActionEffectType.END_TURN]: new UseCardActionStrategy(),
+      [ActionEffectType.SEQUENCE]: new UseCardActionStrategy(),
     };
   }
 

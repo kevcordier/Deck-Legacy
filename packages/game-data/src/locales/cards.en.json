@@ -688,9 +688,10 @@
     "Young Princess": "Young Princess"
   },
   "tags": {
+    "animal": "Animal",
     "artifact": "Artifact",
-    "building": "Building",
     "bandit": "Bandit",
+    "building": "Building",
     "elder": "Elder",
     "enemy": "Enemy",
     "event": "Event",
@@ -703,6 +704,8 @@
     "land": "Land",
     "livestock": "Livestock",
     "loot": "Loot",
+    "mage": "Mage",
+    "omen": "Omen",
     "permanent": "Permanent",
     "person": "Person",
     "potion": "Potion",

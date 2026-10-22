@@ -1,3 +1,4 @@
+import { countResources } from '../resources/countResources';
 import { fixResources } from '../resources/fixResources';
 import { getPayableResourceCostVariants } from '../resources/getPayableResourceCostVariants';
 import { getSourceResourceEquivalence } from '../resources/getSourceResourceEquivalence';
@@ -36,6 +37,13 @@ export function canAffordCost(
         );
 
     if (!canAffordResourceCostOption) return false;
+  }
+
+  if (
+    cost?.anyResources &&
+    countResources(getSpendableResources(gameState, cost.forUpgrade)) < cost.anyResources
+  ) {
+    return false;
   }
 
   if (cost?.accumulated && (gameState.instances[instanceId]?.cumulated ?? 0) < cost.accumulated) {

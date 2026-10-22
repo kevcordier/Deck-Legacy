@@ -219,5 +219,8 @@ Added to the stock when the kingdom gets the foundation (or plays the campaign).
 - Undiscovered cards ("back of the box") are the discoverable pile.
 - Black Plague: only a person discarded **from play** marks its infection sticker, a card blocked by a card in play (Quarantine) included; not from the top of the deck.
 - Quarantine blocks any person in play, infected or not: choosing who to block is up to the player.
+- Cursed Lands: the 3 random lands come from the whole kingdom (deck, discard, play) and leave the deck until the card is upgraded; "any 20 resources" = 20 resources in total, of any types.
+- Haunted Souls: at the start of the round, after the shuffle, 3 random persons of the deck are blocked.
+- Gray Mines and Bear Cub: 0 glory, except −5 when purged.
 - Only 2 foundations are discovered per campaign (6 for 3 campaigns), so the choice at a green box is never empty.
 - Card 28 is a copy of 25; Fancy Wagon is card 152; Aleta's fame is the sum of her medals not crossed out; Mosaics costs N of each; Golden Ring's "any" is chosen each time; Stone Roads is unlimited; Gregorius' ⌛ tasks are marked by ending the turn; Mystic Scholar upgrades by discarding 5 cards with production.

@@ -18,6 +18,7 @@ import {
   TargetScope,
 } from '../enums';
 import { CardChoiceStrategy } from '../playerChoice/CardChoiceStrategy';
+import { shuffle } from '../random';
 import { fixResources } from '../resources/fixResources';
 import { getOfferedResources } from '../resources/getOfferedResources';
 import { mergeResources } from '../resources/mergeResources';
@@ -269,6 +270,16 @@ function resolveCardTarget(
       (actionType !== ActionEffectType.DEFEAT_CARD ||
         getDefeatAction(gameState, id, defs) !== undefined),
   );
+
+  if (cards.random) {
+    // Seeded: the server replays the same draw.
+    resolverAction.instanceIds = shuffle(
+      choices,
+      gameState.seed,
+      `${instanceId}|${parentActionId ?? ''}|${effectId}`,
+    ).slice(0, cards.pickNumber ?? 1);
+    return [resolverAction, pendingChoices];
+  }
 
   const picks = getPickNumbers(cards, choices.length);
   if (cards.pickMin && choices.length < cards.pickMin) {
@@ -583,6 +594,40 @@ function getAllowedResourceKeys(resources: ResourceSelector | undefined): Set<st
   return new Set(keys);
 }
 
+/**
+ * The card is already known (a single target, "each land"): only the resources it has can be
+ * crossed out; a single one is crossed out directly, none leaves the effect without target.
+ */
+function filterResourceChoiceOfKnownTarget(
+  resolverAction: ResolvedActionEffect,
+  pendingChoices: PendingChoice[],
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+  resourceScopes: RemovedResourceScope[] | undefined,
+): [ResolvedActionEffect, PendingChoice[]] {
+  const [targetId] = resolverAction.instanceIds ?? [];
+  const resourceIndex = pendingChoices.findIndex(
+    choice =>
+      choice.type === PendingChoiceType.CHOOSE_RESOURCE &&
+      choice.kind === ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+  );
+  if (resolverAction.instanceIds?.length !== 1 || resourceIndex === -1) {
+    return [resolverAction, pendingChoices];
+  }
+  const keys = getCandidateResourceKeys(targetId, gameState, defs, stickerDefs, resourceScopes);
+  const options = (pendingChoices[resourceIndex].choices as Resources[]).filter(option =>
+    Object.entries(option).every(([key, value]) => (value ?? 0) <= 0 || keys.has(key)),
+  );
+  const others = pendingChoices.filter((_, index) => index !== resourceIndex);
+  if (options.length <= 1) {
+    return [{ ...resolverAction, resources: options[0] ?? {} }, others];
+  }
+  const nextPendingChoices = [...pendingChoices];
+  nextPendingChoices[resourceIndex] = { ...pendingChoices[resourceIndex], choices: options };
+  return [resolverAction, nextPendingChoices];
+}
+
 function filterRemoveResourceCardChoices(
   resolverAction: ResolvedActionEffect,
   pendingChoices: PendingChoice[],
@@ -601,7 +646,16 @@ function filterRemoveResourceCardChoices(
       choice.kind === ActionEffectType.REMOVE_RESOURCE_ON_CARD,
   );
 
-  if (targetChoiceIndex === -1) return [resolverAction, pendingChoices];
+  if (targetChoiceIndex === -1) {
+    return filterResourceChoiceOfKnownTarget(
+      resolverAction,
+      pendingChoices,
+      gameState,
+      defs,
+      stickerDefs,
+      resourceScopes,
+    );
+  }
 
   const targetChoice = pendingChoices[targetChoiceIndex];
   const filteredIds = targetChoice.choices.filter((option): option is number => {
@@ -975,6 +1029,11 @@ export function resolveActionEffect(
 
   if (action.type === ActionEffectType.USE_CARD_ACTION) {
     return resolveUseCardAction(resolverAction, ctx, action, enrichedCards);
+  }
+
+  if (action.type === ActionEffectType.SEQUENCE) {
+    resolverAction.newActionEffects = action.effects ?? [];
+    return [resolverAction, pendingChoices];
   }
 
   if (action.type === ActionEffectType.CROSS_OUT_ACTION) {

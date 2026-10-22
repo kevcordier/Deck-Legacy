@@ -161,7 +161,7 @@ describe('Purge of the cards with the most glory (Invasion)', () => {
     });
     const agg = new GameAggregate(crypto.randomUUID(), state, gloryDefs, {}, []);
     agg.selectExpansion('Invasion', {
-      purge: { permanent: 0, purge: 7, topGlory: { among: 4, picks: 2 } },
+      purge: { permanent: 0, purge: 7, firstBatch: { picks: 2, mostGlory: 4 } },
       campaign: [],
     });
     return agg;
@@ -169,7 +169,7 @@ describe('Purge of the cards with the most glory (Invasion)', () => {
 
   it('offers the cards with the most glory first, ties included, negative cards aside', () => {
     const agg = selectInvasion();
-    const top = agg.getGameState().purgeState?.topGlory;
+    const top = agg.getGameState().purgeState?.firstBatch;
     expect(top?.picks).toBe(2);
     expect([...(top?.ids ?? [])].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5]);
     expect([...agg.getPurgeCandidates()].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5]);

@@ -5,8 +5,9 @@ import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
 import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
 import { PassiveType } from '@deck-legacy/engine/domain/enums';
-import type { CardDef, CardInstance } from '@deck-legacy/engine/domain/types';
+import type { CardDef, CardInstance, PurgeFirstBatch } from '@deck-legacy/engine/domain/types';
 import { useIsDesktop } from '@hooks/useIsDesktop';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
@@ -16,8 +17,9 @@ interface PurgeModalProps {
   readonly batchSize: number;
   /** Allied permanents the expansion purges. */
   readonly permanentToPurge: number;
-  /** Cards still to choose among those with the most glory (Invasion), before the batches. */
-  readonly topGloryPicksLeft?: number;
+  /** First batch before the others: the cards with the most glory, or with `tags`. */
+  readonly firstBatch?: PurgeFirstBatch;
+  readonly firstBatchPicksLeft?: number;
   readonly purgeBatch: number[];
   readonly purgeCandidates: number[];
   readonly purgePermanentCandidates: number[];
@@ -34,6 +36,14 @@ interface PurgeCardTileProps {
   readonly disabled?: boolean;
   readonly instanceId: number;
   readonly onSelect?: (instanceId: number) => void;
+}
+
+/** Label of the current batch: the first one has its own (Invasion, Nature's Revenge). */
+function firstBatchLabel(t: TFunction, first: PurgeFirstBatch | undefined, picksLeft: number) {
+  if (!first || picksLeft <= 0) return t('campaign.purgeBatchLabel');
+  if (!first.tags) return t('campaign.purgeTopGloryLabel', { count: picksLeft });
+  const tags = first.tags.map(tag => t(`tags.${tag}`, { ns: 'cards' })).join(', ');
+  return t('campaign.purgeTagsLabel', { count: picksLeft, tags });
 }
 
 function formatInstanceLabel(instanceId: number): string {
@@ -63,7 +73,8 @@ export function PurgeModal({
   instances,
   batchSize,
   permanentToPurge,
-  topGloryPicksLeft = 0,
+  firstBatch,
+  firstBatchPicksLeft = 0,
   purgeBatch,
   purgeCandidates,
   purgePermanentCandidates,
@@ -91,11 +102,7 @@ export function PurgeModal({
         <View className="gap-2">
           {purgeCandidates.length > 0 && (
             <>
-              <Text className="text-sm">
-                {topGloryPicksLeft > 0
-                  ? t('campaign.purgeTopGloryLabel', { count: topGloryPicksLeft })
-                  : t('campaign.purgeBatchLabel')}
-              </Text>
+              <Text className="text-sm">{firstBatchLabel(t, firstBatch, firstBatchPicksLeft)}</Text>
               <Grid {...gridProps} maxColumns={5} className="p-2">
                 {purgeBatch.map(id => {
                   const instance = instances[id];

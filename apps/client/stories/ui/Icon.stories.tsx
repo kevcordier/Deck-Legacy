@@ -7,12 +7,14 @@ import { DotsVerticalIcon } from '@components/ui/Icon/icons/DotsVerticalIcon';
 import { GloryIcon } from '@components/ui/Icon/icons/GloryIcon';
 import { GoldIcon } from '@components/ui/Icon/icons/GoldIcon';
 import { GoodsIcon } from '@components/ui/Icon/icons/GoodsIcon';
+import { HerbIcon } from '@components/ui/Icon/icons/HerbIcon';
 import { IronIcon } from '@components/ui/Icon/icons/IronIcon';
 import { MerchantsIcon } from '@components/ui/Icon/icons/MerchantsIcon';
 import { PassifIcon } from '@components/ui/Icon/icons/PassifIcon';
 import { PencilIcon } from '@components/ui/Icon/icons/PencilIcon';
 import { ProsperityIcon } from '@components/ui/Icon/icons/ProsperityIcon';
 import { RiddingTheWoodsIcon } from '@components/ui/Icon/icons/RiddingTheWoodsIcon';
+import { ScienceIcon } from '@components/ui/Icon/icons/ScienceIcon';
 import { StickerIcon } from '@components/ui/Icon/icons/StickerIcon';
 import { StoneIcon } from '@components/ui/Icon/icons/StoneIcon';
 import { TimeIcon } from '@components/ui/Icon/icons/TimeIcon';
@@ -42,6 +44,8 @@ const ICONS = [
   { name: 'Iron', Component: IronIcon, color: IconColors.iron },
   { name: 'Weapon', Component: WeaponIcon, color: IconColors.iron },
   { name: 'Goods', Component: GoodsIcon, color: IconColors.wood },
+  { name: 'Science', Component: ScienceIcon, color: IconColors.science },
+  { name: 'Herb', Component: HerbIcon, color: IconColors.leaf },
   { name: 'Glory', Component: GloryIcon, color: IconColors.gold },
   { name: 'Crown', Component: CrownIcon, color: 'currentColor' },
   { name: 'Zoom in', Component: ZoomInIcon, color: 'currentColor' },

@@ -45,6 +45,7 @@ import type {
   ParchmentResolvedEvent,
   PurgeCardSelectedEvent,
   PurgeFinalizedEvent,
+  PurgeFirstBatch,
   PurgeOnTriggeredEvent,
   PurgePermanentSelectedEvent,
   ResolvedActionEffect,
@@ -63,8 +64,8 @@ import type {
 import { CardActionAggregate } from './CardActionAggregate';
 import { eventDrewCards } from './eventDrewCards';
 
-/** `batchStart` of the first purge batch, the cards with the most glory (Invasion). */
-const TOP_GLORY_BATCH = -1;
+/** `batchStart` of the first purge batch (Invasion, Nature's Revenge). */
+const FIRST_BATCH = -1;
 
 export class GameAggregate {
   private events: GameEvent[];
@@ -256,10 +257,26 @@ export class GameAggregate {
       .map(({ id }) => id);
   }
 
-  /** The first batch (Invasion) while its picks are not all made. */
-  private getTopGloryBatch(): number[] | null {
+  /** The first purge batch, fixed when the expansion is selected. */
+  private firstPurgeBatch(
+    pool: number[],
+    { picks, mostGlory, tags }: NonNullable<ExpansionConfig['purge']['firstBatch']>,
+  ): PurgeFirstBatch {
+    if (mostGlory !== undefined) return { ids: this.mostGloriousCards(pool, mostGlory), picks };
+    const ids = pool.filter(
+      id =>
+        this.isPurgeEligible(id, false) &&
+        (getActiveState(this.gameState.instances[id], this.cardDefs).tags ?? []).some(tag =>
+          tags?.includes(tag),
+        ),
+    );
+    return { ids, picks, tags };
+  }
+
+  /** The first batch while its picks are not all made. */
+  private getFirstBatch(): number[] | null {
     const purgeState = this.gameState.purgeState;
-    const top = purgeState?.topGlory;
+    const top = purgeState?.firstBatch;
     if (!top) return null;
     const picked = top.ids.filter(id => purgeState.selectedCardIds.includes(id)).length;
     const remaining = top.ids.filter(id => !purgeState.selectedCardIds.includes(id));
@@ -274,9 +291,9 @@ export class GameAggregate {
     const purgeState = this.gameState.purgeState;
     if (!purgeState) return null;
 
-    const topBatch = this.getTopGloryBatch();
-    if (topBatch) {
-      return { batchStart: TOP_GLORY_BATCH, batch: topBatch, candidates: topBatch };
+    const firstBatch = this.getFirstBatch();
+    if (firstBatch) {
+      return { batchStart: FIRST_BATCH, batch: firstBatch, candidates: firstBatch };
     }
 
     let batchStart = 0;
@@ -395,11 +412,8 @@ export class GameAggregate {
       ...(expansion.onStart?.actions && { onStartActions: expansion.onStart.actions }),
       addedStickers: expansion.stickers,
       purgeFocus: expansion.purge.focus,
-      ...(expansion.purge.topGlory && {
-        purgeTopGlory: {
-          ids: this.mostGloriousCards(purgePool, expansion.purge.topGlory.among),
-          picks: expansion.purge.topGlory.picks,
-        },
+      ...(expansion.purge.firstBatch && {
+        purgeFirstBatch: this.firstPurgeBatch(purgePool, expansion.purge.firstBatch),
       }),
       expansionDiscoveryFirst: true,
     };
@@ -501,7 +515,9 @@ export class GameAggregate {
       if (!instance) return total;
       const state = getActiveState(instance, this.cardDefs);
       return (
-        total + getEffectiveGlory(state, this.gameState, this.cardDefs, instance, this.stickerDefs)
+        total +
+        (state.glory?.whenPurged ??
+          getEffectiveGlory(state, this.gameState, this.cardDefs, instance, this.stickerDefs))
       );
     }, 0);
 

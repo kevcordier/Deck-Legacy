@@ -40,5 +40,7 @@ export function sanitizeChoice(
       return pending.choices.includes(choice.stateId ?? -1)
         ? { ...base, stateId: choice.stateId }
         : null;
+    case PendingChoiceType.SPLIT_RESOURCES:
+      return null; // a cost: paid with resolvePayCost (sanitizeCost)
   }
 }

@@ -91,7 +91,7 @@ export class ExpansionSelectedStrategy implements GameEventStrategy {
         onStartDiscoverIds: e.onStartDiscoverIds,
         ...(e.onStartActions && { onStartActions: e.onStartActions }),
         focus: e.purgeFocus,
-        ...(e.purgeTopGlory && { topGlory: e.purgeTopGlory }),
+        ...(e.purgeFirstBatch && { firstBatch: e.purgeFirstBatch }),
       },
       isLastRound: false,
       phase: Phase.PURGE,

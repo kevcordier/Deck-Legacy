@@ -1,4 +1,4 @@
-import type { Phase, ResourceType } from '../enums';
+import type { CardTag, Phase, ResourceType } from '../enums';
 import type { CardAction, Passive } from './Card';
 import type { CardInstance } from './CardInstance';
 import type { Resources } from './Resource';
@@ -26,8 +26,11 @@ export type ExpansionConfig = {
     permanent: number;
     purge: number;
     focus?: PurgeFocus;
-    /** Before the batches: purge `picks` of the `among` non-permanent cards with the most glory. */
-    topGlory?: { among: number; picks: number };
+    /**
+     * Before the batches: purge `picks` friendly non-permanent cards among the `mostGlory` with the
+     * most glory (Invasion), or among those with one of `tags` (Nature's Revenge: events).
+     */
+    firstBatch?: { picks: number; mostGlory?: number; tags?: CardTag[] };
   };
   parameters?: Partial<GameParameters>;
   /** Expansion that brings the deck (instances record it); absent for the base game campaigns. */
@@ -66,11 +69,11 @@ export type PurgeState = {
   onStartDiscoverIds: number[];
   onStartActions?: CardAction[];
   focus?: PurgeFocus;
-  /** First batch (Invasion): `picks` cards to choose among `ids`, the cards with the most glory. */
-  topGlory?: PurgeTopGlory;
+  /** First batch: `picks` cards to choose among `ids` (the most glory, or cards with `tags`). */
+  firstBatch?: PurgeFirstBatch;
 };
 
-export type PurgeTopGlory = { ids: number[]; picks: number };
+export type PurgeFirstBatch = { ids: number[]; picks: number; tags?: CardTag[] };
 
 export type GameState = {
   /** Seed of the shuffles (EDR-051); absent in older games, which shuffle with `Math.random`. */

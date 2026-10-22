@@ -3,8 +3,8 @@ import type {
   ExpansionDeckEntry,
   GameParameters,
   GameState,
+  PurgeFirstBatch,
   PurgeFocus,
-  PurgeTopGlory,
   Resources,
   StickerStock,
   TriggerEntry,
@@ -158,8 +158,8 @@ export interface ExpansionSelectedEvent extends GameEvent {
   onStartDiscoverIds: number[];
   addedStickers?: StickerStock;
   purgeFocus?: PurgeFocus;
-  /** The cards with the most glory, fixed when the expansion is selected (Invasion). */
-  purgeTopGlory?: PurgeTopGlory;
+  /** The first purge batch, fixed when the expansion is selected (Invasion, Nature's Revenge). */
+  purgeFirstBatch?: PurgeFirstBatch;
   onStartActions?: CardAction[];
   expansionDiscoveryFirst?: boolean; // expansion cards go before the remaining base cards
 }

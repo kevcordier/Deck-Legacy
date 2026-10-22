@@ -179,6 +179,13 @@ function passesScopeConstraints(id: number, ctx: CardCriteriaContext): boolean {
   return true;
 }
 
+/** UPGRADABLE: the card has an upgrade; `fullyUpgraded`: it has none left. */
+function matchesUpgrades(state: CardState, ctx: CardCriteriaContext): boolean {
+  const upgradable = (state.upgrade?.length ?? 0) > 0;
+  if (ctx.isUpgradable && !upgradable) return false;
+  return !(ctx.selector.fullyUpgraded && upgradable);
+}
+
 function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
   if (!passesScopeConstraints(id, ctx)) return false;
 
@@ -195,7 +202,7 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
   if (!matchesProductions(id, state, produces, ctx)) return false;
   if (ctx.selector.ids && !ctx.selector.ids.includes(inst.id)) return false;
   if (!matchesStickers(inst.stickers[inst.stateId] ?? [], ctx.selector)) return false;
-  if (ctx.isUpgradable && (!state.upgrade || state.upgrade.length === 0)) return false;
+  if (!matchesUpgrades(state, ctx)) return false;
   if (ctx.withTrack && !hasAvailableTrackStep(state, inst.trackProgress)) return false;
   if (
     ctx.scope?.includes(TargetScope.STAYING) &&

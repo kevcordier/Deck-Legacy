@@ -25,11 +25,11 @@ import { router } from 'expo-router';
 import { ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-/** Cards still to choose in the first purge batch, the cards with the most glory (Invasion). */
-function topGloryPicksLeft(purgeState: GameState['purgeState']): number {
-  const top = purgeState?.topGlory;
-  if (!top) return 0;
-  return top.picks - top.ids.filter(id => purgeState.selectedCardIds.includes(id)).length;
+/** Cards still to choose in the first purge batch (Invasion, Nature's Revenge). */
+function firstBatchPicksLeft(purgeState: GameState['purgeState']): number {
+  const first = purgeState?.firstBatch;
+  if (!first) return 0;
+  return first.picks - first.ids.filter(id => purgeState.selectedCardIds.includes(id)).length;
 }
 
 export function Game() {
@@ -106,7 +106,8 @@ export function Game() {
               instances={gameState.instances}
               batchSize={gameState.purgeState?.batchSize ?? 0}
               permanentToPurge={gameState.purgeState?.permanentToPurge ?? 0}
-              topGloryPicksLeft={topGloryPicksLeft(gameState.purgeState)}
+              firstBatch={gameState.purgeState?.firstBatch}
+              firstBatchPicksLeft={firstBatchPicksLeft(gameState.purgeState)}
               purgeBatch={purgeBatch}
               purgeCandidates={purgeCandidates}
               purgePermanentCandidates={purgePermanentCandidates}

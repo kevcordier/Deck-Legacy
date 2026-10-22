@@ -111,7 +111,9 @@
     "cost": {
       "discard": "Discard {{count}} {{type}}",
       "destroy": "Destroy {{count}} {{type}}",
-      "cards": "cards"
+      "cards": "cards",
+      "anyResources_one": "{{count}} resource of your choice",
+      "anyResources_other": "{{count}} resources of your choice"
     },
     "deposit": {
       "title": "How many to deposit?",
@@ -172,7 +174,14 @@
     "cancel": "Cancel",
     "confirm": "Confirm ({{selected}})",
     "select": "Select",
-    "deselect": "Deselect"
+    "deselect": "Deselect",
+    "split": {
+      "title_one": "Spend {{count}} resource of your choice",
+      "title_other": "Spend {{count}} resources of your choice",
+      "less": "One {{resource}} less",
+      "more": "One {{resource}} more",
+      "confirm": "Pay ({{paid}}/{{total}})"
+    }
   },
   "triggerPile": {
     "title": "Pending effects",
@@ -262,6 +271,8 @@
     "purgeBatchLabel": "Choose one allied card from the current batch",
     "purgeTopGloryLabel_one": "Choose 1 more of your cards with the most glory to purge",
     "purgeTopGloryLabel_other": "Choose {{count}} of your cards with the most glory to purge",
+    "purgeTagsLabel_one": "Choose 1 more friendly card ({{tags}}) to purge",
+    "purgeTagsLabel_other": "Choose {{count}} friendly cards ({{tags}}) to purge",
     "purgePermanentLabel": "Choose one allied permanent card to purge",
     "purgeSelected": "Cards selected for purge: {{count}}",
     "purge": "Purge",

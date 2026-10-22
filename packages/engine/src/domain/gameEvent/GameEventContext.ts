@@ -30,7 +30,7 @@ export class GameEventContext {
     this.strategies = {
       [GameEventType.GAME_STARTED]: new GameStartedStrategy(cardDefs),
       [GameEventType.GAME_ENDED]: new GameEndedStrategy(),
-      [GameEventType.ROUND_STARTED]: new RoundStartedStrategy(),
+      [GameEventType.ROUND_STARTED]: new RoundStartedStrategy(cardDefs, stickerDefs),
       [GameEventType.STORY_ADVANCED]: new StoryAdvancedStrategy(),
       [GameEventType.ROUND_ENDED]: new RoundEndedStrategy(),
       [GameEventType.TURN_STARTED]: new TurnStartedStrategy(cardDefs, stickerDefs),

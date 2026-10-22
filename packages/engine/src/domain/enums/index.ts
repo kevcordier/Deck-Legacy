@@ -22,6 +22,9 @@ export enum CardTag {
   LADY = 'lady',
   WAGON = 'wagon',
   PERMANENT = 'permanent',
+  MAGE = 'mage',
+  ANIMAL = 'animal',
+  OMEN = 'omen',
 }
 
 export enum Trigger {
@@ -36,6 +39,10 @@ export enum Trigger {
   ON_TRACK_END = 'on_track_end',
   ON_DEFEAT = 'on_defeat',
   ON_PURGE_SELECTION = 'on_purge_selection',
+  /** When the card is discovered by an effect (Cursed Lands). */
+  ON_DISCOVER = 'on_discover',
+  /** Start of the round, after the shuffle: permanents (Haunted Souls). */
+  START_OF_ROUND = 'start_of_round',
 }
 
 export enum GameEventType {
@@ -106,6 +113,12 @@ export enum ActionEffectType {
   REMOVE_STICKER = 'REMOVE_STICKER',
   /** Crosses out an activated effect of the chosen card (`usedAction` once chosen). */
   CROSS_OUT_ACTION = 'CROSS_OUT_ACTION',
+  /** Releases cards blocked by this card into play. */
+  UNBLOCK_CARD = 'UNBLOCK_CARD',
+  /** Ends the turn once the action is resolved ("immediately end your turn"). */
+  END_TURN = 'END_TURN',
+  /** Resolves `effects` in order: one option of a CHOOSE_EFFECT made of several effects. */
+  SEQUENCE = 'SEQUENCE',
 }
 
 export enum PassiveType {
@@ -182,6 +195,8 @@ export enum PendingChoiceType {
   CHOOSE_STICKER = 'choose_sticker',
   CHOOSE_STEP = 'choose_step',
   CHOOSE_ACTION_EFFECT = 'choose_action_effect',
+  /** Pay `total` resources of any types: `choices[0]` = the resources the player can spend. */
+  SPLIT_RESOURCES = 'split_resources',
 }
 
 export enum Phase {

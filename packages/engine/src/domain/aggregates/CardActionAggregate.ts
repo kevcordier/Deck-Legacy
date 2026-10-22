@@ -5,6 +5,7 @@ import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
 import { hasUsesLeft } from '../cards/hasUsesLeft';
+import { cardSelector } from '../cards/selection/cardSelector';
 import { countValuePerElement } from '../cards/selection/countValuePerElement';
 import { evaluateCondition } from '../cards/selection/evaluateCondition';
 import { getActiveState } from '../cards/selection/getActiveState';
@@ -71,7 +72,7 @@ export class CardActionAggregate {
   private lastSelectedIds: number[] = [];
   private readonly selectedResourcesByChoiceKey: Record<string, Resources[]> = {};
   private readonly action: CardAction;
-  private readonly endTurn: boolean;
+  private endTurn: boolean;
   private readonly endRound: boolean;
   /** Amount paid for an `'any'` resource cost: the action's effects apply once per unit. */
   private readonly amount: number;
@@ -98,6 +99,8 @@ export class CardActionAggregate {
       [PendingChoiceType.CHOOSE_STICKER]: new StickerChoiceStrategy(),
       [PendingChoiceType.CHOOSE_STEP]: new StepChoiceStrategy(cardDefs),
       [PendingChoiceType.CHOOSE_ACTION_EFFECT]: new ChooseActionEffectStrategy(),
+      // A split is a cost: paid by resolveCostChoice, like the other cost choices.
+      [PendingChoiceType.SPLIT_RESOURCES]: new ResourceChoiceStrategy(),
     };
     this.amount = hasAnyAmountCost(this.action.cost) ? amount : 1;
     const effects = this.action.actionEffects.reduce((acc, effect) => {
@@ -115,6 +118,17 @@ export class CardActionAggregate {
   }
 
   private getEffectiveActionEffects(effect: ActionEffect): ActionEffect[] {
+    if (effect.cards?.each) {
+      // "Cross out 1 production on each land in play": one copy for each card.
+      const { each: _each, ...cards } = effect.cards;
+      return cardSelector(
+        cards,
+        this.instance.id,
+        this.gameState,
+        this.cardDefs,
+        this.stickerDefs,
+      ).map(id => ({ ...effect, cards: { ...cards, ids: [id] } }));
+    }
     if (!effect.repeat) {
       return [effect];
     }
@@ -545,6 +559,9 @@ export class CardActionAggregate {
     resolvedAction: ResolvedActionEffect,
     index: number,
   ): 'wait' | 'next' {
+    if (resolvedAction.type === ActionEffectType.END_TURN) {
+      this.endTurn = true;
+    }
     if (resolvedAction.newActionEffects) {
       this.insertEffects(index, resolvedAction.newActionEffects);
     }

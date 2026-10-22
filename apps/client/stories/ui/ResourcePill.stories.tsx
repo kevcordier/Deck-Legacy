@@ -11,7 +11,7 @@ const meta: Meta<typeof ResourcePill> = {
   argTypes: {
     resource: {
       control: 'select',
-      options: ['gold', 'wood', 'stone', 'iron', 'weapon', 'goods', 'glory'],
+      options: ['gold', 'wood', 'stone', 'iron', 'weapon', 'goods', 'science', 'herb', 'glory'],
     },
   },
 };
@@ -46,7 +46,7 @@ export const Goods: Story = {
 export const AllResources: Story = {
   render: () => (
     <View className="flex-row items-center gap-2">
-      {['gold', 'wood', 'stone', 'iron', 'weapon', 'goods'].map(r => (
+      {['gold', 'wood', 'stone', 'iron', 'weapon', 'goods', 'science', 'herb'].map(r => (
         <ResourcePill key={r} resource={r} />
       ))}
     </View>
