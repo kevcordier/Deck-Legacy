@@ -16,6 +16,7 @@ import { tab } from './60';
 import { infected } from './61';
 import { science } from './62';
 import { infectionMarked } from './161';
+import { scarves } from './scarves';
 import type { Sticker } from '@deck-legacy/engine/domain/types';
 
 export const stickerData: Sticker[] = [
@@ -37,4 +38,5 @@ export const stickerData: Sticker[] = [
   infected,
   science,
   infectionMarked,
+  ...scarves,
 ];

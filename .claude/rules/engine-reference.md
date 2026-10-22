@@ -249,3 +249,12 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - `CardAction.amountPer` with an `'any'` resource cost: the effects apply once per `amountPer` units ("for every 3 science spent").
 - `ValuePerElement` with both `cards` and `productionTotal`: the total production of that resource on the selected cards.
 - Archbishops (Foundations 72–74): the 3 printed cards count as one permanent card, so one card (245) with a state per Archbishop; its round-start trigger turns it to a new state (`chooseArchbishop`), task step ids are unique on the card so marked tasks stay. Card 71 discovers it and stays as the rule reminder.
+
+## Mechanics added for Foundations: Romance
+
+- Sticker tags count in selectors: a person with the Knight sticker (11) is a knight for every effect, base game included (needs the sticker defs passed to `cardSelector`). Scarves 591–596 (printed 59a–f) carry the `scarf` tag; ladies have it printed.
+- `PassiveType.MULTIPLY_PRODUCTION` (`amount`): the whole production of the selected cards is multiplied (Guinevere).
+- Written medals (Famous Court): `ADD_GLORY` with `valuePerElement.glory` (the glory of the selected cards) and `writeNames` stores the names in `CardInstance.writtenNames`; `CardSelector.notWrittenHere` leaves those names out.
+- `TRACK_ADVANCE` on an `inOrder` track with `steps.ids` marks the next step among those ids (quests: green task boxes and red timer boxes on one track). `Condition.stepsMarked` holds once all its step ids are marked.
+- `CardSelector.notStaying`: cards that do not stay in play (Endurance).
+- Quests (Foundations 99–104, `quest()`): rescued by a knight without a scarf, who gets the lady's scarf; the end-of-turn timer's last box destroys the quest. "Matching scarves" are one `CHOOSE_EFFECT` option per scarf whose knight and lady are in play (`matchingScarves`).

@@ -100,7 +100,9 @@ function resolveTrackAdvanceEffect(
   resolverAction.instanceIds = [targetId];
 
   if (track.inOrder) {
-    const sortedSteps = [...availableSteps].sort((a, b) => a.id - b.id);
+    const sortedSteps = availableSteps
+      .filter(s => !steps.ids || steps.ids.includes(s.id))
+      .sort((a, b) => a.id - b.id);
     resolverAction.stepIds = sortedSteps.slice(0, steps.pickNumber ?? 1).map(s => s.id);
     resolverAction.newActionEffects = resolverAction.stepIds.flatMap(stepId =>
       (track.steps.find(s => s.id === stepId)?.effects ?? []).map(e => ({
@@ -166,6 +168,39 @@ function resolveChooseActionEffect(
     isMandatory: true,
   });
   return [resolverAction, pendingChoices];
+}
+
+/** The effect's value times its count of elements; ADD_GLORY `writeNames` keeps their names. */
+function applyValuePerElement(
+  resolverAction: ResolvedActionEffect,
+  action: ActionEffect,
+  ctx: ResolveContext,
+): void {
+  const valuePerElement = action.valuePerElement;
+  if (!valuePerElement) return;
+  const { instanceId, gameState, defs, stickerDefs, lastSelectedIds } = ctx;
+  resolverAction.value =
+    (resolverAction.value ?? 1) *
+    valuePerElement.amount *
+    countValuePerElement(
+      valuePerElement,
+      gameState,
+      instanceId,
+      defs,
+      stickerDefs,
+      lastSelectedIds,
+    );
+  if (action.writeNames) resolverAction.names = getWrittenNames(action, ctx);
+}
+
+/** ADD_GLORY with `writeNames`: the names of the cards counted by `valuePerElement.cards`. */
+function getWrittenNames(action: ActionEffect, ctx: ResolveContext): string[] {
+  const cards = action.valuePerElement?.cards;
+  if (!cards) return [];
+  const { instanceId, gameState, defs, stickerDefs, lastSelectedIds } = ctx;
+  return cardSelector({ ...cards, lastSelectedIds }, instanceId, gameState, defs, stickerDefs).map(
+    id => getActiveState(gameState.instances[id], defs).name,
+  );
 }
 
 /** CROSS_OUT_ACTION: once the action is chosen (`usedAction`), it is crossed out. */
@@ -1056,19 +1091,7 @@ export function resolveActionEffect(
     );
   }
 
-  if (action.valuePerElement) {
-    resolverAction.value =
-      (resolverAction.value ?? 1) *
-      action.valuePerElement.amount *
-      countValuePerElement(
-        action.valuePerElement,
-        gameState,
-        instanceId,
-        defs,
-        stickerDefs,
-        lastSelectedIds,
-      );
-  }
+  if (action.valuePerElement) applyValuePerElement(resolverAction, action, ctx);
 
   if (enrichedCards) {
     [resolverAction, pendingChoices] = resolveCardTarget(

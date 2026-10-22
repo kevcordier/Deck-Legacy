@@ -186,6 +186,22 @@ function matchesUpgrades(state: CardState, ctx: CardCriteriaContext): boolean {
   return !(ctx.selector.fullyUpgraded && upgradable);
 }
 
+/** A sticker gives the card one of `tags` (Knight sticker 11), or is one of `orStickerIds`. */
+function isTaggedBySticker(
+  stickers: number[],
+  tags: CardTag[] | undefined,
+  ctx: CardCriteriaContext,
+): boolean {
+  if (ctx.selector.orStickerIds?.some(s => stickers.includes(s))) return true;
+  const stickerTags = stickers.flatMap(stickerId => ctx.stickerDefs[stickerId]?.tags ?? []);
+  return !!tags?.some(tag => stickerTags.includes(tag));
+}
+
+/** The name is already written on the card owning the selector (Famous Court). */
+function isWrittenOn(ctx: CardCriteriaContext, name: string): boolean {
+  return !!ctx.gameState.instances[ctx.instanceId]?.writtenNames?.includes(name);
+}
+
 function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
   if (!passesScopeConstraints(id, ctx)) return false;
 
@@ -199,20 +215,22 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
 
   if (!matchesAlignmentAndName(state, ctx.isFriendly, ctx.isEnemy, name)) return false;
   const stickers = inst.stickers[inst.stateId] ?? [];
-  const taggedBySticker = ctx.selector.orStickerIds?.some(s => stickers.includes(s));
-  if (!matchesTags(state, tags) && !taggedBySticker) return false;
+  if (!matchesTags(state, tags) && !isTaggedBySticker(stickers, tags, ctx)) return false;
   if (!matchesProductions(id, state, produces, ctx)) return false;
   if (ctx.selector.ids && !ctx.selector.ids.includes(inst.id)) return false;
   if (!matchesStickers(stickers, ctx.selector)) return false;
   if (!matchesUpgrades(state, ctx)) return false;
   if (ctx.withTrack && !hasAvailableTrackStep(state, inst.trackProgress)) return false;
-  if (
-    ctx.scope?.includes(TargetScope.STAYING) &&
-    !cardShouldStayInPlay(id, ctx.gameState, ctx.defs)
-  )
-    return false;
+  if (ctx.selector.notWrittenHere && isWrittenOn(ctx, state.name)) return false;
+  return matchesStaying(id, ctx);
+}
 
-  return true;
+/** STAYING keeps the cards that stay in play, `notStaying` the others. */
+function matchesStaying(id: number, ctx: CardCriteriaContext): boolean {
+  const wantsStaying = ctx.scope?.includes(TargetScope.STAYING);
+  if (!wantsStaying && !ctx.selector.notStaying) return true;
+  const staying = cardShouldStayInPlay(id, ctx.gameState, ctx.defs);
+  return wantsStaying ? staying : !staying;
 }
 
 /**

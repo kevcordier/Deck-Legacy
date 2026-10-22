@@ -50,6 +50,10 @@ export function evaluateCondition(
         condition.min,
         condition.max,
       );
+    case 'stepsMarked': {
+      const progress = gameState.instances[instanceId]?.trackProgress ?? [];
+      return condition.ids.every(id => progress.includes(id));
+    }
     case 'justPlayed':
       return gameState.lastDrawnCards.includes(instanceId);
     case 'expansionActive':

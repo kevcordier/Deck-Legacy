@@ -20,7 +20,9 @@ export type Condition =
   // accumulation (`cumulated`) of the card owning the condition
   | { type: 'accumulation'; min?: number; max?: number }
   // the card owning the condition is one of the cards just played (drawn or played by an effect)
-  | { type: 'justPlayed' };
+  | { type: 'justPlayed' }
+  // every step `ids` of the card owning the condition is marked ("if all green are marked")
+  | { type: 'stepsMarked'; ids: number[] };
 
 export type CardDef = {
   id: number;
@@ -99,6 +101,7 @@ export type ValuePerElement = {
   deficitTarget?: number; // count = max(0, deficitTarget - actual_count)
   includeSelf?: boolean; // "including this": the card counts too, even once discarded by its action
   per?: number; // "for every N": the count is divided by N (rounded down)
+  glory?: boolean; // with `cards`: the total glory of the selected cards (Famous Court)
 };
 
 export type RemovedResourceScope = 'production' | 'actionCost' | 'upgradeCost';
@@ -130,6 +133,7 @@ export type ActionEffect = {
   // number of times this action will be repeated; 'valuePerElement': its count (the copies drop it)
   repeat?: number | 'accumulation' | 'valuePerElement';
   condition?: Condition; // checked when the effect resolves: skipped when it does not hold
+  writeNames?: boolean; // ADD_GLORY: also writes the names of the `valuePerElement.cards` (Famous Court)
   sourceInstanceId?: number; // card the effect resolves for, when not the acting card (USE_CARD_ACTION)
   usedAction?: { instanceId: number; actionId: string }; // USE_CARD_ACTION: the chosen action
   unlock?: Unlock; // UNLOCK: what a foundation brings
@@ -184,6 +188,8 @@ export type CardSelector = {
   topOfDeck?: number; // among the first cards of the deck, the player choosing (Air Balloons)
   stickerIds?: number[]; // the card carries one of these stickers (its current state)
   orStickerIds?: number[]; // these stickers also match `tags` (blessing sticker 38 = blessed)
+  notWrittenHere?: boolean; // the card's name is not written on the selecting card (Famous Court)
+  notStaying?: boolean; // the card does not stay in play (Endurance)
   withoutStickerIds?: number[]; // the card carries none of these stickers
 };
 
@@ -226,4 +232,6 @@ export type ResolvedActionEffect = {
   unlock?: Unlock;
   crossedOutAction?: { instanceId: number; actionId: string };
   unresolvable?: boolean;
+  /** ADD_GLORY with `writeNames`: the names written with the value. */
+  names?: string[];
 };

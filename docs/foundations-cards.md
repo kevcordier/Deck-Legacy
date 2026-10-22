@@ -231,3 +231,10 @@ Added to the stock when the kingdom gets the foundation (or plays the campaign).
 - Archbishops: choosing one = choosing a card **and** its side; that card blocks the 2 other Archbishop cards for the round.
 - "Blessed cards have +X / Y production": each production of a blessed card gets +X or +Y (chosen when producing).
 - A blocked Archbishop keeps its marked tasks and its used one-time blessing; it just has no effect that round.
+
+## Answers (user, 2026-10-20) — Romance
+
+- A card with the Knight sticker (11) is a knight everywhere, base game included: sticker tags count in selectors.
+- Famous Court: write the person's current fame (stickers included); each name only once (two copies of a card share a name).
+- Andoniel: ladies (printed scarf) and knights with a scarf sticker may stay in play.
+- Guinevere: knights' whole production is doubled (printed, stickers, bonuses).

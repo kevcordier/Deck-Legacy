@@ -1,7 +1,19 @@
 import type { CardDef, GameState, Sticker, ValuePerElement } from '../../types';
 import { cardSelector } from './cardSelector';
+import { getActiveState } from './getActiveState';
+import { getEffectiveGlory } from './getEffectiveGlory';
 import { getTotalProduction } from './getTotalProduction';
 import { getTotalResourceProduction } from './getTotalResourceProduction';
+
+function getCardGlory(
+  id: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): number {
+  const instance = gameState.instances[id];
+  return getEffectiveGlory(getActiveState(instance, defs), gameState, defs, instance, stickerDefs);
+}
 
 export function countValuePerElement(
   valuePerElement: ValuePerElement,
@@ -21,7 +33,9 @@ export function countValuePerElement(
       stickerDefs,
     );
     const { productionTotal } = valuePerElement;
-    if (productionTotal) {
+    if (valuePerElement.glory) {
+      count = ids.reduce((sum, id) => sum + getCardGlory(id, gameState, defs, stickerDefs), 0);
+    } else if (productionTotal) {
       // The total production of that resource on the selected cards
       count = ids.reduce(
         (sum, id) =>

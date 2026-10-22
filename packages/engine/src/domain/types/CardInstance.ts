@@ -24,6 +24,8 @@ export type CardInstance = {
   removedResourcesByState?: Record<number, RemovedResourcesByScope>;
   /** Empty glory values */
   glories: number[];
+  /** Names written with the glory values (Famous Court: each name once). */
+  writtenNames?: string[];
   /** Expansion that brought the card into the game; absent for the base game and its campaigns. */
   expansion?: string;
   /** Number printed on the card, scoped to its expansion (deck entry `number`). */

@@ -64,6 +64,24 @@ import { newParadigm } from './cards/256';
 import { experiment84 } from './cards/257';
 import { printingPress } from './cards/259';
 import { theologyOfScience } from './cards/260';
+import { romanceCover } from './cards/261';
+import { arthur } from './cards/262';
+import { virtues } from './cards/263';
+import { damselInDistress } from './cards/264';
+import { gawain } from './cards/265';
+import { endurance } from './cards/266';
+import { duel } from './cards/267';
+import { court } from './cards/268';
+import { lancelot } from './cards/269';
+import { godfrey } from './cards/270';
+import { roundTable } from './cards/271';
+import { diana } from './cards/272';
+import { seraphine } from './cards/273';
+import { isolde } from './cards/274';
+import { aleta } from './cards/275';
+import { guinevere } from './cards/276';
+import { andoniel } from './cards/277';
+import { chivalry } from './cards/278';
 import deck from './deck.json';
 import en from './locales/cards.en.json';
 import fr from './locales/cards.fr.json';
@@ -137,5 +155,23 @@ export const foundations: ExpansionPack = {
     experiment84,
     printingPress,
     theologyOfScience,
+    romanceCover,
+    arthur,
+    virtues,
+    damselInDistress,
+    gawain,
+    endurance,
+    duel,
+    court,
+    lancelot,
+    godfrey,
+    roundTable,
+    diana,
+    seraphine,
+    isolde,
+    aleta,
+    guinevere,
+    andoniel,
+    chivalry,
   ],
 };

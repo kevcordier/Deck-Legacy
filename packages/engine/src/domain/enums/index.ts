@@ -28,6 +28,11 @@ export enum CardTag {
   ARCHBISHOP = 'archbishop',
   /** A blessed card (Church): the blessing sticker 38 or a printed blessing. */
   BLESSED = 'blessed',
+  /** A lady's printed scarf, or a knight's scarf sticker (Romance). */
+  SCARF = 'scarf',
+  QUEST = 'quest',
+  CRAFTING = 'crafting',
+  FURNITURE = 'furniture',
 }
 
 export enum Trigger {
@@ -148,6 +153,8 @@ export enum PassiveType {
   PREVENT_STAY_IN_PLAY = 'PREVENT_STAY_IN_PLAY',
   /** Upgrading the selected cards does not end the turn (Renowned School). */
   UPGRADE_KEEPS_TURN = 'UPGRADE_KEEPS_TURN',
+  /** The whole production of the selected cards is multiplied by `amount` (Guinevere). */
+  MULTIPLY_PRODUCTION = 'MULTIPLY_PRODUCTION',
 }
 
 export enum Options {

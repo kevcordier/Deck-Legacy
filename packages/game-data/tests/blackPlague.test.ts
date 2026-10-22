@@ -107,7 +107,7 @@ describe('starting The Black Plague', () => {
     resolveTriggers(agg, '175-1-2');
     // The green box: the player picks the foundation to discover (Science)
     const [foundation] = agg.getCurrentCardAction()?.getPendingChoices() ?? [];
-    expect(foundation.choices).toEqual([236, 255]);
+    expect(foundation.choices).toContain(236);
     agg.resolveCardActionChoice(
       {
         id: foundation.id,

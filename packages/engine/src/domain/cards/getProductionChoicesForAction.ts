@@ -86,6 +86,30 @@ function getProductionChoiceBonuses(
   );
 }
 
+/** The MULTIPLY_PRODUCTION passives on the card, multiplied together (Guinevere: × 2). */
+function getProductionFactor(
+  instance: CardInstance,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): number {
+  return Object.entries(gameState.boardEffects)
+    .flatMap(([sourceId, passives]) =>
+      passives.filter(
+        passive =>
+          passive.type === PassiveType.MULTIPLY_PRODUCTION &&
+          cardSelector(
+            passive.cards ?? { scope: [TargetScope.ANY] },
+            Number(sourceId),
+            gameState,
+            defs,
+            stickerDefs,
+          ).includes(instance.id),
+      ),
+    )
+    .reduce((factor, passive) => factor * (passive.amount ?? 1), 1);
+}
+
 export function getProductionChoicesForAction(
   base: Resources,
   gameState: GameState,
@@ -120,6 +144,15 @@ export function getProductionChoicesForAction(
 
   for (const bonuses of getProductionChoiceBonuses(instance, gameState, defs, stickerDefs)) {
     choices = choices.flatMap(choice => bonuses.map(bonus => mergeResources(choice, bonus)));
+  }
+
+  const factor = getProductionFactor(instance, gameState, defs, stickerDefs);
+  if (factor !== 1) {
+    choices = choices.map(choice =>
+      Object.fromEntries(
+        Object.entries(choice).map(([key, value]) => [key, (value ?? 0) * factor]),
+      ),
+    );
   }
 
   choices.forEach(choice => {
