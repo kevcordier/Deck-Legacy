@@ -3,6 +3,7 @@ import type { CardDef, GameState } from '../../types';
 import { cardSelector } from './cardSelector';
 import { getActiveState } from './getActiveState';
 import { getAffectedCardsByBoardEffects } from './getAffectedCardsByBoardEffects';
+import { getHeldByPermanents } from './getHeldByPermanents';
 import { isPermanent } from './isPermanent';
 
 // Sticker ID for the 'stays_in_play' effect (see src/data/stickers.ts)
@@ -34,6 +35,7 @@ export function cardShouldStayInPlay(
   );
 
   if (stayInPlayTargets.has(instanceId)) return true;
+  if (getHeldByPermanents(gameState).includes(instanceId)) return true;
 
   if (
     Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.STAY_IN_PLAY))

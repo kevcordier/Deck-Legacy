@@ -1,0 +1,44 @@
+{
+  "names": {
+    "The Black Plague": "The Black Plague",
+    "Black Plague": "Black Plague",
+    "Treatment": "Treatment",
+    "Setting Up Camps": "Setting Up Camps",
+    "Quarantine": "Quarantine",
+    "Rats": "Rats",
+    "Sewer": "Sewer",
+    "Contamination": "Contamination"
+  },
+  "actions": {
+    "175-1-1": "End of round: mark the next box of the track.",
+    "175-1-2": "Start of the campaign: mark the first box of the track.",
+    "176-1-1": "Whenever an infected card is in play, it infects all persons in play (add an infection sticker to those without one).",
+    "176-1-2": "Whenever an infected card is in play, it infects all persons in play (add an infection sticker to those without one).",
+    "176-1-3": "When an infected person is discarded, mark 1 box on its infection sticker. Marking the second box destroys that person.",
+    "177-1-1": "Spend {{gold}}{{gold}}{{gold}} to cure 1 person in play or in Quarantine.",
+    "177-1-2": "Spend {{goods}}{{goods}} to cure 1 person in play or in Quarantine.",
+    "177-1-3": "Spend {{gold}}{{gold}}{{gold}} and {{goods}}{{goods}} to cure 2 persons in play or in Quarantine.",
+    "177-1-4": "End of round, after the Black Plague: if no card in your kingdom is infected (except in Quarantine), destroy this, Black Plague and Quarantine.",
+    "178-2-1": "Block 1 person (1 blocked card at most).",
+    "178-2-2": "Once per turn, discard 1 blocked person.",
+    "178-3-1": "Block 1 person (2 blocked cards at most).",
+    "178-3-2": "Once per turn, discard 1 blocked person.",
+    "178-4-1": "Block 1 person (3 blocked cards at most).",
+    "178-4-2": "Once per turn, discard 1 blocked person.",
+    "179-1-1": "When played, play the next card from your deck.",
+    "179-1-2": "Discard 1 card with {{weapon}} production to undiscover this.",
+    "182-1-1": "After the Black Plague expansion: {{upgrade}}.",
+    "182-2-1": "Discard any card in play or at the top of your deck.",
+    "182-2-1-1": "Discard 1 card in play.",
+    "182-2-1-2": "Discard the top card of your deck.",
+    "183-1-1": "When played, you may destroy 1 person in play to destroy this."
+  },
+  "tracks": {
+    "175-1-1": "Discover 6 cards of The Black Plague and 1 Foundation.",
+    "175-1-2": "Discover 5 cards of The Black Plague.",
+    "175-1-3": "Discover 3 cards of The Black Plague.",
+    "175-1-4": "Discover 3 cards of The Black Plague and 1 Foundation.",
+    "175-1-5": "Discover 2 cards of The Black Plague.",
+    "175-1-6": ""
+  }
+}

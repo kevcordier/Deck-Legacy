@@ -2,6 +2,7 @@ import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects'
 import { Trigger } from '../enums';
 import { environment } from '../environment/environment';
 import type { CardDef, GameState, Sticker } from '../types';
+import { releaseFromPermanents } from './releaseFromPermanents';
 import { removeFromDiscovery } from './removeFromDiscovery';
 
 export const discardCards = (
@@ -32,5 +33,6 @@ export const discardCards = (
     const { [cardId]: _discarded, ...restDiscardEffects } = gameState.boardEffects;
     gameState.boardEffects = restDiscardEffects;
   });
+  releaseFromPermanents(gameState, cardIds);
   return gameState;
 };

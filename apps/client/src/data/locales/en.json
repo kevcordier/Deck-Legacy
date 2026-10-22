@@ -157,7 +157,9 @@
       "ADD_TO_PURGE": "Choose a card to add to the purge",
       "ADD_TO_PURGE_other": "Choose {{count}} cards to add to the purge",
       "DEFEAT_CARD": "Choose an enemy to defeat",
-      "DEFEAT_CARD_other": "Choose {{count}} enemies to defeat"
+      "DEFEAT_CARD_other": "Choose {{count}} enemies to defeat",
+      "REMOVE_STICKER": "Choose a card to remove the sticker from",
+      "REMOVE_STICKER_other": "Choose {{count}} cards to remove the sticker from"
     },
     "chooseActionEffect": "Choose an effect to resolve",
     "chooseStep": "Choose a track step",

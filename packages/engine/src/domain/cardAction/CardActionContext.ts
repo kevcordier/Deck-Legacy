@@ -19,6 +19,7 @@ import { LoseNextResourcesStrategy } from './LoseNextResourcesStrategy';
 import { PlaceCardInPileStrategy } from './PlaceCardInDrawPileStrategy';
 import { PlayCardStrategy } from './PlayCardStrategy';
 import { RemoveResourceOnCardStrategy } from './RemoveResourceOnCardStrategy';
+import { RemoveStickerStrategy } from './RemoveStickerStrategy';
 import { SaveFromPurgeStrategy } from './SaveFromPurgeStrategy';
 import { SetCumulatedStrategy } from './SetCumulatedStrategy';
 import { ShuffleDeckStrategy } from './ShuffleDeckStrategy';
@@ -59,6 +60,7 @@ export class CardActionContext {
       [ActionEffectType.USE_CARD_ACTION]: new UseCardActionStrategy(),
       [ActionEffectType.LOSE_NEXT_RESOURCES]: new LoseNextResourcesStrategy(),
       [ActionEffectType.UNLOCK]: new UnlockStrategy(),
+      [ActionEffectType.REMOVE_STICKER]: new RemoveStickerStrategy(),
     };
   }
 

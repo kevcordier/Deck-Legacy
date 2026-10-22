@@ -102,6 +102,8 @@ export enum ActionEffectType {
   LOSE_NEXT_RESOURCES = 'LOSE_NEXT_RESOURCES',
   /** Adds `unlock.stickers` to the sticker stock and offers `unlock.resources` (a foundation). */
   UNLOCK = 'UNLOCK',
+  /** Takes `stickers.ids` off the chosen cards (curing an infection). */
+  REMOVE_STICKER = 'REMOVE_STICKER',
 }
 
 export enum PassiveType {
@@ -159,6 +161,8 @@ export enum TargetScope {
   TOP_OF_DECK = 'top_of_deck',
   DRAWN = 'drawn',
   DISCARDED = 'discarded',
+  /** Cards just discarded from play or from a card in play blocking them (Quarantine). */
+  DISCARDED_FROM_PLAY = 'discarded_from_play',
   LAST_SELECTED = 'last_selected',
   TRIGGER_SOURCE = 'trigger_source',
   UPGRADABLE = 'upgradable',

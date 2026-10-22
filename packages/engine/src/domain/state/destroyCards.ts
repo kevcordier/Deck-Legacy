@@ -1,4 +1,5 @@
 import type { GameState } from '../types';
+import { releaseFromPermanents } from './releaseFromPermanents';
 import { removeFromDiscovery } from './removeFromDiscovery';
 
 export const destroyCards = (_gameState: GameState, cardIds: number[]): GameState => {
@@ -13,5 +14,6 @@ export const destroyCards = (_gameState: GameState, cardIds: number[]): GameStat
     const { [cardId]: _destroyed, ...restDestroyEffects } = gameState.boardEffects;
     gameState.boardEffects = restDestroyEffects;
   });
+  releaseFromPermanents(gameState, cardIds);
   return gameState;
 };

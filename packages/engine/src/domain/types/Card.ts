@@ -170,6 +170,8 @@ export type CardSelector = {
   pickMin?: number;
   pickMax?: number;
   autoPick?: boolean;
+  stickerIds?: number[]; // the card carries one of these stickers (its current state)
+  withoutStickerIds?: number[]; // the card carries none of these stickers
 };
 
 export type ResourceSelector = Resources & {

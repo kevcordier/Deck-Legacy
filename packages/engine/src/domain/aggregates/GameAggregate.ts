@@ -7,6 +7,7 @@ import { hasUsesLeft } from '../cards/hasUsesLeft';
 import { cardSelector } from '../cards/selection/cardSelector';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getEffectiveGlory } from '../cards/selection/getEffectiveGlory';
+import { getHeldByPermanents } from '../cards/selection/getHeldByPermanents';
 import { isPermanent } from '../cards/selection/isPermanent';
 import {
   GameEventType,
@@ -145,6 +146,12 @@ export class GameAggregate {
   /** Seeded by the game and the position in the log: a rewound shuffle comes out the same. */
   private shuffle(arr: number[]): number[] {
     return shuffle(arr, this.gameState.seed, String(this.events.length));
+  }
+
+  /** Cards in play that go back to the deck: not those a permanent blocks (EDR-059). */
+  private boardOutOfQuarantine(): number[] {
+    const held = getHeldByPermanents(this.gameState);
+    return this.gameState.board.filter(id => !held.includes(id));
   }
 
   private filterNonPermanentCardIds(cardIds: number[]): number[] {
@@ -586,7 +593,7 @@ export class GameAggregate {
         this.shuffle([
           ...this.gameState.drawPile,
           ...this.gameState.discardPile,
-          ...this.gameState.board,
+          ...this.boardOutOfQuarantine(),
           ...this.filterNonPermanentCardIds(lastAddedCards),
         ]),
     };
@@ -981,7 +988,7 @@ export class GameAggregate {
         newDrawPile: this.shuffle([
           ...this.gameState.drawPile,
           ...this.gameState.discardPile,
-          ...this.gameState.board,
+          ...this.boardOutOfQuarantine(),
         ]),
       };
       this.apply(event);

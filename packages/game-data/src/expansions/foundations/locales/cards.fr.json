@@ -1,0 +1,44 @@
+{
+  "names": {
+    "The Black Plague": "La Peste noire",
+    "Black Plague": "Peste noire",
+    "Treatment": "Traitement",
+    "Setting Up Camps": "Installation des camps",
+    "Quarantine": "Quarantaine",
+    "Rats": "Rats",
+    "Sewer": "Égouts",
+    "Contamination": "Contamination"
+  },
+  "actions": {
+    "175-1-1": "Fin de manche : cochez la case suivante de la piste.",
+    "175-1-2": "Début de la campagne : cochez la première case de la piste.",
+    "176-1-1": "Tant qu'une carte infectée est en jeu, elle infecte toutes les personnes en jeu (ajoutez un sticker d'infection à celles qui n'en ont pas).",
+    "176-1-2": "Tant qu'une carte infectée est en jeu, elle infecte toutes les personnes en jeu (ajoutez un sticker d'infection à celles qui n'en ont pas).",
+    "176-1-3": "Quand une personne infectée est défaussée, cochez 1 case de son sticker d'infection. Cocher la seconde case détruit cette personne.",
+    "177-1-1": "Dépensez {{gold}}{{gold}}{{gold}} pour soigner 1 personne en jeu ou en Quarantaine.",
+    "177-1-2": "Dépensez {{goods}}{{goods}} pour soigner 1 personne en jeu ou en Quarantaine.",
+    "177-1-3": "Dépensez {{gold}}{{gold}}{{gold}} et {{goods}}{{goods}} pour soigner 2 personnes en jeu ou en Quarantaine.",
+    "177-1-4": "Fin de manche, après la Peste noire : si aucune carte de votre royaume n'est infectée (hors Quarantaine), détruisez cette carte, Peste noire et Quarantaine.",
+    "178-2-1": "Bloquez 1 personne (1 carte bloquée au maximum).",
+    "178-2-2": "Une fois par tour, défaussez 1 personne bloquée.",
+    "178-3-1": "Bloquez 1 personne (2 cartes bloquées au maximum).",
+    "178-3-2": "Une fois par tour, défaussez 1 personne bloquée.",
+    "178-4-1": "Bloquez 1 personne (3 cartes bloquées au maximum).",
+    "178-4-2": "Une fois par tour, défaussez 1 personne bloquée.",
+    "179-1-1": "Quand cette carte est jouée, jouez la carte suivante de votre deck.",
+    "179-1-2": "Défaussez 1 carte qui produit des {{weapon}} pour renvoyer cette carte dans la boîte.",
+    "182-1-1": "Après l'extension Peste noire : {{upgrade}}.",
+    "182-2-1": "Défaussez une carte en jeu ou la première carte de votre deck.",
+    "182-2-1-1": "Défaussez 1 carte en jeu.",
+    "182-2-1-2": "Défaussez la première carte de votre deck.",
+    "183-1-1": "Quand cette carte est jouée, vous pouvez détruire 1 personne en jeu pour détruire cette carte."
+  },
+  "tracks": {
+    "175-1-1": "Découvrez 6 cartes de La Peste noire et 1 Fondation.",
+    "175-1-2": "Découvrez 5 cartes de La Peste noire.",
+    "175-1-3": "Découvrez 3 cartes de La Peste noire.",
+    "175-1-4": "Découvrez 3 cartes de La Peste noire et 1 Fondation.",
+    "175-1-5": "Découvrez 2 cartes de La Peste noire.",
+    "175-1-6": ""
+  }
+}

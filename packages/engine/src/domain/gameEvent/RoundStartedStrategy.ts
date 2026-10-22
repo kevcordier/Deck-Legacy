@@ -1,3 +1,4 @@
+import { getHeldByPermanents } from '../cards/selection/getHeldByPermanents';
 import { Phase } from '../enums';
 import { pickPermanentBoardEffects } from '../state/pickPermanentBoardEffects';
 import type { GameEvent, GameState, RoundStartedEvent } from '../types';
@@ -20,7 +21,8 @@ export class RoundStartedStrategy implements GameEventStrategy {
       lastAddedCards: addedCards,
       boardEffects: pickPermanentBoardEffects(gameState.boardEffects, gameState.permanents),
       discardPile: [],
-      board: [],
+      // Cards a permanent blocks (Quarantine) stay blocked, out of the deck.
+      board: getHeldByPermanents(gameState),
       phase: Phase.ROUND_START,
     };
   }

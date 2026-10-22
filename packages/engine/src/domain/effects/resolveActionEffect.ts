@@ -60,6 +60,8 @@ interface ResolveContext {
   stickerDefs: Record<number, Sticker>;
   lastSelectedIds?: number[];
   resourceScopes?: RemovedResourceScope[];
+  /** The effect adds production: the rule of nine keeps it off cards producing 9 or more. */
+  addsProduction?: boolean;
 }
 
 function resolveTrackAdvanceEffect(
@@ -214,8 +216,6 @@ function resolveCardTarget(
     stickerDefs,
   } = ctx;
 
-  const isStickerAction =
-    actionType === ActionEffectType.ADD_STICKER || actionType === ActionEffectType.BOOST_CARD;
   const cantBeDestroyedInstanceIds =
     actionType === ActionEffectType.DESTROY_CARD
       ? new Set(
@@ -227,7 +227,7 @@ function resolveCardTarget(
 
   const choices = cardSelector(cards, instanceId, gameState, defs, stickerDefs).filter(
     id =>
-      (!isStickerAction ||
+      (!ctx.addsProduction ||
         getTotalProduction(id, gameState, defs, stickerDefs) < STICKER_PRODUCTION_CAP) &&
       (actionType !== ActionEffectType.DESTROY_CARD || !cantBeDestroyedInstanceIds?.has(id)) &&
       // Only an enemy with a defeat action can be defeated.
@@ -663,6 +663,11 @@ function buildResolveContext(params: {
     lastSelectedIds,
     resourceScopes:
       action.type === ActionEffectType.REMOVE_RESOURCE_ON_CARD ? action.resourceScopes : undefined,
+    addsProduction:
+      action.type === ActionEffectType.BOOST_CARD ||
+      (action.type === ActionEffectType.ADD_STICKER &&
+        (!action.stickers?.ids ||
+          action.stickers.ids.some(id => !stickerDefs[id] || stickerDefs[id].production))),
   };
 }
 
@@ -993,7 +998,10 @@ export function resolveActionEffect(
     return [resolverAction, pendingChoices];
   }
 
-  if (action.stickers) {
+  if (action.type === ActionEffectType.REMOVE_STICKER) {
+    // The stickers to take off the chosen cards: never read from the stock.
+    resolverAction.stickerIds = action.stickers?.ids ?? [];
+  } else if (action.stickers) {
     [resolverAction, pendingChoices] = resolveStickerTarget(
       resolverAction,
       pendingChoices,

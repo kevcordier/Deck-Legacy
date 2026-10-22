@@ -9,6 +9,7 @@ const LOCATION_SCOPES = new Set([
   TargetScope.DECK,
   TargetScope.DRAWN,
   TargetScope.DISCARDED,
+  TargetScope.DISCARDED_FROM_PLAY,
   TargetScope.BOARD,
   TargetScope.DISCOVERY,
   TargetScope.DISCARD,
@@ -27,6 +28,15 @@ function addLocationScopeParts(
   if (locationScopes.includes(TargetScope.DECK)) parts.push(...gameState.drawPile);
   if (locationScopes.includes(TargetScope.DRAWN)) parts.push(...gameState.lastDrawnCards);
   if (locationScopes.includes(TargetScope.DISCARDED)) parts.push(...gameState.lastDiscardedCards);
+  if (locationScopes.includes(TargetScope.DISCARDED_FROM_PLAY)) {
+    // Still in play while the discard fires its triggers, or blocked by a card in play
+    // (Quarantine): blocked cards stay on the board.
+    parts.push(
+      ...gameState.lastDiscardedCards.filter(
+        id => gameState.board.includes(id) || gameState.permanents.includes(id),
+      ),
+    );
+  }
   if (locationScopes.includes(TargetScope.BOARD)) parts.push(...gameState.board);
   if (locationScopes.includes(TargetScope.DISCOVERY)) {
     parts.push(...gameState.discoveryPile, ...(gameState.discoverablePile ?? []));
@@ -142,6 +152,15 @@ function hasIntrinsicCountAs2(
   return state.passives.some(passive => passive.type === PassiveType.COUNT_AS_2);
 }
 
+function matchesStickers(
+  stickers: number[],
+  { stickerIds, withoutStickerIds }: CardSelector,
+): boolean {
+  if (stickerIds && !stickerIds.some(id => stickers.includes(id))) return false;
+  if (withoutStickerIds?.some(id => stickers.includes(id))) return false;
+  return true;
+}
+
 function passesScopeConstraints(id: number, ctx: CardCriteriaContext): boolean {
   if (!ctx.scope?.includes(TargetScope.SELF) && id === ctx.instanceId) return false;
   if (!ctx.hasBlocked && ctx.blockedInstanceIds.includes(id)) return false;
@@ -163,6 +182,7 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
   if (!matchesTags(state, tags)) return false;
   if (!matchesProductions(id, state, produces, ctx)) return false;
   if (ctx.selector.ids && !ctx.selector.ids.includes(inst.id)) return false;
+  if (!matchesStickers(inst.stickers[inst.stateId] ?? [], ctx.selector)) return false;
   if (ctx.isUpgradable && (!state.upgrade || state.upgrade.length === 0)) return false;
   if (ctx.withTrack && !hasAvailableTrackStep(state, inst.trackProgress)) return false;
   if (
@@ -207,7 +227,8 @@ export function cardSelector(
   const blockedInstanceIds = Object.values(blockedEffect).flat();
 
   const locationScopes = scope.filter(s => LOCATION_SCOPES.has(s));
-  const hasBlocked = scope.includes(TargetScope.BLOCKED);
+  const hasBlocked =
+    scope.includes(TargetScope.BLOCKED) || scope.includes(TargetScope.DISCARDED_FROM_PLAY);
   const isFriendly = scope.includes(TargetScope.FRIENDLY);
   const isEnemy = scope.includes(TargetScope.ENEMY);
   const isUpgradable = scope.includes(TargetScope.UPGRADABLE);
