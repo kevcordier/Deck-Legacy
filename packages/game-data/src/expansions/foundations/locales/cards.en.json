@@ -142,7 +142,29 @@
     "Andoniel": "Andoniel",
     "Chivalry": "Chivalry",
     "Brotherhood": "Brotherhood",
-    "Craftsman": "Craftsman"
+    "Craftsman": "Craftsman",
+    "Artisans": "Artisans",
+    "Modern Art": "Modern Art",
+    "Statues": "Statues",
+    "Mosaics": "Mosaics",
+    "Dreamer": "Dreamer",
+    "Glassblower": "Glassblower",
+    "Jeweler": "Jeweler",
+    "Sir Tristan": "Sir Tristan",
+    "Young Painter": "Young Painter",
+    "Painter": "Painter",
+    "Michelangelo": "Michelangelo",
+    "Plain Windows": "Plain Windows",
+    "Colored Glass": "Colored Glass",
+    "Stained Glass": "Stained Glass",
+    "Window Art": "Window Art",
+    "Pillar Hall": "Pillar Hall",
+    "Ring": "Ring",
+    "Ornate Ring": "Ornate Ring",
+    "Golden Ring": "Golden Ring",
+    "Diamond Ring": "Diamond Ring",
+    "Necklace": "Necklace",
+    "Ether Pearl": "Ether Pearl"
   },
   "actions": {
     "175-1-1": "End of round: mark the next box of the track.",
@@ -515,7 +537,28 @@
     "278-1-1-5": "Her knight (purple scarf) and Guinevere: gain 6.",
     "278-1-1-6": "Her knight (white scarf) and Andoniel: gain 6.",
     "278-1-1-7": "A knight and a lady: gain 4.",
-    "278-2-1": "Discard 2 knights to gain any 3 resources."
+    "278-2-1": "Discard 2 knights to gain any 3 resources.",
+    "281-1-1": "Spend up to 20 {{stone}} to write half that amount (rounded down) in the next {{glory}}.",
+    "281-1-2": "When complete, each row, column and diagonal with 3 different values gives 4 bonus {{glory}}; then {{upgrade}}.",
+    "282-1-1": "Spend the set of {{stone}} and {{goods}} below the next box to mark it; worth the highest marked {{glory}}.",
+    "282-2-1": "Equip a building: place this under a building in play.",
+    "284-1-1": "Spend {{gold}}{{gold}} and {{goods}}{{goods}} to mark 1 box.",
+    "284-1-2": "When complete, {{upgrade}}.",
+    "284-2-1": "Discover 1 Golden Pillar project ({{discovered}}).",
+    "284-2-2": "Discover Pillar Hall ({{discovered}}).",
+    "285-1-1": "Discover Glass Windows ({{discovered}}).",
+    "285-2-1": "Discover 1 jewelry project ({{discovered}}).",
+    "286-1-1": "When played, put 1 card in play at the bottom of your deck.",
+    "286-2-1": "When played, put up to 2 cards in play at the bottom of your deck.",
+    "287-1-1": "Spend {{gold}} to gain {{goods}}.",
+    "287-3-1": "Spend {{goods}}{{goods}}{{goods}} to add sticker +5 {{glory}} to 1 building without that sticker.",
+    "293-1-1": "Destroy 1 Golden Pillar to mark 1 box.",
+    "293-1-2": "When you purge this, save 1 other card from being purged for each box marked.",
+    "294-1-1": "Equip a person: place this under a person in play.",
+    "294-2-1": "Equip a person: place this under a person in play.",
+    "294-3-1": "Equip a person: place this under a person in play.",
+    "294-4-1": "Equip a person: place this under a person in play.",
+    "295-2-1": "Equip a person: place this under a person in play."
   },
   "tracks": {
     "175-1-1": "Discover 6 cards of The Black Plague and 1 Foundation.",
@@ -600,7 +643,16 @@
     "249-4-1": "Upgrading persons does not end your turn.",
     "250-1-1": "You cannot gain {{science}}.",
     "250-2-1": "You cannot gain {{science}}.",
-    "276-2-1": "Knights have double production."
+    "276-2-1": "Knights have double production.",
+    "280-1-1": "You cannot gain {{goods}} or {{science}}.",
+    "284-2-1": "When you upgrade a building, put it on top of your deck.",
+    "285-2-1": "When you gain {{iron}}, you may instead gain {{goods}}.",
+    "293-1-1": "This has +{{gold}} production for each box marked.",
+    "294-2-1": "Holder has +1 production of a resource it already produces.",
+    "294-3-1": "Holder has +1 production of any resource.",
+    "294-4-1": "Holder has double production.",
+    "295-2-1": "This card cannot be destroyed, whether equipped or not.",
+    "295-2-2": "When using a ✓ or ⌛ effect on the holder, first gain any 2 resources."
   },
   "glory": {
     "207-1": "Worth −3 {{glory}} for each negative card in your kingdom.",
@@ -611,11 +663,19 @@
     "255-1": "Worth the sum of the medals written here.",
     "255-2": "Worth the sum of the medals written on the other side.",
     "268-4": "Worth the {{glory}} written here.",
-    "275-2": "Worth the {{glory}} not crossed out (6, 4, 4, 3, 3, 1)."
+    "275-2": "Worth the {{glory}} not crossed out (6, 4, 4, 3, 3, 1).",
+    "281-1": "Worth the {{glory}} written here, and 4 for each line of 3 different values.",
+    "281-2": "Worth the total {{glory}} of the other side, bonus included.",
+    "282-1": "Worth the highest marked {{glory}}.",
+    "288-2": "Worth 1 {{glory}} for each building in your kingdom.",
+    "288-3": "Worth 2 {{glory}} for each building in your kingdom.",
+    "288-4": "Worth 3 {{glory}} for each building in your kingdom.",
+    "293-1": "Worth 25 {{glory}} for each box marked."
   },
   "texts": {
     "218": "## Science\n\n*Your scholars search for knowledge.*\n\nDiscover cards 46–53. Cards 54–63 go to the back of your box, behind your other undiscovered cards: only effects discover them.\n\nYou may now use the stickers of this foundation ({{science}}, {{iron}}, {{goods}} and a tab). Science ({{science}}) is a new resource.",
     "237": "## Church\n\n*Establish the church as a power to be reckoned with. Build the mighty cathedral, educate scholars in your monasteries and lay the foundation for science.*\n\nDiscover cards 65–70. Cards 71–87 go to the back of your box, behind your other undiscovered cards: only effects discover them. Do not lose the Mountain Construction (70) before discovering the Archbishops.\n\nYou may now use the stickers of this foundation (blessings, {{science}}, {{wood}} and {{passif}} Stay in play). Herbs ({{herb}}) and science ({{science}}) are new resources.",
-    "261": "## Romance\n\n*Knights and ladies, quests and courtly love.* At least 4 knights are strongly recommended.\n\nDiscover cards 89–97. Cards 98–105 go to the back of your box, behind your other undiscovered cards: only effects discover them.\n\nYou may now use the stickers of this foundation (+2 and +5 {{glory}}, Knight, {{passif}} Stay in play, Starts in play and the 6 scarves). A knight wearing a lady's scarf is her knight."
+    "261": "## Romance\n\n*Knights and ladies, quests and courtly love.* At least 4 knights are strongly recommended.\n\nDiscover cards 89–97. Cards 98–105 go to the back of your box, behind your other undiscovered cards: only effects discover them.\n\nYou may now use the stickers of this foundation (+2 and +5 {{glory}}, Knight, {{passif}} Stay in play, Starts in play and the 6 scarves). A knight wearing a lady's scarf is her knight.",
+    "279": "## Artisans\n\n*Craftsmen and artists bring beauty to your kingdom.* This foundation requires a lot of stone.\n\nDiscover cards 107–114. Cards 115–122 go to the back of your box, behind your other undiscovered cards: only effects discover them.\n\nYou may now use the stickers of this foundation (+5 {{glory}}).\n\n**Equipment.** A card with \"Equip <keyword>\" has no production and no effects of its own until you equip it (an action that does not end your turn) to a card in play with that keyword. Its production, effects and glory then count on its holder; it leaves play with its holder."
   }
 }

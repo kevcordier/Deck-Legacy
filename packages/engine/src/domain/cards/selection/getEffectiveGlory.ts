@@ -33,5 +33,26 @@ export function getEffectiveGlory(
     passiveGlory = activeState.glory.valuePerElement.amount * count;
   }
 
-  return baseGlory + stickerGlory + passiveGlory + additionalGlory;
+  const gridBonus = activeState.glory?.gridBonus
+    ? activeState.glory.gridBonus * countDistinctLines(instance.glories)
+    : 0;
+
+  return baseGlory + stickerGlory + passiveGlory + additionalGlory + gridBonus;
+}
+
+/** The 3×3 grid of written medals (in order): its rows, columns and diagonals of 3 different values. */
+const GRID_LINES = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
+
+function countDistinctLines(medals: number[]): number {
+  if (medals.length < 9) return 0;
+  return GRID_LINES.filter(line => new Set(line.map(cell => medals[cell])).size === 3).length;
 }

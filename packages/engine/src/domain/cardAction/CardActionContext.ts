@@ -16,6 +16,7 @@ import { DestroyCardStrategy } from './DestroyCardStrategy';
 import { DiscardCardStrategy } from './DiscardCardStrategy';
 import { DiscoverCardStrategy } from './DiscoverCardStrategy';
 import { EndGameStrategy } from './EndGameStrategy';
+import { EquipStrategy } from './EquipStrategy';
 import { LoseNextResourcesStrategy } from './LoseNextResourcesStrategy';
 import { PlaceCardInPileStrategy } from './PlaceCardInDrawPileStrategy';
 import { PlayCardStrategy } from './PlayCardStrategy';
@@ -68,6 +69,7 @@ export class CardActionContext {
       // Nothing to apply: END_TURN ends the action's turn, SEQUENCE inserts its effects.
       [ActionEffectType.END_TURN]: new UseCardActionStrategy(),
       [ActionEffectType.SEQUENCE]: new UseCardActionStrategy(),
+      [ActionEffectType.EQUIP]: new EquipStrategy(),
     };
   }
 

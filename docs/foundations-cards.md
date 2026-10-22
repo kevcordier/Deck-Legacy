@@ -238,3 +238,10 @@ Added to the stock when the kingdom gets the foundation (or plays the campaign).
 - Famous Court: write the person's current fame (stickers included); each name only once (two copies of a card share a name).
 - Andoniel: ladies (printed scarf) and knights with a scarf sticker may stay in play.
 - Guinevere: knights' whole production is doubled (printed, stickers, bonuses).
+
+## Answers (user, 2026-10-20) — Artisans
+
+- Equipping does not end the turn (like a ✓ action).
+- Jeweler: every iron gain (production and effects) may become goods while the Jeweler is in play.
+- Statues: medals are written in order (left to right, top to bottom), spending 2–20 stone (value 1–10).
+- Ether Pearl: the gain applies to the ✓ / ⌛ effects of the holder and of the holder's other equipment.

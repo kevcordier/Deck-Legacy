@@ -114,6 +114,8 @@ export type GameState = {
   purgeState?: PurgeState;
   /** Resources offered beyond the six base ones once a foundation unlocks them (EDR-059). */
   unlockedResources?: ResourceType[];
+  /** Equipped cards (Artisans): equipment id → holder id, while both are in play. */
+  equipped?: Record<number, number>;
   /** Actions with a `perTurn` limit used this turn (`instanceId|actionId`), cleared each turn. */
   turnUsedActions?: string[];
   /** Resource units the next gains of this turn lose (Too Much Mead). */

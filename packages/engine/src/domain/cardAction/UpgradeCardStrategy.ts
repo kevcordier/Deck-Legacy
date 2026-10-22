@@ -3,7 +3,7 @@ import { getActiveState } from '../cards/selection/getActiveState';
 import { isPermanent } from '../cards/selection/isPermanent';
 import { Trigger } from '../enums';
 import { environment } from '../environment/environment';
-import { discardCards } from '../state/discardCards';
+import { leaveUpgradedCard } from '../state/leaveUpgradedCard';
 import { syncInstancePassivesInBoardEffects } from '../state/syncInstancePassivesInBoardEffects';
 import type { CardDef, GameState, ResolvedActionEffect, Sticker } from '../types';
 import type { CardActionStrategy } from './CardActionStrategy';
@@ -48,7 +48,7 @@ export class UpgradeCardStrategy implements CardActionStrategy {
 
     return {
       ...syncedState,
-      ...discardCards(syncedState, [instanceId], this.cardDefs, this.stickerDefs),
+      ...leaveUpgradedCard(syncedState, instanceId, this.cardDefs, this.stickerDefs),
       permanents: syncedState.permanents.filter(id => id !== instanceId),
     };
   }

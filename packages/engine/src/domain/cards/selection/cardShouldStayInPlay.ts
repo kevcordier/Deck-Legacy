@@ -18,6 +18,9 @@ export function cardShouldStayInPlay(
   if (!instance) return false;
   const def = cardDefs[instance.cardId];
   if (isPermanent(getActiveState(instance, cardDefs))) return true;
+  // An equipment stays in play with its holder
+  const holder = gameState.equipped?.[instanceId];
+  if (holder !== undefined) return cardShouldStayInPlay(holder, gameState, cardDefs);
   if (
     Object.entries(gameState.boardEffects).some(([sourceId, passives]) =>
       passives.some(

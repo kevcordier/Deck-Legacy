@@ -42,6 +42,7 @@ import type {
 import { chooseCrossedOutAction } from './chooseCrossedOutAction';
 import { chooseUsedAction } from './chooseUsedAction';
 import { getPickNumbers } from './getPickNumbers';
+import { withGainReplacement } from './withGainReplacement';
 
 const STICKER_PRODUCTION_CAP = 9;
 
@@ -49,6 +50,8 @@ export interface ResolveActionEffectOptions {
   isMandatory?: boolean;
   parentActionId?: string;
   lastSelectedIds?: number[];
+  /** The amount paid for the action's 'any' resource cost. */
+  paidAmount?: number;
 }
 
 interface ResolveContext {
@@ -62,6 +65,7 @@ interface ResolveContext {
   defs: Record<number, CardDef>;
   stickerDefs: Record<number, Sticker>;
   lastSelectedIds?: number[];
+  paidAmount?: number;
   resourceScopes?: RemovedResourceScope[];
   /** The effect adds production: the rule of nine keeps it off cards producing 9 or more. */
   addsProduction?: boolean;
@@ -179,17 +183,17 @@ function applyValuePerElement(
   const valuePerElement = action.valuePerElement;
   if (!valuePerElement) return;
   const { instanceId, gameState, defs, stickerDefs, lastSelectedIds } = ctx;
-  resolverAction.value =
-    (resolverAction.value ?? 1) *
-    valuePerElement.amount *
-    countValuePerElement(
-      valuePerElement,
-      gameState,
-      instanceId,
-      defs,
-      stickerDefs,
-      lastSelectedIds,
-    );
+  const count = valuePerElement.paid
+    ? Math.floor((ctx.paidAmount ?? 0) / (valuePerElement.per ?? 1))
+    : countValuePerElement(
+        valuePerElement,
+        gameState,
+        instanceId,
+        defs,
+        stickerDefs,
+        lastSelectedIds,
+      );
+  resolverAction.value = (resolverAction.value ?? 1) * valuePerElement.amount * count;
   if (action.writeNames) resolverAction.names = getWrittenNames(action, ctx);
 }
 
@@ -769,6 +773,7 @@ function buildResolveContext(params: {
   isMandatory: boolean;
   parentActionId?: string;
   lastSelectedIds?: number[];
+  paidAmount?: number;
 }): ResolveContext {
   const {
     action,
@@ -779,10 +784,12 @@ function buildResolveContext(params: {
     isMandatory,
     parentActionId,
     lastSelectedIds,
+    paidAmount,
   } = params;
 
   return {
     effectId: action.id,
+    paidAmount,
     parentActionId,
     sourceStepId: action.sourceStepId,
     actionType: action.type,
@@ -1041,7 +1048,7 @@ export function resolveActionEffect(
   stickerDefs: Record<number, Sticker>,
   options: ResolveActionEffectOptions = {},
 ): [ResolvedActionEffect, PendingChoice[]] {
-  const action = upgradeLegacyEffect(storedAction);
+  const action = withGainReplacement(upgradeLegacyEffect(storedAction), gameState);
   const isMandatory = options.isMandatory ?? false;
   const parentActionId = options.parentActionId;
   const lastSelectedIds = options.lastSelectedIds;
@@ -1063,6 +1070,7 @@ export function resolveActionEffect(
     isMandatory,
     parentActionId,
     lastSelectedIds,
+    paidAmount: options.paidAmount,
   });
 
   if (action.type === ActionEffectType.TRACK_ADVANCE && action.cards) {

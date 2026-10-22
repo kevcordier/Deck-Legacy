@@ -127,6 +127,8 @@ export enum ActionEffectType {
   END_TURN = 'END_TURN',
   /** Resolves `effects` in order: one option of a CHOOSE_EFFECT made of several effects. */
   SEQUENCE = 'SEQUENCE',
+  /** Places this equipment under the chosen card in play (`cards`). */
+  EQUIP = 'EQUIP',
 }
 
 export enum PassiveType {
@@ -155,6 +157,12 @@ export enum PassiveType {
   UPGRADE_KEEPS_TURN = 'UPGRADE_KEEPS_TURN',
   /** The whole production of the selected cards is multiplied by `amount` (Guinevere). */
   MULTIPLY_PRODUCTION = 'MULTIPLY_PRODUCTION',
+  /** Before a ✓ / ⌛ effect of the selected card (or of its equipment), `actionEffects` (Ether Pearl). */
+  GAIN_BEFORE_HOLDER_ACTION = 'GAIN_BEFORE_HOLDER_ACTION',
+  /** Every gain of `resources`' first type may be the second type instead (Jeweler: iron → goods). */
+  REPLACE_GAIN = 'REPLACE_GAIN',
+  /** The selected cards, once upgraded, go on top of the deck instead of the discard (Architect). */
+  UPGRADED_ON_TOP_OF_DECK = 'UPGRADED_ON_TOP_OF_DECK',
 }
 
 export enum Options {
@@ -202,6 +210,8 @@ export enum TargetScope {
   WITH_TRACK = 'with_track',
   PURGE_SELECTED = 'purge_selected',
   STAYING = 'staying',
+  /** The card the source is equipped to. */
+  HOLDER = 'holder',
 }
 
 export enum PendingChoiceType {

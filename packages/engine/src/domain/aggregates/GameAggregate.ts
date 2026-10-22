@@ -26,6 +26,7 @@ import { canUseOptions } from '../state/canUseOptions';
 import { computeGameStateDiff } from '../state/computeGameStateDiff';
 import { DEFAULT_PARAMETERS } from '../state/defaultParameters';
 import { isLastRound } from '../state/isLastRound';
+import { pruneEquipment } from '../state/pruneEquipment';
 import type {
   AdvanceEvent,
   CampaignScoreSavedEvent,
@@ -91,9 +92,8 @@ export class GameAggregate {
 
   private apply(event: GameEvent) {
     const before = this.gameState;
-    this.gameState = this.gameEventContext.apply(
-      JSON.parse(JSON.stringify(before)) as GameState,
-      event,
+    this.gameState = pruneEquipment(
+      this.gameEventContext.apply(JSON.parse(JSON.stringify(before)) as GameState, event),
     );
     this.currentCardAction = null;
     if (eventDrewCards(event)) this.undoStates = [];

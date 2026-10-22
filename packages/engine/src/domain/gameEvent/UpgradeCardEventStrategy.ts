@@ -5,6 +5,7 @@ import { GameEventType, Trigger } from '../enums';
 import { environment } from '../environment/environment';
 import { destroyCards } from '../state/destroyCards';
 import { discardCards } from '../state/discardCards';
+import { leaveUpgradedCard } from '../state/leaveUpgradedCard';
 import { spendResources } from '../state/spendResources';
 import { syncInstancePassivesInBoardEffects } from '../state/syncInstancePassivesInBoardEffects';
 import type { CardDef, GameEvent, GameState, Sticker, UpgradeCardEvent } from '../types';
@@ -64,7 +65,7 @@ export class UpgradeCardEventStrategy implements GameEventStrategy {
     } else {
       newState = {
         ...upgradedState,
-        ...discardCards(upgradedState, [e.cardInstanceId], this.cardDefs, this.stickerDefs),
+        ...leaveUpgradedCard(upgradedState, e.cardInstanceId, this.cardDefs, this.stickerDefs),
         permanents: upgradedState.permanents.filter(id => id !== e.cardInstanceId),
       };
     }

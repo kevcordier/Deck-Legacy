@@ -259,3 +259,14 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - `CardSelector.notStaying`: cards that do not stay in play (Endurance).
 - Several `upgrade` entries to the same state are ways to pay it (The Round Table: a Craftsman or 4 persons): `resolveUpgrade` takes `upgradeIndex`, the entry the player chose; without it (older commands) the first entry to `upgradeTo` is used.
 - Quests (Foundations 99–104, `quest()`): rescued by a knight without a scarf, who gets the lady's scarf; the end-of-turn timer's last box destroys the quest. "Matching scarves" are one `CHOOSE_EFFECT` option per scarf whose knight and lady are in play (`matchingScarves`).
+
+## Mechanics added for Foundations: Artisans
+
+- Equipment: `CardState.equip` (the holder's keyword). Equipping is an `EQUIP` effect (an unlimited action, so the equipment is not discarded and the turn goes on); `GameState.equipped` maps equipment → holder while both are in play (`pruneEquipment` after each event). An equipped card is left out of selectors (except `equipped: true` or itself), produces nothing itself (`getCardProductionChoices` is empty for an `equip` state) and adds its production to its holder; its passives target `TargetScope.HOLDER`. It stays in play with its holder, is discarded / destroyed with it (`withEquipment`) and cannot be upgraded.
+- `ADD_PRODUCTION_CHOICE` `choices: 'produced'` (+1 of a resource the card produces) or `'any'`.
+- `PassiveType.GAIN_BEFORE_HOLDER_ACTION` (`actionEffects`, Ether Pearl): resolved before a ✓ / ⌛ action of the holder or of its equipment.
+- `PassiveType.REPLACE_GAIN` (Jeweler, `resources` = from, to): productions and fixed `ADD_RESOURCES` gains of the first resource may be the second (`withGainReplacement`).
+- `'any'` costs: `CardAction.amountLimits` (checked by the session) and `amountPer: 'all'` (the effects apply once); `ValuePerElement.paid` counts the amount paid (Statues: half the stone, `per: 2`).
+- `GloryDef.gridBonus`: once 9 medals are written (in order), the bonus for each row, column and diagonal of 3 different values.
+- `PassiveType.UPGRADED_ON_TOP_OF_DECK` (Architect): an upgraded card it selects goes on top of the deck instead of the discard pile (`leaveUpgradedCard`).
+- A ✓ action discards its card before its effects: a card's own passive is gone while its ✓ effects resolve.

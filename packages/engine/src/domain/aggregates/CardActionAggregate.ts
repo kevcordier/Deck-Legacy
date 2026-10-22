@@ -14,7 +14,7 @@ import { isPermanent } from '../cards/selection/isPermanent';
 import { turnUseKey } from '../cards/turnUseKey';
 import { resolveCost } from '../costResolver';
 import { resolveActionEffect } from '../effects/resolveActionEffect';
-import { ActionEffectType, PendingChoiceType, Phase, Trigger } from '../enums';
+import { ActionEffectType, PassiveType, PendingChoiceType, Phase, Trigger } from '../enums';
 import { environment } from '../environment/environment';
 import { CardChoiceStrategy } from '../playerChoice/CardChoiceStrategy';
 import { ChooseActionEffectStrategy } from '../playerChoice/ChooseActionEffectStrategy';
@@ -108,8 +108,12 @@ export class CardActionAggregate {
       return [...acc, ...effectiveEffects];
     }, [] as ActionEffect[]);
     // "For every N spent": the effects apply once per `amountPer` units paid
-    const times = Math.floor(this.amount / (this.action.amountPer ?? 1));
-    this.effects = Array.from({ length: Math.max(0, times) }, () => effects).flat();
+    const per = this.action.amountPer === 'all' ? this.amount : (this.action.amountPer ?? 1);
+    const times = Math.floor(this.amount / per);
+    this.effects = [
+      ...this.getHolderActionBonus(),
+      ...Array.from({ length: Math.max(0, times) }, () => effects).flat(),
+    ];
     const triggerEntry = this.gameState.triggerPile[this.triggerId ?? ''];
     this.endTurn =
       !!this.action.endsTurn ||
@@ -117,6 +121,21 @@ export class CardActionAggregate {
       triggerEntry?.effectDef.trigger === Trigger.END_OF_TURN;
     this.endRound =
       this.gameState.triggerPile[this.triggerId ?? '']?.effectDef.trigger === Trigger.END_OF_ROUND;
+  }
+
+  /**
+   * GAIN_BEFORE_HOLDER_ACTION (Ether Pearl): before a ✓ / ⌛ effect of the holder or of its
+   * equipment, the passives of its equipment resolve their effects.
+   */
+  private getHolderActionBonus(): ActionEffect[] {
+    if (this.action.trigger || this.action.unlimited) return [];
+    const equipped = this.gameState.equipped ?? {};
+    const holder = equipped[this.instance.id] ?? this.instance.id;
+    return Object.entries(equipped)
+      .filter(([, holderId]) => holderId === holder)
+      .flatMap(([equipmentId]) => this.gameState.boardEffects[Number(equipmentId)] ?? [])
+      .filter(passive => passive.type === PassiveType.GAIN_BEFORE_HOLDER_ACTION)
+      .flatMap(passive => passive.actionEffects ?? []);
   }
 
   private getEffectiveActionEffects(effect: ActionEffect): ActionEffect[] {
@@ -483,6 +502,7 @@ export class CardActionAggregate {
           isMandatory: true,
           parentActionId: this.action.id,
           lastSelectedIds: this.lastSelectedIds,
+          paidAmount: this.amount,
         },
       );
 

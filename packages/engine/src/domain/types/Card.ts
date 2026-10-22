@@ -52,6 +52,7 @@ export type GloryDef = {
   condition?: Condition;
   emptyValues?: number;
   whenPurged?: number; // "* worth −5 when purged": the glory of the card in a purge
+  gridBonus?: number; // 3×3 written medals: this bonus for each line of 3 different values (Statues)
 };
 
 export type CardState = {
@@ -67,6 +68,8 @@ export type CardState = {
   upgrade?: UpgradeDef[];
   track?: TrackDef;
   illustration?: string;
+  /** Equipment: the keyword of the card in play it is placed under (Equip Person). */
+  equip?: CardTag;
 };
 
 export type UpgradeDef = {
@@ -83,7 +86,9 @@ export type CardAction = {
   trigger?: Trigger;
   optional?: boolean;
   limitedTime?: number; // max number of uses for this action
-  amountPer?: number; // with an 'any' resource cost: the effects apply once per `amountPer` units
+  // with an 'any' resource cost: the effects apply once per `amountPer` units, or once ('all')
+  amountPer?: number | 'all';
+  amountLimits?: { min?: number; max?: number }; // with an 'any' resource cost: the units allowed
   perTurn?: number; // max number of uses each turn ("once per turn")
   condition?: Condition; // checked when the trigger fires, or before the action is used
   defeat?: boolean; // the action defeats an enemy: fires ON_DEFEAT triggers once resolved
@@ -102,6 +107,7 @@ export type ValuePerElement = {
   includeSelf?: boolean; // "including this": the card counts too, even once discarded by its action
   per?: number; // "for every N": the count is divided by N (rounded down)
   glory?: boolean; // with `cards`: the total glory of the selected cards (Famous Court)
+  paid?: boolean; // the amount paid for the action's 'any' resource cost (Statues)
 };
 
 export type RemovedResourceScope = 'production' | 'actionCost' | 'upgradeCost';
@@ -156,8 +162,10 @@ export type Passive = {
   condition?: Condition;
   options?: unknown[];
   parameters?: Partial<GameParameters>;
-  /** ADD_PRODUCTION_CHOICE: the bonuses offered. */
-  choices?: Resources[];
+  /** ADD_PRODUCTION_CHOICE: the bonuses offered; 'produced': +1 of a resource it produces; 'any'. */
+  choices?: Resources[] | 'produced' | 'any';
+  /** GAIN_BEFORE_HOLDER_ACTION: the effects resolved first. */
+  actionEffects?: ActionEffect[];
 };
 
 export type Having = {
@@ -190,6 +198,7 @@ export type CardSelector = {
   orStickerIds?: number[]; // these stickers also match `tags` (blessing sticker 38 = blessed)
   notWrittenHere?: boolean; // the card's name is not written on the selecting card (Famous Court)
   notStaying?: boolean; // the card does not stay in play (Endurance)
+  equipped?: boolean; // the card is (true) or is not (false) equipped to a card in play
   withoutStickerIds?: number[]; // the card carries none of these stickers
 };
 

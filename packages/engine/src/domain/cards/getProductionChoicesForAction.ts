@@ -1,11 +1,13 @@
 import { PassiveType, TargetScope } from '../enums';
+import { getOfferedResources } from '../resources/getOfferedResources';
 import { mergeResources } from '../resources/mergeResources';
-import type { CardDef, CardInstance, GameState, Resources, Sticker } from '../types';
+import type { CardDef, CardInstance, GameState, Passive, Resources, Sticker } from '../types';
 import { keepGainableResources } from './keepGainableResources';
 import { sanitizeResources } from './sanitizeResources';
 import { cardSelector } from './selection/cardSelector';
 import { getActiveState } from './selection/getActiveState';
 import { getEffectiveProductions } from './selection/getEffectiveProductions';
+import { getEquipment } from './selection/getEquipment';
 
 function applyReplacementOnProduction(
   production: Resources,
@@ -45,8 +47,16 @@ function getApplicableReplaceResourceProductionPassives(
       }),
   );
 
-  return [...statePassives, ...boardEffectPassives]
-    .filter(passive => passive.type === PassiveType.REPLACE_RESOURCE_PRODUCTION)
+  // REPLACE_GAIN (Jeweler) applies to every card's production
+  const gainPassives = Object.values(gameState.boardEffects)
+    .flat()
+    .filter(passive => passive.type === PassiveType.REPLACE_GAIN);
+  return [...statePassives, ...boardEffectPassives, ...gainPassives]
+    .filter(
+      passive =>
+        passive.type === PassiveType.REPLACE_RESOURCE_PRODUCTION ||
+        passive.type === PassiveType.REPLACE_GAIN,
+    )
     .flatMap(passive => {
       const resources = passive.resources;
       if (!resources) return [];
@@ -67,7 +77,7 @@ function getProductionChoiceBonuses(
   gameState: GameState,
   defs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
-): Resources[][] {
+): NonNullable<Passive['choices']>[] {
   return Object.entries(gameState.boardEffects).flatMap(([sourceId, passives]) =>
     passives
       .filter(
@@ -84,6 +94,35 @@ function getProductionChoiceBonuses(
       )
       .map(passive => passive.choices ?? []),
   );
+}
+
+/** The bonuses a choice can get: 'produced' = +1 of a resource it produces, 'any' = any one. */
+function bonusesFor(
+  bonuses: NonNullable<Passive['choices']>,
+  choice: Resources,
+  gameState: GameState,
+): Resources[] {
+  if (bonuses === 'any') return getOfferedResources(gameState).map(type => ({ [type]: 1 }));
+  if (bonuses !== 'produced') return bonuses;
+  const produced = Object.entries(choice).filter(([, value]) => (value ?? 0) > 0);
+  return produced.length > 0 ? produced.map(([type]) => ({ [type]: 1 })) : [{}];
+}
+
+/** The production of the cards equipped to this one (the equipment no longer produces itself). */
+function getEquipmentProduction(
+  instance: CardInstance,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+): Resources {
+  return getEquipment(gameState, instance.id).reduce<Resources>((total, equipmentId) => {
+    const equipment = gameState.instances[equipmentId];
+    const base = getActiveState(equipment, defs).productions?.[0] ?? {};
+    return mergeResources(
+      total,
+      getEffectiveProductions(base, gameState, defs, equipment, stickerDefs, false),
+    );
+  }, {});
 }
 
 /** The MULTIPLY_PRODUCTION passives on the card, multiplied together (Guinevere: × 2). */
@@ -117,7 +156,10 @@ export function getProductionChoicesForAction(
   instance: CardInstance,
   stickerDefs: Record<number, Sticker>,
 ): Resources[] {
-  const baseProduction = getEffectiveProductions(base, gameState, defs, instance, stickerDefs);
+  const baseProduction = mergeResources(
+    getEffectiveProductions(base, gameState, defs, instance, stickerDefs),
+    getEquipmentProduction(instance, gameState, defs, stickerDefs),
+  );
   const replacements = getApplicableReplaceResourceProductionPassives(
     instance,
     gameState,
@@ -143,7 +185,9 @@ export function getProductionChoicesForAction(
   });
 
   for (const bonuses of getProductionChoiceBonuses(instance, gameState, defs, stickerDefs)) {
-    choices = choices.flatMap(choice => bonuses.map(bonus => mergeResources(choice, bonus)));
+    choices = choices.flatMap(choice =>
+      bonusesFor(bonuses, choice, gameState).map(bonus => mergeResources(choice, bonus)),
+    );
   }
 
   const factor = getProductionFactor(instance, gameState, defs, stickerDefs);

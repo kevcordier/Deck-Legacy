@@ -221,8 +221,18 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
   if (!matchesStickers(stickers, ctx.selector)) return false;
   if (!matchesUpgrades(state, ctx)) return false;
   if (ctx.withTrack && !hasAvailableTrackStep(state, inst.trackProgress)) return false;
-  if (ctx.selector.notWrittenHere && isWrittenOn(ctx, state.name)) return false;
-  return matchesStaying(id, ctx);
+  return matchesNotWritten(state.name, ctx) && matchesEquipment(id, ctx) && matchesStaying(id, ctx);
+}
+
+function matchesNotWritten(name: string, ctx: CardCriteriaContext): boolean {
+  return !ctx.selector.notWrittenHere || !isWrittenOn(ctx, name);
+}
+
+/** An equipped card is no longer a card of its own: only `equipped` (or itself) selects it. */
+function matchesEquipment(id: number, ctx: CardCriteriaContext): boolean {
+  const isEquipped = ctx.gameState.equipped?.[id] !== undefined;
+  if (ctx.selector.equipped !== undefined) return isEquipped === ctx.selector.equipped;
+  return !isEquipped || id === ctx.instanceId;
 }
 
 /** STAYING keeps the cards that stay in play, `notStaying` the others. */
@@ -231,6 +241,28 @@ function matchesStaying(id: number, ctx: CardCriteriaContext): boolean {
   if (!wantsStaying && !ctx.selector.notStaying) return true;
   const staying = cardShouldStayInPlay(id, ctx.gameState, ctx.defs);
   return wantsStaying ? staying : !staying;
+}
+
+/** The top cards of the deck; "(if friendly)" keeps the friendly ones (Enemy Archer). */
+function topOfDeck(
+  scope: TargetScope[],
+  pickNumber: number | undefined,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+): number[] {
+  const top = gameState.drawPile.slice(0, pickNumber ?? 1);
+  if (!scope.includes(TargetScope.FRIENDLY) && !scope.includes(TargetScope.ENEMY)) return top;
+  return top.filter(id => {
+    const inst = gameState.instances[id];
+    const negative = inst && defs[inst.cardId]?.states.find(s => s.id === inst.stateId)?.negative;
+    return scope.includes(TargetScope.FRIENDLY) ? !negative : !!negative;
+  });
+}
+
+/** The card `instanceId` is equipped to. */
+function holderOf(instanceId: number, gameState: GameState): number[] {
+  const holder = gameState.equipped?.[instanceId];
+  return holder === undefined ? [] : [holder];
 }
 
 /**
@@ -252,14 +284,7 @@ export function cardSelector(
     return selector.lastSelectedIds ?? [];
   }
   if (scope.includes(TargetScope.TOP_OF_DECK)) {
-    const top = gameState.drawPile.slice(0, selector.pickNumber ?? 1);
-    // "The top card of your deck (if friendly)" (Enemy Archer)
-    if (!scope.includes(TargetScope.FRIENDLY) && !scope.includes(TargetScope.ENEMY)) return top;
-    return top.filter(id => {
-      const inst = gameState.instances[id];
-      const negative = inst && defs[inst.cardId]?.states.find(s => s.id === inst.stateId)?.negative;
-      return scope.includes(TargetScope.FRIENDLY) ? !negative : !!negative;
-    });
+    return topOfDeck(scope, selector.pickNumber, gameState, defs);
   }
   if (scope.includes(TargetScope.TOP_OF_DISCARD)) {
     return gameState.discardPile.slice(-1);
@@ -270,6 +295,7 @@ export function cardSelector(
   if (scope.includes(TargetScope.BLOCKED_BY_THIS)) {
     return blockedEffect[instanceId] ?? [];
   }
+  if (scope.includes(TargetScope.HOLDER)) return holderOf(instanceId, gameState);
   const blockedInstanceIds = Object.values(blockedEffect).flat();
 
   const locationScopes = scope.filter(s => LOCATION_SCOPES.has(s));

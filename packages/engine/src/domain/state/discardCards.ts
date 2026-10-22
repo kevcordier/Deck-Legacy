@@ -4,14 +4,17 @@ import { environment } from '../environment/environment';
 import type { CardDef, GameState, Sticker } from '../types';
 import { releaseFromPermanents } from './releaseFromPermanents';
 import { removeFromDiscovery } from './removeFromDiscovery';
+import { withEquipment } from './withEquipment';
 
 export const discardCards = (
   _gameState: GameState,
-  cardIds: number[],
+  discardedIds: number[],
   cardDefs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
 ): GameState => {
   const gameState = JSON.parse(JSON.stringify(_gameState)) as GameState;
+  // A holder leaving play takes its equipment with it
+  const cardIds = withEquipment(gameState, discardedIds);
   gameState.lastDiscardedCards = cardIds;
   getInstancesTriggerEffects(
     cardIds.map(id => gameState.instances[id]).filter(Boolean),

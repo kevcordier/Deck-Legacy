@@ -82,6 +82,20 @@ import { aleta } from './cards/275';
 import { guinevere } from './cards/276';
 import { andoniel } from './cards/277';
 import { chivalry } from './cards/278';
+import { artisansCover } from './cards/279';
+import { modernArt } from './cards/280';
+import { statues } from './cards/281';
+import { mosaics } from './cards/282';
+import { spinningWheel } from './cards/283';
+import { dreamer } from './cards/284';
+import { glassblower } from './cards/285';
+import { sirTristan } from './cards/286';
+import { youngPainter } from './cards/287';
+import { glassWindows } from './cards/288';
+import { goldenPillar } from './cards/289';
+import { pillarHall } from './cards/293';
+import { ring } from './cards/294';
+import { necklace } from './cards/295';
 import deck from './deck.json';
 import en from './locales/cards.en.json';
 import fr from './locales/cards.fr.json';
@@ -173,5 +187,19 @@ export const foundations: ExpansionPack = {
     guinevere,
     andoniel,
     chivalry,
+    artisansCover,
+    modernArt,
+    statues,
+    mosaics,
+    spinningWheel,
+    dreamer,
+    glassblower,
+    sirTristan,
+    youngPainter,
+    glassWindows,
+    goldenPillar,
+    pillarHall,
+    ring,
+    necklace,
   ],
 };
