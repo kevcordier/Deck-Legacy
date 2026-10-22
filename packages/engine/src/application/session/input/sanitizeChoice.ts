@@ -1,5 +1,6 @@
 import { ActionEffectType, PendingChoiceType } from '../../../domain/enums';
 import type { PendingChoice, ResolvedActionEffect } from '../../../domain/types';
+import { isValidOrder } from './isValidOrder';
 import { isValidSelection } from './isValidSelection';
 import { sameValue } from './sameValue';
 
@@ -7,6 +8,16 @@ import { sameValue } from './sameValue';
  * The choice the engine resolves, rebuilt from the pending choice and the player's selection
  * only; `null` when the selection is not one the pending choice offers.
  */
+/** An order of the offered cards (Performance), the destroyed one apart. */
+function sanitizeOrder(
+  choice: ResolvedActionEffect,
+  pending: PendingChoice,
+  base: Pick<ResolvedActionEffect, 'id' | 'type' | 'sourceInstanceId'>,
+): ResolvedActionEffect | null {
+  if (!isValidOrder(choice, pending)) return null;
+  return { ...base, instanceIds: choice.instanceIds, destroyedIds: choice.destroyedIds ?? [] };
+}
+
 export function sanitizeChoice(
   choice: ResolvedActionEffect,
   choiceType: PendingChoiceType,
@@ -42,5 +53,7 @@ export function sanitizeChoice(
         : null;
     case PendingChoiceType.SPLIT_RESOURCES:
       return null; // a cost: paid with resolvePayCost (sanitizeCost)
+    case PendingChoiceType.ORDER_CARDS:
+      return sanitizeOrder(choice, pending, base);
   }
 }

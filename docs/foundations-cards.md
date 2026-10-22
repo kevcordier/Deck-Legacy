@@ -252,3 +252,11 @@ Added to the stock when the kingdom gets the foundation (or plays the campaign).
 - Windermere Estate: each land played is discarded; Windermere stays in play.
 - Liberation: destroys the cards with 6 or more production in the whole kingdom.
 - Lady Elara: only the fame of the person's current state is crossed out (an upgrade gets its fame).
+
+## Answers (user, 2026-10-21) — Mechanics
+
+- Crane: upgrading a building costs 2 resources less; the player chooses which units of the cost to pay.
+- Performance: a sorting screen (drag and drop) orders the next undiscovered cards, with a drop slot on the right of the modal for the one card to destroy.
+- A ✓ effect of an equipment counts as written on the holder: using it discards the holder (and the equipment with it).
+- Inventor Workshop: each marked box counts as 1 more invention, for its own glory and for the effects counting inventions.
+- Crane Construction, Chains: 1 science + 2 iron (from the card; the notes said 3 iron).

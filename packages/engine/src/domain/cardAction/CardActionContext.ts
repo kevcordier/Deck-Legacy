@@ -19,6 +19,7 @@ import { DiscoverCardStrategy } from './DiscoverCardStrategy';
 import { EndGameStrategy } from './EndGameStrategy';
 import { EquipStrategy } from './EquipStrategy';
 import { LoseNextResourcesStrategy } from './LoseNextResourcesStrategy';
+import { OrderCardsStrategy } from './OrderCardsStrategy';
 import { PlaceCardInPileStrategy } from './PlaceCardInDrawPileStrategy';
 import { PlayCardStrategy } from './PlayCardStrategy';
 import { RemoveResourceOnCardStrategy } from './RemoveResourceOnCardStrategy';
@@ -50,8 +51,8 @@ export class CardActionContext {
       [ActionEffectType.BLOCK_CARD]: new BlockCardStrategy(),
       [ActionEffectType.ADD_BOARD_EFFECT]: new AddBoardEffectStrategy(),
       [ActionEffectType.PLAY_CARD]: new PlayCardStrategy(cardDefs, stickerDefs),
-      [ActionEffectType.BOOST_CARD]: new AddStickerStrategy(),
-      [ActionEffectType.ADD_STICKER]: new AddStickerStrategy(),
+      [ActionEffectType.BOOST_CARD]: new AddStickerStrategy(cardDefs, stickerDefs),
+      [ActionEffectType.ADD_STICKER]: new AddStickerStrategy(cardDefs, stickerDefs),
       [ActionEffectType.CHOOSE_STATE]: new ChoseStateStrategy(),
       [ActionEffectType.TRACK_ADVANCE]: new TrackAdvanceStrategy(cardDefs, stickerDefs),
       [ActionEffectType.SET_CUMULATED]: new SetCumulatedStrategy(),
@@ -70,8 +71,9 @@ export class CardActionContext {
       // Nothing to apply: END_TURN ends the action's turn, SEQUENCE inserts its effects.
       [ActionEffectType.END_TURN]: new UseCardActionStrategy(),
       [ActionEffectType.SEQUENCE]: new UseCardActionStrategy(),
-      [ActionEffectType.EQUIP]: new EquipStrategy(),
+      [ActionEffectType.EQUIP]: new EquipStrategy(cardDefs),
       [ActionEffectType.CROSS_OUT_GLORY]: new CrossOutGloryStrategy(),
+      [ActionEffectType.ORDER_CARDS]: new OrderCardsStrategy(),
     };
   }
 

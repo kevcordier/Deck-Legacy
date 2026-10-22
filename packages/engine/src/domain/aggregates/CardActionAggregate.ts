@@ -18,6 +18,7 @@ import { ActionEffectType, PassiveType, PendingChoiceType, Phase, Trigger } from
 import { environment } from '../environment/environment';
 import { CardChoiceStrategy } from '../playerChoice/CardChoiceStrategy';
 import { ChooseActionEffectStrategy } from '../playerChoice/ChooseActionEffectStrategy';
+import { OrderChoiceStrategy } from '../playerChoice/OrderChoiceStrategy';
 import type { PlayerChoiceStrategy } from '../playerChoice/PlayerChoiceStrategy';
 import { ResourceChoiceStrategy } from '../playerChoice/ResourceChoiceStrategy';
 import { StateChoiceStrategy } from '../playerChoice/StateChoiceStrategy';
@@ -101,6 +102,7 @@ export class CardActionAggregate {
       [PendingChoiceType.CHOOSE_ACTION_EFFECT]: new ChooseActionEffectStrategy(),
       // A split is a cost: paid by resolveCostChoice, like the other cost choices.
       [PendingChoiceType.SPLIT_RESOURCES]: new ResourceChoiceStrategy(),
+      [PendingChoiceType.ORDER_CARDS]: new OrderChoiceStrategy(),
     };
     this.amount = hasAnyAmountCost(this.action.cost) ? amount : 1;
     const effects = this.action.actionEffects.reduce((acc, effect) => {
@@ -789,18 +791,16 @@ export class CardActionAggregate {
       return;
     }
 
+    // An equipment's effect counts as its holder's: the holder is discarded (and it with it)
+    const usedId = this.gameState.equipped?.[this.instance.id] ?? this.instance.id;
+    const used = this.gameState.instances[usedId];
     if (
       !this.triggerId &&
       !this.action.unlimited &&
-      !isPermanent(getActiveState(this.instance, this.cardDefs)) &&
+      !isPermanent(getActiveState(used, this.cardDefs)) &&
       !this.def.parchmentCard
     ) {
-      this.gameState = discardCards(
-        this.gameState,
-        [this.instance.id],
-        this.cardDefs,
-        this.stickerDefs,
-      );
+      this.gameState = discardCards(this.gameState, [usedId], this.cardDefs, this.stickerDefs);
     }
 
     this.payCost(this.resolvedCost);

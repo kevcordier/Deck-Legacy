@@ -51,6 +51,8 @@ export enum Trigger {
   ON_DISCOVER = 'on_discover',
   /** Start of the round, after the shuffle: permanents (Haunted Souls). */
   START_OF_ROUND = 'start_of_round',
+  /** Fired on a card when a sticker is added to it (Irrigation; `stickerAdded` condition). */
+  ON_STICKER_ADDED = 'on_sticker_added',
 }
 
 export enum GameEventType {
@@ -131,6 +133,8 @@ export enum ActionEffectType {
   EQUIP = 'EQUIP',
   /** Crosses out the glory of the chosen cards' current state (Lady Elara). */
   CROSS_OUT_GLORY = 'CROSS_OUT_GLORY',
+  /** Looks at the next `value` cards of the box, re-arranges them and may destroy 1 (Performance). */
+  ORDER_CARDS = 'ORDER_CARDS',
 }
 
 export enum PassiveType {
@@ -165,6 +169,8 @@ export enum PassiveType {
   REPLACE_GAIN = 'REPLACE_GAIN',
   /** The selected cards, once upgraded, go on top of the deck instead of the discard (Architect). */
   UPGRADED_ON_TOP_OF_DECK = 'UPGRADED_ON_TOP_OF_DECK',
+  /** The selected cards, once upgraded, go to the bottom of the deck (Crane). */
+  UPGRADED_TO_BOTTOM_OF_DECK = 'UPGRADED_TO_BOTTOM_OF_DECK',
   /** In the permanents when a campaign starts: its purge batches are `amount` cards larger. */
   ADJUST_PURGE = 'ADJUST_PURGE',
   /** Purged with this card, every purged card is worth at least `amount` glory (Frostpeak). */
@@ -218,6 +224,8 @@ export enum TargetScope {
   STAYING = 'staying',
   /** The card the source is equipped to. */
   HOLDER = 'holder',
+  /** The undiscovered cards of the box, in order (the discoverable pile). */
+  BOX = 'box',
 }
 
 export enum PendingChoiceType {
@@ -229,6 +237,8 @@ export enum PendingChoiceType {
   CHOOSE_ACTION_EFFECT = 'choose_action_effect',
   /** Pay `total` resources of any types: `choices[0]` = the resources the player can spend. */
   SPLIT_RESOURCES = 'split_resources',
+  /** Put `choices` (cards) in a new order; up to `pickMax` of them may be destroyed. */
+  ORDER_CARDS = 'order_cards',
 }
 
 export enum Phase {

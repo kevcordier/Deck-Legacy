@@ -1,5 +1,5 @@
 import { getInstancesTriggerEffects } from '../cards/getInstancesTriggerEffects';
-import { getActiveState } from '../cards/selection/getActiveState';
+import { getActivePassives } from '../cards/selection/getActivePassives';
 import { Trigger } from '../enums';
 import { environment } from '../environment/environment';
 import type { CardDef, GameState, Sticker } from '../types';
@@ -24,9 +24,7 @@ export const drawCards = (
     gameState.triggerPile[environment.newId()] = { effectDef, sourceInstanceId };
   });
   turnCards.forEach(instanceId => {
-    const passives = getActiveState(gameState.instances[instanceId], cardDefs)?.passives;
-    if (!passives) return;
-    passives.forEach(passive => {
+    getActivePassives(gameState, instanceId, cardDefs).forEach(passive => {
       gameState.boardEffects[instanceId] = [...(gameState.boardEffects[instanceId] ?? []), passive];
     });
   });

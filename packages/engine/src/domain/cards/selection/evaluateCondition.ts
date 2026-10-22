@@ -54,6 +54,10 @@ export function evaluateCondition(
       const progress = gameState.instances[instanceId]?.trackProgress ?? [];
       return condition.ids.every(id => progress.includes(id));
     }
+    case 'stickerAdded': {
+      const added = gameState.lastAddedStickers?.[instanceId] ?? [];
+      return added.some(id => !condition.ids || condition.ids.includes(id));
+    }
     case 'justPlayed':
       return gameState.lastDrawnCards.includes(instanceId);
     case 'expansionActive':

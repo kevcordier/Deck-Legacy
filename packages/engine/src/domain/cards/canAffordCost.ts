@@ -1,11 +1,47 @@
 import { countResources } from '../resources/countResources';
 import { fixResources } from '../resources/fixResources';
+import { getDiscountedPayment } from '../resources/getDiscountedPayment';
 import { getPayableResourceCostVariants } from '../resources/getPayableResourceCostVariants';
 import { getSourceResourceEquivalence } from '../resources/getSourceResourceEquivalence';
 import type { CardDef, Cost, GameState, Sticker } from '../types';
 import { canAffordResources } from './canAffordResources';
 import { getSpendableResources } from './getSpendableResources';
 import { cardSelector } from './selection/cardSelector';
+
+/** The resources of a cost: a discount (Crane), equivalences, or the plain options. */
+function canAffordResourceCost(
+  cost: Cost,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+  equivalenceSourceInstanceId: number,
+): boolean {
+  const resources = cost.resources ?? [];
+  const available = getSpendableResources(gameState, cost.forUpgrade);
+  if (cost.discount) {
+    const { payable, total } = getDiscountedPayment(
+      fixResources(resources[0] ?? {}),
+      available,
+      cost.discount,
+    );
+    return countResources(payable) >= total;
+  }
+  const equivalence = getSourceResourceEquivalence(
+    equivalenceSourceInstanceId,
+    gameState,
+    defs,
+    stickerDefs,
+  );
+  if (!equivalence)
+    return canAffordResources(
+      available,
+      resources.map(r => fixResources(r)),
+    );
+  return resources.some(
+    resourceCost =>
+      getPayableResourceCostVariants(fixResources(resourceCost), available, equivalence).length > 0,
+  );
+}
 
 /** Vérifie si les cartes requises pour un coût discard/destroy existent dans la sélection. */
 export function canAffordCost(
@@ -16,27 +52,11 @@ export function canAffordCost(
   stickerDefs: Record<number, Sticker>,
   equivalenceSourceInstanceId = instanceId,
 ): boolean {
-  if (cost?.resources) {
-    const available = getSpendableResources(gameState, cost.forUpgrade);
-    const equivalence = getSourceResourceEquivalence(
-      equivalenceSourceInstanceId,
-      gameState,
-      defs,
-      stickerDefs,
-    );
-
-    const canAffordResourceCostOption = equivalence
-      ? cost.resources.some(
-          resourceCost =>
-            getPayableResourceCostVariants(fixResources(resourceCost), available, equivalence)
-              .length > 0,
-        )
-      : canAffordResources(
-          available,
-          cost.resources.map(r => fixResources(r)),
-        );
-
-    if (!canAffordResourceCostOption) return false;
+  if (
+    cost?.resources &&
+    !canAffordResourceCost(cost, gameState, defs, stickerDefs, equivalenceSourceInstanceId)
+  ) {
+    return false;
   }
 
   if (

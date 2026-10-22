@@ -22,7 +22,9 @@ export type Condition =
   // the card owning the condition is one of the cards just played (drawn or played by an effect)
   | { type: 'justPlayed' }
   // every step `ids` of the card owning the condition is marked ("if all green are marked")
-  | { type: 'stepsMarked'; ids: number[] };
+  | { type: 'stepsMarked'; ids: number[] }
+  // one of the stickers `ids` (any, without ids) was just added to the card owning the condition
+  | { type: 'stickerAdded'; ids?: number[] };
 
 export type CardDef = {
   id: number;
@@ -110,11 +112,15 @@ export type ValuePerElement = {
   paid?: boolean; // the amount paid for the action's 'any' resource cost (Statues)
   markedSteps?: boolean; // the boxes marked on the card's current state (Valiant Prince)
   plus?: number; // added to the count ("its glory +7")
+  max?: number; // the count is at most this (Calculations: 100)
 };
 
 export type RemovedResourceScope = 'production' | 'actionCost' | 'upgradeCost';
 /** 'board': the cards start in play, without being played (Silvanus). */
 export type DeckTarget = 'draw' | 'discard' | 'discovery' | 'board';
+
+/** Actions a USE_CARD_ACTION may use: ✓ or ⌛ (not ∞), or only ⌛. */
+export type UsableActions = 'activated' | 'timed';
 
 export type ActionEffect = {
   id: number;
@@ -143,8 +149,10 @@ export type ActionEffect = {
   condition?: Condition; // checked when the effect resolves: skipped when it does not hold
   writeNames?: boolean; // ADD_GLORY: also writes the names of the `valuePerElement.cards` (Famous Court)
   keepGlory?: boolean; // SAVE_FROM_PURGE: the saved card's glory still counts in the purge (Countess)
-  stickerHere?: boolean; // REMOVE_RESOURCE_ON_CARD: the source gets the crossed out resource's sticker
+  // REMOVE_RESOURCE_ON_CARD: the source ('lastSelected': the card chosen before) gets its sticker
+  stickerHere?: boolean | 'lastSelected';
   keepSelection?: boolean; // its target does not become LAST_SELECTED (the next effects keep the card)
+  usableActions?: UsableActions; // USE_CARD_ACTION: only these actions ('activated' ✓ / ⌛, 'timed' ⌛)
   sourceInstanceId?: number; // card the effect resolves for, when not the acting card (USE_CARD_ACTION)
   usedAction?: { instanceId: number; actionId: string }; // USE_CARD_ACTION: the chosen action
   unlock?: Unlock; // UNLOCK: what a foundation brings
@@ -204,6 +212,9 @@ export type CardSelector = {
   notWrittenHere?: boolean; // the card's name is not written on the selecting card (Famous Court)
   notStaying?: boolean; // the card does not stay in play (Endurance)
   equipped?: boolean; // the card is (true) or is not (false) equipped to a card in play
+  withoutTags?: CardTag[]; // the card has none of these tags (Forbidden Knowledge: not permanent)
+  firstOnly?: boolean; // only the first matching card, in pile order (the next undiscovered card)
+  inPlayWhenInPlay?: boolean; // only the cards in play while the selecting card is in play
   withoutStickerIds?: number[]; // the card carries none of these stickers
 };
 
@@ -221,6 +232,7 @@ export type StickerSelector = {
   pickMin?: number;
   pickMax?: number;
   producedByLastSelected?: boolean; // the stickers of the resources the last selected card produces
+  lastAdded?: boolean; // the stickers just added to the card (among `ids` when given)
 };
 
 export type StateSelector = {
@@ -249,7 +261,12 @@ export type ResolvedActionEffect = {
   unresolvable?: boolean;
   /** ADD_GLORY with `writeNames`: the names written with the value. */
   names?: string[];
+  /** ORDER_CARDS: the cards destroyed instead of being put back. */
+  destroyedIds?: number[];
   keepGlory?: boolean;
   stickerHere?: boolean;
+  /** REMOVE_RESOURCE_ON_CARD `stickerHere`: the card that gets the sticker. */
+  stickerTargetId?: number;
   keepSelection?: boolean;
+  usableActions?: UsableActions;
 };

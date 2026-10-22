@@ -118,6 +118,8 @@ export type GameState = {
   unlockedResources?: ResourceType[];
   /** Equipped cards (Artisans): equipment id → holder id, while both are in play. */
   equipped?: Record<number, number>;
+  /** The stickers just added, by card (ON_STICKER_ADDED triggers read them). */
+  lastAddedStickers?: Record<number, number[]>;
   /** Actions with a `perTurn` limit used this turn (`instanceId|actionId`), cleared each turn. */
   turnUsedActions?: string[];
   /** Resource units the next gains of this turn lose (Too Much Mead). */

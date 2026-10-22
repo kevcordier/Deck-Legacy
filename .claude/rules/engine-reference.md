@@ -278,3 +278,14 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - `REMOVE_RESOURCE_ON_CARD` with `stickerHere`: the source gets the sticker of the crossed out resource, from the stock (Lord Edric). `StickerSelector.producedByLastSelected` offers the stickers of what the last selected card produces (House of Stonehaven).
 - `ValuePerElement.markedSteps` (boxes marked on the current state) and `plus` (added to the count, "its glory +7").
 - `ActionEffect.keepSelection`: its target does not become `LAST_SELECTED`, so the next effects still act on the card chosen before (an effect on the card itself between them).
+
+## Mechanics added for Foundations: Mechanics
+
+- Discounted costs: `ADJUST_UPDATE_COST` with `amount` sets `Cost.discount` (Crane: upgrading buildings costs 2 less); the player pays the rest of `resources[0]` through a `SPLIT_RESOURCES` choice capped by the cost (`getDiscountedPayment`).
+- Equipment: an equipment's passives apply only once equipped (`getActivePassives`; `EquipStrategy` adds them); using a ✓ effect of an equipment discards its holder (and the equipment with it).
+- `PassiveType.COUNT_AS` with `valuePerElement` (copies per element, Inventor Workshop: 1 invention per box) and `cards.tags` (only for the selections asking for these tags).
+- `Trigger.ON_STICKER_ADDED`: fired on the cards that got a sticker (`GameState.lastAddedStickers`, `Condition.stickerAdded`, `StickerSelector.lastAdded`; Irrigation, Mine Shaft).
+- `USE_CARD_ACTION` `usableActions`: 'activated' (✓ / ⌛, Breakthrough) or 'timed' (⌛, Industry).
+- Selectors: `TargetScope.BOX` (the undiscovered cards of the box, in order), `firstOnly`, `withoutTags`, `inPlayWhenInPlay` (Inventor Workshop's glory). `ValuePerElement.max` caps a count (Calculations).
+- `ORDER_CARDS` (Performance): the next `value` cards of the box are offered as a `PendingChoiceType.ORDER_CARDS`; the player answers the order (`instanceIds`) and at most one card to destroy (`destroyedIds`, checked by `isValidOrder`). The client shows a drag and drop sorting screen with a destroy slot.
+- `REMOVE_RESOURCE_ON_CARD` `stickerHere: 'lastSelected'`: the sticker goes to the card chosen before (Wheelbarrow). `UPGRADED_TO_BOTTOM_OF_DECK` (Crane).

@@ -161,7 +161,21 @@
       "DEFEAT_CARD": "Choisissez un ennemi à vaincre",
       "DEFEAT_CARD_other": "Choisissez {{count}} ennemis à vaincre",
       "REMOVE_STICKER": "Choisissez une carte dont retirer le sticker",
-      "REMOVE_STICKER_other": "Choisissez {{count}} cartes dont retirer le sticker"
+      "REMOVE_STICKER_other": "Choisissez {{count}} cartes dont retirer le sticker",
+      "UPGRADE_CARD": "Choisissez une carte à améliorer",
+      "UPGRADE_CARD_other": "Choisissez {{count}} cartes à améliorer",
+      "ADD_CUMULATED": "Choisissez une carte",
+      "ADD_CUMULATED_other": "Choisissez {{count}} cartes",
+      "SAVE_FROM_PURGE": "Choisissez une carte à sauver de la purge",
+      "SAVE_FROM_PURGE_other": "Choisissez {{count}} cartes à sauver de la purge",
+      "UNBLOCK_CARD": "Choisissez une carte à libérer",
+      "UNBLOCK_CARD_other": "Choisissez {{count}} cartes à libérer",
+      "EQUIP": "Choisissez la carte à équiper",
+      "EQUIP_other": "Choisissez la carte à équiper",
+      "CROSS_OUT_GLORY": "Choisissez une carte dont vous rayez la gloire",
+      "CROSS_OUT_GLORY_other": "Choisissez {{count}} cartes dont vous rayez la gloire",
+      "CROSS_OUT_ACTION": "Choisissez une carte pour rayer un de ses effets",
+      "CROSS_OUT_ACTION_other": "Choisissez {{count}} cartes pour rayer un de leurs effets"
     },
     "chooseActionEffect": "Choisissez un effet à résoudre",
     "chooseStep": "Choisir une étape",
@@ -181,6 +195,14 @@
       "less": "Un(e) {{resource}} de moins",
       "more": "Un(e) {{resource}} de plus",
       "confirm": "Payer ({{paid}}/{{total}})"
+    },
+    "order": {
+      "title": "Réordonnez les cartes",
+      "hint": "Faites glisser les cartes dans l'ordre voulu (la première vient en premier). Déposez une carte à droite pour la détruire.",
+      "first": "Première",
+      "destroy": "Détruire",
+      "dropHere": "Déposez une carte ici pour la détruire",
+      "confirm": "Confirmer"
     }
   },
   "triggerPile": {

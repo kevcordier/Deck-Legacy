@@ -113,6 +113,23 @@ import { baronRoderick } from './cards/309';
 import { ladyElara } from './cards/310';
 import { wealthContest } from './cards/311';
 import { growHouses } from './cards/312';
+import { mechanicsCover } from './cards/313';
+import { sirBeaufort } from './cards/314';
+import { tinker } from './cards/315';
+import { workshop } from './cards/316';
+import { irrigation } from './cards/317';
+import { wheelbarrow } from './cards/318';
+import { stagePreparations } from './cards/319';
+import { holeInTheRoof } from './cards/320';
+import { breakthrough } from './cards/321';
+import { brainstorming } from './cards/322';
+import { rust } from './cards/323';
+import { hydraulics } from './cards/324';
+import { wagon } from './cards/325';
+import { craneConstruction } from './cards/326';
+import { siegeEngine } from './cards/327';
+import { calculations } from './cards/328';
+import { childrensToy } from './cards/329';
 import deck from './deck.json';
 import en from './locales/cards.en.json';
 import fr from './locales/cards.fr.json';
@@ -235,5 +252,22 @@ export const foundations: ExpansionPack = {
     ladyElara,
     wealthContest,
     growHouses,
+    mechanicsCover,
+    sirBeaufort,
+    tinker,
+    workshop,
+    irrigation,
+    wheelbarrow,
+    stagePreparations,
+    holeInTheRoof,
+    breakthrough,
+    brainstorming,
+    rust,
+    hydraulics,
+    wagon,
+    craneConstruction,
+    siegeEngine,
+    calculations,
+    childrensToy,
   ],
 };

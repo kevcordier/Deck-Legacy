@@ -92,9 +92,11 @@ export function countValuePerElement(
   stickerDefs: Record<number, Sticker>,
   lastSelectedIds?: number[],
 ): number {
-  const count =
+  const count = Math.min(
     countElements(valuePerElement, gameState, instanceId, defs, stickerDefs, lastSelectedIds) +
-    (valuePerElement.plus ?? 0);
+      (valuePerElement.plus ?? 0),
+    valuePerElement.max ?? Infinity,
+  );
 
   if (valuePerElement.deficitTarget !== undefined) {
     return Math.max(0, valuePerElement.deficitTarget - count);

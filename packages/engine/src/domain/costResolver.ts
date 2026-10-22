@@ -6,6 +6,7 @@ import { CostResolutionError } from './errors/CostResolutionError';
 import { countResources } from './resources/countResources';
 import { dedupeResourceOptions } from './resources/dedupeResourceOptions';
 import { fixResources } from './resources/fixResources';
+import { getDiscountedPayment } from './resources/getDiscountedPayment';
 import { getPayableResourceCostVariants } from './resources/getPayableResourceCostVariants';
 import { getSourceResourceEquivalence } from './resources/getSourceResourceEquivalence';
 import type {
@@ -78,6 +79,36 @@ function splitResourcesChoice(
   };
 }
 
+/** A discounted cost (Crane): the player picks the units they pay; none when it is free. */
+function discountedChoice(
+  cost: Cost,
+  instanceId: number,
+  gameState: GameState,
+  isMandatory: boolean,
+): PendingChoice | null {
+  const owned = sanitizeAvailable(getSpendableResources(gameState, cost.forUpgrade));
+  const { payable, total } = getDiscountedPayment(
+    fixResources(cost.resources?.[0] ?? {}),
+    owned,
+    cost.discount ?? 0,
+  );
+  if (total === 0) return null;
+  if (countResources(payable) < total) {
+    throw new CostResolutionError('errors.cost.notEnoughResources');
+  }
+  return {
+    id: `${instanceId}-cost-split`,
+    kind: ActionEffectType.COST,
+    type: PendingChoiceType.SPLIT_RESOURCES,
+    sourceInstanceId: instanceId,
+    choices: [payable],
+    total,
+    pickMax: 1,
+    pickMin: 1,
+    isMandatory,
+  };
+}
+
 function getPayableResourceCosts(
   cost: Cost,
   equivalenceSourceInstanceId: number,
@@ -108,6 +139,31 @@ function getPayableResourceCosts(
   );
 }
 
+/** The resources of a cost: paid at once, or a choice (options, a discounted split). */
+function resourcesChoice(
+  cost: Cost,
+  instanceId: number,
+  gameState: GameState,
+  defs: Record<number, CardDef>,
+  stickerDefs: Record<number, Sticker>,
+  isMandatory: boolean,
+  equivalenceSourceInstanceId: number,
+): { pending?: PendingChoice; resources: Resources } {
+  if (cost.discount) {
+    const pending = discountedChoice(cost, instanceId, gameState, isMandatory);
+    return { ...(pending && { pending }), resources: {} };
+  }
+  const payable = getPayableResourceCosts(
+    cost,
+    equivalenceSourceInstanceId,
+    gameState,
+    defs,
+    stickerDefs,
+  );
+  const pending = resourceCostChoice(payable, instanceId, isMandatory);
+  return pending ? { pending, resources: {} } : { resources: payable[0] };
+}
+
 export function resolveCost(
   cost: Cost,
   instanceId: number,
@@ -125,16 +181,17 @@ export function resolveCost(
   };
 
   if (cost.resources) {
-    const payable = getPayableResourceCosts(
+    const choice = resourcesChoice(
       cost,
-      equivalenceSourceInstanceId,
+      instanceId,
       gameState,
       defs,
       stickerDefs,
+      isMandatory,
+      equivalenceSourceInstanceId,
     );
-    const choice = resourceCostChoice(payable, instanceId, isMandatory);
-    if (choice) pendingChoices.push(choice);
-    else resolvedCost.resources = payable[0];
+    if (choice.pending) pendingChoices.push(choice.pending);
+    else resolvedCost.resources = choice.resources;
   }
 
   if (cost.anyResources) {

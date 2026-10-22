@@ -161,7 +161,21 @@
       "DEFEAT_CARD": "Choose an enemy to defeat",
       "DEFEAT_CARD_other": "Choose {{count}} enemies to defeat",
       "REMOVE_STICKER": "Choose a card to remove the sticker from",
-      "REMOVE_STICKER_other": "Choose {{count}} cards to remove the sticker from"
+      "REMOVE_STICKER_other": "Choose {{count}} cards to remove the sticker from",
+      "UPGRADE_CARD": "Choose a card to upgrade",
+      "UPGRADE_CARD_other": "Choose {{count}} cards to upgrade",
+      "ADD_CUMULATED": "Choose a card",
+      "ADD_CUMULATED_other": "Choose {{count}} cards",
+      "SAVE_FROM_PURGE": "Choose a card to save from the purge",
+      "SAVE_FROM_PURGE_other": "Choose {{count}} cards to save from the purge",
+      "UNBLOCK_CARD": "Choose a card to release",
+      "UNBLOCK_CARD_other": "Choose {{count}} cards to release",
+      "EQUIP": "Choose the card to equip",
+      "EQUIP_other": "Choose the card to equip",
+      "CROSS_OUT_GLORY": "Choose a card whose glory you cross out",
+      "CROSS_OUT_GLORY_other": "Choose {{count}} cards whose glory you cross out",
+      "CROSS_OUT_ACTION": "Choose a card to cross out one of its effects",
+      "CROSS_OUT_ACTION_other": "Choose {{count}} cards to cross out one of their effects"
     },
     "chooseActionEffect": "Choose an effect to resolve",
     "chooseStep": "Choose a track step",
@@ -181,6 +195,14 @@
       "less": "One {{resource}} less",
       "more": "One {{resource}} more",
       "confirm": "Pay ({{paid}}/{{total}})"
+    },
+    "order": {
+      "title": "Re-arrange the cards",
+      "hint": "Drag the cards into the order you want (the first one comes first). Drop one card on the right to destroy it.",
+      "first": "First",
+      "destroy": "Destroy",
+      "dropHere": "Drop a card here to destroy it",
+      "confirm": "Confirm"
     }
   },
   "triggerPile": {

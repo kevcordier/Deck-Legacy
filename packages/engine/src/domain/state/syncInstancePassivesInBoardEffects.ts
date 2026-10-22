@@ -1,4 +1,4 @@
-import { getActiveState } from '../cards/selection/getActiveState';
+import { getActivePassives } from '../cards/selection/getActivePassives';
 import type { CardDef, GameState } from '../types';
 
 export const syncInstancePassivesInBoardEffects = (
@@ -12,7 +12,7 @@ export const syncInstancePassivesInBoardEffects = (
     return gameState;
   }
 
-  const passives = getActiveState(instance, cardDefs)?.passives ?? [];
+  const passives = getActivePassives(gameState, instanceId, cardDefs);
   if (passives.length === 0) {
     const { [instanceId]: _synced, ...restBoardEffects } = gameState.boardEffects;
     gameState.boardEffects = restBoardEffects;

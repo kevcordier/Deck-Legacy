@@ -42,7 +42,9 @@ export class RemoveResourceOnCardStrategy implements CardActionStrategy {
       });
     });
 
-    if (payload.stickerHere) this.addStickers(gs, payload.sourceInstanceId, removedKeys);
+    if (payload.stickerHere) {
+      this.addStickers(gs, payload.stickerTargetId ?? payload.sourceInstanceId, removedKeys);
+    }
     return {
       ...gs,
       instances: gs.instances,

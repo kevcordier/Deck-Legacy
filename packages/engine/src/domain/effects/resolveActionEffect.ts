@@ -809,12 +809,93 @@ function buildResolveContext(params: {
   };
 }
 
+/** The effects resolved by their own function: tracks, orders, used actions, sequences… */
+function resolveEffectApart(
+  action: ActionEffect,
+  resolverAction: ResolvedActionEffect,
+  ctx: ResolveContext,
+  enrichedCards: CardSelector | undefined,
+): [ResolvedActionEffect, PendingChoice[]] | null {
+  switch (action.type) {
+    case ActionEffectType.TRACK_ADVANCE:
+      return action.cards ? resolveTrackAdvance(action, action.cards, resolverAction, ctx) : null;
+    case ActionEffectType.ORDER_CARDS:
+      return resolveOrderCardsEffect(action, resolverAction, ctx);
+    case ActionEffectType.USE_CARD_ACTION:
+      return resolveUseCardAction(resolverAction, ctx, action, enrichedCards);
+    case ActionEffectType.SEQUENCE:
+      resolverAction.newActionEffects = action.effects ?? [];
+      return [resolverAction, []];
+    case ActionEffectType.CROSS_OUT_ACTION:
+      return resolveCrossOutAction(resolverAction, ctx, action, enrichedCards);
+    default:
+      return null;
+  }
+}
+
+/** ORDER_CARDS: its count from `value` or `valuePerElement` (the persons discarded). */
+function resolveOrderCardsEffect(
+  action: ActionEffect,
+  resolverAction: ResolvedActionEffect,
+  ctx: ResolveContext,
+): [ResolvedActionEffect, PendingChoice[]] {
+  if (action.valuePerElement) applyValuePerElement(resolverAction, action, ctx);
+  return resolveOrderCards(resolverAction, ctx, resolverAction.value ?? action.value ?? 1);
+}
+
+/** ORDER_CARDS: the next `count` cards of the box to put in order; 1 of them may be destroyed. */
+function resolveOrderCards(
+  resolverAction: ResolvedActionEffect,
+  ctx: ResolveContext,
+  count: number,
+): [ResolvedActionEffect, PendingChoice[]] {
+  const box = ctx.gameState.discoverablePile ?? ctx.gameState.discoveryPile;
+  const ids = box.slice(0, Math.max(0, count));
+  if (ids.length === 0) return [resolverAction, []];
+  return [
+    resolverAction,
+    [
+      {
+        id: `${ctx.instanceId}-${ctx.effectId}`,
+        actionId: ctx.parentActionId,
+        effectId: ctx.effectId,
+        kind: ctx.actionType,
+        type: PendingChoiceType.ORDER_CARDS,
+        sourceInstanceId: ctx.instanceId,
+        choices: ids,
+        pickMin: 0,
+        pickMax: 1,
+        isMandatory: ctx.isMandatory,
+      },
+    ],
+  ];
+}
+
 /** The flags an effect passes on to its strategy and to the action (keepGlory…). */
-function resolvedFlags(action: ActionEffect): Partial<ResolvedActionEffect> {
-  const { keepGlory, stickerHere, keepSelection } = action;
-  return Object.fromEntries(
-    Object.entries({ keepGlory, stickerHere, keepSelection }).filter(([, value]) => value),
+function resolvedFlags(
+  action: ActionEffect,
+  lastSelectedIds?: number[],
+): Partial<ResolvedActionEffect> {
+  const { keepGlory, keepSelection, usableActions } = action;
+  const flags: Partial<ResolvedActionEffect> = Object.fromEntries(
+    Object.entries({ keepGlory, keepSelection, usableActions }).filter(([, value]) => value),
   );
+  if (action.stickerHere) {
+    flags.stickerHere = true;
+    // 'lastSelected' (Wheelbarrow): the card chosen before gets the sticker
+    if (action.stickerHere === 'lastSelected') flags.stickerTargetId = lastSelectedIds?.[0];
+  }
+  return flags;
+}
+
+/** The stickers an ADD_STICKER offers: its ids, those just added here, or the last card's. */
+function getOfferedStickers(stickers: StickerSelector, ctx: ResolveContext): number[] {
+  if (stickers.producedByLastSelected) return getStickersOfLastSelected(ctx);
+  if (stickers.lastAdded) {
+    const added = ctx.gameState.lastAddedStickers?.[ctx.instanceId] ?? [];
+    return added.filter(id => !stickers.ids || stickers.ids.includes(id));
+  }
+  return stickers.ids ?? [];
 }
 
 /** The resource stickers of what the last selected card produces (House of Stonehaven). */
@@ -838,9 +919,7 @@ function resolveStickerTarget(
   stickers: StickerSelector,
 ): [ResolvedActionEffect, PendingChoice[]] {
   const { effectId, parentActionId, actionType, instanceId, isMandatory, gameState } = ctx;
-  const offeredIds = stickers.producedByLastSelected
-    ? getStickersOfLastSelected(ctx)
-    : (stickers.ids ?? []);
+  const offeredIds = getOfferedStickers(stickers, ctx);
   const availableIds = offeredIds.filter(id => (gameState.stickerStock[id] ?? 0) > 0);
   const picks = getPickNumbers(stickers, availableIds.length);
   if (stickers.pickMin && availableIds.length < stickers.pickMin) {
@@ -1082,7 +1161,7 @@ export function resolveActionEffect(
     id: `${instanceId}-${action.id}`,
     type: action.type,
     sourceInstanceId: instanceId,
-    ...resolvedFlags(action),
+    ...resolvedFlags(action, lastSelectedIds),
   };
   let pendingChoices: PendingChoice[] = [];
   const enrichedCards = getEnrichedCardSelector(action, lastSelectedIds);
@@ -1099,22 +1178,8 @@ export function resolveActionEffect(
     paidAmount: options.paidAmount,
   });
 
-  if (action.type === ActionEffectType.TRACK_ADVANCE && action.cards) {
-    return resolveTrackAdvance(action, action.cards, resolverAction, ctx);
-  }
-
-  if (action.type === ActionEffectType.USE_CARD_ACTION) {
-    return resolveUseCardAction(resolverAction, ctx, action, enrichedCards);
-  }
-
-  if (action.type === ActionEffectType.SEQUENCE) {
-    resolverAction.newActionEffects = action.effects ?? [];
-    return [resolverAction, pendingChoices];
-  }
-
-  if (action.type === ActionEffectType.CROSS_OUT_ACTION) {
-    return resolveCrossOutAction(resolverAction, ctx, action, enrichedCards);
-  }
+  const resolvedApart = resolveEffectApart(action, resolverAction, ctx, enrichedCards);
+  if (resolvedApart) return resolvedApart;
 
   if (action.type === ActionEffectType.CHOOSE_EFFECT && action.effects) {
     [resolverAction, pendingChoices] = resolveChooseActionEffect(

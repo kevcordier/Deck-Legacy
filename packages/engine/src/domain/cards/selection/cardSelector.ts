@@ -1,6 +1,7 @@
 import { type CardTag, PassiveType, TargetScope } from '../../enums';
 import type { CardDef, CardSelector, CardState, GameState, Sticker } from '../../types';
 import { cardShouldStayInPlay } from './cardShouldStayInPlay';
+import { countValuePerElement } from './countValuePerElement';
 import { getAffectedCardsByBoardEffects } from './getAffectedCardsByBoardEffects';
 import { getEffectiveProductions } from './getEffectiveProductions';
 import { matchHaving } from './matchHaving';
@@ -16,6 +17,7 @@ const LOCATION_SCOPES = new Set([
   TargetScope.BLOCKED,
   TargetScope.PERMANENTS,
   TargetScope.PURGE_SELECTED,
+  TargetScope.BOX,
   TargetScope.ANY,
 ]);
 
@@ -42,6 +44,9 @@ function addLocationScopeParts(
     parts.push(...gameState.discoveryPile, ...(gameState.discoverablePile ?? []));
   }
   if (locationScopes.includes(TargetScope.DISCARD)) parts.push(...gameState.discardPile);
+  if (locationScopes.includes(TargetScope.BOX)) {
+    parts.push(...(gameState.discoverablePile ?? gameState.discoveryPile));
+  }
   if (locationScopes.includes(TargetScope.BLOCKED)) parts.push(...blockedInstanceIds);
   if (locationScopes.includes(TargetScope.PERMANENTS))
     parts.push(...Object.values(gameState.permanents));
@@ -152,16 +157,23 @@ function hasIntrinsicCountAs2(
   return state.passives.some(passive => passive.type === PassiveType.COUNT_AS_2);
 }
 
-/** Copies a card adds to a selection besides itself: "counts as N" (COUNT_AS, `amount` = N). */
-function intrinsicCountAsExtra(
-  id: number,
-  gameState: GameState,
-  defs: Record<number, CardDef>,
-): number {
+/**
+ * Copies a card adds to a selection besides itself: "counts as N" (COUNT_AS, `amount` = N), or
+ * one per element of `valuePerElement` (Inventor Workshop: 1 invention per box), only for the
+ * selections asking for the passive's `cards.tags` when it has some.
+ */
+function intrinsicCountAsExtra(id: number, ctx: CardCriteriaContext): number {
+  const { gameState, defs, stickerDefs } = ctx;
   const inst = gameState.instances[id];
   const state = inst && defs[inst.cardId]?.states.find(s => s.id === inst.stateId);
   const countAs = state?.passives?.find(passive => passive.type === PassiveType.COUNT_AS);
-  return countAs ? Math.max(0, (countAs.amount ?? 1) - 1) : 0;
+  if (!countAs) return 0;
+  const onlyFor = countAs.cards?.tags;
+  if (onlyFor && !onlyFor.some(tag => ctx.selector.tags?.includes(tag))) return 0;
+  if (countAs.valuePerElement) {
+    return countValuePerElement(countAs.valuePerElement, gameState, id, defs, stickerDefs);
+  }
+  return Math.max(0, (countAs.amount ?? 1) - 1);
 }
 
 function matchesStickers(
@@ -221,7 +233,21 @@ function matchesCardCriteria(id: number, ctx: CardCriteriaContext): boolean {
   if (!matchesStickers(stickers, ctx.selector)) return false;
   if (!matchesUpgrades(state, ctx)) return false;
   if (ctx.withTrack && !hasAvailableTrackStep(state, inst.trackProgress)) return false;
-  return matchesNotWritten(state.name, ctx) && matchesEquipment(id, ctx) && matchesStaying(id, ctx);
+  return (
+    matchesNotWritten(state.name, ctx) &&
+    matchesEquipment(id, ctx) &&
+    matchesStaying(id, ctx) &&
+    matchesPlace(id, state, ctx)
+  );
+}
+
+/** `withoutTags`, and `inPlayWhenInPlay` (Inventor Workshop: the inventions in play with it). */
+function matchesPlace(id: number, state: CardState, ctx: CardCriteriaContext): boolean {
+  if (ctx.selector.withoutTags?.some(tag => state.tags?.includes(tag))) return false;
+  if (!ctx.selector.inPlayWhenInPlay) return true;
+  const { board, permanents } = ctx.gameState;
+  const inPlay = (cardId: number) => board.includes(cardId) || permanents.includes(cardId);
+  return !inPlay(ctx.instanceId) || inPlay(id);
 }
 
 function matchesNotWritten(name: string, ctx: CardCriteriaContext): boolean {
@@ -326,9 +352,10 @@ export function cardSelector(
     withTrack,
   };
 
-  const selectedIds = pool
+  const matching = pool
     .filter(id => matchesCardCriteria(id, ctx))
     .filter(id => matchHaving(id, gameState.instances[id].stateId, ctx));
+  const selectedIds = selector.firstOnly ? matching.slice(0, 1) : matching;
 
   const countAs2InstanceIds = new Set(
     Object.values(getAffectedCardsByBoardEffects(gameState, PassiveType.COUNT_AS_2)).flat(),
@@ -343,9 +370,7 @@ export function cardSelector(
       seen.add(id);
     }
     if (!seen.has(id)) {
-      extraIds.push(
-        ...Array.from({ length: intrinsicCountAsExtra(id, gameState, defs) }, () => id),
-      );
+      extraIds.push(...Array.from({ length: intrinsicCountAsExtra(id, ctx) }, () => id));
       seen.add(id);
     }
   });

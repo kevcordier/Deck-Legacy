@@ -15,7 +15,15 @@ export function chooseUsedAction(
   stickerDefs: Record<number, Sticker>,
 ): [ResolvedActionEffect, PendingChoice[]] {
   const options =
-    targetId === undefined ? [] : getUsableActionEffects(targetId, gameState, defs, stickerDefs);
+    targetId === undefined
+      ? []
+      : getUsableActionEffects(
+          targetId,
+          gameState,
+          defs,
+          stickerDefs,
+          resolvedAction.usableActions,
+        );
   const resolved = { ...resolvedAction, instanceIds: targetId === undefined ? [] : [targetId] };
   if (options.length <= 1) return [{ ...resolved, newActionEffects: options }, []];
   return [

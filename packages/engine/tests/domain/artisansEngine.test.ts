@@ -89,7 +89,7 @@ const equippedState = (overrides: Partial<GameState> = {}) =>
 
 describe('equipment', () => {
   it('is placed under the chosen card by EQUIP', () => {
-    const strategy = new EquipStrategy();
+    const strategy = new EquipStrategy(defs);
     const state = stateWith({ board: [PERSON, RING] });
     const base = { id: 'x', type: ActionEffectType.EQUIP, sourceInstanceId: RING };
     expect(strategy.apply(state, base)).toBe(state);
