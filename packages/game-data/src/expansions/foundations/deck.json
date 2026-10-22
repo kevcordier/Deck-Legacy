@@ -105,7 +105,103 @@
           "number": 15
         }
       ],
-      "discoverable": []
+      "discoverable": [
+        {
+          "id": 236,
+          "cardId": 218,
+          "number": 45
+        },
+        {
+          "id": 237,
+          "cardId": 219,
+          "number": 46
+        },
+        {
+          "id": 238,
+          "cardId": 220,
+          "number": 47
+        },
+        {
+          "id": 239,
+          "cardId": 221,
+          "number": 48
+        },
+        {
+          "id": 240,
+          "cardId": 222,
+          "number": 49
+        },
+        {
+          "id": 241,
+          "cardId": 223,
+          "number": 50
+        },
+        {
+          "id": 242,
+          "cardId": 224,
+          "number": 51
+        },
+        {
+          "id": 243,
+          "cardId": 225,
+          "number": 52
+        },
+        {
+          "id": 244,
+          "cardId": 226,
+          "number": 53
+        },
+        {
+          "id": 245,
+          "cardId": 227,
+          "number": 54
+        },
+        {
+          "id": 246,
+          "cardId": 227,
+          "number": 55
+        },
+        {
+          "id": 247,
+          "cardId": 227,
+          "number": 56
+        },
+        {
+          "id": 248,
+          "cardId": 227,
+          "number": 57
+        },
+        {
+          "id": 249,
+          "cardId": 231,
+          "number": 58
+        },
+        {
+          "id": 250,
+          "cardId": 232,
+          "number": 59
+        },
+        {
+          "id": 251,
+          "cardId": 233,
+          "number": 60
+        },
+        {
+          "id": 252,
+          "cardId": 234,
+          "number": 61
+        },
+        {
+          "id": 253,
+          "cardId": 235,
+          "number": 62
+        },
+        {
+          "id": 254,
+          "cardId": 236,
+          "number": 63
+        }
+      ]
     },
     "Invasion": {
       "expansionMaxRound": 5,
@@ -211,7 +307,103 @@
           "number": 29
         }
       ],
-      "discoverable": []
+      "discoverable": [
+        {
+          "id": 236,
+          "cardId": 218,
+          "number": 45
+        },
+        {
+          "id": 237,
+          "cardId": 219,
+          "number": 46
+        },
+        {
+          "id": 238,
+          "cardId": 220,
+          "number": 47
+        },
+        {
+          "id": 239,
+          "cardId": 221,
+          "number": 48
+        },
+        {
+          "id": 240,
+          "cardId": 222,
+          "number": 49
+        },
+        {
+          "id": 241,
+          "cardId": 223,
+          "number": 50
+        },
+        {
+          "id": 242,
+          "cardId": 224,
+          "number": 51
+        },
+        {
+          "id": 243,
+          "cardId": 225,
+          "number": 52
+        },
+        {
+          "id": 244,
+          "cardId": 226,
+          "number": 53
+        },
+        {
+          "id": 245,
+          "cardId": 227,
+          "number": 54
+        },
+        {
+          "id": 246,
+          "cardId": 227,
+          "number": 55
+        },
+        {
+          "id": 247,
+          "cardId": 227,
+          "number": 56
+        },
+        {
+          "id": 248,
+          "cardId": 227,
+          "number": 57
+        },
+        {
+          "id": 249,
+          "cardId": 231,
+          "number": 58
+        },
+        {
+          "id": 250,
+          "cardId": 232,
+          "number": 59
+        },
+        {
+          "id": 251,
+          "cardId": 233,
+          "number": 60
+        },
+        {
+          "id": 252,
+          "cardId": 234,
+          "number": 61
+        },
+        {
+          "id": 253,
+          "cardId": 235,
+          "number": 62
+        },
+        {
+          "id": 254,
+          "cardId": 236,
+          "number": 63
+        }
+      ]
     },
     "Nature's Revenge": {
       "expansionMaxRound": 6,
@@ -322,7 +514,103 @@
           "number": 44
         }
       ],
-      "discoverable": []
+      "discoverable": [
+        {
+          "id": 236,
+          "cardId": 218,
+          "number": 45
+        },
+        {
+          "id": 237,
+          "cardId": 219,
+          "number": 46
+        },
+        {
+          "id": 238,
+          "cardId": 220,
+          "number": 47
+        },
+        {
+          "id": 239,
+          "cardId": 221,
+          "number": 48
+        },
+        {
+          "id": 240,
+          "cardId": 222,
+          "number": 49
+        },
+        {
+          "id": 241,
+          "cardId": 223,
+          "number": 50
+        },
+        {
+          "id": 242,
+          "cardId": 224,
+          "number": 51
+        },
+        {
+          "id": 243,
+          "cardId": 225,
+          "number": 52
+        },
+        {
+          "id": 244,
+          "cardId": 226,
+          "number": 53
+        },
+        {
+          "id": 245,
+          "cardId": 227,
+          "number": 54
+        },
+        {
+          "id": 246,
+          "cardId": 227,
+          "number": 55
+        },
+        {
+          "id": 247,
+          "cardId": 227,
+          "number": 56
+        },
+        {
+          "id": 248,
+          "cardId": 227,
+          "number": 57
+        },
+        {
+          "id": 249,
+          "cardId": 231,
+          "number": 58
+        },
+        {
+          "id": 250,
+          "cardId": 232,
+          "number": 59
+        },
+        {
+          "id": 251,
+          "cardId": 233,
+          "number": 60
+        },
+        {
+          "id": 252,
+          "cardId": 234,
+          "number": 61
+        },
+        {
+          "id": 253,
+          "cardId": 235,
+          "number": 62
+        },
+        {
+          "id": 254,
+          "cardId": 236,
+          "number": 63
+        }
+      ]
     }
   }
 }

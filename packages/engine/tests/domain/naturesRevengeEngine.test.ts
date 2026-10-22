@@ -155,3 +155,17 @@ describe("Purge added for Nature's Revenge", () => {
     expect(glory.at(-1)).toBeLessThanOrEqual(-5);
   });
 });
+
+describe('The first cards of the deck', () => {
+  it('can be chosen among', () => {
+    const state = makeState({
+      drawPile: [1, 2, 3],
+      instances: {
+        1: makeInstance({ id: 1, cardId: 1, stateId: 1 }),
+        2: makeInstance({ id: 2, cardId: 1, stateId: 1 }),
+        3: makeInstance({ id: 3, cardId: 1, stateId: 1 }),
+      },
+    });
+    expect(cardSelector({ topOfDeck: 2 }, 99, state, defs, {})).toEqual([1, 2]);
+  });
+});

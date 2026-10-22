@@ -260,7 +260,10 @@ export function cardSelector(
   const isUpgradable = scope.includes(TargetScope.UPGRADABLE);
   const withTrack = scope.includes(TargetScope.WITH_TRACK);
 
-  const pool = buildCardPool(locationScopes, gameState, blockedInstanceIds);
+  const pool =
+    selector.topOfDeck === undefined
+      ? buildCardPool(locationScopes, gameState, blockedInstanceIds)
+      : gameState.drawPile.slice(0, selector.topOfDeck);
 
   const ctx: CardCriteriaContext = {
     instanceId,

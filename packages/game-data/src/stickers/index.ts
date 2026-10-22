@@ -11,7 +11,9 @@ import { knight } from './11';
 import { emptyValue } from './16';
 import { startsInPlay } from './17';
 import { bottomOfDeck } from './18';
+import { tab } from './60';
 import { infected } from './61';
+import { science } from './62';
 import { infectionMarked } from './161';
 import type { Sticker } from '@deck-legacy/engine/domain/types';
 
@@ -29,6 +31,8 @@ export const stickerData: Sticker[] = [
   emptyValue,
   startsInPlay,
   bottomOfDeck,
+  tab,
   infected,
+  science,
   infectionMarked,
 ];

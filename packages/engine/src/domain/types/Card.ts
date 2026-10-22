@@ -177,6 +177,7 @@ export type CardSelector = {
   random?: boolean; // picks `pickNumber` cards at random (seeded: replayed identically)
   each?: boolean; // the effect is repeated for each matching card ("each land in play")
   fullyUpgraded?: boolean; // the card has no upgrade left
+  topOfDeck?: number; // among the first cards of the deck, the player choosing (Air Balloons)
   stickerIds?: number[]; // the card carries one of these stickers (its current state)
   withoutStickerIds?: number[]; // the card carries none of these stickers
 };

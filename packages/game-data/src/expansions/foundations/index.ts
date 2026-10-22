@@ -29,6 +29,22 @@ import { bearCub } from './cards/213';
 import { drought } from './cards/214';
 import { earthquake } from './cards/215';
 import { lightningStrike } from './cards/217';
+import { scienceCover } from './cards/218';
+import { scienceTrack } from './cards/219';
+import { laughingStock } from './cards/220';
+import { obsession } from './cards/221';
+import { school49 } from './cards/222';
+import { monastery50 } from './cards/223';
+import { monastery51 } from './cards/224';
+import { curiousBoy } from './cards/225';
+import { curiousGirl } from './cards/226';
+import { student } from './cards/227';
+import { university } from './cards/231';
+import { experiments } from './cards/232';
+import { metallurgy } from './cards/233';
+import { aerostats } from './cards/234';
+import { stoneRoads } from './cards/235';
+import { appliedScience } from './cards/236';
 import deck from './deck.json';
 import en from './locales/cards.en.json';
 import fr from './locales/cards.fr.json';
@@ -67,5 +83,21 @@ export const foundations: ExpansionPack = {
     drought,
     earthquake,
     lightningStrike,
+    scienceCover,
+    scienceTrack,
+    laughingStock,
+    obsession,
+    school49,
+    monastery50,
+    monastery51,
+    curiousBoy,
+    curiousGirl,
+    student,
+    university,
+    experiments,
+    metallurgy,
+    aerostats,
+    stoneRoads,
+    appliedScience,
   ],
 };
