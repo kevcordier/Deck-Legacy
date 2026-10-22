@@ -12,7 +12,6 @@ interface StateCriteriaContext {
 function matchHavingGlory(id: number, stateId: number, ctx: StateCriteriaContext): boolean {
   const { gameState, defs, stickerDefs, selector } = ctx;
   const instance = gameState.instances[id];
-  if (!instance) return false;
   const activeState = defs[instance.cardId]?.states.find(s => s.id === stateId);
   if (
     activeState &&
@@ -30,7 +29,6 @@ function matchHavingGlory(id: number, stateId: number, ctx: StateCriteriaContext
 function matchHavingProduction(id: number, stateId: number, ctx: StateCriteriaContext): boolean {
   const { gameState, defs, stickerDefs, selector } = ctx;
   const instance = gameState.instances[id];
-  if (!instance) return false;
   const activeState = defs[instance.cardId]?.states.find(s => s.id === stateId);
   if (
     activeState &&
@@ -68,7 +66,6 @@ function matchHavingProduction(id: number, stateId: number, ctx: StateCriteriaCo
 function matchHavingSticker(id: number, stateId: number, ctx: StateCriteriaContext): boolean {
   const { gameState, selector } = ctx;
   const instance = gameState.instances[id];
-  if (!instance) return false;
   if (selector.having?.minStickers !== undefined || selector.having?.maxStickers !== undefined) {
     const stickers = instance.stickers[stateId] ?? [];
     if (selector.having.minStickers !== undefined && stickers.length < selector.having.minStickers)
@@ -81,6 +78,7 @@ function matchHavingSticker(id: number, stateId: number, ctx: StateCriteriaConte
 
 export function matchHaving(id: number, stateId: number, ctx: StateCriteriaContext): boolean {
   if (!ctx.selector.having) return true;
+  if (!ctx.gameState.instances[id]) return false;
 
   return (
     matchHavingGlory(id, stateId, ctx) &&

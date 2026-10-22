@@ -116,7 +116,7 @@ function getPayableResourceCosts(
   defs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
 ): Resources[] {
-  if (!cost.resources) return [];
+  const resources = cost.resources ?? [];
   const available = getSpendableResources(gameState, cost.forUpgrade);
 
   const equivalence = getSourceResourceEquivalence(
@@ -127,13 +127,13 @@ function getPayableResourceCosts(
   );
 
   if (!equivalence) {
-    return cost.resources
+    return resources
       .map(resourceCost => fixResources(resourceCost))
       .filter(resourceCost => canAffordResourceCost(available, resourceCost));
   }
 
   return dedupeResourceOptions(
-    cost.resources.flatMap(resourceCost =>
+    resources.flatMap(resourceCost =>
       getPayableResourceCostVariants(fixResources(resourceCost), available, equivalence),
     ),
   );

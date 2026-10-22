@@ -28,7 +28,6 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
 
   private getEffectiveProductionResourceKeys(instanceId: number, gs: GameState): Set<string> {
     const instance = gs.instances[instanceId];
-    if (!instance) return new Set();
     const state = getActiveState(instance, this.defs);
     const keys = (state?.productions ?? []).flatMap(prod =>
       Object.entries(getEffectiveProductions(prod, gs, this.defs, instance, this.stickerDefs))
@@ -52,7 +51,6 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
 
   private getActionCostResourceKeys(instanceId: number, gs: GameState): Set<string> {
     const instance = gs.instances[instanceId];
-    if (!instance) return new Set();
     const state = getActiveState(instance, this.defs);
     if (!state.actions?.length) return new Set();
 
@@ -65,7 +63,6 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
 
   private getUpgradeCostResourceKeys(instanceId: number, gs: GameState): Set<string> {
     const instance = gs.instances[instanceId];
-    if (!instance) return new Set();
     const state = getActiveState(instance, this.defs);
     if (!state.upgrade?.length) return new Set();
 
@@ -291,29 +288,9 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
       ];
     }
 
-    const targetId = choice.instanceIds?.[0];
-    if (targetId === undefined) {
-      return [
-        {
-          ...resolvedAction,
-          instanceIds: choice.instanceIds,
-        },
-        remainingPendingChoices,
-      ];
-    }
-
-    const targetInstance = gs.instances[targetId];
-    if (!targetInstance) {
-      return [
-        {
-          ...resolvedAction,
-          instanceIds: choice.instanceIds,
-        },
-        remainingPendingChoices,
-      ];
-    }
-
-    const targetState = getActiveState(targetInstance, this.defs);
+    // `apply` only gets here with a chosen card that exists (it reads its state first).
+    const [targetId] = choice.instanceIds ?? [];
+    const targetState = getActiveState(gs.instances[targetId], this.defs);
     const upgradeChoices = [
       ...new Set((targetState.upgrade ?? []).map(upgrade => upgrade.upgradeTo)),
     ];

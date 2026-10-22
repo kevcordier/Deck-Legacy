@@ -367,7 +367,6 @@ export class GameSession {
       this.dispatch(command);
       return undefined;
     } catch (error) {
-      if (error instanceof ForbiddenCommandError) throw error;
       return this.handleActionError(error);
     } finally {
       this.record(from);
