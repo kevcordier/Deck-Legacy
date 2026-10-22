@@ -37,7 +37,7 @@ export type GameContextType = {
     triggerId?: string,
     amount?: number,
   ) => void;
-  resolveUpgrade: (instanceId: number, chosenUpgradeTo?: number) => void;
+  resolveUpgrade: (instanceId: number, chosenUpgradeTo?: number, upgradeIndex?: number) => void;
   setCardName: (instanceId: number, chosenName: string) => void;
   getCardName: (instanceId: number) => string | undefined;
   progress: () => void;

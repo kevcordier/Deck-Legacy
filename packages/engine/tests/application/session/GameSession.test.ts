@@ -98,6 +98,37 @@ describe('GameSession commands', () => {
     expect(session.getState().resources.gold ?? 0).toBe(0);
   });
 
+  it('pays the upgrade chosen by its index when several lead to the same state', () => {
+    const catalog = makeCatalog();
+    // Two ways to pay: 5 gold (unaffordable) or 1 gold
+    catalog.cards[1].states[0].upgrade = [
+      { cost: { resources: [{ gold: 5 }] }, upgradeTo: 2 },
+      { cost: { resources: [{ gold: 1 }] }, upgradeTo: 2 },
+    ];
+    const session = GameSession.start('g', catalog, DEFAULT_OPTIONS, 'standard', undefined, 'seed');
+    const state = session.getState();
+    const [produced, upgraded] = state.board.filter(id => state.instances[id].cardId === 1);
+    session.execute({ type: 'resolveProduction', instanceId: produced, choiceIndex: 0 });
+
+    // An index that does not lead to the state is ignored
+    session.execute({
+      type: 'resolveUpgrade',
+      instanceId: upgraded,
+      upgradeTo: 3,
+      upgradeIndex: 1,
+    });
+    expect(session.getState().instances[upgraded].stateId).toBe(1);
+
+    session.execute({
+      type: 'resolveUpgrade',
+      instanceId: upgraded,
+      upgradeTo: 2,
+      upgradeIndex: 1,
+    });
+    expect(session.getState().instances[upgraded].stateId).toBe(2);
+    expect(session.getState().resources.gold ?? 0).toBe(0);
+  });
+
   it('ignores upgrades of cards out of play', () => {
     const session = startGame();
     const instanceId = boardCard(session);

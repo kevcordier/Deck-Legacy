@@ -408,7 +408,7 @@ export class GameSession {
           command.amount,
         );
       case 'resolveUpgrade':
-        return this.resolveUpgrade(command.instanceId, command.upgradeTo);
+        return this.resolveUpgrade(command.instanceId, command.upgradeTo, command.upgradeIndex);
       case 'resolvePlayerChoice':
         return this.resolvePlayerChoice(command.choice, parseChoiceType(command.choiceType));
       case 'resolvePayCost':
@@ -641,12 +641,16 @@ export class GameSession {
     this.sync(newState);
   }
 
-  private resolveUpgrade(instanceId: number, upgradeTo: number): void {
+  private resolveUpgrade(instanceId: number, upgradeTo: number, upgradeIndex?: number): void {
     if (!this.isPlayable(instanceId) || !isInPlay(this.agg.getGameState(), instanceId)) return;
     const gs = this.agg.getGameState();
-    const cs = getActiveState(gs.instances[instanceId], this.catalog.cards);
-    const upgrade = (cs.upgrade ?? []).find(u => u.upgradeTo === upgradeTo);
-    if (!upgrade) return;
+    const upgrades = getActiveState(gs.instances[instanceId], this.catalog.cards).upgrade ?? [];
+    // Several upgrades to the same state are ways to pay it (The Round Table): the index picks one.
+    const upgrade =
+      upgradeIndex === undefined
+        ? upgrades.find(u => u.upgradeTo === upgradeTo)
+        : upgrades[upgradeIndex];
+    if (upgrade?.upgradeTo !== upgradeTo) return;
 
     const effectiveCost = getEffectiveUpgradeCost(
       upgrade.cost,

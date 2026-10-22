@@ -257,4 +257,5 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - Written medals (Famous Court): `ADD_GLORY` with `valuePerElement.glory` (the glory of the selected cards) and `writeNames` stores the names in `CardInstance.writtenNames`; `CardSelector.notWrittenHere` leaves those names out.
 - `TRACK_ADVANCE` on an `inOrder` track with `steps.ids` marks the next step among those ids (quests: green task boxes and red timer boxes on one track). `Condition.stepsMarked` holds once all its step ids are marked.
 - `CardSelector.notStaying`: cards that do not stay in play (Endurance).
+- Several `upgrade` entries to the same state are ways to pay it (The Round Table: a Craftsman or 4 persons): `resolveUpgrade` takes `upgradeIndex`, the entry the player chose; without it (older commands) the first entry to `upgradeTo` is used.
 - Quests (Foundations 99–104, `quest()`): rescued by a knight without a scarf, who gets the lady's scarf; the end-of-turn timer's last box destroys the quest. "Matching scarves" are one `CHOOSE_EFFECT` option per scarf whose knight and lady are in play (`matchingScarves`).

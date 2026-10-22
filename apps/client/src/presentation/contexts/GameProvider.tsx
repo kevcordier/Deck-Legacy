@@ -281,9 +281,9 @@ export function GameProvider({
         send({ type: 'resolveProduction', instanceId, choiceIndex }),
       resolveAction: (instanceId, actionId, triggerId, amount) =>
         send({ type: 'resolveAction', instanceId, actionId, triggerId, amount }),
-      resolveUpgrade: (instanceId, upgradeTo) => {
+      resolveUpgrade: (instanceId, upgradeTo, upgradeIndex) => {
         if (upgradeTo === undefined) return;
-        send({ type: 'resolveUpgrade', instanceId, upgradeTo });
+        send({ type: 'resolveUpgrade', instanceId, upgradeTo, upgradeIndex });
       },
       getCardName: instanceId => view?.cardNames[String(instanceId)],
       setCardName: (instanceId, name) => send({ type: 'setCardName', instanceId, name }),

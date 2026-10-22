@@ -1,4 +1,3 @@
-import { flipTo } from './flipTo';
 import { KNIGHT } from './romanceConstants';
 import {
   ActionEffectType,
@@ -6,18 +5,10 @@ import {
   ResourceType,
   TargetScope,
 } from '@deck-legacy/engine/domain/enums';
-import type { CardAction, CardDef, CardSelector } from '@deck-legacy/engine/domain/types';
+import type { CardDef } from '@deck-legacy/engine/domain/types';
 
 const { WOOD, IRON } = ResourceType;
 const TAGS = [CardTag.CRAFTING];
-
-/** "Upgrade: discard a Craftsman or 4 persons": one action per way to pay. */
-const assemble = (id: string, discard: CardSelector): CardAction => ({
-  id,
-  endsTurn: true,
-  cost: { discard: [discard] },
-  actionEffects: [flipTo(1, 4)],
-});
 
 /** Wooden Planks (Foundations 98): crafted into the Round Table. */
 export const roundTable: CardDef = {
@@ -40,9 +31,10 @@ export const roundTable: CardDef = {
       id: 3,
       name: 'Assembly',
       tags: TAGS,
-      actions: [
-        assemble('271-3-1', { name: 'Craftsman', pickNumber: 1 }),
-        assemble('271-3-2', { tags: [CardTag.PERSON], pickNumber: 4 }),
+      // Discard a Craftsman or 4 persons: the player chooses how to pay
+      upgrade: [
+        { cost: { discard: [{ name: 'Craftsman', pickNumber: 1 }] }, upgradeTo: 4 },
+        { cost: { discard: [{ tags: [CardTag.PERSON], pickNumber: 4 }] }, upgradeTo: 4 },
       ],
     },
     {

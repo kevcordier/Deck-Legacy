@@ -64,7 +64,7 @@ apps/client/
 isTutorial  startGame()  continueGame()  endRound()  startRound()  startTurn()
 resolveProduction(instanceId, choiceIndex)
 resolveAction(instanceId, actionId, triggerId?)
-resolveUpgrade(instanceId, upgradeTo?)
+resolveUpgrade(instanceId, upgradeTo?, upgradeIndex?)
 progress()  endTurnVoluntary()
 resolvePlayerChoice(choice, choiceType)  resolvePayCost(resolved)
 skipTrigger(uuid)  skipChoice()  dismissParchmentText()

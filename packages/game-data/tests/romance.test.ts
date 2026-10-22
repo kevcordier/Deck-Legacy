@@ -21,7 +21,8 @@ const ALETA = 293;
 const GUINEVERE = 294;
 const SIR_GAWAIN = 283;
 // Base game cards, with ids of this test: Trader (person, gold 1)
-const PERSONS = [5, 6, 7];
+const PERSONS = [5, 6, 7, 8];
+const ROUND_TABLE = 289;
 const RED_SCARF = 591;
 const KNIGHT_STICKER = 11;
 
@@ -31,6 +32,7 @@ const cardIds: Record<number, number> = {
   [ALETA]: 275,
   [GUINEVERE]: 276,
   [SIR_GAWAIN]: 265,
+  [ROUND_TABLE]: 271,
   ...Object.fromEntries(PERSONS.map(id => [id, 5])),
 };
 
@@ -184,5 +186,24 @@ describe('Famous Court', () => {
       catalog.stickers,
     );
     expect(traders).toEqual([]);
+  });
+});
+
+describe('The Round Table', () => {
+  it('is assembled with a Craftsman or 4 persons, the player choosing the cost', () => {
+    const session = restore(
+      makeGame({ board: [ROUND_TABLE, ...PERSONS], drawPile: [] }, { [ROUND_TABLE]: 3 }),
+    );
+    session.execute({
+      type: 'resolveUpgrade',
+      instanceId: ROUND_TABLE,
+      upgradeTo: 4,
+      upgradeIndex: 1,
+    });
+    session.execute({
+      type: 'resolvePayCost',
+      resolved: { resources: {}, discardedCardIds: PERSONS, destroyedCardIds: [] },
+    });
+    expect(session.getState().instances[ROUND_TABLE].stateId).toBe(4);
   });
 });

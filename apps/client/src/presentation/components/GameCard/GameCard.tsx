@@ -443,11 +443,13 @@ export function GameCard({
 
                   return (
                     <TutorialTarget
-                      key={upg.upgradeTo}
+                      key={`${upg.upgradeTo}-${JSON.stringify(upg.cost)}`}
                       id={index === 0 ? tourId('card-upgrade') : undefined}
                     >
                       <HoverPressable
-                        onPress={withCallback(() => resolveUpgrade(instance.id, upg.upgradeTo))}
+                        onPress={withCallback(() =>
+                          resolveUpgrade(instance.id, upg.upgradeTo, index),
+                        )}
                         disabled={disabled}
                         accessibilityRole="button"
                         accessibilityState={{ disabled }}
@@ -462,7 +464,9 @@ export function GameCard({
                             onTriggerPress={
                               disabled
                                 ? undefined
-                                : withCallback(() => resolveUpgrade(instance.id, upg.upgradeTo))
+                                : withCallback(() =>
+                                    resolveUpgrade(instance.id, upg.upgradeTo, index),
+                                  )
                             }
                           >
                             <Text className={sizes.actionText}>

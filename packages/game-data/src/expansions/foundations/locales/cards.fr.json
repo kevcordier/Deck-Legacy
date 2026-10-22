@@ -141,7 +141,8 @@
     "Cursed Hag": "Sorcière maudite",
     "Andoniel": "Andoniel",
     "Chivalry": "Chevalerie",
-    "Brotherhood": "Fraternité"
+    "Brotherhood": "Fraternité",
+    "Craftsman": "Artisan"
   },
   "actions": {
     "175-1-1": "Fin de manche : cochez la case suivante de la piste.",
@@ -481,8 +482,6 @@
     "268-4-1": "Défaussez 1 personne pour inscrire sa {{glory}} et son nom ici. Chaque nom une seule fois.",
     "269-2-1": "Gagnez 1 ressource au choix par chevalier en jeu, celui-ci compris.",
     "270-2-1": "Quand cette carte est jouée, cochez 1 case et jouez 1 ennemi de la défausse pour ajouter 1 autocollant de ressource au choix ici.",
-    "271-3-1": "Défaussez un Artisan pour {{upgrade}}.",
-    "271-3-2": "Défaussez 4 personnes pour {{upgrade}}.",
     "271-4-1": "Jouez 1 chevalier de la défausse.",
     "272-1-2": "Dépensez 7 {{weapon}} et défaussez 1 chevalier sans écharpe pour lui ajouter l'écharpe rouge et {{upgrade}}.",
     "272-1-3": "Fin du tour : cochez 1 case ; la dernière {{destroy}}.",
