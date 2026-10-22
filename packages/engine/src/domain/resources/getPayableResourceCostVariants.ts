@@ -6,8 +6,8 @@ import { sanitizeResources } from './sanitizeResources';
 
 function mergeResources(base: Resources, extra: Resources): Resources {
   const merged: Resources = { ...base };
+  // `extra` comes from sanitized allocations: every amount is positive.
   Object.entries(extra).forEach(([key, value]) => {
-    if (value <= 0) return;
     merged[key as ResourceKey] = (merged[key as ResourceKey] ?? 0) + value;
   });
   return merged;
@@ -18,8 +18,6 @@ function buildGroupAllocations(
   requiredTotal: number,
   availableResources: Resources,
 ): Resources[] {
-  if (requiredTotal <= 0) return [{}];
-
   const allocations: Resources[] = [];
 
   const recurse = (index: number, remaining: number, current: Resources) => {

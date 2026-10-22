@@ -7,14 +7,17 @@ import type { GameSummary } from '../src/games/application/models/game-summary';
 import { ScoreMirror } from '../src/games/application/score-mirror';
 import type { GameSnapshot } from '../src/games/domain/game-snapshot';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { ScoresRepository } from '../src/scores/application/scores.repository';
 import { EnsureUserUseCase } from '../src/users/application/ensure-user.use-case';
+import { IdentityAdmin } from '../src/users/application/identity-admin';
+import { UsersRepository } from '../src/users/application/users.repository';
 import { signToken, testConfig, testJwks } from './helpers';
 import { GameSession } from '@deck-legacy/engine/application/session/GameSession';
 import { Phase } from '@deck-legacy/engine/domain/enums';
 import { checkpointSeq } from '@deck-legacy/engine/domain/state/checkpointSeq';
 import type { GameCheckpoint, GameEvent, GameStartedEvent } from '@deck-legacy/engine/domain/types';
 import { loadGameCatalog } from '@deck-legacy/game-data';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, Logger } from '@nestjs/common';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import { randomUUID } from 'node:crypto';
@@ -23,6 +26,8 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 const ALICE = '0b6f5a52-3a3c-4f0e-9a37-5c4a1e2d9b10';
 const BOB = '9c1e7d24-6b8a-4c3f-8e21-7a5d3f9b0c42';
+/** A user whose sign-in fails for another reason than the token (database down…). */
+const BROKEN = '5d2f8a61-1c4e-4b7a-9f03-2e6c8d4b1a57';
 const OPTIONS = { allowCheats: true, unrestrictedRewind: false };
 
 type Row = {
@@ -227,6 +232,17 @@ describe('Games sync API (e2e, in-memory storage)', () => {
   const repository = new InMemoryGamesRepository();
   const ensured: string[] = [];
   const syncedScores: Record<string, number>[] = [];
+  const scores = {
+    leaderboard: vi.fn(async (segment: string, limit: number) => ({ segment, limit, entries: [] })),
+    kingdomLeaderboard: vi.fn(async (limit: number) => [{ limit }]),
+    forUser: vi.fn(async (userId: string) => [{ userId }]),
+  };
+  const users = {
+    getProfile: vi.fn(async (id: string) => ({ id, displayName: 'Ally' })),
+    setDisplayName: vi.fn(async () => undefined),
+    delete: vi.fn(async () => undefined),
+  };
+  const identity = { deleteUser: vi.fn(async () => undefined) };
   let aliceToken: string;
   let bobToken: string;
   /** Plays the long games of the checkpoint tests, apart from Alice's kingdom limit. */
@@ -246,10 +262,17 @@ describe('Games sync API (e2e, in-memory storage)', () => {
       .overrideProvider(EnsureUserUseCase)
       .useValue({
         execute: async (u: { id: string }) => {
+          if (u.id === BROKEN) throw new Error('database unavailable');
           ensured.push(u.id);
         },
         forget: () => undefined,
       })
+      .overrideProvider(ScoresRepository)
+      .useValue(scores)
+      .overrideProvider(UsersRepository)
+      .useValue(users)
+      .overrideProvider(IdentityAdmin)
+      .useValue(identity)
       .overrideProvider(ScoreMirror)
       .useValue({
         mirror: async (_tx: unknown, _u: string, _g: string, scores: Record<string, number>) => {
@@ -605,5 +628,49 @@ describe('Games sync API (e2e, in-memory storage)', () => {
     await put(bobToken, second.id, { events: second.getEvents() }).expect(200);
     const revived = await put(bobToken, session.id, { events: session.getEvents() }).expect(409);
     expect(revived.body.code).toBe('KINGDOM_LIMIT');
+  });
+
+  it('serves the profile of the player and deletes the account', async () => {
+    const profile = await request(app.getHttpServer()).get('/me').set(as(aliceToken)).expect(200);
+    expect(profile.body).toEqual({ id: ALICE, displayName: 'Ally' });
+
+    await request(app.getHttpServer())
+      .patch('/me')
+      .set(as(aliceToken))
+      .send({ displayName: ' Arthur ' })
+      .expect(200);
+    expect(users.setDisplayName).toHaveBeenCalledWith(ALICE, 'Arthur');
+
+    await request(app.getHttpServer()).delete('/me').set(as(aliceToken)).expect(204);
+    expect(identity.deleteUser).toHaveBeenCalledWith(ALICE);
+    expect(users.delete).toHaveBeenCalledWith(ALICE);
+  });
+
+  it('serves the leaderboards without a token, with a bounded size', async () => {
+    const board = await request(app.getHttpServer()).get('/scores/leaderboard').expect(200);
+    expect(board.body).toEqual({ segment: 'base', limit: 20, entries: [] });
+    await request(app.getHttpServer()).get('/scores/leaderboard?segment=x&limit=0').expect(200);
+    expect(scores.leaderboard).toHaveBeenLastCalledWith('x', 1);
+
+    await request(app.getHttpServer()).get('/scores/kingdoms?limit=500').expect(200);
+    expect(scores.kingdomLeaderboard).toHaveBeenLastCalledWith(100);
+  });
+
+  it("serves the player's own scores", async () => {
+    const mine = await request(app.getHttpServer()).get('/scores/me').set(as(bobToken)).expect(200);
+    expect(mine.body).toEqual([{ userId: BOB }]);
+  });
+
+  it('refuses a token that is not signed by the project', async () => {
+    const token = await signToken({ sub: ALICE, foreignKey: true });
+    const response = await request(app.getHttpServer()).get('/me').set(as(token)).expect(401);
+    expect(response.body.code).toBe('UNAUTHORIZED');
+  });
+
+  it('answers a server error when signing in fails for another reason than the token', async () => {
+    vi.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
+    const token = await signToken({ sub: BROKEN });
+    const response = await request(app.getHttpServer()).get('/me').set(as(token)).expect(500);
+    expect(response.body.code).toBe('SERVER_ERROR');
   });
 });

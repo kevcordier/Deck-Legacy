@@ -507,3 +507,89 @@ describe('CardChoiceStrategy – other action types', () => {
     expect(remaining[0].targetInstanceId).toBe(9);
   });
 });
+
+describe('CardChoiceStrategy – other card choices', () => {
+  const choice = (type: ActionEffectType) => ({
+    id: 'c',
+    type,
+    sourceInstanceId: 99,
+    instanceIds: [1],
+  });
+  const resolved = (type: ActionEffectType) => ({ id: 'c', type, sourceInstanceId: 99 });
+  const removeChoice = (choices: object[]): PendingChoice => ({
+    ...pending('r'),
+    type: PendingChoiceType.CHOOSE_RESOURCE,
+    kind: ActionEffectType.REMOVE_RESOURCE_ON_CARD,
+    choices,
+  });
+  const tradeDef: CardDef = {
+    id: 1,
+    name: 'T',
+    states: [
+      {
+        id: 1,
+        name: 'S',
+        actions: [
+          { id: 'free', actionEffects: [] },
+          { id: 'paid', cost: { resources: [{ stone: 1 }] }, actionEffects: [] },
+        ],
+      },
+      { id: 2, name: 'U' },
+    ],
+  };
+  const gs = makeState({ instances: { 1: makeInstance() } });
+  const strategy = new CardChoiceStrategy({ 1: tradeDef }, {});
+
+  it('keeps the card to cross a resource out of when no resource is asked', () => {
+    const type = ActionEffectType.REMOVE_RESOURCE_ON_CARD;
+
+    expect(strategy.apply(choice(type), resolved(type), gs, [pending()])).toEqual([
+      { ...resolved(type), instanceIds: [1] },
+      [],
+    ]);
+  });
+
+  it('offers only the resources of the action costs, and drops an empty option', () => {
+    const type = ActionEffectType.REMOVE_RESOURCE_ON_CARD;
+    const pendings = [pending(), removeChoice([{ gold: 0 }, { stone: 1 }])];
+
+    const [next, rest] = strategy.apply(choice(type), resolved(type), gs, pendings);
+    expect(next.resources).toEqual({ stone: 1 });
+    expect(rest).toEqual([]);
+
+    const none = strategy.apply(choice(type), resolved(type), gs, [
+      pending(),
+      removeChoice([{ iron: 1 }]),
+    ]);
+    expect(none[1]).toEqual([]);
+  });
+
+  it('keeps the state an upgrade already has, or asked by another choice', () => {
+    const type = ActionEffectType.UPGRADE_CARD;
+    const stateChoice = { ...pending('s'), type: PendingChoiceType.CHOOSE_STATE, kind: type };
+
+    expect(
+      strategy.apply(choice(type), { ...resolved(type), stateId: 2 }, gs, [pending()]),
+    ).toEqual([{ ...resolved(type), stateId: 2, instanceIds: [1] }, []]);
+    expect(strategy.apply(choice(type), resolved(type), gs, [pending(), stateChoice])[1]).toEqual([
+      stateChoice,
+    ]);
+  });
+
+  it('leaves an upgrade without state when the card cannot be upgraded', () => {
+    const type = ActionEffectType.UPGRADE_CARD;
+
+    expect(strategy.apply(choice(type), resolved(type), gs, [pending()])).toEqual([
+      { ...resolved(type), instanceIds: [1] },
+      [],
+    ]);
+  });
+
+  it('asks which action to cross out on the chosen card', () => {
+    const type = ActionEffectType.CROSS_OUT_ACTION;
+
+    const [, next] = strategy.apply(choice(type), resolved(type), gs, [pending()]);
+    expect(next).toHaveLength(1);
+    expect(next[0].choices).toHaveLength(2);
+  });
+});

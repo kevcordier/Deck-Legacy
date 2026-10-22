@@ -14,7 +14,6 @@ function applyReplacementOnProduction(
   fromResource: keyof Resources,
   toResource: keyof Resources,
 ): Resources {
-  if (fromResource === toResource) return production;
   const amountToMove = production[fromResource] ?? 0;
   if (amountToMove <= 0) return production;
 

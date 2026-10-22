@@ -515,6 +515,7 @@ function gainEveryProduction(
   return [resolverAction, pendingChoices];
 }
 
+// The key helpers below get offered or targeted card ids: their instances exist.
 function getEffectiveProductionKeys(
   instanceId: number,
   gameState: GameState,
@@ -522,7 +523,6 @@ function getEffectiveProductionKeys(
   stickerDefs: Record<number, Sticker>,
 ): Set<string> {
   const instance = gameState.instances[instanceId];
-  if (!instance) return new Set();
 
   const state = getActiveState(instance, defs);
   const baseProductions = state.productions?.length ? state.productions : [{}];
@@ -554,7 +554,6 @@ function getActionCostKeys(
   defs: Record<number, CardDef>,
 ): Set<string> {
   const instance = gameState.instances[instanceId];
-  if (!instance) return new Set();
   const state = getActiveState(instance, defs);
   if (!state.actions?.length) return new Set();
 
@@ -572,7 +571,6 @@ function getUpgradeCostKeys(
   stickerDefs: Record<number, Sticker>,
 ): Set<string> {
   const instance = gameState.instances[instanceId];
-  if (!instance) return new Set();
   const state = getActiveState(instance, defs);
   if (!state.upgrade?.length) return new Set();
 
@@ -621,9 +619,7 @@ function getCandidateResourceKeys(
   }, new Set<string>());
 }
 
-function getAllowedResourceKeys(resources: ResourceSelector | undefined): Set<string> {
-  if (!resources) return new Set();
-
+function getAllowedResourceKeys(resources: ResourceSelector): Set<string> {
   if (resources.choice?.length) {
     const options = expandResourceChoiceOptions(resources.choice, Object.values(ResourceType));
     const keys = options.flatMap(option =>
@@ -680,7 +676,7 @@ function filterRemoveResourceCardChoices(
   gameState: GameState,
   defs: Record<number, CardDef>,
   stickerDefs: Record<number, Sticker>,
-  resources: ResourceSelector | undefined,
+  resources: ResourceSelector,
   resourceScopes: RemovedResourceScope[] | undefined,
 ): [ResolvedActionEffect, PendingChoice[]] {
   const allowedResourceKeys = getAllowedResourceKeys(resources);
@@ -704,8 +700,7 @@ function filterRemoveResourceCardChoices(
   }
 
   const targetChoice = pendingChoices[targetChoiceIndex];
-  const filteredIds = targetChoice.choices.filter((option): option is number => {
-    if (typeof option !== 'number') return false;
+  const filteredIds = (targetChoice.choices as number[]).filter(option => {
     const candidateKeys = getCandidateResourceKeys(
       option,
       gameState,
@@ -839,7 +834,7 @@ function resolveOrderCardsEffect(
   resolverAction: ResolvedActionEffect,
   ctx: ResolveContext,
 ): [ResolvedActionEffect, PendingChoice[]] {
-  if (action.valuePerElement) applyValuePerElement(resolverAction, action, ctx);
+  applyValuePerElement(resolverAction, action, ctx);
   return resolveOrderCards(resolverAction, ctx, resolverAction.value ?? action.value ?? 1);
 }
 
@@ -1010,12 +1005,8 @@ function resolveUpgradeStateTarget(
     return [resolverAction, pendingChoices];
   }
 
-  const targetInstance = gameState.instances[targetId];
-  if (!targetInstance) {
-    return [resolverAction, pendingChoices];
-  }
-
-  const targetState = getActiveState(targetInstance, defs);
+  // Selected ids: their instances exist.
+  const targetState = getActiveState(gameState.instances[targetId], defs);
   const choices = [...new Set((targetState.upgrade ?? []).map(upgrade => upgrade.upgradeTo))];
 
   if (choices.length === 1) {
@@ -1190,7 +1181,7 @@ export function resolveActionEffect(
     );
   }
 
-  if (action.valuePerElement) applyValuePerElement(resolverAction, action, ctx);
+  applyValuePerElement(resolverAction, action, ctx);
 
   if (enrichedCards) {
     [resolverAction, pendingChoices] = resolveCardTarget(

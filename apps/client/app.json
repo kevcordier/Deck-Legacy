@@ -45,7 +45,8 @@
           "motionPermission": "Deck Legacy uses the device motion to add a parallax effect to the cards."
         }
       ],
-      "expo-router"
+      "expo-router",
+      "expo-splash-screen"
     ]
   }
 }

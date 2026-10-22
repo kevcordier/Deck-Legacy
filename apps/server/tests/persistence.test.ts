@@ -214,6 +214,16 @@ describe('GamesRepository reads and creation', () => {
     });
   });
 
+  it('reads malformed card names and segments as empty', async () => {
+    const { prisma, tx } = fakePrisma();
+    const repository = new PrismaGamesRepository(prisma);
+    tx.game.findUnique.mockResolvedValueOnce({ status: 'ACTIVE', cardNames: null, events: [] });
+    tx.game.findFirst.mockResolvedValueOnce({ ...summaryRow, segments: null });
+
+    await expect(repository.load(GAME)).resolves.toMatchObject({ cardNames: {} });
+    await expect(repository.findCurrent(USER)).resolves.toMatchObject({ segments: [] });
+  });
+
   it('hides abandoned and missing games', async () => {
     const { prisma, tx } = fakePrisma();
     const repository = new PrismaGamesRepository(prisma);
@@ -426,6 +436,15 @@ describe('users', () => {
 
     await ensureUser.execute({ ...identity, email: 'new@b.c' });
     expect(tx.user.upsert).toHaveBeenCalledTimes(2);
+  });
+
+  it('forgets every known user past the cache limit', async () => {
+    const { prisma, tx } = fakePrisma();
+    const { ensureUser } = usersWith(prisma);
+
+    for (let i = 0; i <= 10_000; i += 1) await ensureUser.execute({ ...identity, id: `u${i}` });
+    await ensureUser.execute({ ...identity, id: 'u0' });
+    expect(tx.user.upsert).toHaveBeenCalledTimes(10_002);
   });
 
   it('returns and updates the profile', async () => {

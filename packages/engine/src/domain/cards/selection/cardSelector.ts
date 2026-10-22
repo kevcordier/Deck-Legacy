@@ -149,8 +149,8 @@ function hasIntrinsicCountAs2(
   gameState: GameState,
   defs: Record<number, CardDef>,
 ): boolean {
+  // Only called with selected ids, which are instances.
   const inst = gameState.instances[id];
-  if (!inst) return false;
   const state = defs[inst.cardId]?.states.find(s => s.id === inst.stateId);
   if (!state?.passives?.length) return false;
 

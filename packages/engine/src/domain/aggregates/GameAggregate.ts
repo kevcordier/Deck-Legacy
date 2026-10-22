@@ -50,6 +50,7 @@ import type {
   PurgeFirstBatch,
   PurgeOnTriggeredEvent,
   PurgePermanentSelectedEvent,
+  PurgeState,
   ResolvedActionEffect,
   ResolvedCost,
   Resources,
@@ -160,11 +161,10 @@ export class GameAggregate {
   }
 
   private filterNonPermanentCardIds(cardIds: number[]): number[] {
-    return cardIds.filter(cardId => {
-      const instance = this.gameState.instances[cardId];
-      if (!instance) return false;
-      return !isPermanent(getActiveState(instance, this.cardDefs));
-    });
+    // Discovered ids: their instances exist (`roundStarted` reads them first).
+    return cardIds.filter(
+      cardId => !isPermanent(getActiveState(this.gameState.instances[cardId], this.cardDefs)),
+    );
   }
 
   private isPurgeEligible(instanceId: number, requirePermanent: boolean): boolean {
@@ -189,9 +189,7 @@ export class GameAggregate {
   }
 
   /** ON_PURGE_SELECTION triggers of the unselected cards; identical copies trigger once. */
-  private getPurgeSelectionTriggers(selectedIds: number[]): TriggerEntry[] {
-    const purgeState = this.gameState.purgeState;
-    if (!purgeState) return [];
+  private getPurgeSelectionTriggers(purgeState: PurgeState, selectedIds: number[]): TriggerEntry[] {
     const unselected = purgeState.shuffledPool
       .filter(id => !selectedIds.includes(id))
       .map(id => this.gameState.instances[id])
@@ -482,7 +480,7 @@ export class GameAggregate {
           Trigger.ON_PURGE,
           this.gameState,
         ),
-        ...this.getPurgeSelectionTriggers(selectedIds),
+        ...this.getPurgeSelectionTriggers(purgeState, selectedIds),
       ].reduce(
         (acc, { effectDef, sourceInstanceId }) => {
           acc[environment.newId()] = { effectDef, sourceInstanceId };
