@@ -1,3 +1,4 @@
+import { GameExportDto } from '../src/games/presentation/dto/game-export.dto';
 import { SyncGameRequestDto } from '../src/games/presentation/dto/sync-game-request.dto';
 import { UpdateProfileRequestDto } from '../src/users/presentation/dto/update-profile-request.dto';
 import { describe, expect, it } from 'vitest';
@@ -34,5 +35,22 @@ describe('UpdateProfileRequestDto', () => {
     const schema = UpdateProfileRequestDto.schema;
     expect(schema.parse({ displayName: '  Ally ' }).displayName).toBe('Ally');
     expect(schema.safeParse({ displayName: 'A' }).success).toBe(false);
+  });
+});
+
+describe('GameExportDto', () => {
+  it('keeps the checkpoint state as sent', () => {
+    const checkpoint = { seq: 4, state: { round: 2 } };
+    const parsed = GameExportDto.schema.parse({
+      id: 'g',
+      name: '',
+      version: 1,
+      events: [],
+      cardNames: {},
+      savedAt: 0,
+      checkpoint,
+    });
+
+    expect(parsed.checkpoint).toEqual(checkpoint);
   });
 });
