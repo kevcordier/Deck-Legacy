@@ -40,14 +40,20 @@ export class SyncGameUseCase {
       }
       const storedIds = meta ? await this.repository.getEventIds(gameId) : [];
       if (body.fromSeq > storedIds.length) throw staleVersionException();
+      const firstChange =
+        body.fromSeq + firstDifference(storedIds.slice(body.fromSeq), body.events);
+      // Events the server already has come from its own log: a client cannot alter them (or drop
+      // the seed) under the same ids.
       const kept =
-        body.fromSeq > 0 ? await this.repository.getEventPayloads(gameId, body.fromSeq) : [];
-      const events = [...kept, ...body.events];
-      const firstChange = firstDifference(storedIds, events);
+        firstChange > 0 ? await this.repository.getEventPayloads(gameId, firstChange) : [];
+      const events = [...kept, ...body.events.slice(firstChange - body.fromSeq)];
       // A log rewritten before the checkpoint (development rewind, overwrite) is checked in full.
       const checkpoint =
         meta?.checkpoint && meta.checkpoint.seq <= firstChange ? meta.checkpoint : undefined;
-      const snapshot = this.validator.validate({ ...body, events }, checkpoint);
+      const validated = this.validator.validate({ ...body, events }, checkpoint);
+      // Only a game that keeps its stored start keeps its flag when it cannot be verified.
+      const snapshot =
+        firstChange === 0 ? { ...validated, verified: validated.verified ?? false } : validated;
 
       const mirrorScores = (tx: Transaction) =>
         this.scores.mirror(tx, userId, gameId, snapshot.campaignScores);
