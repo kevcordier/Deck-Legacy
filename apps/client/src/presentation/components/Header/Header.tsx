@@ -2,8 +2,9 @@ import logo from '@assets/icon-192x192.png';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
 import { Title } from '@components/ui/Title/Title';
+import { ModalDepthContext } from '@contexts/ModalDepthContext';
 import { useIsDesktop } from '@hooks/useIsDesktop';
-import type { ReactNode } from 'react';
+import { type ReactNode, use } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,12 +22,14 @@ type HeaderProps = {
 export function Header({ onOpenRules, onOpenOptions, center, children }: HeaderProps) {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+  // Copies shown above a modal are not tutorial targets: they would replace the page's one.
+  const inModal = use(ModalDepthContext) > 0;
 
   // The header owns the top inset so the status bar area has its opaque color (pages skip `top`).
   return (
     <SafeAreaView edges={['top']} className="bg-background z-10">
       <TutorialTarget
-        id="header"
+        id={inModal ? undefined : 'header'}
         className="border-b-border flex-row items-center justify-between gap-2 border-b px-3 py-3 lg:px-6"
       >
         {/* Desktop: both sides grow equally so the center content stays centered. Phone: the
@@ -50,7 +53,7 @@ export function Header({ onOpenRules, onOpenOptions, center, children }: HeaderP
           }
         >
           {children}
-          <TutorialTarget id="rules-button">
+          <TutorialTarget id={inModal ? undefined : 'rules-button'}>
             <Button onPress={onOpenRules} color="danger" size="xs" title={t('rules.open')}>
               ?
             </Button>

@@ -6,6 +6,7 @@ import { EyeIcon } from '@components/ui/Icon/icons/EyeIcon';
 import { EyeOffIcon } from '@components/ui/Icon/icons/EyeOffIcon';
 import { Text } from '@components/ui/Text/Text';
 import { ModalDepthContext } from '@contexts/ModalDepthContext';
+import { ModalHeaderContext } from '@contexts/ModalHeaderContext';
 import { TutorialContext } from '@contexts/TutorialContext';
 import { useWebKeyDown } from '@hooks/useWebKeyDown';
 import { type ReactNode, use, useCallback, useEffect, useRef, useState } from 'react';
@@ -49,6 +50,13 @@ function panelClass(side?: 'left' | 'right', wide = false): string {
   if (side === 'left') return `${drawer} left-0 rounded-r-2xl border-r`;
   if (side === 'right') return `${drawer} right-0 rounded-l-2xl border-l`;
   return `bg-background border-border max-h-[90%] w-[95%] gap-6 rounded-2xl border p-4 lg:max-h-[80%] ${wide ? 'lg:w-[80%]' : 'lg:w-auto lg:min-w-[32rem] lg:max-w-[80%]'} lg:p-6`;
+}
+
+/** Vertical padding of the backdrop (centred panel) or of the side panel, which runs under the bars. */
+function insetPadding(top: number, bottom: number, side?: 'left' | 'right'): ViewStyle {
+  return side
+    ? { paddingTop: top + 16, paddingBottom: bottom + 16 }
+    : { paddingTop: top, paddingBottom: bottom };
 }
 
 type ModalHeaderProps = Pick<ModalProps, 'title' | 'subtitle' | 'onClose' | 'label'>;
@@ -112,6 +120,9 @@ export function Modal({
   const insets = useSafeAreaInsets();
   const tutorial = use(TutorialContext);
   const depth = use(ModalDepthContext) + 1;
+  const header = use(ModalHeaderContext);
+  // The page header above the modal already owns the top inset.
+  const padding = insetPadding(header ? 0 : insets.top, insets.bottom, side);
   const registerModal = tutorial?.registerModal;
 
   useEffect(() => registerModal?.(depth), [registerModal, depth]);
@@ -173,55 +184,58 @@ export function Modal({
       >
         <ModalDepthContext value={depth}>
           <View
-            className="flex-1 items-center justify-center bg-black/60"
-            // The centred panel stays clear of the status bar and the home indicator.
-            style={side ? undefined : { paddingTop: insets.top, paddingBottom: insets.bottom }}
+            className="flex-1"
             // On web, the anchor's onLayout only fires on a size change: it moves without resizing
             // when the window does, while this full-screen view resizes.
             onLayout={onPeekToggle ? measurePeekAnchor : undefined}
           >
-            <Pressable
-              className="absolute inset-0"
-              onPress={onClose}
-              disabled={!onClose}
-              // Without a panel, the backdrop is the only close control.
-              accessibilityRole={bare ? 'button' : 'none'}
-              accessibilityLabel={bare ? 'Close' : undefined}
-              accessible={bare}
-            />
+            {/* The page header stays usable above the modal; it owns the top inset. */}
+            {header}
+            <View
+              className="flex-1 items-center justify-center bg-black/60"
+              // The centred panel stays clear of the status bar and the home indicator.
+              style={side ? undefined : padding}
+            >
+              <Pressable
+                className="absolute inset-0"
+                onPress={onClose}
+                disabled={!onClose}
+                // Without a panel, the backdrop is the only close control.
+                accessibilityRole={bare ? 'button' : 'none'}
+                accessibilityLabel={bare ? 'Close' : undefined}
+                accessible={bare}
+              />
 
-            {bare ? (
-              <View
-                style={{ pointerEvents: 'box-none' }}
-                className={`items-center gap-3 ${className}`}
-              >
-                {children}
-              </View>
-            ) : (
-              <Animated.View
-                ref={panelRef}
-                collapsable={false}
-                entering={side ? SLIDE_IN[side] : undefined}
-                style={[
-                  // The side panel runs under the status and navigation bars.
-                  side && { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 16 },
-                ]}
-                className={`${panelClass(side, wide)} ${className}`}
-              >
-                <ModalHeader title={title} subtitle={subtitle} onClose={onClose} label={label} />
+              {bare ? (
+                <View
+                  style={{ pointerEvents: 'box-none' }}
+                  className={`items-center gap-3 ${className}`}
+                >
+                  {children}
+                </View>
+              ) : (
+                <Animated.View
+                  ref={panelRef}
+                  collapsable={false}
+                  entering={side ? SLIDE_IN[side] : undefined}
+                  style={[side && padding]}
+                  className={`${panelClass(side, wide)} ${className}`}
+                >
+                  <ModalHeader title={title} subtitle={subtitle} onClose={onClose} label={label} />
 
-                <ScrollView className="w-full shrink" contentContainerClassName="gap-6 p-1">
-                  <TutorialTarget
-                    id={label ? `modal-${label}-content` : undefined}
-                    className="gap-6"
-                  >
-                    {children}
-                  </TutorialTarget>
-                </ScrollView>
+                  <ScrollView className="w-full shrink" contentContainerClassName="gap-6 p-1">
+                    <TutorialTarget
+                      id={label ? `modal-${label}-content` : undefined}
+                      className="gap-6"
+                    >
+                      {children}
+                    </TutorialTarget>
+                  </ScrollView>
 
-                {footer}
-              </Animated.View>
-            )}
+                  {footer}
+                </Animated.View>
+              )}
+            </View>
 
             {onPeekToggle && peekPos && (
               <PeekButton peeking={false} onPress={onPeekToggle} style={peekPos} />

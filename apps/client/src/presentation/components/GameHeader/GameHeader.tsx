@@ -10,13 +10,14 @@ import { ChevronDownIcon } from '@components/ui/Icon/icons/ChevronDownIcon';
 import { HistoryIcon } from '@components/ui/Icon/icons/HistoryIcon';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
+import { ModalDepthContext } from '@contexts/ModalDepthContext';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useIsDesktop } from '@hooks/useIsDesktop';
 import { useKingdoms } from '@hooks/useKingdoms';
 import { useTutorial } from '@hooks/useTutorial';
 import { useWebKeyDown } from '@hooks/useWebKeyDown';
-import { useCallback, useMemo, useState } from 'react';
+import { use, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -42,6 +43,8 @@ export function GameHeader() {
   const { setOptionsOpen, setRulesOpen } = useGameUI();
   const { run } = useTutorial();
   const isDesktop = useIsDesktop();
+  // The header is also rendered above each modal: only the page's copy handles Ctrl/Cmd+Z.
+  const inModal = use(ModalDepthContext) > 0;
   const [historyOpen, setHistoryOpen] = useState(false);
   const [kingdomModal, setKingdomModal] = useState<'view' | 'destroyed' | 'rename' | null>(null);
   // The session id is the kingdom id (none for a tutorial outside a kingdom).
@@ -67,7 +70,7 @@ export function GameHeader() {
           target.tagName === 'TEXTAREA' ||
           target.tagName === 'SELECT');
 
-      if (isEditableTarget) return;
+      if (inModal || isEditableTarget) return;
 
       const isUndoShortcut =
         (event.ctrlKey || event.metaKey) &&
@@ -80,7 +83,7 @@ export function GameHeader() {
       event.preventDefault();
       rewindEvent();
     },
-    [canRewind, rewindEvent, run],
+    [canRewind, rewindEvent, run, inModal],
   );
   useWebKeyDown(onKeyDown);
 
