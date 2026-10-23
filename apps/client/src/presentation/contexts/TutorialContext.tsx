@@ -1,6 +1,6 @@
 import type { GameState } from '@deck-legacy/engine/domain/types';
 import { type ReactNode, createContext } from 'react';
-import type { View } from 'react-native';
+import type { HostInstance } from 'react-native';
 
 /** `top`: inside the top of the target (e.g. a modal filling the screen); `auto` otherwise. */
 export type TutorialPlacement = 'center' | 'auto' | 'top';
@@ -37,9 +37,9 @@ export interface TutorialContextProps {
   skip: () => void;
   /** Ends the tutorial, keeping the game played so far or starting a new one. */
   finish: (keepGame: boolean) => void;
-  registerTarget: (id: string, ref: React.RefObject<View | null>) => void;
-  unregisterTarget: (id: string, ref: React.RefObject<View | null>) => void;
-  getTarget: (id: string) => React.RefObject<View | null> | undefined;
+  registerTarget: (id: string, ref: React.RefObject<HostInstance | null>) => void;
+  unregisterTarget: (id: string, ref: React.RefObject<HostInstance | null>) => void;
+  getTarget: (id: string) => React.RefObject<HostInstance | null> | undefined;
   /** Depth of the topmost open modal (0 when no modal is open). */
   topModalDepth: number;
   registerModal: (depth: number) => () => void;

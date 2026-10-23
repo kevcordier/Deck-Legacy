@@ -6,14 +6,15 @@ import { Text } from '@components/ui/Text/Text';
 import { useGame } from '@hooks/useGame';
 import { useIsDesktop } from '@hooks/useIsDesktop';
 import { useWebKeyDown } from '@hooks/useWebKeyDown';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 import {
   Directions,
-  Gesture,
   GestureDetector,
   GestureHandlerRootView,
+  useCompetingGestures,
+  useFlingGesture,
 } from 'react-native-gesture-handler';
 
 type CardViewerModalProps = {
@@ -58,14 +59,17 @@ export function CardViewerModal({ cardIds, initialId, onClose, title }: CardView
   useWebKeyDown(handleKey);
 
   // Phone: swiping the card left shows the next one, right the previous one.
-  const swipe = useMemo(
-    () =>
-      Gesture.Race(
-        Gesture.Fling().direction(Directions.LEFT).runOnJS(true).onEnd(goNext),
-        Gesture.Fling().direction(Directions.RIGHT).runOnJS(true).onEnd(goPrev),
-      ),
-    [goNext, goPrev],
-  );
+  const swipeLeft = useFlingGesture({
+    direction: Directions.LEFT,
+    runOnJS: true,
+    onDeactivate: goNext,
+  });
+  const swipeRight = useFlingGesture({
+    direction: Directions.RIGHT,
+    runOnJS: true,
+    onDeactivate: goPrev,
+  });
+  const swipe = useCompetingGestures(swipeLeft, swipeRight);
 
   const instance = gameState.instances[currentId];
   if (!instance) return null;

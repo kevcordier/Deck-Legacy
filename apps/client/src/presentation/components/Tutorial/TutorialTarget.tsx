@@ -1,6 +1,6 @@
 import { TutorialContext } from '@contexts/TutorialContext';
 import { type ReactNode, use, useEffect, useRef } from 'react';
-import { View, type ViewProps } from 'react-native';
+import { type HostInstance, View, type ViewProps } from 'react-native';
 
 type TutorialTargetProps = ViewProps & {
   /** Target id referenced by tutorial steps. Nothing is registered when undefined. */
@@ -12,7 +12,7 @@ type TutorialTargetProps = ViewProps & {
 /** Wraps an element the tutorial can point at (replaces the `data-tour` attributes). */
 export function TutorialTarget({ id, className, children, ...rest }: TutorialTargetProps) {
   const tutorial = use(TutorialContext);
-  const ref = useRef<View>(null);
+  const ref = useRef<HostInstance>(null);
 
   useEffect(() => {
     if (!tutorial || !id) return;

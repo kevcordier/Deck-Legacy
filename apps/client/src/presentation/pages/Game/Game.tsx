@@ -2,6 +2,7 @@ import { ExpansionChoice } from '@components/ExpansionChoice/ExpansionChoice';
 import { GameBoard } from '@components/GameBoard/GameBoard';
 import { GameHeader } from '@components/GameHeader/GameHeader';
 import { OptionsModal } from '@components/OptionsModal/OptionsModal';
+import { PageBackground } from '@components/PageBackground/PageBackground';
 import { PurgeScreen } from '@components/PurgeScreen/PurgeScreen';
 import { ResourceBar } from '@components/ResourceBar/ResourceBar';
 import { RulesModal } from '@components/RulesModal/RulesModal';
@@ -16,14 +17,8 @@ import { useAppServices } from '@hooks/useAppServices';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useIsDesktop } from '@hooks/useIsDesktop';
-import {
-  FULL_SIZE,
-  PAGE_BACKGROUND,
-  PAGE_EDGES,
-  PAGE_EDGES_WITH_FOOTER,
-} from '@styles/pageConstants';
+import { PAGE_EDGES, PAGE_EDGES_WITH_FOOTER } from '@styles/pageConstants';
 import { router } from 'expo-router';
-import { ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 /** Cards still to choose in the first purge batch (Invasion, Nature's Revenge). */
@@ -72,12 +67,7 @@ export function Game() {
   return (
     <TutorialProvider key={id}>
       <ModalHeaderContext value={<GameHeader />}>
-        <ImageBackground
-          source={PAGE_BACKGROUND}
-          resizeMode="cover"
-          className="flex-1"
-          imageStyle={FULL_SIZE}
-        >
+        <PageBackground>
           <SafeAreaView
             edges={isGamePlaying && !isDesktop ? PAGE_EDGES_WITH_FOOTER : PAGE_EDGES}
             className="bg-background/80 flex-1"
@@ -130,7 +120,7 @@ export function Game() {
           </SafeAreaView>
           <TutorialStage />
           <TutorialOverlay />
-        </ImageBackground>
+        </PageBackground>
       </ModalHeaderContext>
     </TutorialProvider>
   );

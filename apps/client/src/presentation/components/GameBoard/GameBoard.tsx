@@ -19,12 +19,12 @@ import { useIsDesktop } from '@hooks/useIsDesktop';
 import { useTutorial } from '@hooks/useTutorial';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, ScrollView, View, type ViewStyle } from 'react-native';
+import { Platform, ScrollView, type ScrollViewInstance, View, type ViewStyle } from 'react-native';
 import {
   Directions,
-  Gesture,
   GestureDetector,
   GestureHandlerRootView,
+  useFlingGesture,
 } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -45,10 +45,11 @@ function EdgeSwipe({
   readonly side: 'left' | 'right';
   readonly onSwipe: () => void;
 }) {
-  const fling = Gesture.Fling()
-    .direction(side === 'left' ? Directions.RIGHT : Directions.LEFT)
-    .runOnJS(true)
-    .onEnd(onSwipe);
+  const fling = useFlingGesture({
+    direction: side === 'left' ? Directions.RIGHT : Directions.LEFT,
+    runOnJS: true,
+    onDeactivate: onSwipe,
+  });
   return (
     <GestureHandlerRootView
       style={{ position: 'absolute', top: 0, bottom: 0, width: EDGE_SWIPE_WIDTH, [side]: 0 }}
@@ -103,7 +104,7 @@ export function GameBoard() {
   // Tied to the choice: a new choice (or none) is never shown hidden.
   const peeking = choiceOpen && peekedKey === choiceKey;
   const lockedPointer = { pointerEvents: peeking ? 'none' : 'auto' } as const;
-  const centerScrollRef = useRef<ScrollView>(null);
+  const centerScrollRef = useRef<ScrollViewInstance>(null);
   const centerScrollYRef = useRef(0);
   const { registerScroller } = useTutorial();
   useEffect(

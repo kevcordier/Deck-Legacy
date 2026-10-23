@@ -2,17 +2,18 @@ import { Header } from '@components/Header/Header';
 import type { KingdomRow } from '@components/KingdomTable/KingdomRow';
 import { KingdomTable } from '@components/KingdomTable/KingdomTable';
 import { OptionsModal } from '@components/OptionsModal/OptionsModal';
+import { PageBackground } from '@components/PageBackground/PageBackground';
 import { RulesModal } from '@components/RulesModal/RulesModal';
 import { Button } from '@components/ui/Button/Button';
 import { Text } from '@components/ui/Text/Text';
 import { TextStyle } from '@components/ui/Text/TextStyle';
 import { Title } from '@components/ui/Title/Title';
 import { useAppServices } from '@hooks/useAppServices';
-import { FULL_SIZE, PAGE_BACKGROUND, PAGE_EDGES } from '@styles/pageConstants';
+import { PAGE_EDGES } from '@styles/pageConstants';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ImageBackground, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 /** Scoreboard page: the kingdoms of registered players with the best total score (needs the API). */
@@ -61,12 +62,7 @@ export function Scoreboard() {
   else content = <KingdomTable kingdoms={kingdoms} ranking />;
 
   return (
-    <ImageBackground
-      source={PAGE_BACKGROUND}
-      resizeMode="cover"
-      className="flex-1"
-      imageStyle={FULL_SIZE}
-    >
+    <PageBackground>
       <SafeAreaView edges={PAGE_EDGES} className="bg-background/80 flex-1">
         <Header onOpenRules={() => setRulesOpen(true)} onOpenOptions={() => setOptionsOpen(true)} />
 
@@ -93,6 +89,6 @@ export function Scoreboard() {
         {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}
         {optionsOpen && <OptionsModal initialTab="general" onClose={() => setOptionsOpen(false)} />}
       </SafeAreaView>
-    </ImageBackground>
+    </PageBackground>
   );
 }

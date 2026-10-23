@@ -3,6 +3,7 @@ import { KingdomTable } from '@components/KingdomTable/KingdomTable';
 import { KingdomViewer } from '@components/KingdomViewer/KingdomViewer';
 import { NewKingdomModal } from '@components/NewKingdomModal/NewKingdomModal';
 import { OptionsModal, type OptionsTab } from '@components/OptionsModal/OptionsModal';
+import { PageBackground } from '@components/PageBackground/PageBackground';
 import { RenameKingdomModal } from '@components/RenameKingdomModal/RenameKingdomModal';
 import { RulesModal } from '@components/RulesModal/RulesModal';
 import { SignInForm } from '@components/SignInForm/SignInForm';
@@ -21,11 +22,11 @@ import { useAuth } from '@hooks/useAuth';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useKingdoms } from '@hooks/useKingdoms';
 import { kingdomPath } from '@presentation/routing/kingdomPath';
-import { FULL_SIZE, PAGE_BACKGROUND, PAGE_EDGES } from '@styles/pageConstants';
+import { PAGE_EDGES } from '@styles/pageConstants';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ImageBackground, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 /** First screen without an account: sign in, or play on this device only. */
@@ -102,12 +103,7 @@ export function Home() {
   };
 
   return (
-    <ImageBackground
-      source={PAGE_BACKGROUND}
-      resizeMode="cover"
-      className="flex-1"
-      imageStyle={FULL_SIZE}
-    >
+    <PageBackground>
       <SafeAreaView edges={PAGE_EDGES} className="bg-background/80 flex-1">
         <Header
           onOpenRules={() => setRulesOpen(true)}
@@ -224,6 +220,6 @@ export function Home() {
         {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}
         {optionsTab && <OptionsModal initialTab={optionsTab} onClose={() => setOptionsTab(null)} />}
       </SafeAreaView>
-    </ImageBackground>
+    </PageBackground>
   );
 }
