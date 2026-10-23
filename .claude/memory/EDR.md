@@ -39,7 +39,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-023 | 2026-10-10 | Moteur de jeu côté serveur uniquement            | Dépréciée par EDR-024                   |
 | EDR-024 | 2026-10-10 | Local-first, serveur valide par rejeu            | En partie remplacée par EDR-051         |
 | EDR-025 | 2026-10-10 | Compatibilité ascendante des rejeux              | Active                                  |
-| EDR-026 | 2026-10-10 | API NestJS 11 en CommonJS                        | En partie remplacée par EDR-056         |
+| EDR-026 | 2026-10-10 | API NestJS 11 en CommonJS                        | En partie remplacée par EDR-056, 060    |
 | EDR-027 | 2026-10-10 | PostgreSQL et Prisma pour la persistance         | Active                                  |
 | EDR-028 | 2026-10-10 | Supabase Auth avec invités anonymes              | Dépréciée par EDR-050                   |
 | EDR-029 | 2026-10-10 | Synchronisation : dernier écrivain gagne         | En partie remplacée par EDR-038, 041    |
@@ -71,6 +71,7 @@ Trace des décisions structurantes de Deck-Legacy, pour ne jamais les oublier ni
 | EDR-057 | 2026-10-18 | Couches et un export public par fichier          | En partie remplacée par EDR-058         |
 | EDR-058 | 2026-10-18 | Clean architecture : le domaine porte les règles | Active                                  |
 | EDR-059 | 2026-10-19 | Foundations : campagnes et fondations            | Active                                  |
+| EDR-060 | 2026-10-23 | NestJS 12 chargé depuis un serveur CommonJS      | Active                                  |
 
 ---
 
@@ -709,7 +710,7 @@ Conséquences
 ID : EDR-026
 Date : 2026-10-10
 Titre : API NestJS 11 en CommonJS
-Statut : En partie remplacée par EDR-056 (contrat HTTP)
+Statut : En partie remplacée par EDR-056 (contrat HTTP) et EDR-060 (NestJS 12)
 
 Contexte
 Le serveur de synchronisation consomme les paquets du monorepo, dont le moteur, qui utilise des imports sans extension.
@@ -1663,3 +1664,30 @@ Conséquences
 
 - Nouveaux éléments du moteur : `ExpansionConfig.onStart.actions`, `position: 'index'`, `ActionEffectType.UNLOCK`, `ResourceType.SCIENCE` et `HERB`, événement `PARCHMENT_RESOLVED`, `GameState.unlockedResources`.
 - `ExpansionPack` accepte plusieurs campagnes ; le client affiche le logo de l'extension (`expansion`) pour chacune.
+
+---
+
+ID : EDR-060
+Date : 2026-10-23
+Titre : NestJS 12 chargé depuis un serveur CommonJS
+Statut : Active
+
+Contexte
+L'EDR-026 bloquait NestJS 12 parce qu'il n'est publié qu'en ESM et que le moteur utilise des imports sans extension. Depuis Node 22.12 (le projet tourne sur Node 24), `require()` charge un module ESM sans top-level await, et TypeScript l'accepte en `module: nodenext`.
+
+Problème
+Peut-on passer à NestJS 12 sans convertir le serveur ni le moteur en ESM ?
+
+Décision
+NestJS 12 (`@nestjs/common`, `core`, `platform-express`, `swagger`, `testing`, `cli`). Le serveur reste en CommonJS et charge NestJS par `require(esm)` ; le moteur et `game-data` ne changent pas.
+
+Alternatives rejetées
+
+- Convertir le serveur en ESM : il faudrait ajouter les extensions à tous les imports du moteur ou le compiler en ESM, pour aucun gain fonctionnel.
+- Rester sur NestJS 11 : le mainteneur veut suivre la version courante, et NestJS 12 fonctionne sans changer de format de modules.
+
+Conséquences
+
+- Le serveur exige Node ≥ 22.12 (`.nvmrc` : 24).
+- `nestjs-zod` 5.5 ne déclare pas encore NestJS 12 dans ses `peerDependencies` (avertissement pnpm) ; il fonctionne, les tests e2e et `openapi.json` sont inchangés.
+- Un `node_modules` installé avant la montée peut garder un `signal-exit` 3 imbriqué sous `restore-cursor` 5 (`nodeLinker: hoisted`) et casser `nest build` : supprimer `node_modules` et réinstaller.

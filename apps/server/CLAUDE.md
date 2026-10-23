@@ -1,6 +1,6 @@
 # Deck-Legacy Server — AI Assistant Guide
 
-NestJS 11 API (`@deck-legacy/server`). Games are played on devices (offline included); the server receives each game's event log, **replays it with the engine to validate it**, stores it in PostgreSQL through Prisma 7, computes scores for the leaderboard and verifies Supabase access tokens. It runs the player commands recorded in the log again to verify it (EDR-051), never commands sent apart from a log.
+NestJS 12 API (`@deck-legacy/server`). Games are played on devices (offline included); the server receives each game's event log, **replays it with the engine to validate it**, stores it in PostgreSQL through Prisma 7, computes scores for the leaderboard and verifies Supabase access tokens. It runs the player commands recorded in the log again to verify it (EDR-051), never commands sent apart from a log.
 
 Repository-wide rules (engine, `GameSession`, layers, TypeScript, lint, quality gates) are in the [root `CLAUDE.md`](../../CLAUDE.md).
 
@@ -20,7 +20,7 @@ pnpm --filter @deck-legacy/server prisma:deploy   # Apply migrations (production
 pnpm generate:api                           # Rewrite openapi.json (via the e2e test) and the client API types
 ```
 
-NestJS stays on **v11 (CommonJS)**: v12 is ESM-only, which the extensionless imports of the engine package do not support.
+The server stays **CommonJS** and loads NestJS 12 (ESM-only) through Node's `require(esm)` (EDR-060): converting it to ESM would break on the extensionless imports of the engine package.
 
 ---
 

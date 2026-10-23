@@ -84,7 +84,7 @@ The game is playable without the API or Supabase (offline, saved on the device);
 - **pnpm workspaces** — one repository, two apps and two shared packages
 - **React Native 0.86 + Expo SDK 57** — iOS, Android and web (react-native-web) from one codebase
 - **NativeWind 4** — Tailwind CSS classes for React Native
-- **NestJS 11** — API server: accounts, game sync (validated by replaying the engine), scores
+- **NestJS 12** — API server: accounts, game sync (validated by replaying the engine), scores
 - **PostgreSQL + Prisma 7** — users, game event logs and scores
 - **Supabase Auth** — optional email accounts
 - **TypeScript** — strict mode throughout
