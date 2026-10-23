@@ -19,6 +19,7 @@ import { useTutorial } from '@hooks/useTutorial';
 import { useWebKeyDown } from '@hooks/useWebKeyDown';
 import { use, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { View } from 'react-native';
 
 /**
  * Game page header: the shared `Header` with the kingdom name in the center (menu to view the
@@ -39,6 +40,7 @@ export function GameHeader() {
     triggerPile,
     gameState,
     parameters,
+    startGame,
   } = useGame();
   const { setOptionsOpen, setRulesOpen } = useGameUI();
   const { run } = useTutorial();
@@ -46,7 +48,9 @@ export function GameHeader() {
   // The header is also rendered above each modal: only the page's copy handles Ctrl/Cmd+Z.
   const inModal = use(ModalDepthContext) > 0;
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [kingdomModal, setKingdomModal] = useState<'view' | 'destroyed' | 'rename' | null>(null);
+  const [kingdomModal, setKingdomModal] = useState<
+    'view' | 'destroyed' | 'rename' | 'reset' | null
+  >(null);
   // The session id is the kingdom id (none for a tutorial outside a kingdom).
   const kingdom = useKingdoms().find(k => k.id === id);
   const { destroyedPile, purgedCards, instances } = gameState;
@@ -98,6 +102,7 @@ export function GameHeader() {
             onView={() => setKingdomModal('view')}
             onViewDestroyed={() => setKingdomModal('destroyed')}
             onRename={() => setKingdomModal('rename')}
+            onReset={() => setKingdomModal('reset')}
             seed={gameState.seed}
             className="min-h-11 min-w-0 shrink items-center justify-center gap-1 px-2 active:opacity-70"
           >
@@ -147,6 +152,38 @@ export function GameHeader() {
       )}
       {kingdom && kingdomModal === 'rename' && (
         <RenameKingdomModal kingdom={kingdom} onClose={() => setKingdomModal(null)} />
+      )}
+      {kingdom && kingdomModal === 'reset' && (
+        <Modal
+          title={t('kingdom.resetTitle')}
+          onClose={() => setKingdomModal(null)}
+          footer={
+            <View className="flex-row justify-end gap-2">
+              <Button
+                size="md"
+                variant="text"
+                color="ink"
+                font="body"
+                onPress={() => setKingdomModal(null)}
+              >
+                {t('kingdom.cancel')}
+              </Button>
+              <Button
+                size="md"
+                color="danger"
+                font="body"
+                onPress={() => {
+                  setKingdomModal(null);
+                  startGame();
+                }}
+              >
+                {t('kingdom.resetConfirmButton')}
+              </Button>
+            </View>
+          }
+        >
+          <Text>{t('kingdom.resetConfirm', { name: kingdom.name })}</Text>
+        </Modal>
       )}
       {isDesktop && (
         <GamePhaseActions
