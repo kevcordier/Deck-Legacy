@@ -3,7 +3,7 @@ import { TextStyle } from '@components/ui/Text/TextStyle';
 import type { ReactNode } from 'react';
 import { Pressable, type PressableProps } from 'react-native';
 
-export type ButtonColor = 'primary' | 'danger' | 'ink' | 'base-primary' | 'ink-card';
+export type ButtonColor = 'primary' | 'danger' | 'ink' | 'base-primary' | 'ink-card' | 'gray';
 export type ButtonVariant = 'text' | 'contained' | 'outlined' | 'link';
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
 
@@ -30,6 +30,7 @@ const TEXT_COLOR: Record<ButtonColor, string> = {
   ink: 'text-ink',
   'base-primary': 'text-base-primary',
   'ink-card': 'text-ink-card',
+  gray: 'text-gray',
 };
 
 const CONTAINED: Record<ButtonColor, string> = {
@@ -39,6 +40,7 @@ const CONTAINED: Record<ButtonColor, string> = {
   'base-primary':
     'border border-base-primary bg-base-primary/20 active:bg-base-primary/40 shadow-sm',
   'ink-card': 'border border-ink-card bg-ink-card/20 active:bg-ink-card/40 shadow-sm',
+  gray: 'border border-gray bg-gray/20 active:bg-gray/40 shadow-sm',
 };
 
 const OUTLINED: Record<ButtonColor, string> = {
@@ -47,6 +49,7 @@ const OUTLINED: Record<ButtonColor, string> = {
   ink: 'border border-ink active:bg-ink/10',
   'base-primary': 'border border-base-primary active:bg-base-primary/10',
   'ink-card': 'border border-ink-card active:bg-ink-card/10',
+  gray: 'border border-gray active:bg-gray/10',
 };
 
 const TEXT_VARIANT: Record<ButtonColor, string> = {
@@ -55,6 +58,7 @@ const TEXT_VARIANT: Record<ButtonColor, string> = {
   ink: 'active:bg-ink/20',
   'base-primary': 'active:bg-base-primary/20',
   'ink-card': 'active:bg-ink-card/20',
+  gray: 'active:bg-gray/20',
 };
 
 const SIZE: Record<ButtonSize, { box: string; text: string }> = {
