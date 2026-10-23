@@ -281,8 +281,8 @@ importers:
         specifier: ~57.0.28
         version: 57.0.28(4f7a610cad54c371e8dc0a32df70f837)
       expo-sensors:
-        specifier: ~57.0.3
-        version: 57.0.3(expo@57.0.30)(react-native@0.86.3(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.88.0(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.3)(supports-color@10.2.2))
+        specifier: ~58.0.4
+        version: 58.0.4(expo@57.0.30)(react-native@0.86.3(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.88.0(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.3)(supports-color@10.2.2))
       expo-splash-screen:
         specifier: ~57.0.10
         version: 57.0.10(expo@57.0.30)(supports-color@10.2.2)(typescript@6.0.3)
@@ -4498,8 +4498,8 @@ packages:
       react-server-dom-webpack:
         optional: true
 
-  expo-sensors@57.0.3:
-    resolution: {integrity: sha512-3MmJ37S/fbN+Ejk9gCeo5pa50hMkW3BYe7IPZX1tKi0Tw1Wvy/FY9FKnVQowOacrDqyWEpmLGgwi3HmDY7DCnw==}
+  expo-sensors@58.0.4:
+    resolution: {integrity: sha512-79NsIcP1MabiTxC78Ebj0TNez0dhHirNfbTRkrtZjUeNkh0eyC0ihPJur6NEIzeCiD+hIaCWY3nF3jyY9PLM+g==}
     peerDependencies:
       expo: '*'
       react-native: '*'
@@ -12239,7 +12239,7 @@ snapshots:
       - react-native-worklets
       - supports-color
 
-  expo-sensors@57.0.3(expo@57.0.30)(react-native@0.86.3(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.88.0(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.3)(supports-color@10.2.2)):
+  expo-sensors@58.0.4(expo@57.0.30)(react-native@0.86.3(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.88.0(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.3)(supports-color@10.2.2)):
     dependencies:
       expo: 57.0.30(@babel/core@7.29.7(supports-color@10.2.2))(@expo/metro-runtime@57.0.17)(expo-router@57.0.28)(react-dom@19.3.1(react@19.2.3))(react-native-web@0.21.4(react-dom@19.3.1(react@19.2.3))(react@19.2.3))(react-native-worklets@0.10.1(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.88.0(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(react-native@0.86.3(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.88.0(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.3)(supports-color@10.2.2))(react@19.2.3)(supports-color@10.2.2))(react-native@0.86.3(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.88.0(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.3)(supports-color@10.2.2))(react@19.2.3)(supports-color@10.2.2)(typescript@6.0.3)
       invariant: 2.2.4
