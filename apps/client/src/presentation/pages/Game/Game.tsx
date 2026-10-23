@@ -8,6 +8,7 @@ import { RulesModal } from '@components/RulesModal/RulesModal';
 import { TutorialOverlay } from '@components/Tutorial/TutorialOverlay';
 import { TutorialStage } from '@components/Tutorial/TutorialStage';
 import { GameOverScreen } from '@components/ui/GameOverScreen/GameOverScreen';
+import { ModalHeaderContext } from '@contexts/ModalHeaderContext';
 import { TutorialProvider } from '@contexts/TutorialProvider';
 import { Phase } from '@deck-legacy/engine/domain/enums';
 import type { GameState } from '@deck-legacy/engine/domain/types';
@@ -70,63 +71,67 @@ export function Game() {
 
   return (
     <TutorialProvider key={id}>
-      <ImageBackground
-        source={PAGE_BACKGROUND}
-        resizeMode="cover"
-        className="flex-1"
-        imageStyle={FULL_SIZE}
-      >
-        <SafeAreaView
-          edges={isGamePlaying && !isDesktop ? PAGE_EDGES_WITH_FOOTER : PAGE_EDGES}
-          className="bg-background/80 flex-1"
+      <ModalHeaderContext value={<GameHeader />}>
+        <ImageBackground
+          source={PAGE_BACKGROUND}
+          resizeMode="cover"
+          className="flex-1"
+          imageStyle={FULL_SIZE}
         >
-          <GameHeader />
-          {isGamePlaying && <ResourceBar />}
-          {isGamePlaying && <GameBoard />}
-          {gameState.phase === Phase.GAME_OVER && (
-            <GameOverScreen
-              score={score}
-              onGoHome={goHome}
-              canContinueCampaign={availableExpansions.length > 0}
-              onContinueCampaign={continueCampaign}
-            />
-          )}
+          <SafeAreaView
+            edges={isGamePlaying && !isDesktop ? PAGE_EDGES_WITH_FOOTER : PAGE_EDGES}
+            className="bg-background/80 flex-1"
+          >
+            <GameHeader />
+            {isGamePlaying && <ResourceBar />}
+            {isGamePlaying && <GameBoard />}
+            {gameState.phase === Phase.GAME_OVER && (
+              <GameOverScreen
+                score={score}
+                onGoHome={goHome}
+                canContinueCampaign={availableExpansions.length > 0}
+                onContinueCampaign={continueCampaign}
+              />
+            )}
 
-          {gameState.phase === Phase.EXPANSION_CHOICE && (
-            <ExpansionChoice
-              expansions={availableExpansions}
-              configs={catalog.expansions}
-              onSelect={selectExpansion}
-            />
-          )}
+            {gameState.phase === Phase.EXPANSION_CHOICE && (
+              <ExpansionChoice
+                expansions={availableExpansions}
+                configs={catalog.expansions}
+                onSelect={selectExpansion}
+              />
+            )}
 
-          {gameState.phase === Phase.PURGE && (
-            <PurgeScreen
-              defs={defs}
-              instances={gameState.instances}
-              batchSize={gameState.purgeState?.batchSize ?? 0}
-              permanentToPurge={gameState.purgeState?.permanentToPurge ?? 0}
-              firstBatch={gameState.purgeState?.firstBatch}
-              firstBatchPicksLeft={firstBatchPicksLeft(gameState.purgeState)}
-              purgeBatch={purgeBatch}
-              purgeCandidates={purgeCandidates}
-              purgePermanentCandidates={purgePermanentCandidates}
-              selectedPurgeIds={selectedPurgeIds}
-              canSelectPermanentForPurge={canSelectPermanentForPurge}
-              isPurgeSelectionComplete={isPurgeSelectionComplete}
-              selectPurgeCard={selectPurgeCard}
-              selectPurgePermanent={selectPurgePermanent}
-              finalizePurge={finalizePurge}
-            />
-          )}
+            {gameState.phase === Phase.PURGE && (
+              <PurgeScreen
+                defs={defs}
+                instances={gameState.instances}
+                batchSize={gameState.purgeState?.batchSize ?? 0}
+                permanentToPurge={gameState.purgeState?.permanentToPurge ?? 0}
+                firstBatch={gameState.purgeState?.firstBatch}
+                firstBatchPicksLeft={firstBatchPicksLeft(gameState.purgeState)}
+                purgeBatch={purgeBatch}
+                purgeCandidates={purgeCandidates}
+                purgePermanentCandidates={purgePermanentCandidates}
+                selectedPurgeIds={selectedPurgeIds}
+                canSelectPermanentForPurge={canSelectPermanentForPurge}
+                isPurgeSelectionComplete={isPurgeSelectionComplete}
+                selectPurgeCard={selectPurgeCard}
+                selectPurgePermanent={selectPurgePermanent}
+                finalizePurge={finalizePurge}
+              />
+            )}
 
-          {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}
+            {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}
 
-          {optionsOpen && <OptionsModal onClose={() => setOptionsOpen(false)} onGoHome={goHome} />}
-        </SafeAreaView>
-        <TutorialStage />
-        <TutorialOverlay />
-      </ImageBackground>
+            {optionsOpen && (
+              <OptionsModal onClose={() => setOptionsOpen(false)} onGoHome={goHome} />
+            )}
+          </SafeAreaView>
+          <TutorialStage />
+          <TutorialOverlay />
+        </ImageBackground>
+      </ModalHeaderContext>
     </TutorialProvider>
   );
 }
