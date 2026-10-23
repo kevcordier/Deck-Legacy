@@ -7,9 +7,9 @@ import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { View } from 'react-native';
+import type { HostInstance } from 'react-native';
 
-type TargetRef = React.RefObject<View | null>;
+type TargetRef = React.RefObject<HostInstance | null>;
 
 export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [stepIndex, setStepIndex] = useState(0);

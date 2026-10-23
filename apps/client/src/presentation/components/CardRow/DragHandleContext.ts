@@ -1,8 +1,8 @@
 import { createContext } from 'react';
-import type { GestureType } from 'react-native-gesture-handler';
+import type { useGridSortable } from 'react-native-reanimated-dnd';
 
 type DragHandleContextValue = {
-  gesture: GestureType;
+  gesture: ReturnType<typeof useGridSortable>['handlePanGestureHandler'];
   registerHandle: (registered: boolean) => void;
   isMoving: boolean;
 };

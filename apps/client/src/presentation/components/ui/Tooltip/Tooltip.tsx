@@ -3,6 +3,7 @@ import { TextStyle } from '@components/ui/Text/TextStyle';
 import { type ReactNode, useRef, useState } from 'react';
 import {
   type GestureResponderEvent,
+  type HostInstance,
   Modal,
   type PointerEvent,
   Pressable,
@@ -79,7 +80,7 @@ export function Tooltip({
   interactive = false,
   onTriggerPress,
 }: TooltipProps) {
-  const triggerRef = useRef<View>(null);
+  const triggerRef = useRef<HostInstance>(null);
   const [anchor, setAnchor] = useState<Anchor | null>(null);
   const [panelSize, setPanelSize] = useState<{ width: number; height: number } | null>(null);
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();

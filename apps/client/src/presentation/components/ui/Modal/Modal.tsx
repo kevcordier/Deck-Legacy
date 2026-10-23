@@ -10,7 +10,14 @@ import { ModalHeaderContext } from '@contexts/ModalHeaderContext';
 import { TutorialContext } from '@contexts/TutorialContext';
 import { useWebKeyDown } from '@hooks/useWebKeyDown';
 import { type ReactNode, use, useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, Modal as RNModal, ScrollView, View, type ViewStyle } from 'react-native';
+import {
+  type HostInstance,
+  Pressable,
+  Modal as RNModal,
+  ScrollView,
+  View,
+  type ViewStyle,
+} from 'react-native';
 import Animated, { SlideInLeft, SlideInRight } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -128,7 +135,7 @@ export function Modal({
   useEffect(() => registerModal?.(depth), [registerModal, depth]);
 
   // The panel is positioned by its parent: a `TutorialTarget` wrapper would break its layout.
-  const panelRef = useRef<View>(null);
+  const panelRef = useRef<HostInstance>(null);
   const panelId = label ? `modal-${label}-panel` : undefined;
   const registerTarget = tutorial?.registerTarget;
   const unregisterTarget = tutorial?.unregisterTarget;
@@ -151,7 +158,7 @@ export function Modal({
 
   // The native modal covers the whole screen while the hidden state renders in the page: the
   // modal's button is placed where the page's one would be, so it does not jump on toggle.
-  const peekAnchorRef = useRef<View>(null);
+  const peekAnchorRef = useRef<HostInstance>(null);
   const [peekPos, setPeekPos] = useState<ViewStyle | null>(null);
   const measurePeekAnchor = () =>
     peekAnchorRef.current?.measureInWindow((left, top) => setPeekPos({ top, left, right: 'auto' }));

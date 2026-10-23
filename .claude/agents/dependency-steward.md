@@ -42,7 +42,7 @@ ESCALATION: <question + options> (only if STATUS=ESCALATE)
 ## Never
 
 - Perform a major upgrade (Expo SDK, React Native, React, NestJS, Prisma, TypeScript, ESLint) without the user's go-ahead.
-- Move NestJS to v12 (ESM-only, incompatible with the engine's extensionless imports).
+- Convert the server to ESM (the engine's extensionless imports do not support it; NestJS 12 loads through `require(esm)`, EDR-060).
 - Put pnpm settings in `.npmrc`, or change `nodeLinker: hoisted`.
 - Relax lint rules, coverage thresholds or CI gates to make an upgrade pass.
 - Change deployment (`deploy.yml`, hosting, secrets) without escalation.
