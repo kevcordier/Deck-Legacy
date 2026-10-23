@@ -32,7 +32,10 @@ export class PrismaUsersRepository extends UsersRepository {
     await this.prisma.user.update({ where: { id: userId }, data: { displayName } });
   }
 
-  async delete(userId: string): Promise<void> {
-    await this.prisma.user.deleteMany({ where: { id: userId } });
+  async delete(userId: string, beforeCommit: () => Promise<void>): Promise<void> {
+    await this.prisma.$transaction(async tx => {
+      await tx.user.deleteMany({ where: { id: userId } });
+      await beforeCommit();
+    });
   }
 }

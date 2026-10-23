@@ -470,15 +470,15 @@ describe('account deletion', () => {
   const withKey = () => testConfig({ SUPABASE_SERVICE_ROLE_KEY: 'service-key' });
 
   it('is unavailable without the service role key', async () => {
-    const { prisma, tx } = fakePrisma();
+    const { prisma } = fakePrisma();
 
     await expect(usersWith(prisma, testConfig()).deleteAccount.execute(USER)).rejects.toThrow(
       'errors.accountDeletionUnavailable',
     );
-    expect(tx.user.deleteMany).not.toHaveBeenCalled();
+    expect(prisma.$transaction).toHaveBeenCalledOnce();
   });
 
-  it('deletes the Supabase user, then the data', async () => {
+  it('deletes the data and the Supabase user in one transaction', async () => {
     const { prisma, tx } = fakePrisma();
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null));
 
@@ -509,6 +509,18 @@ describe('account deletion', () => {
     fetchMock.mockRestore();
   });
 
+  it('keeps the Supabase user when the database deletion fails', async () => {
+    const { prisma, tx } = fakePrisma();
+    tx.user.deleteMany.mockRejectedValue(new Error('pooler timeout'));
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null));
+
+    await expect(usersWith(prisma, withKey()).deleteAccount.execute(USER)).rejects.toThrow(
+      'pooler timeout',
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+    fetchMock.mockRestore();
+  });
+
   it('removes the data of a user already deleted in Supabase', async () => {
     const { prisma, tx } = fakePrisma();
     const fetchMock = vi
@@ -530,7 +542,8 @@ describe('account deletion', () => {
     await expect(usersWith(prisma, withKey()).deleteAccount.execute(USER)).rejects.toThrow(
       'errors.accountDeletionFailed',
     );
-    expect(tx.user.deleteMany).not.toHaveBeenCalled();
+    // The transaction throws, so Postgres rolls the deletion back.
+    expect(tx.user.deleteMany).toHaveBeenCalledOnce();
     fetchMock.mockRestore();
   });
 });

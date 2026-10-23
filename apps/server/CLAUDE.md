@@ -99,7 +99,7 @@ Imports inside the server are relative; shared code comes from `@deck-legacy/eng
 - `SupabaseTokenVerifier` (implements the `TokenVerifier` port) checks the access token: issuer `${SUPABASE_URL}/auth/v1`, audience and role `authenticated`. It uses the project JWKS (`SUPABASE_JWKS` provider; Supabase signs with ES256), never a shared secret.
 - `AuthGuard` then calls `EnsureUserUseCase`, which upserts (through `UsersRepository`) the `User` row (id = Supabase `sub`, email, `isAnonymous`) and caches it in memory to avoid one write per request.
 - Anonymous (guest) users can sync games and have scores, but are excluded from the leaderboard.
-- `DELETE /me` deletes the Supabase user through the admin API, then the `User` row; games, events and scores follow by cascade.
+- `DELETE /me` deletes the `User` row (games, events and scores follow by cascade) and, in the same transaction before the commit, the Supabase user through the admin API: if Supabase refuses, nothing is deleted.
 
 ---
 

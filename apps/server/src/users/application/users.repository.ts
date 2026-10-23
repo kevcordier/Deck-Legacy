@@ -10,6 +10,9 @@ export abstract class UsersRepository {
 
   abstract setDisplayName(userId: string, displayName: string): Promise<void>;
 
-  /** Deletes the user; games, events and scores follow by cascade. */
-  abstract delete(userId: string): Promise<void>;
+  /**
+   * Deletes the user; games, events and scores follow by cascade. `beforeCommit` runs in the same
+   * transaction: when it throws, nothing is deleted.
+   */
+  abstract delete(userId: string, beforeCommit: () => Promise<void>): Promise<void>;
 }

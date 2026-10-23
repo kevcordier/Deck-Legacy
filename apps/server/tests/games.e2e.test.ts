@@ -240,7 +240,7 @@ describe('Games sync API (e2e, in-memory storage)', () => {
   const users = {
     getProfile: vi.fn(async (id: string) => ({ id, displayName: 'Ally' })),
     setDisplayName: vi.fn(async () => undefined),
-    delete: vi.fn(async () => undefined),
+    delete: vi.fn(async (_id: string, beforeCommit: () => Promise<void>) => beforeCommit()),
   };
   const identity = { deleteUser: vi.fn(async () => undefined) };
   let aliceToken: string;
@@ -677,7 +677,7 @@ describe('Games sync API (e2e, in-memory storage)', () => {
 
     await request(app.getHttpServer()).delete('/me').set(as(aliceToken)).expect(204);
     expect(identity.deleteUser).toHaveBeenCalledWith(ALICE);
-    expect(users.delete).toHaveBeenCalledWith(ALICE);
+    expect(users.delete).toHaveBeenCalledWith(ALICE, expect.any(Function));
   });
 
   it('serves the leaderboards without a token, with a bounded size', async () => {
