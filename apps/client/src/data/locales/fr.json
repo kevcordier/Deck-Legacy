@@ -272,6 +272,9 @@
     "title": "Nouvelle carte découverte",
     "title_other": "Nouvelles cartes découvertes"
   },
+  "cardUpgraded": {
+    "title": "Carte améliorée"
+  },
   "gameOver": {
     "title": "Partie terminée",
     "glory": "Gloire",

@@ -272,6 +272,9 @@
     "title": "New card discovered",
     "title_other": "New cards discovered"
   },
+  "cardUpgraded": {
+    "title": "Card upgraded"
+  },
   "gameOver": {
     "title": "Game Over",
     "glory": "Glory",
