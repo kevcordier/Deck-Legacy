@@ -20,7 +20,7 @@ import type {
 } from '@deck-legacy/engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import { tCardName } from '@i18n/card/tCardName';
-import type React from 'react';
+import { type ReactNode, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
@@ -28,14 +28,13 @@ type CardNameProps = {
   readonly instanceId: number;
   readonly stateId?: number;
   /** The translated card name, injected by `Trans`. */
-  readonly children?: React.ReactNode;
+  readonly children?: ReactNode;
 };
 
 function CardName({ instanceId, stateId, children }: CardNameProps) {
   return (
     <CardStateTooltip
-      instanceId={instanceId}
-      stateId={stateId}
+      targets={[{ instanceId, stateId }]}
       renderCard={i => <GameCard instance={i} hideStatePreview />}
     >
       <Text className="text-xs underline">{children}</Text>
@@ -47,14 +46,18 @@ type EventRowProps = {
   readonly event: GameEvent;
   readonly gameState: ReturnType<typeof useGame>['gameState'];
   readonly defs: ReturnType<typeof useGame>['defs'];
+  /** Each card's state just before this event (absent before a checkpoint). */
+  readonly stateIds?: Record<number, number>;
 };
 
-function EventRow({ event, gameState, defs }: EventRowProps) {
+function EventRow({ event, gameState, defs, stateIds }: EventRowProps) {
   const { t } = useTranslation();
 
   /** `key` wraps the card name in `<card>`, which previews the card on hover / tap. */
-  const cardLabel = (key: string, instanceId: number, stateId?: number): React.ReactNode => {
-    const inst = gameState.instances[instanceId];
+  const cardLabel = (key: string, instanceId: number): ReactNode => {
+    const current = gameState.instances[instanceId];
+    const inst = current && { ...current, stateId: stateIds?.[instanceId] ?? current.stateId };
+    const stateId = inst?.stateId;
     const name = inst ? tCardName(t, getActiveState(inst, defs).name || '') : '';
     return (
       <Trans
@@ -72,7 +75,7 @@ function EventRow({ event, gameState, defs }: EventRowProps) {
     second: '2-digit',
   });
 
-  let label: React.ReactNode;
+  let label: ReactNode;
   let color = 'text-ink';
 
   if (event.type === GameEventType.ROUND_STARTED) {
@@ -125,7 +128,7 @@ function EventRow({ event, gameState, defs }: EventRowProps) {
     }
     case GameEventType.UPGRADE_CARD: {
       const e = event as UpgradeCardEvent;
-      label = cardLabel('history.upgradeCard', e.cardInstanceId, e.stateId);
+      label = cardLabel('history.upgradeCard', e.cardInstanceId);
       color = 'text-base-primary';
       break;
     }
@@ -173,13 +176,21 @@ function EventRow({ event, gameState, defs }: EventRowProps) {
 /** Right-side drawer listing the game events, most recent first. */
 export function HistoryDrawer({ onClose }: { readonly onClose: () => void }) {
   const { t } = useTranslation();
-  const { gameState, defs, getEvents } = useGame();
+  const { gameState, defs, getEvents, getStateIdsBeforeEvents } = useGame();
+  // Replays the log once per opening.
+  const [stateIdsBefore] = useState(getStateIdsBeforeEvents);
 
   return (
     <Modal title={t('history.title')} onClose={onClose} side="right" className="lg:w-[28rem]">
       <View>
         {[...getEvents()].reverse().map(e => (
-          <EventRow key={e.id} event={e} gameState={gameState} defs={defs} />
+          <EventRow
+            key={e.id}
+            event={e}
+            gameState={gameState}
+            defs={defs}
+            stateIds={stateIdsBefore[e.id]}
+          />
         ))}
       </View>
     </Modal>

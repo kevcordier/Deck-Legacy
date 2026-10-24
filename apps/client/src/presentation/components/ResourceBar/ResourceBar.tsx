@@ -13,9 +13,10 @@ import { Tooltip } from '@components/ui/Tooltip/Tooltip';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useIsDesktop } from '@hooks/useIsDesktop';
+import { useReducedMotion } from '@hooks/useReducedMotion';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
-import Animated, { type CSSAnimationKeyframes, useReducedMotion } from 'react-native-reanimated';
+import Animated, { type CSSAnimationKeyframes } from 'react-native-reanimated';
 
 // Pop played when a resource appears or its amount changes.
 const RESOURCE_POP: CSSAnimationKeyframes = {

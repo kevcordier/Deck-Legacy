@@ -50,7 +50,12 @@ export function OptionsModal({ onClose, onGoHome, initialTab = 'general' }: Opti
 
 function GeneralOptions({ onGoHome }: { readonly onGoHome?: () => void }) {
   const { t, i18n } = useTranslation();
-  const { resourceWarningEnabled, setResourceWarningEnabled } = use(GameUIContext);
+  const {
+    resourceWarningEnabled,
+    setResourceWarningEnabled,
+    animationsEnabled,
+    setAnimationsEnabled,
+  } = use(GameUIContext);
 
   return (
     <>
@@ -70,6 +75,12 @@ function GeneralOptions({ onGoHome }: { readonly onGoHome?: () => void }) {
         label={t('options.resourceWarning')}
         checked={resourceWarningEnabled}
         onChange={setResourceWarningEnabled}
+      />
+
+      <Checkbox
+        label={t('options.animations')}
+        checked={animationsEnabled}
+        onChange={setAnimationsEnabled}
       />
 
       {onGoHome && (

@@ -60,6 +60,8 @@ export type GameContextType = {
   setDisplayNewCards: (value: boolean) => void;
   /** Event log of the current game (cheat panel). */
   getEvents: () => GameEvent[];
+  /** Each card's state just before each event, by event id (history). */
+  getStateIdsBeforeEvents: () => Record<string, Record<number, number>>;
   parameters: GameParameters;
   campaignScores: Record<string, number>;
   availableExpansions: string[];

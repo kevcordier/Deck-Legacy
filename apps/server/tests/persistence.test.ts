@@ -1,3 +1,8 @@
+import { GameLock } from '../src/games/application/game-lock';
+import type { GameValidator } from '../src/games/application/game-validator';
+import type { GamesRepository } from '../src/games/application/games.repository';
+import type { ScoreMirror } from '../src/games/application/score-mirror';
+import { SyncGameUseCase } from '../src/games/application/sync-game.use-case';
 import { firstDifference } from '../src/games/domain/first-difference';
 import { PrismaGamesRepository } from '../src/games/infrastructure/prisma-games.repository';
 import { Prisma } from '../src/generated/prisma/client';
@@ -470,15 +475,15 @@ describe('account deletion', () => {
   const withKey = () => testConfig({ SUPABASE_SERVICE_ROLE_KEY: 'service-key' });
 
   it('is unavailable without the service role key', async () => {
-    const { prisma, tx } = fakePrisma();
+    const { prisma } = fakePrisma();
 
     await expect(usersWith(prisma, testConfig()).deleteAccount.execute(USER)).rejects.toThrow(
       'errors.accountDeletionUnavailable',
     );
-    expect(tx.user.deleteMany).not.toHaveBeenCalled();
+    expect(prisma.$transaction).toHaveBeenCalledOnce();
   });
 
-  it('deletes the Supabase user, then the data', async () => {
+  it('deletes the data and the Supabase user in one transaction', async () => {
     const { prisma, tx } = fakePrisma();
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null));
 
@@ -509,6 +514,18 @@ describe('account deletion', () => {
     fetchMock.mockRestore();
   });
 
+  it('keeps the Supabase user when the database deletion fails', async () => {
+    const { prisma, tx } = fakePrisma();
+    tx.user.deleteMany.mockRejectedValue(new Error('pooler timeout'));
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null));
+
+    await expect(usersWith(prisma, withKey()).deleteAccount.execute(USER)).rejects.toThrow(
+      'pooler timeout',
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+    fetchMock.mockRestore();
+  });
+
   it('removes the data of a user already deleted in Supabase', async () => {
     const { prisma, tx } = fakePrisma();
     const fetchMock = vi
@@ -530,7 +547,8 @@ describe('account deletion', () => {
     await expect(usersWith(prisma, withKey()).deleteAccount.execute(USER)).rejects.toThrow(
       'errors.accountDeletionFailed',
     );
-    expect(tx.user.deleteMany).not.toHaveBeenCalled();
+    // The transaction throws, so Postgres rolls the deletion back.
+    expect(tx.user.deleteMany).toHaveBeenCalledOnce();
     fetchMock.mockRestore();
   });
 });
@@ -541,5 +559,31 @@ describe('firstDifference', () => {
     expect(firstDifference(['e0', 'x', 'e2'], events(3))).toBe(1);
     expect(firstDifference(['e0', 'e1', 'e2', 'e3'], events(2))).toBe(2);
     expect(firstDifference([], events(2))).toBe(0);
+  });
+});
+
+describe('SyncGameUseCase', () => {
+  it('checks the kingdom limit after the other syncs of the same player', async () => {
+    let kingdoms = 0;
+    const repository = {
+      getMeta: async () => null,
+      getEventIds: async () => [],
+      getEventPayloads: async () => [],
+      create: async () => {
+        const count = kingdoms;
+        await new Promise(resolve => setTimeout(resolve, 5));
+        if (count >= 1) throw new Error('KINGDOM_LIMIT');
+        kingdoms += 1;
+      },
+      getSummary: async () => ({}),
+    } as unknown as GamesRepository;
+    const validator = { validate: () => ({ verified: true }) } as unknown as GameValidator;
+    const sync = new SyncGameUseCase(repository, validator, new GameLock(), {} as ScoreMirror);
+    const guest = { id: USER, email: null, isAnonymous: true };
+    const body = { events: events(1), fromSeq: 0, cardNames: {}, name: '' };
+
+    await Promise.allSettled([sync.execute(guest, GAME, body), sync.execute(guest, USER, body)]);
+
+    expect(kingdoms).toBe(1);
   });
 });

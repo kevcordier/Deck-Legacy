@@ -391,6 +391,30 @@ describe('sync.reconcile', () => {
     expect(store.list().map(k => k.id)).toEqual(['g2']);
   });
 
+  it('keeps the kingdoms with unsynced changes after sign-out, not after account deletion', () => {
+    kingdom('g1');
+    store.updateSyncInfo('g1', store.loadSave('g1')?.savedAt ?? 0, { dirty: true, userId: 'u1' });
+
+    sync.forgetAccountKingdoms();
+    expect(store.get('g1')).not.toBeNull();
+
+    sync.forgetAccountKingdoms(false);
+    expect(store.get('g1')).toBeNull();
+  });
+
+  it('keeps the unsynced kingdoms of another account when a new one signs in', async () => {
+    kingdom('g1');
+    store.updateSyncInfo('g1', store.loadSave('g1')?.savedAt ?? 0, {
+      dirty: true,
+      userId: 'other',
+    });
+
+    await sync.reconcile('u1');
+
+    expect(store.get('g1')).not.toBeNull();
+    expect(api.syncGame).not.toHaveBeenCalled();
+  });
+
   it('removes synced kingdoms the server no longer has', async () => {
     kingdom('g1');
     markSynced('g1');

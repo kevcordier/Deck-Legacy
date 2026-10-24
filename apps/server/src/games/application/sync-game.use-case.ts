@@ -32,32 +32,41 @@ export class SyncGameUseCase {
   execute(user: AuthUser, gameId: string, body: SyncGameCommand): Promise<GameSummary> {
     const userId = user.id;
     const limit = kingdomLimit(user.isAnonymous);
-    return this.lock.run(gameId, async () => {
-      const meta = await this.repository.getMeta(gameId);
-      if (meta && meta.userId !== userId) throw new NotFoundException('Game not found');
-      if (meta && body.baseVersion !== undefined && body.baseVersion !== meta.version) {
-        throw staleVersionException();
-      }
-      const storedIds = meta ? await this.repository.getEventIds(gameId) : [];
-      if (body.fromSeq > storedIds.length) throw staleVersionException();
-      const kept =
-        body.fromSeq > 0 ? await this.repository.getEventPayloads(gameId, body.fromSeq) : [];
-      const events = [...kept, ...body.events];
-      const firstChange = firstDifference(storedIds, events);
-      // A log rewritten before the checkpoint (development rewind, overwrite) is checked in full.
-      const checkpoint =
-        meta?.checkpoint && meta.checkpoint.seq <= firstChange ? meta.checkpoint : undefined;
-      const snapshot = this.validator.validate({ ...body, events }, checkpoint);
+    // Per player as well: the kingdom limit counts every game of the player.
+    return this.lock.run(gameId, () =>
+      this.lock.run(`user:${userId}`, async () => {
+        const meta = await this.repository.getMeta(gameId);
+        if (meta && meta.userId !== userId) throw new NotFoundException('Game not found');
+        if (meta && body.baseVersion !== undefined && body.baseVersion !== meta.version) {
+          throw staleVersionException();
+        }
+        const storedIds = meta ? await this.repository.getEventIds(gameId) : [];
+        if (body.fromSeq > storedIds.length) throw staleVersionException();
+        const firstChange =
+          body.fromSeq + firstDifference(storedIds.slice(body.fromSeq), body.events);
+        // Events the server already has come from its own log: a client cannot alter them (or drop
+        // the seed) under the same ids.
+        const kept =
+          firstChange > 0 ? await this.repository.getEventPayloads(gameId, firstChange) : [];
+        const events = [...kept, ...body.events.slice(firstChange - body.fromSeq)];
+        // A log rewritten before the checkpoint (development rewind, overwrite) is checked in full.
+        const checkpoint =
+          meta?.checkpoint && meta.checkpoint.seq <= firstChange ? meta.checkpoint : undefined;
+        const validated = this.validator.validate({ ...body, events }, checkpoint);
+        // Only a game that keeps its stored start keeps its flag when it cannot be verified.
+        const snapshot =
+          firstChange === 0 ? { ...validated, verified: validated.verified ?? false } : validated;
 
-      const mirrorScores = (tx: Transaction) =>
-        this.scores.mirror(tx, userId, gameId, snapshot.campaignScores);
+        const mirrorScores = (tx: Transaction) =>
+          this.scores.mirror(tx, userId, gameId, snapshot.campaignScores);
 
-      if (meta) {
-        await this.repository.save(gameId, userId, limit, firstChange, snapshot, mirrorScores);
-      } else {
-        await this.repository.create(gameId, userId, limit, snapshot, mirrorScores);
-      }
-      return this.repository.getSummary(gameId);
-    });
+        if (meta) {
+          await this.repository.save(gameId, userId, limit, firstChange, snapshot, mirrorScores);
+        } else {
+          await this.repository.create(gameId, userId, limit, snapshot, mirrorScores);
+        }
+        return this.repository.getSummary(gameId);
+      }),
+    );
   }
 }

@@ -240,7 +240,7 @@ describe('Games sync API (e2e, in-memory storage)', () => {
   const users = {
     getProfile: vi.fn(async (id: string) => ({ id, displayName: 'Ally' })),
     setDisplayName: vi.fn(async () => undefined),
-    delete: vi.fn(async () => undefined),
+    delete: vi.fn(async (_id: string, beforeCommit: () => Promise<void>) => beforeCommit()),
   };
   const identity = { deleteUser: vi.fn(async () => undefined) };
   let aliceToken: string;
@@ -520,6 +520,40 @@ describe('Games sync API (e2e, in-memory storage)', () => {
     repository.games.delete(session.id);
   });
 
+  it('keeps its own copy of the events it already has', async () => {
+    const session = playedGame(2);
+    await put(aliceToken, session.id, { events: session.getEvents() }).expect(200);
+    const score = repository.games.get(session.id)?.score;
+    const tampered = structuredClone(session.getEvents());
+    delete (tampered[0] as GameStartedEvent).seed;
+    const produced = tampered.find(event => event.type === 'CARD_PRODUCED') as GameEvent & {
+      productions: Record<string, number>;
+    };
+    produced.productions = { gold: 50 };
+
+    await put(aliceToken, session.id, { events: tampered }).expect(200);
+
+    const row = repository.games.get(session.id);
+    expect(row?.events).toEqual(session.getEvents());
+    expect(row?.score).toBe(score);
+    expect(row?.verified).toBe(true);
+    repository.games.delete(session.id);
+  });
+
+  it('drops the verified flag when an unverifiable log replaces the game start', async () => {
+    const session = playedGame(1);
+    await put(aliceToken, session.id, { events: session.getEvents() }).expect(200);
+    const [first, ...rest] = session.getEvents();
+    const { seed: _seed, ...legacyStart } = first as GameEvent & { seed?: string };
+
+    await put(aliceToken, session.id, {
+      events: [{ ...legacyStart, id: 'new-start' }, ...rest],
+    }).expect(200);
+
+    expect(repository.games.get(session.id)?.verified).toBe(false);
+    repository.games.delete(session.id);
+  });
+
   it('exports what was synced', async () => {
     const session = playedGame();
     await put(aliceToken, session.id, { events: session.getEvents(), cardNames: { 1: 'Bessie' } });
@@ -643,7 +677,7 @@ describe('Games sync API (e2e, in-memory storage)', () => {
 
     await request(app.getHttpServer()).delete('/me').set(as(aliceToken)).expect(204);
     expect(identity.deleteUser).toHaveBeenCalledWith(ALICE);
-    expect(users.delete).toHaveBeenCalledWith(ALICE);
+    expect(users.delete).toHaveBeenCalledWith(ALICE, expect.any(Function));
   });
 
   it('serves the leaderboards without a token, with a bounded size', async () => {

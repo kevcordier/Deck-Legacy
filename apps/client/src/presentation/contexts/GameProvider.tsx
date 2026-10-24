@@ -318,6 +318,7 @@ export function GameProvider({
       displayNewCards,
       setDisplayNewCards,
       getEvents: () => sessionRef.current?.getEvents() ?? [],
+      getStateIdsBeforeEvents: () => sessionRef.current?.getStateIdsBeforeEvents() ?? {},
       parameters: view?.parameters ?? DEFAULT_PARAMETERS,
     };
   }, [

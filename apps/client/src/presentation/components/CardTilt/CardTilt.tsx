@@ -2,8 +2,9 @@ import { CardTiltContext } from './CardTiltContext';
 import type { CardTiltValues } from './CardTiltValues';
 import { useDeviceTilt } from './deviceTilt';
 import { useTiltStyle } from './useTiltStyle';
+import { useReducedMotion } from '@hooks/useReducedMotion';
 import type { ReactNode } from 'react';
-import Animated, { makeMutable, useReducedMotion } from 'react-native-reanimated';
+import Animated, { makeMutable } from 'react-native-reanimated';
 
 const FLAT_TILT: CardTiltValues = { x: makeMutable(0), y: makeMutable(0) };
 

@@ -20,6 +20,7 @@ import type {
 } from '@deck-legacy/engine/domain/types';
 import { useGame } from '@hooks/useGame';
 import { useIsDesktop } from '@hooks/useIsDesktop';
+import { useReducedMotion } from '@hooks/useReducedMotion';
 import { mergeOrder } from '@presentation/board/mergeOrder';
 import { type ReactNode, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +28,6 @@ import { type LayoutChangeEvent, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withDelay,
   withTiming,

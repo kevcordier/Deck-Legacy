@@ -10,4 +10,6 @@ export const STORAGE_KEYS = {
   tutorial: 'deck_legacy_tutorial',
   /** Warn before progressing while resources are in play (`false` = disabled). */
   resourceWarning: 'deck_legacy_resource_warning',
+  /** Animations of the interface (`false` = disabled). */
+  animations: 'deck_legacy_animations',
 } as const;

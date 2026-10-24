@@ -4,8 +4,9 @@ import { UsersRepository } from './users.repository';
 import { Injectable } from '@nestjs/common';
 
 /**
- * Deletes the account: the identity first (its tokens stop working), then the user's data
- * (games, events and scores are deleted in cascade).
+ * Deletes the account: the user's data (games, events and scores in cascade) and the identity
+ * (its tokens stop working). The identity goes before the data is committed: if the provider
+ * refuses, the data stays and the player can try again; if the database fails, the identity stays.
  */
 @Injectable()
 export class DeleteAccountUseCase {
@@ -16,8 +17,7 @@ export class DeleteAccountUseCase {
   ) {}
 
   async execute(userId: string): Promise<void> {
-    await this.identity.deleteUser(userId);
-    await this.users.delete(userId);
+    await this.users.delete(userId, () => this.identity.deleteUser(userId));
     this.ensureUser.forget(userId);
   }
 }

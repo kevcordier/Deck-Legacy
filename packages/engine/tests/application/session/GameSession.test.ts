@@ -98,6 +98,26 @@ describe('GameSession commands', () => {
     expect(session.getState().resources.gold ?? 0).toBe(0);
   });
 
+  it("gives each card's state just before each event", () => {
+    const session = GameSession.start(
+      'g',
+      makeCatalog(),
+      DEFAULT_OPTIONS,
+      'standard',
+      undefined,
+      'seed',
+    );
+    const state = session.getState();
+    const [produced, upgraded] = state.board.filter(id => state.instances[id].cardId === 1);
+    session.execute({ type: 'resolveProduction', instanceId: produced, choiceIndex: 0 });
+    session.execute({ type: 'resolveUpgrade', instanceId: upgraded, upgradeTo: 2 });
+
+    const upgrade = session.getEvents().find(e => e.type === GameEventType.UPGRADE_CARD);
+    const before = session.getStateIdsBeforeEvents();
+    expect(before[upgrade?.id ?? ''][upgraded]).toBe(1);
+    expect(session.getState().instances[upgraded].stateId).toBe(2);
+  });
+
   it('pays the upgrade chosen by its index when several lead to the same state', () => {
     const catalog = makeCatalog();
     // Two ways to pay: 5 gold (unaffordable) or 1 gold

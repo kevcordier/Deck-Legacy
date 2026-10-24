@@ -310,6 +310,22 @@ export class GameSession {
     return this.agg.getGameState();
   }
 
+  /**
+   * Each card's state just before each event, by event id: the history shows a card as it was.
+   * Replays the log; events kept before a checkpoint are left out.
+   */
+  getStateIdsBeforeEvents(): Record<string, Record<number, number>> {
+    const events = this.agg.getEvents();
+    const agg = this.makeAggregate(this.checkpoint, events);
+    const result: Record<string, Record<number, number>> = {};
+    for (const event of events.slice(this.checkpoint?.seq ?? 0)) {
+      const instances = Object.values(agg.getGameState().instances);
+      result[event.id] = Object.fromEntries(instances.map(i => [i.id, i.stateId]));
+      agg.loadFromHistory([event]);
+    }
+    return result;
+  }
+
   getCardNames(): Record<string, string> {
     return { ...this.cardNames };
   }

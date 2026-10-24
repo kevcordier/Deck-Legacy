@@ -101,9 +101,12 @@ export class SyncService {
     }, DEBOUNCE_MS);
   }
 
-  /** After sign-out: the kingdoms synced with an account stay on it, remove them from this device. */
-  forgetAccountKingdoms(): void {
-    this.forgetOtherAccounts('');
+  /**
+   * After sign-out: the kingdoms synced with an account stay on it, remove them from this device.
+   * Saves with unsynced changes stay until their account signs in again, unless it was deleted.
+   */
+  forgetAccountKingdoms(keepUnsynced = true): void {
+    this.forgetOtherAccounts('', keepUnsynced);
   }
 
   /**
@@ -281,13 +284,14 @@ export class SyncService {
   }
 
   /** Kingdoms synced with another account stay on that account: remove them from this device. */
-  private forgetOtherAccounts(account: string): void {
+  private forgetOtherAccounts(account: string, keepUnsynced = true): void {
     for (const kingdom of this.kingdoms.list()) {
       const save = this.kingdoms.loadSave(kingdom.id);
       const owner = save?.sync.userId;
-      if (owner && owner !== account) this.kingdoms.delete(kingdom.id);
-      // The limit depends on the account (guest or registered): try again.
-      else if (save?.sync.limited) {
+      if (owner && owner !== account) {
+        if (!keepUnsynced || !save?.sync.dirty) this.kingdoms.delete(kingdom.id);
+      } else if (save?.sync.limited) {
+        // The limit depends on the account (guest or registered): try again.
         this.kingdoms.updateSyncInfo(save.id, save.savedAt, { ...save.sync, limited: undefined });
       }
     }

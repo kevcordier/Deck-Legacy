@@ -1,6 +1,6 @@
 import { TextRoot } from '@components/ui/Text/TextRoot';
 import { TextStyle } from '@components/ui/Text/TextStyle';
-import { type ReactNode, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import {
   type GestureResponderEvent,
   type HostInstance,
@@ -31,6 +31,8 @@ interface TooltipProps {
   readonly maxWidth?: number;
   /** Called when the trigger is clicked while the panel covers it (hover modes). */
   readonly onTriggerPress?: () => void;
+  /** Milliseconds the pointer must stay on the trigger before a hover opens the panel (taps stay immediate). */
+  readonly openDelay?: number;
   /** No panel background, border nor padding (e.g. around a card preview). */
   readonly bare?: boolean;
   /**
@@ -79,8 +81,10 @@ export function Tooltip({
   bare = false,
   interactive = false,
   onTriggerPress,
+  openDelay = 0,
 }: TooltipProps) {
   const triggerRef = useRef<HostInstance>(null);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [anchor, setAnchor] = useState<Anchor | null>(null);
   const [panelSize, setPanelSize] = useState<{ width: number; height: number } | null>(null);
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
@@ -90,6 +94,8 @@ export function Tooltip({
       setAnchor({ x, y, width, height }),
     );
   };
+  const cancelHover = () => clearTimeout(hoverTimerRef.current);
+  useEffect(() => cancelHover, []);
   const close = () => {
     setAnchor(null);
     setPanelSize(null);
@@ -147,8 +153,10 @@ export function Tooltip({
         <View
           ref={triggerRef}
           onPointerEnter={event => {
-            if (event.nativeEvent.pointerType !== 'touch') open();
+            if (event.nativeEvent.pointerType !== 'touch')
+              hoverTimerRef.current = setTimeout(open, openDelay);
           }}
+          onPointerLeave={cancelHover}
           onPointerUp={event => {
             if (openOn === 'hoverOrTap' && event.nativeEvent.pointerType === 'touch') open();
           }}

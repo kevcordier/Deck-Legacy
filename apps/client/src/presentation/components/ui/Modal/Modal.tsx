@@ -8,6 +8,7 @@ import { Text } from '@components/ui/Text/Text';
 import { ModalDepthContext } from '@contexts/ModalDepthContext';
 import { ModalHeaderContext } from '@contexts/ModalHeaderContext';
 import { TutorialContext } from '@contexts/TutorialContext';
+import { useReducedMotion } from '@hooks/useReducedMotion';
 import { useWebKeyDown } from '@hooks/useWebKeyDown';
 import { type ReactNode, use, useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -127,6 +128,7 @@ export function Modal({
   const insets = useSafeAreaInsets();
   const tutorial = use(TutorialContext);
   const depth = use(ModalDepthContext) + 1;
+  const reducedMotion = useReducedMotion();
   const header = use(ModalHeaderContext);
   // The page header above the modal already owns the top inset.
   const padding = insetPadding(header ? 0 : insets.top, insets.bottom, side);
@@ -184,7 +186,7 @@ export function Modal({
       <RNModal
         visible
         transparent
-        animationType="fade"
+        animationType={reducedMotion ? 'none' : 'fade'}
         statusBarTranslucent
         navigationBarTranslucent
         onRequestClose={onClose}

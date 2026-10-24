@@ -1,5 +1,6 @@
 import { CardIllustration } from '@components/CardTilt/CardIllustration';
 import { Glory } from '@components/ui/Glory/Glory';
+import { HoverPressable } from '@components/ui/HoverPressable/HoverPressable';
 import { getResMeta } from '@components/ui/Icon/getResMeta';
 import { ActivatedIcon } from '@components/ui/Icon/icons/ActivatedIcon';
 import { DestroyIcon } from '@components/ui/Icon/icons/DestroyIcon';
@@ -121,16 +122,26 @@ function ActionBadges({
   );
 }
 
-function MiniUpgrades({ upgrades }: { readonly upgrades: MiniUpgrade[] }) {
+function MiniUpgrades({
+  upgrades,
+  onUpgrade,
+}: {
+  readonly upgrades: MiniUpgrade[];
+  readonly onUpgrade: (upgradeTo: number, index: number) => void;
+}) {
   const { t } = useTranslation();
   if (upgrades.length === 0) return null;
   return (
     <View className="flex-row flex-wrap items-center justify-end gap-1">
-      {upgrades.map(({ upgradeTo, resources, available }) => (
-        <View
+      {upgrades.map(({ upgradeTo, resources, available }, index) => (
+        <HoverPressable
           key={upgradeTo}
+          onPress={() => onUpgrade(upgradeTo, index)}
+          disabled={!available}
+          accessibilityRole="button"
           accessibilityLabel={t('card.upgradeAvailable')}
-          className={`bg-card flex-row items-center gap-0.5 rounded-full border-2 px-1.5 py-1 shadow-sm ${available ? 'border-card' : 'border-border'}`}
+          accessibilityState={{ disabled: !available }}
+          className={`bg-card active:bg-ink-card/20 flex-row items-center gap-0.5 rounded-full border-2 px-1.5 py-1 shadow-sm ${available ? 'border-card' : 'border-border'}`}
         >
           <UpgradeIcon className={`size-5 ${available ? 'text-ink-card' : 'text-gray'}`} />
           {Object.entries(resources).map(([k, v]) => {
@@ -142,7 +153,7 @@ function MiniUpgrades({ upgrades }: { readonly upgrades: MiniUpgrade[] }) {
               </Fragment>
             );
           })}
-        </View>
+        </HoverPressable>
       ))}
     </View>
   );
@@ -187,7 +198,8 @@ export function MiniGameCard({
   onPress,
 }: MiniGameCardProps) {
   const { t } = useTranslation();
-  const { gameState, defs, stickerDefs, getCardName, resolveProduction } = useGame();
+  const { gameState, defs, stickerDefs, getCardName, resolveProduction, resolveUpgrade } =
+    useGame();
   const isBlocked = isOnBoard && cardIsBlocked(instance.id, gameState);
   const cs = getActiveState(instance, defs);
   const isEnemy = cs.negative === true;
@@ -209,7 +221,7 @@ export function MiniGameCard({
   const glory = getEffectiveGlory(cs, gameState, defs, instance, stickerDefs);
   const hasGlory = cs.glory !== undefined && (cs.glory.amount !== 0 || !!cs.glory.valuePerElement);
 
-  const canUpgrade = !isBlocked && canUseOptions(gameState, Options.UPGRADE, instance.id);
+  const canUpgrade = canActivate && canUseOptions(gameState, Options.UPGRADE, instance.id);
   const upgrades: MiniUpgrade[] = (cs.upgrade ?? []).map(upg => {
     const cost = getEffectiveUpgradeCost(upg.cost, gameState, defs, stickerDefs, instance.id);
     return {
@@ -335,7 +347,10 @@ export function MiniGameCard({
               hasAvailableDestroyAction={hasAvailableDestroyAction}
               hasAvailableAction={hasAvailableAction}
             />
-            <MiniUpgrades upgrades={upgrades} />
+            <MiniUpgrades
+              upgrades={upgrades}
+              onUpgrade={(upgradeTo, index) => resolveUpgrade(instance.id, upgradeTo, index)}
+            />
             {!isBlocked && cs.track && (
               <MiniTrack steps={cs.track.steps} validatedSteps={instance.trackProgress} />
             )}

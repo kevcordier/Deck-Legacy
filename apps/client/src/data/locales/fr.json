@@ -272,6 +272,9 @@
     "title": "Nouvelle carte découverte",
     "title_other": "Nouvelles cartes découvertes"
   },
+  "cardUpgraded": {
+    "title": "Carte améliorée"
+  },
   "gameOver": {
     "title": "Partie terminée",
     "glory": "Gloire",
@@ -384,7 +387,8 @@
     "fr": "Français",
     "tutorial": "Activer le tutoriel",
     "backHome": "Retour à mes royaumes",
-    "resourceWarning": "Prévenir avant d'avancer avec des ressources en jeu"
+    "resourceWarning": "Prévenir avant d'avancer avec des ressources en jeu",
+    "animations": "Animations"
   },
   "progressWarning": {
     "title": "Des ressources vont être perdues",

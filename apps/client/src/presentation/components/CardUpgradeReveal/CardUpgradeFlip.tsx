@@ -2,12 +2,12 @@ import { TILT_PERSPECTIVE } from '@components/CardTilt/cardTiltConstants';
 import { GameCard, type GameCardSize } from '@components/GameCard/GameCard';
 import { MiniGameCard } from '@components/MiniGameCard/MiniGameCard';
 import type { CardInstance } from '@deck-legacy/engine/domain/types';
+import { useReducedMotion } from '@hooks/useReducedMotion';
 import { useEffect } from 'react';
 import { View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withDelay,
   withTiming,

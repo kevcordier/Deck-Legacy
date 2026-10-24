@@ -66,6 +66,8 @@ export function AuthProvider({ children }: { readonly children: ReactNode }) {
   );
 
   const signOut = useCallback(async () => {
+    // Last chance to push the moves played offline; what still fails stays on the device.
+    await sync.syncNow();
     await auth.signOut();
     sync.forgetAccountKingdoms();
     setUser(null);
@@ -75,7 +77,7 @@ export function AuthProvider({ children }: { readonly children: ReactNode }) {
     await accountApi.deleteMe();
     // The user no longer exists on the server: only forget the local session.
     await auth.forgetSession();
-    sync.forgetAccountKingdoms();
+    sync.forgetAccountKingdoms(false);
     setUser(null);
   }, [accountApi, auth, sync]);
 
