@@ -1,3 +1,5 @@
+import { CardStateTooltip } from '@components/CardStateTooltip/CardStateTooltip';
+import { previewTargets } from '@components/CardStateTooltip/previewTargets';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
 import { HoverPressable } from '@components/ui/HoverPressable/HoverPressable';
@@ -33,6 +35,8 @@ type CardActionProps = {
   /** Registers the action as the `card-action` tutorial target. */
   readonly tourTarget?: boolean;
   readonly onTriggered?: () => void;
+  /** Renders the cards previewed on hover (upgrade target, discovered cards); none without it. */
+  readonly renderCard?: (instance: CardInstance) => ReactNode;
 };
 
 function getActionIcon(
@@ -133,6 +137,7 @@ export function CardAction({
   wide = false,
   tourTarget = false,
   onTriggered,
+  renderCard,
 }: CardActionProps) {
   const { gameState, defs, stickerDefs, resolveAction } = useGame();
   const [depositOpen, setDepositOpen] = useState(false);
@@ -156,36 +161,59 @@ export function CardAction({
   const hasDestroyItselfCost =
     effectiveActionCost.destroy?.scope?.includes(TargetScope.SELF) ?? false;
 
+  const targets = previewTargets(instance.id, action.actionEffects);
+  const withPreview = (label: ReactNode, onTriggerPress?: () => void) =>
+    renderCard && targets.length > 0 ? (
+      <CardStateTooltip
+        targets={targets}
+        renderCard={renderCard}
+        className="justify-center"
+        // Inside the action button: a tap keeps triggering the action.
+        openOnTap={Boolean(action.trigger)}
+        onTriggerPress={onTriggerPress}
+      >
+        {label}
+      </CardStateTooltip>
+    ) : (
+      label
+    );
+
   if (action.trigger) {
     return (
       <View className={boxClass}>
-        <Text className={textClass}>
-          {getTriggerIcon(action, iconClass)} {actionLabel}
-        </Text>
+        {withPreview(
+          <Text className={textClass}>
+            {getTriggerIcon(action, iconClass)} {actionLabel}
+          </Text>,
+        )}
       </View>
     );
   }
 
   const isDisabled = !affordable || (disabled ?? false) || optionDisabled || !isActionInPlay;
   const isAnyAmount = hasAnyAmountCost(action.cost);
+  const press = () => {
+    if (!isAnyAmount) {
+      resolveAction(instance.id, action.id);
+      onTriggered?.();
+    } else setDepositOpen(true);
+  };
 
   return (
     <TutorialTarget id={tourTarget ? 'card-action' : undefined}>
       <HoverPressable
-        onPress={() => {
-          if (!isAnyAmount) {
-            resolveAction(instance.id, action.id);
-            onTriggered?.();
-          } else setDepositOpen(true);
-        }}
+        onPress={press}
         disabled={isDisabled}
         accessibilityRole="button"
         accessibilityState={{ disabled: isDisabled }}
         className={`${boxClass} active:bg-ink-card/20 ${isDisabled ? 'opacity-50' : ''}`}
       >
-        <Text className={textClass}>
-          {getActionIcon(action, hasDestroyItselfCost, iconClass)} {actionLabel}
-        </Text>
+        {withPreview(
+          <Text className={textClass}>
+            {getActionIcon(action, hasDestroyItselfCost, iconClass)} {actionLabel}
+          </Text>,
+          isDisabled ? undefined : press,
+        )}
       </HoverPressable>
       {depositOpen && (
         <DepositModal

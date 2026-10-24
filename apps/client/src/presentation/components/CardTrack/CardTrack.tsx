@@ -1,4 +1,6 @@
 import { CardTrackStep } from './CardTrackStep';
+import { CardStateTooltip } from '@components/CardStateTooltip/CardStateTooltip';
+import { previewTargets } from '@components/CardStateTooltip/previewTargets';
 import type { CardInstance, TrackDef } from '@deck-legacy/engine/domain/types';
 import React from 'react';
 import { View } from 'react-native';
@@ -25,17 +27,26 @@ export function CardTrack({
 
   return (
     <View className={`flex-wrap justify-center ${layoutClass}`}>
-      {track.steps.map(step => (
-        <CardTrackStep
-          key={step.id}
-          step={step}
-          track={track}
-          instance={instance}
-          wide={wide}
-          isValidated={validatedSteps.includes(step.id)}
-          renderCard={renderCard}
-        />
-      ))}
+      {track.steps.map(step => {
+        const stepNode = (
+          <CardTrackStep
+            key={step.id}
+            step={step}
+            track={track}
+            instance={instance}
+            wide={wide}
+            isValidated={validatedSteps.includes(step.id)}
+          />
+        );
+        const targets = previewTargets(instance.id, step.effects);
+        return renderCard && targets.length > 0 ? (
+          <CardStateTooltip key={step.id} targets={targets} renderCard={renderCard}>
+            {stepNode}
+          </CardStateTooltip>
+        ) : (
+          stepNode
+        );
+      })}
     </View>
   );
 }

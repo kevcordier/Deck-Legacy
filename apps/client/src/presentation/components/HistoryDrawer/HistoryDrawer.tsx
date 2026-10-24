@@ -34,8 +34,7 @@ type CardNameProps = {
 function CardName({ instanceId, stateId, children }: CardNameProps) {
   return (
     <CardStateTooltip
-      instanceId={instanceId}
-      stateId={stateId}
+      targets={[{ instanceId, stateId }]}
       renderCard={i => <GameCard instance={i} hideStatePreview />}
     >
       <Text className="text-xs underline">{children}</Text>

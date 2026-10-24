@@ -12,7 +12,6 @@ interface CardTrackContentProps {
   readonly step: StepDef;
   readonly isValidated: boolean;
   readonly wide?: boolean;
-  readonly renderCard?: (instance: CardInstance) => React.ReactNode;
 }
 
 export function CardTrackStep({
@@ -21,10 +20,9 @@ export function CardTrackStep({
   instance,
   isValidated,
   wide = false,
-  renderCard,
 }: CardTrackContentProps) {
   const { t } = useTranslation();
-  const contents = CardTrackContent({ t, instance, track, step, isValidated, wide, renderCard });
+  const contents = CardTrackContent({ t, instance, track, step, isValidated, wide });
   let cost: React.ReactNode[] = [];
 
   if (step.cost?.resources) {

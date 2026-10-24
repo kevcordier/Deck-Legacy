@@ -1,7 +1,5 @@
 import { CardNumber } from '@components/CardNumber/CardNumber';
-import { CardStateTooltip } from '@components/CardStateTooltip/CardStateTooltip';
 import { cardTextTokens } from '@components/CardStateTooltip/cardTextTokens';
-import { selfUpgradeStateId } from '@components/CardStateTooltip/selfUpgradeStateId';
 import { Glory } from '@components/ui/Glory/Glory';
 import { getResMeta } from '@components/ui/Icon/getResMeta';
 import { IconColors } from '@components/ui/Icon/iconColors';
@@ -28,7 +26,6 @@ export function CardTrackContent({
   step,
   isValidated,
   wide = false,
-  renderCard,
 }: {
   t: TFunction;
   instance: CardInstance;
@@ -36,7 +33,6 @@ export function CardTrackContent({
   step: StepDef;
   isValidated: boolean;
   wide?: boolean;
-  renderCard?: (instance: CardInstance) => React.ReactNode;
 }): React.ReactNode[] {
   const contents: React.ReactNode[] = [];
   const actions = step.effects ?? [];
@@ -59,32 +55,11 @@ export function CardTrackContent({
 
   const getActionContent = (action: ActionEffect): JSX.Element | null => {
     if (action.type === ActionEffectType.DISCOVER_CARD && action.cards?.ids?.[0] !== undefined) {
-      const discoveredId = action.cards.ids[0];
-      const label = <CardNumber instanceId={discoveredId} className="text-xs" />;
-      return renderCard ? (
-        <CardStateTooltip key={action.id} instanceId={discoveredId} renderCard={renderCard}>
-          {label}
-        </CardStateTooltip>
-      ) : (
-        <React.Fragment key={action.id}>{label}</React.Fragment>
-      );
+      return <CardNumber key={action.id} instanceId={action.cards.ids[0]} className="text-xs" />;
     }
 
     if (action.type === ActionEffectType.UPGRADE_CARD) {
-      const icon = <UpgradeIcon className="size-3" />;
-      const targetStateId = selfUpgradeStateId([action]);
-      return renderCard && targetStateId !== undefined ? (
-        <CardStateTooltip
-          key={action.id}
-          instanceId={instance.id}
-          stateId={targetStateId}
-          renderCard={renderCard}
-        >
-          {icon}
-        </CardStateTooltip>
-      ) : (
-        <React.Fragment key={action.id}>{icon}</React.Fragment>
-      );
+      return <UpgradeIcon key={action.id} className="size-3" />;
     }
 
     if (action.type === ActionEffectType.DESTROY_CARD) {
@@ -125,7 +100,7 @@ export function CardTrackContent({
           instance.cardId,
           instance.stateId,
           step.id,
-          cardTextTokens(instance.id, step.effects, renderCard),
+          cardTextTokens(step.effects),
         )}
       </Text>,
     );

@@ -21,7 +21,7 @@ const meta: Meta<typeof CardStateTooltip> = {
     ),
   ],
   args: {
-    instanceId: 1,
+    targets: [{ instanceId: 1 }],
     renderCard: instance => <GameCard instance={instance} hideStatePreview />,
   },
 };
@@ -32,7 +32,7 @@ type Story = StoryObj<typeof CardStateTooltip>;
 /** Hover (web) or tap the icon to preview the upgraded state. */
 export const UpgradeTarget: Story = {
   args: {
-    stateId: 2,
+    targets: [{ instanceId: 1, stateId: 2 }],
     children: <UpgradeIcon className="size-6" />,
   },
 };
@@ -41,5 +41,13 @@ export const UpgradeTarget: Story = {
 export const CardReference: Story = {
   args: {
     children: <Text className="underline">#1</Text>,
+  },
+};
+
+/** Several cards (e.g. an upgrade that also discovers a card), shown side by side. */
+export const SeveralCards: Story = {
+  args: {
+    targets: [{ instanceId: 1, stateId: 2 }, { instanceId: 2 }],
+    children: <Text className="underline">#1 / #2</Text>,
   },
 };
