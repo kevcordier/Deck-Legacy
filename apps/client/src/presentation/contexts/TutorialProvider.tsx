@@ -16,7 +16,8 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [modalDepths, setModalDepths] = useState<number[]>([]);
   const targetsRef = useRef(new Map<string, TargetRef>());
   const { t } = useTranslation();
-  const { gameState, isTutorial, startGame, continueGame } = useGame();
+  const { gameState, isTutorial, startGame, continueGame, upgradeReveal, dismissUpgradeReveal } =
+    useGame();
   const { setTutorialEnabled } = useGameUI();
 
   // Steps whose target is not rendered (e.g. desktop-only elements on mobile) are skipped
@@ -46,6 +47,12 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       content: text('tutorial.openCard'),
       waitForTarget: `viewer-card-${id}`,
       done,
+    });
+    // Shown over the upgrade reveal; the next step closes it to reach the board again.
+    const afterUpgrade = (key: string): TutorialStep => ({
+      target: null,
+      content: text(key),
+      placement: 'center',
     });
     const onBoard = (id: number, key: string): TutorialStep => ({
       target: `card-${id}`,
@@ -89,9 +96,11 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       ...produce(1, 'tutorial.turn1.produce'),
       ...produce(2, 'tutorial.turn1.produceAgain'),
       ...upgrade(5, 'tutorial.turn1.upgrade'),
+      afterUpgrade('tutorial.turn1.upgraded'),
       {
         target: 'phase-action',
         content: text('tutorial.turn1.next'),
+        closeUpgradeReveal: true,
         done: state => state.turn >= 2 && state.phase === Phase.PLAYING,
       },
       onBoard(6, 'tutorial.turn2.notEnough'),
@@ -100,9 +109,11 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       ...produce(3, 'tutorial.turn2.produce'),
       ...produce(9, 'tutorial.turn2.produceAgain'),
       ...upgrade(6, 'tutorial.turn2.upgrade'),
+      afterUpgrade('tutorial.turn2.upgraded'),
       {
         target: 'phase-action',
         content: text('tutorial.turn2.endRound'),
+        closeUpgradeReveal: true,
         done: state => state.round >= 2,
       },
       { target: 'round-preview', content: text('tutorial.discovery') },
@@ -165,6 +176,13 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     if (doneStep?.(gameState)) nextStep();
   }, [doneStep, gameState, nextStep]);
+
+  // The upgrade reveal modal would cover the board target of the step.
+  const closeReveal =
+    run && steps[stepIndex]?.closeUpgradeReveal === true && upgradeReveal !== null;
+  useEffect(() => {
+    if (closeReveal) dismissUpgradeReveal();
+  }, [closeReveal, dismissUpgradeReveal]);
 
   const registerTarget = useCallback(
     (id: string, ref: TargetRef) => {

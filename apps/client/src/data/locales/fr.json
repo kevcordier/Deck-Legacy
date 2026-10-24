@@ -436,6 +436,7 @@
       "produce": "Produisez avec cette Herbe sauvage pour gagner 1 {{gold}}. La carte est défaussée. ⚠️ Les ressources produites sont perdues dès qu'une autre carte est piochée.",
       "produceAgain": "Produisez avec la seconde Herbe sauvage : vous avez maintenant 2 {{gold}}.",
       "upgrade": "Améliorez la Montagne lointaine. Une amélioration termine toujours le tour.",
+      "upgraded": "Lorsqu'une carte est améliorée, quelle que soit la façon, elle est directement mise dans la défausse.",
       "next": "Le tour est fini, les autres cartes sont défaussées. Lancez le tour suivant."
     },
     "turn2": {
@@ -444,6 +445,7 @@
       "produce": "Deux nouvelles sources de {{gold}} ! Produisez avec l'Herbe sauvage…",
       "produceAgain": "…puis avec le Quartier général : 2 {{gold}}.",
       "upgrade": "Améliorez la Montagne lointaine.",
+      "upgraded": "Si vous le souhaitez, vous pouvez revenir en arrière pour choisir une autre action : le retour en arrière est possible tant qu'aucune autre carte n'a été révélée de la pioche. Dans le cadre de ce tutoriel, nous allons finir la manche.",
       "endRound": "Votre pioche est vide : la manche se termine. Toutes vos cartes sont mélangées pour la suivante."
     },
     "discovery": "À chaque nouvelle manche, 2 nouvelles cartes de la pile de découverte rejoignent votre deck.",

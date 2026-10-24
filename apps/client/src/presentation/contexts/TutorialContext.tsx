@@ -20,6 +20,8 @@ export type TutorialStep = {
   waitForTarget?: string;
   /** Shows the whole starting deck during the step. */
   showStartingDeck?: boolean;
+  /** Closes the upgrade reveal when the step starts (its target is on the board). */
+  closeUpgradeReveal?: boolean;
   /** Action the player must do: the step moves on once it returns true, other presses are blocked. */
   done?: (state: GameState) => boolean;
 };

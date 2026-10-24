@@ -436,6 +436,7 @@
       "produce": "Produce with this Wild Grass to gain 1 {{gold}}. The card is discarded. ⚠️ Produced resources are lost as soon as another card is drawn.",
       "produceAgain": "Produce with the second Wild Grass: you now have 2 {{gold}}.",
       "upgrade": "Upgrade the Distant Mountain. An upgrade always ends the turn.",
+      "upgraded": "Whenever a card is upgraded, however it happens, it goes straight to the discard pile.",
       "next": "The turn is over, the other cards are discarded. Start the next turn."
     },
     "turn2": {
@@ -444,6 +445,7 @@
       "produce": "Two new {{gold}} producers! Produce with the Wild Grass…",
       "produceAgain": "…then with the Headquarters: 2 {{gold}}.",
       "upgrade": "Upgrade the Distant Mountain.",
+      "upgraded": "If you wish, you can go back to choose another action: going back is possible as long as no other card has been revealed from the draw pile. In this tutorial, we will finish the round.",
       "endRound": "Your draw pile is empty: the round ends. All your cards are shuffled for the next one."
     },
     "discovery": "Each new round, 2 new cards from the discovery pile join your deck.",
