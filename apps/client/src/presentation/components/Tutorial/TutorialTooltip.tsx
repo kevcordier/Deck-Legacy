@@ -3,6 +3,8 @@ import { FadeInScale } from '@components/ui/FadeInScale/FadeInScale';
 import { Text } from '@components/ui/Text/Text';
 import { TextStyle } from '@components/ui/Text/TextStyle';
 import type { TutorialStep } from '@contexts/TutorialContext';
+import { useWebKeyDown } from '@hooks/useWebKeyDown';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 
@@ -28,6 +30,22 @@ export function TutorialTooltip({
   const buttons = step.buttons ?? (step.done ? ['skip'] : ['skip', 'primary']);
   const showSkip = !isLastStep && buttons.includes('skip');
   const showPrimary = buttons.includes('primary');
+  // Keyboard on the web: Enter or → moves on, ← goes back.
+  const handleKey = useCallback(
+    (e: KeyboardEvent) => {
+      let action: (() => void) | undefined;
+      if (e.key === 'ArrowLeft') action = onBack;
+      else if (e.key === 'Enter' || e.key === 'ArrowRight') {
+        if (showPrimary) action = onNext;
+        else if (isLastStep) action = () => onFinish(true);
+      }
+      if (!action) return;
+      e.preventDefault();
+      action();
+    },
+    [onBack, onNext, onFinish, showPrimary, isLastStep],
+  );
+  useWebKeyDown(handleKey);
 
   return (
     <FadeInScale className="border-base-primary bg-card overflow-hidden rounded-2xl border-2 shadow-lg">
