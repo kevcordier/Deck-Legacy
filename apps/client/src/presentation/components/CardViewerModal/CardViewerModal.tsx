@@ -115,6 +115,7 @@ export function CardViewerModal({ cardIds, initialId, onClose, title }: CardView
         size="lg"
         isOnBoard={isOnBoard}
         tourTarget
+        editableName
         onActionTriggered={onClose}
       />
     </TutorialTarget>

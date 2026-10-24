@@ -61,6 +61,8 @@ interface GameCardProps {
   readonly unconstrained?: boolean;
   /** Registers the card parts as tutorial targets (first card of the board only). */
   readonly tourTarget?: boolean;
+  /** Shows the input of a card whose name the player chooses (card viewer only); otherwise the chosen name is plain text. */
+  readonly editableName?: boolean;
   /** Called when the card itself (not one of its controls) is pressed. */
   readonly onPress?: () => void;
   /** Called after a production / action / upgrade has been triggered from this card. */
@@ -143,6 +145,7 @@ export function GameCard({
   size = 'md',
   unconstrained = false,
   tourTarget = false,
+  editableName = false,
   onPress,
   onActionTriggered,
 }: GameCardProps) {
@@ -178,7 +181,10 @@ export function GameCard({
   );
   const rawCardName = t(`names.${cs.name}`, { ns: 'cards' });
   const canChooseName = cs.chooseName === true && rawCardName.includes('_____');
-  const [namePrefix, nameSuffix] = canChooseName ? rawCardName.split('_____') : ['', ''];
+  const showNameInput = canChooseName && editableName;
+  const [namePrefix, nameSuffix] = showNameInput ? rawCardName.split('_____') : ['', ''];
+  // Only a chosen name holds the blank, so other names are left unchanged.
+  const displayName = name ? rawCardName.replace('_____', name) : rawCardName;
   const glory = getEffectiveGlory(cs, gameState, defs, instance, stickerDefs);
   const currentStateStickers = instance.stickers[instance.stateId] ?? [];
   const illustration = getIllustrationSource(cs.illustration);
@@ -227,7 +233,7 @@ export function GameCard({
             <View className="flex-row items-start justify-between gap-2">
               {/* An editable name stays out of the drag handle: its gesture takes the input's press. */}
               <CardDragHandle
-                className={`min-w-0 flex-row items-center gap-1 ${canChooseName ? '' : 'flex-1'}`}
+                className={`min-w-0 flex-row items-center gap-1 ${showNameInput ? '' : 'flex-1'}`}
               >
                 {expansion && (
                   <ExpansionIcon
@@ -244,17 +250,17 @@ export function GameCard({
                     <Text className={`font-body-bold ${sizes.nameText}`}>#{number}</Text>
                   </TutorialTarget>
                 )}
-                {!canChooseName && (
+                {!showNameInput && (
                   <TutorialTarget id={tourId('card-name')} className="min-w-0 flex-1">
                     <Text
                       className={`font-display ${sizes.nameText} ${isEnemy ? 'text-tag-enemy' : ''}`}
                     >
-                      {tCardName(t, cs.name || '')}
+                      {displayName}
                     </Text>
                   </TutorialTarget>
                 )}
               </CardDragHandle>
-              {canChooseName && (
+              {showNameInput && (
                 <TutorialTarget id={tourId('card-name')} className="min-w-0 flex-1">
                   <View className="flex-row flex-wrap items-baseline gap-1">
                     <Text className={`font-display ${sizes.nameText}`}>{namePrefix}</Text>
@@ -375,9 +381,9 @@ export function GameCard({
                       t,
                       action.id,
                       instance.cumulated,
-                      // Inside the action button: a tap keeps triggering the action.
-                      cardTextTokens(instance.id, action.actionEffects, renderPreview, false),
+                      cardTextTokens(action.actionEffects),
                     )}
+                    renderCard={renderPreview}
                     disabled={!canActivate}
                     size={size}
                     wide={width >= WIDE_CARD_MIN_WIDTH}
@@ -455,59 +461,57 @@ export function GameCard({
                         accessibilityState={{ disabled }}
                         className={`${sizes.actionBox} active:bg-ink-card/20 ${disabled ? 'opacity-50' : ''}`}
                       >
-                        <Text className={sizes.actionText}>
-                          <CardStateTooltip
-                            instanceId={instance.id}
-                            stateId={upg.upgradeTo}
-                            renderCard={renderPreview}
-                            openOnTap={false}
-                            onTriggerPress={
-                              disabled
-                                ? undefined
-                                : withCallback(() =>
-                                    resolveUpgrade(instance.id, upg.upgradeTo, index),
-                                  )
-                            }
-                          >
-                            <Text className={sizes.actionText}>
-                              <UpgradeIcon className="size-4" />{' '}
-                              {targetState
-                                ? tCardName(t, targetState.name || '')
-                                : t('card.state', { id: upg.upgradeTo })}
-                            </Text>
-                          </CardStateTooltip>
-                          {Boolean(
-                            effectiveUpgradeCost.resources?.[0] ??
-                            discardLabel ??
-                            (destroyLabel || anyLabel),
-                          ) && (
-                            <Text>
-                              {' '}
-                              (
-                              {Object.entries(effectiveUpgradeCost.resources?.[0] ?? {}).map(
-                                ([k, v], ci) => {
-                                  const meta = getResMeta(k);
-                                  return (
-                                    <React.Fragment key={k}>
-                                      {ci > 0 && ', '}
-                                      {v}
-                                      {meta.icon && (
-                                        <meta.icon
-                                          className={sizes.resourceIcon}
-                                          color={meta.color}
-                                          alt={k}
-                                        />
-                                      )}
-                                    </React.Fragment>
-                                  );
-                                },
-                              )}{' '}
-                              {discardLabel}
-                              {destroyLabel}
-                              {anyLabel})
-                            </Text>
-                          )}
-                        </Text>
+                        <CardStateTooltip
+                          targets={[{ instanceId: instance.id, stateId: upg.upgradeTo }]}
+                          renderCard={renderPreview}
+                          className="justify-center"
+                          openOnTap={false}
+                          onTriggerPress={
+                            disabled
+                              ? undefined
+                              : withCallback(() =>
+                                  resolveUpgrade(instance.id, upg.upgradeTo, index),
+                                )
+                          }
+                        >
+                          <Text className={sizes.actionText}>
+                            <UpgradeIcon className="size-4" />{' '}
+                            {targetState
+                              ? tCardName(t, targetState.name || '')
+                              : t('card.state', { id: upg.upgradeTo })}
+                            {Boolean(
+                              effectiveUpgradeCost.resources?.[0] ??
+                              discardLabel ??
+                              (destroyLabel || anyLabel),
+                            ) && (
+                              <Text>
+                                {' '}
+                                (
+                                {Object.entries(effectiveUpgradeCost.resources?.[0] ?? {}).map(
+                                  ([k, v], ci) => {
+                                    const meta = getResMeta(k);
+                                    return (
+                                      <React.Fragment key={k}>
+                                        {ci > 0 && ', '}
+                                        {v}
+                                        {meta.icon && (
+                                          <meta.icon
+                                            className={sizes.resourceIcon}
+                                            color={meta.color}
+                                            alt={k}
+                                          />
+                                        )}
+                                      </React.Fragment>
+                                    );
+                                  },
+                                )}{' '}
+                                {discardLabel}
+                                {destroyLabel}
+                                {anyLabel})
+                              </Text>
+                            )}
+                          </Text>
+                        </CardStateTooltip>
                       </HoverPressable>
                     </TutorialTarget>
                   );
