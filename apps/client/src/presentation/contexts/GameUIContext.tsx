@@ -11,6 +11,8 @@ type GameUIContextType = {
   setTutorialEnabled: (enabled: boolean) => void;
   resourceWarningEnabled: boolean;
   setResourceWarningEnabled: (enabled: boolean) => void;
+  animationsEnabled: boolean;
+  setAnimationsEnabled: (enabled: boolean) => void;
 };
 
 export const GameUIContext = createContext<GameUIContextType>({} as GameUIContextType);

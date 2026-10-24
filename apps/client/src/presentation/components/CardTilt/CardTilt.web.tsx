@@ -1,9 +1,10 @@
 import { CardTiltContext } from './CardTiltContext';
 import type { CardTiltValues } from './CardTiltValues';
 import { useTiltStyle } from './useTiltStyle';
+import { useReducedMotion } from '@hooks/useReducedMotion';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type PointerEvent, View } from 'react-native';
-import Animated, { useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 
 type CardTiltProps = {
   readonly children: ReactNode;
