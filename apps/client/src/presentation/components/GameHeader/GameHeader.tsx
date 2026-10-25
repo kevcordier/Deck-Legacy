@@ -11,6 +11,7 @@ import { HistoryIcon } from '@components/ui/Icon/icons/HistoryIcon';
 import { Modal } from '@components/ui/Modal/Modal';
 import { Text } from '@components/ui/Text/Text';
 import { ModalDepthContext } from '@contexts/ModalDepthContext';
+import { Phase } from '@deck-legacy/engine/domain/enums';
 import { useGame } from '@hooks/useGame';
 import { useGameUI } from '@hooks/useGameInterface';
 import { useIsDesktop } from '@hooks/useIsDesktop';
@@ -59,6 +60,8 @@ export function GameHeader() {
     [destroyedPile, purgedCards, instances],
   );
   const deckEmpty = gameState.drawPile.length === 0;
+  // No undo once the game is over.
+  const canUndo = gameState.phase !== Phase.GAME_OVER && canRewind();
 
   const haveChoiceToDo =
     (!!pendingChoices && pendingChoices.length > 0) ||
@@ -82,12 +85,12 @@ export function GameHeader() {
         !event.shiftKey &&
         event.key.toLowerCase() === 'z';
 
-      if (!isUndoShortcut || !canRewind() || run) return;
+      if (!isUndoShortcut || !canUndo || run) return;
 
       event.preventDefault();
       rewindEvent();
     },
-    [canRewind, rewindEvent, run, inModal],
+    [canUndo, rewindEvent, run, inModal],
   );
   useWebKeyDown(onKeyDown);
 
@@ -118,7 +121,7 @@ export function GameHeader() {
         )
       }
     >
-      {canRewind() && (
+      {canUndo && (
         <Button
           onPress={() => rewindEvent()}
           title={t('header.undoTitle')}

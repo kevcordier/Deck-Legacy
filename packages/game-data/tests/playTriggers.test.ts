@@ -5,7 +5,7 @@ import { ActionEffectType, PendingChoiceType, Phase } from '@deck-legacy/engine/
 import { createInstance } from '@deck-legacy/engine/domain/factory';
 import { discardCards } from '@deck-legacy/engine/domain/state/discardCards';
 import { EMPTY_STATE } from '@deck-legacy/engine/domain/state/emptyState';
-import type { GameState } from '@deck-legacy/engine/domain/types';
+import type { ActionEffect, GameState } from '@deck-legacy/engine/domain/types';
 import { describe, expect, it } from 'vitest';
 
 // Triggered actions that react to other cards (`triggeredBy`) or fire at the end of the turn.
@@ -122,6 +122,34 @@ describe('Espionage', () => {
     const agg = makeGame({ permanents: [121], drawPile: [5] });
     agg.advance();
     expect(triggerIds(agg)).toContain('121-2-1');
+  });
+
+  it('discards the whole deck when its last step is marked, then upgrades at the end of the round', () => {
+    const agg = makeGame({ permanents: [121], drawPile: [5, 3, 8] });
+    agg.getGameState().instances[121].trackProgress.push(1, 2, 3, 4, 5);
+    agg.advance();
+    resolveTrigger(agg, '121-2-1');
+    const [choice] = agg.getCurrentCardAction()?.getPendingChoices() ?? [];
+    agg.resolveCardActionChoice(
+      {
+        id: choice.id,
+        type: ActionEffectType.CHOOSE_EFFECT,
+        sourceInstanceId: 121,
+        newActionEffects: [choice.choices[0] as ActionEffect],
+      },
+      choice.type,
+    );
+    expect(agg.getGameState().instances[121].trackProgress).toHaveLength(6);
+
+    const deck = [...agg.getGameState().drawPile];
+    expect(deck.length).toBeGreaterThan(0);
+    resolveTrigger(agg, '121-2-2');
+    expect(agg.getGameState().drawPile).toEqual([]);
+    expect(agg.getGameState().discardPile).toEqual(expect.arrayContaining(deck));
+
+    agg.roundEnded();
+    resolveTrigger(agg, '121-2-3');
+    expect(stateOf(agg, 121)).toBe('Attack');
   });
 });
 

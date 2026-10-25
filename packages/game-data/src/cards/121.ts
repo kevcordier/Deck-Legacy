@@ -80,6 +80,21 @@ export const borderDispute: CardDef = {
         },
         {
           id: '121-2-2',
+          trigger: Trigger.ON_TRACK_END,
+          actionEffects: [
+            {
+              id: 1,
+              type: ActionEffectType.DISCARD_CARD,
+              cards: {
+                scope: [TargetScope.DECK],
+                pickNumber: 9999,
+                autoPick: true,
+              },
+            },
+          ],
+        },
+        {
+          id: '121-2-3',
           trigger: Trigger.END_OF_ROUND,
           actionEffects: [
             {
@@ -93,26 +108,7 @@ export const borderDispute: CardDef = {
       ],
       track: {
         inOrder: true,
-        steps: [
-          emptyStep(1),
-          emptyStep(2),
-          emptyStep(3),
-          emptyStep(4),
-          emptyStep(5),
-          {
-            id: 6,
-            effects: [
-              {
-                id: 1,
-                type: ActionEffectType.DISCARD_CARD,
-                cards: {
-                  scope: [TargetScope.DECK],
-                  pickNumber: 999,
-                },
-              },
-            ],
-          },
-        ],
+        steps: [emptyStep(1), emptyStep(2), emptyStep(3), emptyStep(4), emptyStep(5), emptyStep(6)],
       },
     },
     {
@@ -185,7 +181,7 @@ export const borderDispute: CardDef = {
           id: '121-4-1',
           unlimited: true,
           cost: {
-            resources: [{ [ResourceType.WEAPON]: 1 }],
+            resources: [{ [ResourceType.WEAPON]: 'any' }],
           },
           actionEffects: [
             {
