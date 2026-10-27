@@ -53,7 +53,7 @@ export function CardTrackStep({
   }
   const textSize = wide ? 'text-sm' : 'text-xs';
   const costNode = <Text className={`text-ink-card ${textSize}`}>{cost}</Text>;
-  const contentNode = <View className="items-center justify-center">{contents}</View>;
+  const contentNode = <View className="shrink items-center justify-center">{contents}</View>;
   let boxSize = 'size-8';
   if (track.vertical) boxSize = wide ? 'size-6' : 'size-5';
 
@@ -61,7 +61,7 @@ export function CardTrackStep({
     <View
       className={`items-center gap-0.5 ${track.vertical ? 'flex-row-reverse justify-end' : 'justify-center'}`}
     >
-      <View className="flex-row items-center gap-0.5">
+      <View className="shrink flex-row items-center gap-0.5">
         {track.inverse ? contentNode : costNode}
       </View>
       <View
