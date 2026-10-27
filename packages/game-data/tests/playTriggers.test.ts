@@ -14,6 +14,7 @@ const catalog = loadGameCatalog();
 // instance id → [card id, state id]
 const CARDS: Record<number, [number, number]> = {
   3: [3, 1], // Forest (land)
+  19: [19, 2], // Mass Export
   5: [5, 1], // Trader (person)
   8: [8, 1], // Field Worker (person)
   81: [81, 3], // Healing Potion
@@ -21,6 +22,7 @@ const CARDS: Record<number, [number, number]> = {
   20: [20, 1], // Volcanic Eruption
   48: [48, 1], // Assassin
   119: [119, 3], // Uprising
+  117: [117, 1], // Handsome Rival (track steps cost resources)
   121: [121, 2], // Espionage
   1213: [121, 3], // Espionage, third state
   124: [124, 1], // Bandit (enemy)
@@ -150,6 +152,24 @@ describe('Espionage', () => {
     agg.roundEnded();
     resolveTrigger(agg, '121-2-3');
     expect(stateOf(agg, 121)).toBe('Attack');
+  });
+});
+
+describe('Mass Export', () => {
+  it('marks a step on another permanent at 150 without paying that step', () => {
+    const agg = makeGame({ permanents: [19, 117] });
+    const massExport = agg.getGameState().instances[19];
+    massExport.trackProgress.push(8, 9, 10, 11);
+    massExport.cumulated = 150;
+    agg.roundEnded();
+    resolveTrigger(agg, '19-2-2');
+    const [choice] = agg.getCurrentCardAction()?.getPendingChoices() ?? [];
+    agg.resolveCardActionChoice(
+      { id: choice.id, type: choice.kind, sourceInstanceId: 19, stepIds: [1] },
+      choice.type,
+    );
+    expect(agg.getGameState().instances[19].trackProgress).toContain(12);
+    expect(agg.getGameState().instances[117].trackProgress).toEqual([1]);
   });
 });
 
