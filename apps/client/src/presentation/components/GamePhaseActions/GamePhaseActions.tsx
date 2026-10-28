@@ -1,13 +1,13 @@
+import { type ResourceWarningKind, ResourceWarningModal } from './ResourceWarningModal';
 import { TutorialTarget } from '@components/Tutorial/TutorialTarget';
 import { Button } from '@components/ui/Button/Button';
-import { Checkbox } from '@components/ui/Checkbox/Checkbox';
-import { Modal } from '@components/ui/Modal/Modal';
-import { Text } from '@components/ui/Text/Text';
 import { GameUIContext } from '@contexts/GameUIContext';
+import { hasActionToSpendResources } from '@deck-legacy/engine/domain/cards/hasActionToSpendResources';
 import { Options, Phase } from '@deck-legacy/engine/domain/enums';
 import { canUseOptions } from '@deck-legacy/engine/domain/state/canUseOptions';
 import { isLastRound } from '@deck-legacy/engine/domain/state/isLastRound';
 import type { GameParameters, GameState } from '@deck-legacy/engine/domain/types/GameState';
+import { useGame } from '@hooks/useGame';
 import { use, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -78,24 +78,35 @@ export function GamePhaseActions({
   variant = 'desktop',
 }: GamePhaseActionsProps) {
   const { t } = useTranslation();
-  const { resourceWarningEnabled, setResourceWarningEnabled } = use(GameUIContext);
-  const [confirmingProgress, setConfirmingProgress] = useState(false);
-  const [dontRemind, setDontRemind] = useState(false);
+  const { resourceWarningEnabled } = use(GameUIContext);
+  const { defs, stickerDefs } = useGame();
+  // The move waiting for the player to confirm the warning: progressing, or leaving the turn.
+  const [pendingMove, setPendingMove] = useState<{
+    kind: ResourceWarningKind;
+    run: () => void;
+  } | null>(null);
 
+  const confirmFirst = (kind: ResourceWarningKind, run: () => void) => {
+    if (resourceWarningEnabled) setPendingMove({ kind, run });
+    else run();
+  };
   // Drawing a card empties the resources: warn first, unless the player turned the warning off.
   const hasResources = Object.values(gameState.resources).some(v => v > 0);
-  const handleProgress = () => {
-    if (hasResources && resourceWarningEnabled) setConfirmingProgress(true);
-    else progress();
-  };
-  const closeWarning = () => {
-    if (dontRemind) setResourceWarningEnabled(false);
-    setConfirmingProgress(false);
-  };
-  const confirmProgress = () => {
-    closeWarning();
-    progress();
-  };
+  const handleProgress = () => (hasResources ? confirmFirst('progress', progress) : progress());
+  // Leaving the turn or the round loses the resources a card in play could still use.
+  const handlePhaseAction = (run: () => void) =>
+    hasActionToSpendResources(gameState, defs, stickerDefs) ? confirmFirst('action', run) : run();
+
+  const warningModal = pendingMove && (
+    <ResourceWarningModal
+      kind={pendingMove.kind}
+      onCancel={() => setPendingMove(null)}
+      onConfirm={() => {
+        setPendingMove(null);
+        pendingMove.run();
+      }}
+    />
+  );
 
   const isDesktop = variant === 'desktop';
   const gapClass = isDesktop ? 'gap-2' : 'gap-1';
@@ -122,29 +133,7 @@ export function GamePhaseActions({
             {progressLabel}
           </Button>
         </TutorialTarget>
-        {confirmingProgress && (
-          <Modal
-            title={t('progressWarning.title')}
-            onClose={closeWarning}
-            footer={
-              <View className="flex-row justify-end gap-2">
-                <Button variant="outlined" size="sm" onPress={closeWarning}>
-                  {t('progressWarning.cancel')}
-                </Button>
-                <Button color="primary" size="sm" onPress={confirmProgress}>
-                  {t('progressWarning.confirm')}
-                </Button>
-              </View>
-            }
-          >
-            <Text>{t('progressWarning.message')}</Text>
-            <Checkbox
-              label={t('progressWarning.dontRemind')}
-              checked={dontRemind}
-              onChange={setDontRemind}
-            />
-          </Modal>
-        )}
+        {warningModal}
         <TutorialTarget id={isDesktop ? 'end-turn-voluntary' : 'end-turn-voluntary-mobile'}>
           <Button
             onPress={endTurnVoluntary}
@@ -173,9 +162,10 @@ export function GamePhaseActions({
 
   return (
     <View className={`flex-row items-center ${gapClass}`}>
-      <Button onPress={action.onPress} variant="outlined" size={size}>
+      <Button onPress={() => handlePhaseAction(action.onPress)} variant="outlined" size={size}>
         {action.label}
       </Button>
+      {warningModal}
     </View>
   );
 }

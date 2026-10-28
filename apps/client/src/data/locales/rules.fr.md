@@ -53,7 +53,7 @@ Une carte défaussée par un autre effet ne donne pas sa production.
 
 ### Ressources
 
-Les ressources se gagnent en produisant et grâce à certains effets, et se dépensent pour payer des coûts. **Toutes vos ressources sont perdues dès qu'une nouvelle carte entre en jeu et à la fin du tour** : ne les gagnez que lorsque vous pouvez les dépenser. L'application vous prévient avant de progresser avec des ressources non dépensées.
+Les ressources se gagnent en produisant et grâce à certains effets, et se dépensent pour payer des coûts. **Toutes vos ressources sont perdues dès qu'une nouvelle carte entre en jeu et à la fin du tour** : ne les gagnez que lorsque vous pouvez les dépenser. L'application vous prévient avant de progresser avec des ressources non dépensées, ou de passer à la suite quand une carte en jeu peut encore les dépenser (par exemple en fin de manche). L'option « Prévenir avant de perdre des ressources » désactive ces alertes.
 
 |           | **Ressource** |            | **Ressource**   |
 | --------- | ------------- | ---------- | --------------- |

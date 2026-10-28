@@ -389,7 +389,7 @@
     "fr": "Français",
     "tutorial": "Activer le tutoriel",
     "backHome": "Retour à mes royaumes",
-    "resourceWarning": "Prévenir avant d'avancer avec des ressources en jeu",
+    "resourceWarning": "Prévenir avant de perdre des ressources",
     "animations": "Animations"
   },
   "progressWarning": {
@@ -398,6 +398,11 @@
     "dontRemind": "Ne plus me le rappeler",
     "cancel": "Annuler",
     "confirm": "Avancer quand même"
+  },
+  "actionWarning": {
+    "title": "Des ressources peuvent encore servir",
+    "message": "Une carte en jeu peut encore dépenser vos ressources (par exemple en déposant des marchandises sur Exportations de masse). Elles seront perdues si vous continuez.",
+    "confirm": "Continuer quand même"
   },
   "tutorial": {
     "tooltip": {
