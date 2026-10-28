@@ -1,4 +1,4 @@
-import { ActionEffectType, CardTag, TargetScope } from '@deck-legacy/engine/domain/enums';
+import { ActionEffectType, CardTag, TargetScope, Trigger } from '@deck-legacy/engine/domain/enums';
 import type { CardDef, StepDef } from '@deck-legacy/engine/domain/types';
 
 const makeStep = (id: number, iron: number, cumulated: number): StepDef => ({
@@ -37,8 +37,15 @@ export const jewellery: CardDef = {
                 scope: [TargetScope.SELF],
               },
             },
+          ],
+        },
+        {
+          // A trigger, so marking it from another card (Mass Export) gives the goods too.
+          id: '75-1-2',
+          trigger: Trigger.ON_TRACK_ADVANCE,
+          actionEffects: [
             {
-              id: 2,
+              id: 1,
               type: ActionEffectType.ADD_RESOURCES,
               resources: {
                 goods: 5,

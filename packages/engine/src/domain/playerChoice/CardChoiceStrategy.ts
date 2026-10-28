@@ -3,6 +3,7 @@ import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
 import { getActiveState } from '../cards/selection/getActiveState';
 import { getEffectiveProductions } from '../cards/selection/getEffectiveProductions';
+import { advanceTrackOf } from '../effects/advanceTrackOf';
 import { chooseCrossedOutAction } from '../effects/chooseCrossedOutAction';
 import { chooseUsedAction } from '../effects/chooseUsedAction';
 import { ActionEffectType, PendingChoiceType } from '../enums';
@@ -395,6 +396,34 @@ export class CardChoiceStrategy implements PlayerChoiceStrategy {
         this.stickerDefs,
       );
       return [resolved, [...actionChoices, ...rest]];
+    } else if (choice.type === ActionEffectType.TRACK_ADVANCE && pendingChoices.length > 0) {
+      const [
+        { type: _type, choices: _choices, pickMin: _min, pickMax: _max, ...template },
+        ...rest
+      ] = pendingChoices;
+      // shortcut: the effect's `steps` options are not carried here (1 step), until a card that
+      // picks its target also sets them.
+      const [firstId, ...otherIds] = choice.instanceIds;
+      const [resolved, stepChoices] = advanceTrackOf(
+        resolvedAction,
+        firstId,
+        {},
+        template,
+        gs,
+        this.defs,
+        this.stickerDefs,
+      );
+      // "Mark all the ones you want": each other chosen card is marked by an effect of its own.
+      const markOthers = otherIds.map(id => ({
+        id: template.effectId ?? 1,
+        type: ActionEffectType.TRACK_ADVANCE,
+        payingCost: resolvedAction.payingCost,
+        cards: { ids: [id] },
+      }));
+      return [
+        { ...resolved, newActionEffects: [...(resolved.newActionEffects ?? []), ...markOthers] },
+        [...stepChoices, ...rest],
+      ];
     } else if (choice.type === ActionEffectType.REMOVE_RESOURCE_ON_CARD) {
       return this.filterRemoveResourceChoicesByEffectiveProduction(
         choice,

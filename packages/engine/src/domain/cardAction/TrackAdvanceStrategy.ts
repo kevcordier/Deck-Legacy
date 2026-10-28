@@ -24,17 +24,17 @@ export class TrackAdvanceStrategy implements CardActionStrategy {
     instance.trackProgress.push(...payload.stepIds);
     const hasCompletedTrack = track.steps.every(step => instance.trackProgress.includes(step.id));
 
-    if (!hadCompletedTrack && hasCompletedTrack) {
-      getInstancesTriggerEffects(
-        [instance],
-        this.cardDefs,
-        this.stickerDefs,
-        Trigger.ON_TRACK_END,
-        gs,
-      ).forEach(({ effectDef, sourceInstanceId }) => {
-        gs.triggerPile[environment.newId()] = { effectDef, sourceInstanceId };
-      });
-    }
+    const triggers = [
+      ...(payload.stepIds.length > 0 ? [Trigger.ON_TRACK_ADVANCE] : []),
+      ...(!hadCompletedTrack && hasCompletedTrack ? [Trigger.ON_TRACK_END] : []),
+    ];
+    triggers.forEach(trigger =>
+      getInstancesTriggerEffects([instance], this.cardDefs, this.stickerDefs, trigger, gs).forEach(
+        ({ effectDef, sourceInstanceId }) => {
+          gs.triggerPile[environment.newId()] = { effectDef, sourceInstanceId };
+        },
+      ),
+    );
 
     return {
       ...gs,

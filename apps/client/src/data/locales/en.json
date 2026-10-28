@@ -175,7 +175,9 @@
       "CROSS_OUT_GLORY": "Choose a card whose glory you cross out",
       "CROSS_OUT_GLORY_other": "Choose {{count}} cards whose glory you cross out",
       "CROSS_OUT_ACTION": "Choose a card to cross out one of its effects",
-      "CROSS_OUT_ACTION_other": "Choose {{count}} cards to cross out one of their effects"
+      "CROSS_OUT_ACTION_other": "Choose {{count}} cards to cross out one of their effects",
+      "TRACK_ADVANCE": "Choose a card to mark a step on",
+      "TRACK_ADVANCE_other": "Choose {{count}} cards to mark a step on"
     },
     "chooseActionEffect": "Choose an effect to resolve",
     "chooseStep": "Choose a track step",
