@@ -142,7 +142,9 @@ export function CardAction({
   const { gameState, defs, stickerDefs, resolveAction } = useGame();
   const [depositOpen, setDepositOpen] = useState(false);
   const isLarge = size === 'lg';
-  const iconClass = isLarge || wide ? 'size-6' : 'size-3';
+  let iconClass = 'size-3';
+  if (isLarge) iconClass = 'size-6';
+  else if (wide) iconClass = 'size-4';
   const boxClass = `bg-white/60 rounded-md ${isLarge || wide ? 'p-2' : 'p-1'}`;
   const textClass = isLarge ? 'text-base text-center' : 'text-xs text-center';
   const effectiveActionCost = getEffectiveActionCost(action.cost, instance);
