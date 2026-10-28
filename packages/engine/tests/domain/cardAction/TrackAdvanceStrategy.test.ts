@@ -35,7 +35,47 @@ const defWithTrackEndTrigger: CardDef = {
   ],
 };
 
+const defWithStepTrigger: CardDef = {
+  id: 4,
+  name: 'J',
+  states: [
+    {
+      id: 1,
+      name: 'S',
+      track: { inOrder: true, steps: [{ id: 10 }, { id: 20 }] },
+      actions: [
+        {
+          id: '4-1-1',
+          trigger: Trigger.ON_TRACK_ADVANCE,
+          actionEffects: [{ id: 1, type: ActionEffectType.ADD_RESOURCES, resources: { goods: 5 } }],
+        },
+      ],
+    },
+  ],
+};
+
 describe('TrackAdvanceStrategy', () => {
+  it('registers ON_TRACK_ADVANCE triggers each time a step is marked', () => {
+    const strategy = new TrackAdvanceStrategy({ 4: defWithStepTrigger }, {});
+    const inst = makeInstance({ id: 4, cardId: 4, stateId: 1, trackProgress: [] });
+    const gs = makeState({ instances: { 4: inst }, triggerPile: {} });
+
+    const result = strategy.apply(gs, {
+      id: 'x',
+      type: ActionEffectType.TRACK_ADVANCE,
+      sourceInstanceId: 1,
+      instanceIds: [4],
+      stepIds: [10],
+    });
+
+    expect(Object.values(result.triggerPile)).toEqual([
+      expect.objectContaining({
+        sourceInstanceId: 4,
+        effectDef: expect.objectContaining({ id: '4-1-1' }),
+      }),
+    ]);
+  });
+
   it('returns state unchanged when instanceId missing', () => {
     const strategy = new TrackAdvanceStrategy({ 1: defWithTrack }, {});
     const gs = makeState();

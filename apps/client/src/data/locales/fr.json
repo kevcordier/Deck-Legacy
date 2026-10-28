@@ -175,7 +175,9 @@
       "CROSS_OUT_GLORY": "Choisissez une carte dont vous rayez la gloire",
       "CROSS_OUT_GLORY_other": "Choisissez {{count}} cartes dont vous rayez la gloire",
       "CROSS_OUT_ACTION": "Choisissez une carte pour rayer un de ses effets",
-      "CROSS_OUT_ACTION_other": "Choisissez {{count}} cartes pour rayer un de leurs effets"
+      "CROSS_OUT_ACTION_other": "Choisissez {{count}} cartes pour rayer un de leurs effets",
+      "TRACK_ADVANCE": "Choisissez une carte sur laquelle marquer une étape",
+      "TRACK_ADVANCE_other": "Choisissez {{count}} cartes sur lesquelles marquer une étape"
     },
     "chooseActionEffect": "Choisissez un effet à résoudre",
     "chooseStep": "Choisir une étape",
@@ -387,7 +389,7 @@
     "fr": "Français",
     "tutorial": "Activer le tutoriel",
     "backHome": "Retour à mes royaumes",
-    "resourceWarning": "Prévenir avant d'avancer avec des ressources en jeu",
+    "resourceWarning": "Prévenir avant de perdre des ressources",
     "animations": "Animations"
   },
   "progressWarning": {
@@ -396,6 +398,11 @@
     "dontRemind": "Ne plus me le rappeler",
     "cancel": "Annuler",
     "confirm": "Avancer quand même"
+  },
+  "actionWarning": {
+    "title": "Des ressources peuvent encore servir",
+    "message": "Une carte en jeu peut encore dépenser vos ressources (par exemple en déposant des marchandises sur Exportations de masse). Elles seront perdues si vous continuez.",
+    "confirm": "Continuer quand même"
   },
   "tutorial": {
     "tooltip": {

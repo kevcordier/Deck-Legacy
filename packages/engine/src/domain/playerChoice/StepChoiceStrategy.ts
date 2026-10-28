@@ -15,18 +15,23 @@ export class StepChoiceStrategy implements PlayerChoiceStrategy {
       return [resolvedAction, pendingChoices.slice(1)];
     }
 
-    const sourceState = getActiveState(gs.instances[choice.sourceInstanceId], this.cardDefs);
+    // The marked card: another card's track when the effect targets one (Mass Export).
+    const targetId = resolvedAction.instanceIds?.[0] ?? choice.sourceInstanceId;
+    const sourceState = getActiveState(gs.instances[targetId], this.cardDefs);
     const newActionEffects = choice.stepIds.flatMap(stepId => {
       return (sourceState?.track?.steps.find(s => s.id === stepId)?.effects ?? []).map(e => ({
         ...e,
         sourceStepId: stepId,
+        // Another card's step: its effects resolve for that card ("this" is the marked card).
+        ...(targetId === choice.sourceInstanceId ? {} : { sourceInstanceId: targetId }),
       }));
     });
 
     const mergedResolvedAction: ResolvedActionEffect = {
       ...resolvedAction,
       stepIds: choice.stepIds,
-      newActionEffects,
+      // After the effects already queued (the other cards to mark, Mass Export).
+      newActionEffects: [...(resolvedAction.newActionEffects ?? []), ...newActionEffects],
     };
 
     return [mergedResolvedAction, pendingChoices.slice(1)];

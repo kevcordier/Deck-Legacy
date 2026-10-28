@@ -1,5 +1,4 @@
 import { getDefeatAction } from '../cardAction/getDefeatAction';
-import { canAffordCost } from '../cards/canAffordCost';
 import { getCardProductionChoices } from '../cards/getCardProductionChoices';
 import { getEffectiveActionCost } from '../cards/getEffectiveActionCost';
 import { getEffectiveUpgradeCost } from '../cards/getEffectiveUpgradeCost';
@@ -39,6 +38,7 @@ import type {
   Sticker,
   StickerSelector,
 } from '../types';
+import { advanceTrackOf } from './advanceTrackOf';
 import { chooseCrossedOutAction } from './chooseCrossedOutAction';
 import { chooseUsedAction } from './chooseUsedAction';
 import { getPickNumbers } from './getPickNumbers';
@@ -92,56 +92,44 @@ function resolveTrackAdvanceEffect(
   const targetIds = cardSelector(cards, instanceId, gameState, defs, stickerDefs);
   if (targetIds.length === 0) return [resolverAction, pendingChoices];
 
-  const targetId = targetIds[0];
-  const targetInst = gameState.instances[targetId];
-  const targetState = getActiveState(targetInst, defs);
-  const track = targetState.track;
-  if (!track) return [resolverAction, pendingChoices];
+  const template = {
+    id: `${instanceId}-${effectId}`,
+    actionId: parentActionId,
+    effectId,
+    sourceStepId: ctx.sourceStepId,
+    kind: actionType,
+    sourceInstanceId: instanceId,
+    isMandatory,
+  };
 
-  const availableSteps = track.steps.filter(s => !targetInst.trackProgress.includes(s.id));
-  if (availableSteps.length === 0) return [resolverAction, pendingChoices];
-
-  resolverAction.instanceIds = [targetId];
-
-  if (track.inOrder) {
-    const sortedSteps = availableSteps
-      .filter(s => !steps.ids || steps.ids.includes(s.id))
-      .sort((a, b) => a.id - b.id);
-    resolverAction.stepIds = sortedSteps.slice(0, steps.pickNumber ?? 1).map(s => s.id);
-    resolverAction.newActionEffects = resolverAction.stepIds.flatMap(stepId =>
-      (track.steps.find(s => s.id === stepId)?.effects ?? []).map(e => ({
-        ...e,
-        sourceStepId: stepId,
-      })),
-    );
-    return [resolverAction, pendingChoices];
-  } else {
-    const choices = availableSteps
-      .filter(
-        s =>
-          !targetInst.trackProgress.includes(s.id) &&
-          (!steps.ids || steps.ids.includes(s.id)) &&
-          canAffordCost(s.cost, instanceId, gameState, defs, stickerDefs),
-      )
-      .map(s => s.id);
-
-    const picks = getPickNumbers(steps, choices.length);
+  // "Mark 1 other permanent card" / "all the ones you want": the player picks the cards (opt-in
+  // with pick numbers, so the cards that always marked the first match keep replaying
+  // identically). Asked even for a single card when none may be picked.
+  const picks = getPickNumbers(cards, targetIds.length);
+  const picksCards =
+    cards.pickNumber !== undefined || cards.pickMin !== undefined || cards.pickMax !== undefined;
+  if (picksCards && (targetIds.length > 1 || picks.pickMin === 0)) {
     pendingChoices.push({
-      id: `${instanceId}-${effectId}`,
-      actionId: parentActionId,
-      effectId,
-      sourceStepId: ctx.sourceStepId,
-      kind: actionType,
-      type: PendingChoiceType.CHOOSE_STEP,
-      sourceInstanceId: instanceId,
-      targetInstanceId: targetId,
-      choices,
+      ...template,
+      type: PendingChoiceType.CHOOSE_CARD,
+      choices: targetIds,
       ...picks,
-      isMandatory,
     });
+    // No card is marked until the player picks (none at all is a valid answer).
+    resolverAction.instanceIds = undefined;
+    return [resolverAction, pendingChoices];
   }
 
-  return [resolverAction, pendingChoices];
+  const [resolved, stepChoices] = advanceTrackOf(
+    resolverAction,
+    targetIds[0],
+    steps,
+    template,
+    gameState,
+    defs,
+    stickerDefs,
+  );
+  return [resolved, [...pendingChoices, ...stepChoices]];
 }
 
 function resolveChooseActionEffect(

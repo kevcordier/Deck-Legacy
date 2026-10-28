@@ -44,6 +44,8 @@ export enum Trigger {
   ON_DISCARD = 'on_discard',
   ON_PRODUCE = 'on_produce',
   ON_UPGRADE = 'on_upgrade',
+  /** A step of the card's track is marked, by its own effect or another card's (Jewellery). */
+  ON_TRACK_ADVANCE = 'on_track_advance',
   ON_TRACK_END = 'on_track_end',
   ON_DEFEAT = 'on_defeat',
   ON_PURGE_SELECTION = 'on_purge_selection',

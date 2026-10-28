@@ -1,6 +1,7 @@
 import { loadGameCatalog } from '../src';
 import { GameAggregate } from '@deck-legacy/engine/domain/aggregates/GameAggregate';
 import { getActiveState } from '@deck-legacy/engine/domain/cards/selection/getActiveState';
+import { getStateActions } from '@deck-legacy/engine/domain/cards/selection/getStateActions';
 import { ActionEffectType, PendingChoiceType, Phase } from '@deck-legacy/engine/domain/enums';
 import { createInstance } from '@deck-legacy/engine/domain/factory';
 import { discardCards } from '@deck-legacy/engine/domain/state/discardCards';
@@ -22,6 +23,7 @@ const CARDS: Record<number, [number, number]> = {
   20: [20, 1], // Volcanic Eruption
   48: [48, 1], // Assassin
   119: [119, 3], // Uprising
+  75: [75, 1], // Jewellery (its steps set its own glory)
   117: [117, 1], // Handsome Rival (track steps cost resources)
   121: [121, 2], // Espionage
   1213: [121, 3], // Espionage, third state
@@ -156,20 +158,104 @@ describe('Espionage', () => {
 });
 
 describe('Mass Export', () => {
-  it('marks a step on another permanent at 150 without paying that step', () => {
-    const agg = makeGame({ permanents: [19, 117] });
+  /** Mass Export's next step (150 or 200) with the other permanents in play, at round end. */
+  function markStep(cumulated: 150 | 200, permanents: number[]) {
+    const agg = makeGame({ permanents: [19, ...permanents] });
     const massExport = agg.getGameState().instances[19];
-    massExport.trackProgress.push(8, 9, 10, 11);
-    massExport.cumulated = 150;
+    massExport.trackProgress.push(...(cumulated === 150 ? [8, 9, 10, 11] : [8, 9, 10, 11, 12]));
+    massExport.cumulated = cumulated;
     agg.roundEnded();
     resolveTrigger(agg, '19-2-2');
+    return agg;
+  }
+  const markStep150 = (permanents: number[]) => markStep(150, permanents);
+
+  function choose(agg: GameAggregate, answer: { instanceIds?: number[]; stepIds?: number[] }) {
     const [choice] = agg.getCurrentCardAction()?.getPendingChoices() ?? [];
     agg.resolveCardActionChoice(
-      { id: choice.id, type: choice.kind, sourceInstanceId: 19, stepIds: [1] },
+      { id: choice.id, type: choice.kind, sourceInstanceId: 19, ...answer },
       choice.type,
     );
-    expect(agg.getGameState().instances[19].trackProgress).toContain(12);
-    expect(agg.getGameState().instances[117].trackProgress).toEqual([1]);
+  }
+
+  const pending = (agg: GameAggregate) => agg.getCurrentCardAction()?.getPendingChoices()[0];
+
+  it('asks which other permanent to mark, then marks it without paying the step', () => {
+    const agg = markStep150([117, 121]);
+    expect(pending(agg)).toMatchObject({
+      type: PendingChoiceType.CHOOSE_CARD,
+      choices: [117, 121],
+    });
+
+    choose(agg, { instanceIds: [117] });
+    // Handsome Rival's first step costs 5 gold: offered anyway, since it is not paid.
+    expect(pending(agg)).toMatchObject({ type: PendingChoiceType.CHOOSE_STEP });
+    expect(pending(agg)?.choices).toContain(1);
+
+    choose(agg, { stepIds: [1] });
+    const gs = agg.getGameState();
+    expect(gs.instances[19].trackProgress).toContain(12);
+    expect(gs.instances[117].trackProgress).toEqual([1]);
+    expect(gs.instances[121].trackProgress).toEqual([]);
+  });
+
+  it("applies the marked card's step to that card, not to Mass Export", () => {
+    const agg = markStep150([75, 117]);
+    choose(agg, { instanceIds: [75] });
+    const gs = agg.getGameState();
+    expect(gs.instances[75]).toMatchObject({ trackProgress: [1], cumulated: 1 });
+    expect(gs.instances[19].cumulated).toBe(150);
+    // FAQ: marking it from Mass Export gives its normal benefits (Jewellery's 5 goods).
+    resolveTrigger(agg, '75-1-2');
+    expect(agg.getGameState().resources.goods).toBe(5);
+  });
+
+  it('marks every permanent chosen at 200, each with its own benefits', () => {
+    const agg = markStep(200, [75, 117, 121]);
+    expect(pending(agg)).toMatchObject({
+      type: PendingChoiceType.CHOOSE_CARD,
+      choices: [75, 117, 121],
+      pickMin: 0,
+    });
+
+    choose(agg, { instanceIds: [75, 121] });
+    const gs = agg.getGameState();
+    expect(gs.instances[19].trackProgress).toContain(13);
+    expect(gs.instances[75]).toMatchObject({ trackProgress: [1], cumulated: 1 });
+    expect(gs.instances[121].trackProgress).toEqual([1]);
+    expect(gs.instances[117].trackProgress).toEqual([]);
+    resolveTrigger(agg, '75-1-2');
+    expect(agg.getGameState().resources.goods).toBe(5);
+  });
+
+  it('marks nothing at 200 when the player picks no card', () => {
+    const agg = markStep(200, [75]);
+    choose(agg, { instanceIds: [] });
+    expect(agg.getGameState().instances[75].trackProgress).toEqual([]);
+    expect(triggerIds(agg)).not.toContain('75-1-2');
+  });
+
+  it('marks the next step of an ordered track directly once the card is chosen', () => {
+    const agg = markStep150([117, 121]);
+    choose(agg, { instanceIds: [121] });
+    expect(agg.getGameState().instances[121].trackProgress).toEqual([1]);
+    expect(agg.getGameState().instances[117].trackProgress).toEqual([]);
+  });
+});
+
+describe('Jewellery', () => {
+  it('gains 5 goods when its own action marks a step', () => {
+    const agg = makeGame({ permanents: [75], resources: { iron: 1 } });
+    const [action] = getStateActions(
+      agg.getGameState().instances[75],
+      catalog.cards,
+      catalog.stickers,
+    );
+    agg.cardAction(action, 75);
+    resolveTrigger(agg, '75-1-2');
+    const gs = agg.getGameState();
+    expect(gs.instances[75]).toMatchObject({ trackProgress: [1], cumulated: 1 });
+    expect(gs.resources.goods).toBe(5);
   });
 });
 

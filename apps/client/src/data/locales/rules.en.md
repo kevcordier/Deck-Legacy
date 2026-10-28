@@ -53,7 +53,7 @@ A card discarded by another effect does not give its production.
 
 ### Resources
 
-Resources are gained by producing and by some effects, and spent to pay costs. **All your resources are lost as soon as a new card enters play and at the end of the turn**: gain them only when you can spend them. The app warns you before you progress with unspent resources.
+Resources are gained by producing and by some effects, and spent to pay costs. **All your resources are lost as soon as a new card enters play and at the end of the turn**: gain them only when you can spend them. The app warns you before you progress with unspent resources, or move on while a card in play can still spend them (for example at the end of the round). The "Warn before resources are lost" option turns these warnings off.
 
 |           | **Resource** |            | **Resource** |
 | --------- | ------------ | ---------- | ------------ |

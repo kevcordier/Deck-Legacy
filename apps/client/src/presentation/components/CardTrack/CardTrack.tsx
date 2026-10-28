@@ -40,7 +40,12 @@ export function CardTrack({
         );
         const targets = previewTargets(instance.id, step.effects);
         return renderCard && targets.length > 0 ? (
-          <CardStateTooltip key={step.id} targets={targets} renderCard={renderCard}>
+          <CardStateTooltip
+            key={step.id}
+            targets={targets}
+            renderCard={renderCard}
+            className="shrink"
+          >
             {stepNode}
           </CardStateTooltip>
         ) : (

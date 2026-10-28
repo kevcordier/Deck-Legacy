@@ -91,10 +91,7 @@ export function CardTrackContent({
 
   if (track.inverse) {
     contents.push(
-      <Text
-        key={step.id}
-        className={`font-body-bold leading-none ${wide ? 'text-sm' : 'text-[9px]'}`}
-      >
+      <Text key={step.id} className={`font-body leading-none ${wide ? 'text-sm' : 'text-[9px]'}`}>
         {tCardTrackAction(
           t,
           instance.cardId,

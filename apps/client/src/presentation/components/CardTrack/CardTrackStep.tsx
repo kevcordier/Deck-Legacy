@@ -59,7 +59,7 @@ export function CardTrackStep({
 
   return (
     <View
-      className={`items-center gap-0.5 ${track.vertical ? 'flex-row-reverse justify-end' : 'justify-center'}`}
+      className={`shrink items-center gap-0.5 ${track.vertical ? 'flex-row-reverse justify-end' : 'justify-center'}`}
     >
       <View className="shrink flex-row items-center gap-0.5">
         {track.inverse ? contentNode : costNode}

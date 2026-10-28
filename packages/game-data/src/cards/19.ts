@@ -314,6 +314,7 @@ export const exportation: CardDef = {
                 payingCost: false,
                 cards: {
                   scope: [TargetScope.PERMANENTS, TargetScope.WITH_TRACK],
+                  pickNumber: 1,
                 },
               },
             ],

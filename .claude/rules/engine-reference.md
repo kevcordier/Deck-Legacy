@@ -289,3 +289,9 @@ When adding new action types, add a new strategy file and register it in `CardAc
 - Selectors: `TargetScope.BOX` (the undiscovered cards of the box, in order), `firstOnly`, `withoutTags`, `inPlayWhenInPlay` (Inventor Workshop's glory). `ValuePerElement.max` caps a count (Calculations).
 - `ORDER_CARDS` (Performance): the next `value` cards of the box are offered as a `PendingChoiceType.ORDER_CARDS`; the player answers the order (`instanceIds`) and at most one card to destroy (`destroyedIds`, checked by `isValidOrder`). The client shows a drag and drop sorting screen with a destroy slot.
 - `REMOVE_RESOURCE_ON_CARD` `stickerHere: 'lastSelected'`: the sticker goes to the card chosen before (Wheelbarrow). `UPGRADED_TO_BOTTOM_OF_DECK` (Crane).
+
+## Marking another card's track (Mass Export)
+
+- `TRACK_ADVANCE` with pick numbers on `cards` (`pickNumber`, or `pickMin`/`pickMax`) asks the player which cards to mark (a `CHOOSE_CARD` of kind `TRACK_ADVANCE`) when several match, or when none may be picked; without them it keeps marking the first match, so older games replay identically. Each extra chosen card gets a `TRACK_ADVANCE` of its own (`cards.ids`), so "mark all the ones you want" (Mass Export at 200) gives each card its benefits. `advanceTrackOf` then marks the next step (ordered track) or asks which one (`CHOOSE_STEP` with `targetInstanceId`).
+- The effects of a step marked on another card resolve for that card (`ActionEffect.sourceInstanceId`): "this" is the marked card. With `payingCost: false`, steps out of reach are offered too.
+- `Trigger.ON_TRACK_ADVANCE`: fired on a card each time a step of its track is marked, by its own effect or another card's. A benefit that comes with marking (Jewellery's 5 goods) is such a trigger, so marking from another card gives it too (FAQ).

@@ -94,14 +94,14 @@ function getSizeClasses(size: GameCardSize, wide: boolean) {
       actionBox: 'bg-white/60 p-2 rounded-md',
       actionText: 'text-xs',
       header: 'px-3 py-2 gap-2',
-      nameText: 'text-base',
+      nameText: 'text-sm',
       body: 'p-2',
       pill: 'size-6',
       glory: 'size-10',
       gloryText: 'text-sm',
       passifIcon: 'size-6',
       resourceIcon: 'size-4',
-      tagText: 'text-base',
+      tagText: 'text-sm',
       tagBox: '',
       expansionIcon: 'size-5',
     };
@@ -123,18 +123,10 @@ function getSizeClasses(size: GameCardSize, wide: boolean) {
   };
 }
 
-/** The illustration fills the card body, under the header, and fades into the card colour. */
+/** The illustration fills the card body, under the header (the actions fade it into the card colour). */
 function CardBackground({ source }: { readonly source?: ImageSourcePropType }) {
   if (!source) return null;
-  return (
-    <>
-      <CardIllustration source={source} />
-      <LinearGradient
-        colors={['transparent', 'rgba(240, 228, 190, 0.7)', CARD_COLOR]}
-        className="absolute inset-x-0 bottom-0 h-2/3"
-      />
-    </>
-  );
+  return <CardIllustration source={source} />;
 }
 
 export function GameCard({
@@ -348,7 +340,12 @@ export function GameCard({
               )}
             </View>
 
-            <View className={`relative z-10 items-center gap-1 ${sizes.body}`}>
+            {/* The fade follows the actions' height, so long tracks stay readable over the image. */}
+            <LinearGradient
+              colors={['transparent', 'rgba(240, 228, 190, 0.7)', CARD_COLOR]}
+              locations={[0, 0.3, 0.9]}
+              className={`relative z-10 min-h-[40%] items-center justify-end gap-1 ${sizes.body}`}
+            >
               {isParchment && def && (
                 <View className="w-full">
                   <MarkdownText text={tCardParchmentText(t, def.id)} ink compact />
@@ -516,7 +513,7 @@ export function GameCard({
                     </TutorialTarget>
                   );
                 })}
-            </View>
+            </LinearGradient>
           </View>
         </TextStyle>
       </Pressable>
