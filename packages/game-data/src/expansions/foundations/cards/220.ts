@@ -10,6 +10,7 @@ export const laughingStock: CardDef = {
     {
       id: 1,
       name: 'Laughing Stock',
+      illustration: 'cards/220_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       glory: { amount: 0, valuePerElement: { amount: -1, accumulation: true } },

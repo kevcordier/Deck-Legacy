@@ -11,6 +11,7 @@ export const damselInDistress: CardDef = {
     {
       id: 1,
       name: 'Damsel in Distress',
+      illustration: 'cards/264_1.jpg',
       tags: [CardTag.PERMANENT],
       track: {
         inOrder: true,

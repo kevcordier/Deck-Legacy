@@ -11,6 +11,7 @@ export const modernArt: CardDef = {
     {
       id: 1,
       name: 'Modern Art',
+      illustration: 'cards/280_1.jpg',
       tags: [CardTag.STATE, CardTag.INVENTION],
       negative: true,
       glory: { amount: 2 },

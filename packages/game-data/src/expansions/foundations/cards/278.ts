@@ -13,6 +13,7 @@ export const chivalry: CardDef = {
     {
       id: 1,
       name: 'Chivalry',
+      illustration: 'cards/278_1.jpg',
       tags: [CardTag.EVENT],
       glory: { amount: 50 },
       actions: [
@@ -62,6 +63,7 @@ export const chivalry: CardDef = {
     {
       id: 2,
       name: 'Brotherhood',
+      illustration: 'cards/278_2.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 30 },
       actions: [

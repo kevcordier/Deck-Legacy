@@ -19,6 +19,7 @@ export const thunderstorm: CardDef = {
     {
       id: 1,
       name: 'Thunderstorm',
+      illustration: 'cards/208_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [
@@ -39,6 +40,7 @@ export const thunderstorm: CardDef = {
     {
       id: 2,
       name: 'Rain',
+      illustration: 'cards/208_2.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       passives: [

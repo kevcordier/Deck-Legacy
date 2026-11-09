@@ -15,6 +15,7 @@ export const weatherMage: CardDef = {
     {
       id: 1,
       name: 'Weather Mage',
+      illustration: 'cards/204_1.jpg',
       tags,
       track: { inOrder: true, steps: [1, 2, 3, 4, 5, 6].map(step) },
       actions: [
@@ -30,6 +31,7 @@ export const weatherMage: CardDef = {
     {
       id: 2,
       name: 'Weather Mage',
+      illustration: 'cards/204_2.jpg',
       tags,
       actions: [
         {

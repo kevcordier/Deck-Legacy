@@ -46,6 +46,7 @@ export const mosaics: CardDef = {
     {
       id: 1,
       name: 'Mosaics',
+      illustration: 'cards/282_1.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 0, valuePerElement: { amount: 1, accumulation: true } },
       track: { inOrder: true, steps },
@@ -62,6 +63,7 @@ export const mosaics: CardDef = {
     {
       id: 2,
       name: 'Mosaics',
+      illustration: 'cards/282_2.jpg',
       tags: [CardTag.FURNITURE],
       equip: CardTag.BUILDING,
       productions: [{ [GOODS]: 3 }],

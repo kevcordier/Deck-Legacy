@@ -18,6 +18,7 @@ export const jaguar: CardDef = {
     {
       id: 1,
       name: 'Jaguar',
+      illustration: 'cards/205_1.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }] },
@@ -45,6 +46,7 @@ export const jaguar: CardDef = {
     {
       id: 2,
       name: 'Enraged Jaguar',
+      illustration: 'cards/205_2.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       actions: [

@@ -22,6 +22,7 @@ export const diana: CardDef = {
     {
       id: 2,
       name: 'Diana',
+      illustration: 'cards/272_2.jpg',
       tags: [CardTag.PERSON, CardTag.LADY, CardTag.SCARF],
       glory: { amount: 7 },
       actions: [

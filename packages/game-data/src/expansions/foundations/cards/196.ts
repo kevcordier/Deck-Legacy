@@ -17,6 +17,7 @@ export const enemyCommander: CardDef = {
     {
       id: 1,
       name: 'Enemy Commander',
+      illustration: 'cards/196_1.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -6 },

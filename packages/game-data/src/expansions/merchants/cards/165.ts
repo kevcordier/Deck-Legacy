@@ -22,6 +22,7 @@ export const mead: CardDef = {
     {
       id: 1,
       name: 'Mead',
+      illustration: 'cards/165_1.jpg',
       tags: [CardTag.ITEM],
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
@@ -43,6 +44,7 @@ export const mead: CardDef = {
     {
       id: 2,
       name: 'Too Much Mead',
+      illustration: 'cards/165_2.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [

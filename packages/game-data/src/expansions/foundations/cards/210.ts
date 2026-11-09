@@ -18,6 +18,7 @@ export const cityFire: CardDef = {
     {
       id: 1,
       name: 'City Fire',
+      illustration: 'cards/210_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
@@ -39,6 +40,7 @@ export const cityFire: CardDef = {
     {
       id: 2,
       name: 'Ashlands',
+      illustration: 'cards/210_2.jpg',
       tags: [CardTag.LAND],
       glory: { amount: -2 },
       upgrade: [{ cost: { resources: [{ [ResourceType.GOLD]: 6 }] }, upgradeTo: 3 }],
@@ -46,6 +48,7 @@ export const cityFire: CardDef = {
     {
       id: 3,
       name: 'Mushroom Plains',
+      illustration: 'cards/210_3.jpg',
       tags: [CardTag.LAND],
       productions: [{ [ResourceType.GOLD]: 2 }, { [ResourceType.GOODS]: 2 }],
     },

@@ -52,6 +52,7 @@ export const theologyOfScience: CardDef = {
     {
       id: 1,
       name: 'Theology of Science',
+      illustration: 'cards/260_1.jpg',
       tags: TAGS,
       actions: [keepInPlay('260-1-1', 3)],
       upgrade: [{ cost: { resources: [{ [SCIENCE]: 9 }] }, upgradeTo: 2 }],
@@ -59,6 +60,7 @@ export const theologyOfScience: CardDef = {
     {
       id: 2,
       name: 'Logos of Creation',
+      illustration: 'cards/260_2.jpg',
       tags: TAGS,
       actions: [
         keepInPlay('260-2-1', 2),

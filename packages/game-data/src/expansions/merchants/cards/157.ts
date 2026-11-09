@@ -25,6 +25,7 @@ export const fishing: CardDef = {
     {
       id: 1,
       name: 'Fishing',
+      illustration: 'cards/157_1.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 0, valuePerElement: { amount: 1, accumulation: true } },
       actions: [

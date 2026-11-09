@@ -17,6 +17,7 @@ export const mountainConstruction: CardDef = {
     {
       id: 1,
       name: 'Mountain Construction',
+      illustration: 'cards/243_1.jpg',
       tags: [CardTag.BUILDING],
       upgrade: [
         { cost: { resources: [{ [GOLD]: 1, [WOOD]: 1, [STONE]: 2, [IRON]: 2 }] }, upgradeTo: 2 },
@@ -25,18 +26,21 @@ export const mountainConstruction: CardDef = {
     {
       id: 2,
       name: 'Cathedral Halls',
+      illustration: 'cards/243_2.jpg',
       tags: [CardTag.BUILDING],
       upgrade: [{ cost: { resources: [{ [IRON]: 2, [STONE]: 2, [WOOD]: 2 }] }, upgradeTo: 3 }],
     },
     {
       id: 3,
       name: 'Cathedral',
+      illustration: 'cards/243_3.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ [GOLD]: 2 }],
       glory: { amount: 9 },
       actions: [
         {
           id: '243-3-1',
+          limitedTime: 1,
           endsTurn: true,
           condition: {
             type: 'cardCount',
@@ -57,6 +61,7 @@ export const mountainConstruction: CardDef = {
     {
       id: 4,
       name: 'Basilica',
+      illustration: 'cards/243_4.jpg',
       tags: [CardTag.BUILDING, CardTag.BLESSED],
       productions: [{ [GOLD]: 2 }],
       glory: { amount: 25 },

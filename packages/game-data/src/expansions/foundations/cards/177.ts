@@ -33,6 +33,7 @@ export const treatment: CardDef = {
     {
       id: 1,
       name: 'Treatment',
+      illustration: 'cards/177_1.jpg',
       tags: [CardTag.PERMANENT],
       negative: true,
       actions: [

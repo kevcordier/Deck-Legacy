@@ -39,6 +39,7 @@ export const wagon: CardDef = {
     {
       id: 1,
       name: 'Wagon',
+      illustration: 'cards/325_1.jpg',
       tags: TAGS,
       equip: CardTag.LAND,
       actions: [equipAction('325-1-1', CardTag.LAND, WAGON), keepPersons('325-1-2')],
@@ -47,6 +48,7 @@ export const wagon: CardDef = {
     {
       id: 2,
       name: 'Fancy Wagon',
+      illustration: 'cards/325_2.jpg',
       tags: TAGS,
       equip: CardTag.LAND,
       productions: [{ [GOLD]: 2 }],

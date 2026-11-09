@@ -13,6 +13,7 @@ export const lancelot: CardDef = {
     {
       id: 1,
       name: 'Lancelot',
+      illustration: 'cards/269_1.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [W]: 1 }],
       upgrade: [{ cost: { discard: [{ ...KNIGHT, pickNumber: 2 }] }, upgradeTo: 2 }],
@@ -20,6 +21,7 @@ export const lancelot: CardDef = {
     {
       id: 2,
       name: 'Sir Lancelot',
+      illustration: 'cards/269_2.jpg',
       tags: [CardTag.PERSON, CardTag.KNIGHT],
       productions: [{ [W]: 3 }],
       actions: [

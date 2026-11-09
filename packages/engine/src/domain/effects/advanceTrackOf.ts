@@ -56,6 +56,8 @@ export function advanceTrackOf(
     );
     return [resolved, []];
   }
+  // 0 derived steps (The Ark with 1 person) marks none; getPickNumbers would read 0 as "1".
+  if (steps.pickNumber === 0) return [resolved, []];
 
   const choices = availableSteps
     .filter(

@@ -13,6 +13,7 @@ export const necklace: CardDef = {
     {
       id: 1,
       name: 'Necklace',
+      illustration: 'cards/295_1.jpg',
       tags: [CardTag.ITEM],
       glory: { amount: 3 },
       upgrade: [
@@ -29,6 +30,7 @@ export const necklace: CardDef = {
     {
       id: 2,
       name: 'Ether Pearl',
+      illustration: 'cards/295_2.jpg',
       tags: [CardTag.ARTIFACT, CardTag.ITEM],
       equip: CardTag.PERSON,
       glory: { amount: 25 },

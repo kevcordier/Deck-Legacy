@@ -18,12 +18,14 @@ export const stagePreparations: CardDef = {
     {
       id: 1,
       name: 'Stage Preparations',
+      illustration: 'cards/319_1.jpg',
       tags: EVENT,
       upgrade: [{ cost: { resources: [{ [WOOD]: 2, [IRON]: 3 }] }, upgradeTo: 2 }],
     },
     {
       id: 2,
       name: 'Performance',
+      illustration: 'cards/319_2.jpg',
       tags: EVENT,
       actions: [
         {
@@ -44,6 +46,7 @@ export const stagePreparations: CardDef = {
     {
       id: 3,
       name: 'Forbidden Knowledge',
+      illustration: 'cards/319_3.jpg',
       tags: EVENT,
       actions: [
         {
@@ -66,6 +69,7 @@ export const stagePreparations: CardDef = {
     {
       id: 4,
       name: 'Shut Down',
+      illustration: 'cards/319_4.jpg',
       tags: EVENT,
       negative: true,
       actions: [

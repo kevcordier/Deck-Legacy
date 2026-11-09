@@ -52,6 +52,7 @@ export const isolde: CardDef = {
     {
       id: 2,
       name: 'Isolde',
+      illustration: 'cards/274_2.jpg',
       tags: [CardTag.PERSON, CardTag.LADY, CardTag.SCARF],
       glory: { amount: 13 },
       actions: [

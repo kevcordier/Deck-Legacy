@@ -12,6 +12,7 @@ export const pilgrimage: CardDef = {
     {
       id: 1,
       name: 'Pilgrimage',
+      illustration: 'cards/253_1.jpg',
       tags: [CardTag.PERMANENT],
       actions: [
         {
@@ -62,6 +63,7 @@ export const pilgrimage: CardDef = {
     {
       id: 2,
       name: 'Devotion',
+      illustration: 'cards/253_2.jpg',
       tags: [CardTag.EVENT],
       glory: { amount: 50 },
       actions: [

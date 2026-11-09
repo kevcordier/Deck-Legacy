@@ -9,6 +9,7 @@ export const contamination: CardDef = {
     {
       id: 1,
       name: 'Contamination',
+      illustration: 'cards/183_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [

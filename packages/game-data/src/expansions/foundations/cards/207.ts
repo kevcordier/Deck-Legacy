@@ -17,6 +17,7 @@ export const badOmen: CardDef = {
     {
       id: 1,
       name: 'Bad Omen',
+      illustration: 'cards/207_1.jpg',
       tags: [CardTag.GOAL, CardTag.OMEN, CardTag.PERMANENT],
       glory: {
         amount: 0,
@@ -26,6 +27,7 @@ export const badOmen: CardDef = {
     {
       id: 2,
       name: 'Flooding',
+      illustration: 'cards/207_2.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],

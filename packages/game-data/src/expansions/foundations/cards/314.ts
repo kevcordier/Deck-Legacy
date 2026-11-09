@@ -20,6 +20,7 @@ export const sirBeaufort: CardDef = {
     {
       id: 1,
       name: 'Sir Beaufort',
+      illustration: 'cards/314_1.jpg',
       tags: TAGS,
       productions: [{ [ResourceType.WEAPON]: 1 }],
       track: { inOrder: true, steps: [1, 2, 3, 4, 5].map(id => ({ id })) },
@@ -48,6 +49,7 @@ export const sirBeaufort: CardDef = {
     {
       id: 2,
       name: 'Sir Beaufort, the Learned',
+      illustration: 'cards/314_2.jpg',
       tags: TAGS,
       productions: [{ [ResourceType.SCIENCE]: 2 }],
       glory: { amount: 5 },

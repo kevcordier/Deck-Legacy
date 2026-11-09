@@ -38,6 +38,7 @@ const side = (
 ): CardState => ({
   id: stateId,
   name: 'Valiant Prince',
+  illustration: `cards/299_${stateId}.jpg`,
   tags: TAGS,
   productions: [{ [WEAPON]: 1 }],
   track: { inOrder: true, steps: steps.map(id => ({ id })) },

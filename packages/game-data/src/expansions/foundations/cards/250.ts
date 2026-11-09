@@ -27,6 +27,7 @@ export const mysticScholar: CardDef = {
     {
       id: 1,
       name: 'Mystic Scholar',
+      illustration: 'cards/250_1.jpg',
       tags: [CardTag.PERSON],
       passives: [noScience('250-1-1')],
       track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }, { id: 3 }] },
@@ -59,6 +60,7 @@ export const mysticScholar: CardDef = {
     {
       id: 2,
       name: 'Mystic Scholar',
+      illustration: 'cards/250_2.jpg',
       tags: [CardTag.PERSON, CardTag.MAGE],
       glory: { amount: 5 },
       passives: [noScience('250-2-1')],

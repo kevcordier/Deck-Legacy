@@ -23,6 +23,7 @@ export const holeInTheRoof: CardDef = {
     {
       id: 1,
       name: 'Hole In the Roof',
+      illustration: 'cards/320_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       glory: { amount: -2 },
@@ -44,6 +45,7 @@ export const holeInTheRoof: CardDef = {
     {
       id: 2,
       name: 'Repaired Roof',
+      illustration: 'cards/320_2.jpg',
       tags: [CardTag.STATE],
       // If there are no buildings in play, discard this
       passives: [
@@ -58,6 +60,7 @@ export const holeInTheRoof: CardDef = {
     {
       id: 3,
       name: 'Better Idea',
+      illustration: 'cards/320_3.jpg',
       tags: [CardTag.EVENT],
       actions: [
         {
@@ -76,6 +79,7 @@ export const holeInTheRoof: CardDef = {
     {
       id: 4,
       name: 'Chimney',
+      illustration: 'cards/320_4.jpg',
       tags: [CardTag.INVENTION],
       equip: CardTag.BUILDING,
       glory: { amount: 14 },

@@ -66,3 +66,5 @@ storybook-static
 dev-dist
 dist-ssr
 web-build
+
+assets

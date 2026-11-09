@@ -10,6 +10,7 @@ export const artisansCover: CardDef = {
     {
       id: 1,
       name: 'Artisans',
+      illustration: 'cards/279_1.jpg',
       actions: [
         {
           id: '279-1-1',

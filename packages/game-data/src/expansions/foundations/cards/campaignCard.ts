@@ -35,6 +35,7 @@ export const campaignCard = (
     {
       id: 1,
       name,
+      illustration: `cards/${id}_1.jpg`,
       tags: [CardTag.PERMANENT],
       track: {
         inOrder: true,

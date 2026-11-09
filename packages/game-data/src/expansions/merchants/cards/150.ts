@@ -15,6 +15,7 @@ export const merchantOffer = (
   entryId: number,
 ): CardAction => ({
   id,
+  limitedTime: 1,
   endsTurn: true,
   cost: { resources: [{ [resource]: amount }] },
   condition: {
@@ -32,6 +33,7 @@ export const merchants: CardDef = {
     {
       id: 1,
       name: 'Merchants',
+      illustration: 'cards/150_1.jpg',
       tags: [CardTag.PERMANENT],
       actions: [
         // Camels, Spices, Furs, Weaving (Merchants 2–5)
@@ -41,6 +43,7 @@ export const merchants: CardDef = {
         merchantOffer('150-1-4', ResourceType.GOODS, 5, 172),
         {
           id: '150-1-5',
+          limitedTime: 1,
           trigger: Trigger.END_OF_ROUND,
           actionEffects: [
             // Brigands (Merchants 19)
@@ -58,6 +61,7 @@ export const merchants: CardDef = {
     {
       id: 2,
       name: 'Merchants',
+      illustration: 'cards/150_2.jpg',
       tags: [CardTag.PERMANENT],
       actions: [
         // Grain, Grapes, Fishing, Ether Enhancer (Merchants 6–9)
@@ -67,6 +71,7 @@ export const merchants: CardDef = {
         merchantOffer('150-2-4', ResourceType.WOOD, 7, 176),
         {
           id: '150-2-5',
+          limitedTime: 1,
           trigger: Trigger.END_OF_ROUND,
           actionEffects: [
             { id: 1, type: ActionEffectType.DESTROY_CARD, cards: { scope: [TargetScope.SELF] } },

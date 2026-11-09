@@ -11,6 +11,7 @@ export const breakthrough: CardDef = {
     {
       id: 1,
       name: 'Breakthrough',
+      illustration: 'cards/321_1.jpg',
       tags: [CardTag.EVENT],
       actions: [
         {
@@ -35,6 +36,7 @@ export const breakthrough: CardDef = {
     {
       id: 2,
       name: 'Backlash',
+      illustration: 'cards/321_2.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [

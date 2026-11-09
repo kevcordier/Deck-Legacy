@@ -33,6 +33,7 @@ export const sirTristan: CardDef = {
     {
       id: 1,
       name: 'Sir Tristan',
+      illustration: 'cards/286_1.jpg',
       tags: TAGS,
       productions: [{ [W]: 1 }],
       actions: [toBottom('286-1-1', 1, 1)],
@@ -41,6 +42,7 @@ export const sirTristan: CardDef = {
     {
       id: 2,
       name: 'Sir Tristan',
+      illustration: 'cards/286_2.jpg',
       tags: TAGS,
       productions: [{ [W]: 2 }],
       glory: { amount: 4 },

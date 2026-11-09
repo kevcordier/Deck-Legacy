@@ -12,6 +12,7 @@ export const spinningWheel: CardDef = {
     {
       id: 1,
       name: 'Spinning Wheel',
+      illustration: 'cards/283_1.jpg',
       tags: TAGS,
       glory: { amount: 2 },
       upgrade: [{ cost: { resources: [{ [GOLD]: 2 }] }, upgradeTo: 2 }],
@@ -19,6 +20,7 @@ export const spinningWheel: CardDef = {
     {
       id: 2,
       name: 'Silk',
+      illustration: 'cards/283_2.jpg',
       tags: TAGS,
       productions: [{ [GOODS]: 1 }],
       glory: { amount: 4 },
@@ -27,6 +29,7 @@ export const spinningWheel: CardDef = {
     {
       id: 3,
       name: 'Cloth Export',
+      illustration: 'cards/283_3.jpg',
       tags: TAGS,
       productions: [{ [GOODS]: 2 }],
       glory: { amount: 6 },
@@ -35,6 +38,7 @@ export const spinningWheel: CardDef = {
     {
       id: 4,
       name: 'Fashion',
+      illustration: 'cards/283_4.jpg',
       tags: TAGS,
       productions: [{ [GOODS]: 3 }],
       glory: { amount: 10 },

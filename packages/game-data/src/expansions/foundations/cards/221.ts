@@ -16,6 +16,7 @@ export const obsession: CardDef = {
     {
       id: 1,
       name: 'Obsession',
+      illustration: 'cards/221_1.jpg',
       tags: [CardTag.EVENT],
       actions: [
         {
@@ -49,6 +50,7 @@ export const obsession: CardDef = {
     {
       id: 2,
       name: 'Failed Experiment',
+      illustration: 'cards/221_2.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [

@@ -76,6 +76,7 @@ const SIDES: Side[] = [
     actions: [
       {
         id: '245-3-1',
+        limitedTime: 1,
         trigger: Trigger.END_OF_ROUND,
         condition: {
           type: 'and',
@@ -166,6 +167,7 @@ const archbishopState = ({ tasks, actions, passive }: Side, index: number): Card
   return {
     id: stateId,
     name: ARCHBISHOP_NAMES[index],
+    illustration: `cards/245_${stateId}.jpg`,
     tags: [CardTag.PERMANENT, CardTag.ARCHBISHOP],
     track: { inOrder: false, steps: tasks },
     actions: [

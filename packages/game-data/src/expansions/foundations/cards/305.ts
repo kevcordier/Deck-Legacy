@@ -18,6 +18,7 @@ export const countessAriadne: CardDef = {
     {
       id: 1,
       name: 'Countess Ariadne',
+      illustration: 'cards/305_1.jpg',
       tags: [CardTag.PERSON, CardTag.LADY],
       productions: [{ [ResourceType.GOLD]: 1 }],
       glory: { amount: 5 },
@@ -41,6 +42,7 @@ export const countessAriadne: CardDef = {
     {
       id: 2,
       name: 'Starfall Castle',
+      illustration: 'cards/305_2.jpg',
       tags: [CardTag.BUILDING, CardTag.PERMANENT],
       // Add 1 to the purge number (a purge 8 becomes a purge 9)
       passives: [{ id: '305-2-1', type: PassiveType.ADJUST_PURGE, amount: 1 }],

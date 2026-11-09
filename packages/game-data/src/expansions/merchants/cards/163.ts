@@ -32,6 +32,7 @@ export const basketry: CardDef = {
     {
       id: 1,
       name: 'Basketry',
+      illustration: 'cards/163_1.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 0, valuePerElement: { amount: 1, accumulation: true } },
       actions: [

@@ -12,6 +12,7 @@ export const chaliceOfMalice: CardDef = {
     {
       id: 1,
       name: 'Chalice of Malice',
+      illustration: 'cards/303_1.jpg',
       tags: [CardTag.ITEM],
       negative: true,
       actions: [
@@ -32,6 +33,7 @@ export const chaliceOfMalice: CardDef = {
     {
       id: 2,
       name: 'Brew that is True',
+      illustration: 'cards/303_2.jpg',
       tags: [CardTag.ITEM],
       glory: { amount: 0, valuePerElement: { amount: 3, markedSteps: true } },
       track: {

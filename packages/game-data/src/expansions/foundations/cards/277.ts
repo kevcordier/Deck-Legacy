@@ -46,6 +46,7 @@ export const andoniel: CardDef = {
     {
       id: 2,
       name: 'Andoniel',
+      illustration: 'cards/277_2.jpg',
       tags: [CardTag.PERSON, CardTag.LADY, CardTag.SCARF],
       glory: { amount: 15 },
       actions: [

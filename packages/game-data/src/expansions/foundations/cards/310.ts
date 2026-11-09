@@ -23,6 +23,7 @@ export const ladyElara: CardDef = {
     {
       id: 1,
       name: 'Lady Elara',
+      illustration: 'cards/310_1.jpg',
       tags: [CardTag.PERSON, CardTag.LADY],
       glory: { amount: 0, emptyValues: 6 },
       // The 6 medals: a box marked for each one written
@@ -89,6 +90,7 @@ export const ladyElara: CardDef = {
     {
       id: 2,
       name: 'House of Thornfield',
+      illustration: 'cards/310_2.jpg',
       tags: [CardTag.BUILDING],
       ...highestMarked(THORNFIELD),
       actions: [

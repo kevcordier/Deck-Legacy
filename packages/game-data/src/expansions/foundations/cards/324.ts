@@ -34,6 +34,7 @@ export const hydraulics: CardDef = {
   states: [0, 1, 2, 3].map((index): CardState => ({
     id: index + 1,
     name: 'Hydraulics',
+    illustration: `cards/324_${index + 1}.jpg`,
     tags: [CardTag.INVENTION],
     actions: [{ id: `324-${index + 1}-1`, actionEffects: boosts(index + 1) }],
     ...(index < 3 && {

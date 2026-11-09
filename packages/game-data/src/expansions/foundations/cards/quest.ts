@@ -74,6 +74,7 @@ export function quest({
   return {
     id: 1,
     name,
+    illustration: `cards/${cardId}_1.jpg`,
     tags: enemy ? [CardTag.ENEMY] : [CardTag.EVENT, CardTag.QUEST],
     negative: true,
     track: { inOrder: !anyOrder, steps },

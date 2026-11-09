@@ -10,6 +10,7 @@ export const skepticism: CardDef = {
     {
       id: 1,
       name: 'Skepticism',
+      illustration: 'cards/238_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       glory: { amount: -2 },

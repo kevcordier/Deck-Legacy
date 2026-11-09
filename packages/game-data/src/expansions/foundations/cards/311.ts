@@ -13,6 +13,7 @@ export const wealthContest: CardDef = {
     {
       id: 1,
       name: 'Wealth Contest',
+      illustration: 'cards/311_1.jpg',
       tags: [CardTag.PERMANENT],
       ...highestMarked(GLORY, index => ({
         discard: [{ having: { minProduction: index + 1 }, pickNumber: 1 }],

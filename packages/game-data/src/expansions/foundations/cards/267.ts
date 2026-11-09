@@ -21,6 +21,7 @@ export const duel: CardDef = {
     {
       id: 1,
       name: 'Duel',
+      illustration: 'cards/267_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [

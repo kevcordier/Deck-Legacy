@@ -22,6 +22,7 @@ export const wheelbarrow: CardDef = {
     {
       id: 1,
       name: 'Wheelbarrow',
+      illustration: 'cards/318_1.jpg',
       tags: [CardTag.ITEM, CardTag.INVENTION],
       equip: CardTag.PERSON,
       actions: [

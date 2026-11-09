@@ -16,6 +16,7 @@ export function servant(id: number, next: Stage[]): CardDef {
     states: stages.map(({ name, productions, glory, cost }, index): CardState => ({
       id: index + 1,
       name,
+      illustration: `cards/${id}_${index + 1}.jpg`,
       tags: [CardTag.PERSON],
       ...(productions && { productions }),
       glory: { amount: glory },

@@ -41,6 +41,7 @@ const quarantineActions = (stateId: number, capacity: number): CardAction[] => [
 const quarantine = (id: number, capacity: number, upgrade?: CardState['upgrade']): CardState => ({
   id,
   name: 'Quarantine',
+  illustration: `cards/178_${id}.jpg`,
   tags: [CardTag.PERMANENT],
   actions: quarantineActions(id, capacity),
   ...(upgrade && { upgrade }),
@@ -54,6 +55,7 @@ export const quarantineCard: CardDef = {
     {
       id: 1,
       name: 'Setting Up Camps',
+      illustration: 'cards/178_1.jpg',
       tags: [CardTag.PERMANENT],
       upgrade: [{ cost: { resources: [{ [ResourceType.GOLD]: 4 }] }, upgradeTo: 2 }],
     },

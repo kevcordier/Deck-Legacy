@@ -45,6 +45,7 @@ export const virtues: CardDef = {
     {
       id: 1,
       name: 'Virtues',
+      illustration: 'cards/263_1.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 0 },
       actions: [
@@ -75,6 +76,7 @@ export const virtues: CardDef = {
     {
       id: 2,
       name: 'Virtues',
+      illustration: 'cards/263_2.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 25 },
       actions: [

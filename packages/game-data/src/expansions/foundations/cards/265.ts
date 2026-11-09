@@ -20,6 +20,7 @@ export const gawain: CardDef = {
     {
       id: 1,
       name: 'Gawain',
+      illustration: 'cards/265_1.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [W]: 1 }],
       // 2 boxes, then the arrow
@@ -37,6 +38,7 @@ export const gawain: CardDef = {
     {
       id: 2,
       name: 'Sir Gawain',
+      illustration: 'cards/265_2.jpg',
       tags: [CardTag.PERSON, CardTag.KNIGHT],
       productions: [{ [W]: 1 }],
       actions: [{ id: '265-2-1', cost: discardLady, actionEffects: [gainAny(1, 2)] }],

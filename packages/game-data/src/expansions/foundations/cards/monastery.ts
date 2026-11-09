@@ -13,6 +13,7 @@ const G = ResourceType.GOLD;
 /** Discover the Student `instanceId`, while it is still in the box. */
 const discoverStudent = (id: string, instanceId: number): CardAction => ({
   id,
+  limitedTime: 1,
   endsTurn: true,
   condition: {
     type: 'cardCount',
@@ -30,12 +31,14 @@ export const monastery = (id: number, students: [number, number]): CardDef => ({
     {
       id: 1,
       name: 'Small Chapel',
+      illustration: `cards/${id}_1.jpg`,
       tags: [CardTag.BUILDING],
       upgrade: [{ cost: { resources: [{ [W]: 2, [S]: 2 }] }, upgradeTo: 2 }],
     },
     {
       id: 2,
       name: 'Monastery',
+      illustration: `cards/${id}_2.jpg`,
       tags: [CardTag.BUILDING],
       productions: [{ [G]: 1 }],
       actions: [discoverStudent(`${id}-2-1`, students[0])],
@@ -44,6 +47,7 @@ export const monastery = (id: number, students: [number, number]): CardDef => ({
     {
       id: 3,
       name: 'Monastery',
+      illustration: `cards/${id}_3.jpg`,
       tags: [CardTag.BUILDING],
       productions: [{ [G]: 1 }],
       glory: { amount: 4 },
@@ -53,6 +57,7 @@ export const monastery = (id: number, students: [number, number]): CardDef => ({
     {
       id: 4,
       name: 'Renowned Monastery',
+      illustration: `cards/${id}_4.jpg`,
       tags: [CardTag.BUILDING],
       productions: [{ [G]: 2 }],
       glory: { amount: 8 },

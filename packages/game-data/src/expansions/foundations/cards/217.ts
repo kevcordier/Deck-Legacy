@@ -10,6 +10,7 @@ export const lightningStrike: CardDef = {
     {
       id: 1,
       name: 'Lightning Strike',
+      illustration: 'cards/217_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [
@@ -47,6 +48,7 @@ export const lightningStrike: CardDef = {
     {
       id: 2,
       name: 'The Chosen One',
+      illustration: 'cards/217_2.jpg',
       tags: [CardTag.PERSON],
       glory: { amount: 2 },
       actions: [

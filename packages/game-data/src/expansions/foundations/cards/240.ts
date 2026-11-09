@@ -22,6 +22,7 @@ export const churchBells: CardDef = {
     {
       id: 1,
       name: 'Church Bells',
+      illustration: 'cards/240_1.jpg',
       tags: [CardTag.ITEM],
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
       actions: [
@@ -41,6 +42,7 @@ export const churchBells: CardDef = {
     {
       id: 2,
       name: 'Eager Custodian',
+      illustration: 'cards/240_2.jpg',
       tags: [CardTag.PERSON],
       actions: [
         {

@@ -75,6 +75,7 @@ export const aleta: CardDef = {
     {
       id: 2,
       name: 'Aleta',
+      illustration: 'cards/275_2.jpg',
       tags: [CardTag.PERSON, CardTag.LADY, CardTag.SCARF],
       // The medals not crossed out: 21 minus the values crossed out (kept on the card)
       glory: { amount: 21, valuePerElement: { amount: -1, accumulation: true } },

@@ -17,6 +17,7 @@ export const aerostats: CardDef = {
     {
       id: 1,
       name: 'Aerostats',
+      illustration: 'cards/234_1.jpg',
       tags: [CardTag.INVENTION],
       productions: [{ [ResourceType.GOODS]: 2 }],
       track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] },
@@ -45,6 +46,7 @@ export const aerostats: CardDef = {
     {
       id: 2,
       name: 'Air Balloons',
+      illustration: 'cards/234_2.jpg',
       tags: [CardTag.INVENTION],
       productions: [{ [ResourceType.GOODS]: 2 }],
       glory: { amount: 6 },

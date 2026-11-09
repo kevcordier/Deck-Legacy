@@ -17,6 +17,7 @@ export const earthquake: CardDef = {
     {
       id: 1,
       name: 'Earthquake',
+      illustration: 'cards/215_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [
@@ -55,6 +56,7 @@ export const earthquake: CardDef = {
     {
       id: 2,
       name: 'Mystical Fog',
+      illustration: 'cards/215_2.jpg',
       tags: [CardTag.EVENT, CardTag.PERMANENT],
       negative: true,
       track: { inOrder: true, steps: [1, 2, 3, 4, 5, 6].map(id => ({ id })) },

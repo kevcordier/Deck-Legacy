@@ -15,6 +15,7 @@ export const secondMerchants: CardDef = {
     {
       id: 1,
       name: 'Merchants',
+      illustration: 'cards/159_1.jpg',
       tags: [CardTag.PERMANENT],
       actions: [
         // Chicken, Beer, Brewing, Basketry (Merchants 11–14)
@@ -39,6 +40,7 @@ export const secondMerchants: CardDef = {
     {
       id: 2,
       name: 'Merchants',
+      illustration: 'cards/159_2.jpg',
       tags: [CardTag.PERMANENT],
       actions: [
         // Viking Warrior, Mead, Shoemaking, Sheep (Merchants 15–18)

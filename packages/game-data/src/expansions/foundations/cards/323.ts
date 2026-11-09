@@ -16,6 +16,7 @@ export const rust: CardDef = {
     {
       id: 1,
       name: 'Rust',
+      illustration: 'cards/323_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [
@@ -36,6 +37,7 @@ export const rust: CardDef = {
     {
       id: 2,
       name: 'Mechanical Failure',
+      illustration: 'cards/323_2.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [

@@ -29,12 +29,14 @@ export const scholar = ({
     {
       id: 1,
       name: names[0],
+      illustration: `cards/${id}_1.jpg`,
       tags: [CardTag.PERSON],
       upgrade: [{ cost: { resources: [costs[0]] }, upgradeTo: 2 }],
     },
     {
       id: 2,
       name: names[1],
+      illustration: `cards/${id}_2.jpg`,
       tags: [CardTag.PERSON],
       ...(productions[0] && { productions: [productions[0]] }),
       upgrade: [{ cost: { resources: [costs[1]] }, upgradeTo: 3 }],
@@ -42,6 +44,7 @@ export const scholar = ({
     {
       id: 3,
       name: names[2],
+      illustration: `cards/${id}_3.jpg`,
       tags: [CardTag.PERSON],
       productions: [productions[1]],
       upgrade: [{ cost: { resources: [costs[2]] }, upgradeTo: 4 }],
@@ -49,6 +52,7 @@ export const scholar = ({
     {
       id: 4,
       name: names[3],
+      illustration: `cards/${id}_4.jpg`,
       ...(chooseName && { chooseName }),
       tags: [CardTag.PERSON],
       productions: [productions[2]],

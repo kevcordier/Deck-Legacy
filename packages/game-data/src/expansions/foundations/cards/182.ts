@@ -10,6 +10,7 @@ export const sewer: CardDef = {
       // Negative side: the Rats (179) check it before their activated effect
       id: 1,
       name: 'Sewer',
+      illustration: 'cards/182_1.jpg',
       tags: [CardTag.BUILDING],
       negative: true,
       actions: [
@@ -34,6 +35,7 @@ export const sewer: CardDef = {
     {
       id: 2,
       name: 'Sewer',
+      illustration: 'cards/182_2.jpg',
       tags: [CardTag.BUILDING],
       glory: { amount: 2 },
       actions: [

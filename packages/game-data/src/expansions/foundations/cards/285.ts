@@ -32,13 +32,15 @@ export const glassblower: CardDef = {
     {
       id: 1,
       name: 'Glassblower',
+      illustration: 'cards/285_1.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [GOODS]: 3 }],
-      actions: [discover('285-1-1', [ARTISANS_CARDS.glassWindows])],
+      actions: [{ ...discover('285-1-1', [ARTISANS_CARDS.glassWindows]), limitedTime: 1 }],
     },
     {
       id: 2,
       name: 'Jeweler',
+      illustration: 'cards/285_2.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [GOODS]: 1 }],
       // When you gain iron, you may instead gain goods

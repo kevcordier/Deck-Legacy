@@ -20,6 +20,7 @@ export const drought: CardDef = {
     {
       id: 1,
       name: 'Drought',
+      illustration: 'cards/214_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [
@@ -44,6 +45,7 @@ export const drought: CardDef = {
     {
       id: 2,
       name: 'Mudslides',
+      illustration: 'cards/214_2.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [

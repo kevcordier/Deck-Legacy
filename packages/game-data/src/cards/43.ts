@@ -87,6 +87,7 @@ export const mightyMound: CardDef = {
       actions: [
         {
           id: '43-4-1',
+          limitedTime: 2,
           actionEffects: [
             {
               id: 1,

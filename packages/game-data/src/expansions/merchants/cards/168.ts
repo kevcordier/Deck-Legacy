@@ -33,6 +33,7 @@ export const brigands: CardDef = {
     {
       id: 1,
       name: 'Brigands',
+      illustration: 'cards/168_1.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       passives: [noPlay('168-1-1')],
@@ -54,6 +55,7 @@ export const brigands: CardDef = {
     {
       id: 2,
       name: 'Brigand Boss',
+      illustration: 'cards/168_2.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       passives: [noPlay('168-2-1')],

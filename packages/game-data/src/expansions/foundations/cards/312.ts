@@ -14,6 +14,7 @@ export const growHouses: CardDef = {
     {
       id: 1,
       name: 'Grow Houses',
+      illustration: 'cards/312_1.jpg',
       tags: [CardTag.PERMANENT],
       ...highestMarked(GLORY, () => ({
         destroy: { tags: [CardTag.PERSON, CardTag.BUILDING, CardTag.LAND], pickNumber: 1 },
@@ -42,6 +43,7 @@ export const growHouses: CardDef = {
     {
       id: 2,
       name: 'Liberation',
+      illustration: 'cards/312_2.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 200 },
       actions: [

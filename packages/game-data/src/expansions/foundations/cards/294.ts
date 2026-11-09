@@ -15,6 +15,7 @@ const ringState = (
 ) => ({
   id,
   name,
+  illustration: `cards/294_${id}.jpg`,
   tags: TAGS,
   equip: CardTag.PERSON,
   glory: { amount: glory },
