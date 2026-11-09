@@ -202,3 +202,11 @@ describe('choosing the card and the step', () => {
     ]);
   });
 });
+
+// The Ark: "mark 1 for every 2 persons" with 1 person derives 0 steps.
+describe('TRACK_ADVANCE with 0 steps to mark', () => {
+  it('asks for no step on a track marked in any order', () => {
+    const [, pending] = advanceTrackOf(resolved, 3, { pickNumber: 0 }, template, state(), defs, {});
+    expect(pending).toEqual([]);
+  });
+});
