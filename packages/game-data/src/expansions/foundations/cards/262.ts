@@ -45,6 +45,7 @@ export const arthur: CardDef = {
       actions: [
         {
           id: '262-2-1',
+          limitedTime: 1,
           condition: {
             type: 'cardCount',
             cards: { ids: [ROMANCE_CARDS.roundTable], scope: [TargetScope.DISCOVERY] },

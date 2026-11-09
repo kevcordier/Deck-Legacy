@@ -16,6 +16,7 @@ export const archbishops: CardDef = {
       actions: [
         {
           id: '244-1-1',
+          limitedTime: 1,
           trigger: Trigger.ON_DISCOVER,
           actionEffects: [
             {

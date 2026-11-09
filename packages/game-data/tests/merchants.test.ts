@@ -188,7 +188,10 @@ describe('Merchants', () => {
     expect(gs.discardPile).toContain(CAMELS);
     expect(gs.resources.gold ?? 0).toBe(0);
     expect(gs.permanents).toEqual([MERCHANTS]);
-    expect(() => agg.cardAction(actionOf(agg, MERCHANTS, '150-1-1'), MERCHANTS)).toThrow();
+    // limitedTime 1: a second use does nothing
+    agg.cardAction(actionOf(agg, MERCHANTS, '150-1-1'), MERCHANTS);
+    expect(agg.getGameState().discardPile).toEqual(gs.discardPile);
+    expect(agg.getGameState().instances[MERCHANTS].usedActionIds).toEqual(['150-1-1']);
   });
 
   it('brings the Brigands and turns at the end of round 1, then gives way to the second Merchants', () => {

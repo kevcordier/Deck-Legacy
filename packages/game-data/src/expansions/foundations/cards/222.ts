@@ -20,6 +20,7 @@ export const school49: CardDef = {
       actions: [
         {
           id: '222-4-1',
+          limitedTime: 1,
           cost: { resources: [{ [SCIENCE]: 3 }] },
           actionEffects: [
             destroySelf(1),

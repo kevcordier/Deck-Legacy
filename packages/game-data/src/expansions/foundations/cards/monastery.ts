@@ -13,6 +13,7 @@ const G = ResourceType.GOLD;
 /** Discover the Student `instanceId`, while it is still in the box. */
 const discoverStudent = (id: string, instanceId: number): CardAction => ({
   id,
+  limitedTime: 1,
   endsTurn: true,
   condition: {
     type: 'cardCount',

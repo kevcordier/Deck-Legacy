@@ -35,7 +35,7 @@ export const glassblower: CardDef = {
       illustration: 'cards/285_1.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [GOODS]: 3 }],
-      actions: [discover('285-1-1', [ARTISANS_CARDS.glassWindows])],
+      actions: [{ ...discover('285-1-1', [ARTISANS_CARDS.glassWindows]), limitedTime: 1 }],
     },
     {
       id: 2,

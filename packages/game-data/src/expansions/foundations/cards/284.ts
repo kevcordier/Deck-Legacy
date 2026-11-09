@@ -65,7 +65,7 @@ export const dreamer: CardDef = {
       ],
       actions: [
         discoverProject('284-2-1', ARTISANS_CARDS.pillars),
-        discoverProject('284-2-2', [ARTISANS_CARDS.pillarHall]),
+        { ...discoverProject('284-2-2', [ARTISANS_CARDS.pillarHall]), limitedTime: 1 },
       ],
     },
   ],

@@ -76,6 +76,7 @@ const SIDES: Side[] = [
     actions: [
       {
         id: '245-3-1',
+        limitedTime: 1,
         trigger: Trigger.END_OF_ROUND,
         condition: {
           type: 'and',

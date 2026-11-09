@@ -40,6 +40,7 @@ export const mountainConstruction: CardDef = {
       actions: [
         {
           id: '243-3-1',
+          limitedTime: 1,
           endsTurn: true,
           condition: {
             type: 'cardCount',

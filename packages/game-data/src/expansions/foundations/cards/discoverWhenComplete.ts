@@ -4,6 +4,7 @@ import type { CardAction } from '@deck-legacy/engine/domain/types';
 /** "When complete, discover X" (in the box). */
 export const discoverWhenComplete = (id: string, instanceId: number): CardAction => ({
   id,
+  limitedTime: 1,
   trigger: Trigger.ON_TRACK_END,
   condition: {
     type: 'cardCount',
