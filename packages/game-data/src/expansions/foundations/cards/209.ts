@@ -16,6 +16,7 @@ export const volcanicEruption: CardDef = {
     {
       id: 1,
       name: 'Volcanic Eruption',
+      illustration: 'cards/209_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       actions: [
@@ -38,6 +39,7 @@ export const volcanicEruption: CardDef = {
     {
       id: 2,
       name: 'Ashlands',
+      illustration: 'cards/209_2.jpg',
       tags: [CardTag.LAND],
       glory: { amount: -2 },
       upgrade: [
@@ -50,6 +52,7 @@ export const volcanicEruption: CardDef = {
     {
       id: 3,
       name: 'Gray Mines of _____',
+      illustration: 'cards/209_3.jpg',
       chooseName: true,
       tags: [CardTag.LAND],
       glory: { amount: 0, whenPurged: -5 },

@@ -10,6 +10,7 @@ export const mechanicsCover: CardDef = {
     {
       id: 1,
       name: 'Mechanics',
+      illustration: 'cards/313_1.jpg',
       actions: [
         {
           id: '313-1-1',

@@ -23,6 +23,7 @@ export const hurricane: CardDef = {
     {
       id: 1,
       name: 'Hurricane',
+      illustration: 'cards/212_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
@@ -49,6 +50,7 @@ export const hurricane: CardDef = {
     {
       id: 2,
       name: 'Erosion',
+      illustration: 'cards/212_2.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] },

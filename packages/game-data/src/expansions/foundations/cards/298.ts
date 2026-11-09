@@ -17,6 +17,7 @@ export const nobleHouses: CardDef = {
     {
       id: 1,
       name: 'Noble Houses',
+      illustration: 'cards/298_1.jpg',
       tags: [CardTag.PERMANENT],
       track: {
         inOrder: true,

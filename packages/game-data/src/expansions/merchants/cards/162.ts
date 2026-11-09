@@ -32,6 +32,7 @@ export const brewing: CardDef = {
     {
       id: 1,
       name: 'Brewing',
+      illustration: 'cards/162_1.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 0, valuePerElement: { amount: 1, accumulation: true } },
       actions: [

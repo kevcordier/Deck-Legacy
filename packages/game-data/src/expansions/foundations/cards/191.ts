@@ -19,6 +19,7 @@ export const enemyArcher: CardDef = {
     {
       id: 1,
       name: 'Enemy Archer',
+      illustration: 'cards/191_1.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -3 },

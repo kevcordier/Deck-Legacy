@@ -28,6 +28,7 @@ export const guinevere: CardDef = {
     {
       id: 2,
       name: 'Guinevere',
+      illustration: 'cards/276_2.jpg',
       tags: [CardTag.PERSON, CardTag.LADY, CardTag.SCARF],
       glory: { amount: 7 },
       passives: [

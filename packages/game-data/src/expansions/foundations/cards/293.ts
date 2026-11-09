@@ -21,6 +21,7 @@ export const pillarHall: CardDef = {
     {
       id: 1,
       name: 'Pillar Hall',
+      illustration: 'cards/293_1.jpg',
       tags: [CardTag.BUILDING],
       glory: { amount: 0, valuePerElement: perBox(25) },
       track: {

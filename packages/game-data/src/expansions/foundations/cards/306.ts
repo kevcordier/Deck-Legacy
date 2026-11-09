@@ -17,12 +17,14 @@ export const earlAlistair: CardDef = {
     {
       id: 1,
       name: 'Earl Alistair',
+      illustration: 'cards/306_1.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [GOLD]: 2, [GOODS]: 2 }],
     },
     {
       id: 2,
       name: 'Goldharvest Estate',
+      illustration: 'cards/306_2.jpg',
       tags: [CardTag.LAND],
       actions: [
         {

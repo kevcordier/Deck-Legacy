@@ -27,6 +27,7 @@ export const scienceTrack: CardDef = {
     {
       id: 1,
       name: 'Science',
+      illustration: 'cards/219_1.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 0 },
       actions: [
@@ -57,6 +58,7 @@ export const scienceTrack: CardDef = {
     {
       id: 2,
       name: 'Science',
+      illustration: 'cards/219_2.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 25 },
       actions: [

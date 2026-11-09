@@ -32,6 +32,7 @@ export const newForest: CardDef = {
     {
       id: 1,
       name: 'New Forest',
+      illustration: 'cards/254_1.jpg',
       tags: [CardTag.LAND],
       actions: [plantWood('254-1-1')],
       upgrade: [{ cost: { resources: [{ [GOLD]: 4 }] }, upgradeTo: 2 }],
@@ -39,6 +40,7 @@ export const newForest: CardDef = {
     {
       id: 2,
       name: 'Young Forest',
+      illustration: 'cards/254_2.jpg',
       tags: [CardTag.LAND],
       productions: [{ [WOOD]: 1 }],
       actions: [plantWood('254-2-1')],
@@ -47,6 +49,7 @@ export const newForest: CardDef = {
     {
       id: 3,
       name: 'Growing Forest',
+      illustration: 'cards/254_3.jpg',
       tags: [CardTag.LAND],
       productions: [{ [WOOD]: 2 }],
       actions: [plantWood('254-3-1')],
@@ -55,6 +58,7 @@ export const newForest: CardDef = {
     {
       id: 4,
       name: 'Thick Forest',
+      illustration: 'cards/254_4.jpg',
       tags: [CardTag.LAND],
       productions: [{ [WOOD]: 3 }],
       glory: { amount: 3 },

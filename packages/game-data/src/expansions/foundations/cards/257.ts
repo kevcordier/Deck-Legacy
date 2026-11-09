@@ -20,12 +20,31 @@ export const experiment84: CardDef = {
   id: 257,
   name: 'Experiment',
   states: [
-    { id: 1, name: 'Experiment', tags: [CardTag.EVENT], actions: [experiment('257-1-1', 1, 2)] },
-    { id: 2, name: 'Experiment', tags: [CardTag.EVENT], actions: [experiment('257-2-1', 2, 3)] },
-    { id: 3, name: 'Experiment', tags: [CardTag.EVENT], actions: [experiment('257-3-1', 3, 4)] },
+    {
+      id: 1,
+      name: 'Experiment',
+      illustration: 'cards/257_1.jpg',
+      tags: [CardTag.EVENT],
+      actions: [experiment('257-1-1', 1, 2)],
+    },
+    {
+      id: 2,
+      name: 'Experiment',
+      illustration: 'cards/257_2.jpg',
+      tags: [CardTag.EVENT],
+      actions: [experiment('257-2-1', 2, 3)],
+    },
+    {
+      id: 3,
+      name: 'Experiment',
+      illustration: 'cards/257_3.jpg',
+      tags: [CardTag.EVENT],
+      actions: [experiment('257-3-1', 3, 4)],
+    },
     {
       id: 4,
       name: 'Results',
+      illustration: 'cards/257_4.jpg',
       tags: [CardTag.EVENT],
       actions: [
         {

@@ -20,6 +20,7 @@ export const grain: CardDef = {
     {
       id: 1,
       name: 'Grain',
+      illustration: 'cards/155_1.jpg',
       tags: [CardTag.ITEM],
       actions: [
         {

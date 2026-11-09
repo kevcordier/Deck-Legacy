@@ -28,6 +28,7 @@ export const beer: CardDef = {
     {
       id: 1,
       name: 'Beer',
+      illustration: 'cards/161_1.jpg',
       tags: [CardTag.ITEM],
       actions: [
         {
@@ -54,6 +55,7 @@ export const beer: CardDef = {
     {
       id: 2,
       name: 'Hangover',
+      illustration: 'cards/161_2.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],

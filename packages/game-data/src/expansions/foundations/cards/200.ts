@@ -9,6 +9,7 @@ export const cityAblaze: CardDef = {
     {
       id: 1,
       name: 'City Ablaze',
+      illustration: 'cards/200_1.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] },

@@ -33,6 +33,7 @@ export const dreamer: CardDef = {
     {
       id: 1,
       name: 'Dreamer',
+      illustration: 'cards/284_1.jpg',
       tags: [CardTag.PERSON],
       track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }] },
       actions: [
@@ -50,6 +51,7 @@ export const dreamer: CardDef = {
     {
       id: 2,
       name: 'Architect',
+      illustration: 'cards/284_2.jpg',
       tags: [CardTag.PERSON, CardTag.LADY],
       productions: [{ [STONE]: 1 }],
       glory: { amount: 7 },

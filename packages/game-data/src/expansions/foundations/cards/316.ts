@@ -18,6 +18,7 @@ export const workshop: CardDef = {
     {
       id: 1,
       name: 'Simple Workshop',
+      illustration: 'cards/316_1.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ [GOODS]: 1 }],
       upgrade: [{ cost: { resources: [{ [IRON]: 2, [WOOD]: 2 }] }, upgradeTo: 2 }],
@@ -25,6 +26,7 @@ export const workshop: CardDef = {
     {
       id: 2,
       name: 'Scientific Workshop',
+      illustration: 'cards/316_2.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ [SCIENCE]: 1, [GOODS]: 1 }],
       glory: { amount: 2 },
@@ -33,6 +35,7 @@ export const workshop: CardDef = {
     {
       id: 3,
       name: 'Inventor Workshop',
+      illustration: 'cards/316_3.jpg',
       tags: [CardTag.BUILDING, CardTag.INVENTION],
       // 2 glory per invention: those in play while this is in play, otherwise the kingdom's
       glory: {

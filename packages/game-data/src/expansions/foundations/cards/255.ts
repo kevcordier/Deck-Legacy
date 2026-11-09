@@ -15,6 +15,7 @@ export const churchAuthority: CardDef = {
     {
       id: 1,
       name: 'Church Authority',
+      illustration: 'cards/255_1.jpg',
       tags: TAGS,
       glory: writtenMedals,
       track: {
@@ -44,6 +45,7 @@ export const churchAuthority: CardDef = {
     {
       id: 2,
       name: 'Church Authority',
+      illustration: 'cards/255_2.jpg',
       tags: TAGS,
       glory: writtenMedals,
       actions: [

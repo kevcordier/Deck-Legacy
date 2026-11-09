@@ -13,6 +13,7 @@ export const school49: CardDef = {
     {
       id: 4,
       name: 'Renowned School',
+      illustration: 'cards/222_4.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ [SCIENCE]: 1 }],
       glory: { amount: 6 },

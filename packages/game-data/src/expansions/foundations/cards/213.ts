@@ -18,6 +18,7 @@ export const bearCub: CardDef = {
     {
       id: 1,
       name: 'Bear Cub',
+      illustration: 'cards/213_1.jpg',
       tags: [CardTag.ANIMAL],
       glory: { amount: 0, whenPurged: -5 },
       actions: [
@@ -48,6 +49,7 @@ export const bearCub: CardDef = {
     {
       id: 2,
       name: 'Mama Bear',
+      illustration: 'cards/213_2.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -6 },

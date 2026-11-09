@@ -19,6 +19,7 @@ export const percival: CardDef = {
     {
       id: 1,
       name: 'Young Percival',
+      illustration: 'cards/239_1.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [W]: 1 }],
       track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] },
@@ -36,6 +37,7 @@ export const percival: CardDef = {
     {
       id: 2,
       name: 'Sir Percival',
+      illustration: 'cards/239_2.jpg',
       tags: [CardTag.PERSON, CardTag.KNIGHT, CardTag.BLESSED],
       productions: [{ [W]: 2 }],
       glory: { amount: 5 },

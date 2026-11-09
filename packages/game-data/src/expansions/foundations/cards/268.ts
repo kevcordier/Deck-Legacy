@@ -22,6 +22,7 @@ export const court: CardDef = {
     {
       id: 1,
       name: 'Small Court',
+      illustration: 'cards/268_1.jpg',
       tags: TAGS,
       actions: [
         {
@@ -43,6 +44,7 @@ export const court: CardDef = {
     {
       id: 2,
       name: 'Court',
+      illustration: 'cards/268_2.jpg',
       tags: TAGS,
       actions: [
         {
@@ -63,6 +65,7 @@ export const court: CardDef = {
     {
       id: 3,
       name: 'Large Court',
+      illustration: 'cards/268_3.jpg',
       tags: TAGS,
       actions: [
         {
@@ -85,6 +88,7 @@ export const court: CardDef = {
     {
       id: 4,
       name: 'Famous Court',
+      illustration: 'cards/268_4.jpg',
       tags: TAGS,
       glory: { amount: 0, emptyValues: 4 },
       // The 4 medals: a box marked for each name written

@@ -21,6 +21,7 @@ export const printingPress: CardDef = {
     {
       id: 1,
       name: 'Printing Press',
+      illustration: 'cards/259_1.jpg',
       tags: [CardTag.INVENTION],
       actions: [
         {
@@ -34,6 +35,12 @@ export const printingPress: CardDef = {
         },
       ],
     },
-    { id: 2, name: 'Holy Bible', tags: [CardTag.ITEM], glory: { amount: 20 } },
+    {
+      id: 2,
+      name: 'Holy Bible',
+      illustration: 'cards/259_2.jpg',
+      tags: [CardTag.ITEM],
+      glory: { amount: 20 },
+    },
   ],
 };

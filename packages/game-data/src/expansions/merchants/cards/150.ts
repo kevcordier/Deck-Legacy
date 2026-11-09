@@ -32,6 +32,7 @@ export const merchants: CardDef = {
     {
       id: 1,
       name: 'Merchants',
+      illustration: 'cards/150_1.jpg',
       tags: [CardTag.PERMANENT],
       actions: [
         // Camels, Spices, Furs, Weaving (Merchants 2–5)
@@ -58,6 +59,7 @@ export const merchants: CardDef = {
     {
       id: 2,
       name: 'Merchants',
+      illustration: 'cards/150_2.jpg',
       tags: [CardTag.PERMANENT],
       actions: [
         // Grain, Grapes, Fishing, Ether Enhancer (Merchants 6–9)

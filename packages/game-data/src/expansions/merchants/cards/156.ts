@@ -56,6 +56,7 @@ export const grapes: CardDef = {
     {
       id: 1,
       name: 'Grapes',
+      illustration: 'cards/156_1.jpg',
       tags: [CardTag.ITEM],
       productions: [{ [ResourceType.GOODS]: 1 }],
       actions: [markBox('156-1-1')],
@@ -65,6 +66,7 @@ export const grapes: CardDef = {
     {
       id: 2,
       name: 'Wine',
+      illustration: 'cards/156_2.jpg',
       tags: [CardTag.ITEM],
       productions: [{ [ResourceType.GOODS]: 1 }],
       actions: [markBox('156-2-1', { resources: [{ goods: 2 }] })],

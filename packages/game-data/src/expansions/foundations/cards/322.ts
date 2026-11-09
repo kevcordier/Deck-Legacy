@@ -32,6 +32,7 @@ export const brainstorming: CardDef = {
     {
       id: 1,
       name: 'Brainstorming',
+      illustration: 'cards/322_1.jpg',
       tags: [CardTag.EVENT],
       actions: [lowerUpgradeCost('322-1-1')],
       upgrade: [{ cost: { resources: [{ [SCIENCE]: 10 }] }, upgradeTo: 2 }],
@@ -39,6 +40,7 @@ export const brainstorming: CardDef = {
     {
       id: 2,
       name: "Inventor's Guild",
+      illustration: 'cards/322_2.jpg',
       tags: [CardTag.BUILDING],
       glory: { amount: 10 },
       actions: [lowerUpgradeCost('322-2-1')],
@@ -47,6 +49,7 @@ export const brainstorming: CardDef = {
     {
       id: 3,
       name: 'Industry',
+      illustration: 'cards/322_3.jpg',
       tags: [CardTag.BUILDING, CardTag.INVENTION],
       glory: { amount: 20 },
       actions: [

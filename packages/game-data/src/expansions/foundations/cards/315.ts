@@ -38,6 +38,7 @@ export const tinker: CardDef = {
     {
       id: 1,
       name: 'Tinker',
+      illustration: 'cards/315_1.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [ResourceType.SCIENCE]: 1 }],
       track: { inOrder: true, steps: [1, 2, 3, 4, 5].map(id => ({ id })) },
@@ -56,6 +57,7 @@ export const tinker: CardDef = {
     {
       id: 2,
       name: 'Thinker',
+      illustration: 'cards/315_2.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [ResourceType.SCIENCE]: 2 }],
       track: { inOrder: true, steps: THINKER_STEPS.map(id => ({ id })) },

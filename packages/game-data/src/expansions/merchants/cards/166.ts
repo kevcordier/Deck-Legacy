@@ -33,6 +33,7 @@ export const shoemaking: CardDef = {
     {
       id: 1,
       name: 'Shoemaking',
+      illustration: 'cards/166_1.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 0, valuePerElement: { amount: 1, accumulation: true } },
       actions: [

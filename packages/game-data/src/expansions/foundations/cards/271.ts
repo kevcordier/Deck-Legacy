@@ -18,18 +18,21 @@ export const roundTable: CardDef = {
     {
       id: 1,
       name: 'Wooden Planks',
+      illustration: 'cards/271_1.jpg',
       tags: TAGS,
       upgrade: [{ cost: { resources: [{ [WOOD]: 4 }] }, upgradeTo: 2 }],
     },
     {
       id: 2,
       name: 'Wooden Structure',
+      illustration: 'cards/271_2.jpg',
       tags: TAGS,
       upgrade: [{ cost: { resources: [{ [WOOD]: 2, [IRON]: 2 }] }, upgradeTo: 3 }],
     },
     {
       id: 3,
       name: 'Assembly',
+      illustration: 'cards/271_3.jpg',
       tags: TAGS,
       // Discard a Craftsman or 4 persons: the player chooses how to pay
       upgrade: [
@@ -40,6 +43,7 @@ export const roundTable: CardDef = {
     {
       id: 4,
       name: 'The Round Table',
+      illustration: 'cards/271_4.jpg',
       tags: [CardTag.ITEM, CardTag.FURNITURE],
       glory: { amount: 10 },
       actions: [

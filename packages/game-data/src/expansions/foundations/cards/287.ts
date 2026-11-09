@@ -16,6 +16,7 @@ export const youngPainter: CardDef = {
     {
       id: 1,
       name: 'Young Painter',
+      illustration: 'cards/287_1.jpg',
       tags: [CardTag.PERSON],
       actions: [
         {
@@ -31,6 +32,7 @@ export const youngPainter: CardDef = {
     {
       id: 2,
       name: 'Painter',
+      illustration: 'cards/287_2.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [GOODS]: 1 }],
       upgrade: [{ cost: { resources: [{ [GOODS]: 4 }] }, upgradeTo: 3 }],
@@ -38,6 +40,7 @@ export const youngPainter: CardDef = {
     {
       id: 3,
       name: 'Michelangelo',
+      illustration: 'cards/287_3.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [GOODS]: 2 }],
       glory: { amount: 7 },

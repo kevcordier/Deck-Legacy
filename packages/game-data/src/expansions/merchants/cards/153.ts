@@ -22,12 +22,14 @@ export const furs: CardDef = {
     {
       id: 1,
       name: 'Goat Fur',
+      illustration: 'cards/153_1.jpg',
       tags: [CardTag.ITEM],
       actions: [{ id: '153-1-1', actionEffects: [stickerOnPerson(1), thenTo(2)] }],
     },
     {
       id: 2,
       name: 'Camel Fur',
+      illustration: 'cards/153_2.jpg',
       tags: [CardTag.ITEM],
       // Erratum: sticker 18 is not a production, it gives the person an activated effect.
       actions: [{ id: '153-2-1', actionEffects: [stickerOnPerson(18), thenTo(3)] }],
@@ -35,12 +37,14 @@ export const furs: CardDef = {
     {
       id: 3,
       name: 'Cheeta Fur',
+      illustration: 'cards/153_3.jpg',
       tags: [CardTag.ITEM],
       actions: [{ id: '153-3-1', actionEffects: [stickerOnPerson(7), thenTo(4)] }],
     },
     {
       id: 4,
       name: 'Rabbit Fur',
+      illustration: 'cards/153_4.jpg',
       tags: [CardTag.ITEM],
       actions: [
         {

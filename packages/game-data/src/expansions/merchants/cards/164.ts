@@ -21,6 +21,7 @@ export const vikingWarrior: CardDef = {
     {
       id: 1,
       name: 'Viking Warrior',
+      illustration: 'cards/164_1.jpg',
       tags: [CardTag.PERSON],
       actions: [
         {
@@ -51,6 +52,7 @@ export const vikingWarrior: CardDef = {
     {
       id: 2,
       name: 'Viking Veteran',
+      illustration: 'cards/164_2.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [ResourceType.WEAPON]: 2 }],
       glory: { amount: 5 },

@@ -35,6 +35,7 @@ export const newParadigm: CardDef = {
     {
       id: 1,
       name: 'New Paradigm',
+      illustration: 'cards/256_1.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 0 },
       actions: [
@@ -65,6 +66,7 @@ export const newParadigm: CardDef = {
     {
       id: 2,
       name: 'Practical Science',
+      illustration: 'cards/256_2.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 25 },
       actions: [

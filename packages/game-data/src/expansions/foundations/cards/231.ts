@@ -11,6 +11,7 @@ export const university: CardDef = {
     {
       id: 1,
       name: 'Small University',
+      illustration: 'cards/231_1.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ [SCIENCE]: 1 }],
       glory: { amount: 10 },
@@ -19,6 +20,7 @@ export const university: CardDef = {
     {
       id: 2,
       name: 'University',
+      illustration: 'cards/231_2.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ [SCIENCE]: 2 }],
       glory: { amount: 15 },
@@ -27,6 +29,7 @@ export const university: CardDef = {
     {
       id: 3,
       name: 'Large University',
+      illustration: 'cards/231_3.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ [SCIENCE]: 3 }],
       glory: { amount: 20 },
@@ -37,6 +40,7 @@ export const university: CardDef = {
     {
       id: 4,
       name: 'Grand University',
+      illustration: 'cards/231_4.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ [SCIENCE]: 3 }],
       glory: { amount: 40 },

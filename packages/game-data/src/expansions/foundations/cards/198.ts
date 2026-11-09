@@ -39,6 +39,7 @@ export const enemySpearman: CardDef = {
     {
       id: 1,
       name: 'Enemy Spearman',
+      illustration: 'cards/198_1.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -3 },
@@ -79,6 +80,7 @@ export const enemySpearman: CardDef = {
     {
       id: 2,
       name: 'Wounded Spearman',
+      illustration: 'cards/198_2.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       actions: [

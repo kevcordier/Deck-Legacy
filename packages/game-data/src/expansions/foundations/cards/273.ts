@@ -23,6 +23,7 @@ export const seraphine: CardDef = {
     {
       id: 2,
       name: 'Seraphine',
+      illustration: 'cards/273_2.jpg',
       tags: [CardTag.PERSON, CardTag.LADY, CardTag.SCARF],
       glory: { amount: 7 },
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],

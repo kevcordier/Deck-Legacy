@@ -20,6 +20,7 @@ export const statues: CardDef = {
     {
       id: 1,
       name: 'Statues',
+      illustration: 'cards/281_1.jpg',
       tags: TAGS,
       glory: statuesGlory,
       track: { inOrder: true, steps: Array.from({ length: 9 }, (_, index) => ({ id: index + 1 })) },
@@ -45,6 +46,6 @@ export const statues: CardDef = {
       ],
     },
     // The other side writes the total of the medals and the bonus: the same glory
-    { id: 2, name: 'Statues', tags: TAGS, glory: statuesGlory },
+    { id: 2, name: 'Statues', illustration: 'cards/281_2.jpg', tags: TAGS, glory: statuesGlory },
   ],
 };

@@ -24,6 +24,7 @@ export const irrigation: CardDef = {
     {
       id: 1,
       name: 'Irrigation',
+      illustration: 'cards/317_1.jpg',
       tags: [CardTag.LAND, CardTag.INVENTION],
       actions: [
         {
@@ -49,6 +50,7 @@ export const irrigation: CardDef = {
     {
       id: 2,
       name: 'Mine Shaft',
+      illustration: 'cards/317_2.jpg',
       tags: [CardTag.BUILDING, CardTag.INVENTION],
       track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }, { id: 3 }] },
       actions: [

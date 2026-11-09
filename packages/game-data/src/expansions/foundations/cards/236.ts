@@ -29,6 +29,7 @@ export const appliedScience: CardDef = {
     {
       id: 1,
       name: 'Applied Science',
+      illustration: 'cards/236_1.jpg',
       tags,
       actions: [
         anyResource('236-1-1', 3),
@@ -52,6 +53,7 @@ export const appliedScience: CardDef = {
     {
       id: 2,
       name: 'Scientific Progress',
+      illustration: 'cards/236_2.jpg',
       tags,
       track: { inOrder: true, steps: [1, 2, 3, 4, 5].map(id => ({ id })) },
       actions: [

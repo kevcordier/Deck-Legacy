@@ -17,6 +17,7 @@ export const stoneRoads: CardDef = {
     {
       id: 1,
       name: 'Stone Roads',
+      illustration: 'cards/235_1.jpg',
       tags: [CardTag.INVENTION, CardTag.PERMANENT],
       actions: [
         {

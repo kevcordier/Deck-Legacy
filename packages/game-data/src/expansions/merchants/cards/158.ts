@@ -8,6 +8,7 @@ export const etherEnhancer: CardDef = {
     {
       id: 1,
       name: 'Ether Enhancer',
+      illustration: 'cards/158_1.jpg',
       tags: [CardTag.ARTIFACT, CardTag.PERMANENT],
       glory: { amount: 10 },
       passives: [{ id: '158-1-1', type: PassiveType.CANT_BE_DESTROYED }],

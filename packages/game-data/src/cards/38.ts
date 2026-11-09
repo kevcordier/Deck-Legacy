@@ -9,6 +9,7 @@ export const stop5: CardDef = {
     {
       id: 1,
       name: 'Stop',
+      illustration: 'cards/38_1.jpg',
       actions: [
         {
           id: '38-1-1',

@@ -28,6 +28,7 @@ const spice = (
 ): CardState => ({
   id: stateId,
   name,
+  illustration: `cards/152_${stateId}.jpg`,
   tags: [CardTag.ITEM],
   actions: [
     {
@@ -65,6 +66,7 @@ export const spices: CardDef = {
     {
       id: 1,
       name: 'Spices',
+      illustration: 'cards/152_1.jpg',
       tags: [CardTag.ITEM],
       productions: [{ [ResourceType.GOODS]: 1 }],
       actions: [rotate],

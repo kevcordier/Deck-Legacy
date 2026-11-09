@@ -30,6 +30,7 @@ export const calculations: CardDef = {
     {
       id: 1,
       name: 'Calculations',
+      illustration: 'cards/328_1.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 0, valuePerElement: { amount: 1, accumulation: true, max: 100 } },
       actions: [

@@ -166,6 +166,7 @@ const archbishopState = ({ tasks, actions, passive }: Side, index: number): Card
   return {
     id: stateId,
     name: ARCHBISHOP_NAMES[index],
+    illustration: `cards/245_${stateId}.jpg`,
     tags: [CardTag.PERMANENT, CardTag.ARCHBISHOP],
     track: { inOrder: false, steps: tasks },
     actions: [

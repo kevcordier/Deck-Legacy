@@ -22,6 +22,7 @@ export const baronArion: CardDef = {
     {
       id: 1,
       name: 'Baron Arion',
+      illustration: 'cards/308_1.jpg',
       tags: [CardTag.PERSON],
       glory: { amount: -2 },
       actions: [
@@ -39,6 +40,7 @@ export const baronArion: CardDef = {
     {
       id: 2,
       name: 'Windermere Estate',
+      illustration: 'cards/308_2.jpg',
       tags: [CardTag.LAND],
       productions: [{ [GOLD]: 2, [WOOD]: 2, [STONE]: 2, [IRON]: 2 }],
       glory: { amount: 2 },

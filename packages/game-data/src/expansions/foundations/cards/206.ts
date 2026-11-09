@@ -12,6 +12,7 @@ export const cursedLands: CardDef = {
     {
       id: 1,
       name: 'Cursed Lands',
+      illustration: 'cards/206_1.jpg',
       tags,
       negative: true,
       actions: [
@@ -38,6 +39,7 @@ export const cursedLands: CardDef = {
     {
       id: 2,
       name: 'Haunted Souls',
+      illustration: 'cards/206_2.jpg',
       tags,
       negative: true,
       actions: [

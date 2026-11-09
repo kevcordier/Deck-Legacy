@@ -29,6 +29,7 @@ export const craneConstruction: CardDef = {
     {
       id: 1,
       name: 'Crane Construction',
+      illustration: 'cards/326_1.jpg',
       tags: [CardTag.PERMANENT],
       track: {
         inOrder: false,
@@ -67,6 +68,7 @@ export const craneConstruction: CardDef = {
     {
       id: 2,
       name: 'Crane',
+      illustration: 'cards/326_2.jpg',
       tags: [CardTag.BUILDING, CardTag.INVENTION],
       equip: CardTag.LAND,
       glory: { amount: 5 },

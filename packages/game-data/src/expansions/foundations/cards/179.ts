@@ -19,6 +19,7 @@ export const rats: CardDef = {
     {
       id: 1,
       name: 'Rats',
+      illustration: 'cards/179_1.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -2 },

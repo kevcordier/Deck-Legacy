@@ -31,6 +31,7 @@ export const weaving: CardDef = {
     {
       id: 1,
       name: 'Weaving',
+      illustration: 'cards/154_1.jpg',
       tags: [CardTag.PERMANENT],
       glory: { amount: 0, valuePerElement: { amount: 1, accumulation: true } },
       actions: [

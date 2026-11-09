@@ -10,6 +10,7 @@ export const scienceCover: CardDef = {
     {
       id: 1,
       name: 'Science',
+      illustration: 'cards/218_1.jpg',
       actions: [
         {
           id: '218-1-1',

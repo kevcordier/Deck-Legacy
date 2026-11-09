@@ -9,6 +9,7 @@ export const endurance: CardDef = {
     {
       id: 1,
       name: 'Endurance',
+      illustration: 'cards/266_1.jpg',
       tags: [CardTag.EVENT],
       actions: [
         {

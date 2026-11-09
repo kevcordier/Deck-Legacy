@@ -12,12 +12,14 @@ export const viscountEemon: CardDef = {
     {
       id: 1,
       name: 'Viscount Eemon',
+      illustration: 'cards/307_1.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [STONE]: 2, [WEAPON]: 2 }],
     },
     {
       id: 2,
       name: 'Frostpeak Fortress',
+      illustration: 'cards/307_2.jpg',
       tags: [CardTag.BUILDING],
       glory: { amount: 5 },
       // The cards purged together with this are worth at least 5 glory

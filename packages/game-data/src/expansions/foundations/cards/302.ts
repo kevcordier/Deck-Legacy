@@ -29,6 +29,7 @@ export const steward: CardDef = {
     {
       id: 1,
       name: 'Steward',
+      illustration: 'cards/302_1.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [ResourceType.GOLD]: 1 }],
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],
@@ -55,6 +56,7 @@ export const steward: CardDef = {
     {
       id: 2,
       name: 'Wishing Well',
+      illustration: 'cards/302_2.jpg',
       tags: [CardTag.LAND],
       track: {
         inOrder: true,

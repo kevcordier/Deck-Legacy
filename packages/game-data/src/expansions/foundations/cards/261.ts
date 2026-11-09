@@ -11,6 +11,7 @@ export const romanceCover: CardDef = {
     {
       id: 1,
       name: 'Romance',
+      illustration: 'cards/261_1.jpg',
       actions: [
         {
           id: '261-1-1',

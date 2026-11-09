@@ -18,6 +18,7 @@ export const baronRoderick: CardDef = {
     {
       id: 1,
       name: 'Baron Roderick',
+      illustration: 'cards/309_1.jpg',
       tags: [CardTag.PERSON],
       actions: [
         {
@@ -37,6 +38,7 @@ export const baronRoderick: CardDef = {
     {
       id: 2,
       name: 'House of Blackwater',
+      illustration: 'cards/309_2.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ [ResourceType.GOLD]: 4 }],
       passives: [CardPassives[PassiveType.STAY_IN_PLAY]],

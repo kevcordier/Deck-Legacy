@@ -32,6 +32,7 @@ export const ratsFamine: CardDef = {
     {
       id: 1,
       name: 'Rats',
+      illustration: 'cards/211_1.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -2 },
@@ -70,6 +71,7 @@ export const ratsFamine: CardDef = {
     {
       id: 2,
       name: 'Famine',
+      illustration: 'cards/211_2.jpg',
       tags: [CardTag.EVENT],
       negative: true,
       glory: { amount: -2 },

@@ -34,6 +34,7 @@ const school = (
 ): CardState => ({
   id,
   name,
+  illustration: `cards/${cardId}_${id}.jpg`,
   tags: [CardTag.BUILDING],
   actions: [teach(`${cardId}-${id}-1`, id + 1)],
   ...extra,

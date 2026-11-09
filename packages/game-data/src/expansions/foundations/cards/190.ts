@@ -52,6 +52,7 @@ export const siegeTower: CardDef = {
     {
       id: 1,
       name: 'Siege Tower',
+      illustration: 'cards/190_1.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -5 },
@@ -66,6 +67,7 @@ export const siegeTower: CardDef = {
     {
       id: 2,
       name: 'Siege Tower',
+      illustration: 'cards/190_2.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -3 },

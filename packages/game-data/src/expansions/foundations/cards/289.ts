@@ -12,6 +12,7 @@ export const goldenPillar: CardDef = {
     {
       id: 1,
       name: 'Statue',
+      illustration: 'cards/289_1.jpg',
       tags: TAGS,
       glory: { amount: 2 },
       upgrade: [{ cost: { resources: [{ [STONE]: 4 }] }, upgradeTo: 2 }],
@@ -19,6 +20,7 @@ export const goldenPillar: CardDef = {
     {
       id: 2,
       name: 'Monument',
+      illustration: 'cards/289_2.jpg',
       tags: TAGS,
       glory: { amount: 5 },
       upgrade: [{ cost: { resources: [{ [STONE]: 4, [WOOD]: 2 }] }, upgradeTo: 3 }],
@@ -26,10 +28,17 @@ export const goldenPillar: CardDef = {
     {
       id: 3,
       name: 'Obelisk',
+      illustration: 'cards/289_3.jpg',
       tags: TAGS,
       glory: { amount: 10 },
       upgrade: [{ cost: { resources: [{ [GOLD]: 6 }] }, upgradeTo: 4 }],
     },
-    { id: 4, name: 'Golden Pillar', tags: TAGS, glory: { amount: 15 } },
+    {
+      id: 4,
+      name: 'Golden Pillar',
+      illustration: 'cards/289_4.jpg',
+      tags: TAGS,
+      glory: { amount: 15 },
+    },
   ],
 };

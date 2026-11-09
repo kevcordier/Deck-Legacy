@@ -22,6 +22,7 @@ export const childrensToy: CardDef = {
     {
       id: 1,
       name: "Children's Toy",
+      illustration: 'cards/329_1.jpg',
       tags: TAGS,
       equip: CardTag.PERSON,
       glory: { amount: 0, valuePerElement: { amount: 1, markedSteps: true } },
@@ -44,6 +45,7 @@ export const childrensToy: CardDef = {
     {
       id: 2,
       name: 'Painted Model',
+      illustration: 'cards/329_2.jpg',
       tags: TAGS,
       equip: CardTag.PERSON,
       productions: [{ [ResourceType.GOODS]: 1, [ResourceType.SCIENCE]: 1 }],

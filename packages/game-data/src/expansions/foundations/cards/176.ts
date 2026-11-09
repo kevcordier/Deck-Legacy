@@ -23,6 +23,7 @@ export const blackPlague: CardDef = {
     {
       id: 1,
       name: 'Black Plague',
+      illustration: 'cards/176_1.jpg',
       tags: [CardTag.PERMANENT],
       negative: true,
       actions: [

@@ -16,6 +16,7 @@ export const metallurgy: CardDef = {
     {
       id: 1,
       name: 'Metallurgy',
+      illustration: 'cards/233_1.jpg',
       tags: [CardTag.INVENTION],
       track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] },
       actions: [

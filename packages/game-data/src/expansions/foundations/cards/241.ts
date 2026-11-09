@@ -10,6 +10,7 @@ export const pilgrim: CardDef = {
     {
       id: 1,
       name: 'Pilgrim',
+      illustration: 'cards/241_1.jpg',
       tags: [CardTag.PERSON],
       actions: [
         {
@@ -49,6 +50,7 @@ export const pilgrim: CardDef = {
     {
       id: 2,
       name: 'Gargoyle Statue',
+      illustration: 'cards/241_2.jpg',
       tags: [CardTag.ITEM],
       glory: { amount: 3 },
       actions: [

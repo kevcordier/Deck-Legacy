@@ -13,6 +13,7 @@ export const siegeEngine: CardDef = {
     {
       id: 1,
       name: 'Siege Engine',
+      illustration: 'cards/327_1.jpg',
       tags: [CardTag.INVENTION],
       equip: CardTag.LAND,
       productions: [{ [WEAPON]: 2 }],
@@ -23,6 +24,7 @@ export const siegeEngine: CardDef = {
     {
       id: 2,
       name: 'Siege Engine',
+      illustration: 'cards/327_2.jpg',
       tags: [CardTag.INVENTION],
       equip: CardTag.LAND,
       productions: [{ [WEAPON]: 4 }],

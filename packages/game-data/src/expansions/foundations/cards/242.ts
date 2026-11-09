@@ -20,6 +20,7 @@ export const overgrownChapel: CardDef = {
     {
       id: 1,
       name: 'Overgrown Chapel',
+      illustration: 'cards/242_1.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ [HERB]: 1 }],
       actions: [bless('242-1-1')],
@@ -28,6 +29,7 @@ export const overgrownChapel: CardDef = {
     {
       id: 2,
       name: 'Small Abbey',
+      illustration: 'cards/242_2.jpg',
       tags: [CardTag.BUILDING, CardTag.LAND],
       productions: [{ [GOLD]: 1 }],
       actions: [bless('242-2-1')],
@@ -36,6 +38,7 @@ export const overgrownChapel: CardDef = {
     {
       id: 3,
       name: 'Church Estate',
+      illustration: 'cards/242_3.jpg',
       tags: [CardTag.BUILDING, CardTag.LAND],
       productions: [{ [GOLD]: 2 }],
       actions: [bless('242-3-1')],
@@ -44,6 +47,7 @@ export const overgrownChapel: CardDef = {
     {
       id: 4,
       name: 'Church Property',
+      illustration: 'cards/242_4.jpg',
       tags: [CardTag.STATE],
       productions: [{ [GOLD]: 2 }],
       glory: {

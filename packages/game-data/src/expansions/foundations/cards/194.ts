@@ -29,6 +29,7 @@ export const infiltrator: CardDef = {
     {
       id: 1,
       name: 'Infiltrator',
+      illustration: 'cards/194_1.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -3 },
@@ -64,6 +65,7 @@ export const infiltrator: CardDef = {
     {
       id: 2,
       name: 'Wounded Infiltrator',
+      illustration: 'cards/194_2.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       actions: [

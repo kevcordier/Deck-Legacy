@@ -11,6 +11,7 @@ export const churchCover: CardDef = {
     {
       id: 1,
       name: 'Church',
+      illustration: 'cards/237_1.jpg',
       actions: [
         {
           id: '237-1-1',

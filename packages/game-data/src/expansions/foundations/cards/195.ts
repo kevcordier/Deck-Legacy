@@ -15,6 +15,7 @@ export const enemyPrince: CardDef = {
     {
       id: 1,
       name: 'Enemy Prince',
+      illustration: 'cards/195_1.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -8 },
@@ -50,6 +51,7 @@ export const enemyPrince: CardDef = {
     {
       id: 2,
       name: 'Valuable Prisoner',
+      illustration: 'cards/195_2.jpg',
       tags: [CardTag.STATE],
       glory: { amount: 4 },
       actions: [

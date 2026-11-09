@@ -20,6 +20,7 @@ export const arthur: CardDef = {
     {
       id: 1,
       name: 'Arthur',
+      illustration: 'cards/262_1.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [WEAPON]: 1 }],
       track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }, { id: 3 }] },
@@ -37,6 +38,7 @@ export const arthur: CardDef = {
     {
       id: 2,
       name: 'King Arthur',
+      illustration: 'cards/262_2.jpg',
       tags: [CardTag.PERSON, CardTag.KNIGHT],
       productions: [{ [GOLD]: 1, [WEAPON]: 1 }],
       glory: { amount: 13 },

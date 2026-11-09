@@ -18,6 +18,7 @@ export const lordEdric: CardDef = {
     {
       id: 1,
       name: 'Lord Edric',
+      illustration: 'cards/304_1.jpg',
       tags: [CardTag.PERSON],
       actions: [
         {
@@ -44,6 +45,7 @@ export const lordEdric: CardDef = {
     {
       id: 2,
       name: 'House of Stonehaven',
+      illustration: 'cards/304_2.jpg',
       tags: [CardTag.BUILDING],
       productions: [{ [ResourceType.GOLD]: 1 }],
       glory: { amount: 0, emptyValues: 6 },

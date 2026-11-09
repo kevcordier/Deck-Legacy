@@ -31,6 +31,7 @@ const defeat = (stateId: number, effects: ActionEffect[]): CardAction => ({
 const troop = (id: number, name: string, glory: number, enemies: number): CardState => ({
   id,
   name,
+  illustration: `cards/192_${id}.jpg`,
   tags: [CardTag.ENEMY],
   negative: true,
   glory: { amount: glory },
@@ -59,6 +60,7 @@ export const enemyTroop: CardDef = {
     {
       id: 4,
       name: 'Lone Enemy',
+      illustration: 'cards/192_4.jpg',
       tags: [CardTag.ENEMY],
       negative: true,
       glory: { amount: -1 },

@@ -12,6 +12,7 @@ export const archbishops: CardDef = {
     {
       id: 1,
       name: 'STOP!',
+      illustration: 'cards/244_1.jpg',
       actions: [
         {
           id: '244-1-1',
@@ -28,6 +29,6 @@ export const archbishops: CardDef = {
         },
       ],
     },
-    { id: 2, name: 'Archbishops', tags: [CardTag.PERMANENT] },
+    { id: 2, name: 'Archbishops', illustration: 'cards/244_2.jpg', tags: [CardTag.PERMANENT] },
   ],
 };

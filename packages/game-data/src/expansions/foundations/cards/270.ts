@@ -21,6 +21,7 @@ export const godfrey: CardDef = {
     {
       id: 1,
       name: 'Godfrey',
+      illustration: 'cards/270_1.jpg',
       tags: [CardTag.PERSON],
       productions: [{ [WEAPON]: 1 }],
       upgrade: [{ cost: { resources: [{ [GOODS]: 2, [WOOD]: 2, [GOLD]: 2 }] }, upgradeTo: 2 }],
@@ -28,6 +29,7 @@ export const godfrey: CardDef = {
     {
       id: 2,
       name: 'Sir Godfrey',
+      illustration: 'cards/270_2.jpg',
       tags: [CardTag.PERSON, CardTag.KNIGHT],
       track: { inOrder: true, steps: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] },
       actions: [
